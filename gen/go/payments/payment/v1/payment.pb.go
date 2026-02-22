@@ -2250,7 +2250,7 @@ type BidPurchase struct {
 	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	BidId          int64                  `protobuf:"varint,3,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
-	RequestId      int64                  `protobuf:"varint,4,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	RequestId      string                 `protobuf:"bytes,4,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	PriceAmount    int64                  `protobuf:"varint,5,opt,name=price_amount,json=priceAmount,proto3" json:"price_amount,omitempty"`
 	Currency       string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`
 	Status         string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
@@ -2310,11 +2310,11 @@ func (x *BidPurchase) GetBidId() int64 {
 	return 0
 }
 
-func (x *BidPurchase) GetRequestId() int64 {
+func (x *BidPurchase) GetRequestId() string {
 	if x != nil {
 		return x.RequestId
 	}
-	return 0
+	return ""
 }
 
 func (x *BidPurchase) GetPriceAmount() int64 {
@@ -4184,7 +4184,7 @@ func (x *InitiateRefundResponse) GetRefund() *Refund {
 type PurchaseBidRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	RequestId      int64                  `protobuf:"varint,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	RequestId      string                 `protobuf:"bytes,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	PaymentMethod  PaymentMethod          `protobuf:"varint,3,opt,name=payment_method,json=paymentMethod,proto3,enum=payments.payment.v1.PaymentMethod" json:"payment_method,omitempty"`
 	IdempotencyKey string                 `protobuf:"bytes,4,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
 	GroupId        int64                  `protobuf:"varint,5,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
@@ -4229,11 +4229,11 @@ func (x *PurchaseBidRequest) GetOrganizationId() string {
 	return ""
 }
 
-func (x *PurchaseBidRequest) GetRequestId() int64 {
+func (x *PurchaseBidRequest) GetRequestId() string {
 	if x != nil {
 		return x.RequestId
 	}
-	return 0
+	return ""
 }
 
 func (x *PurchaseBidRequest) GetPaymentMethod() PaymentMethod {
@@ -7485,7 +7485,7 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x15\n" +
 	"\x06bid_id\x18\x03 \x01(\x03R\x05bidId\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x04 \x01(\x03R\trequestId\x12!\n" +
+	"request_id\x18\x04 \x01(\tR\trequestId\x12!\n" +
 	"\fprice_amount\x18\x05 \x01(\x03R\vpriceAmount\x12\x1a\n" +
 	"\bcurrency\x18\x06 \x01(\tR\bcurrency\x12\x16\n" +
 	"\x06status\x18\a \x01(\tR\x06status\x129\n" +
@@ -7654,7 +7654,7 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x12PurchaseBidRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x02 \x01(\x03R\trequestId\x12I\n" +
+	"request_id\x18\x02 \x01(\tR\trequestId\x12I\n" +
 	"\x0epayment_method\x18\x03 \x01(\x0e2\".payments.payment.v1.PaymentMethodR\rpaymentMethod\x12'\n" +
 	"\x0fidempotency_key\x18\x04 \x01(\tR\x0eidempotencyKey\x12\x19\n" +
 	"\bgroup_id\x18\x05 \x01(\x03R\agroupId\"{\n" +
