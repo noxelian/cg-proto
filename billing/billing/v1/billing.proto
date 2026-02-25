@@ -1,0 +1,254 @@
+syntax = "proto3";
+
+package billing.billing.v1;
+
+option go_package = "gitlab.com/xakpro/cg-proto/gen/go/billing/billing;billingv1";
+
+import "google/protobuf/timestamp.proto";
+
+// BillingService handles financial accounting: ledger entries, org balances,
+// payouts, reconciliation, and revenue reporting.
+// Consumes events from cg-payments, cg-orders, cg-booking via Kafka.
+service BillingService {
+  // === Ledger ===
+  rpc RecordLedgerEntry(RecordLedgerEntryRequest) returns (RecordLedgerEntryResponse);
+  rpc ListLedgerEntries(ListLedgerEntriesRequest) returns (ListLedgerEntriesResponse);
+
+  // === Org balances ===
+  rpc GetOrgBalance(GetOrgBalanceRequest) returns (GetOrgBalanceResponse);
+
+  // === Payouts ===
+  rpc InitiatePayout(InitiatePayoutRequest) returns (InitiatePayoutResponse);
+  rpc GetPayoutHistory(GetPayoutHistoryRequest) returns (GetPayoutHistoryResponse);
+
+  // === Reconciliation ===
+  rpc ReconcileTransaction(ReconcileTransactionRequest) returns (ReconcileTransactionResponse);
+
+  // === Reporting ===
+  rpc GetOrgStatement(GetOrgStatementRequest) returns (GetOrgStatementResponse);
+  rpc GetRevenueStats(GetRevenueStatsRequest) returns (GetRevenueStatsResponse);
+}
+
+// =============================================
+// Enums
+// =============================================
+
+enum LedgerEntryType {
+  LEDGER_ENTRY_TYPE_UNSPECIFIED = 0;
+  LEDGER_ENTRY_TYPE_PAYMENT_RECEIVED = 1;     // buyer paid
+  LEDGER_ENTRY_TYPE_COMMISSION_EARNED = 2;     // platform commission
+  LEDGER_ENTRY_TYPE_SELLER_CREDIT = 3;         // credit to seller balance
+  LEDGER_ENTRY_TYPE_ESCROW_HOLD = 4;           // funds held in escrow
+  LEDGER_ENTRY_TYPE_ESCROW_RELEASE = 5;        // escrow released to seller
+  LEDGER_ENTRY_TYPE_ESCROW_RETURN = 6;         // escrow returned to buyer
+  LEDGER_ENTRY_TYPE_REFUND = 7;                // refund to buyer
+  LEDGER_ENTRY_TYPE_PAYOUT = 8;                // payout to seller
+  LEDGER_ENTRY_TYPE_SUBSCRIPTION_PAYMENT = 9;  // subscription charge
+  LEDGER_ENTRY_TYPE_BOOKING_PAYMENT = 10;      // booking charge
+  LEDGER_ENTRY_TYPE_ADJUSTMENT = 11;           // manual adjustment
+}
+
+enum PayoutStatus {
+  PAYOUT_STATUS_UNSPECIFIED = 0;
+  PAYOUT_STATUS_PENDING = 1;
+  PAYOUT_STATUS_PROCESSING = 2;
+  PAYOUT_STATUS_COMPLETED = 3;
+  PAYOUT_STATUS_FAILED = 4;
+  PAYOUT_STATUS_CANCELLED = 5;
+}
+
+enum ReconciliationStatus {
+  RECONCILIATION_STATUS_UNSPECIFIED = 0;
+  RECONCILIATION_STATUS_MATCHED = 1;
+  RECONCILIATION_STATUS_MISMATCHED = 2;
+  RECONCILIATION_STATUS_MISSING = 3;
+  RECONCILIATION_STATUS_DUPLICATE = 4;
+}
+
+// =============================================
+// Core messages
+// =============================================
+
+// LedgerEntry represents a double-entry accounting record.
+// Every financial operation creates a debit + credit pair that must balance.
+message LedgerEntry {
+  int64 id = 1;
+  LedgerEntryType entry_type = 2;
+  string debit_account = 3;         // e.g. "buyer:123", "platform:commission", "escrow:order:456"
+  string credit_account = 4;        // e.g. "seller:org_abc", "platform:revenue"
+  int64 amount = 5;
+  string currency = 6;
+  string entity_type = 7;           // "order", "subscription", "booking", "bid_purchase"
+  int64 entity_id = 8;
+  string organization_id = 9;
+  string description = 10;
+  string idempotency_key = 11;
+  google.protobuf.Timestamp created_at = 12;
+}
+
+// OrgBalance represents the current financial state of an organization.
+message OrgBalance {
+  string organization_id = 1;
+  int64 available_balance = 2;      // withdrawable amount
+  int64 pending_balance = 3;        // in escrow, not yet released
+  int64 held_balance = 4;           // payout in progress
+  int64 total_earned = 5;           // lifetime earnings
+  int64 total_paid_out = 6;         // lifetime payouts
+  int64 total_commission_paid = 7;  // lifetime commission to platform
+  string currency = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message Payout {
+  int64 id = 1;
+  string organization_id = 2;
+  int64 amount = 3;
+  string currency = 4;
+  PayoutStatus status = 5;
+  string bank_account = 6;          // masked, e.g. "****1234"
+  string bank_name = 7;
+  string reference_number = 8;
+  string failure_reason = 9;
+  google.protobuf.Timestamp requested_at = 10;
+  google.protobuf.Timestamp completed_at = 11;
+}
+
+message RevenueDataPoint {
+  string period = 1;
+  int64 total_amount = 2;
+  int64 subscription_amount = 3;
+  int64 bid_purchase_amount = 4;
+  int64 order_amount = 5;
+  int64 booking_amount = 6;
+  int64 commission_amount = 7;
+  int64 refund_amount = 8;
+  string currency = 9;
+}
+
+// =============================================
+// Ledger RPCs
+// =============================================
+
+message RecordLedgerEntryRequest {
+  LedgerEntryType entry_type = 1;
+  string debit_account = 2;
+  string credit_account = 3;
+  int64 amount = 4;
+  string currency = 5;
+  string entity_type = 6;
+  int64 entity_id = 7;
+  string organization_id = 8;
+  string description = 9;
+  string idempotency_key = 10;
+}
+
+message RecordLedgerEntryResponse {
+  LedgerEntry entry = 1;
+}
+
+message ListLedgerEntriesRequest {
+  string organization_id = 1;
+  string entity_type = 2;
+  int64 entity_id = 3;
+  LedgerEntryType entry_type = 4;
+  google.protobuf.Timestamp from = 5;
+  google.protobuf.Timestamp to = 6;
+  int32 page = 7;
+  int32 page_size = 8;
+}
+
+message ListLedgerEntriesResponse {
+  repeated LedgerEntry entries = 1;
+  int32 total = 2;
+}
+
+// =============================================
+// Org balance RPCs
+// =============================================
+
+message GetOrgBalanceRequest {
+  string organization_id = 1;
+}
+
+message GetOrgBalanceResponse {
+  OrgBalance balance = 1;
+}
+
+// =============================================
+// Payout RPCs
+// =============================================
+
+message InitiatePayoutRequest {
+  string organization_id = 1;
+  int64 amount = 2;
+  string currency = 3;
+  string bank_account = 4;
+  string bank_name = 5;
+  string idempotency_key = 6;
+}
+
+message InitiatePayoutResponse {
+  Payout payout = 1;
+}
+
+message GetPayoutHistoryRequest {
+  string organization_id = 1;
+  PayoutStatus status = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message GetPayoutHistoryResponse {
+  repeated Payout payouts = 1;
+  int32 total = 2;
+}
+
+// =============================================
+// Reconciliation RPCs
+// =============================================
+
+message ReconcileTransactionRequest {
+  int64 transaction_id = 1;
+  string provider = 2;
+  string external_id = 3;
+  int64 expected_amount = 4;
+  int64 actual_amount = 5;
+  string currency = 6;
+}
+
+message ReconcileTransactionResponse {
+  ReconciliationStatus status = 1;
+  string details = 2;
+}
+
+// =============================================
+// Reporting RPCs
+// =============================================
+
+message GetOrgStatementRequest {
+  string organization_id = 1;
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+}
+
+message GetOrgStatementResponse {
+  string organization_id = 1;
+  repeated LedgerEntry entries = 2;
+  int64 opening_balance = 3;
+  int64 closing_balance = 4;
+  int64 total_credits = 5;
+  int64 total_debits = 6;
+  string currency = 7;
+}
+
+message GetRevenueStatsRequest {
+  google.protobuf.Timestamp from = 1;
+  google.protobuf.Timestamp to = 2;
+  string group_by = 3;  // day, week, month
+}
+
+message GetRevenueStatsResponse {
+  repeated RevenueDataPoint data_points = 1;
+  int64 total_revenue = 2;
+  string currency = 3;
+}

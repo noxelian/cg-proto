@@ -6,82 +6,29 @@ option go_package = "gitlab.com/xakpro/cg-proto/gen/go/payments/payment;paymentv
 
 import "google/protobuf/timestamp.proto";
 
+// PaymentService handles payment processing, transactions, refunds, and webhooks.
+// Domain services (orders, bookings) create entities first, then BFF calls
+// CreateTransaction to initiate payment via the appropriate provider.
 service PaymentService {
-  // === Plans (admin) ===
-  rpc ListPlans(ListPlansRequest) returns (ListPlansResponse);
-  rpc CreatePlan(CreatePlanRequest) returns (CreatePlanResponse);
-  rpc UpdatePlan(UpdatePlanRequest) returns (UpdatePlanResponse);
-  rpc SetPlanPrices(SetPlanPricesRequest) returns (SetPlanPricesResponse);
-
-  // === Subscriptions ===
-  rpc CreateSubscription(CreateSubscriptionRequest) returns (CreateSubscriptionResponse);
-  rpc GetSubscription(GetSubscriptionRequest) returns (GetSubscriptionResponse);
-  rpc GetSubscriptionsByOrg(GetSubscriptionsByOrgRequest) returns (GetSubscriptionsByOrgResponse);
-  rpc CancelSubscription(CancelSubscriptionRequest) returns (CancelSubscriptionResponse);
-  rpc CheckBidAccess(CheckBidAccessRequest) returns (CheckBidAccessResponse);
-  rpc CalculateSubscriptionPrice(CalculateSubscriptionPriceRequest) returns (CalculateSubscriptionPriceResponse);
-
-  // === Transactions (admin) ===
+  // === Transactions ===
+  rpc CreateTransaction(CreateTransactionRequest) returns (CreateTransactionResponse);
   rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse);
   rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
+
+  // === Refunds ===
   rpc InitiateRefund(InitiateRefundRequest) returns (InitiateRefundResponse);
 
-  // === Bid purchases ===
-  rpc PurchaseBid(PurchaseBidRequest) returns (PurchaseBidResponse);
-  rpc GetBidPurchasePrice(GetBidPurchasePriceRequest) returns (GetBidPurchasePriceResponse);
-
-  // === Orders (parts marketplace) ===
-  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
-  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
-  rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse);
-  rpc ConfirmShipment(ConfirmShipmentRequest) returns (ConfirmShipmentResponse);
-  rpc ConfirmReceipt(ConfirmReceiptRequest) returns (ConfirmReceiptResponse);
-  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse);
-
-  // === Bookings (car wash) ===
-  rpc CreateBooking(CreateBookingRequest) returns (CreateBookingResponse);
-  rpc GetBooking(GetBookingRequest) returns (GetBookingResponse);
-  rpc ListBookings(ListBookingsRequest) returns (ListBookingsResponse);
-  rpc CancelBooking(CancelBookingRequest) returns (CancelBookingResponse);
-  rpc AssignNoQueueBooking(AssignNoQueueBookingRequest) returns (AssignNoQueueBookingResponse);
-
-  // === Wash services & slots ===
-  rpc ListWashServices(ListWashServicesRequest) returns (ListWashServicesResponse);
-  rpc CreateWashService(CreateWashServiceRequest) returns (CreateWashServiceResponse);
-  rpc UpdateWashService(UpdateWashServiceRequest) returns (UpdateWashServiceResponse);
-  rpc SetWashPricing(SetWashPricingRequest) returns (SetWashPricingResponse);
-  rpc GetAvailableSlots(GetAvailableSlotsRequest) returns (GetAvailableSlotsResponse);
-  rpc GenerateWashSlots(GenerateWashSlotsRequest) returns (GenerateWashSlotsResponse);
-
-  // === Webhooks ===
+  // === Provider webhooks ===
   rpc HandleIokaWebhook(HandleIokaWebhookRequest) returns (HandleIokaWebhookResponse);
   rpc HandleKaspiCheckPay(HandleKaspiCheckPayRequest) returns (HandleKaspiCheckPayResponse);
 
-  // === Admin analytics ===
-  rpc GetRevenueStats(GetRevenueStatsRequest) returns (GetRevenueStatsResponse);
-  rpc GetSubscriptionStats(GetSubscriptionStatsRequest) returns (GetSubscriptionStatsResponse);
+  // === Admin ===
   rpc GetPaymentAuditLog(GetPaymentAuditLogRequest) returns (GetPaymentAuditLogResponse);
 }
 
 // =============================================
 // Enums
 // =============================================
-
-enum PlanType {
-  PLAN_TYPE_UNSPECIFIED = 0;
-  PLAN_TYPE_SUBSCRIPTION = 1;
-  PLAN_TYPE_BID_PACKAGE = 2;
-}
-
-enum SubscriptionStatus {
-  SUBSCRIPTION_STATUS_UNSPECIFIED = 0;
-  SUBSCRIPTION_STATUS_PENDING = 1;
-  SUBSCRIPTION_STATUS_ACTIVE = 2;
-  SUBSCRIPTION_STATUS_PAST_DUE = 3;
-  SUBSCRIPTION_STATUS_GRACE_PERIOD = 4;
-  SUBSCRIPTION_STATUS_CANCELLED = 5;
-  SUBSCRIPTION_STATUS_EXPIRED = 6;
-}
 
 enum TransactionStatus {
   TRANSACTION_STATUS_UNSPECIFIED = 0;
@@ -115,113 +62,9 @@ enum PaymentMethod {
   PAYMENT_METHOD_KASPI = 4;
 }
 
-enum OrderStatus {
-  ORDER_STATUS_UNSPECIFIED = 0;
-  ORDER_STATUS_PENDING = 1;
-  ORDER_STATUS_PAID = 2;
-  ORDER_STATUS_CONFIRMED = 3;
-  ORDER_STATUS_SHIPPING = 4;
-  ORDER_STATUS_SHIPPED = 5;
-  ORDER_STATUS_DELIVERED = 6;
-  ORDER_STATUS_COMPLETED = 7;
-  ORDER_STATUS_CANCELLED = 8;
-  ORDER_STATUS_DISPUTED = 9;
-  ORDER_STATUS_REFUNDED = 10;
-}
-
-enum EscrowStatus {
-  ESCROW_STATUS_UNSPECIFIED = 0;
-  ESCROW_STATUS_NONE = 1;
-  ESCROW_STATUS_HELD = 2;
-  ESCROW_STATUS_RELEASED = 3;
-  ESCROW_STATUS_RETURNED = 4;
-}
-
-enum BookingType {
-  BOOKING_TYPE_UNSPECIFIED = 0;
-  BOOKING_TYPE_SLOT = 1;
-  BOOKING_TYPE_NO_QUEUE = 2;
-}
-
-enum BookingStatus {
-  BOOKING_STATUS_UNSPECIFIED = 0;
-  BOOKING_STATUS_PENDING = 1;
-  BOOKING_STATUS_PAID = 2;
-  BOOKING_STATUS_CONFIRMED = 3;
-  BOOKING_STATUS_IN_PROGRESS = 4;
-  BOOKING_STATUS_COMPLETED = 5;
-  BOOKING_STATUS_CANCELLED = 6;
-  BOOKING_STATUS_REFUNDED = 7;
-  BOOKING_STATUS_NO_SHOW = 8;
-}
-
-enum DeliveryType {
-  DELIVERY_TYPE_UNSPECIFIED = 0;
-  DELIVERY_TYPE_PICKUP = 1;
-  DELIVERY_TYPE_DELIVERY = 2;
-}
-
 // =============================================
 // Core messages
 // =============================================
-
-message Plan {
-  int64 id = 1;
-  string code = 2;
-  string name = 3;
-  string description = 4;
-  string org_type = 5;
-  PlanType plan_type = 6;
-  map<string, string> features = 7;
-  bool is_active = 8;
-  int32 sort_order = 9;
-  repeated PlanPrice prices = 10;
-  google.protobuf.Timestamp created_at = 11;
-  google.protobuf.Timestamp updated_at = 12;
-  int64 group_id = 13;
-  int64 city_id = 14;
-}
-
-message PlanPrice {
-  int64 id = 1;
-  int64 plan_id = 2;
-  int32 period_months = 3;
-  int64 price_amount = 4;
-  string currency = 5;
-  int32 discount_percent = 6;
-  bool is_active = 7;
-  repeated PlanPriceTier tiers = 8;
-}
-
-message PlanPriceTier {
-  int64 id = 1;
-  string attribute_key = 2;
-  int32 min_value = 3;
-  int32 max_value = 4;
-  int64 price_amount = 5;
-  string currency = 6;
-  bool is_per_unit = 7;
-  int32 rental_discount_percent = 8;
-}
-
-message Subscription {
-  int64 id = 1;
-  string organization_id = 2;
-  int64 plan_id = 3;
-  int64 plan_price_id = 4;
-  SubscriptionStatus status = 5;
-  google.protobuf.Timestamp current_period_start = 6;
-  google.protobuf.Timestamp current_period_end = 7;
-  google.protobuf.Timestamp cancelled_at = 8;
-  string cancel_reason = 9;
-  bool auto_renew = 10;
-  string card_last_four = 11;
-  string card_brand = 12;
-  map<string, string> tier_attributes = 13;
-  google.protobuf.Timestamp created_at = 14;
-  google.protobuf.Timestamp updated_at = 15;
-  Plan plan = 16;
-}
 
 message Transaction {
   int64 id = 1;
@@ -256,108 +99,6 @@ message Refund {
   google.protobuf.Timestamp created_at = 9;
 }
 
-message Order {
-  int64 id = 1;
-  string order_number = 2;
-  int64 buyer_user_id = 3;
-  string seller_org_id = 4;
-  OrderStatus status = 5;
-  int64 subtotal = 6;
-  int64 commission_amount = 7;
-  int64 delivery_amount = 8;
-  int64 total_amount = 9;
-  string currency = 10;
-  DeliveryType delivery_type = 11;
-  string delivery_address = 12;
-  int64 delivery_city_id = 13;
-  EscrowStatus escrow_status = 14;
-  repeated OrderItem items = 15;
-  string notes = 16;
-  google.protobuf.Timestamp created_at = 17;
-  google.protobuf.Timestamp updated_at = 18;
-}
-
-message OrderItem {
-  int64 id = 1;
-  int64 order_id = 2;
-  string part_name = 3;
-  string part_number = 4;
-  int32 quantity = 5;
-  int64 unit_price = 6;
-  int64 total_price = 7;
-  string condition = 8;
-  string currency = 9;
-}
-
-message WashService {
-  int64 id = 1;
-  string organization_id = 2;
-  string name = 3;
-  string description = 4;
-  int32 duration_minutes = 5;
-  int32 sort_order = 6;
-  bool is_active = 7;
-  repeated WashPricing pricing = 8;
-  google.protobuf.Timestamp created_at = 9;
-  google.protobuf.Timestamp updated_at = 10;
-}
-
-message WashPricing {
-  int64 id = 1;
-  int64 wash_service_id = 2;
-  string body_type = 3;
-  int64 price_amount = 4;
-  string currency = 5;
-  bool is_active = 6;
-}
-
-message WashSlot {
-  int64 id = 1;
-  string organization_id = 2;
-  int32 bay_number = 3;
-  string slot_date = 4;
-  string start_time = 5;
-  string end_time = 6;
-  string status = 7;
-}
-
-message Booking {
-  int64 id = 1;
-  string booking_number = 2;
-  int64 user_id = 3;
-  string organization_id = 4;
-  BookingType booking_type = 5;
-  optional int64 wash_slot_id = 6;
-  int64 wash_service_id = 7;
-  string body_type = 8;
-  optional string preferred_date = 9;
-  optional string preferred_time_from = 10;
-  optional string preferred_time_to = 11;
-  optional string assigned_org_id = 12;
-  int64 price_amount = 13;
-  string currency = 14;
-  BookingStatus status = 15;
-  optional int64 car_id = 16;
-  string car_make = 17;
-  string car_model = 18;
-  string car_plate = 19;
-  bool refund_eligible = 20;
-  string notes = 21;
-  google.protobuf.Timestamp created_at = 22;
-  google.protobuf.Timestamp updated_at = 23;
-}
-
-message BidPurchase {
-  int64 id = 1;
-  string organization_id = 2;
-  int64 bid_id = 3;
-  string request_id = 4;
-  int64 price_amount = 5;
-  string currency = 6;
-  string status = 7;
-  google.protobuf.Timestamp created_at = 8;
-}
-
 message AuditLogEntry {
   int64 id = 1;
   string entity_type = 2;
@@ -371,156 +112,29 @@ message AuditLogEntry {
 }
 
 // =============================================
-// Plan RPCs
+// CreateTransaction — initiates a payment for any entity
 // =============================================
 
-message ListPlansRequest {
-  string org_type = 1;
-  bool active_only = 2;
-  int64 group_id = 3;
-  int64 city_id = 4;
+message CreateTransactionRequest {
+  string entity_type = 1;       // "subscription", "bid_purchase", "order", "booking"
+  int64 entity_id = 2;
+  string organization_id = 3;
+  int64 user_id = 4;
+  int64 amount = 5;
+  string currency = 6;
+  PaymentProvider provider = 7;
+  PaymentMethod payment_method = 8;
+  string idempotency_key = 9;
+  int64 commission_amount = 10;
 }
 
-message ListPlansResponse {
-  repeated Plan plans = 1;
-}
-
-message CreatePlanRequest {
-  string code = 1;
-  string name = 2;
-  string description = 3;
-  string org_type = 4;
-  PlanType plan_type = 5;
-  map<string, string> features = 6;
-  int32 sort_order = 7;
-  int64 group_id = 8;
-  int64 city_id = 9;
-}
-
-message CreatePlanResponse {
-  Plan plan = 1;
-}
-
-message UpdatePlanRequest {
-  int64 plan_id = 1;
-  optional string name = 2;
-  optional string description = 3;
-  map<string, string> features = 4;
-  optional bool is_active = 5;
-  optional int32 sort_order = 6;
-}
-
-message UpdatePlanResponse {
-  Plan plan = 1;
-}
-
-message SetPlanPricesRequest {
-  int64 plan_id = 1;
-  repeated PlanPriceInput prices = 2;
-}
-
-message PlanPriceInput {
-  int32 period_months = 1;
-  int64 price_amount = 2;
-  string currency = 3;
-  int32 discount_percent = 4;
-  repeated PlanPriceTierInput tiers = 5;
-}
-
-message PlanPriceTierInput {
-  string attribute_key = 1;
-  int32 min_value = 2;
-  int32 max_value = 3;
-  int64 price_amount = 4;
-  string currency = 5;
-  bool is_per_unit = 6;
-  int32 rental_discount_percent = 7;
-}
-
-message SetPlanPricesResponse {
-  Plan plan = 1;
-}
-
-// =============================================
-// Subscription RPCs
-// =============================================
-
-message CreateSubscriptionRequest {
-  string organization_id = 1;
-  int64 plan_id = 2;
-  int32 period_months = 3;
-  PaymentMethod payment_method = 4;
-  map<string, string> tier_attributes = 5;
-  string idempotency_key = 6;
-  int64 group_id = 7;
-  int64 city_id = 8;
-  int32 posts_count = 9;
-  bool is_rented = 10;
-}
-
-message CreateSubscriptionResponse {
-  Subscription subscription = 1;
+message CreateTransactionResponse {
+  Transaction transaction = 1;
   string payment_url = 2;
 }
 
-message GetSubscriptionRequest {
-  int64 subscription_id = 1;
-}
-
-message GetSubscriptionResponse {
-  Subscription subscription = 1;
-}
-
-message GetSubscriptionsByOrgRequest {
-  string organization_id = 1;
-  bool active_only = 2;
-}
-
-message GetSubscriptionsByOrgResponse {
-  repeated Subscription subscriptions = 1;
-}
-
-message CancelSubscriptionRequest {
-  int64 subscription_id = 1;
-  string organization_id = 2;
-  string reason = 3;
-}
-
-message CancelSubscriptionResponse {
-  Subscription subscription = 1;
-}
-
-message CheckBidAccessRequest {
-  string organization_id = 1;
-  string org_type = 2;
-  int64 city_id = 3;
-}
-
-message CheckBidAccessResponse {
-  bool has_access = 1;
-  string access_type = 2;  // "subscription" or "bid_purchase"
-}
-
-message CalculateSubscriptionPriceRequest {
-  int64 group_id = 1;
-  int64 city_id = 2;
-  int32 posts_count = 3;
-  bool is_rented = 4;
-  int32 period_months = 5;
-}
-
-message CalculateSubscriptionPriceResponse {
-  int64 base_price = 1;
-  int64 rental_discount = 2;
-  int64 period_discount = 3;
-  int64 final_price = 4;
-  string currency = 5;
-  bool is_free = 6;
-  string price_breakdown = 7;
-}
-
 // =============================================
-// Transaction RPCs
+// ListTransactions / GetTransaction
 // =============================================
 
 message ListTransactionsRequest {
@@ -545,6 +159,10 @@ message GetTransactionResponse {
   Transaction transaction = 1;
 }
 
+// =============================================
+// Refund
+// =============================================
+
 message InitiateRefundRequest {
   int64 transaction_id = 1;
   int64 amount = 2;
@@ -557,263 +175,7 @@ message InitiateRefundResponse {
 }
 
 // =============================================
-// Bid purchase RPCs
-// =============================================
-
-message PurchaseBidRequest {
-  string organization_id = 1;
-  string request_id = 2;
-  PaymentMethod payment_method = 3;
-  string idempotency_key = 4;
-  int64 group_id = 5;
-}
-
-message PurchaseBidResponse {
-  BidPurchase bid_purchase = 1;
-  string payment_url = 2;
-}
-
-message GetBidPurchasePriceRequest {
-  string org_type = 1;
-  int64 group_id = 2;
-}
-
-message GetBidPurchasePriceResponse {
-  int64 price_amount = 1;
-  string currency = 2;
-}
-
-// =============================================
-// Order RPCs
-// =============================================
-
-message CreateOrderRequest {
-  int64 buyer_user_id = 1;
-  string seller_org_id = 2;
-  repeated OrderItemInput items = 3;
-  DeliveryType delivery_type = 4;
-  string delivery_address = 5;
-  int64 delivery_city_id = 6;
-  PaymentMethod payment_method = 7;
-  string notes = 8;
-  string idempotency_key = 9;
-}
-
-message OrderItemInput {
-  string part_name = 1;
-  string part_number = 2;
-  int32 quantity = 3;
-  int64 unit_price = 4;
-  string condition = 5;
-}
-
-message CreateOrderResponse {
-  Order order = 1;
-  string payment_url = 2;
-}
-
-message GetOrderRequest {
-  int64 order_id = 1;
-}
-
-message GetOrderResponse {
-  Order order = 1;
-}
-
-message ListOrdersRequest {
-  int64 buyer_user_id = 1;
-  string seller_org_id = 2;
-  OrderStatus status = 3;
-  int32 page = 4;
-  int32 page_size = 5;
-}
-
-message ListOrdersResponse {
-  repeated Order orders = 1;
-  int32 total = 2;
-}
-
-message ConfirmShipmentRequest {
-  int64 order_id = 1;
-  string seller_org_id = 2;
-}
-
-message ConfirmShipmentResponse {
-  Order order = 1;
-}
-
-message ConfirmReceiptRequest {
-  int64 order_id = 1;
-  int64 buyer_user_id = 2;
-}
-
-message ConfirmReceiptResponse {
-  Order order = 1;
-}
-
-message CancelOrderRequest {
-  int64 order_id = 1;
-  int64 user_id = 2;
-  string reason = 3;
-}
-
-message CancelOrderResponse {
-  Order order = 1;
-  Refund refund = 2;
-  bool refund_eligible = 3;
-}
-
-// =============================================
-// Booking RPCs
-// =============================================
-
-message CreateBookingRequest {
-  int64 user_id = 1;
-  string organization_id = 2;
-  BookingType booking_type = 3;
-  optional int64 wash_slot_id = 4;
-  int64 wash_service_id = 5;
-  string body_type = 6;
-  optional string preferred_date = 7;
-  optional string preferred_time_from = 8;
-  optional string preferred_time_to = 9;
-  optional int64 car_id = 10;
-  string car_make = 11;
-  string car_model = 12;
-  string car_plate = 13;
-  PaymentMethod payment_method = 14;
-  string notes = 15;
-  string idempotency_key = 16;
-}
-
-message CreateBookingResponse {
-  Booking booking = 1;
-  string payment_url = 2;
-}
-
-message GetBookingRequest {
-  int64 booking_id = 1;
-}
-
-message GetBookingResponse {
-  Booking booking = 1;
-}
-
-message ListBookingsRequest {
-  int64 user_id = 1;
-  string organization_id = 2;
-  BookingStatus status = 3;
-  BookingType booking_type = 4;
-  int32 page = 5;
-  int32 page_size = 6;
-}
-
-message ListBookingsResponse {
-  repeated Booking bookings = 1;
-  int32 total = 2;
-}
-
-message CancelBookingRequest {
-  int64 booking_id = 1;
-  int64 user_id = 2;
-  string reason = 3;
-}
-
-message CancelBookingResponse {
-  Booking booking = 1;
-  Refund refund = 2;
-}
-
-message AssignNoQueueBookingRequest {
-  int64 booking_id = 1;
-  string assigned_org_id = 2;
-  int64 wash_slot_id = 3;
-}
-
-message AssignNoQueueBookingResponse {
-  Booking booking = 1;
-}
-
-// =============================================
-// Wash service RPCs
-// =============================================
-
-message ListWashServicesRequest {
-  string organization_id = 1;
-  bool active_only = 2;
-}
-
-message ListWashServicesResponse {
-  repeated WashService services = 1;
-}
-
-message CreateWashServiceRequest {
-  string organization_id = 1;
-  string name = 2;
-  string description = 3;
-  int32 duration_minutes = 4;
-  int32 sort_order = 5;
-}
-
-message CreateWashServiceResponse {
-  WashService service = 1;
-}
-
-message UpdateWashServiceRequest {
-  int64 service_id = 1;
-  string organization_id = 2;
-  optional string name = 3;
-  optional string description = 4;
-  optional int32 duration_minutes = 5;
-  optional bool is_active = 6;
-  optional int32 sort_order = 7;
-}
-
-message UpdateWashServiceResponse {
-  WashService service = 1;
-}
-
-message SetWashPricingRequest {
-  int64 wash_service_id = 1;
-  string organization_id = 2;
-  repeated WashPricingInput pricing = 3;
-}
-
-message WashPricingInput {
-  string body_type = 1;
-  int64 price_amount = 2;
-  string currency = 3;
-}
-
-message SetWashPricingResponse {
-  WashService service = 1;
-}
-
-message GetAvailableSlotsRequest {
-  string organization_id = 1;
-  string date = 2;
-}
-
-message GetAvailableSlotsResponse {
-  repeated WashSlot slots = 1;
-}
-
-message GenerateWashSlotsRequest {
-  string organization_id = 1;
-  string date_from = 2;             // "2006-01-02"
-  string date_to = 3;               // "2006-01-02"
-  int32 bays_count = 4;             // number of wash bays
-  int32 slot_duration_minutes = 5;  // e.g. 30
-  string start_time = 6;            // "HH:MM" e.g. "09:00"
-  string end_time = 7;              // "HH:MM" e.g. "21:00"
-}
-
-message GenerateWashSlotsResponse {
-  int32 slots_created = 1;
-}
-
-// =============================================
-// Webhook RPCs
+// Webhooks
 // =============================================
 
 message HandleIokaWebhookRequest {
@@ -838,45 +200,8 @@ message HandleKaspiCheckPayResponse {
 }
 
 // =============================================
-// Admin analytics RPCs
+// Audit log
 // =============================================
-
-message GetRevenueStatsRequest {
-  google.protobuf.Timestamp from = 1;
-  google.protobuf.Timestamp to = 2;
-  string group_by = 3;  // day, week, month
-}
-
-message RevenueDataPoint {
-  string period = 1;
-  int64 total_amount = 2;
-  int64 subscription_amount = 3;
-  int64 bid_purchase_amount = 4;
-  int64 order_amount = 5;
-  int64 booking_amount = 6;
-  int64 commission_amount = 7;
-  int64 refund_amount = 8;
-  string currency = 9;
-}
-
-message GetRevenueStatsResponse {
-  repeated RevenueDataPoint data_points = 1;
-  int64 total_revenue = 2;
-  string currency = 3;
-}
-
-message GetSubscriptionStatsRequest {
-  string org_type = 1;
-}
-
-message GetSubscriptionStatsResponse {
-  int32 total_active = 1;
-  int32 total_expired = 2;
-  int32 total_cancelled = 3;
-  int32 new_this_month = 4;
-  int32 churned_this_month = 5;
-  double churn_rate = 6;
-}
 
 message GetPaymentAuditLogRequest {
   string entity_type = 1;

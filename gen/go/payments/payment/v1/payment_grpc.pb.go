@@ -19,94 +19,33 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PaymentService_ListPlans_FullMethodName                  = "/payments.payment.v1.PaymentService/ListPlans"
-	PaymentService_CreatePlan_FullMethodName                 = "/payments.payment.v1.PaymentService/CreatePlan"
-	PaymentService_UpdatePlan_FullMethodName                 = "/payments.payment.v1.PaymentService/UpdatePlan"
-	PaymentService_SetPlanPrices_FullMethodName              = "/payments.payment.v1.PaymentService/SetPlanPrices"
-	PaymentService_CreateSubscription_FullMethodName         = "/payments.payment.v1.PaymentService/CreateSubscription"
-	PaymentService_GetSubscription_FullMethodName            = "/payments.payment.v1.PaymentService/GetSubscription"
-	PaymentService_GetSubscriptionsByOrg_FullMethodName      = "/payments.payment.v1.PaymentService/GetSubscriptionsByOrg"
-	PaymentService_CancelSubscription_FullMethodName         = "/payments.payment.v1.PaymentService/CancelSubscription"
-	PaymentService_CheckBidAccess_FullMethodName             = "/payments.payment.v1.PaymentService/CheckBidAccess"
-	PaymentService_CalculateSubscriptionPrice_FullMethodName = "/payments.payment.v1.PaymentService/CalculateSubscriptionPrice"
-	PaymentService_ListTransactions_FullMethodName           = "/payments.payment.v1.PaymentService/ListTransactions"
-	PaymentService_GetTransaction_FullMethodName             = "/payments.payment.v1.PaymentService/GetTransaction"
-	PaymentService_InitiateRefund_FullMethodName             = "/payments.payment.v1.PaymentService/InitiateRefund"
-	PaymentService_PurchaseBid_FullMethodName                = "/payments.payment.v1.PaymentService/PurchaseBid"
-	PaymentService_GetBidPurchasePrice_FullMethodName        = "/payments.payment.v1.PaymentService/GetBidPurchasePrice"
-	PaymentService_CreateOrder_FullMethodName                = "/payments.payment.v1.PaymentService/CreateOrder"
-	PaymentService_GetOrder_FullMethodName                   = "/payments.payment.v1.PaymentService/GetOrder"
-	PaymentService_ListOrders_FullMethodName                 = "/payments.payment.v1.PaymentService/ListOrders"
-	PaymentService_ConfirmShipment_FullMethodName            = "/payments.payment.v1.PaymentService/ConfirmShipment"
-	PaymentService_ConfirmReceipt_FullMethodName             = "/payments.payment.v1.PaymentService/ConfirmReceipt"
-	PaymentService_CancelOrder_FullMethodName                = "/payments.payment.v1.PaymentService/CancelOrder"
-	PaymentService_CreateBooking_FullMethodName              = "/payments.payment.v1.PaymentService/CreateBooking"
-	PaymentService_GetBooking_FullMethodName                 = "/payments.payment.v1.PaymentService/GetBooking"
-	PaymentService_ListBookings_FullMethodName               = "/payments.payment.v1.PaymentService/ListBookings"
-	PaymentService_CancelBooking_FullMethodName              = "/payments.payment.v1.PaymentService/CancelBooking"
-	PaymentService_AssignNoQueueBooking_FullMethodName       = "/payments.payment.v1.PaymentService/AssignNoQueueBooking"
-	PaymentService_ListWashServices_FullMethodName           = "/payments.payment.v1.PaymentService/ListWashServices"
-	PaymentService_CreateWashService_FullMethodName          = "/payments.payment.v1.PaymentService/CreateWashService"
-	PaymentService_UpdateWashService_FullMethodName          = "/payments.payment.v1.PaymentService/UpdateWashService"
-	PaymentService_SetWashPricing_FullMethodName             = "/payments.payment.v1.PaymentService/SetWashPricing"
-	PaymentService_GetAvailableSlots_FullMethodName          = "/payments.payment.v1.PaymentService/GetAvailableSlots"
-	PaymentService_GenerateWashSlots_FullMethodName          = "/payments.payment.v1.PaymentService/GenerateWashSlots"
-	PaymentService_HandleIokaWebhook_FullMethodName          = "/payments.payment.v1.PaymentService/HandleIokaWebhook"
-	PaymentService_HandleKaspiCheckPay_FullMethodName        = "/payments.payment.v1.PaymentService/HandleKaspiCheckPay"
-	PaymentService_GetRevenueStats_FullMethodName            = "/payments.payment.v1.PaymentService/GetRevenueStats"
-	PaymentService_GetSubscriptionStats_FullMethodName       = "/payments.payment.v1.PaymentService/GetSubscriptionStats"
-	PaymentService_GetPaymentAuditLog_FullMethodName         = "/payments.payment.v1.PaymentService/GetPaymentAuditLog"
+	PaymentService_CreateTransaction_FullMethodName   = "/payments.payment.v1.PaymentService/CreateTransaction"
+	PaymentService_ListTransactions_FullMethodName    = "/payments.payment.v1.PaymentService/ListTransactions"
+	PaymentService_GetTransaction_FullMethodName      = "/payments.payment.v1.PaymentService/GetTransaction"
+	PaymentService_InitiateRefund_FullMethodName      = "/payments.payment.v1.PaymentService/InitiateRefund"
+	PaymentService_HandleIokaWebhook_FullMethodName   = "/payments.payment.v1.PaymentService/HandleIokaWebhook"
+	PaymentService_HandleKaspiCheckPay_FullMethodName = "/payments.payment.v1.PaymentService/HandleKaspiCheckPay"
+	PaymentService_GetPaymentAuditLog_FullMethodName  = "/payments.payment.v1.PaymentService/GetPaymentAuditLog"
 )
 
 // PaymentServiceClient is the client API for PaymentService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// PaymentService handles payment processing, transactions, refunds, and webhooks.
+// Domain services (orders, bookings) create entities first, then BFF calls
+// CreateTransaction to initiate payment via the appropriate provider.
 type PaymentServiceClient interface {
-	// === Plans (admin) ===
-	ListPlans(ctx context.Context, in *ListPlansRequest, opts ...grpc.CallOption) (*ListPlansResponse, error)
-	CreatePlan(ctx context.Context, in *CreatePlanRequest, opts ...grpc.CallOption) (*CreatePlanResponse, error)
-	UpdatePlan(ctx context.Context, in *UpdatePlanRequest, opts ...grpc.CallOption) (*UpdatePlanResponse, error)
-	SetPlanPrices(ctx context.Context, in *SetPlanPricesRequest, opts ...grpc.CallOption) (*SetPlanPricesResponse, error)
-	// === Subscriptions ===
-	CreateSubscription(ctx context.Context, in *CreateSubscriptionRequest, opts ...grpc.CallOption) (*CreateSubscriptionResponse, error)
-	GetSubscription(ctx context.Context, in *GetSubscriptionRequest, opts ...grpc.CallOption) (*GetSubscriptionResponse, error)
-	GetSubscriptionsByOrg(ctx context.Context, in *GetSubscriptionsByOrgRequest, opts ...grpc.CallOption) (*GetSubscriptionsByOrgResponse, error)
-	CancelSubscription(ctx context.Context, in *CancelSubscriptionRequest, opts ...grpc.CallOption) (*CancelSubscriptionResponse, error)
-	CheckBidAccess(ctx context.Context, in *CheckBidAccessRequest, opts ...grpc.CallOption) (*CheckBidAccessResponse, error)
-	CalculateSubscriptionPrice(ctx context.Context, in *CalculateSubscriptionPriceRequest, opts ...grpc.CallOption) (*CalculateSubscriptionPriceResponse, error)
-	// === Transactions (admin) ===
+	// === Transactions ===
+	CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*CreateTransactionResponse, error)
 	ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error)
 	GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error)
+	// === Refunds ===
 	InitiateRefund(ctx context.Context, in *InitiateRefundRequest, opts ...grpc.CallOption) (*InitiateRefundResponse, error)
-	// === Bid purchases ===
-	PurchaseBid(ctx context.Context, in *PurchaseBidRequest, opts ...grpc.CallOption) (*PurchaseBidResponse, error)
-	GetBidPurchasePrice(ctx context.Context, in *GetBidPurchasePriceRequest, opts ...grpc.CallOption) (*GetBidPurchasePriceResponse, error)
-	// === Orders (parts marketplace) ===
-	CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error)
-	GetOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*GetOrderResponse, error)
-	ListOrders(ctx context.Context, in *ListOrdersRequest, opts ...grpc.CallOption) (*ListOrdersResponse, error)
-	ConfirmShipment(ctx context.Context, in *ConfirmShipmentRequest, opts ...grpc.CallOption) (*ConfirmShipmentResponse, error)
-	ConfirmReceipt(ctx context.Context, in *ConfirmReceiptRequest, opts ...grpc.CallOption) (*ConfirmReceiptResponse, error)
-	CancelOrder(ctx context.Context, in *CancelOrderRequest, opts ...grpc.CallOption) (*CancelOrderResponse, error)
-	// === Bookings (car wash) ===
-	CreateBooking(ctx context.Context, in *CreateBookingRequest, opts ...grpc.CallOption) (*CreateBookingResponse, error)
-	GetBooking(ctx context.Context, in *GetBookingRequest, opts ...grpc.CallOption) (*GetBookingResponse, error)
-	ListBookings(ctx context.Context, in *ListBookingsRequest, opts ...grpc.CallOption) (*ListBookingsResponse, error)
-	CancelBooking(ctx context.Context, in *CancelBookingRequest, opts ...grpc.CallOption) (*CancelBookingResponse, error)
-	AssignNoQueueBooking(ctx context.Context, in *AssignNoQueueBookingRequest, opts ...grpc.CallOption) (*AssignNoQueueBookingResponse, error)
-	// === Wash services & slots ===
-	ListWashServices(ctx context.Context, in *ListWashServicesRequest, opts ...grpc.CallOption) (*ListWashServicesResponse, error)
-	CreateWashService(ctx context.Context, in *CreateWashServiceRequest, opts ...grpc.CallOption) (*CreateWashServiceResponse, error)
-	UpdateWashService(ctx context.Context, in *UpdateWashServiceRequest, opts ...grpc.CallOption) (*UpdateWashServiceResponse, error)
-	SetWashPricing(ctx context.Context, in *SetWashPricingRequest, opts ...grpc.CallOption) (*SetWashPricingResponse, error)
-	GetAvailableSlots(ctx context.Context, in *GetAvailableSlotsRequest, opts ...grpc.CallOption) (*GetAvailableSlotsResponse, error)
-	GenerateWashSlots(ctx context.Context, in *GenerateWashSlotsRequest, opts ...grpc.CallOption) (*GenerateWashSlotsResponse, error)
-	// === Webhooks ===
+	// === Provider webhooks ===
 	HandleIokaWebhook(ctx context.Context, in *HandleIokaWebhookRequest, opts ...grpc.CallOption) (*HandleIokaWebhookResponse, error)
 	HandleKaspiCheckPay(ctx context.Context, in *HandleKaspiCheckPayRequest, opts ...grpc.CallOption) (*HandleKaspiCheckPayResponse, error)
-	// === Admin analytics ===
-	GetRevenueStats(ctx context.Context, in *GetRevenueStatsRequest, opts ...grpc.CallOption) (*GetRevenueStatsResponse, error)
-	GetSubscriptionStats(ctx context.Context, in *GetSubscriptionStatsRequest, opts ...grpc.CallOption) (*GetSubscriptionStatsResponse, error)
+	// === Admin ===
 	GetPaymentAuditLog(ctx context.Context, in *GetPaymentAuditLogRequest, opts ...grpc.CallOption) (*GetPaymentAuditLogResponse, error)
 }
 
@@ -118,100 +57,10 @@ func NewPaymentServiceClient(cc grpc.ClientConnInterface) PaymentServiceClient {
 	return &paymentServiceClient{cc}
 }
 
-func (c *paymentServiceClient) ListPlans(ctx context.Context, in *ListPlansRequest, opts ...grpc.CallOption) (*ListPlansResponse, error) {
+func (c *paymentServiceClient) CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*CreateTransactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListPlansResponse)
-	err := c.cc.Invoke(ctx, PaymentService_ListPlans_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) CreatePlan(ctx context.Context, in *CreatePlanRequest, opts ...grpc.CallOption) (*CreatePlanResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreatePlanResponse)
-	err := c.cc.Invoke(ctx, PaymentService_CreatePlan_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) UpdatePlan(ctx context.Context, in *UpdatePlanRequest, opts ...grpc.CallOption) (*UpdatePlanResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdatePlanResponse)
-	err := c.cc.Invoke(ctx, PaymentService_UpdatePlan_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) SetPlanPrices(ctx context.Context, in *SetPlanPricesRequest, opts ...grpc.CallOption) (*SetPlanPricesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SetPlanPricesResponse)
-	err := c.cc.Invoke(ctx, PaymentService_SetPlanPrices_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) CreateSubscription(ctx context.Context, in *CreateSubscriptionRequest, opts ...grpc.CallOption) (*CreateSubscriptionResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateSubscriptionResponse)
-	err := c.cc.Invoke(ctx, PaymentService_CreateSubscription_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) GetSubscription(ctx context.Context, in *GetSubscriptionRequest, opts ...grpc.CallOption) (*GetSubscriptionResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetSubscriptionResponse)
-	err := c.cc.Invoke(ctx, PaymentService_GetSubscription_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) GetSubscriptionsByOrg(ctx context.Context, in *GetSubscriptionsByOrgRequest, opts ...grpc.CallOption) (*GetSubscriptionsByOrgResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetSubscriptionsByOrgResponse)
-	err := c.cc.Invoke(ctx, PaymentService_GetSubscriptionsByOrg_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) CancelSubscription(ctx context.Context, in *CancelSubscriptionRequest, opts ...grpc.CallOption) (*CancelSubscriptionResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CancelSubscriptionResponse)
-	err := c.cc.Invoke(ctx, PaymentService_CancelSubscription_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) CheckBidAccess(ctx context.Context, in *CheckBidAccessRequest, opts ...grpc.CallOption) (*CheckBidAccessResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CheckBidAccessResponse)
-	err := c.cc.Invoke(ctx, PaymentService_CheckBidAccess_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) CalculateSubscriptionPrice(ctx context.Context, in *CalculateSubscriptionPriceRequest, opts ...grpc.CallOption) (*CalculateSubscriptionPriceResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CalculateSubscriptionPriceResponse)
-	err := c.cc.Invoke(ctx, PaymentService_CalculateSubscriptionPrice_FullMethodName, in, out, cOpts...)
+	out := new(CreateTransactionResponse)
+	err := c.cc.Invoke(ctx, PaymentService_CreateTransaction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -248,196 +97,6 @@ func (c *paymentServiceClient) InitiateRefund(ctx context.Context, in *InitiateR
 	return out, nil
 }
 
-func (c *paymentServiceClient) PurchaseBid(ctx context.Context, in *PurchaseBidRequest, opts ...grpc.CallOption) (*PurchaseBidResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PurchaseBidResponse)
-	err := c.cc.Invoke(ctx, PaymentService_PurchaseBid_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) GetBidPurchasePrice(ctx context.Context, in *GetBidPurchasePriceRequest, opts ...grpc.CallOption) (*GetBidPurchasePriceResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetBidPurchasePriceResponse)
-	err := c.cc.Invoke(ctx, PaymentService_GetBidPurchasePrice_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateOrderResponse)
-	err := c.cc.Invoke(ctx, PaymentService_CreateOrder_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) GetOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*GetOrderResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetOrderResponse)
-	err := c.cc.Invoke(ctx, PaymentService_GetOrder_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) ListOrders(ctx context.Context, in *ListOrdersRequest, opts ...grpc.CallOption) (*ListOrdersResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListOrdersResponse)
-	err := c.cc.Invoke(ctx, PaymentService_ListOrders_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) ConfirmShipment(ctx context.Context, in *ConfirmShipmentRequest, opts ...grpc.CallOption) (*ConfirmShipmentResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ConfirmShipmentResponse)
-	err := c.cc.Invoke(ctx, PaymentService_ConfirmShipment_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) ConfirmReceipt(ctx context.Context, in *ConfirmReceiptRequest, opts ...grpc.CallOption) (*ConfirmReceiptResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ConfirmReceiptResponse)
-	err := c.cc.Invoke(ctx, PaymentService_ConfirmReceipt_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) CancelOrder(ctx context.Context, in *CancelOrderRequest, opts ...grpc.CallOption) (*CancelOrderResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CancelOrderResponse)
-	err := c.cc.Invoke(ctx, PaymentService_CancelOrder_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) CreateBooking(ctx context.Context, in *CreateBookingRequest, opts ...grpc.CallOption) (*CreateBookingResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateBookingResponse)
-	err := c.cc.Invoke(ctx, PaymentService_CreateBooking_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) GetBooking(ctx context.Context, in *GetBookingRequest, opts ...grpc.CallOption) (*GetBookingResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetBookingResponse)
-	err := c.cc.Invoke(ctx, PaymentService_GetBooking_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) ListBookings(ctx context.Context, in *ListBookingsRequest, opts ...grpc.CallOption) (*ListBookingsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListBookingsResponse)
-	err := c.cc.Invoke(ctx, PaymentService_ListBookings_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) CancelBooking(ctx context.Context, in *CancelBookingRequest, opts ...grpc.CallOption) (*CancelBookingResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CancelBookingResponse)
-	err := c.cc.Invoke(ctx, PaymentService_CancelBooking_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) AssignNoQueueBooking(ctx context.Context, in *AssignNoQueueBookingRequest, opts ...grpc.CallOption) (*AssignNoQueueBookingResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AssignNoQueueBookingResponse)
-	err := c.cc.Invoke(ctx, PaymentService_AssignNoQueueBooking_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) ListWashServices(ctx context.Context, in *ListWashServicesRequest, opts ...grpc.CallOption) (*ListWashServicesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListWashServicesResponse)
-	err := c.cc.Invoke(ctx, PaymentService_ListWashServices_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) CreateWashService(ctx context.Context, in *CreateWashServiceRequest, opts ...grpc.CallOption) (*CreateWashServiceResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateWashServiceResponse)
-	err := c.cc.Invoke(ctx, PaymentService_CreateWashService_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) UpdateWashService(ctx context.Context, in *UpdateWashServiceRequest, opts ...grpc.CallOption) (*UpdateWashServiceResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateWashServiceResponse)
-	err := c.cc.Invoke(ctx, PaymentService_UpdateWashService_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) SetWashPricing(ctx context.Context, in *SetWashPricingRequest, opts ...grpc.CallOption) (*SetWashPricingResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SetWashPricingResponse)
-	err := c.cc.Invoke(ctx, PaymentService_SetWashPricing_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) GetAvailableSlots(ctx context.Context, in *GetAvailableSlotsRequest, opts ...grpc.CallOption) (*GetAvailableSlotsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetAvailableSlotsResponse)
-	err := c.cc.Invoke(ctx, PaymentService_GetAvailableSlots_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) GenerateWashSlots(ctx context.Context, in *GenerateWashSlotsRequest, opts ...grpc.CallOption) (*GenerateWashSlotsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GenerateWashSlotsResponse)
-	err := c.cc.Invoke(ctx, PaymentService_GenerateWashSlots_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *paymentServiceClient) HandleIokaWebhook(ctx context.Context, in *HandleIokaWebhookRequest, opts ...grpc.CallOption) (*HandleIokaWebhookResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(HandleIokaWebhookResponse)
@@ -458,26 +117,6 @@ func (c *paymentServiceClient) HandleKaspiCheckPay(ctx context.Context, in *Hand
 	return out, nil
 }
 
-func (c *paymentServiceClient) GetRevenueStats(ctx context.Context, in *GetRevenueStatsRequest, opts ...grpc.CallOption) (*GetRevenueStatsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetRevenueStatsResponse)
-	err := c.cc.Invoke(ctx, PaymentService_GetRevenueStats_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentServiceClient) GetSubscriptionStats(ctx context.Context, in *GetSubscriptionStatsRequest, opts ...grpc.CallOption) (*GetSubscriptionStatsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetSubscriptionStatsResponse)
-	err := c.cc.Invoke(ctx, PaymentService_GetSubscriptionStats_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *paymentServiceClient) GetPaymentAuditLog(ctx context.Context, in *GetPaymentAuditLogRequest, opts ...grpc.CallOption) (*GetPaymentAuditLogResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPaymentAuditLogResponse)
@@ -491,52 +130,21 @@ func (c *paymentServiceClient) GetPaymentAuditLog(ctx context.Context, in *GetPa
 // PaymentServiceServer is the server API for PaymentService service.
 // All implementations must embed UnimplementedPaymentServiceServer
 // for forward compatibility.
+//
+// PaymentService handles payment processing, transactions, refunds, and webhooks.
+// Domain services (orders, bookings) create entities first, then BFF calls
+// CreateTransaction to initiate payment via the appropriate provider.
 type PaymentServiceServer interface {
-	// === Plans (admin) ===
-	ListPlans(context.Context, *ListPlansRequest) (*ListPlansResponse, error)
-	CreatePlan(context.Context, *CreatePlanRequest) (*CreatePlanResponse, error)
-	UpdatePlan(context.Context, *UpdatePlanRequest) (*UpdatePlanResponse, error)
-	SetPlanPrices(context.Context, *SetPlanPricesRequest) (*SetPlanPricesResponse, error)
-	// === Subscriptions ===
-	CreateSubscription(context.Context, *CreateSubscriptionRequest) (*CreateSubscriptionResponse, error)
-	GetSubscription(context.Context, *GetSubscriptionRequest) (*GetSubscriptionResponse, error)
-	GetSubscriptionsByOrg(context.Context, *GetSubscriptionsByOrgRequest) (*GetSubscriptionsByOrgResponse, error)
-	CancelSubscription(context.Context, *CancelSubscriptionRequest) (*CancelSubscriptionResponse, error)
-	CheckBidAccess(context.Context, *CheckBidAccessRequest) (*CheckBidAccessResponse, error)
-	CalculateSubscriptionPrice(context.Context, *CalculateSubscriptionPriceRequest) (*CalculateSubscriptionPriceResponse, error)
-	// === Transactions (admin) ===
+	// === Transactions ===
+	CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionResponse, error)
 	ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error)
 	GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error)
+	// === Refunds ===
 	InitiateRefund(context.Context, *InitiateRefundRequest) (*InitiateRefundResponse, error)
-	// === Bid purchases ===
-	PurchaseBid(context.Context, *PurchaseBidRequest) (*PurchaseBidResponse, error)
-	GetBidPurchasePrice(context.Context, *GetBidPurchasePriceRequest) (*GetBidPurchasePriceResponse, error)
-	// === Orders (parts marketplace) ===
-	CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error)
-	GetOrder(context.Context, *GetOrderRequest) (*GetOrderResponse, error)
-	ListOrders(context.Context, *ListOrdersRequest) (*ListOrdersResponse, error)
-	ConfirmShipment(context.Context, *ConfirmShipmentRequest) (*ConfirmShipmentResponse, error)
-	ConfirmReceipt(context.Context, *ConfirmReceiptRequest) (*ConfirmReceiptResponse, error)
-	CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error)
-	// === Bookings (car wash) ===
-	CreateBooking(context.Context, *CreateBookingRequest) (*CreateBookingResponse, error)
-	GetBooking(context.Context, *GetBookingRequest) (*GetBookingResponse, error)
-	ListBookings(context.Context, *ListBookingsRequest) (*ListBookingsResponse, error)
-	CancelBooking(context.Context, *CancelBookingRequest) (*CancelBookingResponse, error)
-	AssignNoQueueBooking(context.Context, *AssignNoQueueBookingRequest) (*AssignNoQueueBookingResponse, error)
-	// === Wash services & slots ===
-	ListWashServices(context.Context, *ListWashServicesRequest) (*ListWashServicesResponse, error)
-	CreateWashService(context.Context, *CreateWashServiceRequest) (*CreateWashServiceResponse, error)
-	UpdateWashService(context.Context, *UpdateWashServiceRequest) (*UpdateWashServiceResponse, error)
-	SetWashPricing(context.Context, *SetWashPricingRequest) (*SetWashPricingResponse, error)
-	GetAvailableSlots(context.Context, *GetAvailableSlotsRequest) (*GetAvailableSlotsResponse, error)
-	GenerateWashSlots(context.Context, *GenerateWashSlotsRequest) (*GenerateWashSlotsResponse, error)
-	// === Webhooks ===
+	// === Provider webhooks ===
 	HandleIokaWebhook(context.Context, *HandleIokaWebhookRequest) (*HandleIokaWebhookResponse, error)
 	HandleKaspiCheckPay(context.Context, *HandleKaspiCheckPayRequest) (*HandleKaspiCheckPayResponse, error)
-	// === Admin analytics ===
-	GetRevenueStats(context.Context, *GetRevenueStatsRequest) (*GetRevenueStatsResponse, error)
-	GetSubscriptionStats(context.Context, *GetSubscriptionStatsRequest) (*GetSubscriptionStatsResponse, error)
+	// === Admin ===
 	GetPaymentAuditLog(context.Context, *GetPaymentAuditLogRequest) (*GetPaymentAuditLogResponse, error)
 	mustEmbedUnimplementedPaymentServiceServer()
 }
@@ -548,35 +156,8 @@ type PaymentServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPaymentServiceServer struct{}
 
-func (UnimplementedPaymentServiceServer) ListPlans(context.Context, *ListPlansRequest) (*ListPlansResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListPlans not implemented")
-}
-func (UnimplementedPaymentServiceServer) CreatePlan(context.Context, *CreatePlanRequest) (*CreatePlanResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CreatePlan not implemented")
-}
-func (UnimplementedPaymentServiceServer) UpdatePlan(context.Context, *UpdatePlanRequest) (*UpdatePlanResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpdatePlan not implemented")
-}
-func (UnimplementedPaymentServiceServer) SetPlanPrices(context.Context, *SetPlanPricesRequest) (*SetPlanPricesResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method SetPlanPrices not implemented")
-}
-func (UnimplementedPaymentServiceServer) CreateSubscription(context.Context, *CreateSubscriptionRequest) (*CreateSubscriptionResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CreateSubscription not implemented")
-}
-func (UnimplementedPaymentServiceServer) GetSubscription(context.Context, *GetSubscriptionRequest) (*GetSubscriptionResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetSubscription not implemented")
-}
-func (UnimplementedPaymentServiceServer) GetSubscriptionsByOrg(context.Context, *GetSubscriptionsByOrgRequest) (*GetSubscriptionsByOrgResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetSubscriptionsByOrg not implemented")
-}
-func (UnimplementedPaymentServiceServer) CancelSubscription(context.Context, *CancelSubscriptionRequest) (*CancelSubscriptionResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CancelSubscription not implemented")
-}
-func (UnimplementedPaymentServiceServer) CheckBidAccess(context.Context, *CheckBidAccessRequest) (*CheckBidAccessResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CheckBidAccess not implemented")
-}
-func (UnimplementedPaymentServiceServer) CalculateSubscriptionPrice(context.Context, *CalculateSubscriptionPriceRequest) (*CalculateSubscriptionPriceResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CalculateSubscriptionPrice not implemented")
+func (UnimplementedPaymentServiceServer) CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateTransaction not implemented")
 }
 func (UnimplementedPaymentServiceServer) ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTransactions not implemented")
@@ -587,74 +168,11 @@ func (UnimplementedPaymentServiceServer) GetTransaction(context.Context, *GetTra
 func (UnimplementedPaymentServiceServer) InitiateRefund(context.Context, *InitiateRefundRequest) (*InitiateRefundResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method InitiateRefund not implemented")
 }
-func (UnimplementedPaymentServiceServer) PurchaseBid(context.Context, *PurchaseBidRequest) (*PurchaseBidResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method PurchaseBid not implemented")
-}
-func (UnimplementedPaymentServiceServer) GetBidPurchasePrice(context.Context, *GetBidPurchasePriceRequest) (*GetBidPurchasePriceResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetBidPurchasePrice not implemented")
-}
-func (UnimplementedPaymentServiceServer) CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CreateOrder not implemented")
-}
-func (UnimplementedPaymentServiceServer) GetOrder(context.Context, *GetOrderRequest) (*GetOrderResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetOrder not implemented")
-}
-func (UnimplementedPaymentServiceServer) ListOrders(context.Context, *ListOrdersRequest) (*ListOrdersResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListOrders not implemented")
-}
-func (UnimplementedPaymentServiceServer) ConfirmShipment(context.Context, *ConfirmShipmentRequest) (*ConfirmShipmentResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ConfirmShipment not implemented")
-}
-func (UnimplementedPaymentServiceServer) ConfirmReceipt(context.Context, *ConfirmReceiptRequest) (*ConfirmReceiptResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ConfirmReceipt not implemented")
-}
-func (UnimplementedPaymentServiceServer) CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CancelOrder not implemented")
-}
-func (UnimplementedPaymentServiceServer) CreateBooking(context.Context, *CreateBookingRequest) (*CreateBookingResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CreateBooking not implemented")
-}
-func (UnimplementedPaymentServiceServer) GetBooking(context.Context, *GetBookingRequest) (*GetBookingResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetBooking not implemented")
-}
-func (UnimplementedPaymentServiceServer) ListBookings(context.Context, *ListBookingsRequest) (*ListBookingsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListBookings not implemented")
-}
-func (UnimplementedPaymentServiceServer) CancelBooking(context.Context, *CancelBookingRequest) (*CancelBookingResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CancelBooking not implemented")
-}
-func (UnimplementedPaymentServiceServer) AssignNoQueueBooking(context.Context, *AssignNoQueueBookingRequest) (*AssignNoQueueBookingResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method AssignNoQueueBooking not implemented")
-}
-func (UnimplementedPaymentServiceServer) ListWashServices(context.Context, *ListWashServicesRequest) (*ListWashServicesResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListWashServices not implemented")
-}
-func (UnimplementedPaymentServiceServer) CreateWashService(context.Context, *CreateWashServiceRequest) (*CreateWashServiceResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CreateWashService not implemented")
-}
-func (UnimplementedPaymentServiceServer) UpdateWashService(context.Context, *UpdateWashServiceRequest) (*UpdateWashServiceResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpdateWashService not implemented")
-}
-func (UnimplementedPaymentServiceServer) SetWashPricing(context.Context, *SetWashPricingRequest) (*SetWashPricingResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method SetWashPricing not implemented")
-}
-func (UnimplementedPaymentServiceServer) GetAvailableSlots(context.Context, *GetAvailableSlotsRequest) (*GetAvailableSlotsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetAvailableSlots not implemented")
-}
-func (UnimplementedPaymentServiceServer) GenerateWashSlots(context.Context, *GenerateWashSlotsRequest) (*GenerateWashSlotsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GenerateWashSlots not implemented")
-}
 func (UnimplementedPaymentServiceServer) HandleIokaWebhook(context.Context, *HandleIokaWebhookRequest) (*HandleIokaWebhookResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HandleIokaWebhook not implemented")
 }
 func (UnimplementedPaymentServiceServer) HandleKaspiCheckPay(context.Context, *HandleKaspiCheckPayRequest) (*HandleKaspiCheckPayResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HandleKaspiCheckPay not implemented")
-}
-func (UnimplementedPaymentServiceServer) GetRevenueStats(context.Context, *GetRevenueStatsRequest) (*GetRevenueStatsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetRevenueStats not implemented")
-}
-func (UnimplementedPaymentServiceServer) GetSubscriptionStats(context.Context, *GetSubscriptionStatsRequest) (*GetSubscriptionStatsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetSubscriptionStats not implemented")
 }
 func (UnimplementedPaymentServiceServer) GetPaymentAuditLog(context.Context, *GetPaymentAuditLogRequest) (*GetPaymentAuditLogResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPaymentAuditLog not implemented")
@@ -680,182 +198,20 @@ func RegisterPaymentServiceServer(s grpc.ServiceRegistrar, srv PaymentServiceSer
 	s.RegisterService(&PaymentService_ServiceDesc, srv)
 }
 
-func _PaymentService_ListPlans_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListPlansRequest)
+func _PaymentService_CreateTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentServiceServer).ListPlans(ctx, in)
+		return srv.(PaymentServiceServer).CreateTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentService_ListPlans_FullMethodName,
+		FullMethod: PaymentService_CreateTransaction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).ListPlans(ctx, req.(*ListPlansRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_CreatePlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreatePlanRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).CreatePlan(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_CreatePlan_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).CreatePlan(ctx, req.(*CreatePlanRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_UpdatePlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdatePlanRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).UpdatePlan(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_UpdatePlan_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).UpdatePlan(ctx, req.(*UpdatePlanRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_SetPlanPrices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetPlanPricesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).SetPlanPrices(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_SetPlanPrices_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).SetPlanPrices(ctx, req.(*SetPlanPricesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_CreateSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateSubscriptionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).CreateSubscription(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_CreateSubscription_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).CreateSubscription(ctx, req.(*CreateSubscriptionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_GetSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSubscriptionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).GetSubscription(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_GetSubscription_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).GetSubscription(ctx, req.(*GetSubscriptionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_GetSubscriptionsByOrg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSubscriptionsByOrgRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).GetSubscriptionsByOrg(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_GetSubscriptionsByOrg_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).GetSubscriptionsByOrg(ctx, req.(*GetSubscriptionsByOrgRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_CancelSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CancelSubscriptionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).CancelSubscription(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_CancelSubscription_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).CancelSubscription(ctx, req.(*CancelSubscriptionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_CheckBidAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckBidAccessRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).CheckBidAccess(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_CheckBidAccess_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).CheckBidAccess(ctx, req.(*CheckBidAccessRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_CalculateSubscriptionPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CalculateSubscriptionPriceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).CalculateSubscriptionPrice(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_CalculateSubscriptionPrice_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).CalculateSubscriptionPrice(ctx, req.(*CalculateSubscriptionPriceRequest))
+		return srv.(PaymentServiceServer).CreateTransaction(ctx, req.(*CreateTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -914,348 +270,6 @@ func _PaymentService_InitiateRefund_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentService_PurchaseBid_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PurchaseBidRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).PurchaseBid(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_PurchaseBid_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).PurchaseBid(ctx, req.(*PurchaseBidRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_GetBidPurchasePrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBidPurchasePriceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).GetBidPurchasePrice(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_GetBidPurchasePrice_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).GetBidPurchasePrice(ctx, req.(*GetBidPurchasePriceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_CreateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateOrderRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).CreateOrder(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_CreateOrder_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).CreateOrder(ctx, req.(*CreateOrderRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_GetOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetOrderRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).GetOrder(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_GetOrder_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).GetOrder(ctx, req.(*GetOrderRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_ListOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListOrdersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).ListOrders(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_ListOrders_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).ListOrders(ctx, req.(*ListOrdersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_ConfirmShipment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ConfirmShipmentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).ConfirmShipment(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_ConfirmShipment_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).ConfirmShipment(ctx, req.(*ConfirmShipmentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_ConfirmReceipt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ConfirmReceiptRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).ConfirmReceipt(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_ConfirmReceipt_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).ConfirmReceipt(ctx, req.(*ConfirmReceiptRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_CancelOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CancelOrderRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).CancelOrder(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_CancelOrder_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).CancelOrder(ctx, req.(*CancelOrderRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_CreateBooking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateBookingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).CreateBooking(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_CreateBooking_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).CreateBooking(ctx, req.(*CreateBookingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_GetBooking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBookingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).GetBooking(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_GetBooking_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).GetBooking(ctx, req.(*GetBookingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_ListBookings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListBookingsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).ListBookings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_ListBookings_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).ListBookings(ctx, req.(*ListBookingsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_CancelBooking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CancelBookingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).CancelBooking(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_CancelBooking_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).CancelBooking(ctx, req.(*CancelBookingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_AssignNoQueueBooking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AssignNoQueueBookingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).AssignNoQueueBooking(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_AssignNoQueueBooking_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).AssignNoQueueBooking(ctx, req.(*AssignNoQueueBookingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_ListWashServices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListWashServicesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).ListWashServices(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_ListWashServices_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).ListWashServices(ctx, req.(*ListWashServicesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_CreateWashService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateWashServiceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).CreateWashService(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_CreateWashService_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).CreateWashService(ctx, req.(*CreateWashServiceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_UpdateWashService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateWashServiceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).UpdateWashService(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_UpdateWashService_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).UpdateWashService(ctx, req.(*UpdateWashServiceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_SetWashPricing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetWashPricingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).SetWashPricing(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_SetWashPricing_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).SetWashPricing(ctx, req.(*SetWashPricingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_GetAvailableSlots_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAvailableSlotsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).GetAvailableSlots(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_GetAvailableSlots_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).GetAvailableSlots(ctx, req.(*GetAvailableSlotsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_GenerateWashSlots_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenerateWashSlotsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).GenerateWashSlots(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_GenerateWashSlots_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).GenerateWashSlots(ctx, req.(*GenerateWashSlotsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _PaymentService_HandleIokaWebhook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(HandleIokaWebhookRequest)
 	if err := dec(in); err != nil {
@@ -1292,42 +306,6 @@ func _PaymentService_HandleKaspiCheckPay_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentService_GetRevenueStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRevenueStatsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).GetRevenueStats(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_GetRevenueStats_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).GetRevenueStats(ctx, req.(*GetRevenueStatsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentService_GetSubscriptionStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSubscriptionStatsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentServiceServer).GetSubscriptionStats(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentService_GetSubscriptionStats_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentServiceServer).GetSubscriptionStats(ctx, req.(*GetSubscriptionStatsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _PaymentService_GetPaymentAuditLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPaymentAuditLogRequest)
 	if err := dec(in); err != nil {
@@ -1354,44 +332,8 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PaymentServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ListPlans",
-			Handler:    _PaymentService_ListPlans_Handler,
-		},
-		{
-			MethodName: "CreatePlan",
-			Handler:    _PaymentService_CreatePlan_Handler,
-		},
-		{
-			MethodName: "UpdatePlan",
-			Handler:    _PaymentService_UpdatePlan_Handler,
-		},
-		{
-			MethodName: "SetPlanPrices",
-			Handler:    _PaymentService_SetPlanPrices_Handler,
-		},
-		{
-			MethodName: "CreateSubscription",
-			Handler:    _PaymentService_CreateSubscription_Handler,
-		},
-		{
-			MethodName: "GetSubscription",
-			Handler:    _PaymentService_GetSubscription_Handler,
-		},
-		{
-			MethodName: "GetSubscriptionsByOrg",
-			Handler:    _PaymentService_GetSubscriptionsByOrg_Handler,
-		},
-		{
-			MethodName: "CancelSubscription",
-			Handler:    _PaymentService_CancelSubscription_Handler,
-		},
-		{
-			MethodName: "CheckBidAccess",
-			Handler:    _PaymentService_CheckBidAccess_Handler,
-		},
-		{
-			MethodName: "CalculateSubscriptionPrice",
-			Handler:    _PaymentService_CalculateSubscriptionPrice_Handler,
+			MethodName: "CreateTransaction",
+			Handler:    _PaymentService_CreateTransaction_Handler,
 		},
 		{
 			MethodName: "ListTransactions",
@@ -1406,96 +348,12 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PaymentService_InitiateRefund_Handler,
 		},
 		{
-			MethodName: "PurchaseBid",
-			Handler:    _PaymentService_PurchaseBid_Handler,
-		},
-		{
-			MethodName: "GetBidPurchasePrice",
-			Handler:    _PaymentService_GetBidPurchasePrice_Handler,
-		},
-		{
-			MethodName: "CreateOrder",
-			Handler:    _PaymentService_CreateOrder_Handler,
-		},
-		{
-			MethodName: "GetOrder",
-			Handler:    _PaymentService_GetOrder_Handler,
-		},
-		{
-			MethodName: "ListOrders",
-			Handler:    _PaymentService_ListOrders_Handler,
-		},
-		{
-			MethodName: "ConfirmShipment",
-			Handler:    _PaymentService_ConfirmShipment_Handler,
-		},
-		{
-			MethodName: "ConfirmReceipt",
-			Handler:    _PaymentService_ConfirmReceipt_Handler,
-		},
-		{
-			MethodName: "CancelOrder",
-			Handler:    _PaymentService_CancelOrder_Handler,
-		},
-		{
-			MethodName: "CreateBooking",
-			Handler:    _PaymentService_CreateBooking_Handler,
-		},
-		{
-			MethodName: "GetBooking",
-			Handler:    _PaymentService_GetBooking_Handler,
-		},
-		{
-			MethodName: "ListBookings",
-			Handler:    _PaymentService_ListBookings_Handler,
-		},
-		{
-			MethodName: "CancelBooking",
-			Handler:    _PaymentService_CancelBooking_Handler,
-		},
-		{
-			MethodName: "AssignNoQueueBooking",
-			Handler:    _PaymentService_AssignNoQueueBooking_Handler,
-		},
-		{
-			MethodName: "ListWashServices",
-			Handler:    _PaymentService_ListWashServices_Handler,
-		},
-		{
-			MethodName: "CreateWashService",
-			Handler:    _PaymentService_CreateWashService_Handler,
-		},
-		{
-			MethodName: "UpdateWashService",
-			Handler:    _PaymentService_UpdateWashService_Handler,
-		},
-		{
-			MethodName: "SetWashPricing",
-			Handler:    _PaymentService_SetWashPricing_Handler,
-		},
-		{
-			MethodName: "GetAvailableSlots",
-			Handler:    _PaymentService_GetAvailableSlots_Handler,
-		},
-		{
-			MethodName: "GenerateWashSlots",
-			Handler:    _PaymentService_GenerateWashSlots_Handler,
-		},
-		{
 			MethodName: "HandleIokaWebhook",
 			Handler:    _PaymentService_HandleIokaWebhook_Handler,
 		},
 		{
 			MethodName: "HandleKaspiCheckPay",
 			Handler:    _PaymentService_HandleKaspiCheckPay_Handler,
-		},
-		{
-			MethodName: "GetRevenueStats",
-			Handler:    _PaymentService_GetRevenueStats_Handler,
-		},
-		{
-			MethodName: "GetSubscriptionStats",
-			Handler:    _PaymentService_GetSubscriptionStats_Handler,
 		},
 		{
 			MethodName: "GetPaymentAuditLog",

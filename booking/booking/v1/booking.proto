@@ -1,0 +1,263 @@
+syntax = "proto3";
+
+package booking.booking.v1;
+
+option go_package = "gitlab.com/xakpro/cg-proto/gen/go/booking/booking;bookingv1";
+
+import "google/protobuf/timestamp.proto";
+
+// BookingService handles car wash services, slots, and bookings.
+// Payment initiation is delegated to PaymentService via BFF orchestration.
+service BookingService {
+  // === Bookings ===
+  rpc CreateBooking(CreateBookingRequest) returns (CreateBookingResponse);
+  rpc GetBooking(GetBookingRequest) returns (GetBookingResponse);
+  rpc ListBookings(ListBookingsRequest) returns (ListBookingsResponse);
+  rpc CancelBooking(CancelBookingRequest) returns (CancelBookingResponse);
+  rpc AssignNoQueueBooking(AssignNoQueueBookingRequest) returns (AssignNoQueueBookingResponse);
+
+  // === Wash services & pricing ===
+  rpc ListWashServices(ListWashServicesRequest) returns (ListWashServicesResponse);
+  rpc CreateWashService(CreateWashServiceRequest) returns (CreateWashServiceResponse);
+  rpc UpdateWashService(UpdateWashServiceRequest) returns (UpdateWashServiceResponse);
+  rpc SetWashPricing(SetWashPricingRequest) returns (SetWashPricingResponse);
+
+  // === Wash slots ===
+  rpc GetAvailableSlots(GetAvailableSlotsRequest) returns (GetAvailableSlotsResponse);
+  rpc GenerateWashSlots(GenerateWashSlotsRequest) returns (GenerateWashSlotsResponse);
+}
+
+// =============================================
+// Enums
+// =============================================
+
+enum BookingType {
+  BOOKING_TYPE_UNSPECIFIED = 0;
+  BOOKING_TYPE_SLOT = 1;
+  BOOKING_TYPE_NO_QUEUE = 2;
+}
+
+enum BookingStatus {
+  BOOKING_STATUS_UNSPECIFIED = 0;
+  BOOKING_STATUS_PENDING = 1;
+  BOOKING_STATUS_PAID = 2;
+  BOOKING_STATUS_CONFIRMED = 3;
+  BOOKING_STATUS_IN_PROGRESS = 4;
+  BOOKING_STATUS_COMPLETED = 5;
+  BOOKING_STATUS_CANCELLED = 6;
+  BOOKING_STATUS_REFUNDED = 7;
+  BOOKING_STATUS_NO_SHOW = 8;
+}
+
+// =============================================
+// Core messages
+// =============================================
+
+message WashService {
+  int64 id = 1;
+  string organization_id = 2;
+  string name = 3;
+  string description = 4;
+  int32 duration_minutes = 5;
+  int32 sort_order = 6;
+  bool is_active = 7;
+  repeated WashPricing pricing = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+message WashPricing {
+  int64 id = 1;
+  int64 wash_service_id = 2;
+  string body_type = 3;
+  int64 price_amount = 4;
+  string currency = 5;
+  bool is_active = 6;
+}
+
+message WashSlot {
+  int64 id = 1;
+  string organization_id = 2;
+  int32 bay_number = 3;
+  string slot_date = 4;
+  string start_time = 5;
+  string end_time = 6;
+  string status = 7;
+}
+
+message Booking {
+  int64 id = 1;
+  string booking_number = 2;
+  int64 user_id = 3;
+  string organization_id = 4;
+  BookingType booking_type = 5;
+  optional int64 wash_slot_id = 6;
+  int64 wash_service_id = 7;
+  string body_type = 8;
+  optional string preferred_date = 9;
+  optional string preferred_time_from = 10;
+  optional string preferred_time_to = 11;
+  optional string assigned_org_id = 12;
+  int64 price_amount = 13;
+  string currency = 14;
+  BookingStatus status = 15;
+  optional int64 car_id = 16;
+  string car_make = 17;
+  string car_model = 18;
+  string car_plate = 19;
+  bool refund_eligible = 20;
+  string notes = 21;
+  google.protobuf.Timestamp created_at = 22;
+  google.protobuf.Timestamp updated_at = 23;
+}
+
+// =============================================
+// Booking RPCs
+// =============================================
+
+message CreateBookingRequest {
+  int64 user_id = 1;
+  string organization_id = 2;
+  BookingType booking_type = 3;
+  optional int64 wash_slot_id = 4;
+  int64 wash_service_id = 5;
+  string body_type = 6;
+  optional string preferred_date = 7;
+  optional string preferred_time_from = 8;
+  optional string preferred_time_to = 9;
+  optional int64 car_id = 10;
+  string car_make = 11;
+  string car_model = 12;
+  string car_plate = 13;
+  string notes = 14;
+  string idempotency_key = 15;
+}
+
+message CreateBookingResponse {
+  Booking booking = 1;
+}
+
+message GetBookingRequest {
+  int64 booking_id = 1;
+}
+
+message GetBookingResponse {
+  Booking booking = 1;
+}
+
+message ListBookingsRequest {
+  int64 user_id = 1;
+  string organization_id = 2;
+  BookingStatus status = 3;
+  BookingType booking_type = 4;
+  int32 page = 5;
+  int32 page_size = 6;
+}
+
+message ListBookingsResponse {
+  repeated Booking bookings = 1;
+  int32 total = 2;
+}
+
+message CancelBookingRequest {
+  int64 booking_id = 1;
+  int64 user_id = 2;
+  string reason = 3;
+}
+
+message CancelBookingResponse {
+  Booking booking = 1;
+  bool refund_eligible = 2;
+}
+
+message AssignNoQueueBookingRequest {
+  int64 booking_id = 1;
+  string assigned_org_id = 2;
+  int64 wash_slot_id = 3;
+}
+
+message AssignNoQueueBookingResponse {
+  Booking booking = 1;
+}
+
+// =============================================
+// Wash service RPCs
+// =============================================
+
+message ListWashServicesRequest {
+  string organization_id = 1;
+  bool active_only = 2;
+}
+
+message ListWashServicesResponse {
+  repeated WashService services = 1;
+}
+
+message CreateWashServiceRequest {
+  string organization_id = 1;
+  string name = 2;
+  string description = 3;
+  int32 duration_minutes = 4;
+  int32 sort_order = 5;
+}
+
+message CreateWashServiceResponse {
+  WashService service = 1;
+}
+
+message UpdateWashServiceRequest {
+  int64 service_id = 1;
+  string organization_id = 2;
+  optional string name = 3;
+  optional string description = 4;
+  optional int32 duration_minutes = 5;
+  optional bool is_active = 6;
+  optional int32 sort_order = 7;
+}
+
+message UpdateWashServiceResponse {
+  WashService service = 1;
+}
+
+message SetWashPricingRequest {
+  int64 wash_service_id = 1;
+  string organization_id = 2;
+  repeated WashPricingInput pricing = 3;
+}
+
+message WashPricingInput {
+  string body_type = 1;
+  int64 price_amount = 2;
+  string currency = 3;
+}
+
+message SetWashPricingResponse {
+  WashService service = 1;
+}
+
+// =============================================
+// Wash slot RPCs
+// =============================================
+
+message GetAvailableSlotsRequest {
+  string organization_id = 1;
+  string date = 2;
+}
+
+message GetAvailableSlotsResponse {
+  repeated WashSlot slots = 1;
+}
+
+message GenerateWashSlotsRequest {
+  string organization_id = 1;
+  string date_from = 2;             // "2006-01-02"
+  string date_to = 3;               // "2006-01-02"
+  int32 bays_count = 4;             // number of wash bays
+  int32 slot_duration_minutes = 5;  // e.g. 30
+  string start_time = 6;            // "HH:MM" e.g. "09:00"
+  string end_time = 7;              // "HH:MM" e.g. "21:00"
+}
+
+message GenerateWashSlotsResponse {
+  int32 slots_created = 1;
+}
