@@ -6173,9 +6173,12 @@ func (x *MasterPerformanceEntry) GetAvgCompletionHours() float64 {
 }
 
 type GetDailyReportRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	WorkshopId    int64                  `protobuf:"varint,1,opt,name=workshop_id,json=workshopId,proto3" json:"workshop_id,omitempty"`
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	WorkshopId int64                  `protobuf:"varint,1,opt,name=workshop_id,json=workshopId,proto3" json:"workshop_id,omitempty"`
+	// Deprecated: Marked as deprecated in workshop/workshop.proto.
 	Date          *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=date,proto3" json:"date,omitempty"`
+	StartDate     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
+	EndDate       *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6217,6 +6220,7 @@ func (x *GetDailyReportRequest) GetWorkshopId() int64 {
 	return 0
 }
 
+// Deprecated: Marked as deprecated in workshop/workshop.proto.
 func (x *GetDailyReportRequest) GetDate() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Date
@@ -6224,20 +6228,124 @@ func (x *GetDailyReportRequest) GetDate() *timestamppb.Timestamp {
 	return nil
 }
 
-type GetDailyReportResponse struct {
+func (x *GetDailyReportRequest) GetStartDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.StartDate
+	}
+	return nil
+}
+
+func (x *GetDailyReportRequest) GetEndDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.EndDate
+	}
+	return nil
+}
+
+type DailyReportEntry struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	OrdersReceived   int32                  `protobuf:"varint,1,opt,name=orders_received,json=ordersReceived,proto3" json:"orders_received,omitempty"`
-	OrdersDelivered  int32                  `protobuf:"varint,2,opt,name=orders_delivered,json=ordersDelivered,proto3" json:"orders_delivered,omitempty"`
-	OrdersInProgress int32                  `protobuf:"varint,3,opt,name=orders_in_progress,json=ordersInProgress,proto3" json:"orders_in_progress,omitempty"`
-	Revenue          int64                  `protobuf:"varint,4,opt,name=revenue,proto3" json:"revenue,omitempty"`
-	StatusBreakdown  []*StatusCount         `protobuf:"bytes,5,rep,name=status_breakdown,json=statusBreakdown,proto3" json:"status_breakdown,omitempty"`
+	Date             *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
+	OrdersReceived   int32                  `protobuf:"varint,2,opt,name=orders_received,json=ordersReceived,proto3" json:"orders_received,omitempty"`
+	OrdersDelivered  int32                  `protobuf:"varint,3,opt,name=orders_delivered,json=ordersDelivered,proto3" json:"orders_delivered,omitempty"`
+	OrdersInProgress int32                  `protobuf:"varint,4,opt,name=orders_in_progress,json=ordersInProgress,proto3" json:"orders_in_progress,omitempty"`
+	Revenue          int64                  `protobuf:"varint,5,opt,name=revenue,proto3" json:"revenue,omitempty"`
+	StatusBreakdown  []*StatusCount         `protobuf:"bytes,6,rep,name=status_breakdown,json=statusBreakdown,proto3" json:"status_breakdown,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
 
+func (x *DailyReportEntry) Reset() {
+	*x = DailyReportEntry{}
+	mi := &file_workshop_workshop_proto_msgTypes[90]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DailyReportEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DailyReportEntry) ProtoMessage() {}
+
+func (x *DailyReportEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_workshop_workshop_proto_msgTypes[90]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DailyReportEntry.ProtoReflect.Descriptor instead.
+func (*DailyReportEntry) Descriptor() ([]byte, []int) {
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{90}
+}
+
+func (x *DailyReportEntry) GetDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Date
+	}
+	return nil
+}
+
+func (x *DailyReportEntry) GetOrdersReceived() int32 {
+	if x != nil {
+		return x.OrdersReceived
+	}
+	return 0
+}
+
+func (x *DailyReportEntry) GetOrdersDelivered() int32 {
+	if x != nil {
+		return x.OrdersDelivered
+	}
+	return 0
+}
+
+func (x *DailyReportEntry) GetOrdersInProgress() int32 {
+	if x != nil {
+		return x.OrdersInProgress
+	}
+	return 0
+}
+
+func (x *DailyReportEntry) GetRevenue() int64 {
+	if x != nil {
+		return x.Revenue
+	}
+	return 0
+}
+
+func (x *DailyReportEntry) GetStatusBreakdown() []*StatusCount {
+	if x != nil {
+		return x.StatusBreakdown
+	}
+	return nil
+}
+
+type GetDailyReportResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Deprecated: Marked as deprecated in workshop/workshop.proto.
+	OrdersReceived int32 `protobuf:"varint,1,opt,name=orders_received,json=ordersReceived,proto3" json:"orders_received,omitempty"`
+	// Deprecated: Marked as deprecated in workshop/workshop.proto.
+	OrdersDelivered int32 `protobuf:"varint,2,opt,name=orders_delivered,json=ordersDelivered,proto3" json:"orders_delivered,omitempty"`
+	// Deprecated: Marked as deprecated in workshop/workshop.proto.
+	OrdersInProgress int32 `protobuf:"varint,3,opt,name=orders_in_progress,json=ordersInProgress,proto3" json:"orders_in_progress,omitempty"`
+	// Deprecated: Marked as deprecated in workshop/workshop.proto.
+	Revenue int64 `protobuf:"varint,4,opt,name=revenue,proto3" json:"revenue,omitempty"`
+	// Deprecated: Marked as deprecated in workshop/workshop.proto.
+	StatusBreakdown []*StatusCount      `protobuf:"bytes,5,rep,name=status_breakdown,json=statusBreakdown,proto3" json:"status_breakdown,omitempty"`
+	Entries         []*DailyReportEntry `protobuf:"bytes,6,rep,name=entries,proto3" json:"entries,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
 func (x *GetDailyReportResponse) Reset() {
 	*x = GetDailyReportResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[90]
+	mi := &file_workshop_workshop_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6249,7 +6357,7 @@ func (x *GetDailyReportResponse) String() string {
 func (*GetDailyReportResponse) ProtoMessage() {}
 
 func (x *GetDailyReportResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[90]
+	mi := &file_workshop_workshop_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6262,9 +6370,10 @@ func (x *GetDailyReportResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDailyReportResponse.ProtoReflect.Descriptor instead.
 func (*GetDailyReportResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{90}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{91}
 }
 
+// Deprecated: Marked as deprecated in workshop/workshop.proto.
 func (x *GetDailyReportResponse) GetOrdersReceived() int32 {
 	if x != nil {
 		return x.OrdersReceived
@@ -6272,6 +6381,7 @@ func (x *GetDailyReportResponse) GetOrdersReceived() int32 {
 	return 0
 }
 
+// Deprecated: Marked as deprecated in workshop/workshop.proto.
 func (x *GetDailyReportResponse) GetOrdersDelivered() int32 {
 	if x != nil {
 		return x.OrdersDelivered
@@ -6279,6 +6389,7 @@ func (x *GetDailyReportResponse) GetOrdersDelivered() int32 {
 	return 0
 }
 
+// Deprecated: Marked as deprecated in workshop/workshop.proto.
 func (x *GetDailyReportResponse) GetOrdersInProgress() int32 {
 	if x != nil {
 		return x.OrdersInProgress
@@ -6286,6 +6397,7 @@ func (x *GetDailyReportResponse) GetOrdersInProgress() int32 {
 	return 0
 }
 
+// Deprecated: Marked as deprecated in workshop/workshop.proto.
 func (x *GetDailyReportResponse) GetRevenue() int64 {
 	if x != nil {
 		return x.Revenue
@@ -6293,9 +6405,17 @@ func (x *GetDailyReportResponse) GetRevenue() int64 {
 	return 0
 }
 
+// Deprecated: Marked as deprecated in workshop/workshop.proto.
 func (x *GetDailyReportResponse) GetStatusBreakdown() []*StatusCount {
 	if x != nil {
 		return x.StatusBreakdown
+	}
+	return nil
+}
+
+func (x *GetDailyReportResponse) GetEntries() []*DailyReportEntry {
+	if x != nil {
+		return x.Entries
 	}
 	return nil
 }
@@ -6310,7 +6430,7 @@ type StatusCount struct {
 
 func (x *StatusCount) Reset() {
 	*x = StatusCount{}
-	mi := &file_workshop_workshop_proto_msgTypes[91]
+	mi := &file_workshop_workshop_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6322,7 +6442,7 @@ func (x *StatusCount) String() string {
 func (*StatusCount) ProtoMessage() {}
 
 func (x *StatusCount) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[91]
+	mi := &file_workshop_workshop_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6335,7 +6455,7 @@ func (x *StatusCount) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatusCount.ProtoReflect.Descriptor instead.
 func (*StatusCount) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{91}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{92}
 }
 
 func (x *StatusCount) GetStatus() RepairStatus {
@@ -6363,7 +6483,7 @@ type AddCommentRequest struct {
 
 func (x *AddCommentRequest) Reset() {
 	*x = AddCommentRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[92]
+	mi := &file_workshop_workshop_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6375,7 +6495,7 @@ func (x *AddCommentRequest) String() string {
 func (*AddCommentRequest) ProtoMessage() {}
 
 func (x *AddCommentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[92]
+	mi := &file_workshop_workshop_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6388,7 +6508,7 @@ func (x *AddCommentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddCommentRequest.ProtoReflect.Descriptor instead.
 func (*AddCommentRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{92}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{93}
 }
 
 func (x *AddCommentRequest) GetRepairOrderId() int64 {
@@ -6421,7 +6541,7 @@ type AddCommentResponse struct {
 
 func (x *AddCommentResponse) Reset() {
 	*x = AddCommentResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[93]
+	mi := &file_workshop_workshop_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6433,7 +6553,7 @@ func (x *AddCommentResponse) String() string {
 func (*AddCommentResponse) ProtoMessage() {}
 
 func (x *AddCommentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[93]
+	mi := &file_workshop_workshop_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6446,7 +6566,7 @@ func (x *AddCommentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddCommentResponse.ProtoReflect.Descriptor instead.
 func (*AddCommentResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{93}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{94}
 }
 
 func (x *AddCommentResponse) GetComment() *RepairComment {
@@ -6466,7 +6586,7 @@ type ListCommentsRequest struct {
 
 func (x *ListCommentsRequest) Reset() {
 	*x = ListCommentsRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[94]
+	mi := &file_workshop_workshop_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6478,7 +6598,7 @@ func (x *ListCommentsRequest) String() string {
 func (*ListCommentsRequest) ProtoMessage() {}
 
 func (x *ListCommentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[94]
+	mi := &file_workshop_workshop_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6491,7 +6611,7 @@ func (x *ListCommentsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCommentsRequest.ProtoReflect.Descriptor instead.
 func (*ListCommentsRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{94}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{95}
 }
 
 func (x *ListCommentsRequest) GetRepairOrderId() int64 {
@@ -6517,7 +6637,7 @@ type ListCommentsResponse struct {
 
 func (x *ListCommentsResponse) Reset() {
 	*x = ListCommentsResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[95]
+	mi := &file_workshop_workshop_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6529,7 +6649,7 @@ func (x *ListCommentsResponse) String() string {
 func (*ListCommentsResponse) ProtoMessage() {}
 
 func (x *ListCommentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[95]
+	mi := &file_workshop_workshop_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6542,7 +6662,7 @@ func (x *ListCommentsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCommentsResponse.ProtoReflect.Descriptor instead.
 func (*ListCommentsResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{95}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{96}
 }
 
 func (x *ListCommentsResponse) GetComments() []*RepairComment {
@@ -6565,7 +6685,7 @@ type UploadPhotoRequest struct {
 
 func (x *UploadPhotoRequest) Reset() {
 	*x = UploadPhotoRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[96]
+	mi := &file_workshop_workshop_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6577,7 +6697,7 @@ func (x *UploadPhotoRequest) String() string {
 func (*UploadPhotoRequest) ProtoMessage() {}
 
 func (x *UploadPhotoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[96]
+	mi := &file_workshop_workshop_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6590,7 +6710,7 @@ func (x *UploadPhotoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadPhotoRequest.ProtoReflect.Descriptor instead.
 func (*UploadPhotoRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{96}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{97}
 }
 
 func (x *UploadPhotoRequest) GetRepairOrderId() int64 {
@@ -6637,7 +6757,7 @@ type UploadPhotoResponse struct {
 
 func (x *UploadPhotoResponse) Reset() {
 	*x = UploadPhotoResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[97]
+	mi := &file_workshop_workshop_proto_msgTypes[98]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6649,7 +6769,7 @@ func (x *UploadPhotoResponse) String() string {
 func (*UploadPhotoResponse) ProtoMessage() {}
 
 func (x *UploadPhotoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[97]
+	mi := &file_workshop_workshop_proto_msgTypes[98]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6662,7 +6782,7 @@ func (x *UploadPhotoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadPhotoResponse.ProtoReflect.Descriptor instead.
 func (*UploadPhotoResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{97}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{98}
 }
 
 func (x *UploadPhotoResponse) GetPhoto() *RepairPhoto {
@@ -6682,7 +6802,7 @@ type ListPhotosRequest struct {
 
 func (x *ListPhotosRequest) Reset() {
 	*x = ListPhotosRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[98]
+	mi := &file_workshop_workshop_proto_msgTypes[99]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6694,7 +6814,7 @@ func (x *ListPhotosRequest) String() string {
 func (*ListPhotosRequest) ProtoMessage() {}
 
 func (x *ListPhotosRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[98]
+	mi := &file_workshop_workshop_proto_msgTypes[99]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6707,7 +6827,7 @@ func (x *ListPhotosRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPhotosRequest.ProtoReflect.Descriptor instead.
 func (*ListPhotosRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{98}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{99}
 }
 
 func (x *ListPhotosRequest) GetRepairOrderId() int64 {
@@ -6733,7 +6853,7 @@ type ListPhotosResponse struct {
 
 func (x *ListPhotosResponse) Reset() {
 	*x = ListPhotosResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[99]
+	mi := &file_workshop_workshop_proto_msgTypes[100]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6745,7 +6865,7 @@ func (x *ListPhotosResponse) String() string {
 func (*ListPhotosResponse) ProtoMessage() {}
 
 func (x *ListPhotosResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[99]
+	mi := &file_workshop_workshop_proto_msgTypes[100]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6758,7 +6878,7 @@ func (x *ListPhotosResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPhotosResponse.ProtoReflect.Descriptor instead.
 func (*ListPhotosResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{99}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{100}
 }
 
 func (x *ListPhotosResponse) GetPhotos() []*RepairPhoto {
@@ -6777,7 +6897,7 @@ type DeletePhotoRequest struct {
 
 func (x *DeletePhotoRequest) Reset() {
 	*x = DeletePhotoRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[100]
+	mi := &file_workshop_workshop_proto_msgTypes[101]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6789,7 +6909,7 @@ func (x *DeletePhotoRequest) String() string {
 func (*DeletePhotoRequest) ProtoMessage() {}
 
 func (x *DeletePhotoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[100]
+	mi := &file_workshop_workshop_proto_msgTypes[101]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6802,7 +6922,7 @@ func (x *DeletePhotoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeletePhotoRequest.ProtoReflect.Descriptor instead.
 func (*DeletePhotoRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{100}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{101}
 }
 
 func (x *DeletePhotoRequest) GetPhotoId() int64 {
@@ -6820,7 +6940,7 @@ type DeletePhotoResponse struct {
 
 func (x *DeletePhotoResponse) Reset() {
 	*x = DeletePhotoResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[101]
+	mi := &file_workshop_workshop_proto_msgTypes[102]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6832,7 +6952,7 @@ func (x *DeletePhotoResponse) String() string {
 func (*DeletePhotoResponse) ProtoMessage() {}
 
 func (x *DeletePhotoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[101]
+	mi := &file_workshop_workshop_proto_msgTypes[102]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6845,7 +6965,7 @@ func (x *DeletePhotoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeletePhotoResponse.ProtoReflect.Descriptor instead.
 func (*DeletePhotoResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{101}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{102}
 }
 
 type GetQCChecklistRequest struct {
@@ -6857,7 +6977,7 @@ type GetQCChecklistRequest struct {
 
 func (x *GetQCChecklistRequest) Reset() {
 	*x = GetQCChecklistRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[102]
+	mi := &file_workshop_workshop_proto_msgTypes[103]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6869,7 +6989,7 @@ func (x *GetQCChecklistRequest) String() string {
 func (*GetQCChecklistRequest) ProtoMessage() {}
 
 func (x *GetQCChecklistRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[102]
+	mi := &file_workshop_workshop_proto_msgTypes[103]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6882,7 +7002,7 @@ func (x *GetQCChecklistRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetQCChecklistRequest.ProtoReflect.Descriptor instead.
 func (*GetQCChecklistRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{102}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{103}
 }
 
 func (x *GetQCChecklistRequest) GetRepairOrderId() int64 {
@@ -6901,7 +7021,7 @@ type GetQCChecklistResponse struct {
 
 func (x *GetQCChecklistResponse) Reset() {
 	*x = GetQCChecklistResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[103]
+	mi := &file_workshop_workshop_proto_msgTypes[104]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6913,7 +7033,7 @@ func (x *GetQCChecklistResponse) String() string {
 func (*GetQCChecklistResponse) ProtoMessage() {}
 
 func (x *GetQCChecklistResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[103]
+	mi := &file_workshop_workshop_proto_msgTypes[104]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6926,7 +7046,7 @@ func (x *GetQCChecklistResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetQCChecklistResponse.ProtoReflect.Descriptor instead.
 func (*GetQCChecklistResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{103}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{104}
 }
 
 func (x *GetQCChecklistResponse) GetChecklist() *QCChecklist {
@@ -6946,7 +7066,7 @@ type SubmitQCChecklistRequest struct {
 
 func (x *SubmitQCChecklistRequest) Reset() {
 	*x = SubmitQCChecklistRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[104]
+	mi := &file_workshop_workshop_proto_msgTypes[105]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6958,7 +7078,7 @@ func (x *SubmitQCChecklistRequest) String() string {
 func (*SubmitQCChecklistRequest) ProtoMessage() {}
 
 func (x *SubmitQCChecklistRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[104]
+	mi := &file_workshop_workshop_proto_msgTypes[105]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6971,7 +7091,7 @@ func (x *SubmitQCChecklistRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubmitQCChecklistRequest.ProtoReflect.Descriptor instead.
 func (*SubmitQCChecklistRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{104}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{105}
 }
 
 func (x *SubmitQCChecklistRequest) GetRepairOrderId() int64 {
@@ -6997,7 +7117,7 @@ type SubmitQCChecklistResponse struct {
 
 func (x *SubmitQCChecklistResponse) Reset() {
 	*x = SubmitQCChecklistResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[105]
+	mi := &file_workshop_workshop_proto_msgTypes[106]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7009,7 +7129,7 @@ func (x *SubmitQCChecklistResponse) String() string {
 func (*SubmitQCChecklistResponse) ProtoMessage() {}
 
 func (x *SubmitQCChecklistResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[105]
+	mi := &file_workshop_workshop_proto_msgTypes[106]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7022,7 +7142,7 @@ func (x *SubmitQCChecklistResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubmitQCChecklistResponse.ProtoReflect.Descriptor instead.
 func (*SubmitQCChecklistResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{105}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{106}
 }
 
 func (x *SubmitQCChecklistResponse) GetChecklist() *QCChecklist {
@@ -7044,7 +7164,7 @@ type RejectQCItemRequest struct {
 
 func (x *RejectQCItemRequest) Reset() {
 	*x = RejectQCItemRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[106]
+	mi := &file_workshop_workshop_proto_msgTypes[107]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7056,7 +7176,7 @@ func (x *RejectQCItemRequest) String() string {
 func (*RejectQCItemRequest) ProtoMessage() {}
 
 func (x *RejectQCItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[106]
+	mi := &file_workshop_workshop_proto_msgTypes[107]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7069,7 +7189,7 @@ func (x *RejectQCItemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RejectQCItemRequest.ProtoReflect.Descriptor instead.
 func (*RejectQCItemRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{106}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{107}
 }
 
 func (x *RejectQCItemRequest) GetChecklistId() int64 {
@@ -7109,7 +7229,7 @@ type RejectQCItemResponse struct {
 
 func (x *RejectQCItemResponse) Reset() {
 	*x = RejectQCItemResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[107]
+	mi := &file_workshop_workshop_proto_msgTypes[108]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7121,7 +7241,7 @@ func (x *RejectQCItemResponse) String() string {
 func (*RejectQCItemResponse) ProtoMessage() {}
 
 func (x *RejectQCItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[107]
+	mi := &file_workshop_workshop_proto_msgTypes[108]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7134,7 +7254,7 @@ func (x *RejectQCItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RejectQCItemResponse.ProtoReflect.Descriptor instead.
 func (*RejectQCItemResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{107}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{108}
 }
 
 func (x *RejectQCItemResponse) GetChecklist() *QCChecklist {
@@ -7153,7 +7273,7 @@ type ListStatusHistoryRequest struct {
 
 func (x *ListStatusHistoryRequest) Reset() {
 	*x = ListStatusHistoryRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[108]
+	mi := &file_workshop_workshop_proto_msgTypes[109]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7165,7 +7285,7 @@ func (x *ListStatusHistoryRequest) String() string {
 func (*ListStatusHistoryRequest) ProtoMessage() {}
 
 func (x *ListStatusHistoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[108]
+	mi := &file_workshop_workshop_proto_msgTypes[109]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7178,7 +7298,7 @@ func (x *ListStatusHistoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListStatusHistoryRequest.ProtoReflect.Descriptor instead.
 func (*ListStatusHistoryRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{108}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{109}
 }
 
 func (x *ListStatusHistoryRequest) GetRepairOrderId() int64 {
@@ -7197,7 +7317,7 @@ type ListStatusHistoryResponse struct {
 
 func (x *ListStatusHistoryResponse) Reset() {
 	*x = ListStatusHistoryResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[109]
+	mi := &file_workshop_workshop_proto_msgTypes[110]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7209,7 +7329,7 @@ func (x *ListStatusHistoryResponse) String() string {
 func (*ListStatusHistoryResponse) ProtoMessage() {}
 
 func (x *ListStatusHistoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[109]
+	mi := &file_workshop_workshop_proto_msgTypes[110]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7222,7 +7342,7 @@ func (x *ListStatusHistoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListStatusHistoryResponse.ProtoReflect.Descriptor instead.
 func (*ListStatusHistoryResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{109}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{110}
 }
 
 func (x *ListStatusHistoryResponse) GetEntries() []*StatusHistoryEntry {
@@ -7242,7 +7362,7 @@ type GetClientOrderStatusRequest struct {
 
 func (x *GetClientOrderStatusRequest) Reset() {
 	*x = GetClientOrderStatusRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[110]
+	mi := &file_workshop_workshop_proto_msgTypes[111]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7254,7 +7374,7 @@ func (x *GetClientOrderStatusRequest) String() string {
 func (*GetClientOrderStatusRequest) ProtoMessage() {}
 
 func (x *GetClientOrderStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[110]
+	mi := &file_workshop_workshop_proto_msgTypes[111]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7267,7 +7387,7 @@ func (x *GetClientOrderStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientOrderStatusRequest.ProtoReflect.Descriptor instead.
 func (*GetClientOrderStatusRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{110}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{111}
 }
 
 func (x *GetClientOrderStatusRequest) GetOrderId() int64 {
@@ -7295,7 +7415,7 @@ type GetClientOrderStatusResponse struct {
 
 func (x *GetClientOrderStatusResponse) Reset() {
 	*x = GetClientOrderStatusResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[111]
+	mi := &file_workshop_workshop_proto_msgTypes[112]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7307,7 +7427,7 @@ func (x *GetClientOrderStatusResponse) String() string {
 func (*GetClientOrderStatusResponse) ProtoMessage() {}
 
 func (x *GetClientOrderStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[111]
+	mi := &file_workshop_workshop_proto_msgTypes[112]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7320,7 +7440,7 @@ func (x *GetClientOrderStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientOrderStatusResponse.ProtoReflect.Descriptor instead.
 func (*GetClientOrderStatusResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{111}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{112}
 }
 
 func (x *GetClientOrderStatusResponse) GetOrder() *RepairOrder {
@@ -7355,7 +7475,7 @@ type GetClientOrderPhotosRequest struct {
 
 func (x *GetClientOrderPhotosRequest) Reset() {
 	*x = GetClientOrderPhotosRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[112]
+	mi := &file_workshop_workshop_proto_msgTypes[113]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7367,7 +7487,7 @@ func (x *GetClientOrderPhotosRequest) String() string {
 func (*GetClientOrderPhotosRequest) ProtoMessage() {}
 
 func (x *GetClientOrderPhotosRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[112]
+	mi := &file_workshop_workshop_proto_msgTypes[113]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7380,7 +7500,7 @@ func (x *GetClientOrderPhotosRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientOrderPhotosRequest.ProtoReflect.Descriptor instead.
 func (*GetClientOrderPhotosRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{112}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{113}
 }
 
 func (x *GetClientOrderPhotosRequest) GetOrderId() int64 {
@@ -7413,7 +7533,7 @@ type GetClientOrderPhotosResponse struct {
 
 func (x *GetClientOrderPhotosResponse) Reset() {
 	*x = GetClientOrderPhotosResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[113]
+	mi := &file_workshop_workshop_proto_msgTypes[114]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7425,7 +7545,7 @@ func (x *GetClientOrderPhotosResponse) String() string {
 func (*GetClientOrderPhotosResponse) ProtoMessage() {}
 
 func (x *GetClientOrderPhotosResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[113]
+	mi := &file_workshop_workshop_proto_msgTypes[114]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7438,7 +7558,7 @@ func (x *GetClientOrderPhotosResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientOrderPhotosResponse.ProtoReflect.Descriptor instead.
 func (*GetClientOrderPhotosResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{113}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{114}
 }
 
 func (x *GetClientOrderPhotosResponse) GetPhotos() []*RepairPhoto {
@@ -7458,7 +7578,7 @@ type GetClientOrderTimelineRequest struct {
 
 func (x *GetClientOrderTimelineRequest) Reset() {
 	*x = GetClientOrderTimelineRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[114]
+	mi := &file_workshop_workshop_proto_msgTypes[115]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7470,7 +7590,7 @@ func (x *GetClientOrderTimelineRequest) String() string {
 func (*GetClientOrderTimelineRequest) ProtoMessage() {}
 
 func (x *GetClientOrderTimelineRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[114]
+	mi := &file_workshop_workshop_proto_msgTypes[115]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7483,7 +7603,7 @@ func (x *GetClientOrderTimelineRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientOrderTimelineRequest.ProtoReflect.Descriptor instead.
 func (*GetClientOrderTimelineRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{114}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{115}
 }
 
 func (x *GetClientOrderTimelineRequest) GetOrderId() int64 {
@@ -7509,7 +7629,7 @@ type GetClientOrderTimelineResponse struct {
 
 func (x *GetClientOrderTimelineResponse) Reset() {
 	*x = GetClientOrderTimelineResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[115]
+	mi := &file_workshop_workshop_proto_msgTypes[116]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7521,7 +7641,7 @@ func (x *GetClientOrderTimelineResponse) String() string {
 func (*GetClientOrderTimelineResponse) ProtoMessage() {}
 
 func (x *GetClientOrderTimelineResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[115]
+	mi := &file_workshop_workshop_proto_msgTypes[116]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7534,7 +7654,7 @@ func (x *GetClientOrderTimelineResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientOrderTimelineResponse.ProtoReflect.Descriptor instead.
 func (*GetClientOrderTimelineResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{115}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{116}
 }
 
 func (x *GetClientOrderTimelineResponse) GetEntries() []*TimelineEntry {
@@ -7556,7 +7676,7 @@ type TimelineEntry struct {
 
 func (x *TimelineEntry) Reset() {
 	*x = TimelineEntry{}
-	mi := &file_workshop_workshop_proto_msgTypes[116]
+	mi := &file_workshop_workshop_proto_msgTypes[117]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7568,7 +7688,7 @@ func (x *TimelineEntry) String() string {
 func (*TimelineEntry) ProtoMessage() {}
 
 func (x *TimelineEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[116]
+	mi := &file_workshop_workshop_proto_msgTypes[117]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7581,7 +7701,7 @@ func (x *TimelineEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TimelineEntry.ProtoReflect.Descriptor instead.
 func (*TimelineEntry) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{116}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{117}
 }
 
 func (x *TimelineEntry) GetType() string {
@@ -8135,17 +8255,28 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\x0fworks_completed\x18\x03 \x01(\x05R\x0eworksCompleted\x12&\n" +
 	"\x0ftotal_hour_rate\x18\x04 \x01(\x01R\rtotalHourRate\x12\x18\n" +
 	"\aremakes\x18\x05 \x01(\x05R\aremakes\x120\n" +
-	"\x14avg_completion_hours\x18\x06 \x01(\x01R\x12avgCompletionHours\"h\n" +
+	"\x14avg_completion_hours\x18\x06 \x01(\x01R\x12avgCompletionHours\"\xde\x01\n" +
 	"\x15GetDailyReportRequest\x12\x1f\n" +
 	"\vworkshop_id\x18\x01 \x01(\x03R\n" +
-	"workshopId\x12.\n" +
-	"\x04date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x04date\"\xf9\x01\n" +
-	"\x16GetDailyReportResponse\x12'\n" +
-	"\x0forders_received\x18\x01 \x01(\x05R\x0eordersReceived\x12)\n" +
-	"\x10orders_delivered\x18\x02 \x01(\x05R\x0fordersDelivered\x12,\n" +
-	"\x12orders_in_progress\x18\x03 \x01(\x05R\x10ordersInProgress\x12\x18\n" +
-	"\arevenue\x18\x04 \x01(\x03R\arevenue\x12C\n" +
-	"\x10status_breakdown\x18\x05 \x03(\v2\x18.workshop.v1.StatusCountR\x0fstatusBreakdown\"V\n" +
+	"workshopId\x122\n" +
+	"\x04date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\x02\x18\x01R\x04date\x129\n" +
+	"\n" +
+	"start_date\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tstartDate\x125\n" +
+	"\bend_date\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\aendDate\"\xa3\x02\n" +
+	"\x10DailyReportEntry\x12.\n" +
+	"\x04date\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x04date\x12'\n" +
+	"\x0forders_received\x18\x02 \x01(\x05R\x0eordersReceived\x12)\n" +
+	"\x10orders_delivered\x18\x03 \x01(\x05R\x0fordersDelivered\x12,\n" +
+	"\x12orders_in_progress\x18\x04 \x01(\x05R\x10ordersInProgress\x12\x18\n" +
+	"\arevenue\x18\x05 \x01(\x03R\arevenue\x12C\n" +
+	"\x10status_breakdown\x18\x06 \x03(\v2\x18.workshop.v1.StatusCountR\x0fstatusBreakdown\"\xc6\x02\n" +
+	"\x16GetDailyReportResponse\x12+\n" +
+	"\x0forders_received\x18\x01 \x01(\x05B\x02\x18\x01R\x0eordersReceived\x12-\n" +
+	"\x10orders_delivered\x18\x02 \x01(\x05B\x02\x18\x01R\x0fordersDelivered\x120\n" +
+	"\x12orders_in_progress\x18\x03 \x01(\x05B\x02\x18\x01R\x10ordersInProgress\x12\x1c\n" +
+	"\arevenue\x18\x04 \x01(\x03B\x02\x18\x01R\arevenue\x12G\n" +
+	"\x10status_breakdown\x18\x05 \x03(\v2\x18.workshop.v1.StatusCountB\x02\x18\x01R\x0fstatusBreakdown\x127\n" +
+	"\aentries\x18\x06 \x03(\v2\x1d.workshop.v1.DailyReportEntryR\aentries\"V\n" +
 	"\vStatusCount\x121\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x19.workshop.v1.RepairStatusR\x06status\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x05R\x05count\"}\n" +
@@ -8327,7 +8458,7 @@ func file_workshop_workshop_proto_rawDescGZIP() []byte {
 }
 
 var file_workshop_workshop_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_workshop_workshop_proto_msgTypes = make([]protoimpl.MessageInfo, 117)
+var file_workshop_workshop_proto_msgTypes = make([]protoimpl.MessageInfo, 118)
 var file_workshop_workshop_proto_goTypes = []any{
 	(RepairStatus)(0),                       // 0: workshop.v1.RepairStatus
 	(MasterRole)(0),                         // 1: workshop.v1.MasterRole
@@ -8425,77 +8556,78 @@ var file_workshop_workshop_proto_goTypes = []any{
 	(*GetMasterPerformanceResponse)(nil),    // 93: workshop.v1.GetMasterPerformanceResponse
 	(*MasterPerformanceEntry)(nil),          // 94: workshop.v1.MasterPerformanceEntry
 	(*GetDailyReportRequest)(nil),           // 95: workshop.v1.GetDailyReportRequest
-	(*GetDailyReportResponse)(nil),          // 96: workshop.v1.GetDailyReportResponse
-	(*StatusCount)(nil),                     // 97: workshop.v1.StatusCount
-	(*AddCommentRequest)(nil),               // 98: workshop.v1.AddCommentRequest
-	(*AddCommentResponse)(nil),              // 99: workshop.v1.AddCommentResponse
-	(*ListCommentsRequest)(nil),             // 100: workshop.v1.ListCommentsRequest
-	(*ListCommentsResponse)(nil),            // 101: workshop.v1.ListCommentsResponse
-	(*UploadPhotoRequest)(nil),              // 102: workshop.v1.UploadPhotoRequest
-	(*UploadPhotoResponse)(nil),             // 103: workshop.v1.UploadPhotoResponse
-	(*ListPhotosRequest)(nil),               // 104: workshop.v1.ListPhotosRequest
-	(*ListPhotosResponse)(nil),              // 105: workshop.v1.ListPhotosResponse
-	(*DeletePhotoRequest)(nil),              // 106: workshop.v1.DeletePhotoRequest
-	(*DeletePhotoResponse)(nil),             // 107: workshop.v1.DeletePhotoResponse
-	(*GetQCChecklistRequest)(nil),           // 108: workshop.v1.GetQCChecklistRequest
-	(*GetQCChecklistResponse)(nil),          // 109: workshop.v1.GetQCChecklistResponse
-	(*SubmitQCChecklistRequest)(nil),        // 110: workshop.v1.SubmitQCChecklistRequest
-	(*SubmitQCChecklistResponse)(nil),       // 111: workshop.v1.SubmitQCChecklistResponse
-	(*RejectQCItemRequest)(nil),             // 112: workshop.v1.RejectQCItemRequest
-	(*RejectQCItemResponse)(nil),            // 113: workshop.v1.RejectQCItemResponse
-	(*ListStatusHistoryRequest)(nil),        // 114: workshop.v1.ListStatusHistoryRequest
-	(*ListStatusHistoryResponse)(nil),       // 115: workshop.v1.ListStatusHistoryResponse
-	(*GetClientOrderStatusRequest)(nil),     // 116: workshop.v1.GetClientOrderStatusRequest
-	(*GetClientOrderStatusResponse)(nil),    // 117: workshop.v1.GetClientOrderStatusResponse
-	(*GetClientOrderPhotosRequest)(nil),     // 118: workshop.v1.GetClientOrderPhotosRequest
-	(*GetClientOrderPhotosResponse)(nil),    // 119: workshop.v1.GetClientOrderPhotosResponse
-	(*GetClientOrderTimelineRequest)(nil),   // 120: workshop.v1.GetClientOrderTimelineRequest
-	(*GetClientOrderTimelineResponse)(nil),  // 121: workshop.v1.GetClientOrderTimelineResponse
-	(*TimelineEntry)(nil),                   // 122: workshop.v1.TimelineEntry
-	(*timestamppb.Timestamp)(nil),           // 123: google.protobuf.Timestamp
+	(*DailyReportEntry)(nil),                // 96: workshop.v1.DailyReportEntry
+	(*GetDailyReportResponse)(nil),          // 97: workshop.v1.GetDailyReportResponse
+	(*StatusCount)(nil),                     // 98: workshop.v1.StatusCount
+	(*AddCommentRequest)(nil),               // 99: workshop.v1.AddCommentRequest
+	(*AddCommentResponse)(nil),              // 100: workshop.v1.AddCommentResponse
+	(*ListCommentsRequest)(nil),             // 101: workshop.v1.ListCommentsRequest
+	(*ListCommentsResponse)(nil),            // 102: workshop.v1.ListCommentsResponse
+	(*UploadPhotoRequest)(nil),              // 103: workshop.v1.UploadPhotoRequest
+	(*UploadPhotoResponse)(nil),             // 104: workshop.v1.UploadPhotoResponse
+	(*ListPhotosRequest)(nil),               // 105: workshop.v1.ListPhotosRequest
+	(*ListPhotosResponse)(nil),              // 106: workshop.v1.ListPhotosResponse
+	(*DeletePhotoRequest)(nil),              // 107: workshop.v1.DeletePhotoRequest
+	(*DeletePhotoResponse)(nil),             // 108: workshop.v1.DeletePhotoResponse
+	(*GetQCChecklistRequest)(nil),           // 109: workshop.v1.GetQCChecklistRequest
+	(*GetQCChecklistResponse)(nil),          // 110: workshop.v1.GetQCChecklistResponse
+	(*SubmitQCChecklistRequest)(nil),        // 111: workshop.v1.SubmitQCChecklistRequest
+	(*SubmitQCChecklistResponse)(nil),       // 112: workshop.v1.SubmitQCChecklistResponse
+	(*RejectQCItemRequest)(nil),             // 113: workshop.v1.RejectQCItemRequest
+	(*RejectQCItemResponse)(nil),            // 114: workshop.v1.RejectQCItemResponse
+	(*ListStatusHistoryRequest)(nil),        // 115: workshop.v1.ListStatusHistoryRequest
+	(*ListStatusHistoryResponse)(nil),       // 116: workshop.v1.ListStatusHistoryResponse
+	(*GetClientOrderStatusRequest)(nil),     // 117: workshop.v1.GetClientOrderStatusRequest
+	(*GetClientOrderStatusResponse)(nil),    // 118: workshop.v1.GetClientOrderStatusResponse
+	(*GetClientOrderPhotosRequest)(nil),     // 119: workshop.v1.GetClientOrderPhotosRequest
+	(*GetClientOrderPhotosResponse)(nil),    // 120: workshop.v1.GetClientOrderPhotosResponse
+	(*GetClientOrderTimelineRequest)(nil),   // 121: workshop.v1.GetClientOrderTimelineRequest
+	(*GetClientOrderTimelineResponse)(nil),  // 122: workshop.v1.GetClientOrderTimelineResponse
+	(*TimelineEntry)(nil),                   // 123: workshop.v1.TimelineEntry
+	(*timestamppb.Timestamp)(nil),           // 124: google.protobuf.Timestamp
 }
 var file_workshop_workshop_proto_depIdxs = []int32{
-	123, // 0: workshop.v1.Workshop.created_at:type_name -> google.protobuf.Timestamp
-	123, // 1: workshop.v1.Workshop.updated_at:type_name -> google.protobuf.Timestamp
+	124, // 0: workshop.v1.Workshop.created_at:type_name -> google.protobuf.Timestamp
+	124, // 1: workshop.v1.Workshop.updated_at:type_name -> google.protobuf.Timestamp
 	0,   // 2: workshop.v1.RepairOrder.status:type_name -> workshop.v1.RepairStatus
-	123, // 3: workshop.v1.RepairOrder.intake_date:type_name -> google.protobuf.Timestamp
-	123, // 4: workshop.v1.RepairOrder.promised_date:type_name -> google.protobuf.Timestamp
-	123, // 5: workshop.v1.RepairOrder.completion_date:type_name -> google.protobuf.Timestamp
+	124, // 3: workshop.v1.RepairOrder.intake_date:type_name -> google.protobuf.Timestamp
+	124, // 4: workshop.v1.RepairOrder.promised_date:type_name -> google.protobuf.Timestamp
+	124, // 5: workshop.v1.RepairOrder.completion_date:type_name -> google.protobuf.Timestamp
 	9,   // 6: workshop.v1.RepairOrder.works:type_name -> workshop.v1.CarWork
 	8,   // 7: workshop.v1.RepairOrder.masters:type_name -> workshop.v1.MasterSummary
-	123, // 8: workshop.v1.RepairOrder.created_at:type_name -> google.protobuf.Timestamp
-	123, // 9: workshop.v1.RepairOrder.updated_at:type_name -> google.protobuf.Timestamp
+	124, // 8: workshop.v1.RepairOrder.created_at:type_name -> google.protobuf.Timestamp
+	124, // 9: workshop.v1.RepairOrder.updated_at:type_name -> google.protobuf.Timestamp
 	1,   // 10: workshop.v1.MasterSummary.role:type_name -> workshop.v1.MasterRole
-	123, // 11: workshop.v1.CarWork.clock_in_at:type_name -> google.protobuf.Timestamp
-	123, // 12: workshop.v1.CarWork.clock_out_at:type_name -> google.protobuf.Timestamp
-	123, // 13: workshop.v1.CarWork.done_at:type_name -> google.protobuf.Timestamp
-	123, // 14: workshop.v1.CarWork.created_at:type_name -> google.protobuf.Timestamp
-	123, // 15: workshop.v1.CarWork.updated_at:type_name -> google.protobuf.Timestamp
+	124, // 11: workshop.v1.CarWork.clock_in_at:type_name -> google.protobuf.Timestamp
+	124, // 12: workshop.v1.CarWork.clock_out_at:type_name -> google.protobuf.Timestamp
+	124, // 13: workshop.v1.CarWork.done_at:type_name -> google.protobuf.Timestamp
+	124, // 14: workshop.v1.CarWork.created_at:type_name -> google.protobuf.Timestamp
+	124, // 15: workshop.v1.CarWork.updated_at:type_name -> google.protobuf.Timestamp
 	1,   // 16: workshop.v1.Master.role:type_name -> workshop.v1.MasterRole
 	2,   // 17: workshop.v1.Master.fix_salary_type:type_name -> workshop.v1.FixSalaryType
-	123, // 18: workshop.v1.Master.hired_at:type_name -> google.protobuf.Timestamp
-	123, // 19: workshop.v1.Master.fired_at:type_name -> google.protobuf.Timestamp
-	123, // 20: workshop.v1.Master.created_at:type_name -> google.protobuf.Timestamp
-	123, // 21: workshop.v1.Master.updated_at:type_name -> google.protobuf.Timestamp
-	123, // 22: workshop.v1.Client.created_at:type_name -> google.protobuf.Timestamp
-	123, // 23: workshop.v1.Client.updated_at:type_name -> google.protobuf.Timestamp
+	124, // 18: workshop.v1.Master.hired_at:type_name -> google.protobuf.Timestamp
+	124, // 19: workshop.v1.Master.fired_at:type_name -> google.protobuf.Timestamp
+	124, // 20: workshop.v1.Master.created_at:type_name -> google.protobuf.Timestamp
+	124, // 21: workshop.v1.Master.updated_at:type_name -> google.protobuf.Timestamp
+	124, // 22: workshop.v1.Client.created_at:type_name -> google.protobuf.Timestamp
+	124, // 23: workshop.v1.Client.updated_at:type_name -> google.protobuf.Timestamp
 	4,   // 24: workshop.v1.RepairPhoto.album:type_name -> workshop.v1.PhotoAlbum
 	0,   // 25: workshop.v1.RepairPhoto.stage_at_upload:type_name -> workshop.v1.RepairStatus
-	123, // 26: workshop.v1.RepairPhoto.created_at:type_name -> google.protobuf.Timestamp
+	124, // 26: workshop.v1.RepairPhoto.created_at:type_name -> google.protobuf.Timestamp
 	5,   // 27: workshop.v1.RepairComment.type:type_name -> workshop.v1.CommentType
-	123, // 28: workshop.v1.RepairComment.created_at:type_name -> google.protobuf.Timestamp
+	124, // 28: workshop.v1.RepairComment.created_at:type_name -> google.protobuf.Timestamp
 	0,   // 29: workshop.v1.StatusHistoryEntry.old_status:type_name -> workshop.v1.RepairStatus
 	0,   // 30: workshop.v1.StatusHistoryEntry.new_status:type_name -> workshop.v1.RepairStatus
-	123, // 31: workshop.v1.StatusHistoryEntry.created_at:type_name -> google.protobuf.Timestamp
+	124, // 31: workshop.v1.StatusHistoryEntry.created_at:type_name -> google.protobuf.Timestamp
 	16,  // 32: workshop.v1.QCChecklist.items:type_name -> workshop.v1.QCItem
-	123, // 33: workshop.v1.QCChecklist.completed_at:type_name -> google.protobuf.Timestamp
-	123, // 34: workshop.v1.QCChecklist.created_at:type_name -> google.protobuf.Timestamp
+	124, // 33: workshop.v1.QCChecklist.completed_at:type_name -> google.protobuf.Timestamp
+	124, // 34: workshop.v1.QCChecklist.created_at:type_name -> google.protobuf.Timestamp
 	3,   // 35: workshop.v1.OutsourceRequest.status:type_name -> workshop.v1.OutsourceStatus
-	123, // 36: workshop.v1.OutsourceRequest.created_at:type_name -> google.protobuf.Timestamp
-	123, // 37: workshop.v1.OutsourceRequest.updated_at:type_name -> google.protobuf.Timestamp
+	124, // 36: workshop.v1.OutsourceRequest.created_at:type_name -> google.protobuf.Timestamp
+	124, // 37: workshop.v1.OutsourceRequest.updated_at:type_name -> google.protobuf.Timestamp
 	2,   // 38: workshop.v1.SalaryBreakdown.fix_salary_type:type_name -> workshop.v1.FixSalaryType
 	19,  // 39: workshop.v1.SalaryBreakdown.adjustments:type_name -> workshop.v1.SalaryAdjustment
-	123, // 40: workshop.v1.SalaryAdjustment.created_at:type_name -> google.protobuf.Timestamp
+	124, // 40: workshop.v1.SalaryAdjustment.created_at:type_name -> google.protobuf.Timestamp
 	0,   // 41: workshop.v1.KanbanColumn.status:type_name -> workshop.v1.RepairStatus
 	7,   // 42: workshop.v1.KanbanColumn.orders:type_name -> workshop.v1.RepairOrder
 	3,   // 43: workshop.v1.OutsourceKanbanColumn.status:type_name -> workshop.v1.OutsourceStatus
@@ -8504,7 +8636,7 @@ var file_workshop_workshop_proto_depIdxs = []int32{
 	6,   // 46: workshop.v1.GetWorkshopResponse.workshop:type_name -> workshop.v1.Workshop
 	6,   // 47: workshop.v1.UpdateWorkshopResponse.workshop:type_name -> workshop.v1.Workshop
 	6,   // 48: workshop.v1.ListWorkshopsResponse.workshops:type_name -> workshop.v1.Workshop
-	123, // 49: workshop.v1.CreateRepairOrderRequest.promised_date:type_name -> google.protobuf.Timestamp
+	124, // 49: workshop.v1.CreateRepairOrderRequest.promised_date:type_name -> google.protobuf.Timestamp
 	7,   // 50: workshop.v1.CreateRepairOrderResponse.order:type_name -> workshop.v1.RepairOrder
 	7,   // 51: workshop.v1.GetRepairOrderResponse.order:type_name -> workshop.v1.RepairOrder
 	7,   // 52: workshop.v1.UpdateRepairOrderResponse.order:type_name -> workshop.v1.RepairOrder
@@ -8541,134 +8673,139 @@ var file_workshop_workshop_proto_depIdxs = []int32{
 	21,  // 83: workshop.v1.GetOutsourceKanbanResponse.columns:type_name -> workshop.v1.OutsourceKanbanColumn
 	3,   // 84: workshop.v1.UpdateOutsourceStatusRequest.new_status:type_name -> workshop.v1.OutsourceStatus
 	17,  // 85: workshop.v1.UpdateOutsourceStatusResponse.request:type_name -> workshop.v1.OutsourceRequest
-	123, // 86: workshop.v1.GetWorkshopStatsRequest.from:type_name -> google.protobuf.Timestamp
-	123, // 87: workshop.v1.GetWorkshopStatsRequest.to:type_name -> google.protobuf.Timestamp
+	124, // 86: workshop.v1.GetWorkshopStatsRequest.from:type_name -> google.protobuf.Timestamp
+	124, // 87: workshop.v1.GetWorkshopStatsRequest.to:type_name -> google.protobuf.Timestamp
 	94,  // 88: workshop.v1.GetMasterPerformanceResponse.entries:type_name -> workshop.v1.MasterPerformanceEntry
-	123, // 89: workshop.v1.GetDailyReportRequest.date:type_name -> google.protobuf.Timestamp
-	97,  // 90: workshop.v1.GetDailyReportResponse.status_breakdown:type_name -> workshop.v1.StatusCount
-	0,   // 91: workshop.v1.StatusCount.status:type_name -> workshop.v1.RepairStatus
-	5,   // 92: workshop.v1.AddCommentRequest.type:type_name -> workshop.v1.CommentType
-	13,  // 93: workshop.v1.AddCommentResponse.comment:type_name -> workshop.v1.RepairComment
-	5,   // 94: workshop.v1.ListCommentsRequest.type:type_name -> workshop.v1.CommentType
-	13,  // 95: workshop.v1.ListCommentsResponse.comments:type_name -> workshop.v1.RepairComment
-	4,   // 96: workshop.v1.UploadPhotoRequest.album:type_name -> workshop.v1.PhotoAlbum
-	12,  // 97: workshop.v1.UploadPhotoResponse.photo:type_name -> workshop.v1.RepairPhoto
-	4,   // 98: workshop.v1.ListPhotosRequest.album:type_name -> workshop.v1.PhotoAlbum
-	12,  // 99: workshop.v1.ListPhotosResponse.photos:type_name -> workshop.v1.RepairPhoto
-	15,  // 100: workshop.v1.GetQCChecklistResponse.checklist:type_name -> workshop.v1.QCChecklist
-	16,  // 101: workshop.v1.SubmitQCChecklistRequest.items:type_name -> workshop.v1.QCItem
-	15,  // 102: workshop.v1.SubmitQCChecklistResponse.checklist:type_name -> workshop.v1.QCChecklist
-	0,   // 103: workshop.v1.RejectQCItemRequest.return_to_status:type_name -> workshop.v1.RepairStatus
-	15,  // 104: workshop.v1.RejectQCItemResponse.checklist:type_name -> workshop.v1.QCChecklist
-	14,  // 105: workshop.v1.ListStatusHistoryResponse.entries:type_name -> workshop.v1.StatusHistoryEntry
-	7,   // 106: workshop.v1.GetClientOrderStatusResponse.order:type_name -> workshop.v1.RepairOrder
-	4,   // 107: workshop.v1.GetClientOrderPhotosRequest.album:type_name -> workshop.v1.PhotoAlbum
-	12,  // 108: workshop.v1.GetClientOrderPhotosResponse.photos:type_name -> workshop.v1.RepairPhoto
-	122, // 109: workshop.v1.GetClientOrderTimelineResponse.entries:type_name -> workshop.v1.TimelineEntry
-	123, // 110: workshop.v1.TimelineEntry.timestamp:type_name -> google.protobuf.Timestamp
-	22,  // 111: workshop.v1.WorkshopService.CreateWorkshop:input_type -> workshop.v1.CreateWorkshopRequest
-	24,  // 112: workshop.v1.WorkshopService.GetWorkshop:input_type -> workshop.v1.GetWorkshopRequest
-	26,  // 113: workshop.v1.WorkshopService.UpdateWorkshop:input_type -> workshop.v1.UpdateWorkshopRequest
-	28,  // 114: workshop.v1.WorkshopService.ListWorkshops:input_type -> workshop.v1.ListWorkshopsRequest
-	30,  // 115: workshop.v1.WorkshopService.CreateRepairOrder:input_type -> workshop.v1.CreateRepairOrderRequest
-	32,  // 116: workshop.v1.WorkshopService.GetRepairOrder:input_type -> workshop.v1.GetRepairOrderRequest
-	34,  // 117: workshop.v1.WorkshopService.UpdateRepairOrder:input_type -> workshop.v1.UpdateRepairOrderRequest
-	36,  // 118: workshop.v1.WorkshopService.UpdateRepairOrderStatus:input_type -> workshop.v1.UpdateRepairOrderStatusRequest
-	38,  // 119: workshop.v1.WorkshopService.ListRepairOrders:input_type -> workshop.v1.ListRepairOrdersRequest
-	40,  // 120: workshop.v1.WorkshopService.GetKanban:input_type -> workshop.v1.GetKanbanRequest
-	42,  // 121: workshop.v1.WorkshopService.CreateCarWork:input_type -> workshop.v1.CreateCarWorkRequest
-	44,  // 122: workshop.v1.WorkshopService.UpdateCarWork:input_type -> workshop.v1.UpdateCarWorkRequest
-	46,  // 123: workshop.v1.WorkshopService.DeleteCarWork:input_type -> workshop.v1.DeleteCarWorkRequest
-	48,  // 124: workshop.v1.WorkshopService.ListCarWorks:input_type -> workshop.v1.ListCarWorksRequest
-	50,  // 125: workshop.v1.WorkshopService.MarkCarWorkDone:input_type -> workshop.v1.MarkCarWorkDoneRequest
-	52,  // 126: workshop.v1.WorkshopService.ClockIn:input_type -> workshop.v1.ClockInRequest
-	54,  // 127: workshop.v1.WorkshopService.ClockOut:input_type -> workshop.v1.ClockOutRequest
-	56,  // 128: workshop.v1.WorkshopService.CreateMaster:input_type -> workshop.v1.CreateMasterRequest
-	58,  // 129: workshop.v1.WorkshopService.GetMaster:input_type -> workshop.v1.GetMasterRequest
-	60,  // 130: workshop.v1.WorkshopService.UpdateMaster:input_type -> workshop.v1.UpdateMasterRequest
-	62,  // 131: workshop.v1.WorkshopService.FireMaster:input_type -> workshop.v1.FireMasterRequest
-	64,  // 132: workshop.v1.WorkshopService.ListMasters:input_type -> workshop.v1.ListMastersRequest
-	66,  // 133: workshop.v1.WorkshopService.CalculateSalary:input_type -> workshop.v1.CalculateSalaryRequest
-	68,  // 134: workshop.v1.WorkshopService.GetSalaryBreakdown:input_type -> workshop.v1.GetSalaryBreakdownRequest
-	70,  // 135: workshop.v1.WorkshopService.CreateBonus:input_type -> workshop.v1.CreateBonusRequest
-	72,  // 136: workshop.v1.WorkshopService.CreateFine:input_type -> workshop.v1.CreateFineRequest
-	74,  // 137: workshop.v1.WorkshopService.CreateAdvance:input_type -> workshop.v1.CreateAdvanceRequest
-	76,  // 138: workshop.v1.WorkshopService.DeleteBonus:input_type -> workshop.v1.DeleteBonusRequest
-	78,  // 139: workshop.v1.WorkshopService.DeleteFine:input_type -> workshop.v1.DeleteFineRequest
-	80,  // 140: workshop.v1.WorkshopService.PublishOutsource:input_type -> workshop.v1.PublishOutsourceRequest
-	82,  // 141: workshop.v1.WorkshopService.AcceptOutsource:input_type -> workshop.v1.AcceptOutsourceRequest
-	84,  // 142: workshop.v1.WorkshopService.ListOutsourceRequests:input_type -> workshop.v1.ListOutsourceRequestsRequest
-	86,  // 143: workshop.v1.WorkshopService.GetOutsourceKanban:input_type -> workshop.v1.GetOutsourceKanbanRequest
-	88,  // 144: workshop.v1.WorkshopService.UpdateOutsourceStatus:input_type -> workshop.v1.UpdateOutsourceStatusRequest
-	90,  // 145: workshop.v1.WorkshopService.GetWorkshopStats:input_type -> workshop.v1.GetWorkshopStatsRequest
-	92,  // 146: workshop.v1.WorkshopService.GetMasterPerformance:input_type -> workshop.v1.GetMasterPerformanceRequest
-	95,  // 147: workshop.v1.WorkshopService.GetDailyReport:input_type -> workshop.v1.GetDailyReportRequest
-	98,  // 148: workshop.v1.WorkshopService.AddComment:input_type -> workshop.v1.AddCommentRequest
-	100, // 149: workshop.v1.WorkshopService.ListComments:input_type -> workshop.v1.ListCommentsRequest
-	102, // 150: workshop.v1.WorkshopService.UploadPhoto:input_type -> workshop.v1.UploadPhotoRequest
-	104, // 151: workshop.v1.WorkshopService.ListPhotos:input_type -> workshop.v1.ListPhotosRequest
-	106, // 152: workshop.v1.WorkshopService.DeletePhoto:input_type -> workshop.v1.DeletePhotoRequest
-	108, // 153: workshop.v1.WorkshopService.GetQCChecklist:input_type -> workshop.v1.GetQCChecklistRequest
-	110, // 154: workshop.v1.WorkshopService.SubmitQCChecklist:input_type -> workshop.v1.SubmitQCChecklistRequest
-	112, // 155: workshop.v1.WorkshopService.RejectQCItem:input_type -> workshop.v1.RejectQCItemRequest
-	114, // 156: workshop.v1.WorkshopService.ListStatusHistory:input_type -> workshop.v1.ListStatusHistoryRequest
-	116, // 157: workshop.v1.WorkshopService.GetClientOrderStatus:input_type -> workshop.v1.GetClientOrderStatusRequest
-	118, // 158: workshop.v1.WorkshopService.GetClientOrderPhotos:input_type -> workshop.v1.GetClientOrderPhotosRequest
-	120, // 159: workshop.v1.WorkshopService.GetClientOrderTimeline:input_type -> workshop.v1.GetClientOrderTimelineRequest
-	23,  // 160: workshop.v1.WorkshopService.CreateWorkshop:output_type -> workshop.v1.CreateWorkshopResponse
-	25,  // 161: workshop.v1.WorkshopService.GetWorkshop:output_type -> workshop.v1.GetWorkshopResponse
-	27,  // 162: workshop.v1.WorkshopService.UpdateWorkshop:output_type -> workshop.v1.UpdateWorkshopResponse
-	29,  // 163: workshop.v1.WorkshopService.ListWorkshops:output_type -> workshop.v1.ListWorkshopsResponse
-	31,  // 164: workshop.v1.WorkshopService.CreateRepairOrder:output_type -> workshop.v1.CreateRepairOrderResponse
-	33,  // 165: workshop.v1.WorkshopService.GetRepairOrder:output_type -> workshop.v1.GetRepairOrderResponse
-	35,  // 166: workshop.v1.WorkshopService.UpdateRepairOrder:output_type -> workshop.v1.UpdateRepairOrderResponse
-	37,  // 167: workshop.v1.WorkshopService.UpdateRepairOrderStatus:output_type -> workshop.v1.UpdateRepairOrderStatusResponse
-	39,  // 168: workshop.v1.WorkshopService.ListRepairOrders:output_type -> workshop.v1.ListRepairOrdersResponse
-	41,  // 169: workshop.v1.WorkshopService.GetKanban:output_type -> workshop.v1.GetKanbanResponse
-	43,  // 170: workshop.v1.WorkshopService.CreateCarWork:output_type -> workshop.v1.CreateCarWorkResponse
-	45,  // 171: workshop.v1.WorkshopService.UpdateCarWork:output_type -> workshop.v1.UpdateCarWorkResponse
-	47,  // 172: workshop.v1.WorkshopService.DeleteCarWork:output_type -> workshop.v1.DeleteCarWorkResponse
-	49,  // 173: workshop.v1.WorkshopService.ListCarWorks:output_type -> workshop.v1.ListCarWorksResponse
-	51,  // 174: workshop.v1.WorkshopService.MarkCarWorkDone:output_type -> workshop.v1.MarkCarWorkDoneResponse
-	53,  // 175: workshop.v1.WorkshopService.ClockIn:output_type -> workshop.v1.ClockInResponse
-	55,  // 176: workshop.v1.WorkshopService.ClockOut:output_type -> workshop.v1.ClockOutResponse
-	57,  // 177: workshop.v1.WorkshopService.CreateMaster:output_type -> workshop.v1.CreateMasterResponse
-	59,  // 178: workshop.v1.WorkshopService.GetMaster:output_type -> workshop.v1.GetMasterResponse
-	61,  // 179: workshop.v1.WorkshopService.UpdateMaster:output_type -> workshop.v1.UpdateMasterResponse
-	63,  // 180: workshop.v1.WorkshopService.FireMaster:output_type -> workshop.v1.FireMasterResponse
-	65,  // 181: workshop.v1.WorkshopService.ListMasters:output_type -> workshop.v1.ListMastersResponse
-	67,  // 182: workshop.v1.WorkshopService.CalculateSalary:output_type -> workshop.v1.CalculateSalaryResponse
-	69,  // 183: workshop.v1.WorkshopService.GetSalaryBreakdown:output_type -> workshop.v1.GetSalaryBreakdownResponse
-	71,  // 184: workshop.v1.WorkshopService.CreateBonus:output_type -> workshop.v1.CreateBonusResponse
-	73,  // 185: workshop.v1.WorkshopService.CreateFine:output_type -> workshop.v1.CreateFineResponse
-	75,  // 186: workshop.v1.WorkshopService.CreateAdvance:output_type -> workshop.v1.CreateAdvanceResponse
-	77,  // 187: workshop.v1.WorkshopService.DeleteBonus:output_type -> workshop.v1.DeleteBonusResponse
-	79,  // 188: workshop.v1.WorkshopService.DeleteFine:output_type -> workshop.v1.DeleteFineResponse
-	81,  // 189: workshop.v1.WorkshopService.PublishOutsource:output_type -> workshop.v1.PublishOutsourceResponse
-	83,  // 190: workshop.v1.WorkshopService.AcceptOutsource:output_type -> workshop.v1.AcceptOutsourceResponse
-	85,  // 191: workshop.v1.WorkshopService.ListOutsourceRequests:output_type -> workshop.v1.ListOutsourceRequestsResponse
-	87,  // 192: workshop.v1.WorkshopService.GetOutsourceKanban:output_type -> workshop.v1.GetOutsourceKanbanResponse
-	89,  // 193: workshop.v1.WorkshopService.UpdateOutsourceStatus:output_type -> workshop.v1.UpdateOutsourceStatusResponse
-	91,  // 194: workshop.v1.WorkshopService.GetWorkshopStats:output_type -> workshop.v1.GetWorkshopStatsResponse
-	93,  // 195: workshop.v1.WorkshopService.GetMasterPerformance:output_type -> workshop.v1.GetMasterPerformanceResponse
-	96,  // 196: workshop.v1.WorkshopService.GetDailyReport:output_type -> workshop.v1.GetDailyReportResponse
-	99,  // 197: workshop.v1.WorkshopService.AddComment:output_type -> workshop.v1.AddCommentResponse
-	101, // 198: workshop.v1.WorkshopService.ListComments:output_type -> workshop.v1.ListCommentsResponse
-	103, // 199: workshop.v1.WorkshopService.UploadPhoto:output_type -> workshop.v1.UploadPhotoResponse
-	105, // 200: workshop.v1.WorkshopService.ListPhotos:output_type -> workshop.v1.ListPhotosResponse
-	107, // 201: workshop.v1.WorkshopService.DeletePhoto:output_type -> workshop.v1.DeletePhotoResponse
-	109, // 202: workshop.v1.WorkshopService.GetQCChecklist:output_type -> workshop.v1.GetQCChecklistResponse
-	111, // 203: workshop.v1.WorkshopService.SubmitQCChecklist:output_type -> workshop.v1.SubmitQCChecklistResponse
-	113, // 204: workshop.v1.WorkshopService.RejectQCItem:output_type -> workshop.v1.RejectQCItemResponse
-	115, // 205: workshop.v1.WorkshopService.ListStatusHistory:output_type -> workshop.v1.ListStatusHistoryResponse
-	117, // 206: workshop.v1.WorkshopService.GetClientOrderStatus:output_type -> workshop.v1.GetClientOrderStatusResponse
-	119, // 207: workshop.v1.WorkshopService.GetClientOrderPhotos:output_type -> workshop.v1.GetClientOrderPhotosResponse
-	121, // 208: workshop.v1.WorkshopService.GetClientOrderTimeline:output_type -> workshop.v1.GetClientOrderTimelineResponse
-	160, // [160:209] is the sub-list for method output_type
-	111, // [111:160] is the sub-list for method input_type
-	111, // [111:111] is the sub-list for extension type_name
-	111, // [111:111] is the sub-list for extension extendee
-	0,   // [0:111] is the sub-list for field type_name
+	124, // 89: workshop.v1.GetDailyReportRequest.date:type_name -> google.protobuf.Timestamp
+	124, // 90: workshop.v1.GetDailyReportRequest.start_date:type_name -> google.protobuf.Timestamp
+	124, // 91: workshop.v1.GetDailyReportRequest.end_date:type_name -> google.protobuf.Timestamp
+	124, // 92: workshop.v1.DailyReportEntry.date:type_name -> google.protobuf.Timestamp
+	98,  // 93: workshop.v1.DailyReportEntry.status_breakdown:type_name -> workshop.v1.StatusCount
+	98,  // 94: workshop.v1.GetDailyReportResponse.status_breakdown:type_name -> workshop.v1.StatusCount
+	96,  // 95: workshop.v1.GetDailyReportResponse.entries:type_name -> workshop.v1.DailyReportEntry
+	0,   // 96: workshop.v1.StatusCount.status:type_name -> workshop.v1.RepairStatus
+	5,   // 97: workshop.v1.AddCommentRequest.type:type_name -> workshop.v1.CommentType
+	13,  // 98: workshop.v1.AddCommentResponse.comment:type_name -> workshop.v1.RepairComment
+	5,   // 99: workshop.v1.ListCommentsRequest.type:type_name -> workshop.v1.CommentType
+	13,  // 100: workshop.v1.ListCommentsResponse.comments:type_name -> workshop.v1.RepairComment
+	4,   // 101: workshop.v1.UploadPhotoRequest.album:type_name -> workshop.v1.PhotoAlbum
+	12,  // 102: workshop.v1.UploadPhotoResponse.photo:type_name -> workshop.v1.RepairPhoto
+	4,   // 103: workshop.v1.ListPhotosRequest.album:type_name -> workshop.v1.PhotoAlbum
+	12,  // 104: workshop.v1.ListPhotosResponse.photos:type_name -> workshop.v1.RepairPhoto
+	15,  // 105: workshop.v1.GetQCChecklistResponse.checklist:type_name -> workshop.v1.QCChecklist
+	16,  // 106: workshop.v1.SubmitQCChecklistRequest.items:type_name -> workshop.v1.QCItem
+	15,  // 107: workshop.v1.SubmitQCChecklistResponse.checklist:type_name -> workshop.v1.QCChecklist
+	0,   // 108: workshop.v1.RejectQCItemRequest.return_to_status:type_name -> workshop.v1.RepairStatus
+	15,  // 109: workshop.v1.RejectQCItemResponse.checklist:type_name -> workshop.v1.QCChecklist
+	14,  // 110: workshop.v1.ListStatusHistoryResponse.entries:type_name -> workshop.v1.StatusHistoryEntry
+	7,   // 111: workshop.v1.GetClientOrderStatusResponse.order:type_name -> workshop.v1.RepairOrder
+	4,   // 112: workshop.v1.GetClientOrderPhotosRequest.album:type_name -> workshop.v1.PhotoAlbum
+	12,  // 113: workshop.v1.GetClientOrderPhotosResponse.photos:type_name -> workshop.v1.RepairPhoto
+	123, // 114: workshop.v1.GetClientOrderTimelineResponse.entries:type_name -> workshop.v1.TimelineEntry
+	124, // 115: workshop.v1.TimelineEntry.timestamp:type_name -> google.protobuf.Timestamp
+	22,  // 116: workshop.v1.WorkshopService.CreateWorkshop:input_type -> workshop.v1.CreateWorkshopRequest
+	24,  // 117: workshop.v1.WorkshopService.GetWorkshop:input_type -> workshop.v1.GetWorkshopRequest
+	26,  // 118: workshop.v1.WorkshopService.UpdateWorkshop:input_type -> workshop.v1.UpdateWorkshopRequest
+	28,  // 119: workshop.v1.WorkshopService.ListWorkshops:input_type -> workshop.v1.ListWorkshopsRequest
+	30,  // 120: workshop.v1.WorkshopService.CreateRepairOrder:input_type -> workshop.v1.CreateRepairOrderRequest
+	32,  // 121: workshop.v1.WorkshopService.GetRepairOrder:input_type -> workshop.v1.GetRepairOrderRequest
+	34,  // 122: workshop.v1.WorkshopService.UpdateRepairOrder:input_type -> workshop.v1.UpdateRepairOrderRequest
+	36,  // 123: workshop.v1.WorkshopService.UpdateRepairOrderStatus:input_type -> workshop.v1.UpdateRepairOrderStatusRequest
+	38,  // 124: workshop.v1.WorkshopService.ListRepairOrders:input_type -> workshop.v1.ListRepairOrdersRequest
+	40,  // 125: workshop.v1.WorkshopService.GetKanban:input_type -> workshop.v1.GetKanbanRequest
+	42,  // 126: workshop.v1.WorkshopService.CreateCarWork:input_type -> workshop.v1.CreateCarWorkRequest
+	44,  // 127: workshop.v1.WorkshopService.UpdateCarWork:input_type -> workshop.v1.UpdateCarWorkRequest
+	46,  // 128: workshop.v1.WorkshopService.DeleteCarWork:input_type -> workshop.v1.DeleteCarWorkRequest
+	48,  // 129: workshop.v1.WorkshopService.ListCarWorks:input_type -> workshop.v1.ListCarWorksRequest
+	50,  // 130: workshop.v1.WorkshopService.MarkCarWorkDone:input_type -> workshop.v1.MarkCarWorkDoneRequest
+	52,  // 131: workshop.v1.WorkshopService.ClockIn:input_type -> workshop.v1.ClockInRequest
+	54,  // 132: workshop.v1.WorkshopService.ClockOut:input_type -> workshop.v1.ClockOutRequest
+	56,  // 133: workshop.v1.WorkshopService.CreateMaster:input_type -> workshop.v1.CreateMasterRequest
+	58,  // 134: workshop.v1.WorkshopService.GetMaster:input_type -> workshop.v1.GetMasterRequest
+	60,  // 135: workshop.v1.WorkshopService.UpdateMaster:input_type -> workshop.v1.UpdateMasterRequest
+	62,  // 136: workshop.v1.WorkshopService.FireMaster:input_type -> workshop.v1.FireMasterRequest
+	64,  // 137: workshop.v1.WorkshopService.ListMasters:input_type -> workshop.v1.ListMastersRequest
+	66,  // 138: workshop.v1.WorkshopService.CalculateSalary:input_type -> workshop.v1.CalculateSalaryRequest
+	68,  // 139: workshop.v1.WorkshopService.GetSalaryBreakdown:input_type -> workshop.v1.GetSalaryBreakdownRequest
+	70,  // 140: workshop.v1.WorkshopService.CreateBonus:input_type -> workshop.v1.CreateBonusRequest
+	72,  // 141: workshop.v1.WorkshopService.CreateFine:input_type -> workshop.v1.CreateFineRequest
+	74,  // 142: workshop.v1.WorkshopService.CreateAdvance:input_type -> workshop.v1.CreateAdvanceRequest
+	76,  // 143: workshop.v1.WorkshopService.DeleteBonus:input_type -> workshop.v1.DeleteBonusRequest
+	78,  // 144: workshop.v1.WorkshopService.DeleteFine:input_type -> workshop.v1.DeleteFineRequest
+	80,  // 145: workshop.v1.WorkshopService.PublishOutsource:input_type -> workshop.v1.PublishOutsourceRequest
+	82,  // 146: workshop.v1.WorkshopService.AcceptOutsource:input_type -> workshop.v1.AcceptOutsourceRequest
+	84,  // 147: workshop.v1.WorkshopService.ListOutsourceRequests:input_type -> workshop.v1.ListOutsourceRequestsRequest
+	86,  // 148: workshop.v1.WorkshopService.GetOutsourceKanban:input_type -> workshop.v1.GetOutsourceKanbanRequest
+	88,  // 149: workshop.v1.WorkshopService.UpdateOutsourceStatus:input_type -> workshop.v1.UpdateOutsourceStatusRequest
+	90,  // 150: workshop.v1.WorkshopService.GetWorkshopStats:input_type -> workshop.v1.GetWorkshopStatsRequest
+	92,  // 151: workshop.v1.WorkshopService.GetMasterPerformance:input_type -> workshop.v1.GetMasterPerformanceRequest
+	95,  // 152: workshop.v1.WorkshopService.GetDailyReport:input_type -> workshop.v1.GetDailyReportRequest
+	99,  // 153: workshop.v1.WorkshopService.AddComment:input_type -> workshop.v1.AddCommentRequest
+	101, // 154: workshop.v1.WorkshopService.ListComments:input_type -> workshop.v1.ListCommentsRequest
+	103, // 155: workshop.v1.WorkshopService.UploadPhoto:input_type -> workshop.v1.UploadPhotoRequest
+	105, // 156: workshop.v1.WorkshopService.ListPhotos:input_type -> workshop.v1.ListPhotosRequest
+	107, // 157: workshop.v1.WorkshopService.DeletePhoto:input_type -> workshop.v1.DeletePhotoRequest
+	109, // 158: workshop.v1.WorkshopService.GetQCChecklist:input_type -> workshop.v1.GetQCChecklistRequest
+	111, // 159: workshop.v1.WorkshopService.SubmitQCChecklist:input_type -> workshop.v1.SubmitQCChecklistRequest
+	113, // 160: workshop.v1.WorkshopService.RejectQCItem:input_type -> workshop.v1.RejectQCItemRequest
+	115, // 161: workshop.v1.WorkshopService.ListStatusHistory:input_type -> workshop.v1.ListStatusHistoryRequest
+	117, // 162: workshop.v1.WorkshopService.GetClientOrderStatus:input_type -> workshop.v1.GetClientOrderStatusRequest
+	119, // 163: workshop.v1.WorkshopService.GetClientOrderPhotos:input_type -> workshop.v1.GetClientOrderPhotosRequest
+	121, // 164: workshop.v1.WorkshopService.GetClientOrderTimeline:input_type -> workshop.v1.GetClientOrderTimelineRequest
+	23,  // 165: workshop.v1.WorkshopService.CreateWorkshop:output_type -> workshop.v1.CreateWorkshopResponse
+	25,  // 166: workshop.v1.WorkshopService.GetWorkshop:output_type -> workshop.v1.GetWorkshopResponse
+	27,  // 167: workshop.v1.WorkshopService.UpdateWorkshop:output_type -> workshop.v1.UpdateWorkshopResponse
+	29,  // 168: workshop.v1.WorkshopService.ListWorkshops:output_type -> workshop.v1.ListWorkshopsResponse
+	31,  // 169: workshop.v1.WorkshopService.CreateRepairOrder:output_type -> workshop.v1.CreateRepairOrderResponse
+	33,  // 170: workshop.v1.WorkshopService.GetRepairOrder:output_type -> workshop.v1.GetRepairOrderResponse
+	35,  // 171: workshop.v1.WorkshopService.UpdateRepairOrder:output_type -> workshop.v1.UpdateRepairOrderResponse
+	37,  // 172: workshop.v1.WorkshopService.UpdateRepairOrderStatus:output_type -> workshop.v1.UpdateRepairOrderStatusResponse
+	39,  // 173: workshop.v1.WorkshopService.ListRepairOrders:output_type -> workshop.v1.ListRepairOrdersResponse
+	41,  // 174: workshop.v1.WorkshopService.GetKanban:output_type -> workshop.v1.GetKanbanResponse
+	43,  // 175: workshop.v1.WorkshopService.CreateCarWork:output_type -> workshop.v1.CreateCarWorkResponse
+	45,  // 176: workshop.v1.WorkshopService.UpdateCarWork:output_type -> workshop.v1.UpdateCarWorkResponse
+	47,  // 177: workshop.v1.WorkshopService.DeleteCarWork:output_type -> workshop.v1.DeleteCarWorkResponse
+	49,  // 178: workshop.v1.WorkshopService.ListCarWorks:output_type -> workshop.v1.ListCarWorksResponse
+	51,  // 179: workshop.v1.WorkshopService.MarkCarWorkDone:output_type -> workshop.v1.MarkCarWorkDoneResponse
+	53,  // 180: workshop.v1.WorkshopService.ClockIn:output_type -> workshop.v1.ClockInResponse
+	55,  // 181: workshop.v1.WorkshopService.ClockOut:output_type -> workshop.v1.ClockOutResponse
+	57,  // 182: workshop.v1.WorkshopService.CreateMaster:output_type -> workshop.v1.CreateMasterResponse
+	59,  // 183: workshop.v1.WorkshopService.GetMaster:output_type -> workshop.v1.GetMasterResponse
+	61,  // 184: workshop.v1.WorkshopService.UpdateMaster:output_type -> workshop.v1.UpdateMasterResponse
+	63,  // 185: workshop.v1.WorkshopService.FireMaster:output_type -> workshop.v1.FireMasterResponse
+	65,  // 186: workshop.v1.WorkshopService.ListMasters:output_type -> workshop.v1.ListMastersResponse
+	67,  // 187: workshop.v1.WorkshopService.CalculateSalary:output_type -> workshop.v1.CalculateSalaryResponse
+	69,  // 188: workshop.v1.WorkshopService.GetSalaryBreakdown:output_type -> workshop.v1.GetSalaryBreakdownResponse
+	71,  // 189: workshop.v1.WorkshopService.CreateBonus:output_type -> workshop.v1.CreateBonusResponse
+	73,  // 190: workshop.v1.WorkshopService.CreateFine:output_type -> workshop.v1.CreateFineResponse
+	75,  // 191: workshop.v1.WorkshopService.CreateAdvance:output_type -> workshop.v1.CreateAdvanceResponse
+	77,  // 192: workshop.v1.WorkshopService.DeleteBonus:output_type -> workshop.v1.DeleteBonusResponse
+	79,  // 193: workshop.v1.WorkshopService.DeleteFine:output_type -> workshop.v1.DeleteFineResponse
+	81,  // 194: workshop.v1.WorkshopService.PublishOutsource:output_type -> workshop.v1.PublishOutsourceResponse
+	83,  // 195: workshop.v1.WorkshopService.AcceptOutsource:output_type -> workshop.v1.AcceptOutsourceResponse
+	85,  // 196: workshop.v1.WorkshopService.ListOutsourceRequests:output_type -> workshop.v1.ListOutsourceRequestsResponse
+	87,  // 197: workshop.v1.WorkshopService.GetOutsourceKanban:output_type -> workshop.v1.GetOutsourceKanbanResponse
+	89,  // 198: workshop.v1.WorkshopService.UpdateOutsourceStatus:output_type -> workshop.v1.UpdateOutsourceStatusResponse
+	91,  // 199: workshop.v1.WorkshopService.GetWorkshopStats:output_type -> workshop.v1.GetWorkshopStatsResponse
+	93,  // 200: workshop.v1.WorkshopService.GetMasterPerformance:output_type -> workshop.v1.GetMasterPerformanceResponse
+	97,  // 201: workshop.v1.WorkshopService.GetDailyReport:output_type -> workshop.v1.GetDailyReportResponse
+	100, // 202: workshop.v1.WorkshopService.AddComment:output_type -> workshop.v1.AddCommentResponse
+	102, // 203: workshop.v1.WorkshopService.ListComments:output_type -> workshop.v1.ListCommentsResponse
+	104, // 204: workshop.v1.WorkshopService.UploadPhoto:output_type -> workshop.v1.UploadPhotoResponse
+	106, // 205: workshop.v1.WorkshopService.ListPhotos:output_type -> workshop.v1.ListPhotosResponse
+	108, // 206: workshop.v1.WorkshopService.DeletePhoto:output_type -> workshop.v1.DeletePhotoResponse
+	110, // 207: workshop.v1.WorkshopService.GetQCChecklist:output_type -> workshop.v1.GetQCChecklistResponse
+	112, // 208: workshop.v1.WorkshopService.SubmitQCChecklist:output_type -> workshop.v1.SubmitQCChecklistResponse
+	114, // 209: workshop.v1.WorkshopService.RejectQCItem:output_type -> workshop.v1.RejectQCItemResponse
+	116, // 210: workshop.v1.WorkshopService.ListStatusHistory:output_type -> workshop.v1.ListStatusHistoryResponse
+	118, // 211: workshop.v1.WorkshopService.GetClientOrderStatus:output_type -> workshop.v1.GetClientOrderStatusResponse
+	120, // 212: workshop.v1.WorkshopService.GetClientOrderPhotos:output_type -> workshop.v1.GetClientOrderPhotosResponse
+	122, // 213: workshop.v1.WorkshopService.GetClientOrderTimeline:output_type -> workshop.v1.GetClientOrderTimelineResponse
+	165, // [165:214] is the sub-list for method output_type
+	116, // [116:165] is the sub-list for method input_type
+	116, // [116:116] is the sub-list for extension type_name
+	116, // [116:116] is the sub-list for extension extendee
+	0,   // [0:116] is the sub-list for field type_name
 }
 
 func init() { file_workshop_workshop_proto_init() }
@@ -8686,7 +8823,7 @@ func file_workshop_workshop_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_workshop_workshop_proto_rawDesc), len(file_workshop_workshop_proto_rawDesc)),
 			NumEnums:      6,
-			NumMessages:   117,
+			NumMessages:   118,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

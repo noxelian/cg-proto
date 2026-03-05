@@ -766,15 +766,27 @@ message MasterPerformanceEntry {
 
 message GetDailyReportRequest {
   int64 workshop_id = 1;
-  google.protobuf.Timestamp date = 2;
+  google.protobuf.Timestamp date = 2 [deprecated = true];
+  google.protobuf.Timestamp start_date = 3;
+  google.protobuf.Timestamp end_date = 4;
+}
+
+message DailyReportEntry {
+  google.protobuf.Timestamp date = 1;
+  int32 orders_received = 2;
+  int32 orders_delivered = 3;
+  int32 orders_in_progress = 4;
+  int64 revenue = 5;
+  repeated StatusCount status_breakdown = 6;
 }
 
 message GetDailyReportResponse {
-  int32 orders_received = 1;
-  int32 orders_delivered = 2;
-  int32 orders_in_progress = 3;
-  int64 revenue = 4;
-  repeated StatusCount status_breakdown = 5;
+  int32 orders_received = 1 [deprecated = true];
+  int32 orders_delivered = 2 [deprecated = true];
+  int32 orders_in_progress = 3 [deprecated = true];
+  int64 revenue = 4 [deprecated = true];
+  repeated StatusCount status_breakdown = 5 [deprecated = true];
+  repeated DailyReportEntry entries = 6;
 }
 
 message StatusCount {
