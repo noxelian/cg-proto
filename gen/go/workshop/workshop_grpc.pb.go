@@ -79,6 +79,11 @@ const (
 	WorkshopService_GetClientOrderStatus_FullMethodName      = "/workshop.v1.WorkshopService/GetClientOrderStatus"
 	WorkshopService_GetClientOrderPhotos_FullMethodName      = "/workshop.v1.WorkshopService/GetClientOrderPhotos"
 	WorkshopService_GetClientOrderTimeline_FullMethodName    = "/workshop.v1.WorkshopService/GetClientOrderTimeline"
+	WorkshopService_CreateOrderFromCRM_FullMethodName        = "/workshop.v1.WorkshopService/CreateOrderFromCRM"
+	WorkshopService_SyncCRMDeals_FullMethodName              = "/workshop.v1.WorkshopService/SyncCRMDeals"
+	WorkshopService_GetCRMSyncStatus_FullMethodName          = "/workshop.v1.WorkshopService/GetCRMSyncStatus"
+	WorkshopService_SetMasterTelegram_FullMethodName         = "/workshop.v1.WorkshopService/SetMasterTelegram"
+	WorkshopService_GetMasterByTelegram_FullMethodName       = "/workshop.v1.WorkshopService/GetMasterByTelegram"
 )
 
 // WorkshopServiceClient is the client API for WorkshopService service.
@@ -159,6 +164,13 @@ type WorkshopServiceClient interface {
 	GetClientOrderStatus(ctx context.Context, in *GetClientOrderStatusRequest, opts ...grpc.CallOption) (*GetClientOrderStatusResponse, error)
 	GetClientOrderPhotos(ctx context.Context, in *GetClientOrderPhotosRequest, opts ...grpc.CallOption) (*GetClientOrderPhotosResponse, error)
 	GetClientOrderTimeline(ctx context.Context, in *GetClientOrderTimelineRequest, opts ...grpc.CallOption) (*GetClientOrderTimelineResponse, error)
+	// --- CRM Integration ---
+	CreateOrderFromCRM(ctx context.Context, in *CreateOrderFromCRMRequest, opts ...grpc.CallOption) (*CreateOrderFromCRMResponse, error)
+	SyncCRMDeals(ctx context.Context, in *SyncCRMDealsRequest, opts ...grpc.CallOption) (*SyncCRMDealsResponse, error)
+	GetCRMSyncStatus(ctx context.Context, in *GetCRMSyncStatusRequest, opts ...grpc.CallOption) (*GetCRMSyncStatusResponse, error)
+	// --- Master Telegram ---
+	SetMasterTelegram(ctx context.Context, in *SetMasterTelegramRequest, opts ...grpc.CallOption) (*SetMasterTelegramResponse, error)
+	GetMasterByTelegram(ctx context.Context, in *GetMasterByTelegramRequest, opts ...grpc.CallOption) (*GetMasterByTelegramResponse, error)
 }
 
 type workshopServiceClient struct {
@@ -769,6 +781,56 @@ func (c *workshopServiceClient) GetClientOrderTimeline(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *workshopServiceClient) CreateOrderFromCRM(ctx context.Context, in *CreateOrderFromCRMRequest, opts ...grpc.CallOption) (*CreateOrderFromCRMResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateOrderFromCRMResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_CreateOrderFromCRM_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) SyncCRMDeals(ctx context.Context, in *SyncCRMDealsRequest, opts ...grpc.CallOption) (*SyncCRMDealsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SyncCRMDealsResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_SyncCRMDeals_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) GetCRMSyncStatus(ctx context.Context, in *GetCRMSyncStatusRequest, opts ...grpc.CallOption) (*GetCRMSyncStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCRMSyncStatusResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_GetCRMSyncStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) SetMasterTelegram(ctx context.Context, in *SetMasterTelegramRequest, opts ...grpc.CallOption) (*SetMasterTelegramResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetMasterTelegramResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_SetMasterTelegram_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) GetMasterByTelegram(ctx context.Context, in *GetMasterByTelegramRequest, opts ...grpc.CallOption) (*GetMasterByTelegramResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMasterByTelegramResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_GetMasterByTelegram_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkshopServiceServer is the server API for WorkshopService service.
 // All implementations must embed UnimplementedWorkshopServiceServer
 // for forward compatibility.
@@ -847,6 +909,13 @@ type WorkshopServiceServer interface {
 	GetClientOrderStatus(context.Context, *GetClientOrderStatusRequest) (*GetClientOrderStatusResponse, error)
 	GetClientOrderPhotos(context.Context, *GetClientOrderPhotosRequest) (*GetClientOrderPhotosResponse, error)
 	GetClientOrderTimeline(context.Context, *GetClientOrderTimelineRequest) (*GetClientOrderTimelineResponse, error)
+	// --- CRM Integration ---
+	CreateOrderFromCRM(context.Context, *CreateOrderFromCRMRequest) (*CreateOrderFromCRMResponse, error)
+	SyncCRMDeals(context.Context, *SyncCRMDealsRequest) (*SyncCRMDealsResponse, error)
+	GetCRMSyncStatus(context.Context, *GetCRMSyncStatusRequest) (*GetCRMSyncStatusResponse, error)
+	// --- Master Telegram ---
+	SetMasterTelegram(context.Context, *SetMasterTelegramRequest) (*SetMasterTelegramResponse, error)
+	GetMasterByTelegram(context.Context, *GetMasterByTelegramRequest) (*GetMasterByTelegramResponse, error)
 	mustEmbedUnimplementedWorkshopServiceServer()
 }
 
@@ -1036,6 +1105,21 @@ func (UnimplementedWorkshopServiceServer) GetClientOrderPhotos(context.Context, 
 }
 func (UnimplementedWorkshopServiceServer) GetClientOrderTimeline(context.Context, *GetClientOrderTimelineRequest) (*GetClientOrderTimelineResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetClientOrderTimeline not implemented")
+}
+func (UnimplementedWorkshopServiceServer) CreateOrderFromCRM(context.Context, *CreateOrderFromCRMRequest) (*CreateOrderFromCRMResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateOrderFromCRM not implemented")
+}
+func (UnimplementedWorkshopServiceServer) SyncCRMDeals(context.Context, *SyncCRMDealsRequest) (*SyncCRMDealsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SyncCRMDeals not implemented")
+}
+func (UnimplementedWorkshopServiceServer) GetCRMSyncStatus(context.Context, *GetCRMSyncStatusRequest) (*GetCRMSyncStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCRMSyncStatus not implemented")
+}
+func (UnimplementedWorkshopServiceServer) SetMasterTelegram(context.Context, *SetMasterTelegramRequest) (*SetMasterTelegramResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetMasterTelegram not implemented")
+}
+func (UnimplementedWorkshopServiceServer) GetMasterByTelegram(context.Context, *GetMasterByTelegramRequest) (*GetMasterByTelegramResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMasterByTelegram not implemented")
 }
 func (UnimplementedWorkshopServiceServer) mustEmbedUnimplementedWorkshopServiceServer() {}
 func (UnimplementedWorkshopServiceServer) testEmbeddedByValue()                         {}
@@ -2138,6 +2222,96 @@ func _WorkshopService_GetClientOrderTimeline_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkshopService_CreateOrderFromCRM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrderFromCRMRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).CreateOrderFromCRM(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_CreateOrderFromCRM_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).CreateOrderFromCRM(ctx, req.(*CreateOrderFromCRMRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_SyncCRMDeals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SyncCRMDealsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).SyncCRMDeals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_SyncCRMDeals_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).SyncCRMDeals(ctx, req.(*SyncCRMDealsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_GetCRMSyncStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCRMSyncStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).GetCRMSyncStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_GetCRMSyncStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).GetCRMSyncStatus(ctx, req.(*GetCRMSyncStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_SetMasterTelegram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetMasterTelegramRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).SetMasterTelegram(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_SetMasterTelegram_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).SetMasterTelegram(ctx, req.(*SetMasterTelegramRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_GetMasterByTelegram_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMasterByTelegramRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).GetMasterByTelegram(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_GetMasterByTelegram_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).GetMasterByTelegram(ctx, req.(*GetMasterByTelegramRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WorkshopService_ServiceDesc is the grpc.ServiceDesc for WorkshopService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2384,6 +2558,26 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetClientOrderTimeline",
 			Handler:    _WorkshopService_GetClientOrderTimeline_Handler,
+		},
+		{
+			MethodName: "CreateOrderFromCRM",
+			Handler:    _WorkshopService_CreateOrderFromCRM_Handler,
+		},
+		{
+			MethodName: "SyncCRMDeals",
+			Handler:    _WorkshopService_SyncCRMDeals_Handler,
+		},
+		{
+			MethodName: "GetCRMSyncStatus",
+			Handler:    _WorkshopService_GetCRMSyncStatus_Handler,
+		},
+		{
+			MethodName: "SetMasterTelegram",
+			Handler:    _WorkshopService_SetMasterTelegram_Handler,
+		},
+		{
+			MethodName: "GetMasterByTelegram",
+			Handler:    _WorkshopService_GetMasterByTelegram_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

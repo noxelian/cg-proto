@@ -98,6 +98,15 @@ service WorkshopService {
   rpc GetClientOrderStatus(GetClientOrderStatusRequest) returns (GetClientOrderStatusResponse);
   rpc GetClientOrderPhotos(GetClientOrderPhotosRequest) returns (GetClientOrderPhotosResponse);
   rpc GetClientOrderTimeline(GetClientOrderTimelineRequest) returns (GetClientOrderTimelineResponse);
+
+  // --- CRM Integration ---
+  rpc CreateOrderFromCRM(CreateOrderFromCRMRequest) returns (CreateOrderFromCRMResponse);
+  rpc SyncCRMDeals(SyncCRMDealsRequest) returns (SyncCRMDealsResponse);
+  rpc GetCRMSyncStatus(GetCRMSyncStatusRequest) returns (GetCRMSyncStatusResponse);
+
+  // --- Master Telegram ---
+  rpc SetMasterTelegram(SetMasterTelegramRequest) returns (SetMasterTelegramResponse);
+  rpc GetMasterByTelegram(GetMasterByTelegramRequest) returns (GetMasterByTelegramResponse);
 }
 
 // =============================================================================
@@ -248,6 +257,7 @@ message Master {
   google.protobuf.Timestamp fired_at = 11;
   google.protobuf.Timestamp created_at = 12;
   google.protobuf.Timestamp updated_at = 13;
+  int64 telegram_chat_id = 14;
 }
 
 message Client {
@@ -655,6 +665,7 @@ message UpdateMasterRequest {
   optional string position = 4;
   optional MasterRole role = 5;
   optional FixSalaryType fix_salary_type = 6;
+  optional int64 telegram_chat_id = 7;
 }
 
 message UpdateMasterResponse {
@@ -1145,4 +1156,67 @@ message TimelineEntry {
   string title = 2;
   string description = 3;
   google.protobuf.Timestamp timestamp = 4;
+}
+
+// =============================================================================
+// CRM Integration RPCs
+// =============================================================================
+
+message CreateOrderFromCRMRequest {
+  int64 workshop_id = 1;
+  string crm_lead_id = 2;
+  string client_name = 3;
+  string client_phone = 4;
+  string car_model = 5;
+  string license_plate = 6;
+  int64 price = 7;
+  string description = 8;
+  map<string, string> crm_metadata = 9;
+}
+
+message CreateOrderFromCRMResponse {
+  RepairOrder order = 1;
+  bool already_exists = 2;
+}
+
+message SyncCRMDealsRequest {
+  int64 workshop_id = 1;
+  int64 pipeline_id = 2;
+}
+
+message SyncCRMDealsResponse {
+  int32 synced = 1;
+  int32 skipped = 2;
+  int32 errors = 3;
+}
+
+message GetCRMSyncStatusRequest {
+  int64 workshop_id = 1;
+}
+
+message GetCRMSyncStatusResponse {
+  google.protobuf.Timestamp last_sync_at = 1;
+  int32 total_synced = 2;
+  string status = 3;
+}
+
+// =============================================================================
+// Master Telegram RPCs
+// =============================================================================
+
+message SetMasterTelegramRequest {
+  int64 master_id = 1;
+  int64 telegram_chat_id = 2;
+}
+
+message SetMasterTelegramResponse {
+  Master master = 1;
+}
+
+message GetMasterByTelegramRequest {
+  int64 telegram_chat_id = 1;
+}
+
+message GetMasterByTelegramResponse {
+  Master master = 1;
 }
