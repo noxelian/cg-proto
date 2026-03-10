@@ -41,6 +41,11 @@ service WorkshopService {
   rpc FireMaster(FireMasterRequest) returns (FireMasterResponse);
   rpc ListMasters(ListMastersRequest) returns (ListMastersResponse);
 
+  // --- Master Rates ---
+  rpc SetMasterHourRate(SetMasterHourRateRequest) returns (SetMasterHourRateResponse);
+  rpc SetMasterFixSalary(SetMasterFixSalaryRequest) returns (SetMasterFixSalaryResponse);
+  rpc GetMasterRateHistory(GetMasterRateHistoryRequest) returns (GetMasterRateHistoryResponse);
+
   // --- Salary ---
   rpc CalculateSalary(CalculateSalaryRequest) returns (CalculateSalaryResponse);
   rpc GetSalaryBreakdown(GetSalaryBreakdownRequest) returns (GetSalaryBreakdownResponse);
@@ -319,6 +324,24 @@ message SalaryAdjustment {
   int64 amount = 3;
   string reason = 4;
   google.protobuf.Timestamp created_at = 5;
+}
+
+message MasterHourRate {
+  int64 id = 1;
+  int64 master_id = 2;
+  int64 hour_price = 3;
+  google.protobuf.Timestamp effective_from = 4;
+  int64 created_by = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+message MasterFixSalary {
+  int64 id = 1;
+  int64 master_id = 2;
+  int64 amount = 3;
+  google.protobuf.Timestamp effective_from = 4;
+  int64 created_by = 5;
+  google.protobuf.Timestamp created_at = 6;
 }
 
 // =============================================================================
@@ -669,6 +692,39 @@ message DeleteFineRequest {
 }
 
 message DeleteFineResponse {}
+
+// =============================================================================
+// Master Rate RPCs
+// =============================================================================
+
+message SetMasterHourRateRequest {
+  int64 master_id = 1;
+  int64 hour_price = 2;
+  google.protobuf.Timestamp effective_from = 3;
+}
+
+message SetMasterHourRateResponse {
+  MasterHourRate rate = 1;
+}
+
+message SetMasterFixSalaryRequest {
+  int64 master_id = 1;
+  int64 amount = 2;
+  google.protobuf.Timestamp effective_from = 3;
+}
+
+message SetMasterFixSalaryResponse {
+  MasterFixSalary rate = 1;
+}
+
+message GetMasterRateHistoryRequest {
+  int64 master_id = 1;
+}
+
+message GetMasterRateHistoryResponse {
+  repeated MasterHourRate hour_rates = 1;
+  repeated MasterFixSalary fix_salaries = 2;
+}
 
 // =============================================================================
 // Outsource RPCs

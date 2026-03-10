@@ -41,6 +41,9 @@ const (
 	WorkshopService_UpdateMaster_FullMethodName            = "/workshop.v1.WorkshopService/UpdateMaster"
 	WorkshopService_FireMaster_FullMethodName              = "/workshop.v1.WorkshopService/FireMaster"
 	WorkshopService_ListMasters_FullMethodName             = "/workshop.v1.WorkshopService/ListMasters"
+	WorkshopService_SetMasterHourRate_FullMethodName       = "/workshop.v1.WorkshopService/SetMasterHourRate"
+	WorkshopService_SetMasterFixSalary_FullMethodName      = "/workshop.v1.WorkshopService/SetMasterFixSalary"
+	WorkshopService_GetMasterRateHistory_FullMethodName    = "/workshop.v1.WorkshopService/GetMasterRateHistory"
 	WorkshopService_CalculateSalary_FullMethodName         = "/workshop.v1.WorkshopService/CalculateSalary"
 	WorkshopService_GetSalaryBreakdown_FullMethodName      = "/workshop.v1.WorkshopService/GetSalaryBreakdown"
 	WorkshopService_CreateBonus_FullMethodName             = "/workshop.v1.WorkshopService/CreateBonus"
@@ -100,6 +103,10 @@ type WorkshopServiceClient interface {
 	UpdateMaster(ctx context.Context, in *UpdateMasterRequest, opts ...grpc.CallOption) (*UpdateMasterResponse, error)
 	FireMaster(ctx context.Context, in *FireMasterRequest, opts ...grpc.CallOption) (*FireMasterResponse, error)
 	ListMasters(ctx context.Context, in *ListMastersRequest, opts ...grpc.CallOption) (*ListMastersResponse, error)
+	// --- Master Rates ---
+	SetMasterHourRate(ctx context.Context, in *SetMasterHourRateRequest, opts ...grpc.CallOption) (*SetMasterHourRateResponse, error)
+	SetMasterFixSalary(ctx context.Context, in *SetMasterFixSalaryRequest, opts ...grpc.CallOption) (*SetMasterFixSalaryResponse, error)
+	GetMasterRateHistory(ctx context.Context, in *GetMasterRateHistoryRequest, opts ...grpc.CallOption) (*GetMasterRateHistoryResponse, error)
 	// --- Salary ---
 	CalculateSalary(ctx context.Context, in *CalculateSalaryRequest, opts ...grpc.CallOption) (*CalculateSalaryResponse, error)
 	GetSalaryBreakdown(ctx context.Context, in *GetSalaryBreakdownRequest, opts ...grpc.CallOption) (*GetSalaryBreakdownResponse, error)
@@ -359,6 +366,36 @@ func (c *workshopServiceClient) ListMasters(ctx context.Context, in *ListMasters
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListMastersResponse)
 	err := c.cc.Invoke(ctx, WorkshopService_ListMasters_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) SetMasterHourRate(ctx context.Context, in *SetMasterHourRateRequest, opts ...grpc.CallOption) (*SetMasterHourRateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetMasterHourRateResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_SetMasterHourRate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) SetMasterFixSalary(ctx context.Context, in *SetMasterFixSalaryRequest, opts ...grpc.CallOption) (*SetMasterFixSalaryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetMasterFixSalaryResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_SetMasterFixSalary_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) GetMasterRateHistory(ctx context.Context, in *GetMasterRateHistoryRequest, opts ...grpc.CallOption) (*GetMasterRateHistoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMasterRateHistoryResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_GetMasterRateHistory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -665,6 +702,10 @@ type WorkshopServiceServer interface {
 	UpdateMaster(context.Context, *UpdateMasterRequest) (*UpdateMasterResponse, error)
 	FireMaster(context.Context, *FireMasterRequest) (*FireMasterResponse, error)
 	ListMasters(context.Context, *ListMastersRequest) (*ListMastersResponse, error)
+	// --- Master Rates ---
+	SetMasterHourRate(context.Context, *SetMasterHourRateRequest) (*SetMasterHourRateResponse, error)
+	SetMasterFixSalary(context.Context, *SetMasterFixSalaryRequest) (*SetMasterFixSalaryResponse, error)
+	GetMasterRateHistory(context.Context, *GetMasterRateHistoryRequest) (*GetMasterRateHistoryResponse, error)
 	// --- Salary ---
 	CalculateSalary(context.Context, *CalculateSalaryRequest) (*CalculateSalaryResponse, error)
 	GetSalaryBreakdown(context.Context, *GetSalaryBreakdownRequest) (*GetSalaryBreakdownResponse, error)
@@ -775,6 +816,15 @@ func (UnimplementedWorkshopServiceServer) FireMaster(context.Context, *FireMaste
 }
 func (UnimplementedWorkshopServiceServer) ListMasters(context.Context, *ListMastersRequest) (*ListMastersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMasters not implemented")
+}
+func (UnimplementedWorkshopServiceServer) SetMasterHourRate(context.Context, *SetMasterHourRateRequest) (*SetMasterHourRateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetMasterHourRate not implemented")
+}
+func (UnimplementedWorkshopServiceServer) SetMasterFixSalary(context.Context, *SetMasterFixSalaryRequest) (*SetMasterFixSalaryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetMasterFixSalary not implemented")
+}
+func (UnimplementedWorkshopServiceServer) GetMasterRateHistory(context.Context, *GetMasterRateHistoryRequest) (*GetMasterRateHistoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMasterRateHistory not implemented")
 }
 func (UnimplementedWorkshopServiceServer) CalculateSalary(context.Context, *CalculateSalaryRequest) (*CalculateSalaryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CalculateSalary not implemented")
@@ -1270,6 +1320,60 @@ func _WorkshopService_ListMasters_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WorkshopServiceServer).ListMasters(ctx, req.(*ListMastersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_SetMasterHourRate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetMasterHourRateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).SetMasterHourRate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_SetMasterHourRate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).SetMasterHourRate(ctx, req.(*SetMasterHourRateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_SetMasterFixSalary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetMasterFixSalaryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).SetMasterFixSalary(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_SetMasterFixSalary_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).SetMasterFixSalary(ctx, req.(*SetMasterFixSalaryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_GetMasterRateHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMasterRateHistoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).GetMasterRateHistory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_GetMasterRateHistory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).GetMasterRateHistory(ctx, req.(*GetMasterRateHistoryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1854,6 +1958,18 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListMasters",
 			Handler:    _WorkshopService_ListMasters_Handler,
+		},
+		{
+			MethodName: "SetMasterHourRate",
+			Handler:    _WorkshopService_SetMasterHourRate_Handler,
+		},
+		{
+			MethodName: "SetMasterFixSalary",
+			Handler:    _WorkshopService_SetMasterFixSalary_Handler,
+		},
+		{
+			MethodName: "GetMasterRateHistory",
+			Handler:    _WorkshopService_GetMasterRateHistory_Handler,
 		},
 		{
 			MethodName: "CalculateSalary",
