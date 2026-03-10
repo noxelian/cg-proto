@@ -84,6 +84,16 @@ service WorkshopService {
   // --- Status History ---
   rpc ListStatusHistory(ListStatusHistoryRequest) returns (ListStatusHistoryResponse);
 
+  // --- Materials ---
+  rpc CreateMaterial(CreateMaterialRequest) returns (CreateMaterialResponse);
+  rpc UpdateMaterial(UpdateMaterialRequest) returns (UpdateMaterialResponse);
+  rpc ListMaterials(ListMaterialsRequest) returns (ListMaterialsResponse);
+  rpc AddMaterialStock(AddMaterialStockRequest) returns (AddMaterialStockResponse);
+  rpc WriteOffMaterial(WriteOffMaterialRequest) returns (WriteOffMaterialResponse);
+  rpc GetMaterialStock(GetMaterialStockRequest) returns (GetMaterialStockResponse);
+  rpc ListMaterialTransactions(ListMaterialTransactionsRequest) returns (ListMaterialTransactionsResponse);
+  rpc GetMasterMaterialExpenses(GetMasterMaterialExpensesRequest) returns (GetMasterMaterialExpensesResponse);
+
   // --- Client API (for mobile app) ---
   rpc GetClientOrderStatus(GetClientOrderStatusRequest) returns (GetClientOrderStatusResponse);
   rpc GetClientOrderPhotos(GetClientOrderPhotosRequest) returns (GetClientOrderPhotosResponse);
@@ -140,6 +150,21 @@ enum CommentType {
   COMMENT_TYPE_UNSPECIFIED = 0;
   COMMENT_TYPE_INTERNAL = 1;
   COMMENT_TYPE_CLIENT_VISIBLE = 2;
+}
+
+enum MaterialUnit {
+  MATERIAL_UNIT_UNSPECIFIED = 0;
+  MATERIAL_UNIT_PCS = 1;
+  MATERIAL_UNIT_GRAM = 2;
+  MATERIAL_UNIT_KG = 3;
+  MATERIAL_UNIT_LITER = 4;
+  MATERIAL_UNIT_METER = 5;
+}
+
+enum MaterialTransactionType {
+  MATERIAL_TRANSACTION_TYPE_UNSPECIFIED = 0;
+  MATERIAL_TRANSACTION_TYPE_INCOME = 1;
+  MATERIAL_TRANSACTION_TYPE_EXPENSE = 2;
 }
 
 // =============================================================================
@@ -316,6 +341,7 @@ message SalaryBreakdown {
   int64 debts = 13;
   int64 total = 14;
   repeated SalaryAdjustment adjustments = 15;
+  int64 material_expenses = 16;
 }
 
 message SalaryAdjustment {
@@ -342,6 +368,41 @@ message MasterFixSalary {
   google.protobuf.Timestamp effective_from = 4;
   int64 created_by = 5;
   google.protobuf.Timestamp created_at = 6;
+}
+
+message Material {
+  int64 id = 1;
+  int64 workshop_id = 2;
+  string name = 3;
+  MaterialUnit unit = 4;
+  bool is_active = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message MaterialStock {
+  int64 material_id = 1;
+  int64 workshop_id = 2;
+  double quantity = 3;
+  google.protobuf.Timestamp updated_at = 4;
+  Material material = 5;
+}
+
+message MaterialTransaction {
+  int64 id = 1;
+  int64 material_id = 2;
+  int64 workshop_id = 3;
+  MaterialTransactionType type = 4;
+  double quantity = 5;
+  int64 unit_price = 6;
+  int64 total_price = 7;
+  int64 master_id = 8;
+  int64 repair_order_id = 9;
+  int64 performed_by = 10;
+  string comment = 11;
+  google.protobuf.Timestamp created_at = 12;
+  string material_name = 13;
+  string master_name = 14;
 }
 
 // =============================================================================
@@ -946,6 +1007,103 @@ message ListStatusHistoryRequest {
 
 message ListStatusHistoryResponse {
   repeated StatusHistoryEntry entries = 1;
+}
+
+// =============================================================================
+// Material RPCs
+// =============================================================================
+
+message CreateMaterialRequest {
+  int64 workshop_id = 1;
+  string name = 2;
+  MaterialUnit unit = 3;
+}
+
+message CreateMaterialResponse {
+  Material material = 1;
+}
+
+message UpdateMaterialRequest {
+  int64 material_id = 1;
+  optional string name = 2;
+  optional bool is_active = 3;
+  optional MaterialUnit unit = 4;
+}
+
+message UpdateMaterialResponse {
+  Material material = 1;
+}
+
+message ListMaterialsRequest {
+  int64 workshop_id = 1;
+  bool active_only = 2;
+}
+
+message ListMaterialsResponse {
+  repeated Material materials = 1;
+}
+
+message AddMaterialStockRequest {
+  int64 material_id = 1;
+  int64 workshop_id = 2;
+  double quantity = 3;
+  int64 unit_price = 4;
+  string comment = 5;
+}
+
+message AddMaterialStockResponse {
+  MaterialTransaction transaction = 1;
+  MaterialStock stock = 2;
+}
+
+message WriteOffMaterialRequest {
+  int64 material_id = 1;
+  int64 workshop_id = 2;
+  double quantity = 3;
+  int64 unit_price = 4;
+  int64 master_id = 5;
+  int64 repair_order_id = 6;
+  string comment = 7;
+}
+
+message WriteOffMaterialResponse {
+  MaterialTransaction transaction = 1;
+  MaterialStock stock = 2;
+}
+
+message GetMaterialStockRequest {
+  int64 workshop_id = 1;
+}
+
+message GetMaterialStockResponse {
+  repeated MaterialStock items = 1;
+}
+
+message ListMaterialTransactionsRequest {
+  int64 workshop_id = 1;
+  int64 material_id = 2;
+  int64 master_id = 3;
+  MaterialTransactionType type = 4;
+  google.protobuf.Timestamp from = 5;
+  google.protobuf.Timestamp to = 6;
+  int32 page = 7;
+  int32 page_size = 8;
+}
+
+message ListMaterialTransactionsResponse {
+  repeated MaterialTransaction transactions = 1;
+  int32 total = 2;
+}
+
+message GetMasterMaterialExpensesRequest {
+  int64 master_id = 1;
+  int32 year = 2;
+  int32 month = 3;
+}
+
+message GetMasterMaterialExpensesResponse {
+  int64 total_expenses = 1;
+  repeated MaterialTransaction transactions = 2;
 }
 
 // =============================================================================

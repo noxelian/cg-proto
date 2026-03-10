@@ -19,58 +19,66 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	WorkshopService_CreateWorkshop_FullMethodName          = "/workshop.v1.WorkshopService/CreateWorkshop"
-	WorkshopService_GetWorkshop_FullMethodName             = "/workshop.v1.WorkshopService/GetWorkshop"
-	WorkshopService_UpdateWorkshop_FullMethodName          = "/workshop.v1.WorkshopService/UpdateWorkshop"
-	WorkshopService_ListWorkshops_FullMethodName           = "/workshop.v1.WorkshopService/ListWorkshops"
-	WorkshopService_CreateRepairOrder_FullMethodName       = "/workshop.v1.WorkshopService/CreateRepairOrder"
-	WorkshopService_GetRepairOrder_FullMethodName          = "/workshop.v1.WorkshopService/GetRepairOrder"
-	WorkshopService_UpdateRepairOrder_FullMethodName       = "/workshop.v1.WorkshopService/UpdateRepairOrder"
-	WorkshopService_UpdateRepairOrderStatus_FullMethodName = "/workshop.v1.WorkshopService/UpdateRepairOrderStatus"
-	WorkshopService_ListRepairOrders_FullMethodName        = "/workshop.v1.WorkshopService/ListRepairOrders"
-	WorkshopService_GetKanban_FullMethodName               = "/workshop.v1.WorkshopService/GetKanban"
-	WorkshopService_CreateCarWork_FullMethodName           = "/workshop.v1.WorkshopService/CreateCarWork"
-	WorkshopService_UpdateCarWork_FullMethodName           = "/workshop.v1.WorkshopService/UpdateCarWork"
-	WorkshopService_DeleteCarWork_FullMethodName           = "/workshop.v1.WorkshopService/DeleteCarWork"
-	WorkshopService_ListCarWorks_FullMethodName            = "/workshop.v1.WorkshopService/ListCarWorks"
-	WorkshopService_MarkCarWorkDone_FullMethodName         = "/workshop.v1.WorkshopService/MarkCarWorkDone"
-	WorkshopService_ClockIn_FullMethodName                 = "/workshop.v1.WorkshopService/ClockIn"
-	WorkshopService_ClockOut_FullMethodName                = "/workshop.v1.WorkshopService/ClockOut"
-	WorkshopService_CreateMaster_FullMethodName            = "/workshop.v1.WorkshopService/CreateMaster"
-	WorkshopService_GetMaster_FullMethodName               = "/workshop.v1.WorkshopService/GetMaster"
-	WorkshopService_UpdateMaster_FullMethodName            = "/workshop.v1.WorkshopService/UpdateMaster"
-	WorkshopService_FireMaster_FullMethodName              = "/workshop.v1.WorkshopService/FireMaster"
-	WorkshopService_ListMasters_FullMethodName             = "/workshop.v1.WorkshopService/ListMasters"
-	WorkshopService_SetMasterHourRate_FullMethodName       = "/workshop.v1.WorkshopService/SetMasterHourRate"
-	WorkshopService_SetMasterFixSalary_FullMethodName      = "/workshop.v1.WorkshopService/SetMasterFixSalary"
-	WorkshopService_GetMasterRateHistory_FullMethodName    = "/workshop.v1.WorkshopService/GetMasterRateHistory"
-	WorkshopService_CalculateSalary_FullMethodName         = "/workshop.v1.WorkshopService/CalculateSalary"
-	WorkshopService_GetSalaryBreakdown_FullMethodName      = "/workshop.v1.WorkshopService/GetSalaryBreakdown"
-	WorkshopService_CreateBonus_FullMethodName             = "/workshop.v1.WorkshopService/CreateBonus"
-	WorkshopService_CreateFine_FullMethodName              = "/workshop.v1.WorkshopService/CreateFine"
-	WorkshopService_CreateAdvance_FullMethodName           = "/workshop.v1.WorkshopService/CreateAdvance"
-	WorkshopService_DeleteBonus_FullMethodName             = "/workshop.v1.WorkshopService/DeleteBonus"
-	WorkshopService_DeleteFine_FullMethodName              = "/workshop.v1.WorkshopService/DeleteFine"
-	WorkshopService_PublishOutsource_FullMethodName        = "/workshop.v1.WorkshopService/PublishOutsource"
-	WorkshopService_AcceptOutsource_FullMethodName         = "/workshop.v1.WorkshopService/AcceptOutsource"
-	WorkshopService_ListOutsourceRequests_FullMethodName   = "/workshop.v1.WorkshopService/ListOutsourceRequests"
-	WorkshopService_GetOutsourceKanban_FullMethodName      = "/workshop.v1.WorkshopService/GetOutsourceKanban"
-	WorkshopService_UpdateOutsourceStatus_FullMethodName   = "/workshop.v1.WorkshopService/UpdateOutsourceStatus"
-	WorkshopService_GetWorkshopStats_FullMethodName        = "/workshop.v1.WorkshopService/GetWorkshopStats"
-	WorkshopService_GetMasterPerformance_FullMethodName    = "/workshop.v1.WorkshopService/GetMasterPerformance"
-	WorkshopService_GetDailyReport_FullMethodName          = "/workshop.v1.WorkshopService/GetDailyReport"
-	WorkshopService_AddComment_FullMethodName              = "/workshop.v1.WorkshopService/AddComment"
-	WorkshopService_ListComments_FullMethodName            = "/workshop.v1.WorkshopService/ListComments"
-	WorkshopService_UploadPhoto_FullMethodName             = "/workshop.v1.WorkshopService/UploadPhoto"
-	WorkshopService_ListPhotos_FullMethodName              = "/workshop.v1.WorkshopService/ListPhotos"
-	WorkshopService_DeletePhoto_FullMethodName             = "/workshop.v1.WorkshopService/DeletePhoto"
-	WorkshopService_GetQCChecklist_FullMethodName          = "/workshop.v1.WorkshopService/GetQCChecklist"
-	WorkshopService_SubmitQCChecklist_FullMethodName       = "/workshop.v1.WorkshopService/SubmitQCChecklist"
-	WorkshopService_RejectQCItem_FullMethodName            = "/workshop.v1.WorkshopService/RejectQCItem"
-	WorkshopService_ListStatusHistory_FullMethodName       = "/workshop.v1.WorkshopService/ListStatusHistory"
-	WorkshopService_GetClientOrderStatus_FullMethodName    = "/workshop.v1.WorkshopService/GetClientOrderStatus"
-	WorkshopService_GetClientOrderPhotos_FullMethodName    = "/workshop.v1.WorkshopService/GetClientOrderPhotos"
-	WorkshopService_GetClientOrderTimeline_FullMethodName  = "/workshop.v1.WorkshopService/GetClientOrderTimeline"
+	WorkshopService_CreateWorkshop_FullMethodName            = "/workshop.v1.WorkshopService/CreateWorkshop"
+	WorkshopService_GetWorkshop_FullMethodName               = "/workshop.v1.WorkshopService/GetWorkshop"
+	WorkshopService_UpdateWorkshop_FullMethodName            = "/workshop.v1.WorkshopService/UpdateWorkshop"
+	WorkshopService_ListWorkshops_FullMethodName             = "/workshop.v1.WorkshopService/ListWorkshops"
+	WorkshopService_CreateRepairOrder_FullMethodName         = "/workshop.v1.WorkshopService/CreateRepairOrder"
+	WorkshopService_GetRepairOrder_FullMethodName            = "/workshop.v1.WorkshopService/GetRepairOrder"
+	WorkshopService_UpdateRepairOrder_FullMethodName         = "/workshop.v1.WorkshopService/UpdateRepairOrder"
+	WorkshopService_UpdateRepairOrderStatus_FullMethodName   = "/workshop.v1.WorkshopService/UpdateRepairOrderStatus"
+	WorkshopService_ListRepairOrders_FullMethodName          = "/workshop.v1.WorkshopService/ListRepairOrders"
+	WorkshopService_GetKanban_FullMethodName                 = "/workshop.v1.WorkshopService/GetKanban"
+	WorkshopService_CreateCarWork_FullMethodName             = "/workshop.v1.WorkshopService/CreateCarWork"
+	WorkshopService_UpdateCarWork_FullMethodName             = "/workshop.v1.WorkshopService/UpdateCarWork"
+	WorkshopService_DeleteCarWork_FullMethodName             = "/workshop.v1.WorkshopService/DeleteCarWork"
+	WorkshopService_ListCarWorks_FullMethodName              = "/workshop.v1.WorkshopService/ListCarWorks"
+	WorkshopService_MarkCarWorkDone_FullMethodName           = "/workshop.v1.WorkshopService/MarkCarWorkDone"
+	WorkshopService_ClockIn_FullMethodName                   = "/workshop.v1.WorkshopService/ClockIn"
+	WorkshopService_ClockOut_FullMethodName                  = "/workshop.v1.WorkshopService/ClockOut"
+	WorkshopService_CreateMaster_FullMethodName              = "/workshop.v1.WorkshopService/CreateMaster"
+	WorkshopService_GetMaster_FullMethodName                 = "/workshop.v1.WorkshopService/GetMaster"
+	WorkshopService_UpdateMaster_FullMethodName              = "/workshop.v1.WorkshopService/UpdateMaster"
+	WorkshopService_FireMaster_FullMethodName                = "/workshop.v1.WorkshopService/FireMaster"
+	WorkshopService_ListMasters_FullMethodName               = "/workshop.v1.WorkshopService/ListMasters"
+	WorkshopService_SetMasterHourRate_FullMethodName         = "/workshop.v1.WorkshopService/SetMasterHourRate"
+	WorkshopService_SetMasterFixSalary_FullMethodName        = "/workshop.v1.WorkshopService/SetMasterFixSalary"
+	WorkshopService_GetMasterRateHistory_FullMethodName      = "/workshop.v1.WorkshopService/GetMasterRateHistory"
+	WorkshopService_CalculateSalary_FullMethodName           = "/workshop.v1.WorkshopService/CalculateSalary"
+	WorkshopService_GetSalaryBreakdown_FullMethodName        = "/workshop.v1.WorkshopService/GetSalaryBreakdown"
+	WorkshopService_CreateBonus_FullMethodName               = "/workshop.v1.WorkshopService/CreateBonus"
+	WorkshopService_CreateFine_FullMethodName                = "/workshop.v1.WorkshopService/CreateFine"
+	WorkshopService_CreateAdvance_FullMethodName             = "/workshop.v1.WorkshopService/CreateAdvance"
+	WorkshopService_DeleteBonus_FullMethodName               = "/workshop.v1.WorkshopService/DeleteBonus"
+	WorkshopService_DeleteFine_FullMethodName                = "/workshop.v1.WorkshopService/DeleteFine"
+	WorkshopService_PublishOutsource_FullMethodName          = "/workshop.v1.WorkshopService/PublishOutsource"
+	WorkshopService_AcceptOutsource_FullMethodName           = "/workshop.v1.WorkshopService/AcceptOutsource"
+	WorkshopService_ListOutsourceRequests_FullMethodName     = "/workshop.v1.WorkshopService/ListOutsourceRequests"
+	WorkshopService_GetOutsourceKanban_FullMethodName        = "/workshop.v1.WorkshopService/GetOutsourceKanban"
+	WorkshopService_UpdateOutsourceStatus_FullMethodName     = "/workshop.v1.WorkshopService/UpdateOutsourceStatus"
+	WorkshopService_GetWorkshopStats_FullMethodName          = "/workshop.v1.WorkshopService/GetWorkshopStats"
+	WorkshopService_GetMasterPerformance_FullMethodName      = "/workshop.v1.WorkshopService/GetMasterPerformance"
+	WorkshopService_GetDailyReport_FullMethodName            = "/workshop.v1.WorkshopService/GetDailyReport"
+	WorkshopService_AddComment_FullMethodName                = "/workshop.v1.WorkshopService/AddComment"
+	WorkshopService_ListComments_FullMethodName              = "/workshop.v1.WorkshopService/ListComments"
+	WorkshopService_UploadPhoto_FullMethodName               = "/workshop.v1.WorkshopService/UploadPhoto"
+	WorkshopService_ListPhotos_FullMethodName                = "/workshop.v1.WorkshopService/ListPhotos"
+	WorkshopService_DeletePhoto_FullMethodName               = "/workshop.v1.WorkshopService/DeletePhoto"
+	WorkshopService_GetQCChecklist_FullMethodName            = "/workshop.v1.WorkshopService/GetQCChecklist"
+	WorkshopService_SubmitQCChecklist_FullMethodName         = "/workshop.v1.WorkshopService/SubmitQCChecklist"
+	WorkshopService_RejectQCItem_FullMethodName              = "/workshop.v1.WorkshopService/RejectQCItem"
+	WorkshopService_ListStatusHistory_FullMethodName         = "/workshop.v1.WorkshopService/ListStatusHistory"
+	WorkshopService_CreateMaterial_FullMethodName            = "/workshop.v1.WorkshopService/CreateMaterial"
+	WorkshopService_UpdateMaterial_FullMethodName            = "/workshop.v1.WorkshopService/UpdateMaterial"
+	WorkshopService_ListMaterials_FullMethodName             = "/workshop.v1.WorkshopService/ListMaterials"
+	WorkshopService_AddMaterialStock_FullMethodName          = "/workshop.v1.WorkshopService/AddMaterialStock"
+	WorkshopService_WriteOffMaterial_FullMethodName          = "/workshop.v1.WorkshopService/WriteOffMaterial"
+	WorkshopService_GetMaterialStock_FullMethodName          = "/workshop.v1.WorkshopService/GetMaterialStock"
+	WorkshopService_ListMaterialTransactions_FullMethodName  = "/workshop.v1.WorkshopService/ListMaterialTransactions"
+	WorkshopService_GetMasterMaterialExpenses_FullMethodName = "/workshop.v1.WorkshopService/GetMasterMaterialExpenses"
+	WorkshopService_GetClientOrderStatus_FullMethodName      = "/workshop.v1.WorkshopService/GetClientOrderStatus"
+	WorkshopService_GetClientOrderPhotos_FullMethodName      = "/workshop.v1.WorkshopService/GetClientOrderPhotos"
+	WorkshopService_GetClientOrderTimeline_FullMethodName    = "/workshop.v1.WorkshopService/GetClientOrderTimeline"
 )
 
 // WorkshopServiceClient is the client API for WorkshopService service.
@@ -138,6 +146,15 @@ type WorkshopServiceClient interface {
 	RejectQCItem(ctx context.Context, in *RejectQCItemRequest, opts ...grpc.CallOption) (*RejectQCItemResponse, error)
 	// --- Status History ---
 	ListStatusHistory(ctx context.Context, in *ListStatusHistoryRequest, opts ...grpc.CallOption) (*ListStatusHistoryResponse, error)
+	// --- Materials ---
+	CreateMaterial(ctx context.Context, in *CreateMaterialRequest, opts ...grpc.CallOption) (*CreateMaterialResponse, error)
+	UpdateMaterial(ctx context.Context, in *UpdateMaterialRequest, opts ...grpc.CallOption) (*UpdateMaterialResponse, error)
+	ListMaterials(ctx context.Context, in *ListMaterialsRequest, opts ...grpc.CallOption) (*ListMaterialsResponse, error)
+	AddMaterialStock(ctx context.Context, in *AddMaterialStockRequest, opts ...grpc.CallOption) (*AddMaterialStockResponse, error)
+	WriteOffMaterial(ctx context.Context, in *WriteOffMaterialRequest, opts ...grpc.CallOption) (*WriteOffMaterialResponse, error)
+	GetMaterialStock(ctx context.Context, in *GetMaterialStockRequest, opts ...grpc.CallOption) (*GetMaterialStockResponse, error)
+	ListMaterialTransactions(ctx context.Context, in *ListMaterialTransactionsRequest, opts ...grpc.CallOption) (*ListMaterialTransactionsResponse, error)
+	GetMasterMaterialExpenses(ctx context.Context, in *GetMasterMaterialExpensesRequest, opts ...grpc.CallOption) (*GetMasterMaterialExpensesResponse, error)
 	// --- Client API (for mobile app) ---
 	GetClientOrderStatus(ctx context.Context, in *GetClientOrderStatusRequest, opts ...grpc.CallOption) (*GetClientOrderStatusResponse, error)
 	GetClientOrderPhotos(ctx context.Context, in *GetClientOrderPhotosRequest, opts ...grpc.CallOption) (*GetClientOrderPhotosResponse, error)
@@ -642,6 +659,86 @@ func (c *workshopServiceClient) ListStatusHistory(ctx context.Context, in *ListS
 	return out, nil
 }
 
+func (c *workshopServiceClient) CreateMaterial(ctx context.Context, in *CreateMaterialRequest, opts ...grpc.CallOption) (*CreateMaterialResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateMaterialResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_CreateMaterial_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) UpdateMaterial(ctx context.Context, in *UpdateMaterialRequest, opts ...grpc.CallOption) (*UpdateMaterialResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateMaterialResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_UpdateMaterial_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) ListMaterials(ctx context.Context, in *ListMaterialsRequest, opts ...grpc.CallOption) (*ListMaterialsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMaterialsResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_ListMaterials_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) AddMaterialStock(ctx context.Context, in *AddMaterialStockRequest, opts ...grpc.CallOption) (*AddMaterialStockResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddMaterialStockResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_AddMaterialStock_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) WriteOffMaterial(ctx context.Context, in *WriteOffMaterialRequest, opts ...grpc.CallOption) (*WriteOffMaterialResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WriteOffMaterialResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_WriteOffMaterial_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) GetMaterialStock(ctx context.Context, in *GetMaterialStockRequest, opts ...grpc.CallOption) (*GetMaterialStockResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMaterialStockResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_GetMaterialStock_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) ListMaterialTransactions(ctx context.Context, in *ListMaterialTransactionsRequest, opts ...grpc.CallOption) (*ListMaterialTransactionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMaterialTransactionsResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_ListMaterialTransactions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) GetMasterMaterialExpenses(ctx context.Context, in *GetMasterMaterialExpensesRequest, opts ...grpc.CallOption) (*GetMasterMaterialExpensesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMasterMaterialExpensesResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_GetMasterMaterialExpenses_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *workshopServiceClient) GetClientOrderStatus(ctx context.Context, in *GetClientOrderStatusRequest, opts ...grpc.CallOption) (*GetClientOrderStatusResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetClientOrderStatusResponse)
@@ -737,6 +834,15 @@ type WorkshopServiceServer interface {
 	RejectQCItem(context.Context, *RejectQCItemRequest) (*RejectQCItemResponse, error)
 	// --- Status History ---
 	ListStatusHistory(context.Context, *ListStatusHistoryRequest) (*ListStatusHistoryResponse, error)
+	// --- Materials ---
+	CreateMaterial(context.Context, *CreateMaterialRequest) (*CreateMaterialResponse, error)
+	UpdateMaterial(context.Context, *UpdateMaterialRequest) (*UpdateMaterialResponse, error)
+	ListMaterials(context.Context, *ListMaterialsRequest) (*ListMaterialsResponse, error)
+	AddMaterialStock(context.Context, *AddMaterialStockRequest) (*AddMaterialStockResponse, error)
+	WriteOffMaterial(context.Context, *WriteOffMaterialRequest) (*WriteOffMaterialResponse, error)
+	GetMaterialStock(context.Context, *GetMaterialStockRequest) (*GetMaterialStockResponse, error)
+	ListMaterialTransactions(context.Context, *ListMaterialTransactionsRequest) (*ListMaterialTransactionsResponse, error)
+	GetMasterMaterialExpenses(context.Context, *GetMasterMaterialExpensesRequest) (*GetMasterMaterialExpensesResponse, error)
 	// --- Client API (for mobile app) ---
 	GetClientOrderStatus(context.Context, *GetClientOrderStatusRequest) (*GetClientOrderStatusResponse, error)
 	GetClientOrderPhotos(context.Context, *GetClientOrderPhotosRequest) (*GetClientOrderPhotosResponse, error)
@@ -897,6 +1003,30 @@ func (UnimplementedWorkshopServiceServer) RejectQCItem(context.Context, *RejectQ
 }
 func (UnimplementedWorkshopServiceServer) ListStatusHistory(context.Context, *ListStatusHistoryRequest) (*ListStatusHistoryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListStatusHistory not implemented")
+}
+func (UnimplementedWorkshopServiceServer) CreateMaterial(context.Context, *CreateMaterialRequest) (*CreateMaterialResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateMaterial not implemented")
+}
+func (UnimplementedWorkshopServiceServer) UpdateMaterial(context.Context, *UpdateMaterialRequest) (*UpdateMaterialResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateMaterial not implemented")
+}
+func (UnimplementedWorkshopServiceServer) ListMaterials(context.Context, *ListMaterialsRequest) (*ListMaterialsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMaterials not implemented")
+}
+func (UnimplementedWorkshopServiceServer) AddMaterialStock(context.Context, *AddMaterialStockRequest) (*AddMaterialStockResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddMaterialStock not implemented")
+}
+func (UnimplementedWorkshopServiceServer) WriteOffMaterial(context.Context, *WriteOffMaterialRequest) (*WriteOffMaterialResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method WriteOffMaterial not implemented")
+}
+func (UnimplementedWorkshopServiceServer) GetMaterialStock(context.Context, *GetMaterialStockRequest) (*GetMaterialStockResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMaterialStock not implemented")
+}
+func (UnimplementedWorkshopServiceServer) ListMaterialTransactions(context.Context, *ListMaterialTransactionsRequest) (*ListMaterialTransactionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMaterialTransactions not implemented")
+}
+func (UnimplementedWorkshopServiceServer) GetMasterMaterialExpenses(context.Context, *GetMasterMaterialExpensesRequest) (*GetMasterMaterialExpensesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMasterMaterialExpenses not implemented")
 }
 func (UnimplementedWorkshopServiceServer) GetClientOrderStatus(context.Context, *GetClientOrderStatusRequest) (*GetClientOrderStatusResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetClientOrderStatus not implemented")
@@ -1810,6 +1940,150 @@ func _WorkshopService_ListStatusHistory_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkshopService_CreateMaterial_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateMaterialRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).CreateMaterial(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_CreateMaterial_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).CreateMaterial(ctx, req.(*CreateMaterialRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_UpdateMaterial_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMaterialRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).UpdateMaterial(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_UpdateMaterial_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).UpdateMaterial(ctx, req.(*UpdateMaterialRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_ListMaterials_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMaterialsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).ListMaterials(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_ListMaterials_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).ListMaterials(ctx, req.(*ListMaterialsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_AddMaterialStock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddMaterialStockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).AddMaterialStock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_AddMaterialStock_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).AddMaterialStock(ctx, req.(*AddMaterialStockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_WriteOffMaterial_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WriteOffMaterialRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).WriteOffMaterial(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_WriteOffMaterial_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).WriteOffMaterial(ctx, req.(*WriteOffMaterialRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_GetMaterialStock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMaterialStockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).GetMaterialStock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_GetMaterialStock_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).GetMaterialStock(ctx, req.(*GetMaterialStockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_ListMaterialTransactions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMaterialTransactionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).ListMaterialTransactions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_ListMaterialTransactions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).ListMaterialTransactions(ctx, req.(*ListMaterialTransactionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_GetMasterMaterialExpenses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMasterMaterialExpensesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).GetMasterMaterialExpenses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_GetMasterMaterialExpenses_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).GetMasterMaterialExpenses(ctx, req.(*GetMasterMaterialExpensesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _WorkshopService_GetClientOrderStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetClientOrderStatusRequest)
 	if err := dec(in); err != nil {
@@ -2066,6 +2340,38 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListStatusHistory",
 			Handler:    _WorkshopService_ListStatusHistory_Handler,
+		},
+		{
+			MethodName: "CreateMaterial",
+			Handler:    _WorkshopService_CreateMaterial_Handler,
+		},
+		{
+			MethodName: "UpdateMaterial",
+			Handler:    _WorkshopService_UpdateMaterial_Handler,
+		},
+		{
+			MethodName: "ListMaterials",
+			Handler:    _WorkshopService_ListMaterials_Handler,
+		},
+		{
+			MethodName: "AddMaterialStock",
+			Handler:    _WorkshopService_AddMaterialStock_Handler,
+		},
+		{
+			MethodName: "WriteOffMaterial",
+			Handler:    _WorkshopService_WriteOffMaterial_Handler,
+		},
+		{
+			MethodName: "GetMaterialStock",
+			Handler:    _WorkshopService_GetMaterialStock_Handler,
+		},
+		{
+			MethodName: "ListMaterialTransactions",
+			Handler:    _WorkshopService_ListMaterialTransactions_Handler,
+		},
+		{
+			MethodName: "GetMasterMaterialExpenses",
+			Handler:    _WorkshopService_GetMasterMaterialExpenses_Handler,
 		},
 		{
 			MethodName: "GetClientOrderStatus",
