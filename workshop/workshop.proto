@@ -107,6 +107,12 @@ service WorkshopService {
   // --- Master Telegram ---
   rpc SetMasterTelegram(SetMasterTelegramRequest) returns (SetMasterTelegramResponse);
   rpc GetMasterByTelegram(GetMasterByTelegramRequest) returns (GetMasterByTelegramResponse);
+
+  // --- Pricing ---
+  rpc SetDiscount(SetDiscountRequest) returns (SetDiscountResponse);
+  rpc SetMarkup(SetMarkupRequest) returns (SetMarkupResponse);
+  rpc SetWorkshopMarkup(SetWorkshopMarkupRequest) returns (SetWorkshopMarkupResponse);
+  rpc GetPricingBreakdown(GetPricingBreakdownRequest) returns (GetPricingBreakdownResponse);
 }
 
 // =============================================================================
@@ -189,6 +195,7 @@ message Workshop {
   bool is_active = 6;
   google.protobuf.Timestamp created_at = 7;
   google.protobuf.Timestamp updated_at = 8;
+  int32 default_markup_pct = 9;
 }
 
 message RepairOrder {
@@ -217,12 +224,33 @@ message RepairOrder {
   bool has_outsource = 23;
   google.protobuf.Timestamp created_at = 24;
   google.protobuf.Timestamp updated_at = 25;
+  // Pricing fields
+  int64 works_price = 26;
+  int64 parts_price = 27;
+  int32 parts_count = 28;
+  int64 materials_markup = 29;
+  int32 markup_pct = 30;
+  int64 discount = 31;
+  string discount_reason = 32;
+  int64 total = 33;
+  int64 order_id = 34;
 }
 
 message MasterSummary {
   int64 id = 1;
   string name = 2;
   MasterRole role = 3;
+}
+
+message PricingBreakdown {
+  int64 works_price = 1;
+  int64 parts_price = 2;
+  int32 parts_count = 3;
+  int64 materials_markup = 4;
+  int32 markup_pct = 5;
+  int64 discount = 6;
+  string discount_reason = 7;
+  int64 total = 8;
 }
 
 message CarWork {
@@ -1219,4 +1247,44 @@ message GetMasterByTelegramRequest {
 
 message GetMasterByTelegramResponse {
   Master master = 1;
+}
+
+// =============================================================================
+// Pricing RPCs
+// =============================================================================
+
+message SetDiscountRequest {
+  int64 order_id = 1;
+  int64 discount = 2;
+  string discount_reason = 3;
+}
+
+message SetDiscountResponse {
+  RepairOrder order = 1;
+}
+
+message SetMarkupRequest {
+  int64 order_id = 1;
+  int32 markup_pct = 2;
+}
+
+message SetMarkupResponse {
+  RepairOrder order = 1;
+}
+
+message SetWorkshopMarkupRequest {
+  int64 workshop_id = 1;
+  int32 default_markup_pct = 2;
+}
+
+message SetWorkshopMarkupResponse {
+  Workshop workshop = 1;
+}
+
+message GetPricingBreakdownRequest {
+  int64 order_id = 1;
+}
+
+message GetPricingBreakdownResponse {
+  PricingBreakdown breakdown = 1;
 }

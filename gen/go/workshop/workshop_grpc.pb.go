@@ -84,6 +84,10 @@ const (
 	WorkshopService_GetCRMSyncStatus_FullMethodName          = "/workshop.v1.WorkshopService/GetCRMSyncStatus"
 	WorkshopService_SetMasterTelegram_FullMethodName         = "/workshop.v1.WorkshopService/SetMasterTelegram"
 	WorkshopService_GetMasterByTelegram_FullMethodName       = "/workshop.v1.WorkshopService/GetMasterByTelegram"
+	WorkshopService_SetDiscount_FullMethodName               = "/workshop.v1.WorkshopService/SetDiscount"
+	WorkshopService_SetMarkup_FullMethodName                 = "/workshop.v1.WorkshopService/SetMarkup"
+	WorkshopService_SetWorkshopMarkup_FullMethodName         = "/workshop.v1.WorkshopService/SetWorkshopMarkup"
+	WorkshopService_GetPricingBreakdown_FullMethodName       = "/workshop.v1.WorkshopService/GetPricingBreakdown"
 )
 
 // WorkshopServiceClient is the client API for WorkshopService service.
@@ -171,6 +175,11 @@ type WorkshopServiceClient interface {
 	// --- Master Telegram ---
 	SetMasterTelegram(ctx context.Context, in *SetMasterTelegramRequest, opts ...grpc.CallOption) (*SetMasterTelegramResponse, error)
 	GetMasterByTelegram(ctx context.Context, in *GetMasterByTelegramRequest, opts ...grpc.CallOption) (*GetMasterByTelegramResponse, error)
+	// --- Pricing ---
+	SetDiscount(ctx context.Context, in *SetDiscountRequest, opts ...grpc.CallOption) (*SetDiscountResponse, error)
+	SetMarkup(ctx context.Context, in *SetMarkupRequest, opts ...grpc.CallOption) (*SetMarkupResponse, error)
+	SetWorkshopMarkup(ctx context.Context, in *SetWorkshopMarkupRequest, opts ...grpc.CallOption) (*SetWorkshopMarkupResponse, error)
+	GetPricingBreakdown(ctx context.Context, in *GetPricingBreakdownRequest, opts ...grpc.CallOption) (*GetPricingBreakdownResponse, error)
 }
 
 type workshopServiceClient struct {
@@ -831,6 +840,46 @@ func (c *workshopServiceClient) GetMasterByTelegram(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *workshopServiceClient) SetDiscount(ctx context.Context, in *SetDiscountRequest, opts ...grpc.CallOption) (*SetDiscountResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetDiscountResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_SetDiscount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) SetMarkup(ctx context.Context, in *SetMarkupRequest, opts ...grpc.CallOption) (*SetMarkupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetMarkupResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_SetMarkup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) SetWorkshopMarkup(ctx context.Context, in *SetWorkshopMarkupRequest, opts ...grpc.CallOption) (*SetWorkshopMarkupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetWorkshopMarkupResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_SetWorkshopMarkup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) GetPricingBreakdown(ctx context.Context, in *GetPricingBreakdownRequest, opts ...grpc.CallOption) (*GetPricingBreakdownResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPricingBreakdownResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_GetPricingBreakdown_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkshopServiceServer is the server API for WorkshopService service.
 // All implementations must embed UnimplementedWorkshopServiceServer
 // for forward compatibility.
@@ -916,6 +965,11 @@ type WorkshopServiceServer interface {
 	// --- Master Telegram ---
 	SetMasterTelegram(context.Context, *SetMasterTelegramRequest) (*SetMasterTelegramResponse, error)
 	GetMasterByTelegram(context.Context, *GetMasterByTelegramRequest) (*GetMasterByTelegramResponse, error)
+	// --- Pricing ---
+	SetDiscount(context.Context, *SetDiscountRequest) (*SetDiscountResponse, error)
+	SetMarkup(context.Context, *SetMarkupRequest) (*SetMarkupResponse, error)
+	SetWorkshopMarkup(context.Context, *SetWorkshopMarkupRequest) (*SetWorkshopMarkupResponse, error)
+	GetPricingBreakdown(context.Context, *GetPricingBreakdownRequest) (*GetPricingBreakdownResponse, error)
 	mustEmbedUnimplementedWorkshopServiceServer()
 }
 
@@ -1120,6 +1174,18 @@ func (UnimplementedWorkshopServiceServer) SetMasterTelegram(context.Context, *Se
 }
 func (UnimplementedWorkshopServiceServer) GetMasterByTelegram(context.Context, *GetMasterByTelegramRequest) (*GetMasterByTelegramResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMasterByTelegram not implemented")
+}
+func (UnimplementedWorkshopServiceServer) SetDiscount(context.Context, *SetDiscountRequest) (*SetDiscountResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetDiscount not implemented")
+}
+func (UnimplementedWorkshopServiceServer) SetMarkup(context.Context, *SetMarkupRequest) (*SetMarkupResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetMarkup not implemented")
+}
+func (UnimplementedWorkshopServiceServer) SetWorkshopMarkup(context.Context, *SetWorkshopMarkupRequest) (*SetWorkshopMarkupResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetWorkshopMarkup not implemented")
+}
+func (UnimplementedWorkshopServiceServer) GetPricingBreakdown(context.Context, *GetPricingBreakdownRequest) (*GetPricingBreakdownResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPricingBreakdown not implemented")
 }
 func (UnimplementedWorkshopServiceServer) mustEmbedUnimplementedWorkshopServiceServer() {}
 func (UnimplementedWorkshopServiceServer) testEmbeddedByValue()                         {}
@@ -2312,6 +2378,78 @@ func _WorkshopService_GetMasterByTelegram_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkshopService_SetDiscount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetDiscountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).SetDiscount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_SetDiscount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).SetDiscount(ctx, req.(*SetDiscountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_SetMarkup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetMarkupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).SetMarkup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_SetMarkup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).SetMarkup(ctx, req.(*SetMarkupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_SetWorkshopMarkup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetWorkshopMarkupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).SetWorkshopMarkup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_SetWorkshopMarkup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).SetWorkshopMarkup(ctx, req.(*SetWorkshopMarkupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_GetPricingBreakdown_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPricingBreakdownRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).GetPricingBreakdown(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_GetPricingBreakdown_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).GetPricingBreakdown(ctx, req.(*GetPricingBreakdownRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WorkshopService_ServiceDesc is the grpc.ServiceDesc for WorkshopService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2578,6 +2716,22 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMasterByTelegram",
 			Handler:    _WorkshopService_GetMasterByTelegram_Handler,
+		},
+		{
+			MethodName: "SetDiscount",
+			Handler:    _WorkshopService_SetDiscount_Handler,
+		},
+		{
+			MethodName: "SetMarkup",
+			Handler:    _WorkshopService_SetMarkup_Handler,
+		},
+		{
+			MethodName: "SetWorkshopMarkup",
+			Handler:    _WorkshopService_SetWorkshopMarkup_Handler,
+		},
+		{
+			MethodName: "GetPricingBreakdown",
+			Handler:    _WorkshopService_GetPricingBreakdown_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
