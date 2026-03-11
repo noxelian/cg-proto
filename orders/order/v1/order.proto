@@ -35,6 +35,14 @@ service OrderService {
   rpc ConfirmReceipt(ConfirmReceiptRequest) returns (ConfirmReceiptResponse);
   rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse);
 
+  // === Workshop orders (parts in repair orders) ===
+  rpc CreateWorkshopOrder(CreateWorkshopOrderRequest) returns (CreateWorkshopOrderResponse);
+  rpc GetOrderByRepairOrderId(GetOrderByRepairOrderIdRequest) returns (GetOrderByRepairOrderIdResponse);
+  rpc AddOrderItem(AddOrderItemRequest) returns (AddOrderItemResponse);
+  rpc UpdateOrderItem(UpdateOrderItemRequest) returns (UpdateOrderItemResponse);
+  rpc DeleteOrderItem(DeleteOrderItemRequest) returns (DeleteOrderItemResponse);
+  rpc UpdateDeliveryStatus(UpdateDeliveryStatusRequest) returns (UpdateDeliveryStatusResponse);
+
   // === Admin analytics ===
   rpc GetSubscriptionStats(GetSubscriptionStatsRequest) returns (GetSubscriptionStatsResponse);
 }
@@ -491,4 +499,75 @@ message GetSubscriptionStatsResponse {
   int32 new_this_month = 4;
   int32 churned_this_month = 5;
   double churn_rate = 6;
+}
+
+// =============================================
+// Workshop order RPCs
+// =============================================
+
+message CreateWorkshopOrderRequest {
+  int64 repair_order_id = 1;           // Linked repair order ID in cg-workshop
+  int64 created_by_user_id = 2;        // User creating the order (MP or MZ)
+  repeated WorkshopOrderItemInput items = 3; // Initial items (at least one required)
+}
+
+message WorkshopOrderItemInput {
+  string part_name = 1;
+  string part_number = 2;
+  int32 quantity = 3;
+  int64 unit_price = 4;               // In tenge (minor units); 0 for CLIENT source
+  ItemSource source = 5;               // WORKSHOP or CLIENT
+  ItemCondition condition = 6;         // NEW, USED, REFURBISHED
+}
+
+message CreateWorkshopOrderResponse {
+  Order order = 1;
+}
+
+message GetOrderByRepairOrderIdRequest {
+  int64 repair_order_id = 1;
+}
+
+message GetOrderByRepairOrderIdResponse {
+  Order order = 1;                     // null if no parts order exists for this repair order
+}
+
+message AddOrderItemRequest {
+  int64 order_id = 1;
+  WorkshopOrderItemInput item = 2;
+}
+
+message AddOrderItemResponse {
+  Order order = 1;                     // Full order with updated items list
+}
+
+message UpdateOrderItemRequest {
+  int64 item_id = 1;
+  optional string part_name = 2;
+  optional string part_number = 3;
+  optional int32 quantity = 4;
+  optional int64 unit_price = 5;
+  optional ItemSource source = 6;
+  optional ItemCondition condition = 7;
+}
+
+message UpdateOrderItemResponse {
+  Order order = 1;
+}
+
+message DeleteOrderItemRequest {
+  int64 item_id = 1;                   // Soft-delete: sets deleted_at timestamp
+}
+
+message DeleteOrderItemResponse {
+  Order order = 1;
+}
+
+message UpdateDeliveryStatusRequest {
+  int64 item_id = 1;
+  DeliveryStatus delivery_status = 2;  // Forward-only: ORDERED->SHIPPED->DELIVERED->INSTALLED or ->CANCELLED
+}
+
+message UpdateDeliveryStatusResponse {
+  Order order = 1;
 }

@@ -37,6 +37,12 @@ const (
 	OrderService_ConfirmShipment_FullMethodName            = "/orders.order.v1.OrderService/ConfirmShipment"
 	OrderService_ConfirmReceipt_FullMethodName             = "/orders.order.v1.OrderService/ConfirmReceipt"
 	OrderService_CancelOrder_FullMethodName                = "/orders.order.v1.OrderService/CancelOrder"
+	OrderService_CreateWorkshopOrder_FullMethodName        = "/orders.order.v1.OrderService/CreateWorkshopOrder"
+	OrderService_GetOrderByRepairOrderId_FullMethodName    = "/orders.order.v1.OrderService/GetOrderByRepairOrderId"
+	OrderService_AddOrderItem_FullMethodName               = "/orders.order.v1.OrderService/AddOrderItem"
+	OrderService_UpdateOrderItem_FullMethodName            = "/orders.order.v1.OrderService/UpdateOrderItem"
+	OrderService_DeleteOrderItem_FullMethodName            = "/orders.order.v1.OrderService/DeleteOrderItem"
+	OrderService_UpdateDeliveryStatus_FullMethodName       = "/orders.order.v1.OrderService/UpdateDeliveryStatus"
 	OrderService_GetSubscriptionStats_FullMethodName       = "/orders.order.v1.OrderService/GetSubscriptionStats"
 )
 
@@ -69,6 +75,13 @@ type OrderServiceClient interface {
 	ConfirmShipment(ctx context.Context, in *ConfirmShipmentRequest, opts ...grpc.CallOption) (*ConfirmShipmentResponse, error)
 	ConfirmReceipt(ctx context.Context, in *ConfirmReceiptRequest, opts ...grpc.CallOption) (*ConfirmReceiptResponse, error)
 	CancelOrder(ctx context.Context, in *CancelOrderRequest, opts ...grpc.CallOption) (*CancelOrderResponse, error)
+	// === Workshop orders (parts in repair orders) ===
+	CreateWorkshopOrder(ctx context.Context, in *CreateWorkshopOrderRequest, opts ...grpc.CallOption) (*CreateWorkshopOrderResponse, error)
+	GetOrderByRepairOrderId(ctx context.Context, in *GetOrderByRepairOrderIdRequest, opts ...grpc.CallOption) (*GetOrderByRepairOrderIdResponse, error)
+	AddOrderItem(ctx context.Context, in *AddOrderItemRequest, opts ...grpc.CallOption) (*AddOrderItemResponse, error)
+	UpdateOrderItem(ctx context.Context, in *UpdateOrderItemRequest, opts ...grpc.CallOption) (*UpdateOrderItemResponse, error)
+	DeleteOrderItem(ctx context.Context, in *DeleteOrderItemRequest, opts ...grpc.CallOption) (*DeleteOrderItemResponse, error)
+	UpdateDeliveryStatus(ctx context.Context, in *UpdateDeliveryStatusRequest, opts ...grpc.CallOption) (*UpdateDeliveryStatusResponse, error)
 	// === Admin analytics ===
 	GetSubscriptionStats(ctx context.Context, in *GetSubscriptionStatsRequest, opts ...grpc.CallOption) (*GetSubscriptionStatsResponse, error)
 }
@@ -261,6 +274,66 @@ func (c *orderServiceClient) CancelOrder(ctx context.Context, in *CancelOrderReq
 	return out, nil
 }
 
+func (c *orderServiceClient) CreateWorkshopOrder(ctx context.Context, in *CreateWorkshopOrderRequest, opts ...grpc.CallOption) (*CreateWorkshopOrderResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateWorkshopOrderResponse)
+	err := c.cc.Invoke(ctx, OrderService_CreateWorkshopOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) GetOrderByRepairOrderId(ctx context.Context, in *GetOrderByRepairOrderIdRequest, opts ...grpc.CallOption) (*GetOrderByRepairOrderIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOrderByRepairOrderIdResponse)
+	err := c.cc.Invoke(ctx, OrderService_GetOrderByRepairOrderId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) AddOrderItem(ctx context.Context, in *AddOrderItemRequest, opts ...grpc.CallOption) (*AddOrderItemResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddOrderItemResponse)
+	err := c.cc.Invoke(ctx, OrderService_AddOrderItem_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) UpdateOrderItem(ctx context.Context, in *UpdateOrderItemRequest, opts ...grpc.CallOption) (*UpdateOrderItemResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateOrderItemResponse)
+	err := c.cc.Invoke(ctx, OrderService_UpdateOrderItem_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) DeleteOrderItem(ctx context.Context, in *DeleteOrderItemRequest, opts ...grpc.CallOption) (*DeleteOrderItemResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteOrderItemResponse)
+	err := c.cc.Invoke(ctx, OrderService_DeleteOrderItem_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) UpdateDeliveryStatus(ctx context.Context, in *UpdateDeliveryStatusRequest, opts ...grpc.CallOption) (*UpdateDeliveryStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateDeliveryStatusResponse)
+	err := c.cc.Invoke(ctx, OrderService_UpdateDeliveryStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *orderServiceClient) GetSubscriptionStats(ctx context.Context, in *GetSubscriptionStatsRequest, opts ...grpc.CallOption) (*GetSubscriptionStatsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSubscriptionStatsResponse)
@@ -300,6 +373,13 @@ type OrderServiceServer interface {
 	ConfirmShipment(context.Context, *ConfirmShipmentRequest) (*ConfirmShipmentResponse, error)
 	ConfirmReceipt(context.Context, *ConfirmReceiptRequest) (*ConfirmReceiptResponse, error)
 	CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error)
+	// === Workshop orders (parts in repair orders) ===
+	CreateWorkshopOrder(context.Context, *CreateWorkshopOrderRequest) (*CreateWorkshopOrderResponse, error)
+	GetOrderByRepairOrderId(context.Context, *GetOrderByRepairOrderIdRequest) (*GetOrderByRepairOrderIdResponse, error)
+	AddOrderItem(context.Context, *AddOrderItemRequest) (*AddOrderItemResponse, error)
+	UpdateOrderItem(context.Context, *UpdateOrderItemRequest) (*UpdateOrderItemResponse, error)
+	DeleteOrderItem(context.Context, *DeleteOrderItemRequest) (*DeleteOrderItemResponse, error)
+	UpdateDeliveryStatus(context.Context, *UpdateDeliveryStatusRequest) (*UpdateDeliveryStatusResponse, error)
 	// === Admin analytics ===
 	GetSubscriptionStats(context.Context, *GetSubscriptionStatsRequest) (*GetSubscriptionStatsResponse, error)
 	mustEmbedUnimplementedOrderServiceServer()
@@ -365,6 +445,24 @@ func (UnimplementedOrderServiceServer) ConfirmReceipt(context.Context, *ConfirmR
 }
 func (UnimplementedOrderServiceServer) CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelOrder not implemented")
+}
+func (UnimplementedOrderServiceServer) CreateWorkshopOrder(context.Context, *CreateWorkshopOrderRequest) (*CreateWorkshopOrderResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateWorkshopOrder not implemented")
+}
+func (UnimplementedOrderServiceServer) GetOrderByRepairOrderId(context.Context, *GetOrderByRepairOrderIdRequest) (*GetOrderByRepairOrderIdResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOrderByRepairOrderId not implemented")
+}
+func (UnimplementedOrderServiceServer) AddOrderItem(context.Context, *AddOrderItemRequest) (*AddOrderItemResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddOrderItem not implemented")
+}
+func (UnimplementedOrderServiceServer) UpdateOrderItem(context.Context, *UpdateOrderItemRequest) (*UpdateOrderItemResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateOrderItem not implemented")
+}
+func (UnimplementedOrderServiceServer) DeleteOrderItem(context.Context, *DeleteOrderItemRequest) (*DeleteOrderItemResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteOrderItem not implemented")
+}
+func (UnimplementedOrderServiceServer) UpdateDeliveryStatus(context.Context, *UpdateDeliveryStatusRequest) (*UpdateDeliveryStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateDeliveryStatus not implemented")
 }
 func (UnimplementedOrderServiceServer) GetSubscriptionStats(context.Context, *GetSubscriptionStatsRequest) (*GetSubscriptionStatsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSubscriptionStats not implemented")
@@ -714,6 +812,114 @@ func _OrderService_CancelOrder_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_CreateWorkshopOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateWorkshopOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).CreateWorkshopOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_CreateWorkshopOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).CreateWorkshopOrder(ctx, req.(*CreateWorkshopOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_GetOrderByRepairOrderId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrderByRepairOrderIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).GetOrderByRepairOrderId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_GetOrderByRepairOrderId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).GetOrderByRepairOrderId(ctx, req.(*GetOrderByRepairOrderIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_AddOrderItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddOrderItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).AddOrderItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_AddOrderItem_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).AddOrderItem(ctx, req.(*AddOrderItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_UpdateOrderItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOrderItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).UpdateOrderItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_UpdateOrderItem_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).UpdateOrderItem(ctx, req.(*UpdateOrderItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_DeleteOrderItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteOrderItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).DeleteOrderItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_DeleteOrderItem_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).DeleteOrderItem(ctx, req.(*DeleteOrderItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_UpdateDeliveryStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateDeliveryStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).UpdateDeliveryStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_UpdateDeliveryStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).UpdateDeliveryStatus(ctx, req.(*UpdateDeliveryStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrderService_GetSubscriptionStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSubscriptionStatsRequest)
 	if err := dec(in); err != nil {
@@ -810,6 +1016,30 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CancelOrder",
 			Handler:    _OrderService_CancelOrder_Handler,
+		},
+		{
+			MethodName: "CreateWorkshopOrder",
+			Handler:    _OrderService_CreateWorkshopOrder_Handler,
+		},
+		{
+			MethodName: "GetOrderByRepairOrderId",
+			Handler:    _OrderService_GetOrderByRepairOrderId_Handler,
+		},
+		{
+			MethodName: "AddOrderItem",
+			Handler:    _OrderService_AddOrderItem_Handler,
+		},
+		{
+			MethodName: "UpdateOrderItem",
+			Handler:    _OrderService_UpdateOrderItem_Handler,
+		},
+		{
+			MethodName: "DeleteOrderItem",
+			Handler:    _OrderService_DeleteOrderItem_Handler,
+		},
+		{
+			MethodName: "UpdateDeliveryStatus",
+			Handler:    _OrderService_UpdateDeliveryStatus_Handler,
 		},
 		{
 			MethodName: "GetSubscriptionStats",
