@@ -113,6 +113,11 @@ service WorkshopService {
   rpc SetMarkup(SetMarkupRequest) returns (SetMarkupResponse);
   rpc SetWorkshopMarkup(SetWorkshopMarkupRequest) returns (SetWorkshopMarkupResponse);
   rpc GetPricingBreakdown(GetPricingBreakdownRequest) returns (GetPricingBreakdownResponse);
+
+  // --- Payments ---
+  rpc MarkPaidManual(MarkPaidManualRequest) returns (MarkPaidManualResponse);
+  rpc CancelPayment(CancelPaymentRequest) returns (CancelPaymentResponse);
+  rpc GetPaymentHistory(GetPaymentHistoryRequest) returns (GetPaymentHistoryResponse);
 }
 
 // =============================================================================
@@ -182,6 +187,23 @@ enum MaterialTransactionType {
   MATERIAL_TRANSACTION_TYPE_EXPENSE = 2;
 }
 
+enum PaymentStatus {
+  PAYMENT_STATUS_UNSPECIFIED = 0;
+  PAYMENT_STATUS_UNPAID = 1;
+  PAYMENT_STATUS_PENDING = 2;
+  PAYMENT_STATUS_PARTIALLY_PAID = 3;
+  PAYMENT_STATUS_PAID = 4;
+  PAYMENT_STATUS_REFUNDED = 5;
+}
+
+enum PaymentMethod {
+  PAYMENT_METHOD_UNSPECIFIED = 0;
+  PAYMENT_METHOD_CASH = 1;
+  PAYMENT_METHOD_TERMINAL = 2;
+  PAYMENT_METHOD_IOKA = 3;
+  PAYMENT_METHOD_KASPI = 4;
+}
+
 // =============================================================================
 // Core Messages
 // =============================================================================
@@ -234,6 +256,9 @@ message RepairOrder {
   string discount_reason = 32;
   int64 total = 33;
   int64 order_id = 34;
+  // Payment fields
+  PaymentStatus payment_status = 35;
+  int64 paid_amount = 36;
 }
 
 message MasterSummary {
@@ -251,6 +276,20 @@ message PricingBreakdown {
   int64 discount = 6;
   string discount_reason = 7;
   int64 total = 8;
+}
+
+message RepairOrderPayment {
+  int64 id = 1;
+  int64 repair_order_id = 2;
+  int64 amount = 3;
+  PaymentMethod method = 4;
+  string transaction_id = 5;
+  int64 received_by = 6;
+  string note = 7;
+  bool cancelled = 8;
+  string cancel_reason = 9;
+  google.protobuf.Timestamp cancelled_at = 10;
+  google.protobuf.Timestamp created_at = 11;
 }
 
 message CarWork {
@@ -1287,4 +1326,39 @@ message GetPricingBreakdownRequest {
 
 message GetPricingBreakdownResponse {
   PricingBreakdown breakdown = 1;
+}
+
+// =============================================================================
+// Payment RPCs
+// =============================================================================
+
+message MarkPaidManualRequest {
+  int64 repair_order_id = 1;
+  PaymentMethod method = 2;
+  int64 amount = 3;
+  string note = 4;
+}
+
+message MarkPaidManualResponse {
+  RepairOrderPayment payment = 1;
+  RepairOrder repair_order = 2;
+}
+
+message CancelPaymentRequest {
+  int64 payment_id = 1;
+  string reason = 2;
+}
+
+message CancelPaymentResponse {
+  RepairOrderPayment payment = 1;
+  RepairOrder repair_order = 2;
+}
+
+message GetPaymentHistoryRequest {
+  int64 repair_order_id = 1;
+}
+
+message GetPaymentHistoryResponse {
+  repeated RepairOrderPayment payments = 1;
+  int64 total_paid = 2;
 }

@@ -459,6 +459,119 @@ func (MaterialTransactionType) EnumDescriptor() ([]byte, []int) {
 	return file_workshop_workshop_proto_rawDescGZIP(), []int{7}
 }
 
+type PaymentStatus int32
+
+const (
+	PaymentStatus_PAYMENT_STATUS_UNSPECIFIED    PaymentStatus = 0
+	PaymentStatus_PAYMENT_STATUS_UNPAID         PaymentStatus = 1
+	PaymentStatus_PAYMENT_STATUS_PENDING        PaymentStatus = 2
+	PaymentStatus_PAYMENT_STATUS_PARTIALLY_PAID PaymentStatus = 3
+	PaymentStatus_PAYMENT_STATUS_PAID           PaymentStatus = 4
+	PaymentStatus_PAYMENT_STATUS_REFUNDED       PaymentStatus = 5
+)
+
+// Enum value maps for PaymentStatus.
+var (
+	PaymentStatus_name = map[int32]string{
+		0: "PAYMENT_STATUS_UNSPECIFIED",
+		1: "PAYMENT_STATUS_UNPAID",
+		2: "PAYMENT_STATUS_PENDING",
+		3: "PAYMENT_STATUS_PARTIALLY_PAID",
+		4: "PAYMENT_STATUS_PAID",
+		5: "PAYMENT_STATUS_REFUNDED",
+	}
+	PaymentStatus_value = map[string]int32{
+		"PAYMENT_STATUS_UNSPECIFIED":    0,
+		"PAYMENT_STATUS_UNPAID":         1,
+		"PAYMENT_STATUS_PENDING":        2,
+		"PAYMENT_STATUS_PARTIALLY_PAID": 3,
+		"PAYMENT_STATUS_PAID":           4,
+		"PAYMENT_STATUS_REFUNDED":       5,
+	}
+)
+
+func (x PaymentStatus) Enum() *PaymentStatus {
+	p := new(PaymentStatus)
+	*p = x
+	return p
+}
+
+func (x PaymentStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PaymentStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_workshop_workshop_proto_enumTypes[8].Descriptor()
+}
+
+func (PaymentStatus) Type() protoreflect.EnumType {
+	return &file_workshop_workshop_proto_enumTypes[8]
+}
+
+func (x PaymentStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PaymentStatus.Descriptor instead.
+func (PaymentStatus) EnumDescriptor() ([]byte, []int) {
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{8}
+}
+
+type PaymentMethod int32
+
+const (
+	PaymentMethod_PAYMENT_METHOD_UNSPECIFIED PaymentMethod = 0
+	PaymentMethod_PAYMENT_METHOD_CASH        PaymentMethod = 1
+	PaymentMethod_PAYMENT_METHOD_TERMINAL    PaymentMethod = 2
+	PaymentMethod_PAYMENT_METHOD_IOKA        PaymentMethod = 3
+	PaymentMethod_PAYMENT_METHOD_KASPI       PaymentMethod = 4
+)
+
+// Enum value maps for PaymentMethod.
+var (
+	PaymentMethod_name = map[int32]string{
+		0: "PAYMENT_METHOD_UNSPECIFIED",
+		1: "PAYMENT_METHOD_CASH",
+		2: "PAYMENT_METHOD_TERMINAL",
+		3: "PAYMENT_METHOD_IOKA",
+		4: "PAYMENT_METHOD_KASPI",
+	}
+	PaymentMethod_value = map[string]int32{
+		"PAYMENT_METHOD_UNSPECIFIED": 0,
+		"PAYMENT_METHOD_CASH":        1,
+		"PAYMENT_METHOD_TERMINAL":    2,
+		"PAYMENT_METHOD_IOKA":        3,
+		"PAYMENT_METHOD_KASPI":       4,
+	}
+)
+
+func (x PaymentMethod) Enum() *PaymentMethod {
+	p := new(PaymentMethod)
+	*p = x
+	return p
+}
+
+func (x PaymentMethod) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PaymentMethod) Descriptor() protoreflect.EnumDescriptor {
+	return file_workshop_workshop_proto_enumTypes[9].Descriptor()
+}
+
+func (PaymentMethod) Type() protoreflect.EnumType {
+	return &file_workshop_workshop_proto_enumTypes[9]
+}
+
+func (x PaymentMethod) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PaymentMethod.Descriptor instead.
+func (PaymentMethod) EnumDescriptor() ([]byte, []int) {
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{9}
+}
+
 type Workshop struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -604,8 +717,11 @@ type RepairOrder struct {
 	DiscountReason  string `protobuf:"bytes,32,opt,name=discount_reason,json=discountReason,proto3" json:"discount_reason,omitempty"`
 	Total           int64  `protobuf:"varint,33,opt,name=total,proto3" json:"total,omitempty"`
 	OrderId         int64  `protobuf:"varint,34,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Payment fields
+	PaymentStatus PaymentStatus `protobuf:"varint,35,opt,name=payment_status,json=paymentStatus,proto3,enum=workshop.v1.PaymentStatus" json:"payment_status,omitempty"`
+	PaidAmount    int64         `protobuf:"varint,36,opt,name=paid_amount,json=paidAmount,proto3" json:"paid_amount,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RepairOrder) Reset() {
@@ -876,6 +992,20 @@ func (x *RepairOrder) GetOrderId() int64 {
 	return 0
 }
 
+func (x *RepairOrder) GetPaymentStatus() PaymentStatus {
+	if x != nil {
+		return x.PaymentStatus
+	}
+	return PaymentStatus_PAYMENT_STATUS_UNSPECIFIED
+}
+
+func (x *RepairOrder) GetPaidAmount() int64 {
+	if x != nil {
+		return x.PaidAmount
+	}
+	return 0
+}
+
 type MasterSummary struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -1036,6 +1166,130 @@ func (x *PricingBreakdown) GetTotal() int64 {
 	return 0
 }
 
+type RepairOrderPayment struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	RepairOrderId int64                  `protobuf:"varint,2,opt,name=repair_order_id,json=repairOrderId,proto3" json:"repair_order_id,omitempty"`
+	Amount        int64                  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
+	Method        PaymentMethod          `protobuf:"varint,4,opt,name=method,proto3,enum=workshop.v1.PaymentMethod" json:"method,omitempty"`
+	TransactionId string                 `protobuf:"bytes,5,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	ReceivedBy    int64                  `protobuf:"varint,6,opt,name=received_by,json=receivedBy,proto3" json:"received_by,omitempty"`
+	Note          string                 `protobuf:"bytes,7,opt,name=note,proto3" json:"note,omitempty"`
+	Cancelled     bool                   `protobuf:"varint,8,opt,name=cancelled,proto3" json:"cancelled,omitempty"`
+	CancelReason  string                 `protobuf:"bytes,9,opt,name=cancel_reason,json=cancelReason,proto3" json:"cancel_reason,omitempty"`
+	CancelledAt   *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=cancelled_at,json=cancelledAt,proto3" json:"cancelled_at,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RepairOrderPayment) Reset() {
+	*x = RepairOrderPayment{}
+	mi := &file_workshop_workshop_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RepairOrderPayment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RepairOrderPayment) ProtoMessage() {}
+
+func (x *RepairOrderPayment) ProtoReflect() protoreflect.Message {
+	mi := &file_workshop_workshop_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RepairOrderPayment.ProtoReflect.Descriptor instead.
+func (*RepairOrderPayment) Descriptor() ([]byte, []int) {
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *RepairOrderPayment) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *RepairOrderPayment) GetRepairOrderId() int64 {
+	if x != nil {
+		return x.RepairOrderId
+	}
+	return 0
+}
+
+func (x *RepairOrderPayment) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *RepairOrderPayment) GetMethod() PaymentMethod {
+	if x != nil {
+		return x.Method
+	}
+	return PaymentMethod_PAYMENT_METHOD_UNSPECIFIED
+}
+
+func (x *RepairOrderPayment) GetTransactionId() string {
+	if x != nil {
+		return x.TransactionId
+	}
+	return ""
+}
+
+func (x *RepairOrderPayment) GetReceivedBy() int64 {
+	if x != nil {
+		return x.ReceivedBy
+	}
+	return 0
+}
+
+func (x *RepairOrderPayment) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
+func (x *RepairOrderPayment) GetCancelled() bool {
+	if x != nil {
+		return x.Cancelled
+	}
+	return false
+}
+
+func (x *RepairOrderPayment) GetCancelReason() string {
+	if x != nil {
+		return x.CancelReason
+	}
+	return ""
+}
+
+func (x *RepairOrderPayment) GetCancelledAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CancelledAt
+	}
+	return nil
+}
+
+func (x *RepairOrderPayment) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
 type CarWork struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -1059,7 +1313,7 @@ type CarWork struct {
 
 func (x *CarWork) Reset() {
 	*x = CarWork{}
-	mi := &file_workshop_workshop_proto_msgTypes[4]
+	mi := &file_workshop_workshop_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1071,7 +1325,7 @@ func (x *CarWork) String() string {
 func (*CarWork) ProtoMessage() {}
 
 func (x *CarWork) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[4]
+	mi := &file_workshop_workshop_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1084,7 +1338,7 @@ func (x *CarWork) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CarWork.ProtoReflect.Descriptor instead.
 func (*CarWork) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{4}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CarWork) GetId() int64 {
@@ -1214,7 +1468,7 @@ type Master struct {
 
 func (x *Master) Reset() {
 	*x = Master{}
-	mi := &file_workshop_workshop_proto_msgTypes[5]
+	mi := &file_workshop_workshop_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1226,7 +1480,7 @@ func (x *Master) String() string {
 func (*Master) ProtoMessage() {}
 
 func (x *Master) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[5]
+	mi := &file_workshop_workshop_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1239,7 +1493,7 @@ func (x *Master) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Master.ProtoReflect.Descriptor instead.
 func (*Master) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{5}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *Master) GetId() int64 {
@@ -1356,7 +1610,7 @@ type Client struct {
 
 func (x *Client) Reset() {
 	*x = Client{}
-	mi := &file_workshop_workshop_proto_msgTypes[6]
+	mi := &file_workshop_workshop_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1368,7 +1622,7 @@ func (x *Client) String() string {
 func (*Client) ProtoMessage() {}
 
 func (x *Client) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[6]
+	mi := &file_workshop_workshop_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1381,7 +1635,7 @@ func (x *Client) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Client.ProtoReflect.Descriptor instead.
 func (*Client) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{6}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *Client) GetId() int64 {
@@ -1456,7 +1710,7 @@ type RepairPhoto struct {
 
 func (x *RepairPhoto) Reset() {
 	*x = RepairPhoto{}
-	mi := &file_workshop_workshop_proto_msgTypes[7]
+	mi := &file_workshop_workshop_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1468,7 +1722,7 @@ func (x *RepairPhoto) String() string {
 func (*RepairPhoto) ProtoMessage() {}
 
 func (x *RepairPhoto) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[7]
+	mi := &file_workshop_workshop_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1481,7 +1735,7 @@ func (x *RepairPhoto) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepairPhoto.ProtoReflect.Descriptor instead.
 func (*RepairPhoto) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{7}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *RepairPhoto) GetId() int64 {
@@ -1555,7 +1809,7 @@ type RepairComment struct {
 
 func (x *RepairComment) Reset() {
 	*x = RepairComment{}
-	mi := &file_workshop_workshop_proto_msgTypes[8]
+	mi := &file_workshop_workshop_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1567,7 +1821,7 @@ func (x *RepairComment) String() string {
 func (*RepairComment) ProtoMessage() {}
 
 func (x *RepairComment) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[8]
+	mi := &file_workshop_workshop_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1580,7 +1834,7 @@ func (x *RepairComment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepairComment.ProtoReflect.Descriptor instead.
 func (*RepairComment) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{8}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *RepairComment) GetId() int64 {
@@ -1648,7 +1902,7 @@ type StatusHistoryEntry struct {
 
 func (x *StatusHistoryEntry) Reset() {
 	*x = StatusHistoryEntry{}
-	mi := &file_workshop_workshop_proto_msgTypes[9]
+	mi := &file_workshop_workshop_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1660,7 +1914,7 @@ func (x *StatusHistoryEntry) String() string {
 func (*StatusHistoryEntry) ProtoMessage() {}
 
 func (x *StatusHistoryEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[9]
+	mi := &file_workshop_workshop_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1673,7 +1927,7 @@ func (x *StatusHistoryEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatusHistoryEntry.ProtoReflect.Descriptor instead.
 func (*StatusHistoryEntry) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{9}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *StatusHistoryEntry) GetId() int64 {
@@ -1748,7 +2002,7 @@ type QCChecklist struct {
 
 func (x *QCChecklist) Reset() {
 	*x = QCChecklist{}
-	mi := &file_workshop_workshop_proto_msgTypes[10]
+	mi := &file_workshop_workshop_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1760,7 +2014,7 @@ func (x *QCChecklist) String() string {
 func (*QCChecklist) ProtoMessage() {}
 
 func (x *QCChecklist) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[10]
+	mi := &file_workshop_workshop_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1773,7 +2027,7 @@ func (x *QCChecklist) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QCChecklist.ProtoReflect.Descriptor instead.
 func (*QCChecklist) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{10}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *QCChecklist) GetId() int64 {
@@ -1844,7 +2098,7 @@ type QCItem struct {
 
 func (x *QCItem) Reset() {
 	*x = QCItem{}
-	mi := &file_workshop_workshop_proto_msgTypes[11]
+	mi := &file_workshop_workshop_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1856,7 +2110,7 @@ func (x *QCItem) String() string {
 func (*QCItem) ProtoMessage() {}
 
 func (x *QCItem) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[11]
+	mi := &file_workshop_workshop_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1869,7 +2123,7 @@ func (x *QCItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QCItem.ProtoReflect.Descriptor instead.
 func (*QCItem) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{11}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *QCItem) GetKey() string {
@@ -1919,7 +2173,7 @@ type OutsourceRequest struct {
 
 func (x *OutsourceRequest) Reset() {
 	*x = OutsourceRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[12]
+	mi := &file_workshop_workshop_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1931,7 +2185,7 @@ func (x *OutsourceRequest) String() string {
 func (*OutsourceRequest) ProtoMessage() {}
 
 func (x *OutsourceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[12]
+	mi := &file_workshop_workshop_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1944,7 +2198,7 @@ func (x *OutsourceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OutsourceRequest.ProtoReflect.Descriptor instead.
 func (*OutsourceRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{12}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *OutsourceRequest) GetId() int64 {
@@ -2048,7 +2302,7 @@ type SalaryBreakdown struct {
 
 func (x *SalaryBreakdown) Reset() {
 	*x = SalaryBreakdown{}
-	mi := &file_workshop_workshop_proto_msgTypes[13]
+	mi := &file_workshop_workshop_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2060,7 +2314,7 @@ func (x *SalaryBreakdown) String() string {
 func (*SalaryBreakdown) ProtoMessage() {}
 
 func (x *SalaryBreakdown) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[13]
+	mi := &file_workshop_workshop_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2073,7 +2327,7 @@ func (x *SalaryBreakdown) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SalaryBreakdown.ProtoReflect.Descriptor instead.
 func (*SalaryBreakdown) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{13}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *SalaryBreakdown) GetMasterId() int64 {
@@ -2201,7 +2455,7 @@ type SalaryAdjustment struct {
 
 func (x *SalaryAdjustment) Reset() {
 	*x = SalaryAdjustment{}
-	mi := &file_workshop_workshop_proto_msgTypes[14]
+	mi := &file_workshop_workshop_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2213,7 +2467,7 @@ func (x *SalaryAdjustment) String() string {
 func (*SalaryAdjustment) ProtoMessage() {}
 
 func (x *SalaryAdjustment) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[14]
+	mi := &file_workshop_workshop_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2226,7 +2480,7 @@ func (x *SalaryAdjustment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SalaryAdjustment.ProtoReflect.Descriptor instead.
 func (*SalaryAdjustment) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{14}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *SalaryAdjustment) GetId() int64 {
@@ -2278,7 +2532,7 @@ type MasterHourRate struct {
 
 func (x *MasterHourRate) Reset() {
 	*x = MasterHourRate{}
-	mi := &file_workshop_workshop_proto_msgTypes[15]
+	mi := &file_workshop_workshop_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2290,7 +2544,7 @@ func (x *MasterHourRate) String() string {
 func (*MasterHourRate) ProtoMessage() {}
 
 func (x *MasterHourRate) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[15]
+	mi := &file_workshop_workshop_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2303,7 +2557,7 @@ func (x *MasterHourRate) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MasterHourRate.ProtoReflect.Descriptor instead.
 func (*MasterHourRate) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{15}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *MasterHourRate) GetId() int64 {
@@ -2362,7 +2616,7 @@ type MasterFixSalary struct {
 
 func (x *MasterFixSalary) Reset() {
 	*x = MasterFixSalary{}
-	mi := &file_workshop_workshop_proto_msgTypes[16]
+	mi := &file_workshop_workshop_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2374,7 +2628,7 @@ func (x *MasterFixSalary) String() string {
 func (*MasterFixSalary) ProtoMessage() {}
 
 func (x *MasterFixSalary) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[16]
+	mi := &file_workshop_workshop_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2387,7 +2641,7 @@ func (x *MasterFixSalary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MasterFixSalary.ProtoReflect.Descriptor instead.
 func (*MasterFixSalary) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{16}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *MasterFixSalary) GetId() int64 {
@@ -2447,7 +2701,7 @@ type Material struct {
 
 func (x *Material) Reset() {
 	*x = Material{}
-	mi := &file_workshop_workshop_proto_msgTypes[17]
+	mi := &file_workshop_workshop_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2459,7 +2713,7 @@ func (x *Material) String() string {
 func (*Material) ProtoMessage() {}
 
 func (x *Material) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[17]
+	mi := &file_workshop_workshop_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2472,7 +2726,7 @@ func (x *Material) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Material.ProtoReflect.Descriptor instead.
 func (*Material) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{17}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *Material) GetId() int64 {
@@ -2537,7 +2791,7 @@ type MaterialStock struct {
 
 func (x *MaterialStock) Reset() {
 	*x = MaterialStock{}
-	mi := &file_workshop_workshop_proto_msgTypes[18]
+	mi := &file_workshop_workshop_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2549,7 +2803,7 @@ func (x *MaterialStock) String() string {
 func (*MaterialStock) ProtoMessage() {}
 
 func (x *MaterialStock) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[18]
+	mi := &file_workshop_workshop_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2562,7 +2816,7 @@ func (x *MaterialStock) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MaterialStock.ProtoReflect.Descriptor instead.
 func (*MaterialStock) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{18}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *MaterialStock) GetMaterialId() int64 {
@@ -2622,7 +2876,7 @@ type MaterialTransaction struct {
 
 func (x *MaterialTransaction) Reset() {
 	*x = MaterialTransaction{}
-	mi := &file_workshop_workshop_proto_msgTypes[19]
+	mi := &file_workshop_workshop_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2634,7 +2888,7 @@ func (x *MaterialTransaction) String() string {
 func (*MaterialTransaction) ProtoMessage() {}
 
 func (x *MaterialTransaction) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[19]
+	mi := &file_workshop_workshop_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2647,7 +2901,7 @@ func (x *MaterialTransaction) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MaterialTransaction.ProtoReflect.Descriptor instead.
 func (*MaterialTransaction) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{19}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *MaterialTransaction) GetId() int64 {
@@ -2760,7 +3014,7 @@ type KanbanColumn struct {
 
 func (x *KanbanColumn) Reset() {
 	*x = KanbanColumn{}
-	mi := &file_workshop_workshop_proto_msgTypes[20]
+	mi := &file_workshop_workshop_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2772,7 +3026,7 @@ func (x *KanbanColumn) String() string {
 func (*KanbanColumn) ProtoMessage() {}
 
 func (x *KanbanColumn) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[20]
+	mi := &file_workshop_workshop_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2785,7 +3039,7 @@ func (x *KanbanColumn) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KanbanColumn.ProtoReflect.Descriptor instead.
 func (*KanbanColumn) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{20}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *KanbanColumn) GetStatus() RepairStatus {
@@ -2828,7 +3082,7 @@ type OutsourceKanbanColumn struct {
 
 func (x *OutsourceKanbanColumn) Reset() {
 	*x = OutsourceKanbanColumn{}
-	mi := &file_workshop_workshop_proto_msgTypes[21]
+	mi := &file_workshop_workshop_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2840,7 +3094,7 @@ func (x *OutsourceKanbanColumn) String() string {
 func (*OutsourceKanbanColumn) ProtoMessage() {}
 
 func (x *OutsourceKanbanColumn) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[21]
+	mi := &file_workshop_workshop_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2853,7 +3107,7 @@ func (x *OutsourceKanbanColumn) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OutsourceKanbanColumn.ProtoReflect.Descriptor instead.
 func (*OutsourceKanbanColumn) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{21}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *OutsourceKanbanColumn) GetStatus() OutsourceStatus {
@@ -2896,7 +3150,7 @@ type CreateWorkshopRequest struct {
 
 func (x *CreateWorkshopRequest) Reset() {
 	*x = CreateWorkshopRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[22]
+	mi := &file_workshop_workshop_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2908,7 +3162,7 @@ func (x *CreateWorkshopRequest) String() string {
 func (*CreateWorkshopRequest) ProtoMessage() {}
 
 func (x *CreateWorkshopRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[22]
+	mi := &file_workshop_workshop_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2921,7 +3175,7 @@ func (x *CreateWorkshopRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateWorkshopRequest.ProtoReflect.Descriptor instead.
 func (*CreateWorkshopRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{22}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *CreateWorkshopRequest) GetOrgId() string {
@@ -2961,7 +3215,7 @@ type CreateWorkshopResponse struct {
 
 func (x *CreateWorkshopResponse) Reset() {
 	*x = CreateWorkshopResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[23]
+	mi := &file_workshop_workshop_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2973,7 +3227,7 @@ func (x *CreateWorkshopResponse) String() string {
 func (*CreateWorkshopResponse) ProtoMessage() {}
 
 func (x *CreateWorkshopResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[23]
+	mi := &file_workshop_workshop_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2986,7 +3240,7 @@ func (x *CreateWorkshopResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateWorkshopResponse.ProtoReflect.Descriptor instead.
 func (*CreateWorkshopResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{23}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *CreateWorkshopResponse) GetWorkshop() *Workshop {
@@ -3005,7 +3259,7 @@ type GetWorkshopRequest struct {
 
 func (x *GetWorkshopRequest) Reset() {
 	*x = GetWorkshopRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[24]
+	mi := &file_workshop_workshop_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3017,7 +3271,7 @@ func (x *GetWorkshopRequest) String() string {
 func (*GetWorkshopRequest) ProtoMessage() {}
 
 func (x *GetWorkshopRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[24]
+	mi := &file_workshop_workshop_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3030,7 +3284,7 @@ func (x *GetWorkshopRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkshopRequest.ProtoReflect.Descriptor instead.
 func (*GetWorkshopRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{24}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetWorkshopRequest) GetWorkshopId() int64 {
@@ -3049,7 +3303,7 @@ type GetWorkshopResponse struct {
 
 func (x *GetWorkshopResponse) Reset() {
 	*x = GetWorkshopResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[25]
+	mi := &file_workshop_workshop_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3061,7 +3315,7 @@ func (x *GetWorkshopResponse) String() string {
 func (*GetWorkshopResponse) ProtoMessage() {}
 
 func (x *GetWorkshopResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[25]
+	mi := &file_workshop_workshop_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3074,7 +3328,7 @@ func (x *GetWorkshopResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkshopResponse.ProtoReflect.Descriptor instead.
 func (*GetWorkshopResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{25}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *GetWorkshopResponse) GetWorkshop() *Workshop {
@@ -3097,7 +3351,7 @@ type UpdateWorkshopRequest struct {
 
 func (x *UpdateWorkshopRequest) Reset() {
 	*x = UpdateWorkshopRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[26]
+	mi := &file_workshop_workshop_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3109,7 +3363,7 @@ func (x *UpdateWorkshopRequest) String() string {
 func (*UpdateWorkshopRequest) ProtoMessage() {}
 
 func (x *UpdateWorkshopRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[26]
+	mi := &file_workshop_workshop_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3122,7 +3376,7 @@ func (x *UpdateWorkshopRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateWorkshopRequest.ProtoReflect.Descriptor instead.
 func (*UpdateWorkshopRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{26}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *UpdateWorkshopRequest) GetWorkshopId() int64 {
@@ -3169,7 +3423,7 @@ type UpdateWorkshopResponse struct {
 
 func (x *UpdateWorkshopResponse) Reset() {
 	*x = UpdateWorkshopResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[27]
+	mi := &file_workshop_workshop_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3181,7 +3435,7 @@ func (x *UpdateWorkshopResponse) String() string {
 func (*UpdateWorkshopResponse) ProtoMessage() {}
 
 func (x *UpdateWorkshopResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[27]
+	mi := &file_workshop_workshop_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3194,7 +3448,7 @@ func (x *UpdateWorkshopResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateWorkshopResponse.ProtoReflect.Descriptor instead.
 func (*UpdateWorkshopResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{27}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *UpdateWorkshopResponse) GetWorkshop() *Workshop {
@@ -3216,7 +3470,7 @@ type ListWorkshopsRequest struct {
 
 func (x *ListWorkshopsRequest) Reset() {
 	*x = ListWorkshopsRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[28]
+	mi := &file_workshop_workshop_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3228,7 +3482,7 @@ func (x *ListWorkshopsRequest) String() string {
 func (*ListWorkshopsRequest) ProtoMessage() {}
 
 func (x *ListWorkshopsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[28]
+	mi := &file_workshop_workshop_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3241,7 +3495,7 @@ func (x *ListWorkshopsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWorkshopsRequest.ProtoReflect.Descriptor instead.
 func (*ListWorkshopsRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{28}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ListWorkshopsRequest) GetOrgId() string {
@@ -3282,7 +3536,7 @@ type ListWorkshopsResponse struct {
 
 func (x *ListWorkshopsResponse) Reset() {
 	*x = ListWorkshopsResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[29]
+	mi := &file_workshop_workshop_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3294,7 +3548,7 @@ func (x *ListWorkshopsResponse) String() string {
 func (*ListWorkshopsResponse) ProtoMessage() {}
 
 func (x *ListWorkshopsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[29]
+	mi := &file_workshop_workshop_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3307,7 +3561,7 @@ func (x *ListWorkshopsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWorkshopsResponse.ProtoReflect.Descriptor instead.
 func (*ListWorkshopsResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{29}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *ListWorkshopsResponse) GetWorkshops() []*Workshop {
@@ -3344,7 +3598,7 @@ type CreateRepairOrderRequest struct {
 
 func (x *CreateRepairOrderRequest) Reset() {
 	*x = CreateRepairOrderRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[30]
+	mi := &file_workshop_workshop_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3356,7 +3610,7 @@ func (x *CreateRepairOrderRequest) String() string {
 func (*CreateRepairOrderRequest) ProtoMessage() {}
 
 func (x *CreateRepairOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[30]
+	mi := &file_workshop_workshop_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3369,7 +3623,7 @@ func (x *CreateRepairOrderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRepairOrderRequest.ProtoReflect.Descriptor instead.
 func (*CreateRepairOrderRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{30}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *CreateRepairOrderRequest) GetWorkshopId() int64 {
@@ -3465,7 +3719,7 @@ type CreateRepairOrderResponse struct {
 
 func (x *CreateRepairOrderResponse) Reset() {
 	*x = CreateRepairOrderResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[31]
+	mi := &file_workshop_workshop_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3477,7 +3731,7 @@ func (x *CreateRepairOrderResponse) String() string {
 func (*CreateRepairOrderResponse) ProtoMessage() {}
 
 func (x *CreateRepairOrderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[31]
+	mi := &file_workshop_workshop_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3490,7 +3744,7 @@ func (x *CreateRepairOrderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRepairOrderResponse.ProtoReflect.Descriptor instead.
 func (*CreateRepairOrderResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{31}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *CreateRepairOrderResponse) GetOrder() *RepairOrder {
@@ -3509,7 +3763,7 @@ type GetRepairOrderRequest struct {
 
 func (x *GetRepairOrderRequest) Reset() {
 	*x = GetRepairOrderRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[32]
+	mi := &file_workshop_workshop_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3521,7 +3775,7 @@ func (x *GetRepairOrderRequest) String() string {
 func (*GetRepairOrderRequest) ProtoMessage() {}
 
 func (x *GetRepairOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[32]
+	mi := &file_workshop_workshop_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3534,7 +3788,7 @@ func (x *GetRepairOrderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRepairOrderRequest.ProtoReflect.Descriptor instead.
 func (*GetRepairOrderRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{32}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *GetRepairOrderRequest) GetOrderId() int64 {
@@ -3553,7 +3807,7 @@ type GetRepairOrderResponse struct {
 
 func (x *GetRepairOrderResponse) Reset() {
 	*x = GetRepairOrderResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[33]
+	mi := &file_workshop_workshop_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3565,7 +3819,7 @@ func (x *GetRepairOrderResponse) String() string {
 func (*GetRepairOrderResponse) ProtoMessage() {}
 
 func (x *GetRepairOrderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[33]
+	mi := &file_workshop_workshop_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3578,7 +3832,7 @@ func (x *GetRepairOrderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRepairOrderResponse.ProtoReflect.Descriptor instead.
 func (*GetRepairOrderResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{33}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *GetRepairOrderResponse) GetOrder() *RepairOrder {
@@ -3608,7 +3862,7 @@ type UpdateRepairOrderRequest struct {
 
 func (x *UpdateRepairOrderRequest) Reset() {
 	*x = UpdateRepairOrderRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[34]
+	mi := &file_workshop_workshop_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3620,7 +3874,7 @@ func (x *UpdateRepairOrderRequest) String() string {
 func (*UpdateRepairOrderRequest) ProtoMessage() {}
 
 func (x *UpdateRepairOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[34]
+	mi := &file_workshop_workshop_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3633,7 +3887,7 @@ func (x *UpdateRepairOrderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateRepairOrderRequest.ProtoReflect.Descriptor instead.
 func (*UpdateRepairOrderRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{34}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *UpdateRepairOrderRequest) GetOrderId() int64 {
@@ -3729,7 +3983,7 @@ type UpdateRepairOrderResponse struct {
 
 func (x *UpdateRepairOrderResponse) Reset() {
 	*x = UpdateRepairOrderResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[35]
+	mi := &file_workshop_workshop_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3741,7 +3995,7 @@ func (x *UpdateRepairOrderResponse) String() string {
 func (*UpdateRepairOrderResponse) ProtoMessage() {}
 
 func (x *UpdateRepairOrderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[35]
+	mi := &file_workshop_workshop_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3754,7 +4008,7 @@ func (x *UpdateRepairOrderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateRepairOrderResponse.ProtoReflect.Descriptor instead.
 func (*UpdateRepairOrderResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{35}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *UpdateRepairOrderResponse) GetOrder() *RepairOrder {
@@ -3775,7 +4029,7 @@ type UpdateRepairOrderStatusRequest struct {
 
 func (x *UpdateRepairOrderStatusRequest) Reset() {
 	*x = UpdateRepairOrderStatusRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[36]
+	mi := &file_workshop_workshop_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3787,7 +4041,7 @@ func (x *UpdateRepairOrderStatusRequest) String() string {
 func (*UpdateRepairOrderStatusRequest) ProtoMessage() {}
 
 func (x *UpdateRepairOrderStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[36]
+	mi := &file_workshop_workshop_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3800,7 +4054,7 @@ func (x *UpdateRepairOrderStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateRepairOrderStatusRequest.ProtoReflect.Descriptor instead.
 func (*UpdateRepairOrderStatusRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{36}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *UpdateRepairOrderStatusRequest) GetOrderId() int64 {
@@ -3833,7 +4087,7 @@ type UpdateRepairOrderStatusResponse struct {
 
 func (x *UpdateRepairOrderStatusResponse) Reset() {
 	*x = UpdateRepairOrderStatusResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[37]
+	mi := &file_workshop_workshop_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3845,7 +4099,7 @@ func (x *UpdateRepairOrderStatusResponse) String() string {
 func (*UpdateRepairOrderStatusResponse) ProtoMessage() {}
 
 func (x *UpdateRepairOrderStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[37]
+	mi := &file_workshop_workshop_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3858,7 +4112,7 @@ func (x *UpdateRepairOrderStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateRepairOrderStatusResponse.ProtoReflect.Descriptor instead.
 func (*UpdateRepairOrderStatusResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{37}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *UpdateRepairOrderStatusResponse) GetOrder() *RepairOrder {
@@ -3882,7 +4136,7 @@ type ListRepairOrdersRequest struct {
 
 func (x *ListRepairOrdersRequest) Reset() {
 	*x = ListRepairOrdersRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[38]
+	mi := &file_workshop_workshop_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3894,7 +4148,7 @@ func (x *ListRepairOrdersRequest) String() string {
 func (*ListRepairOrdersRequest) ProtoMessage() {}
 
 func (x *ListRepairOrdersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[38]
+	mi := &file_workshop_workshop_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3907,7 +4161,7 @@ func (x *ListRepairOrdersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRepairOrdersRequest.ProtoReflect.Descriptor instead.
 func (*ListRepairOrdersRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{38}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *ListRepairOrdersRequest) GetWorkshopId() int64 {
@@ -3962,7 +4216,7 @@ type ListRepairOrdersResponse struct {
 
 func (x *ListRepairOrdersResponse) Reset() {
 	*x = ListRepairOrdersResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[39]
+	mi := &file_workshop_workshop_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3974,7 +4228,7 @@ func (x *ListRepairOrdersResponse) String() string {
 func (*ListRepairOrdersResponse) ProtoMessage() {}
 
 func (x *ListRepairOrdersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[39]
+	mi := &file_workshop_workshop_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3987,7 +4241,7 @@ func (x *ListRepairOrdersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRepairOrdersResponse.ProtoReflect.Descriptor instead.
 func (*ListRepairOrdersResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{39}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ListRepairOrdersResponse) GetOrders() []*RepairOrder {
@@ -4013,7 +4267,7 @@ type GetKanbanRequest struct {
 
 func (x *GetKanbanRequest) Reset() {
 	*x = GetKanbanRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[40]
+	mi := &file_workshop_workshop_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4025,7 +4279,7 @@ func (x *GetKanbanRequest) String() string {
 func (*GetKanbanRequest) ProtoMessage() {}
 
 func (x *GetKanbanRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[40]
+	mi := &file_workshop_workshop_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4038,7 +4292,7 @@ func (x *GetKanbanRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetKanbanRequest.ProtoReflect.Descriptor instead.
 func (*GetKanbanRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{40}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetKanbanRequest) GetWorkshopId() int64 {
@@ -4059,7 +4313,7 @@ type GetKanbanResponse struct {
 
 func (x *GetKanbanResponse) Reset() {
 	*x = GetKanbanResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[41]
+	mi := &file_workshop_workshop_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4071,7 +4325,7 @@ func (x *GetKanbanResponse) String() string {
 func (*GetKanbanResponse) ProtoMessage() {}
 
 func (x *GetKanbanResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[41]
+	mi := &file_workshop_workshop_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4084,7 +4338,7 @@ func (x *GetKanbanResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetKanbanResponse.ProtoReflect.Descriptor instead.
 func (*GetKanbanResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{41}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *GetKanbanResponse) GetColumns() []*KanbanColumn {
@@ -4121,7 +4375,7 @@ type CreateCarWorkRequest struct {
 
 func (x *CreateCarWorkRequest) Reset() {
 	*x = CreateCarWorkRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[42]
+	mi := &file_workshop_workshop_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4133,7 +4387,7 @@ func (x *CreateCarWorkRequest) String() string {
 func (*CreateCarWorkRequest) ProtoMessage() {}
 
 func (x *CreateCarWorkRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[42]
+	mi := &file_workshop_workshop_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4146,7 +4400,7 @@ func (x *CreateCarWorkRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCarWorkRequest.ProtoReflect.Descriptor instead.
 func (*CreateCarWorkRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{42}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *CreateCarWorkRequest) GetRepairOrderId() int64 {
@@ -4193,7 +4447,7 @@ type CreateCarWorkResponse struct {
 
 func (x *CreateCarWorkResponse) Reset() {
 	*x = CreateCarWorkResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[43]
+	mi := &file_workshop_workshop_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4205,7 +4459,7 @@ func (x *CreateCarWorkResponse) String() string {
 func (*CreateCarWorkResponse) ProtoMessage() {}
 
 func (x *CreateCarWorkResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[43]
+	mi := &file_workshop_workshop_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4218,7 +4472,7 @@ func (x *CreateCarWorkResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCarWorkResponse.ProtoReflect.Descriptor instead.
 func (*CreateCarWorkResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{43}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *CreateCarWorkResponse) GetWork() *CarWork {
@@ -4242,7 +4496,7 @@ type UpdateCarWorkRequest struct {
 
 func (x *UpdateCarWorkRequest) Reset() {
 	*x = UpdateCarWorkRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[44]
+	mi := &file_workshop_workshop_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4254,7 +4508,7 @@ func (x *UpdateCarWorkRequest) String() string {
 func (*UpdateCarWorkRequest) ProtoMessage() {}
 
 func (x *UpdateCarWorkRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[44]
+	mi := &file_workshop_workshop_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4267,7 +4521,7 @@ func (x *UpdateCarWorkRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCarWorkRequest.ProtoReflect.Descriptor instead.
 func (*UpdateCarWorkRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{44}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *UpdateCarWorkRequest) GetWorkId() int64 {
@@ -4321,7 +4575,7 @@ type UpdateCarWorkResponse struct {
 
 func (x *UpdateCarWorkResponse) Reset() {
 	*x = UpdateCarWorkResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[45]
+	mi := &file_workshop_workshop_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4333,7 +4587,7 @@ func (x *UpdateCarWorkResponse) String() string {
 func (*UpdateCarWorkResponse) ProtoMessage() {}
 
 func (x *UpdateCarWorkResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[45]
+	mi := &file_workshop_workshop_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4346,7 +4600,7 @@ func (x *UpdateCarWorkResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCarWorkResponse.ProtoReflect.Descriptor instead.
 func (*UpdateCarWorkResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{45}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *UpdateCarWorkResponse) GetWork() *CarWork {
@@ -4365,7 +4619,7 @@ type DeleteCarWorkRequest struct {
 
 func (x *DeleteCarWorkRequest) Reset() {
 	*x = DeleteCarWorkRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[46]
+	mi := &file_workshop_workshop_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4377,7 +4631,7 @@ func (x *DeleteCarWorkRequest) String() string {
 func (*DeleteCarWorkRequest) ProtoMessage() {}
 
 func (x *DeleteCarWorkRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[46]
+	mi := &file_workshop_workshop_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4390,7 +4644,7 @@ func (x *DeleteCarWorkRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCarWorkRequest.ProtoReflect.Descriptor instead.
 func (*DeleteCarWorkRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{46}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *DeleteCarWorkRequest) GetWorkId() int64 {
@@ -4408,7 +4662,7 @@ type DeleteCarWorkResponse struct {
 
 func (x *DeleteCarWorkResponse) Reset() {
 	*x = DeleteCarWorkResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[47]
+	mi := &file_workshop_workshop_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4420,7 +4674,7 @@ func (x *DeleteCarWorkResponse) String() string {
 func (*DeleteCarWorkResponse) ProtoMessage() {}
 
 func (x *DeleteCarWorkResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[47]
+	mi := &file_workshop_workshop_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4433,7 +4687,7 @@ func (x *DeleteCarWorkResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCarWorkResponse.ProtoReflect.Descriptor instead.
 func (*DeleteCarWorkResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{47}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{48}
 }
 
 type ListCarWorksRequest struct {
@@ -4446,7 +4700,7 @@ type ListCarWorksRequest struct {
 
 func (x *ListCarWorksRequest) Reset() {
 	*x = ListCarWorksRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[48]
+	mi := &file_workshop_workshop_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4458,7 +4712,7 @@ func (x *ListCarWorksRequest) String() string {
 func (*ListCarWorksRequest) ProtoMessage() {}
 
 func (x *ListCarWorksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[48]
+	mi := &file_workshop_workshop_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4471,7 +4725,7 @@ func (x *ListCarWorksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCarWorksRequest.ProtoReflect.Descriptor instead.
 func (*ListCarWorksRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{48}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *ListCarWorksRequest) GetRepairOrderId() int64 {
@@ -4497,7 +4751,7 @@ type ListCarWorksResponse struct {
 
 func (x *ListCarWorksResponse) Reset() {
 	*x = ListCarWorksResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[49]
+	mi := &file_workshop_workshop_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4509,7 +4763,7 @@ func (x *ListCarWorksResponse) String() string {
 func (*ListCarWorksResponse) ProtoMessage() {}
 
 func (x *ListCarWorksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[49]
+	mi := &file_workshop_workshop_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4522,7 +4776,7 @@ func (x *ListCarWorksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCarWorksResponse.ProtoReflect.Descriptor instead.
 func (*ListCarWorksResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{49}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *ListCarWorksResponse) GetWorks() []*CarWork {
@@ -4541,7 +4795,7 @@ type MarkCarWorkDoneRequest struct {
 
 func (x *MarkCarWorkDoneRequest) Reset() {
 	*x = MarkCarWorkDoneRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[50]
+	mi := &file_workshop_workshop_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4553,7 +4807,7 @@ func (x *MarkCarWorkDoneRequest) String() string {
 func (*MarkCarWorkDoneRequest) ProtoMessage() {}
 
 func (x *MarkCarWorkDoneRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[50]
+	mi := &file_workshop_workshop_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4566,7 +4820,7 @@ func (x *MarkCarWorkDoneRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkCarWorkDoneRequest.ProtoReflect.Descriptor instead.
 func (*MarkCarWorkDoneRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{50}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *MarkCarWorkDoneRequest) GetWorkId() int64 {
@@ -4585,7 +4839,7 @@ type MarkCarWorkDoneResponse struct {
 
 func (x *MarkCarWorkDoneResponse) Reset() {
 	*x = MarkCarWorkDoneResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[51]
+	mi := &file_workshop_workshop_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4597,7 +4851,7 @@ func (x *MarkCarWorkDoneResponse) String() string {
 func (*MarkCarWorkDoneResponse) ProtoMessage() {}
 
 func (x *MarkCarWorkDoneResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[51]
+	mi := &file_workshop_workshop_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4610,7 +4864,7 @@ func (x *MarkCarWorkDoneResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkCarWorkDoneResponse.ProtoReflect.Descriptor instead.
 func (*MarkCarWorkDoneResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{51}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *MarkCarWorkDoneResponse) GetWork() *CarWork {
@@ -4629,7 +4883,7 @@ type ClockInRequest struct {
 
 func (x *ClockInRequest) Reset() {
 	*x = ClockInRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[52]
+	mi := &file_workshop_workshop_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4641,7 +4895,7 @@ func (x *ClockInRequest) String() string {
 func (*ClockInRequest) ProtoMessage() {}
 
 func (x *ClockInRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[52]
+	mi := &file_workshop_workshop_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4654,7 +4908,7 @@ func (x *ClockInRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClockInRequest.ProtoReflect.Descriptor instead.
 func (*ClockInRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{52}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *ClockInRequest) GetWorkId() int64 {
@@ -4673,7 +4927,7 @@ type ClockInResponse struct {
 
 func (x *ClockInResponse) Reset() {
 	*x = ClockInResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[53]
+	mi := &file_workshop_workshop_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4685,7 +4939,7 @@ func (x *ClockInResponse) String() string {
 func (*ClockInResponse) ProtoMessage() {}
 
 func (x *ClockInResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[53]
+	mi := &file_workshop_workshop_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4698,7 +4952,7 @@ func (x *ClockInResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClockInResponse.ProtoReflect.Descriptor instead.
 func (*ClockInResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{53}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *ClockInResponse) GetWork() *CarWork {
@@ -4717,7 +4971,7 @@ type ClockOutRequest struct {
 
 func (x *ClockOutRequest) Reset() {
 	*x = ClockOutRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[54]
+	mi := &file_workshop_workshop_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4729,7 +4983,7 @@ func (x *ClockOutRequest) String() string {
 func (*ClockOutRequest) ProtoMessage() {}
 
 func (x *ClockOutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[54]
+	mi := &file_workshop_workshop_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4742,7 +4996,7 @@ func (x *ClockOutRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClockOutRequest.ProtoReflect.Descriptor instead.
 func (*ClockOutRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{54}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *ClockOutRequest) GetWorkId() int64 {
@@ -4761,7 +5015,7 @@ type ClockOutResponse struct {
 
 func (x *ClockOutResponse) Reset() {
 	*x = ClockOutResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[55]
+	mi := &file_workshop_workshop_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4773,7 +5027,7 @@ func (x *ClockOutResponse) String() string {
 func (*ClockOutResponse) ProtoMessage() {}
 
 func (x *ClockOutResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[55]
+	mi := &file_workshop_workshop_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4786,7 +5040,7 @@ func (x *ClockOutResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClockOutResponse.ProtoReflect.Descriptor instead.
 func (*ClockOutResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{55}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *ClockOutResponse) GetWork() *CarWork {
@@ -4811,7 +5065,7 @@ type CreateMasterRequest struct {
 
 func (x *CreateMasterRequest) Reset() {
 	*x = CreateMasterRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[56]
+	mi := &file_workshop_workshop_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4823,7 +5077,7 @@ func (x *CreateMasterRequest) String() string {
 func (*CreateMasterRequest) ProtoMessage() {}
 
 func (x *CreateMasterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[56]
+	mi := &file_workshop_workshop_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4836,7 +5090,7 @@ func (x *CreateMasterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateMasterRequest.ProtoReflect.Descriptor instead.
 func (*CreateMasterRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{56}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *CreateMasterRequest) GetWorkshopId() int64 {
@@ -4897,7 +5151,7 @@ type CreateMasterResponse struct {
 
 func (x *CreateMasterResponse) Reset() {
 	*x = CreateMasterResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[57]
+	mi := &file_workshop_workshop_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4909,7 +5163,7 @@ func (x *CreateMasterResponse) String() string {
 func (*CreateMasterResponse) ProtoMessage() {}
 
 func (x *CreateMasterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[57]
+	mi := &file_workshop_workshop_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4922,7 +5176,7 @@ func (x *CreateMasterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateMasterResponse.ProtoReflect.Descriptor instead.
 func (*CreateMasterResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{57}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *CreateMasterResponse) GetMaster() *Master {
@@ -4941,7 +5195,7 @@ type GetMasterRequest struct {
 
 func (x *GetMasterRequest) Reset() {
 	*x = GetMasterRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[58]
+	mi := &file_workshop_workshop_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4953,7 +5207,7 @@ func (x *GetMasterRequest) String() string {
 func (*GetMasterRequest) ProtoMessage() {}
 
 func (x *GetMasterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[58]
+	mi := &file_workshop_workshop_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4966,7 +5220,7 @@ func (x *GetMasterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMasterRequest.ProtoReflect.Descriptor instead.
 func (*GetMasterRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{58}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *GetMasterRequest) GetMasterId() int64 {
@@ -4985,7 +5239,7 @@ type GetMasterResponse struct {
 
 func (x *GetMasterResponse) Reset() {
 	*x = GetMasterResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[59]
+	mi := &file_workshop_workshop_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4997,7 +5251,7 @@ func (x *GetMasterResponse) String() string {
 func (*GetMasterResponse) ProtoMessage() {}
 
 func (x *GetMasterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[59]
+	mi := &file_workshop_workshop_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5010,7 +5264,7 @@ func (x *GetMasterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMasterResponse.ProtoReflect.Descriptor instead.
 func (*GetMasterResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{59}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *GetMasterResponse) GetMaster() *Master {
@@ -5035,7 +5289,7 @@ type UpdateMasterRequest struct {
 
 func (x *UpdateMasterRequest) Reset() {
 	*x = UpdateMasterRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[60]
+	mi := &file_workshop_workshop_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5047,7 +5301,7 @@ func (x *UpdateMasterRequest) String() string {
 func (*UpdateMasterRequest) ProtoMessage() {}
 
 func (x *UpdateMasterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[60]
+	mi := &file_workshop_workshop_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5060,7 +5314,7 @@ func (x *UpdateMasterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateMasterRequest.ProtoReflect.Descriptor instead.
 func (*UpdateMasterRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{60}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *UpdateMasterRequest) GetMasterId() int64 {
@@ -5121,7 +5375,7 @@ type UpdateMasterResponse struct {
 
 func (x *UpdateMasterResponse) Reset() {
 	*x = UpdateMasterResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[61]
+	mi := &file_workshop_workshop_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5133,7 +5387,7 @@ func (x *UpdateMasterResponse) String() string {
 func (*UpdateMasterResponse) ProtoMessage() {}
 
 func (x *UpdateMasterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[61]
+	mi := &file_workshop_workshop_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5146,7 +5400,7 @@ func (x *UpdateMasterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateMasterResponse.ProtoReflect.Descriptor instead.
 func (*UpdateMasterResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{61}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *UpdateMasterResponse) GetMaster() *Master {
@@ -5165,7 +5419,7 @@ type FireMasterRequest struct {
 
 func (x *FireMasterRequest) Reset() {
 	*x = FireMasterRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[62]
+	mi := &file_workshop_workshop_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5177,7 +5431,7 @@ func (x *FireMasterRequest) String() string {
 func (*FireMasterRequest) ProtoMessage() {}
 
 func (x *FireMasterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[62]
+	mi := &file_workshop_workshop_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5190,7 +5444,7 @@ func (x *FireMasterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FireMasterRequest.ProtoReflect.Descriptor instead.
 func (*FireMasterRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{62}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *FireMasterRequest) GetMasterId() int64 {
@@ -5209,7 +5463,7 @@ type FireMasterResponse struct {
 
 func (x *FireMasterResponse) Reset() {
 	*x = FireMasterResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[63]
+	mi := &file_workshop_workshop_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5221,7 +5475,7 @@ func (x *FireMasterResponse) String() string {
 func (*FireMasterResponse) ProtoMessage() {}
 
 func (x *FireMasterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[63]
+	mi := &file_workshop_workshop_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5234,7 +5488,7 @@ func (x *FireMasterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FireMasterResponse.ProtoReflect.Descriptor instead.
 func (*FireMasterResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{63}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *FireMasterResponse) GetMaster() *Master {
@@ -5255,7 +5509,7 @@ type ListMastersRequest struct {
 
 func (x *ListMastersRequest) Reset() {
 	*x = ListMastersRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[64]
+	mi := &file_workshop_workshop_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5267,7 +5521,7 @@ func (x *ListMastersRequest) String() string {
 func (*ListMastersRequest) ProtoMessage() {}
 
 func (x *ListMastersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[64]
+	mi := &file_workshop_workshop_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5280,7 +5534,7 @@ func (x *ListMastersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMastersRequest.ProtoReflect.Descriptor instead.
 func (*ListMastersRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{64}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *ListMastersRequest) GetWorkshopId() int64 {
@@ -5313,7 +5567,7 @@ type ListMastersResponse struct {
 
 func (x *ListMastersResponse) Reset() {
 	*x = ListMastersResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[65]
+	mi := &file_workshop_workshop_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5325,7 +5579,7 @@ func (x *ListMastersResponse) String() string {
 func (*ListMastersResponse) ProtoMessage() {}
 
 func (x *ListMastersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[65]
+	mi := &file_workshop_workshop_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5338,7 +5592,7 @@ func (x *ListMastersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMastersResponse.ProtoReflect.Descriptor instead.
 func (*ListMastersResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{65}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *ListMastersResponse) GetMasters() []*Master {
@@ -5360,7 +5614,7 @@ type CalculateSalaryRequest struct {
 
 func (x *CalculateSalaryRequest) Reset() {
 	*x = CalculateSalaryRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[66]
+	mi := &file_workshop_workshop_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5372,7 +5626,7 @@ func (x *CalculateSalaryRequest) String() string {
 func (*CalculateSalaryRequest) ProtoMessage() {}
 
 func (x *CalculateSalaryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[66]
+	mi := &file_workshop_workshop_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5385,7 +5639,7 @@ func (x *CalculateSalaryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CalculateSalaryRequest.ProtoReflect.Descriptor instead.
 func (*CalculateSalaryRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{66}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *CalculateSalaryRequest) GetWorkshopId() int64 {
@@ -5426,7 +5680,7 @@ type CalculateSalaryResponse struct {
 
 func (x *CalculateSalaryResponse) Reset() {
 	*x = CalculateSalaryResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[67]
+	mi := &file_workshop_workshop_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5438,7 +5692,7 @@ func (x *CalculateSalaryResponse) String() string {
 func (*CalculateSalaryResponse) ProtoMessage() {}
 
 func (x *CalculateSalaryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[67]
+	mi := &file_workshop_workshop_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5451,7 +5705,7 @@ func (x *CalculateSalaryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CalculateSalaryResponse.ProtoReflect.Descriptor instead.
 func (*CalculateSalaryResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{67}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *CalculateSalaryResponse) GetBreakdowns() []*SalaryBreakdown {
@@ -5480,7 +5734,7 @@ type GetSalaryBreakdownRequest struct {
 
 func (x *GetSalaryBreakdownRequest) Reset() {
 	*x = GetSalaryBreakdownRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[68]
+	mi := &file_workshop_workshop_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5492,7 +5746,7 @@ func (x *GetSalaryBreakdownRequest) String() string {
 func (*GetSalaryBreakdownRequest) ProtoMessage() {}
 
 func (x *GetSalaryBreakdownRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[68]
+	mi := &file_workshop_workshop_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5505,7 +5759,7 @@ func (x *GetSalaryBreakdownRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSalaryBreakdownRequest.ProtoReflect.Descriptor instead.
 func (*GetSalaryBreakdownRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{68}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *GetSalaryBreakdownRequest) GetMasterId() int64 {
@@ -5545,7 +5799,7 @@ type GetSalaryBreakdownResponse struct {
 
 func (x *GetSalaryBreakdownResponse) Reset() {
 	*x = GetSalaryBreakdownResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[69]
+	mi := &file_workshop_workshop_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5557,7 +5811,7 @@ func (x *GetSalaryBreakdownResponse) String() string {
 func (*GetSalaryBreakdownResponse) ProtoMessage() {}
 
 func (x *GetSalaryBreakdownResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[69]
+	mi := &file_workshop_workshop_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5570,7 +5824,7 @@ func (x *GetSalaryBreakdownResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSalaryBreakdownResponse.ProtoReflect.Descriptor instead.
 func (*GetSalaryBreakdownResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{69}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *GetSalaryBreakdownResponse) GetBreakdown() *SalaryBreakdown {
@@ -5593,7 +5847,7 @@ type CreateBonusRequest struct {
 
 func (x *CreateBonusRequest) Reset() {
 	*x = CreateBonusRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[70]
+	mi := &file_workshop_workshop_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5605,7 +5859,7 @@ func (x *CreateBonusRequest) String() string {
 func (*CreateBonusRequest) ProtoMessage() {}
 
 func (x *CreateBonusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[70]
+	mi := &file_workshop_workshop_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5618,7 +5872,7 @@ func (x *CreateBonusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateBonusRequest.ProtoReflect.Descriptor instead.
 func (*CreateBonusRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{70}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *CreateBonusRequest) GetMasterId() int64 {
@@ -5665,7 +5919,7 @@ type CreateBonusResponse struct {
 
 func (x *CreateBonusResponse) Reset() {
 	*x = CreateBonusResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[71]
+	mi := &file_workshop_workshop_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5677,7 +5931,7 @@ func (x *CreateBonusResponse) String() string {
 func (*CreateBonusResponse) ProtoMessage() {}
 
 func (x *CreateBonusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[71]
+	mi := &file_workshop_workshop_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5690,7 +5944,7 @@ func (x *CreateBonusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateBonusResponse.ProtoReflect.Descriptor instead.
 func (*CreateBonusResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{71}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *CreateBonusResponse) GetBonus() *SalaryAdjustment {
@@ -5713,7 +5967,7 @@ type CreateFineRequest struct {
 
 func (x *CreateFineRequest) Reset() {
 	*x = CreateFineRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[72]
+	mi := &file_workshop_workshop_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5725,7 +5979,7 @@ func (x *CreateFineRequest) String() string {
 func (*CreateFineRequest) ProtoMessage() {}
 
 func (x *CreateFineRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[72]
+	mi := &file_workshop_workshop_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5738,7 +5992,7 @@ func (x *CreateFineRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateFineRequest.ProtoReflect.Descriptor instead.
 func (*CreateFineRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{72}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *CreateFineRequest) GetMasterId() int64 {
@@ -5785,7 +6039,7 @@ type CreateFineResponse struct {
 
 func (x *CreateFineResponse) Reset() {
 	*x = CreateFineResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[73]
+	mi := &file_workshop_workshop_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5797,7 +6051,7 @@ func (x *CreateFineResponse) String() string {
 func (*CreateFineResponse) ProtoMessage() {}
 
 func (x *CreateFineResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[73]
+	mi := &file_workshop_workshop_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5810,7 +6064,7 @@ func (x *CreateFineResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateFineResponse.ProtoReflect.Descriptor instead.
 func (*CreateFineResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{73}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *CreateFineResponse) GetFine() *SalaryAdjustment {
@@ -5833,7 +6087,7 @@ type CreateAdvanceRequest struct {
 
 func (x *CreateAdvanceRequest) Reset() {
 	*x = CreateAdvanceRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[74]
+	mi := &file_workshop_workshop_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5845,7 +6099,7 @@ func (x *CreateAdvanceRequest) String() string {
 func (*CreateAdvanceRequest) ProtoMessage() {}
 
 func (x *CreateAdvanceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[74]
+	mi := &file_workshop_workshop_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5858,7 +6112,7 @@ func (x *CreateAdvanceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateAdvanceRequest.ProtoReflect.Descriptor instead.
 func (*CreateAdvanceRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{74}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *CreateAdvanceRequest) GetMasterId() int64 {
@@ -5905,7 +6159,7 @@ type CreateAdvanceResponse struct {
 
 func (x *CreateAdvanceResponse) Reset() {
 	*x = CreateAdvanceResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[75]
+	mi := &file_workshop_workshop_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5917,7 +6171,7 @@ func (x *CreateAdvanceResponse) String() string {
 func (*CreateAdvanceResponse) ProtoMessage() {}
 
 func (x *CreateAdvanceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[75]
+	mi := &file_workshop_workshop_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5930,7 +6184,7 @@ func (x *CreateAdvanceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateAdvanceResponse.ProtoReflect.Descriptor instead.
 func (*CreateAdvanceResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{75}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *CreateAdvanceResponse) GetAdvance() *SalaryAdjustment {
@@ -5949,7 +6203,7 @@ type DeleteBonusRequest struct {
 
 func (x *DeleteBonusRequest) Reset() {
 	*x = DeleteBonusRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[76]
+	mi := &file_workshop_workshop_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5961,7 +6215,7 @@ func (x *DeleteBonusRequest) String() string {
 func (*DeleteBonusRequest) ProtoMessage() {}
 
 func (x *DeleteBonusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[76]
+	mi := &file_workshop_workshop_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5974,7 +6228,7 @@ func (x *DeleteBonusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBonusRequest.ProtoReflect.Descriptor instead.
 func (*DeleteBonusRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{76}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *DeleteBonusRequest) GetBonusId() int64 {
@@ -5992,7 +6246,7 @@ type DeleteBonusResponse struct {
 
 func (x *DeleteBonusResponse) Reset() {
 	*x = DeleteBonusResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[77]
+	mi := &file_workshop_workshop_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6004,7 +6258,7 @@ func (x *DeleteBonusResponse) String() string {
 func (*DeleteBonusResponse) ProtoMessage() {}
 
 func (x *DeleteBonusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[77]
+	mi := &file_workshop_workshop_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6017,7 +6271,7 @@ func (x *DeleteBonusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBonusResponse.ProtoReflect.Descriptor instead.
 func (*DeleteBonusResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{77}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{78}
 }
 
 type DeleteFineRequest struct {
@@ -6029,7 +6283,7 @@ type DeleteFineRequest struct {
 
 func (x *DeleteFineRequest) Reset() {
 	*x = DeleteFineRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[78]
+	mi := &file_workshop_workshop_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6041,7 +6295,7 @@ func (x *DeleteFineRequest) String() string {
 func (*DeleteFineRequest) ProtoMessage() {}
 
 func (x *DeleteFineRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[78]
+	mi := &file_workshop_workshop_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6054,7 +6308,7 @@ func (x *DeleteFineRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFineRequest.ProtoReflect.Descriptor instead.
 func (*DeleteFineRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{78}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *DeleteFineRequest) GetFineId() int64 {
@@ -6072,7 +6326,7 @@ type DeleteFineResponse struct {
 
 func (x *DeleteFineResponse) Reset() {
 	*x = DeleteFineResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[79]
+	mi := &file_workshop_workshop_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6084,7 +6338,7 @@ func (x *DeleteFineResponse) String() string {
 func (*DeleteFineResponse) ProtoMessage() {}
 
 func (x *DeleteFineResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[79]
+	mi := &file_workshop_workshop_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6097,7 +6351,7 @@ func (x *DeleteFineResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFineResponse.ProtoReflect.Descriptor instead.
 func (*DeleteFineResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{79}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{80}
 }
 
 type SetMasterHourRateRequest struct {
@@ -6111,7 +6365,7 @@ type SetMasterHourRateRequest struct {
 
 func (x *SetMasterHourRateRequest) Reset() {
 	*x = SetMasterHourRateRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[80]
+	mi := &file_workshop_workshop_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6123,7 +6377,7 @@ func (x *SetMasterHourRateRequest) String() string {
 func (*SetMasterHourRateRequest) ProtoMessage() {}
 
 func (x *SetMasterHourRateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[80]
+	mi := &file_workshop_workshop_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6136,7 +6390,7 @@ func (x *SetMasterHourRateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMasterHourRateRequest.ProtoReflect.Descriptor instead.
 func (*SetMasterHourRateRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{80}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *SetMasterHourRateRequest) GetMasterId() int64 {
@@ -6169,7 +6423,7 @@ type SetMasterHourRateResponse struct {
 
 func (x *SetMasterHourRateResponse) Reset() {
 	*x = SetMasterHourRateResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[81]
+	mi := &file_workshop_workshop_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6181,7 +6435,7 @@ func (x *SetMasterHourRateResponse) String() string {
 func (*SetMasterHourRateResponse) ProtoMessage() {}
 
 func (x *SetMasterHourRateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[81]
+	mi := &file_workshop_workshop_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6194,7 +6448,7 @@ func (x *SetMasterHourRateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMasterHourRateResponse.ProtoReflect.Descriptor instead.
 func (*SetMasterHourRateResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{81}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *SetMasterHourRateResponse) GetRate() *MasterHourRate {
@@ -6215,7 +6469,7 @@ type SetMasterFixSalaryRequest struct {
 
 func (x *SetMasterFixSalaryRequest) Reset() {
 	*x = SetMasterFixSalaryRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[82]
+	mi := &file_workshop_workshop_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6227,7 +6481,7 @@ func (x *SetMasterFixSalaryRequest) String() string {
 func (*SetMasterFixSalaryRequest) ProtoMessage() {}
 
 func (x *SetMasterFixSalaryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[82]
+	mi := &file_workshop_workshop_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6240,7 +6494,7 @@ func (x *SetMasterFixSalaryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMasterFixSalaryRequest.ProtoReflect.Descriptor instead.
 func (*SetMasterFixSalaryRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{82}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *SetMasterFixSalaryRequest) GetMasterId() int64 {
@@ -6273,7 +6527,7 @@ type SetMasterFixSalaryResponse struct {
 
 func (x *SetMasterFixSalaryResponse) Reset() {
 	*x = SetMasterFixSalaryResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[83]
+	mi := &file_workshop_workshop_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6285,7 +6539,7 @@ func (x *SetMasterFixSalaryResponse) String() string {
 func (*SetMasterFixSalaryResponse) ProtoMessage() {}
 
 func (x *SetMasterFixSalaryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[83]
+	mi := &file_workshop_workshop_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6298,7 +6552,7 @@ func (x *SetMasterFixSalaryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMasterFixSalaryResponse.ProtoReflect.Descriptor instead.
 func (*SetMasterFixSalaryResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{83}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *SetMasterFixSalaryResponse) GetRate() *MasterFixSalary {
@@ -6317,7 +6571,7 @@ type GetMasterRateHistoryRequest struct {
 
 func (x *GetMasterRateHistoryRequest) Reset() {
 	*x = GetMasterRateHistoryRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[84]
+	mi := &file_workshop_workshop_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6329,7 +6583,7 @@ func (x *GetMasterRateHistoryRequest) String() string {
 func (*GetMasterRateHistoryRequest) ProtoMessage() {}
 
 func (x *GetMasterRateHistoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[84]
+	mi := &file_workshop_workshop_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6342,7 +6596,7 @@ func (x *GetMasterRateHistoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMasterRateHistoryRequest.ProtoReflect.Descriptor instead.
 func (*GetMasterRateHistoryRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{84}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *GetMasterRateHistoryRequest) GetMasterId() int64 {
@@ -6362,7 +6616,7 @@ type GetMasterRateHistoryResponse struct {
 
 func (x *GetMasterRateHistoryResponse) Reset() {
 	*x = GetMasterRateHistoryResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[85]
+	mi := &file_workshop_workshop_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6374,7 +6628,7 @@ func (x *GetMasterRateHistoryResponse) String() string {
 func (*GetMasterRateHistoryResponse) ProtoMessage() {}
 
 func (x *GetMasterRateHistoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[85]
+	mi := &file_workshop_workshop_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6387,7 +6641,7 @@ func (x *GetMasterRateHistoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMasterRateHistoryResponse.ProtoReflect.Descriptor instead.
 func (*GetMasterRateHistoryResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{85}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *GetMasterRateHistoryResponse) GetHourRates() []*MasterHourRate {
@@ -6416,7 +6670,7 @@ type PublishOutsourceRequest struct {
 
 func (x *PublishOutsourceRequest) Reset() {
 	*x = PublishOutsourceRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[86]
+	mi := &file_workshop_workshop_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6428,7 +6682,7 @@ func (x *PublishOutsourceRequest) String() string {
 func (*PublishOutsourceRequest) ProtoMessage() {}
 
 func (x *PublishOutsourceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[86]
+	mi := &file_workshop_workshop_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6441,7 +6695,7 @@ func (x *PublishOutsourceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublishOutsourceRequest.ProtoReflect.Descriptor instead.
 func (*PublishOutsourceRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{86}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *PublishOutsourceRequest) GetRepairOrderId() int64 {
@@ -6481,7 +6735,7 @@ type PublishOutsourceResponse struct {
 
 func (x *PublishOutsourceResponse) Reset() {
 	*x = PublishOutsourceResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[87]
+	mi := &file_workshop_workshop_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6493,7 +6747,7 @@ func (x *PublishOutsourceResponse) String() string {
 func (*PublishOutsourceResponse) ProtoMessage() {}
 
 func (x *PublishOutsourceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[87]
+	mi := &file_workshop_workshop_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6506,7 +6760,7 @@ func (x *PublishOutsourceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublishOutsourceResponse.ProtoReflect.Descriptor instead.
 func (*PublishOutsourceResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{87}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{88}
 }
 
 func (x *PublishOutsourceResponse) GetRequest() *OutsourceRequest {
@@ -6526,7 +6780,7 @@ type AcceptOutsourceRequest struct {
 
 func (x *AcceptOutsourceRequest) Reset() {
 	*x = AcceptOutsourceRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[88]
+	mi := &file_workshop_workshop_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6538,7 +6792,7 @@ func (x *AcceptOutsourceRequest) String() string {
 func (*AcceptOutsourceRequest) ProtoMessage() {}
 
 func (x *AcceptOutsourceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[88]
+	mi := &file_workshop_workshop_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6551,7 +6805,7 @@ func (x *AcceptOutsourceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AcceptOutsourceRequest.ProtoReflect.Descriptor instead.
 func (*AcceptOutsourceRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{88}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{89}
 }
 
 func (x *AcceptOutsourceRequest) GetOutsourceId() int64 {
@@ -6577,7 +6831,7 @@ type AcceptOutsourceResponse struct {
 
 func (x *AcceptOutsourceResponse) Reset() {
 	*x = AcceptOutsourceResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[89]
+	mi := &file_workshop_workshop_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6589,7 +6843,7 @@ func (x *AcceptOutsourceResponse) String() string {
 func (*AcceptOutsourceResponse) ProtoMessage() {}
 
 func (x *AcceptOutsourceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[89]
+	mi := &file_workshop_workshop_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6602,7 +6856,7 @@ func (x *AcceptOutsourceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AcceptOutsourceResponse.ProtoReflect.Descriptor instead.
 func (*AcceptOutsourceResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{89}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{90}
 }
 
 func (x *AcceptOutsourceResponse) GetRequest() *OutsourceRequest {
@@ -6625,7 +6879,7 @@ type ListOutsourceRequestsRequest struct {
 
 func (x *ListOutsourceRequestsRequest) Reset() {
 	*x = ListOutsourceRequestsRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[90]
+	mi := &file_workshop_workshop_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6637,7 +6891,7 @@ func (x *ListOutsourceRequestsRequest) String() string {
 func (*ListOutsourceRequestsRequest) ProtoMessage() {}
 
 func (x *ListOutsourceRequestsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[90]
+	mi := &file_workshop_workshop_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6650,7 +6904,7 @@ func (x *ListOutsourceRequestsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListOutsourceRequestsRequest.ProtoReflect.Descriptor instead.
 func (*ListOutsourceRequestsRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{90}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{91}
 }
 
 func (x *ListOutsourceRequestsRequest) GetOrgId() string {
@@ -6698,7 +6952,7 @@ type ListOutsourceRequestsResponse struct {
 
 func (x *ListOutsourceRequestsResponse) Reset() {
 	*x = ListOutsourceRequestsResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[91]
+	mi := &file_workshop_workshop_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6710,7 +6964,7 @@ func (x *ListOutsourceRequestsResponse) String() string {
 func (*ListOutsourceRequestsResponse) ProtoMessage() {}
 
 func (x *ListOutsourceRequestsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[91]
+	mi := &file_workshop_workshop_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6723,7 +6977,7 @@ func (x *ListOutsourceRequestsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListOutsourceRequestsResponse.ProtoReflect.Descriptor instead.
 func (*ListOutsourceRequestsResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{91}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{92}
 }
 
 func (x *ListOutsourceRequestsResponse) GetRequests() []*OutsourceRequest {
@@ -6749,7 +7003,7 @@ type GetOutsourceKanbanRequest struct {
 
 func (x *GetOutsourceKanbanRequest) Reset() {
 	*x = GetOutsourceKanbanRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[92]
+	mi := &file_workshop_workshop_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6761,7 +7015,7 @@ func (x *GetOutsourceKanbanRequest) String() string {
 func (*GetOutsourceKanbanRequest) ProtoMessage() {}
 
 func (x *GetOutsourceKanbanRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[92]
+	mi := &file_workshop_workshop_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6774,7 +7028,7 @@ func (x *GetOutsourceKanbanRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOutsourceKanbanRequest.ProtoReflect.Descriptor instead.
 func (*GetOutsourceKanbanRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{92}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{93}
 }
 
 func (x *GetOutsourceKanbanRequest) GetOrgId() string {
@@ -6793,7 +7047,7 @@ type GetOutsourceKanbanResponse struct {
 
 func (x *GetOutsourceKanbanResponse) Reset() {
 	*x = GetOutsourceKanbanResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[93]
+	mi := &file_workshop_workshop_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6805,7 +7059,7 @@ func (x *GetOutsourceKanbanResponse) String() string {
 func (*GetOutsourceKanbanResponse) ProtoMessage() {}
 
 func (x *GetOutsourceKanbanResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[93]
+	mi := &file_workshop_workshop_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6818,7 +7072,7 @@ func (x *GetOutsourceKanbanResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOutsourceKanbanResponse.ProtoReflect.Descriptor instead.
 func (*GetOutsourceKanbanResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{93}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{94}
 }
 
 func (x *GetOutsourceKanbanResponse) GetColumns() []*OutsourceKanbanColumn {
@@ -6838,7 +7092,7 @@ type UpdateOutsourceStatusRequest struct {
 
 func (x *UpdateOutsourceStatusRequest) Reset() {
 	*x = UpdateOutsourceStatusRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[94]
+	mi := &file_workshop_workshop_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6850,7 +7104,7 @@ func (x *UpdateOutsourceStatusRequest) String() string {
 func (*UpdateOutsourceStatusRequest) ProtoMessage() {}
 
 func (x *UpdateOutsourceStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[94]
+	mi := &file_workshop_workshop_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6863,7 +7117,7 @@ func (x *UpdateOutsourceStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateOutsourceStatusRequest.ProtoReflect.Descriptor instead.
 func (*UpdateOutsourceStatusRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{94}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{95}
 }
 
 func (x *UpdateOutsourceStatusRequest) GetOutsourceId() int64 {
@@ -6889,7 +7143,7 @@ type UpdateOutsourceStatusResponse struct {
 
 func (x *UpdateOutsourceStatusResponse) Reset() {
 	*x = UpdateOutsourceStatusResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[95]
+	mi := &file_workshop_workshop_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6901,7 +7155,7 @@ func (x *UpdateOutsourceStatusResponse) String() string {
 func (*UpdateOutsourceStatusResponse) ProtoMessage() {}
 
 func (x *UpdateOutsourceStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[95]
+	mi := &file_workshop_workshop_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6914,7 +7168,7 @@ func (x *UpdateOutsourceStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateOutsourceStatusResponse.ProtoReflect.Descriptor instead.
 func (*UpdateOutsourceStatusResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{95}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{96}
 }
 
 func (x *UpdateOutsourceStatusResponse) GetRequest() *OutsourceRequest {
@@ -6935,7 +7189,7 @@ type GetWorkshopStatsRequest struct {
 
 func (x *GetWorkshopStatsRequest) Reset() {
 	*x = GetWorkshopStatsRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[96]
+	mi := &file_workshop_workshop_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6947,7 +7201,7 @@ func (x *GetWorkshopStatsRequest) String() string {
 func (*GetWorkshopStatsRequest) ProtoMessage() {}
 
 func (x *GetWorkshopStatsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[96]
+	mi := &file_workshop_workshop_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6960,7 +7214,7 @@ func (x *GetWorkshopStatsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkshopStatsRequest.ProtoReflect.Descriptor instead.
 func (*GetWorkshopStatsRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{96}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{97}
 }
 
 func (x *GetWorkshopStatsRequest) GetWorkshopId() int64 {
@@ -7000,7 +7254,7 @@ type GetWorkshopStatsResponse struct {
 
 func (x *GetWorkshopStatsResponse) Reset() {
 	*x = GetWorkshopStatsResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[97]
+	mi := &file_workshop_workshop_proto_msgTypes[98]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7012,7 +7266,7 @@ func (x *GetWorkshopStatsResponse) String() string {
 func (*GetWorkshopStatsResponse) ProtoMessage() {}
 
 func (x *GetWorkshopStatsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[97]
+	mi := &file_workshop_workshop_proto_msgTypes[98]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7025,7 +7279,7 @@ func (x *GetWorkshopStatsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWorkshopStatsResponse.ProtoReflect.Descriptor instead.
 func (*GetWorkshopStatsResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{97}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{98}
 }
 
 func (x *GetWorkshopStatsResponse) GetOrdersInProgress() int32 {
@@ -7095,7 +7349,7 @@ type GetMasterPerformanceRequest struct {
 
 func (x *GetMasterPerformanceRequest) Reset() {
 	*x = GetMasterPerformanceRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[98]
+	mi := &file_workshop_workshop_proto_msgTypes[99]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7107,7 +7361,7 @@ func (x *GetMasterPerformanceRequest) String() string {
 func (*GetMasterPerformanceRequest) ProtoMessage() {}
 
 func (x *GetMasterPerformanceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[98]
+	mi := &file_workshop_workshop_proto_msgTypes[99]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7120,7 +7374,7 @@ func (x *GetMasterPerformanceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMasterPerformanceRequest.ProtoReflect.Descriptor instead.
 func (*GetMasterPerformanceRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{98}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{99}
 }
 
 func (x *GetMasterPerformanceRequest) GetWorkshopId() int64 {
@@ -7153,7 +7407,7 @@ type GetMasterPerformanceResponse struct {
 
 func (x *GetMasterPerformanceResponse) Reset() {
 	*x = GetMasterPerformanceResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[99]
+	mi := &file_workshop_workshop_proto_msgTypes[100]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7165,7 +7419,7 @@ func (x *GetMasterPerformanceResponse) String() string {
 func (*GetMasterPerformanceResponse) ProtoMessage() {}
 
 func (x *GetMasterPerformanceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[99]
+	mi := &file_workshop_workshop_proto_msgTypes[100]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7178,7 +7432,7 @@ func (x *GetMasterPerformanceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMasterPerformanceResponse.ProtoReflect.Descriptor instead.
 func (*GetMasterPerformanceResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{99}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{100}
 }
 
 func (x *GetMasterPerformanceResponse) GetEntries() []*MasterPerformanceEntry {
@@ -7202,7 +7456,7 @@ type MasterPerformanceEntry struct {
 
 func (x *MasterPerformanceEntry) Reset() {
 	*x = MasterPerformanceEntry{}
-	mi := &file_workshop_workshop_proto_msgTypes[100]
+	mi := &file_workshop_workshop_proto_msgTypes[101]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7214,7 +7468,7 @@ func (x *MasterPerformanceEntry) String() string {
 func (*MasterPerformanceEntry) ProtoMessage() {}
 
 func (x *MasterPerformanceEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[100]
+	mi := &file_workshop_workshop_proto_msgTypes[101]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7227,7 +7481,7 @@ func (x *MasterPerformanceEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MasterPerformanceEntry.ProtoReflect.Descriptor instead.
 func (*MasterPerformanceEntry) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{100}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{101}
 }
 
 func (x *MasterPerformanceEntry) GetMasterId() int64 {
@@ -7285,7 +7539,7 @@ type GetDailyReportRequest struct {
 
 func (x *GetDailyReportRequest) Reset() {
 	*x = GetDailyReportRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[101]
+	mi := &file_workshop_workshop_proto_msgTypes[102]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7297,7 +7551,7 @@ func (x *GetDailyReportRequest) String() string {
 func (*GetDailyReportRequest) ProtoMessage() {}
 
 func (x *GetDailyReportRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[101]
+	mi := &file_workshop_workshop_proto_msgTypes[102]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7310,7 +7564,7 @@ func (x *GetDailyReportRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDailyReportRequest.ProtoReflect.Descriptor instead.
 func (*GetDailyReportRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{101}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{102}
 }
 
 func (x *GetDailyReportRequest) GetWorkshopId() int64 {
@@ -7356,7 +7610,7 @@ type DailyReportEntry struct {
 
 func (x *DailyReportEntry) Reset() {
 	*x = DailyReportEntry{}
-	mi := &file_workshop_workshop_proto_msgTypes[102]
+	mi := &file_workshop_workshop_proto_msgTypes[103]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7368,7 +7622,7 @@ func (x *DailyReportEntry) String() string {
 func (*DailyReportEntry) ProtoMessage() {}
 
 func (x *DailyReportEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[102]
+	mi := &file_workshop_workshop_proto_msgTypes[103]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7381,7 +7635,7 @@ func (x *DailyReportEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DailyReportEntry.ProtoReflect.Descriptor instead.
 func (*DailyReportEntry) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{102}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{103}
 }
 
 func (x *DailyReportEntry) GetDate() *timestamppb.Timestamp {
@@ -7445,7 +7699,7 @@ type GetDailyReportResponse struct {
 
 func (x *GetDailyReportResponse) Reset() {
 	*x = GetDailyReportResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[103]
+	mi := &file_workshop_workshop_proto_msgTypes[104]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7457,7 +7711,7 @@ func (x *GetDailyReportResponse) String() string {
 func (*GetDailyReportResponse) ProtoMessage() {}
 
 func (x *GetDailyReportResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[103]
+	mi := &file_workshop_workshop_proto_msgTypes[104]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7470,7 +7724,7 @@ func (x *GetDailyReportResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDailyReportResponse.ProtoReflect.Descriptor instead.
 func (*GetDailyReportResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{103}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{104}
 }
 
 // Deprecated: Marked as deprecated in workshop/workshop.proto.
@@ -7530,7 +7784,7 @@ type StatusCount struct {
 
 func (x *StatusCount) Reset() {
 	*x = StatusCount{}
-	mi := &file_workshop_workshop_proto_msgTypes[104]
+	mi := &file_workshop_workshop_proto_msgTypes[105]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7542,7 +7796,7 @@ func (x *StatusCount) String() string {
 func (*StatusCount) ProtoMessage() {}
 
 func (x *StatusCount) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[104]
+	mi := &file_workshop_workshop_proto_msgTypes[105]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7555,7 +7809,7 @@ func (x *StatusCount) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatusCount.ProtoReflect.Descriptor instead.
 func (*StatusCount) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{104}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{105}
 }
 
 func (x *StatusCount) GetStatus() RepairStatus {
@@ -7583,7 +7837,7 @@ type AddCommentRequest struct {
 
 func (x *AddCommentRequest) Reset() {
 	*x = AddCommentRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[105]
+	mi := &file_workshop_workshop_proto_msgTypes[106]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7595,7 +7849,7 @@ func (x *AddCommentRequest) String() string {
 func (*AddCommentRequest) ProtoMessage() {}
 
 func (x *AddCommentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[105]
+	mi := &file_workshop_workshop_proto_msgTypes[106]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7608,7 +7862,7 @@ func (x *AddCommentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddCommentRequest.ProtoReflect.Descriptor instead.
 func (*AddCommentRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{105}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{106}
 }
 
 func (x *AddCommentRequest) GetRepairOrderId() int64 {
@@ -7641,7 +7895,7 @@ type AddCommentResponse struct {
 
 func (x *AddCommentResponse) Reset() {
 	*x = AddCommentResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[106]
+	mi := &file_workshop_workshop_proto_msgTypes[107]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7653,7 +7907,7 @@ func (x *AddCommentResponse) String() string {
 func (*AddCommentResponse) ProtoMessage() {}
 
 func (x *AddCommentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[106]
+	mi := &file_workshop_workshop_proto_msgTypes[107]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7666,7 +7920,7 @@ func (x *AddCommentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddCommentResponse.ProtoReflect.Descriptor instead.
 func (*AddCommentResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{106}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{107}
 }
 
 func (x *AddCommentResponse) GetComment() *RepairComment {
@@ -7686,7 +7940,7 @@ type ListCommentsRequest struct {
 
 func (x *ListCommentsRequest) Reset() {
 	*x = ListCommentsRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[107]
+	mi := &file_workshop_workshop_proto_msgTypes[108]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7698,7 +7952,7 @@ func (x *ListCommentsRequest) String() string {
 func (*ListCommentsRequest) ProtoMessage() {}
 
 func (x *ListCommentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[107]
+	mi := &file_workshop_workshop_proto_msgTypes[108]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7711,7 +7965,7 @@ func (x *ListCommentsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCommentsRequest.ProtoReflect.Descriptor instead.
 func (*ListCommentsRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{107}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{108}
 }
 
 func (x *ListCommentsRequest) GetRepairOrderId() int64 {
@@ -7737,7 +7991,7 @@ type ListCommentsResponse struct {
 
 func (x *ListCommentsResponse) Reset() {
 	*x = ListCommentsResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[108]
+	mi := &file_workshop_workshop_proto_msgTypes[109]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7749,7 +8003,7 @@ func (x *ListCommentsResponse) String() string {
 func (*ListCommentsResponse) ProtoMessage() {}
 
 func (x *ListCommentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[108]
+	mi := &file_workshop_workshop_proto_msgTypes[109]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7762,7 +8016,7 @@ func (x *ListCommentsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCommentsResponse.ProtoReflect.Descriptor instead.
 func (*ListCommentsResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{108}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{109}
 }
 
 func (x *ListCommentsResponse) GetComments() []*RepairComment {
@@ -7785,7 +8039,7 @@ type UploadPhotoRequest struct {
 
 func (x *UploadPhotoRequest) Reset() {
 	*x = UploadPhotoRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[109]
+	mi := &file_workshop_workshop_proto_msgTypes[110]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7797,7 +8051,7 @@ func (x *UploadPhotoRequest) String() string {
 func (*UploadPhotoRequest) ProtoMessage() {}
 
 func (x *UploadPhotoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[109]
+	mi := &file_workshop_workshop_proto_msgTypes[110]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7810,7 +8064,7 @@ func (x *UploadPhotoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadPhotoRequest.ProtoReflect.Descriptor instead.
 func (*UploadPhotoRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{109}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{110}
 }
 
 func (x *UploadPhotoRequest) GetRepairOrderId() int64 {
@@ -7857,7 +8111,7 @@ type UploadPhotoResponse struct {
 
 func (x *UploadPhotoResponse) Reset() {
 	*x = UploadPhotoResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[110]
+	mi := &file_workshop_workshop_proto_msgTypes[111]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7869,7 +8123,7 @@ func (x *UploadPhotoResponse) String() string {
 func (*UploadPhotoResponse) ProtoMessage() {}
 
 func (x *UploadPhotoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[110]
+	mi := &file_workshop_workshop_proto_msgTypes[111]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7882,7 +8136,7 @@ func (x *UploadPhotoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadPhotoResponse.ProtoReflect.Descriptor instead.
 func (*UploadPhotoResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{110}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{111}
 }
 
 func (x *UploadPhotoResponse) GetPhoto() *RepairPhoto {
@@ -7902,7 +8156,7 @@ type ListPhotosRequest struct {
 
 func (x *ListPhotosRequest) Reset() {
 	*x = ListPhotosRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[111]
+	mi := &file_workshop_workshop_proto_msgTypes[112]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7914,7 +8168,7 @@ func (x *ListPhotosRequest) String() string {
 func (*ListPhotosRequest) ProtoMessage() {}
 
 func (x *ListPhotosRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[111]
+	mi := &file_workshop_workshop_proto_msgTypes[112]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7927,7 +8181,7 @@ func (x *ListPhotosRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPhotosRequest.ProtoReflect.Descriptor instead.
 func (*ListPhotosRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{111}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{112}
 }
 
 func (x *ListPhotosRequest) GetRepairOrderId() int64 {
@@ -7953,7 +8207,7 @@ type ListPhotosResponse struct {
 
 func (x *ListPhotosResponse) Reset() {
 	*x = ListPhotosResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[112]
+	mi := &file_workshop_workshop_proto_msgTypes[113]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7965,7 +8219,7 @@ func (x *ListPhotosResponse) String() string {
 func (*ListPhotosResponse) ProtoMessage() {}
 
 func (x *ListPhotosResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[112]
+	mi := &file_workshop_workshop_proto_msgTypes[113]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7978,7 +8232,7 @@ func (x *ListPhotosResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPhotosResponse.ProtoReflect.Descriptor instead.
 func (*ListPhotosResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{112}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{113}
 }
 
 func (x *ListPhotosResponse) GetPhotos() []*RepairPhoto {
@@ -7997,7 +8251,7 @@ type DeletePhotoRequest struct {
 
 func (x *DeletePhotoRequest) Reset() {
 	*x = DeletePhotoRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[113]
+	mi := &file_workshop_workshop_proto_msgTypes[114]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8009,7 +8263,7 @@ func (x *DeletePhotoRequest) String() string {
 func (*DeletePhotoRequest) ProtoMessage() {}
 
 func (x *DeletePhotoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[113]
+	mi := &file_workshop_workshop_proto_msgTypes[114]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8022,7 +8276,7 @@ func (x *DeletePhotoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeletePhotoRequest.ProtoReflect.Descriptor instead.
 func (*DeletePhotoRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{113}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{114}
 }
 
 func (x *DeletePhotoRequest) GetPhotoId() int64 {
@@ -8040,7 +8294,7 @@ type DeletePhotoResponse struct {
 
 func (x *DeletePhotoResponse) Reset() {
 	*x = DeletePhotoResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[114]
+	mi := &file_workshop_workshop_proto_msgTypes[115]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8052,7 +8306,7 @@ func (x *DeletePhotoResponse) String() string {
 func (*DeletePhotoResponse) ProtoMessage() {}
 
 func (x *DeletePhotoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[114]
+	mi := &file_workshop_workshop_proto_msgTypes[115]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8065,7 +8319,7 @@ func (x *DeletePhotoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeletePhotoResponse.ProtoReflect.Descriptor instead.
 func (*DeletePhotoResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{114}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{115}
 }
 
 type GetQCChecklistRequest struct {
@@ -8077,7 +8331,7 @@ type GetQCChecklistRequest struct {
 
 func (x *GetQCChecklistRequest) Reset() {
 	*x = GetQCChecklistRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[115]
+	mi := &file_workshop_workshop_proto_msgTypes[116]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8089,7 +8343,7 @@ func (x *GetQCChecklistRequest) String() string {
 func (*GetQCChecklistRequest) ProtoMessage() {}
 
 func (x *GetQCChecklistRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[115]
+	mi := &file_workshop_workshop_proto_msgTypes[116]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8102,7 +8356,7 @@ func (x *GetQCChecklistRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetQCChecklistRequest.ProtoReflect.Descriptor instead.
 func (*GetQCChecklistRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{115}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{116}
 }
 
 func (x *GetQCChecklistRequest) GetRepairOrderId() int64 {
@@ -8121,7 +8375,7 @@ type GetQCChecklistResponse struct {
 
 func (x *GetQCChecklistResponse) Reset() {
 	*x = GetQCChecklistResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[116]
+	mi := &file_workshop_workshop_proto_msgTypes[117]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8133,7 +8387,7 @@ func (x *GetQCChecklistResponse) String() string {
 func (*GetQCChecklistResponse) ProtoMessage() {}
 
 func (x *GetQCChecklistResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[116]
+	mi := &file_workshop_workshop_proto_msgTypes[117]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8146,7 +8400,7 @@ func (x *GetQCChecklistResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetQCChecklistResponse.ProtoReflect.Descriptor instead.
 func (*GetQCChecklistResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{116}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{117}
 }
 
 func (x *GetQCChecklistResponse) GetChecklist() *QCChecklist {
@@ -8166,7 +8420,7 @@ type SubmitQCChecklistRequest struct {
 
 func (x *SubmitQCChecklistRequest) Reset() {
 	*x = SubmitQCChecklistRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[117]
+	mi := &file_workshop_workshop_proto_msgTypes[118]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8178,7 +8432,7 @@ func (x *SubmitQCChecklistRequest) String() string {
 func (*SubmitQCChecklistRequest) ProtoMessage() {}
 
 func (x *SubmitQCChecklistRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[117]
+	mi := &file_workshop_workshop_proto_msgTypes[118]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8191,7 +8445,7 @@ func (x *SubmitQCChecklistRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubmitQCChecklistRequest.ProtoReflect.Descriptor instead.
 func (*SubmitQCChecklistRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{117}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{118}
 }
 
 func (x *SubmitQCChecklistRequest) GetRepairOrderId() int64 {
@@ -8217,7 +8471,7 @@ type SubmitQCChecklistResponse struct {
 
 func (x *SubmitQCChecklistResponse) Reset() {
 	*x = SubmitQCChecklistResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[118]
+	mi := &file_workshop_workshop_proto_msgTypes[119]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8229,7 +8483,7 @@ func (x *SubmitQCChecklistResponse) String() string {
 func (*SubmitQCChecklistResponse) ProtoMessage() {}
 
 func (x *SubmitQCChecklistResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[118]
+	mi := &file_workshop_workshop_proto_msgTypes[119]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8242,7 +8496,7 @@ func (x *SubmitQCChecklistResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubmitQCChecklistResponse.ProtoReflect.Descriptor instead.
 func (*SubmitQCChecklistResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{118}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{119}
 }
 
 func (x *SubmitQCChecklistResponse) GetChecklist() *QCChecklist {
@@ -8264,7 +8518,7 @@ type RejectQCItemRequest struct {
 
 func (x *RejectQCItemRequest) Reset() {
 	*x = RejectQCItemRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[119]
+	mi := &file_workshop_workshop_proto_msgTypes[120]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8276,7 +8530,7 @@ func (x *RejectQCItemRequest) String() string {
 func (*RejectQCItemRequest) ProtoMessage() {}
 
 func (x *RejectQCItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[119]
+	mi := &file_workshop_workshop_proto_msgTypes[120]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8289,7 +8543,7 @@ func (x *RejectQCItemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RejectQCItemRequest.ProtoReflect.Descriptor instead.
 func (*RejectQCItemRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{119}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{120}
 }
 
 func (x *RejectQCItemRequest) GetChecklistId() int64 {
@@ -8329,7 +8583,7 @@ type RejectQCItemResponse struct {
 
 func (x *RejectQCItemResponse) Reset() {
 	*x = RejectQCItemResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[120]
+	mi := &file_workshop_workshop_proto_msgTypes[121]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8341,7 +8595,7 @@ func (x *RejectQCItemResponse) String() string {
 func (*RejectQCItemResponse) ProtoMessage() {}
 
 func (x *RejectQCItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[120]
+	mi := &file_workshop_workshop_proto_msgTypes[121]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8354,7 +8608,7 @@ func (x *RejectQCItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RejectQCItemResponse.ProtoReflect.Descriptor instead.
 func (*RejectQCItemResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{120}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{121}
 }
 
 func (x *RejectQCItemResponse) GetChecklist() *QCChecklist {
@@ -8373,7 +8627,7 @@ type ListStatusHistoryRequest struct {
 
 func (x *ListStatusHistoryRequest) Reset() {
 	*x = ListStatusHistoryRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[121]
+	mi := &file_workshop_workshop_proto_msgTypes[122]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8385,7 +8639,7 @@ func (x *ListStatusHistoryRequest) String() string {
 func (*ListStatusHistoryRequest) ProtoMessage() {}
 
 func (x *ListStatusHistoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[121]
+	mi := &file_workshop_workshop_proto_msgTypes[122]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8398,7 +8652,7 @@ func (x *ListStatusHistoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListStatusHistoryRequest.ProtoReflect.Descriptor instead.
 func (*ListStatusHistoryRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{121}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{122}
 }
 
 func (x *ListStatusHistoryRequest) GetRepairOrderId() int64 {
@@ -8417,7 +8671,7 @@ type ListStatusHistoryResponse struct {
 
 func (x *ListStatusHistoryResponse) Reset() {
 	*x = ListStatusHistoryResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[122]
+	mi := &file_workshop_workshop_proto_msgTypes[123]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8429,7 +8683,7 @@ func (x *ListStatusHistoryResponse) String() string {
 func (*ListStatusHistoryResponse) ProtoMessage() {}
 
 func (x *ListStatusHistoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[122]
+	mi := &file_workshop_workshop_proto_msgTypes[123]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8442,7 +8696,7 @@ func (x *ListStatusHistoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListStatusHistoryResponse.ProtoReflect.Descriptor instead.
 func (*ListStatusHistoryResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{122}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{123}
 }
 
 func (x *ListStatusHistoryResponse) GetEntries() []*StatusHistoryEntry {
@@ -8463,7 +8717,7 @@ type CreateMaterialRequest struct {
 
 func (x *CreateMaterialRequest) Reset() {
 	*x = CreateMaterialRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[123]
+	mi := &file_workshop_workshop_proto_msgTypes[124]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8475,7 +8729,7 @@ func (x *CreateMaterialRequest) String() string {
 func (*CreateMaterialRequest) ProtoMessage() {}
 
 func (x *CreateMaterialRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[123]
+	mi := &file_workshop_workshop_proto_msgTypes[124]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8488,7 +8742,7 @@ func (x *CreateMaterialRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateMaterialRequest.ProtoReflect.Descriptor instead.
 func (*CreateMaterialRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{123}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{124}
 }
 
 func (x *CreateMaterialRequest) GetWorkshopId() int64 {
@@ -8521,7 +8775,7 @@ type CreateMaterialResponse struct {
 
 func (x *CreateMaterialResponse) Reset() {
 	*x = CreateMaterialResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[124]
+	mi := &file_workshop_workshop_proto_msgTypes[125]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8533,7 +8787,7 @@ func (x *CreateMaterialResponse) String() string {
 func (*CreateMaterialResponse) ProtoMessage() {}
 
 func (x *CreateMaterialResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[124]
+	mi := &file_workshop_workshop_proto_msgTypes[125]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8546,7 +8800,7 @@ func (x *CreateMaterialResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateMaterialResponse.ProtoReflect.Descriptor instead.
 func (*CreateMaterialResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{124}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{125}
 }
 
 func (x *CreateMaterialResponse) GetMaterial() *Material {
@@ -8568,7 +8822,7 @@ type UpdateMaterialRequest struct {
 
 func (x *UpdateMaterialRequest) Reset() {
 	*x = UpdateMaterialRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[125]
+	mi := &file_workshop_workshop_proto_msgTypes[126]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8580,7 +8834,7 @@ func (x *UpdateMaterialRequest) String() string {
 func (*UpdateMaterialRequest) ProtoMessage() {}
 
 func (x *UpdateMaterialRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[125]
+	mi := &file_workshop_workshop_proto_msgTypes[126]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8593,7 +8847,7 @@ func (x *UpdateMaterialRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateMaterialRequest.ProtoReflect.Descriptor instead.
 func (*UpdateMaterialRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{125}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{126}
 }
 
 func (x *UpdateMaterialRequest) GetMaterialId() int64 {
@@ -8633,7 +8887,7 @@ type UpdateMaterialResponse struct {
 
 func (x *UpdateMaterialResponse) Reset() {
 	*x = UpdateMaterialResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[126]
+	mi := &file_workshop_workshop_proto_msgTypes[127]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8645,7 +8899,7 @@ func (x *UpdateMaterialResponse) String() string {
 func (*UpdateMaterialResponse) ProtoMessage() {}
 
 func (x *UpdateMaterialResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[126]
+	mi := &file_workshop_workshop_proto_msgTypes[127]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8658,7 +8912,7 @@ func (x *UpdateMaterialResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateMaterialResponse.ProtoReflect.Descriptor instead.
 func (*UpdateMaterialResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{126}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{127}
 }
 
 func (x *UpdateMaterialResponse) GetMaterial() *Material {
@@ -8678,7 +8932,7 @@ type ListMaterialsRequest struct {
 
 func (x *ListMaterialsRequest) Reset() {
 	*x = ListMaterialsRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[127]
+	mi := &file_workshop_workshop_proto_msgTypes[128]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8690,7 +8944,7 @@ func (x *ListMaterialsRequest) String() string {
 func (*ListMaterialsRequest) ProtoMessage() {}
 
 func (x *ListMaterialsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[127]
+	mi := &file_workshop_workshop_proto_msgTypes[128]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8703,7 +8957,7 @@ func (x *ListMaterialsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMaterialsRequest.ProtoReflect.Descriptor instead.
 func (*ListMaterialsRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{127}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{128}
 }
 
 func (x *ListMaterialsRequest) GetWorkshopId() int64 {
@@ -8729,7 +8983,7 @@ type ListMaterialsResponse struct {
 
 func (x *ListMaterialsResponse) Reset() {
 	*x = ListMaterialsResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[128]
+	mi := &file_workshop_workshop_proto_msgTypes[129]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8741,7 +8995,7 @@ func (x *ListMaterialsResponse) String() string {
 func (*ListMaterialsResponse) ProtoMessage() {}
 
 func (x *ListMaterialsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[128]
+	mi := &file_workshop_workshop_proto_msgTypes[129]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8754,7 +9008,7 @@ func (x *ListMaterialsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMaterialsResponse.ProtoReflect.Descriptor instead.
 func (*ListMaterialsResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{128}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{129}
 }
 
 func (x *ListMaterialsResponse) GetMaterials() []*Material {
@@ -8777,7 +9031,7 @@ type AddMaterialStockRequest struct {
 
 func (x *AddMaterialStockRequest) Reset() {
 	*x = AddMaterialStockRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[129]
+	mi := &file_workshop_workshop_proto_msgTypes[130]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8789,7 +9043,7 @@ func (x *AddMaterialStockRequest) String() string {
 func (*AddMaterialStockRequest) ProtoMessage() {}
 
 func (x *AddMaterialStockRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[129]
+	mi := &file_workshop_workshop_proto_msgTypes[130]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8802,7 +9056,7 @@ func (x *AddMaterialStockRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddMaterialStockRequest.ProtoReflect.Descriptor instead.
 func (*AddMaterialStockRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{129}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{130}
 }
 
 func (x *AddMaterialStockRequest) GetMaterialId() int64 {
@@ -8850,7 +9104,7 @@ type AddMaterialStockResponse struct {
 
 func (x *AddMaterialStockResponse) Reset() {
 	*x = AddMaterialStockResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[130]
+	mi := &file_workshop_workshop_proto_msgTypes[131]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8862,7 +9116,7 @@ func (x *AddMaterialStockResponse) String() string {
 func (*AddMaterialStockResponse) ProtoMessage() {}
 
 func (x *AddMaterialStockResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[130]
+	mi := &file_workshop_workshop_proto_msgTypes[131]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8875,7 +9129,7 @@ func (x *AddMaterialStockResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddMaterialStockResponse.ProtoReflect.Descriptor instead.
 func (*AddMaterialStockResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{130}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{131}
 }
 
 func (x *AddMaterialStockResponse) GetTransaction() *MaterialTransaction {
@@ -8907,7 +9161,7 @@ type WriteOffMaterialRequest struct {
 
 func (x *WriteOffMaterialRequest) Reset() {
 	*x = WriteOffMaterialRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[131]
+	mi := &file_workshop_workshop_proto_msgTypes[132]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8919,7 +9173,7 @@ func (x *WriteOffMaterialRequest) String() string {
 func (*WriteOffMaterialRequest) ProtoMessage() {}
 
 func (x *WriteOffMaterialRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[131]
+	mi := &file_workshop_workshop_proto_msgTypes[132]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8932,7 +9186,7 @@ func (x *WriteOffMaterialRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WriteOffMaterialRequest.ProtoReflect.Descriptor instead.
 func (*WriteOffMaterialRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{131}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{132}
 }
 
 func (x *WriteOffMaterialRequest) GetMaterialId() int64 {
@@ -8994,7 +9248,7 @@ type WriteOffMaterialResponse struct {
 
 func (x *WriteOffMaterialResponse) Reset() {
 	*x = WriteOffMaterialResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[132]
+	mi := &file_workshop_workshop_proto_msgTypes[133]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9006,7 +9260,7 @@ func (x *WriteOffMaterialResponse) String() string {
 func (*WriteOffMaterialResponse) ProtoMessage() {}
 
 func (x *WriteOffMaterialResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[132]
+	mi := &file_workshop_workshop_proto_msgTypes[133]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9019,7 +9273,7 @@ func (x *WriteOffMaterialResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WriteOffMaterialResponse.ProtoReflect.Descriptor instead.
 func (*WriteOffMaterialResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{132}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{133}
 }
 
 func (x *WriteOffMaterialResponse) GetTransaction() *MaterialTransaction {
@@ -9045,7 +9299,7 @@ type GetMaterialStockRequest struct {
 
 func (x *GetMaterialStockRequest) Reset() {
 	*x = GetMaterialStockRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[133]
+	mi := &file_workshop_workshop_proto_msgTypes[134]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9057,7 +9311,7 @@ func (x *GetMaterialStockRequest) String() string {
 func (*GetMaterialStockRequest) ProtoMessage() {}
 
 func (x *GetMaterialStockRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[133]
+	mi := &file_workshop_workshop_proto_msgTypes[134]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9070,7 +9324,7 @@ func (x *GetMaterialStockRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMaterialStockRequest.ProtoReflect.Descriptor instead.
 func (*GetMaterialStockRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{133}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{134}
 }
 
 func (x *GetMaterialStockRequest) GetWorkshopId() int64 {
@@ -9089,7 +9343,7 @@ type GetMaterialStockResponse struct {
 
 func (x *GetMaterialStockResponse) Reset() {
 	*x = GetMaterialStockResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[134]
+	mi := &file_workshop_workshop_proto_msgTypes[135]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9101,7 +9355,7 @@ func (x *GetMaterialStockResponse) String() string {
 func (*GetMaterialStockResponse) ProtoMessage() {}
 
 func (x *GetMaterialStockResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[134]
+	mi := &file_workshop_workshop_proto_msgTypes[135]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9114,7 +9368,7 @@ func (x *GetMaterialStockResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMaterialStockResponse.ProtoReflect.Descriptor instead.
 func (*GetMaterialStockResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{134}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{135}
 }
 
 func (x *GetMaterialStockResponse) GetItems() []*MaterialStock {
@@ -9140,7 +9394,7 @@ type ListMaterialTransactionsRequest struct {
 
 func (x *ListMaterialTransactionsRequest) Reset() {
 	*x = ListMaterialTransactionsRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[135]
+	mi := &file_workshop_workshop_proto_msgTypes[136]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9152,7 +9406,7 @@ func (x *ListMaterialTransactionsRequest) String() string {
 func (*ListMaterialTransactionsRequest) ProtoMessage() {}
 
 func (x *ListMaterialTransactionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[135]
+	mi := &file_workshop_workshop_proto_msgTypes[136]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9165,7 +9419,7 @@ func (x *ListMaterialTransactionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMaterialTransactionsRequest.ProtoReflect.Descriptor instead.
 func (*ListMaterialTransactionsRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{135}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{136}
 }
 
 func (x *ListMaterialTransactionsRequest) GetWorkshopId() int64 {
@@ -9234,7 +9488,7 @@ type ListMaterialTransactionsResponse struct {
 
 func (x *ListMaterialTransactionsResponse) Reset() {
 	*x = ListMaterialTransactionsResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[136]
+	mi := &file_workshop_workshop_proto_msgTypes[137]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9246,7 +9500,7 @@ func (x *ListMaterialTransactionsResponse) String() string {
 func (*ListMaterialTransactionsResponse) ProtoMessage() {}
 
 func (x *ListMaterialTransactionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[136]
+	mi := &file_workshop_workshop_proto_msgTypes[137]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9259,7 +9513,7 @@ func (x *ListMaterialTransactionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMaterialTransactionsResponse.ProtoReflect.Descriptor instead.
 func (*ListMaterialTransactionsResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{136}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{137}
 }
 
 func (x *ListMaterialTransactionsResponse) GetTransactions() []*MaterialTransaction {
@@ -9287,7 +9541,7 @@ type GetMasterMaterialExpensesRequest struct {
 
 func (x *GetMasterMaterialExpensesRequest) Reset() {
 	*x = GetMasterMaterialExpensesRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[137]
+	mi := &file_workshop_workshop_proto_msgTypes[138]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9299,7 +9553,7 @@ func (x *GetMasterMaterialExpensesRequest) String() string {
 func (*GetMasterMaterialExpensesRequest) ProtoMessage() {}
 
 func (x *GetMasterMaterialExpensesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[137]
+	mi := &file_workshop_workshop_proto_msgTypes[138]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9312,7 +9566,7 @@ func (x *GetMasterMaterialExpensesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMasterMaterialExpensesRequest.ProtoReflect.Descriptor instead.
 func (*GetMasterMaterialExpensesRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{137}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{138}
 }
 
 func (x *GetMasterMaterialExpensesRequest) GetMasterId() int64 {
@@ -9346,7 +9600,7 @@ type GetMasterMaterialExpensesResponse struct {
 
 func (x *GetMasterMaterialExpensesResponse) Reset() {
 	*x = GetMasterMaterialExpensesResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[138]
+	mi := &file_workshop_workshop_proto_msgTypes[139]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9358,7 +9612,7 @@ func (x *GetMasterMaterialExpensesResponse) String() string {
 func (*GetMasterMaterialExpensesResponse) ProtoMessage() {}
 
 func (x *GetMasterMaterialExpensesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[138]
+	mi := &file_workshop_workshop_proto_msgTypes[139]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9371,7 +9625,7 @@ func (x *GetMasterMaterialExpensesResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use GetMasterMaterialExpensesResponse.ProtoReflect.Descriptor instead.
 func (*GetMasterMaterialExpensesResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{138}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{139}
 }
 
 func (x *GetMasterMaterialExpensesResponse) GetTotalExpenses() int64 {
@@ -9398,7 +9652,7 @@ type GetClientOrderStatusRequest struct {
 
 func (x *GetClientOrderStatusRequest) Reset() {
 	*x = GetClientOrderStatusRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[139]
+	mi := &file_workshop_workshop_proto_msgTypes[140]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9410,7 +9664,7 @@ func (x *GetClientOrderStatusRequest) String() string {
 func (*GetClientOrderStatusRequest) ProtoMessage() {}
 
 func (x *GetClientOrderStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[139]
+	mi := &file_workshop_workshop_proto_msgTypes[140]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9423,7 +9677,7 @@ func (x *GetClientOrderStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientOrderStatusRequest.ProtoReflect.Descriptor instead.
 func (*GetClientOrderStatusRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{139}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{140}
 }
 
 func (x *GetClientOrderStatusRequest) GetOrderId() int64 {
@@ -9451,7 +9705,7 @@ type GetClientOrderStatusResponse struct {
 
 func (x *GetClientOrderStatusResponse) Reset() {
 	*x = GetClientOrderStatusResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[140]
+	mi := &file_workshop_workshop_proto_msgTypes[141]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9463,7 +9717,7 @@ func (x *GetClientOrderStatusResponse) String() string {
 func (*GetClientOrderStatusResponse) ProtoMessage() {}
 
 func (x *GetClientOrderStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[140]
+	mi := &file_workshop_workshop_proto_msgTypes[141]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9476,7 +9730,7 @@ func (x *GetClientOrderStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientOrderStatusResponse.ProtoReflect.Descriptor instead.
 func (*GetClientOrderStatusResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{140}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{141}
 }
 
 func (x *GetClientOrderStatusResponse) GetOrder() *RepairOrder {
@@ -9511,7 +9765,7 @@ type GetClientOrderPhotosRequest struct {
 
 func (x *GetClientOrderPhotosRequest) Reset() {
 	*x = GetClientOrderPhotosRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[141]
+	mi := &file_workshop_workshop_proto_msgTypes[142]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9523,7 +9777,7 @@ func (x *GetClientOrderPhotosRequest) String() string {
 func (*GetClientOrderPhotosRequest) ProtoMessage() {}
 
 func (x *GetClientOrderPhotosRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[141]
+	mi := &file_workshop_workshop_proto_msgTypes[142]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9536,7 +9790,7 @@ func (x *GetClientOrderPhotosRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientOrderPhotosRequest.ProtoReflect.Descriptor instead.
 func (*GetClientOrderPhotosRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{141}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{142}
 }
 
 func (x *GetClientOrderPhotosRequest) GetOrderId() int64 {
@@ -9569,7 +9823,7 @@ type GetClientOrderPhotosResponse struct {
 
 func (x *GetClientOrderPhotosResponse) Reset() {
 	*x = GetClientOrderPhotosResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[142]
+	mi := &file_workshop_workshop_proto_msgTypes[143]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9581,7 +9835,7 @@ func (x *GetClientOrderPhotosResponse) String() string {
 func (*GetClientOrderPhotosResponse) ProtoMessage() {}
 
 func (x *GetClientOrderPhotosResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[142]
+	mi := &file_workshop_workshop_proto_msgTypes[143]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9594,7 +9848,7 @@ func (x *GetClientOrderPhotosResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientOrderPhotosResponse.ProtoReflect.Descriptor instead.
 func (*GetClientOrderPhotosResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{142}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{143}
 }
 
 func (x *GetClientOrderPhotosResponse) GetPhotos() []*RepairPhoto {
@@ -9614,7 +9868,7 @@ type GetClientOrderTimelineRequest struct {
 
 func (x *GetClientOrderTimelineRequest) Reset() {
 	*x = GetClientOrderTimelineRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[143]
+	mi := &file_workshop_workshop_proto_msgTypes[144]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9626,7 +9880,7 @@ func (x *GetClientOrderTimelineRequest) String() string {
 func (*GetClientOrderTimelineRequest) ProtoMessage() {}
 
 func (x *GetClientOrderTimelineRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[143]
+	mi := &file_workshop_workshop_proto_msgTypes[144]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9639,7 +9893,7 @@ func (x *GetClientOrderTimelineRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientOrderTimelineRequest.ProtoReflect.Descriptor instead.
 func (*GetClientOrderTimelineRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{143}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{144}
 }
 
 func (x *GetClientOrderTimelineRequest) GetOrderId() int64 {
@@ -9665,7 +9919,7 @@ type GetClientOrderTimelineResponse struct {
 
 func (x *GetClientOrderTimelineResponse) Reset() {
 	*x = GetClientOrderTimelineResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[144]
+	mi := &file_workshop_workshop_proto_msgTypes[145]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9677,7 +9931,7 @@ func (x *GetClientOrderTimelineResponse) String() string {
 func (*GetClientOrderTimelineResponse) ProtoMessage() {}
 
 func (x *GetClientOrderTimelineResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[144]
+	mi := &file_workshop_workshop_proto_msgTypes[145]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9690,7 +9944,7 @@ func (x *GetClientOrderTimelineResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientOrderTimelineResponse.ProtoReflect.Descriptor instead.
 func (*GetClientOrderTimelineResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{144}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{145}
 }
 
 func (x *GetClientOrderTimelineResponse) GetEntries() []*TimelineEntry {
@@ -9712,7 +9966,7 @@ type TimelineEntry struct {
 
 func (x *TimelineEntry) Reset() {
 	*x = TimelineEntry{}
-	mi := &file_workshop_workshop_proto_msgTypes[145]
+	mi := &file_workshop_workshop_proto_msgTypes[146]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9724,7 +9978,7 @@ func (x *TimelineEntry) String() string {
 func (*TimelineEntry) ProtoMessage() {}
 
 func (x *TimelineEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[145]
+	mi := &file_workshop_workshop_proto_msgTypes[146]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9737,7 +9991,7 @@ func (x *TimelineEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TimelineEntry.ProtoReflect.Descriptor instead.
 func (*TimelineEntry) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{145}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{146}
 }
 
 func (x *TimelineEntry) GetType() string {
@@ -9785,7 +10039,7 @@ type CreateOrderFromCRMRequest struct {
 
 func (x *CreateOrderFromCRMRequest) Reset() {
 	*x = CreateOrderFromCRMRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[146]
+	mi := &file_workshop_workshop_proto_msgTypes[147]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9797,7 +10051,7 @@ func (x *CreateOrderFromCRMRequest) String() string {
 func (*CreateOrderFromCRMRequest) ProtoMessage() {}
 
 func (x *CreateOrderFromCRMRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[146]
+	mi := &file_workshop_workshop_proto_msgTypes[147]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9810,7 +10064,7 @@ func (x *CreateOrderFromCRMRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrderFromCRMRequest.ProtoReflect.Descriptor instead.
 func (*CreateOrderFromCRMRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{146}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{147}
 }
 
 func (x *CreateOrderFromCRMRequest) GetWorkshopId() int64 {
@@ -9886,7 +10140,7 @@ type CreateOrderFromCRMResponse struct {
 
 func (x *CreateOrderFromCRMResponse) Reset() {
 	*x = CreateOrderFromCRMResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[147]
+	mi := &file_workshop_workshop_proto_msgTypes[148]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9898,7 +10152,7 @@ func (x *CreateOrderFromCRMResponse) String() string {
 func (*CreateOrderFromCRMResponse) ProtoMessage() {}
 
 func (x *CreateOrderFromCRMResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[147]
+	mi := &file_workshop_workshop_proto_msgTypes[148]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9911,7 +10165,7 @@ func (x *CreateOrderFromCRMResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrderFromCRMResponse.ProtoReflect.Descriptor instead.
 func (*CreateOrderFromCRMResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{147}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{148}
 }
 
 func (x *CreateOrderFromCRMResponse) GetOrder() *RepairOrder {
@@ -9938,7 +10192,7 @@ type SyncCRMDealsRequest struct {
 
 func (x *SyncCRMDealsRequest) Reset() {
 	*x = SyncCRMDealsRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[148]
+	mi := &file_workshop_workshop_proto_msgTypes[149]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9950,7 +10204,7 @@ func (x *SyncCRMDealsRequest) String() string {
 func (*SyncCRMDealsRequest) ProtoMessage() {}
 
 func (x *SyncCRMDealsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[148]
+	mi := &file_workshop_workshop_proto_msgTypes[149]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9963,7 +10217,7 @@ func (x *SyncCRMDealsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncCRMDealsRequest.ProtoReflect.Descriptor instead.
 func (*SyncCRMDealsRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{148}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{149}
 }
 
 func (x *SyncCRMDealsRequest) GetWorkshopId() int64 {
@@ -9991,7 +10245,7 @@ type SyncCRMDealsResponse struct {
 
 func (x *SyncCRMDealsResponse) Reset() {
 	*x = SyncCRMDealsResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[149]
+	mi := &file_workshop_workshop_proto_msgTypes[150]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10003,7 +10257,7 @@ func (x *SyncCRMDealsResponse) String() string {
 func (*SyncCRMDealsResponse) ProtoMessage() {}
 
 func (x *SyncCRMDealsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[149]
+	mi := &file_workshop_workshop_proto_msgTypes[150]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10016,7 +10270,7 @@ func (x *SyncCRMDealsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncCRMDealsResponse.ProtoReflect.Descriptor instead.
 func (*SyncCRMDealsResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{149}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{150}
 }
 
 func (x *SyncCRMDealsResponse) GetSynced() int32 {
@@ -10049,7 +10303,7 @@ type GetCRMSyncStatusRequest struct {
 
 func (x *GetCRMSyncStatusRequest) Reset() {
 	*x = GetCRMSyncStatusRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[150]
+	mi := &file_workshop_workshop_proto_msgTypes[151]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10061,7 +10315,7 @@ func (x *GetCRMSyncStatusRequest) String() string {
 func (*GetCRMSyncStatusRequest) ProtoMessage() {}
 
 func (x *GetCRMSyncStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[150]
+	mi := &file_workshop_workshop_proto_msgTypes[151]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10074,7 +10328,7 @@ func (x *GetCRMSyncStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCRMSyncStatusRequest.ProtoReflect.Descriptor instead.
 func (*GetCRMSyncStatusRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{150}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{151}
 }
 
 func (x *GetCRMSyncStatusRequest) GetWorkshopId() int64 {
@@ -10095,7 +10349,7 @@ type GetCRMSyncStatusResponse struct {
 
 func (x *GetCRMSyncStatusResponse) Reset() {
 	*x = GetCRMSyncStatusResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[151]
+	mi := &file_workshop_workshop_proto_msgTypes[152]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10107,7 +10361,7 @@ func (x *GetCRMSyncStatusResponse) String() string {
 func (*GetCRMSyncStatusResponse) ProtoMessage() {}
 
 func (x *GetCRMSyncStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[151]
+	mi := &file_workshop_workshop_proto_msgTypes[152]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10120,7 +10374,7 @@ func (x *GetCRMSyncStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCRMSyncStatusResponse.ProtoReflect.Descriptor instead.
 func (*GetCRMSyncStatusResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{151}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{152}
 }
 
 func (x *GetCRMSyncStatusResponse) GetLastSyncAt() *timestamppb.Timestamp {
@@ -10154,7 +10408,7 @@ type SetMasterTelegramRequest struct {
 
 func (x *SetMasterTelegramRequest) Reset() {
 	*x = SetMasterTelegramRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[152]
+	mi := &file_workshop_workshop_proto_msgTypes[153]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10166,7 +10420,7 @@ func (x *SetMasterTelegramRequest) String() string {
 func (*SetMasterTelegramRequest) ProtoMessage() {}
 
 func (x *SetMasterTelegramRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[152]
+	mi := &file_workshop_workshop_proto_msgTypes[153]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10179,7 +10433,7 @@ func (x *SetMasterTelegramRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMasterTelegramRequest.ProtoReflect.Descriptor instead.
 func (*SetMasterTelegramRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{152}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{153}
 }
 
 func (x *SetMasterTelegramRequest) GetMasterId() int64 {
@@ -10205,7 +10459,7 @@ type SetMasterTelegramResponse struct {
 
 func (x *SetMasterTelegramResponse) Reset() {
 	*x = SetMasterTelegramResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[153]
+	mi := &file_workshop_workshop_proto_msgTypes[154]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10217,7 +10471,7 @@ func (x *SetMasterTelegramResponse) String() string {
 func (*SetMasterTelegramResponse) ProtoMessage() {}
 
 func (x *SetMasterTelegramResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[153]
+	mi := &file_workshop_workshop_proto_msgTypes[154]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10230,7 +10484,7 @@ func (x *SetMasterTelegramResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMasterTelegramResponse.ProtoReflect.Descriptor instead.
 func (*SetMasterTelegramResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{153}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{154}
 }
 
 func (x *SetMasterTelegramResponse) GetMaster() *Master {
@@ -10249,7 +10503,7 @@ type GetMasterByTelegramRequest struct {
 
 func (x *GetMasterByTelegramRequest) Reset() {
 	*x = GetMasterByTelegramRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[154]
+	mi := &file_workshop_workshop_proto_msgTypes[155]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10261,7 +10515,7 @@ func (x *GetMasterByTelegramRequest) String() string {
 func (*GetMasterByTelegramRequest) ProtoMessage() {}
 
 func (x *GetMasterByTelegramRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[154]
+	mi := &file_workshop_workshop_proto_msgTypes[155]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10274,7 +10528,7 @@ func (x *GetMasterByTelegramRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMasterByTelegramRequest.ProtoReflect.Descriptor instead.
 func (*GetMasterByTelegramRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{154}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{155}
 }
 
 func (x *GetMasterByTelegramRequest) GetTelegramChatId() int64 {
@@ -10293,7 +10547,7 @@ type GetMasterByTelegramResponse struct {
 
 func (x *GetMasterByTelegramResponse) Reset() {
 	*x = GetMasterByTelegramResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[155]
+	mi := &file_workshop_workshop_proto_msgTypes[156]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10305,7 +10559,7 @@ func (x *GetMasterByTelegramResponse) String() string {
 func (*GetMasterByTelegramResponse) ProtoMessage() {}
 
 func (x *GetMasterByTelegramResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[155]
+	mi := &file_workshop_workshop_proto_msgTypes[156]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10318,7 +10572,7 @@ func (x *GetMasterByTelegramResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMasterByTelegramResponse.ProtoReflect.Descriptor instead.
 func (*GetMasterByTelegramResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{155}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{156}
 }
 
 func (x *GetMasterByTelegramResponse) GetMaster() *Master {
@@ -10339,7 +10593,7 @@ type SetDiscountRequest struct {
 
 func (x *SetDiscountRequest) Reset() {
 	*x = SetDiscountRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[156]
+	mi := &file_workshop_workshop_proto_msgTypes[157]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10351,7 +10605,7 @@ func (x *SetDiscountRequest) String() string {
 func (*SetDiscountRequest) ProtoMessage() {}
 
 func (x *SetDiscountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[156]
+	mi := &file_workshop_workshop_proto_msgTypes[157]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10364,7 +10618,7 @@ func (x *SetDiscountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetDiscountRequest.ProtoReflect.Descriptor instead.
 func (*SetDiscountRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{156}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{157}
 }
 
 func (x *SetDiscountRequest) GetOrderId() int64 {
@@ -10397,7 +10651,7 @@ type SetDiscountResponse struct {
 
 func (x *SetDiscountResponse) Reset() {
 	*x = SetDiscountResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[157]
+	mi := &file_workshop_workshop_proto_msgTypes[158]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10409,7 +10663,7 @@ func (x *SetDiscountResponse) String() string {
 func (*SetDiscountResponse) ProtoMessage() {}
 
 func (x *SetDiscountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[157]
+	mi := &file_workshop_workshop_proto_msgTypes[158]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10422,7 +10676,7 @@ func (x *SetDiscountResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetDiscountResponse.ProtoReflect.Descriptor instead.
 func (*SetDiscountResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{157}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{158}
 }
 
 func (x *SetDiscountResponse) GetOrder() *RepairOrder {
@@ -10442,7 +10696,7 @@ type SetMarkupRequest struct {
 
 func (x *SetMarkupRequest) Reset() {
 	*x = SetMarkupRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[158]
+	mi := &file_workshop_workshop_proto_msgTypes[159]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10454,7 +10708,7 @@ func (x *SetMarkupRequest) String() string {
 func (*SetMarkupRequest) ProtoMessage() {}
 
 func (x *SetMarkupRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[158]
+	mi := &file_workshop_workshop_proto_msgTypes[159]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10467,7 +10721,7 @@ func (x *SetMarkupRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMarkupRequest.ProtoReflect.Descriptor instead.
 func (*SetMarkupRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{158}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{159}
 }
 
 func (x *SetMarkupRequest) GetOrderId() int64 {
@@ -10493,7 +10747,7 @@ type SetMarkupResponse struct {
 
 func (x *SetMarkupResponse) Reset() {
 	*x = SetMarkupResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[159]
+	mi := &file_workshop_workshop_proto_msgTypes[160]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10505,7 +10759,7 @@ func (x *SetMarkupResponse) String() string {
 func (*SetMarkupResponse) ProtoMessage() {}
 
 func (x *SetMarkupResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[159]
+	mi := &file_workshop_workshop_proto_msgTypes[160]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10518,7 +10772,7 @@ func (x *SetMarkupResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMarkupResponse.ProtoReflect.Descriptor instead.
 func (*SetMarkupResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{159}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{160}
 }
 
 func (x *SetMarkupResponse) GetOrder() *RepairOrder {
@@ -10538,7 +10792,7 @@ type SetWorkshopMarkupRequest struct {
 
 func (x *SetWorkshopMarkupRequest) Reset() {
 	*x = SetWorkshopMarkupRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[160]
+	mi := &file_workshop_workshop_proto_msgTypes[161]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10550,7 +10804,7 @@ func (x *SetWorkshopMarkupRequest) String() string {
 func (*SetWorkshopMarkupRequest) ProtoMessage() {}
 
 func (x *SetWorkshopMarkupRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[160]
+	mi := &file_workshop_workshop_proto_msgTypes[161]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10563,7 +10817,7 @@ func (x *SetWorkshopMarkupRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetWorkshopMarkupRequest.ProtoReflect.Descriptor instead.
 func (*SetWorkshopMarkupRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{160}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{161}
 }
 
 func (x *SetWorkshopMarkupRequest) GetWorkshopId() int64 {
@@ -10589,7 +10843,7 @@ type SetWorkshopMarkupResponse struct {
 
 func (x *SetWorkshopMarkupResponse) Reset() {
 	*x = SetWorkshopMarkupResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[161]
+	mi := &file_workshop_workshop_proto_msgTypes[162]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10601,7 +10855,7 @@ func (x *SetWorkshopMarkupResponse) String() string {
 func (*SetWorkshopMarkupResponse) ProtoMessage() {}
 
 func (x *SetWorkshopMarkupResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[161]
+	mi := &file_workshop_workshop_proto_msgTypes[162]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10614,7 +10868,7 @@ func (x *SetWorkshopMarkupResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetWorkshopMarkupResponse.ProtoReflect.Descriptor instead.
 func (*SetWorkshopMarkupResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{161}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{162}
 }
 
 func (x *SetWorkshopMarkupResponse) GetWorkshop() *Workshop {
@@ -10633,7 +10887,7 @@ type GetPricingBreakdownRequest struct {
 
 func (x *GetPricingBreakdownRequest) Reset() {
 	*x = GetPricingBreakdownRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[162]
+	mi := &file_workshop_workshop_proto_msgTypes[163]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10645,7 +10899,7 @@ func (x *GetPricingBreakdownRequest) String() string {
 func (*GetPricingBreakdownRequest) ProtoMessage() {}
 
 func (x *GetPricingBreakdownRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[162]
+	mi := &file_workshop_workshop_proto_msgTypes[163]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10658,7 +10912,7 @@ func (x *GetPricingBreakdownRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPricingBreakdownRequest.ProtoReflect.Descriptor instead.
 func (*GetPricingBreakdownRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{162}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{163}
 }
 
 func (x *GetPricingBreakdownRequest) GetOrderId() int64 {
@@ -10677,7 +10931,7 @@ type GetPricingBreakdownResponse struct {
 
 func (x *GetPricingBreakdownResponse) Reset() {
 	*x = GetPricingBreakdownResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[163]
+	mi := &file_workshop_workshop_proto_msgTypes[164]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10689,7 +10943,7 @@ func (x *GetPricingBreakdownResponse) String() string {
 func (*GetPricingBreakdownResponse) ProtoMessage() {}
 
 func (x *GetPricingBreakdownResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[163]
+	mi := &file_workshop_workshop_proto_msgTypes[164]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10702,7 +10956,7 @@ func (x *GetPricingBreakdownResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPricingBreakdownResponse.ProtoReflect.Descriptor instead.
 func (*GetPricingBreakdownResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{163}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{164}
 }
 
 func (x *GetPricingBreakdownResponse) GetBreakdown() *PricingBreakdown {
@@ -10710,6 +10964,326 @@ func (x *GetPricingBreakdownResponse) GetBreakdown() *PricingBreakdown {
 		return x.Breakdown
 	}
 	return nil
+}
+
+type MarkPaidManualRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepairOrderId int64                  `protobuf:"varint,1,opt,name=repair_order_id,json=repairOrderId,proto3" json:"repair_order_id,omitempty"`
+	Method        PaymentMethod          `protobuf:"varint,2,opt,name=method,proto3,enum=workshop.v1.PaymentMethod" json:"method,omitempty"`
+	Amount        int64                  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
+	Note          string                 `protobuf:"bytes,4,opt,name=note,proto3" json:"note,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MarkPaidManualRequest) Reset() {
+	*x = MarkPaidManualRequest{}
+	mi := &file_workshop_workshop_proto_msgTypes[165]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MarkPaidManualRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MarkPaidManualRequest) ProtoMessage() {}
+
+func (x *MarkPaidManualRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_workshop_workshop_proto_msgTypes[165]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MarkPaidManualRequest.ProtoReflect.Descriptor instead.
+func (*MarkPaidManualRequest) Descriptor() ([]byte, []int) {
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{165}
+}
+
+func (x *MarkPaidManualRequest) GetRepairOrderId() int64 {
+	if x != nil {
+		return x.RepairOrderId
+	}
+	return 0
+}
+
+func (x *MarkPaidManualRequest) GetMethod() PaymentMethod {
+	if x != nil {
+		return x.Method
+	}
+	return PaymentMethod_PAYMENT_METHOD_UNSPECIFIED
+}
+
+func (x *MarkPaidManualRequest) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *MarkPaidManualRequest) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
+type MarkPaidManualResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Payment       *RepairOrderPayment    `protobuf:"bytes,1,opt,name=payment,proto3" json:"payment,omitempty"`
+	RepairOrder   *RepairOrder           `protobuf:"bytes,2,opt,name=repair_order,json=repairOrder,proto3" json:"repair_order,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MarkPaidManualResponse) Reset() {
+	*x = MarkPaidManualResponse{}
+	mi := &file_workshop_workshop_proto_msgTypes[166]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MarkPaidManualResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MarkPaidManualResponse) ProtoMessage() {}
+
+func (x *MarkPaidManualResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_workshop_workshop_proto_msgTypes[166]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MarkPaidManualResponse.ProtoReflect.Descriptor instead.
+func (*MarkPaidManualResponse) Descriptor() ([]byte, []int) {
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{166}
+}
+
+func (x *MarkPaidManualResponse) GetPayment() *RepairOrderPayment {
+	if x != nil {
+		return x.Payment
+	}
+	return nil
+}
+
+func (x *MarkPaidManualResponse) GetRepairOrder() *RepairOrder {
+	if x != nil {
+		return x.RepairOrder
+	}
+	return nil
+}
+
+type CancelPaymentRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PaymentId     int64                  `protobuf:"varint,1,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
+	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelPaymentRequest) Reset() {
+	*x = CancelPaymentRequest{}
+	mi := &file_workshop_workshop_proto_msgTypes[167]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelPaymentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelPaymentRequest) ProtoMessage() {}
+
+func (x *CancelPaymentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_workshop_workshop_proto_msgTypes[167]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelPaymentRequest.ProtoReflect.Descriptor instead.
+func (*CancelPaymentRequest) Descriptor() ([]byte, []int) {
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{167}
+}
+
+func (x *CancelPaymentRequest) GetPaymentId() int64 {
+	if x != nil {
+		return x.PaymentId
+	}
+	return 0
+}
+
+func (x *CancelPaymentRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+type CancelPaymentResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Payment       *RepairOrderPayment    `protobuf:"bytes,1,opt,name=payment,proto3" json:"payment,omitempty"`
+	RepairOrder   *RepairOrder           `protobuf:"bytes,2,opt,name=repair_order,json=repairOrder,proto3" json:"repair_order,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelPaymentResponse) Reset() {
+	*x = CancelPaymentResponse{}
+	mi := &file_workshop_workshop_proto_msgTypes[168]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelPaymentResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelPaymentResponse) ProtoMessage() {}
+
+func (x *CancelPaymentResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_workshop_workshop_proto_msgTypes[168]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelPaymentResponse.ProtoReflect.Descriptor instead.
+func (*CancelPaymentResponse) Descriptor() ([]byte, []int) {
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{168}
+}
+
+func (x *CancelPaymentResponse) GetPayment() *RepairOrderPayment {
+	if x != nil {
+		return x.Payment
+	}
+	return nil
+}
+
+func (x *CancelPaymentResponse) GetRepairOrder() *RepairOrder {
+	if x != nil {
+		return x.RepairOrder
+	}
+	return nil
+}
+
+type GetPaymentHistoryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepairOrderId int64                  `protobuf:"varint,1,opt,name=repair_order_id,json=repairOrderId,proto3" json:"repair_order_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPaymentHistoryRequest) Reset() {
+	*x = GetPaymentHistoryRequest{}
+	mi := &file_workshop_workshop_proto_msgTypes[169]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPaymentHistoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPaymentHistoryRequest) ProtoMessage() {}
+
+func (x *GetPaymentHistoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_workshop_workshop_proto_msgTypes[169]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPaymentHistoryRequest.ProtoReflect.Descriptor instead.
+func (*GetPaymentHistoryRequest) Descriptor() ([]byte, []int) {
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{169}
+}
+
+func (x *GetPaymentHistoryRequest) GetRepairOrderId() int64 {
+	if x != nil {
+		return x.RepairOrderId
+	}
+	return 0
+}
+
+type GetPaymentHistoryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Payments      []*RepairOrderPayment  `protobuf:"bytes,1,rep,name=payments,proto3" json:"payments,omitempty"`
+	TotalPaid     int64                  `protobuf:"varint,2,opt,name=total_paid,json=totalPaid,proto3" json:"total_paid,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPaymentHistoryResponse) Reset() {
+	*x = GetPaymentHistoryResponse{}
+	mi := &file_workshop_workshop_proto_msgTypes[170]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPaymentHistoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPaymentHistoryResponse) ProtoMessage() {}
+
+func (x *GetPaymentHistoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_workshop_workshop_proto_msgTypes[170]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPaymentHistoryResponse.ProtoReflect.Descriptor instead.
+func (*GetPaymentHistoryResponse) Descriptor() ([]byte, []int) {
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{170}
+}
+
+func (x *GetPaymentHistoryResponse) GetPayments() []*RepairOrderPayment {
+	if x != nil {
+		return x.Payments
+	}
+	return nil
+}
+
+func (x *GetPaymentHistoryResponse) GetTotalPaid() int64 {
+	if x != nil {
+		return x.TotalPaid
+	}
+	return 0
 }
 
 var File_workshop_workshop_proto protoreflect.FileDescriptor
@@ -10728,7 +11302,8 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12,\n" +
-	"\x12default_markup_pct\x18\t \x01(\x05R\x10defaultMarkupPct\"\xee\t\n" +
+	"\x12default_markup_pct\x18\t \x01(\x05R\x10defaultMarkupPct\"\xd2\n" +
+	"\n" +
 	"\vRepairOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vworkshop_id\x18\x02 \x01(\x03R\n" +
@@ -10776,7 +11351,10 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\bdiscount\x18\x1f \x01(\x03R\bdiscount\x12'\n" +
 	"\x0fdiscount_reason\x18  \x01(\tR\x0ediscountReason\x12\x14\n" +
 	"\x05total\x18! \x01(\x03R\x05total\x12\x19\n" +
-	"\border_id\x18\" \x01(\x03R\aorderId\"`\n" +
+	"\border_id\x18\" \x01(\x03R\aorderId\x12A\n" +
+	"\x0epayment_status\x18# \x01(\x0e2\x1a.workshop.v1.PaymentStatusR\rpaymentStatus\x12\x1f\n" +
+	"\vpaid_amount\x18$ \x01(\x03R\n" +
+	"paidAmount\"`\n" +
 	"\rMasterSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12+\n" +
@@ -10793,7 +11371,22 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"markup_pct\x18\x05 \x01(\x05R\tmarkupPct\x12\x1a\n" +
 	"\bdiscount\x18\x06 \x01(\x03R\bdiscount\x12'\n" +
 	"\x0fdiscount_reason\x18\a \x01(\tR\x0ediscountReason\x12\x14\n" +
-	"\x05total\x18\b \x01(\x03R\x05total\"\xcb\x04\n" +
+	"\x05total\x18\b \x01(\x03R\x05total\"\xb1\x03\n" +
+	"\x12RepairOrderPayment\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12&\n" +
+	"\x0frepair_order_id\x18\x02 \x01(\x03R\rrepairOrderId\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\x122\n" +
+	"\x06method\x18\x04 \x01(\x0e2\x1a.workshop.v1.PaymentMethodR\x06method\x12%\n" +
+	"\x0etransaction_id\x18\x05 \x01(\tR\rtransactionId\x12\x1f\n" +
+	"\vreceived_by\x18\x06 \x01(\x03R\n" +
+	"receivedBy\x12\x12\n" +
+	"\x04note\x18\a \x01(\tR\x04note\x12\x1c\n" +
+	"\tcancelled\x18\b \x01(\bR\tcancelled\x12#\n" +
+	"\rcancel_reason\x18\t \x01(\tR\fcancelReason\x12=\n" +
+	"\fcancelled_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\vcancelledAt\x129\n" +
+	"\n" +
+	"created_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xcb\x04\n" +
 	"\aCarWork\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12&\n" +
 	"\x0frepair_order_id\x18\x02 \x01(\x03R\rrepairOrderId\x12\x1b\n" +
@@ -11584,7 +12177,28 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\x1aGetPricingBreakdownRequest\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\"Z\n" +
 	"\x1bGetPricingBreakdownResponse\x12;\n" +
-	"\tbreakdown\x18\x01 \x01(\v2\x1d.workshop.v1.PricingBreakdownR\tbreakdown*\xcc\x02\n" +
+	"\tbreakdown\x18\x01 \x01(\v2\x1d.workshop.v1.PricingBreakdownR\tbreakdown\"\x9f\x01\n" +
+	"\x15MarkPaidManualRequest\x12&\n" +
+	"\x0frepair_order_id\x18\x01 \x01(\x03R\rrepairOrderId\x122\n" +
+	"\x06method\x18\x02 \x01(\x0e2\x1a.workshop.v1.PaymentMethodR\x06method\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\x12\x12\n" +
+	"\x04note\x18\x04 \x01(\tR\x04note\"\x90\x01\n" +
+	"\x16MarkPaidManualResponse\x129\n" +
+	"\apayment\x18\x01 \x01(\v2\x1f.workshop.v1.RepairOrderPaymentR\apayment\x12;\n" +
+	"\frepair_order\x18\x02 \x01(\v2\x18.workshop.v1.RepairOrderR\vrepairOrder\"M\n" +
+	"\x14CancelPaymentRequest\x12\x1d\n" +
+	"\n" +
+	"payment_id\x18\x01 \x01(\x03R\tpaymentId\x12\x16\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\"\x8f\x01\n" +
+	"\x15CancelPaymentResponse\x129\n" +
+	"\apayment\x18\x01 \x01(\v2\x1f.workshop.v1.RepairOrderPaymentR\apayment\x12;\n" +
+	"\frepair_order\x18\x02 \x01(\v2\x18.workshop.v1.RepairOrderR\vrepairOrder\"B\n" +
+	"\x18GetPaymentHistoryRequest\x12&\n" +
+	"\x0frepair_order_id\x18\x01 \x01(\x03R\rrepairOrderId\"w\n" +
+	"\x19GetPaymentHistoryResponse\x12;\n" +
+	"\bpayments\x18\x01 \x03(\v2\x1f.workshop.v1.RepairOrderPaymentR\bpayments\x12\x1d\n" +
+	"\n" +
+	"total_paid\x18\x02 \x01(\x03R\ttotalPaid*\xcc\x02\n" +
 	"\fRepairStatus\x12\x1d\n" +
 	"\x19REPAIR_STATUS_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13REPAIR_STATUS_QUEUE\x10\x01\x12\x1f\n" +
@@ -11634,7 +12248,20 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\x17MaterialTransactionType\x12)\n" +
 	"%MATERIAL_TRANSACTION_TYPE_UNSPECIFIED\x10\x00\x12$\n" +
 	" MATERIAL_TRANSACTION_TYPE_INCOME\x10\x01\x12%\n" +
-	"!MATERIAL_TRANSACTION_TYPE_EXPENSE\x10\x022\xb72\n" +
+	"!MATERIAL_TRANSACTION_TYPE_EXPENSE\x10\x02*\xbf\x01\n" +
+	"\rPaymentStatus\x12\x1e\n" +
+	"\x1aPAYMENT_STATUS_UNSPECIFIED\x10\x00\x12\x19\n" +
+	"\x15PAYMENT_STATUS_UNPAID\x10\x01\x12\x1a\n" +
+	"\x16PAYMENT_STATUS_PENDING\x10\x02\x12!\n" +
+	"\x1dPAYMENT_STATUS_PARTIALLY_PAID\x10\x03\x12\x17\n" +
+	"\x13PAYMENT_STATUS_PAID\x10\x04\x12\x1b\n" +
+	"\x17PAYMENT_STATUS_REFUNDED\x10\x05*\x98\x01\n" +
+	"\rPaymentMethod\x12\x1e\n" +
+	"\x1aPAYMENT_METHOD_UNSPECIFIED\x10\x00\x12\x17\n" +
+	"\x13PAYMENT_METHOD_CASH\x10\x01\x12\x1b\n" +
+	"\x17PAYMENT_METHOD_TERMINAL\x10\x02\x12\x17\n" +
+	"\x13PAYMENT_METHOD_IOKA\x10\x03\x12\x18\n" +
+	"\x14PAYMENT_METHOD_KASPI\x10\x042\xce4\n" +
 	"\x0fWorkshopService\x12Y\n" +
 	"\x0eCreateWorkshop\x12\".workshop.v1.CreateWorkshopRequest\x1a#.workshop.v1.CreateWorkshopResponse\x12P\n" +
 	"\vGetWorkshop\x12\x1f.workshop.v1.GetWorkshopRequest\x1a .workshop.v1.GetWorkshopResponse\x12Y\n" +
@@ -11709,7 +12336,10 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\vSetDiscount\x12\x1f.workshop.v1.SetDiscountRequest\x1a .workshop.v1.SetDiscountResponse\x12J\n" +
 	"\tSetMarkup\x12\x1d.workshop.v1.SetMarkupRequest\x1a\x1e.workshop.v1.SetMarkupResponse\x12b\n" +
 	"\x11SetWorkshopMarkup\x12%.workshop.v1.SetWorkshopMarkupRequest\x1a&.workshop.v1.SetWorkshopMarkupResponse\x12h\n" +
-	"\x13GetPricingBreakdown\x12'.workshop.v1.GetPricingBreakdownRequest\x1a(.workshop.v1.GetPricingBreakdownResponseB7Z5gitlab.com/xakpro/cg-proto/gen/go/workshop;workshopv1b\x06proto3"
+	"\x13GetPricingBreakdown\x12'.workshop.v1.GetPricingBreakdownRequest\x1a(.workshop.v1.GetPricingBreakdownResponse\x12Y\n" +
+	"\x0eMarkPaidManual\x12\".workshop.v1.MarkPaidManualRequest\x1a#.workshop.v1.MarkPaidManualResponse\x12V\n" +
+	"\rCancelPayment\x12!.workshop.v1.CancelPaymentRequest\x1a\".workshop.v1.CancelPaymentResponse\x12b\n" +
+	"\x11GetPaymentHistory\x12%.workshop.v1.GetPaymentHistoryRequest\x1a&.workshop.v1.GetPaymentHistoryResponseB7Z5gitlab.com/xakpro/cg-proto/gen/go/workshop;workshopv1b\x06proto3"
 
 var (
 	file_workshop_workshop_proto_rawDescOnce sync.Once
@@ -11723,8 +12353,8 @@ func file_workshop_workshop_proto_rawDescGZIP() []byte {
 	return file_workshop_workshop_proto_rawDescData
 }
 
-var file_workshop_workshop_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
-var file_workshop_workshop_proto_msgTypes = make([]protoimpl.MessageInfo, 165)
+var file_workshop_workshop_proto_enumTypes = make([]protoimpl.EnumInfo, 10)
+var file_workshop_workshop_proto_msgTypes = make([]protoimpl.MessageInfo, 172)
 var file_workshop_workshop_proto_goTypes = []any{
 	(RepairStatus)(0),                         // 0: workshop.v1.RepairStatus
 	(MasterRole)(0),                           // 1: workshop.v1.MasterRole
@@ -11734,474 +12364,499 @@ var file_workshop_workshop_proto_goTypes = []any{
 	(CommentType)(0),                          // 5: workshop.v1.CommentType
 	(MaterialUnit)(0),                         // 6: workshop.v1.MaterialUnit
 	(MaterialTransactionType)(0),              // 7: workshop.v1.MaterialTransactionType
-	(*Workshop)(nil),                          // 8: workshop.v1.Workshop
-	(*RepairOrder)(nil),                       // 9: workshop.v1.RepairOrder
-	(*MasterSummary)(nil),                     // 10: workshop.v1.MasterSummary
-	(*PricingBreakdown)(nil),                  // 11: workshop.v1.PricingBreakdown
-	(*CarWork)(nil),                           // 12: workshop.v1.CarWork
-	(*Master)(nil),                            // 13: workshop.v1.Master
-	(*Client)(nil),                            // 14: workshop.v1.Client
-	(*RepairPhoto)(nil),                       // 15: workshop.v1.RepairPhoto
-	(*RepairComment)(nil),                     // 16: workshop.v1.RepairComment
-	(*StatusHistoryEntry)(nil),                // 17: workshop.v1.StatusHistoryEntry
-	(*QCChecklist)(nil),                       // 18: workshop.v1.QCChecklist
-	(*QCItem)(nil),                            // 19: workshop.v1.QCItem
-	(*OutsourceRequest)(nil),                  // 20: workshop.v1.OutsourceRequest
-	(*SalaryBreakdown)(nil),                   // 21: workshop.v1.SalaryBreakdown
-	(*SalaryAdjustment)(nil),                  // 22: workshop.v1.SalaryAdjustment
-	(*MasterHourRate)(nil),                    // 23: workshop.v1.MasterHourRate
-	(*MasterFixSalary)(nil),                   // 24: workshop.v1.MasterFixSalary
-	(*Material)(nil),                          // 25: workshop.v1.Material
-	(*MaterialStock)(nil),                     // 26: workshop.v1.MaterialStock
-	(*MaterialTransaction)(nil),               // 27: workshop.v1.MaterialTransaction
-	(*KanbanColumn)(nil),                      // 28: workshop.v1.KanbanColumn
-	(*OutsourceKanbanColumn)(nil),             // 29: workshop.v1.OutsourceKanbanColumn
-	(*CreateWorkshopRequest)(nil),             // 30: workshop.v1.CreateWorkshopRequest
-	(*CreateWorkshopResponse)(nil),            // 31: workshop.v1.CreateWorkshopResponse
-	(*GetWorkshopRequest)(nil),                // 32: workshop.v1.GetWorkshopRequest
-	(*GetWorkshopResponse)(nil),               // 33: workshop.v1.GetWorkshopResponse
-	(*UpdateWorkshopRequest)(nil),             // 34: workshop.v1.UpdateWorkshopRequest
-	(*UpdateWorkshopResponse)(nil),            // 35: workshop.v1.UpdateWorkshopResponse
-	(*ListWorkshopsRequest)(nil),              // 36: workshop.v1.ListWorkshopsRequest
-	(*ListWorkshopsResponse)(nil),             // 37: workshop.v1.ListWorkshopsResponse
-	(*CreateRepairOrderRequest)(nil),          // 38: workshop.v1.CreateRepairOrderRequest
-	(*CreateRepairOrderResponse)(nil),         // 39: workshop.v1.CreateRepairOrderResponse
-	(*GetRepairOrderRequest)(nil),             // 40: workshop.v1.GetRepairOrderRequest
-	(*GetRepairOrderResponse)(nil),            // 41: workshop.v1.GetRepairOrderResponse
-	(*UpdateRepairOrderRequest)(nil),          // 42: workshop.v1.UpdateRepairOrderRequest
-	(*UpdateRepairOrderResponse)(nil),         // 43: workshop.v1.UpdateRepairOrderResponse
-	(*UpdateRepairOrderStatusRequest)(nil),    // 44: workshop.v1.UpdateRepairOrderStatusRequest
-	(*UpdateRepairOrderStatusResponse)(nil),   // 45: workshop.v1.UpdateRepairOrderStatusResponse
-	(*ListRepairOrdersRequest)(nil),           // 46: workshop.v1.ListRepairOrdersRequest
-	(*ListRepairOrdersResponse)(nil),          // 47: workshop.v1.ListRepairOrdersResponse
-	(*GetKanbanRequest)(nil),                  // 48: workshop.v1.GetKanbanRequest
-	(*GetKanbanResponse)(nil),                 // 49: workshop.v1.GetKanbanResponse
-	(*CreateCarWorkRequest)(nil),              // 50: workshop.v1.CreateCarWorkRequest
-	(*CreateCarWorkResponse)(nil),             // 51: workshop.v1.CreateCarWorkResponse
-	(*UpdateCarWorkRequest)(nil),              // 52: workshop.v1.UpdateCarWorkRequest
-	(*UpdateCarWorkResponse)(nil),             // 53: workshop.v1.UpdateCarWorkResponse
-	(*DeleteCarWorkRequest)(nil),              // 54: workshop.v1.DeleteCarWorkRequest
-	(*DeleteCarWorkResponse)(nil),             // 55: workshop.v1.DeleteCarWorkResponse
-	(*ListCarWorksRequest)(nil),               // 56: workshop.v1.ListCarWorksRequest
-	(*ListCarWorksResponse)(nil),              // 57: workshop.v1.ListCarWorksResponse
-	(*MarkCarWorkDoneRequest)(nil),            // 58: workshop.v1.MarkCarWorkDoneRequest
-	(*MarkCarWorkDoneResponse)(nil),           // 59: workshop.v1.MarkCarWorkDoneResponse
-	(*ClockInRequest)(nil),                    // 60: workshop.v1.ClockInRequest
-	(*ClockInResponse)(nil),                   // 61: workshop.v1.ClockInResponse
-	(*ClockOutRequest)(nil),                   // 62: workshop.v1.ClockOutRequest
-	(*ClockOutResponse)(nil),                  // 63: workshop.v1.ClockOutResponse
-	(*CreateMasterRequest)(nil),               // 64: workshop.v1.CreateMasterRequest
-	(*CreateMasterResponse)(nil),              // 65: workshop.v1.CreateMasterResponse
-	(*GetMasterRequest)(nil),                  // 66: workshop.v1.GetMasterRequest
-	(*GetMasterResponse)(nil),                 // 67: workshop.v1.GetMasterResponse
-	(*UpdateMasterRequest)(nil),               // 68: workshop.v1.UpdateMasterRequest
-	(*UpdateMasterResponse)(nil),              // 69: workshop.v1.UpdateMasterResponse
-	(*FireMasterRequest)(nil),                 // 70: workshop.v1.FireMasterRequest
-	(*FireMasterResponse)(nil),                // 71: workshop.v1.FireMasterResponse
-	(*ListMastersRequest)(nil),                // 72: workshop.v1.ListMastersRequest
-	(*ListMastersResponse)(nil),               // 73: workshop.v1.ListMastersResponse
-	(*CalculateSalaryRequest)(nil),            // 74: workshop.v1.CalculateSalaryRequest
-	(*CalculateSalaryResponse)(nil),           // 75: workshop.v1.CalculateSalaryResponse
-	(*GetSalaryBreakdownRequest)(nil),         // 76: workshop.v1.GetSalaryBreakdownRequest
-	(*GetSalaryBreakdownResponse)(nil),        // 77: workshop.v1.GetSalaryBreakdownResponse
-	(*CreateBonusRequest)(nil),                // 78: workshop.v1.CreateBonusRequest
-	(*CreateBonusResponse)(nil),               // 79: workshop.v1.CreateBonusResponse
-	(*CreateFineRequest)(nil),                 // 80: workshop.v1.CreateFineRequest
-	(*CreateFineResponse)(nil),                // 81: workshop.v1.CreateFineResponse
-	(*CreateAdvanceRequest)(nil),              // 82: workshop.v1.CreateAdvanceRequest
-	(*CreateAdvanceResponse)(nil),             // 83: workshop.v1.CreateAdvanceResponse
-	(*DeleteBonusRequest)(nil),                // 84: workshop.v1.DeleteBonusRequest
-	(*DeleteBonusResponse)(nil),               // 85: workshop.v1.DeleteBonusResponse
-	(*DeleteFineRequest)(nil),                 // 86: workshop.v1.DeleteFineRequest
-	(*DeleteFineResponse)(nil),                // 87: workshop.v1.DeleteFineResponse
-	(*SetMasterHourRateRequest)(nil),          // 88: workshop.v1.SetMasterHourRateRequest
-	(*SetMasterHourRateResponse)(nil),         // 89: workshop.v1.SetMasterHourRateResponse
-	(*SetMasterFixSalaryRequest)(nil),         // 90: workshop.v1.SetMasterFixSalaryRequest
-	(*SetMasterFixSalaryResponse)(nil),        // 91: workshop.v1.SetMasterFixSalaryResponse
-	(*GetMasterRateHistoryRequest)(nil),       // 92: workshop.v1.GetMasterRateHistoryRequest
-	(*GetMasterRateHistoryResponse)(nil),      // 93: workshop.v1.GetMasterRateHistoryResponse
-	(*PublishOutsourceRequest)(nil),           // 94: workshop.v1.PublishOutsourceRequest
-	(*PublishOutsourceResponse)(nil),          // 95: workshop.v1.PublishOutsourceResponse
-	(*AcceptOutsourceRequest)(nil),            // 96: workshop.v1.AcceptOutsourceRequest
-	(*AcceptOutsourceResponse)(nil),           // 97: workshop.v1.AcceptOutsourceResponse
-	(*ListOutsourceRequestsRequest)(nil),      // 98: workshop.v1.ListOutsourceRequestsRequest
-	(*ListOutsourceRequestsResponse)(nil),     // 99: workshop.v1.ListOutsourceRequestsResponse
-	(*GetOutsourceKanbanRequest)(nil),         // 100: workshop.v1.GetOutsourceKanbanRequest
-	(*GetOutsourceKanbanResponse)(nil),        // 101: workshop.v1.GetOutsourceKanbanResponse
-	(*UpdateOutsourceStatusRequest)(nil),      // 102: workshop.v1.UpdateOutsourceStatusRequest
-	(*UpdateOutsourceStatusResponse)(nil),     // 103: workshop.v1.UpdateOutsourceStatusResponse
-	(*GetWorkshopStatsRequest)(nil),           // 104: workshop.v1.GetWorkshopStatsRequest
-	(*GetWorkshopStatsResponse)(nil),          // 105: workshop.v1.GetWorkshopStatsResponse
-	(*GetMasterPerformanceRequest)(nil),       // 106: workshop.v1.GetMasterPerformanceRequest
-	(*GetMasterPerformanceResponse)(nil),      // 107: workshop.v1.GetMasterPerformanceResponse
-	(*MasterPerformanceEntry)(nil),            // 108: workshop.v1.MasterPerformanceEntry
-	(*GetDailyReportRequest)(nil),             // 109: workshop.v1.GetDailyReportRequest
-	(*DailyReportEntry)(nil),                  // 110: workshop.v1.DailyReportEntry
-	(*GetDailyReportResponse)(nil),            // 111: workshop.v1.GetDailyReportResponse
-	(*StatusCount)(nil),                       // 112: workshop.v1.StatusCount
-	(*AddCommentRequest)(nil),                 // 113: workshop.v1.AddCommentRequest
-	(*AddCommentResponse)(nil),                // 114: workshop.v1.AddCommentResponse
-	(*ListCommentsRequest)(nil),               // 115: workshop.v1.ListCommentsRequest
-	(*ListCommentsResponse)(nil),              // 116: workshop.v1.ListCommentsResponse
-	(*UploadPhotoRequest)(nil),                // 117: workshop.v1.UploadPhotoRequest
-	(*UploadPhotoResponse)(nil),               // 118: workshop.v1.UploadPhotoResponse
-	(*ListPhotosRequest)(nil),                 // 119: workshop.v1.ListPhotosRequest
-	(*ListPhotosResponse)(nil),                // 120: workshop.v1.ListPhotosResponse
-	(*DeletePhotoRequest)(nil),                // 121: workshop.v1.DeletePhotoRequest
-	(*DeletePhotoResponse)(nil),               // 122: workshop.v1.DeletePhotoResponse
-	(*GetQCChecklistRequest)(nil),             // 123: workshop.v1.GetQCChecklistRequest
-	(*GetQCChecklistResponse)(nil),            // 124: workshop.v1.GetQCChecklistResponse
-	(*SubmitQCChecklistRequest)(nil),          // 125: workshop.v1.SubmitQCChecklistRequest
-	(*SubmitQCChecklistResponse)(nil),         // 126: workshop.v1.SubmitQCChecklistResponse
-	(*RejectQCItemRequest)(nil),               // 127: workshop.v1.RejectQCItemRequest
-	(*RejectQCItemResponse)(nil),              // 128: workshop.v1.RejectQCItemResponse
-	(*ListStatusHistoryRequest)(nil),          // 129: workshop.v1.ListStatusHistoryRequest
-	(*ListStatusHistoryResponse)(nil),         // 130: workshop.v1.ListStatusHistoryResponse
-	(*CreateMaterialRequest)(nil),             // 131: workshop.v1.CreateMaterialRequest
-	(*CreateMaterialResponse)(nil),            // 132: workshop.v1.CreateMaterialResponse
-	(*UpdateMaterialRequest)(nil),             // 133: workshop.v1.UpdateMaterialRequest
-	(*UpdateMaterialResponse)(nil),            // 134: workshop.v1.UpdateMaterialResponse
-	(*ListMaterialsRequest)(nil),              // 135: workshop.v1.ListMaterialsRequest
-	(*ListMaterialsResponse)(nil),             // 136: workshop.v1.ListMaterialsResponse
-	(*AddMaterialStockRequest)(nil),           // 137: workshop.v1.AddMaterialStockRequest
-	(*AddMaterialStockResponse)(nil),          // 138: workshop.v1.AddMaterialStockResponse
-	(*WriteOffMaterialRequest)(nil),           // 139: workshop.v1.WriteOffMaterialRequest
-	(*WriteOffMaterialResponse)(nil),          // 140: workshop.v1.WriteOffMaterialResponse
-	(*GetMaterialStockRequest)(nil),           // 141: workshop.v1.GetMaterialStockRequest
-	(*GetMaterialStockResponse)(nil),          // 142: workshop.v1.GetMaterialStockResponse
-	(*ListMaterialTransactionsRequest)(nil),   // 143: workshop.v1.ListMaterialTransactionsRequest
-	(*ListMaterialTransactionsResponse)(nil),  // 144: workshop.v1.ListMaterialTransactionsResponse
-	(*GetMasterMaterialExpensesRequest)(nil),  // 145: workshop.v1.GetMasterMaterialExpensesRequest
-	(*GetMasterMaterialExpensesResponse)(nil), // 146: workshop.v1.GetMasterMaterialExpensesResponse
-	(*GetClientOrderStatusRequest)(nil),       // 147: workshop.v1.GetClientOrderStatusRequest
-	(*GetClientOrderStatusResponse)(nil),      // 148: workshop.v1.GetClientOrderStatusResponse
-	(*GetClientOrderPhotosRequest)(nil),       // 149: workshop.v1.GetClientOrderPhotosRequest
-	(*GetClientOrderPhotosResponse)(nil),      // 150: workshop.v1.GetClientOrderPhotosResponse
-	(*GetClientOrderTimelineRequest)(nil),     // 151: workshop.v1.GetClientOrderTimelineRequest
-	(*GetClientOrderTimelineResponse)(nil),    // 152: workshop.v1.GetClientOrderTimelineResponse
-	(*TimelineEntry)(nil),                     // 153: workshop.v1.TimelineEntry
-	(*CreateOrderFromCRMRequest)(nil),         // 154: workshop.v1.CreateOrderFromCRMRequest
-	(*CreateOrderFromCRMResponse)(nil),        // 155: workshop.v1.CreateOrderFromCRMResponse
-	(*SyncCRMDealsRequest)(nil),               // 156: workshop.v1.SyncCRMDealsRequest
-	(*SyncCRMDealsResponse)(nil),              // 157: workshop.v1.SyncCRMDealsResponse
-	(*GetCRMSyncStatusRequest)(nil),           // 158: workshop.v1.GetCRMSyncStatusRequest
-	(*GetCRMSyncStatusResponse)(nil),          // 159: workshop.v1.GetCRMSyncStatusResponse
-	(*SetMasterTelegramRequest)(nil),          // 160: workshop.v1.SetMasterTelegramRequest
-	(*SetMasterTelegramResponse)(nil),         // 161: workshop.v1.SetMasterTelegramResponse
-	(*GetMasterByTelegramRequest)(nil),        // 162: workshop.v1.GetMasterByTelegramRequest
-	(*GetMasterByTelegramResponse)(nil),       // 163: workshop.v1.GetMasterByTelegramResponse
-	(*SetDiscountRequest)(nil),                // 164: workshop.v1.SetDiscountRequest
-	(*SetDiscountResponse)(nil),               // 165: workshop.v1.SetDiscountResponse
-	(*SetMarkupRequest)(nil),                  // 166: workshop.v1.SetMarkupRequest
-	(*SetMarkupResponse)(nil),                 // 167: workshop.v1.SetMarkupResponse
-	(*SetWorkshopMarkupRequest)(nil),          // 168: workshop.v1.SetWorkshopMarkupRequest
-	(*SetWorkshopMarkupResponse)(nil),         // 169: workshop.v1.SetWorkshopMarkupResponse
-	(*GetPricingBreakdownRequest)(nil),        // 170: workshop.v1.GetPricingBreakdownRequest
-	(*GetPricingBreakdownResponse)(nil),       // 171: workshop.v1.GetPricingBreakdownResponse
-	nil,                                       // 172: workshop.v1.CreateOrderFromCRMRequest.CrmMetadataEntry
-	(*timestamppb.Timestamp)(nil),             // 173: google.protobuf.Timestamp
+	(PaymentStatus)(0),                        // 8: workshop.v1.PaymentStatus
+	(PaymentMethod)(0),                        // 9: workshop.v1.PaymentMethod
+	(*Workshop)(nil),                          // 10: workshop.v1.Workshop
+	(*RepairOrder)(nil),                       // 11: workshop.v1.RepairOrder
+	(*MasterSummary)(nil),                     // 12: workshop.v1.MasterSummary
+	(*PricingBreakdown)(nil),                  // 13: workshop.v1.PricingBreakdown
+	(*RepairOrderPayment)(nil),                // 14: workshop.v1.RepairOrderPayment
+	(*CarWork)(nil),                           // 15: workshop.v1.CarWork
+	(*Master)(nil),                            // 16: workshop.v1.Master
+	(*Client)(nil),                            // 17: workshop.v1.Client
+	(*RepairPhoto)(nil),                       // 18: workshop.v1.RepairPhoto
+	(*RepairComment)(nil),                     // 19: workshop.v1.RepairComment
+	(*StatusHistoryEntry)(nil),                // 20: workshop.v1.StatusHistoryEntry
+	(*QCChecklist)(nil),                       // 21: workshop.v1.QCChecklist
+	(*QCItem)(nil),                            // 22: workshop.v1.QCItem
+	(*OutsourceRequest)(nil),                  // 23: workshop.v1.OutsourceRequest
+	(*SalaryBreakdown)(nil),                   // 24: workshop.v1.SalaryBreakdown
+	(*SalaryAdjustment)(nil),                  // 25: workshop.v1.SalaryAdjustment
+	(*MasterHourRate)(nil),                    // 26: workshop.v1.MasterHourRate
+	(*MasterFixSalary)(nil),                   // 27: workshop.v1.MasterFixSalary
+	(*Material)(nil),                          // 28: workshop.v1.Material
+	(*MaterialStock)(nil),                     // 29: workshop.v1.MaterialStock
+	(*MaterialTransaction)(nil),               // 30: workshop.v1.MaterialTransaction
+	(*KanbanColumn)(nil),                      // 31: workshop.v1.KanbanColumn
+	(*OutsourceKanbanColumn)(nil),             // 32: workshop.v1.OutsourceKanbanColumn
+	(*CreateWorkshopRequest)(nil),             // 33: workshop.v1.CreateWorkshopRequest
+	(*CreateWorkshopResponse)(nil),            // 34: workshop.v1.CreateWorkshopResponse
+	(*GetWorkshopRequest)(nil),                // 35: workshop.v1.GetWorkshopRequest
+	(*GetWorkshopResponse)(nil),               // 36: workshop.v1.GetWorkshopResponse
+	(*UpdateWorkshopRequest)(nil),             // 37: workshop.v1.UpdateWorkshopRequest
+	(*UpdateWorkshopResponse)(nil),            // 38: workshop.v1.UpdateWorkshopResponse
+	(*ListWorkshopsRequest)(nil),              // 39: workshop.v1.ListWorkshopsRequest
+	(*ListWorkshopsResponse)(nil),             // 40: workshop.v1.ListWorkshopsResponse
+	(*CreateRepairOrderRequest)(nil),          // 41: workshop.v1.CreateRepairOrderRequest
+	(*CreateRepairOrderResponse)(nil),         // 42: workshop.v1.CreateRepairOrderResponse
+	(*GetRepairOrderRequest)(nil),             // 43: workshop.v1.GetRepairOrderRequest
+	(*GetRepairOrderResponse)(nil),            // 44: workshop.v1.GetRepairOrderResponse
+	(*UpdateRepairOrderRequest)(nil),          // 45: workshop.v1.UpdateRepairOrderRequest
+	(*UpdateRepairOrderResponse)(nil),         // 46: workshop.v1.UpdateRepairOrderResponse
+	(*UpdateRepairOrderStatusRequest)(nil),    // 47: workshop.v1.UpdateRepairOrderStatusRequest
+	(*UpdateRepairOrderStatusResponse)(nil),   // 48: workshop.v1.UpdateRepairOrderStatusResponse
+	(*ListRepairOrdersRequest)(nil),           // 49: workshop.v1.ListRepairOrdersRequest
+	(*ListRepairOrdersResponse)(nil),          // 50: workshop.v1.ListRepairOrdersResponse
+	(*GetKanbanRequest)(nil),                  // 51: workshop.v1.GetKanbanRequest
+	(*GetKanbanResponse)(nil),                 // 52: workshop.v1.GetKanbanResponse
+	(*CreateCarWorkRequest)(nil),              // 53: workshop.v1.CreateCarWorkRequest
+	(*CreateCarWorkResponse)(nil),             // 54: workshop.v1.CreateCarWorkResponse
+	(*UpdateCarWorkRequest)(nil),              // 55: workshop.v1.UpdateCarWorkRequest
+	(*UpdateCarWorkResponse)(nil),             // 56: workshop.v1.UpdateCarWorkResponse
+	(*DeleteCarWorkRequest)(nil),              // 57: workshop.v1.DeleteCarWorkRequest
+	(*DeleteCarWorkResponse)(nil),             // 58: workshop.v1.DeleteCarWorkResponse
+	(*ListCarWorksRequest)(nil),               // 59: workshop.v1.ListCarWorksRequest
+	(*ListCarWorksResponse)(nil),              // 60: workshop.v1.ListCarWorksResponse
+	(*MarkCarWorkDoneRequest)(nil),            // 61: workshop.v1.MarkCarWorkDoneRequest
+	(*MarkCarWorkDoneResponse)(nil),           // 62: workshop.v1.MarkCarWorkDoneResponse
+	(*ClockInRequest)(nil),                    // 63: workshop.v1.ClockInRequest
+	(*ClockInResponse)(nil),                   // 64: workshop.v1.ClockInResponse
+	(*ClockOutRequest)(nil),                   // 65: workshop.v1.ClockOutRequest
+	(*ClockOutResponse)(nil),                  // 66: workshop.v1.ClockOutResponse
+	(*CreateMasterRequest)(nil),               // 67: workshop.v1.CreateMasterRequest
+	(*CreateMasterResponse)(nil),              // 68: workshop.v1.CreateMasterResponse
+	(*GetMasterRequest)(nil),                  // 69: workshop.v1.GetMasterRequest
+	(*GetMasterResponse)(nil),                 // 70: workshop.v1.GetMasterResponse
+	(*UpdateMasterRequest)(nil),               // 71: workshop.v1.UpdateMasterRequest
+	(*UpdateMasterResponse)(nil),              // 72: workshop.v1.UpdateMasterResponse
+	(*FireMasterRequest)(nil),                 // 73: workshop.v1.FireMasterRequest
+	(*FireMasterResponse)(nil),                // 74: workshop.v1.FireMasterResponse
+	(*ListMastersRequest)(nil),                // 75: workshop.v1.ListMastersRequest
+	(*ListMastersResponse)(nil),               // 76: workshop.v1.ListMastersResponse
+	(*CalculateSalaryRequest)(nil),            // 77: workshop.v1.CalculateSalaryRequest
+	(*CalculateSalaryResponse)(nil),           // 78: workshop.v1.CalculateSalaryResponse
+	(*GetSalaryBreakdownRequest)(nil),         // 79: workshop.v1.GetSalaryBreakdownRequest
+	(*GetSalaryBreakdownResponse)(nil),        // 80: workshop.v1.GetSalaryBreakdownResponse
+	(*CreateBonusRequest)(nil),                // 81: workshop.v1.CreateBonusRequest
+	(*CreateBonusResponse)(nil),               // 82: workshop.v1.CreateBonusResponse
+	(*CreateFineRequest)(nil),                 // 83: workshop.v1.CreateFineRequest
+	(*CreateFineResponse)(nil),                // 84: workshop.v1.CreateFineResponse
+	(*CreateAdvanceRequest)(nil),              // 85: workshop.v1.CreateAdvanceRequest
+	(*CreateAdvanceResponse)(nil),             // 86: workshop.v1.CreateAdvanceResponse
+	(*DeleteBonusRequest)(nil),                // 87: workshop.v1.DeleteBonusRequest
+	(*DeleteBonusResponse)(nil),               // 88: workshop.v1.DeleteBonusResponse
+	(*DeleteFineRequest)(nil),                 // 89: workshop.v1.DeleteFineRequest
+	(*DeleteFineResponse)(nil),                // 90: workshop.v1.DeleteFineResponse
+	(*SetMasterHourRateRequest)(nil),          // 91: workshop.v1.SetMasterHourRateRequest
+	(*SetMasterHourRateResponse)(nil),         // 92: workshop.v1.SetMasterHourRateResponse
+	(*SetMasterFixSalaryRequest)(nil),         // 93: workshop.v1.SetMasterFixSalaryRequest
+	(*SetMasterFixSalaryResponse)(nil),        // 94: workshop.v1.SetMasterFixSalaryResponse
+	(*GetMasterRateHistoryRequest)(nil),       // 95: workshop.v1.GetMasterRateHistoryRequest
+	(*GetMasterRateHistoryResponse)(nil),      // 96: workshop.v1.GetMasterRateHistoryResponse
+	(*PublishOutsourceRequest)(nil),           // 97: workshop.v1.PublishOutsourceRequest
+	(*PublishOutsourceResponse)(nil),          // 98: workshop.v1.PublishOutsourceResponse
+	(*AcceptOutsourceRequest)(nil),            // 99: workshop.v1.AcceptOutsourceRequest
+	(*AcceptOutsourceResponse)(nil),           // 100: workshop.v1.AcceptOutsourceResponse
+	(*ListOutsourceRequestsRequest)(nil),      // 101: workshop.v1.ListOutsourceRequestsRequest
+	(*ListOutsourceRequestsResponse)(nil),     // 102: workshop.v1.ListOutsourceRequestsResponse
+	(*GetOutsourceKanbanRequest)(nil),         // 103: workshop.v1.GetOutsourceKanbanRequest
+	(*GetOutsourceKanbanResponse)(nil),        // 104: workshop.v1.GetOutsourceKanbanResponse
+	(*UpdateOutsourceStatusRequest)(nil),      // 105: workshop.v1.UpdateOutsourceStatusRequest
+	(*UpdateOutsourceStatusResponse)(nil),     // 106: workshop.v1.UpdateOutsourceStatusResponse
+	(*GetWorkshopStatsRequest)(nil),           // 107: workshop.v1.GetWorkshopStatsRequest
+	(*GetWorkshopStatsResponse)(nil),          // 108: workshop.v1.GetWorkshopStatsResponse
+	(*GetMasterPerformanceRequest)(nil),       // 109: workshop.v1.GetMasterPerformanceRequest
+	(*GetMasterPerformanceResponse)(nil),      // 110: workshop.v1.GetMasterPerformanceResponse
+	(*MasterPerformanceEntry)(nil),            // 111: workshop.v1.MasterPerformanceEntry
+	(*GetDailyReportRequest)(nil),             // 112: workshop.v1.GetDailyReportRequest
+	(*DailyReportEntry)(nil),                  // 113: workshop.v1.DailyReportEntry
+	(*GetDailyReportResponse)(nil),            // 114: workshop.v1.GetDailyReportResponse
+	(*StatusCount)(nil),                       // 115: workshop.v1.StatusCount
+	(*AddCommentRequest)(nil),                 // 116: workshop.v1.AddCommentRequest
+	(*AddCommentResponse)(nil),                // 117: workshop.v1.AddCommentResponse
+	(*ListCommentsRequest)(nil),               // 118: workshop.v1.ListCommentsRequest
+	(*ListCommentsResponse)(nil),              // 119: workshop.v1.ListCommentsResponse
+	(*UploadPhotoRequest)(nil),                // 120: workshop.v1.UploadPhotoRequest
+	(*UploadPhotoResponse)(nil),               // 121: workshop.v1.UploadPhotoResponse
+	(*ListPhotosRequest)(nil),                 // 122: workshop.v1.ListPhotosRequest
+	(*ListPhotosResponse)(nil),                // 123: workshop.v1.ListPhotosResponse
+	(*DeletePhotoRequest)(nil),                // 124: workshop.v1.DeletePhotoRequest
+	(*DeletePhotoResponse)(nil),               // 125: workshop.v1.DeletePhotoResponse
+	(*GetQCChecklistRequest)(nil),             // 126: workshop.v1.GetQCChecklistRequest
+	(*GetQCChecklistResponse)(nil),            // 127: workshop.v1.GetQCChecklistResponse
+	(*SubmitQCChecklistRequest)(nil),          // 128: workshop.v1.SubmitQCChecklistRequest
+	(*SubmitQCChecklistResponse)(nil),         // 129: workshop.v1.SubmitQCChecklistResponse
+	(*RejectQCItemRequest)(nil),               // 130: workshop.v1.RejectQCItemRequest
+	(*RejectQCItemResponse)(nil),              // 131: workshop.v1.RejectQCItemResponse
+	(*ListStatusHistoryRequest)(nil),          // 132: workshop.v1.ListStatusHistoryRequest
+	(*ListStatusHistoryResponse)(nil),         // 133: workshop.v1.ListStatusHistoryResponse
+	(*CreateMaterialRequest)(nil),             // 134: workshop.v1.CreateMaterialRequest
+	(*CreateMaterialResponse)(nil),            // 135: workshop.v1.CreateMaterialResponse
+	(*UpdateMaterialRequest)(nil),             // 136: workshop.v1.UpdateMaterialRequest
+	(*UpdateMaterialResponse)(nil),            // 137: workshop.v1.UpdateMaterialResponse
+	(*ListMaterialsRequest)(nil),              // 138: workshop.v1.ListMaterialsRequest
+	(*ListMaterialsResponse)(nil),             // 139: workshop.v1.ListMaterialsResponse
+	(*AddMaterialStockRequest)(nil),           // 140: workshop.v1.AddMaterialStockRequest
+	(*AddMaterialStockResponse)(nil),          // 141: workshop.v1.AddMaterialStockResponse
+	(*WriteOffMaterialRequest)(nil),           // 142: workshop.v1.WriteOffMaterialRequest
+	(*WriteOffMaterialResponse)(nil),          // 143: workshop.v1.WriteOffMaterialResponse
+	(*GetMaterialStockRequest)(nil),           // 144: workshop.v1.GetMaterialStockRequest
+	(*GetMaterialStockResponse)(nil),          // 145: workshop.v1.GetMaterialStockResponse
+	(*ListMaterialTransactionsRequest)(nil),   // 146: workshop.v1.ListMaterialTransactionsRequest
+	(*ListMaterialTransactionsResponse)(nil),  // 147: workshop.v1.ListMaterialTransactionsResponse
+	(*GetMasterMaterialExpensesRequest)(nil),  // 148: workshop.v1.GetMasterMaterialExpensesRequest
+	(*GetMasterMaterialExpensesResponse)(nil), // 149: workshop.v1.GetMasterMaterialExpensesResponse
+	(*GetClientOrderStatusRequest)(nil),       // 150: workshop.v1.GetClientOrderStatusRequest
+	(*GetClientOrderStatusResponse)(nil),      // 151: workshop.v1.GetClientOrderStatusResponse
+	(*GetClientOrderPhotosRequest)(nil),       // 152: workshop.v1.GetClientOrderPhotosRequest
+	(*GetClientOrderPhotosResponse)(nil),      // 153: workshop.v1.GetClientOrderPhotosResponse
+	(*GetClientOrderTimelineRequest)(nil),     // 154: workshop.v1.GetClientOrderTimelineRequest
+	(*GetClientOrderTimelineResponse)(nil),    // 155: workshop.v1.GetClientOrderTimelineResponse
+	(*TimelineEntry)(nil),                     // 156: workshop.v1.TimelineEntry
+	(*CreateOrderFromCRMRequest)(nil),         // 157: workshop.v1.CreateOrderFromCRMRequest
+	(*CreateOrderFromCRMResponse)(nil),        // 158: workshop.v1.CreateOrderFromCRMResponse
+	(*SyncCRMDealsRequest)(nil),               // 159: workshop.v1.SyncCRMDealsRequest
+	(*SyncCRMDealsResponse)(nil),              // 160: workshop.v1.SyncCRMDealsResponse
+	(*GetCRMSyncStatusRequest)(nil),           // 161: workshop.v1.GetCRMSyncStatusRequest
+	(*GetCRMSyncStatusResponse)(nil),          // 162: workshop.v1.GetCRMSyncStatusResponse
+	(*SetMasterTelegramRequest)(nil),          // 163: workshop.v1.SetMasterTelegramRequest
+	(*SetMasterTelegramResponse)(nil),         // 164: workshop.v1.SetMasterTelegramResponse
+	(*GetMasterByTelegramRequest)(nil),        // 165: workshop.v1.GetMasterByTelegramRequest
+	(*GetMasterByTelegramResponse)(nil),       // 166: workshop.v1.GetMasterByTelegramResponse
+	(*SetDiscountRequest)(nil),                // 167: workshop.v1.SetDiscountRequest
+	(*SetDiscountResponse)(nil),               // 168: workshop.v1.SetDiscountResponse
+	(*SetMarkupRequest)(nil),                  // 169: workshop.v1.SetMarkupRequest
+	(*SetMarkupResponse)(nil),                 // 170: workshop.v1.SetMarkupResponse
+	(*SetWorkshopMarkupRequest)(nil),          // 171: workshop.v1.SetWorkshopMarkupRequest
+	(*SetWorkshopMarkupResponse)(nil),         // 172: workshop.v1.SetWorkshopMarkupResponse
+	(*GetPricingBreakdownRequest)(nil),        // 173: workshop.v1.GetPricingBreakdownRequest
+	(*GetPricingBreakdownResponse)(nil),       // 174: workshop.v1.GetPricingBreakdownResponse
+	(*MarkPaidManualRequest)(nil),             // 175: workshop.v1.MarkPaidManualRequest
+	(*MarkPaidManualResponse)(nil),            // 176: workshop.v1.MarkPaidManualResponse
+	(*CancelPaymentRequest)(nil),              // 177: workshop.v1.CancelPaymentRequest
+	(*CancelPaymentResponse)(nil),             // 178: workshop.v1.CancelPaymentResponse
+	(*GetPaymentHistoryRequest)(nil),          // 179: workshop.v1.GetPaymentHistoryRequest
+	(*GetPaymentHistoryResponse)(nil),         // 180: workshop.v1.GetPaymentHistoryResponse
+	nil,                                       // 181: workshop.v1.CreateOrderFromCRMRequest.CrmMetadataEntry
+	(*timestamppb.Timestamp)(nil),             // 182: google.protobuf.Timestamp
 }
 var file_workshop_workshop_proto_depIdxs = []int32{
-	173, // 0: workshop.v1.Workshop.created_at:type_name -> google.protobuf.Timestamp
-	173, // 1: workshop.v1.Workshop.updated_at:type_name -> google.protobuf.Timestamp
+	182, // 0: workshop.v1.Workshop.created_at:type_name -> google.protobuf.Timestamp
+	182, // 1: workshop.v1.Workshop.updated_at:type_name -> google.protobuf.Timestamp
 	0,   // 2: workshop.v1.RepairOrder.status:type_name -> workshop.v1.RepairStatus
-	173, // 3: workshop.v1.RepairOrder.intake_date:type_name -> google.protobuf.Timestamp
-	173, // 4: workshop.v1.RepairOrder.promised_date:type_name -> google.protobuf.Timestamp
-	173, // 5: workshop.v1.RepairOrder.completion_date:type_name -> google.protobuf.Timestamp
-	12,  // 6: workshop.v1.RepairOrder.works:type_name -> workshop.v1.CarWork
-	10,  // 7: workshop.v1.RepairOrder.masters:type_name -> workshop.v1.MasterSummary
-	173, // 8: workshop.v1.RepairOrder.created_at:type_name -> google.protobuf.Timestamp
-	173, // 9: workshop.v1.RepairOrder.updated_at:type_name -> google.protobuf.Timestamp
-	1,   // 10: workshop.v1.MasterSummary.role:type_name -> workshop.v1.MasterRole
-	173, // 11: workshop.v1.CarWork.clock_in_at:type_name -> google.protobuf.Timestamp
-	173, // 12: workshop.v1.CarWork.clock_out_at:type_name -> google.protobuf.Timestamp
-	173, // 13: workshop.v1.CarWork.done_at:type_name -> google.protobuf.Timestamp
-	173, // 14: workshop.v1.CarWork.created_at:type_name -> google.protobuf.Timestamp
-	173, // 15: workshop.v1.CarWork.updated_at:type_name -> google.protobuf.Timestamp
-	1,   // 16: workshop.v1.Master.role:type_name -> workshop.v1.MasterRole
-	2,   // 17: workshop.v1.Master.fix_salary_type:type_name -> workshop.v1.FixSalaryType
-	173, // 18: workshop.v1.Master.hired_at:type_name -> google.protobuf.Timestamp
-	173, // 19: workshop.v1.Master.fired_at:type_name -> google.protobuf.Timestamp
-	173, // 20: workshop.v1.Master.created_at:type_name -> google.protobuf.Timestamp
-	173, // 21: workshop.v1.Master.updated_at:type_name -> google.protobuf.Timestamp
-	173, // 22: workshop.v1.Client.created_at:type_name -> google.protobuf.Timestamp
-	173, // 23: workshop.v1.Client.updated_at:type_name -> google.protobuf.Timestamp
-	4,   // 24: workshop.v1.RepairPhoto.album:type_name -> workshop.v1.PhotoAlbum
-	0,   // 25: workshop.v1.RepairPhoto.stage_at_upload:type_name -> workshop.v1.RepairStatus
-	173, // 26: workshop.v1.RepairPhoto.created_at:type_name -> google.protobuf.Timestamp
-	5,   // 27: workshop.v1.RepairComment.type:type_name -> workshop.v1.CommentType
-	173, // 28: workshop.v1.RepairComment.created_at:type_name -> google.protobuf.Timestamp
-	0,   // 29: workshop.v1.StatusHistoryEntry.old_status:type_name -> workshop.v1.RepairStatus
-	0,   // 30: workshop.v1.StatusHistoryEntry.new_status:type_name -> workshop.v1.RepairStatus
-	173, // 31: workshop.v1.StatusHistoryEntry.created_at:type_name -> google.protobuf.Timestamp
-	19,  // 32: workshop.v1.QCChecklist.items:type_name -> workshop.v1.QCItem
-	173, // 33: workshop.v1.QCChecklist.completed_at:type_name -> google.protobuf.Timestamp
-	173, // 34: workshop.v1.QCChecklist.created_at:type_name -> google.protobuf.Timestamp
-	3,   // 35: workshop.v1.OutsourceRequest.status:type_name -> workshop.v1.OutsourceStatus
-	173, // 36: workshop.v1.OutsourceRequest.created_at:type_name -> google.protobuf.Timestamp
-	173, // 37: workshop.v1.OutsourceRequest.updated_at:type_name -> google.protobuf.Timestamp
-	2,   // 38: workshop.v1.SalaryBreakdown.fix_salary_type:type_name -> workshop.v1.FixSalaryType
-	22,  // 39: workshop.v1.SalaryBreakdown.adjustments:type_name -> workshop.v1.SalaryAdjustment
-	173, // 40: workshop.v1.SalaryAdjustment.created_at:type_name -> google.protobuf.Timestamp
-	173, // 41: workshop.v1.MasterHourRate.effective_from:type_name -> google.protobuf.Timestamp
-	173, // 42: workshop.v1.MasterHourRate.created_at:type_name -> google.protobuf.Timestamp
-	173, // 43: workshop.v1.MasterFixSalary.effective_from:type_name -> google.protobuf.Timestamp
-	173, // 44: workshop.v1.MasterFixSalary.created_at:type_name -> google.protobuf.Timestamp
-	6,   // 45: workshop.v1.Material.unit:type_name -> workshop.v1.MaterialUnit
-	173, // 46: workshop.v1.Material.created_at:type_name -> google.protobuf.Timestamp
-	173, // 47: workshop.v1.Material.updated_at:type_name -> google.protobuf.Timestamp
-	173, // 48: workshop.v1.MaterialStock.updated_at:type_name -> google.protobuf.Timestamp
-	25,  // 49: workshop.v1.MaterialStock.material:type_name -> workshop.v1.Material
-	7,   // 50: workshop.v1.MaterialTransaction.type:type_name -> workshop.v1.MaterialTransactionType
-	173, // 51: workshop.v1.MaterialTransaction.created_at:type_name -> google.protobuf.Timestamp
-	0,   // 52: workshop.v1.KanbanColumn.status:type_name -> workshop.v1.RepairStatus
-	9,   // 53: workshop.v1.KanbanColumn.orders:type_name -> workshop.v1.RepairOrder
-	3,   // 54: workshop.v1.OutsourceKanbanColumn.status:type_name -> workshop.v1.OutsourceStatus
-	20,  // 55: workshop.v1.OutsourceKanbanColumn.requests:type_name -> workshop.v1.OutsourceRequest
-	8,   // 56: workshop.v1.CreateWorkshopResponse.workshop:type_name -> workshop.v1.Workshop
-	8,   // 57: workshop.v1.GetWorkshopResponse.workshop:type_name -> workshop.v1.Workshop
-	8,   // 58: workshop.v1.UpdateWorkshopResponse.workshop:type_name -> workshop.v1.Workshop
-	8,   // 59: workshop.v1.ListWorkshopsResponse.workshops:type_name -> workshop.v1.Workshop
-	173, // 60: workshop.v1.CreateRepairOrderRequest.promised_date:type_name -> google.protobuf.Timestamp
-	9,   // 61: workshop.v1.CreateRepairOrderResponse.order:type_name -> workshop.v1.RepairOrder
-	9,   // 62: workshop.v1.GetRepairOrderResponse.order:type_name -> workshop.v1.RepairOrder
-	9,   // 63: workshop.v1.UpdateRepairOrderResponse.order:type_name -> workshop.v1.RepairOrder
-	0,   // 64: workshop.v1.UpdateRepairOrderStatusRequest.new_status:type_name -> workshop.v1.RepairStatus
-	9,   // 65: workshop.v1.UpdateRepairOrderStatusResponse.order:type_name -> workshop.v1.RepairOrder
-	0,   // 66: workshop.v1.ListRepairOrdersRequest.status:type_name -> workshop.v1.RepairStatus
-	9,   // 67: workshop.v1.ListRepairOrdersResponse.orders:type_name -> workshop.v1.RepairOrder
-	28,  // 68: workshop.v1.GetKanbanResponse.columns:type_name -> workshop.v1.KanbanColumn
-	12,  // 69: workshop.v1.CreateCarWorkResponse.work:type_name -> workshop.v1.CarWork
-	12,  // 70: workshop.v1.UpdateCarWorkResponse.work:type_name -> workshop.v1.CarWork
-	12,  // 71: workshop.v1.ListCarWorksResponse.works:type_name -> workshop.v1.CarWork
-	12,  // 72: workshop.v1.MarkCarWorkDoneResponse.work:type_name -> workshop.v1.CarWork
-	12,  // 73: workshop.v1.ClockInResponse.work:type_name -> workshop.v1.CarWork
-	12,  // 74: workshop.v1.ClockOutResponse.work:type_name -> workshop.v1.CarWork
-	1,   // 75: workshop.v1.CreateMasterRequest.role:type_name -> workshop.v1.MasterRole
-	2,   // 76: workshop.v1.CreateMasterRequest.fix_salary_type:type_name -> workshop.v1.FixSalaryType
-	13,  // 77: workshop.v1.CreateMasterResponse.master:type_name -> workshop.v1.Master
-	13,  // 78: workshop.v1.GetMasterResponse.master:type_name -> workshop.v1.Master
-	1,   // 79: workshop.v1.UpdateMasterRequest.role:type_name -> workshop.v1.MasterRole
-	2,   // 80: workshop.v1.UpdateMasterRequest.fix_salary_type:type_name -> workshop.v1.FixSalaryType
-	13,  // 81: workshop.v1.UpdateMasterResponse.master:type_name -> workshop.v1.Master
-	13,  // 82: workshop.v1.FireMasterResponse.master:type_name -> workshop.v1.Master
-	1,   // 83: workshop.v1.ListMastersRequest.role:type_name -> workshop.v1.MasterRole
-	13,  // 84: workshop.v1.ListMastersResponse.masters:type_name -> workshop.v1.Master
-	21,  // 85: workshop.v1.CalculateSalaryResponse.breakdowns:type_name -> workshop.v1.SalaryBreakdown
-	21,  // 86: workshop.v1.GetSalaryBreakdownResponse.breakdown:type_name -> workshop.v1.SalaryBreakdown
-	22,  // 87: workshop.v1.CreateBonusResponse.bonus:type_name -> workshop.v1.SalaryAdjustment
-	22,  // 88: workshop.v1.CreateFineResponse.fine:type_name -> workshop.v1.SalaryAdjustment
-	22,  // 89: workshop.v1.CreateAdvanceResponse.advance:type_name -> workshop.v1.SalaryAdjustment
-	173, // 90: workshop.v1.SetMasterHourRateRequest.effective_from:type_name -> google.protobuf.Timestamp
-	23,  // 91: workshop.v1.SetMasterHourRateResponse.rate:type_name -> workshop.v1.MasterHourRate
-	173, // 92: workshop.v1.SetMasterFixSalaryRequest.effective_from:type_name -> google.protobuf.Timestamp
-	24,  // 93: workshop.v1.SetMasterFixSalaryResponse.rate:type_name -> workshop.v1.MasterFixSalary
-	23,  // 94: workshop.v1.GetMasterRateHistoryResponse.hour_rates:type_name -> workshop.v1.MasterHourRate
-	24,  // 95: workshop.v1.GetMasterRateHistoryResponse.fix_salaries:type_name -> workshop.v1.MasterFixSalary
-	20,  // 96: workshop.v1.PublishOutsourceResponse.request:type_name -> workshop.v1.OutsourceRequest
-	20,  // 97: workshop.v1.AcceptOutsourceResponse.request:type_name -> workshop.v1.OutsourceRequest
-	3,   // 98: workshop.v1.ListOutsourceRequestsRequest.status:type_name -> workshop.v1.OutsourceStatus
-	20,  // 99: workshop.v1.ListOutsourceRequestsResponse.requests:type_name -> workshop.v1.OutsourceRequest
-	29,  // 100: workshop.v1.GetOutsourceKanbanResponse.columns:type_name -> workshop.v1.OutsourceKanbanColumn
-	3,   // 101: workshop.v1.UpdateOutsourceStatusRequest.new_status:type_name -> workshop.v1.OutsourceStatus
-	20,  // 102: workshop.v1.UpdateOutsourceStatusResponse.request:type_name -> workshop.v1.OutsourceRequest
-	173, // 103: workshop.v1.GetWorkshopStatsRequest.from:type_name -> google.protobuf.Timestamp
-	173, // 104: workshop.v1.GetWorkshopStatsRequest.to:type_name -> google.protobuf.Timestamp
-	108, // 105: workshop.v1.GetMasterPerformanceResponse.entries:type_name -> workshop.v1.MasterPerformanceEntry
-	173, // 106: workshop.v1.GetDailyReportRequest.date:type_name -> google.protobuf.Timestamp
-	173, // 107: workshop.v1.GetDailyReportRequest.start_date:type_name -> google.protobuf.Timestamp
-	173, // 108: workshop.v1.GetDailyReportRequest.end_date:type_name -> google.protobuf.Timestamp
-	173, // 109: workshop.v1.DailyReportEntry.date:type_name -> google.protobuf.Timestamp
-	112, // 110: workshop.v1.DailyReportEntry.status_breakdown:type_name -> workshop.v1.StatusCount
-	112, // 111: workshop.v1.GetDailyReportResponse.status_breakdown:type_name -> workshop.v1.StatusCount
-	110, // 112: workshop.v1.GetDailyReportResponse.entries:type_name -> workshop.v1.DailyReportEntry
-	0,   // 113: workshop.v1.StatusCount.status:type_name -> workshop.v1.RepairStatus
-	5,   // 114: workshop.v1.AddCommentRequest.type:type_name -> workshop.v1.CommentType
-	16,  // 115: workshop.v1.AddCommentResponse.comment:type_name -> workshop.v1.RepairComment
-	5,   // 116: workshop.v1.ListCommentsRequest.type:type_name -> workshop.v1.CommentType
-	16,  // 117: workshop.v1.ListCommentsResponse.comments:type_name -> workshop.v1.RepairComment
-	4,   // 118: workshop.v1.UploadPhotoRequest.album:type_name -> workshop.v1.PhotoAlbum
-	15,  // 119: workshop.v1.UploadPhotoResponse.photo:type_name -> workshop.v1.RepairPhoto
-	4,   // 120: workshop.v1.ListPhotosRequest.album:type_name -> workshop.v1.PhotoAlbum
-	15,  // 121: workshop.v1.ListPhotosResponse.photos:type_name -> workshop.v1.RepairPhoto
-	18,  // 122: workshop.v1.GetQCChecklistResponse.checklist:type_name -> workshop.v1.QCChecklist
-	19,  // 123: workshop.v1.SubmitQCChecklistRequest.items:type_name -> workshop.v1.QCItem
-	18,  // 124: workshop.v1.SubmitQCChecklistResponse.checklist:type_name -> workshop.v1.QCChecklist
-	0,   // 125: workshop.v1.RejectQCItemRequest.return_to_status:type_name -> workshop.v1.RepairStatus
-	18,  // 126: workshop.v1.RejectQCItemResponse.checklist:type_name -> workshop.v1.QCChecklist
-	17,  // 127: workshop.v1.ListStatusHistoryResponse.entries:type_name -> workshop.v1.StatusHistoryEntry
-	6,   // 128: workshop.v1.CreateMaterialRequest.unit:type_name -> workshop.v1.MaterialUnit
-	25,  // 129: workshop.v1.CreateMaterialResponse.material:type_name -> workshop.v1.Material
-	6,   // 130: workshop.v1.UpdateMaterialRequest.unit:type_name -> workshop.v1.MaterialUnit
-	25,  // 131: workshop.v1.UpdateMaterialResponse.material:type_name -> workshop.v1.Material
-	25,  // 132: workshop.v1.ListMaterialsResponse.materials:type_name -> workshop.v1.Material
-	27,  // 133: workshop.v1.AddMaterialStockResponse.transaction:type_name -> workshop.v1.MaterialTransaction
-	26,  // 134: workshop.v1.AddMaterialStockResponse.stock:type_name -> workshop.v1.MaterialStock
-	27,  // 135: workshop.v1.WriteOffMaterialResponse.transaction:type_name -> workshop.v1.MaterialTransaction
-	26,  // 136: workshop.v1.WriteOffMaterialResponse.stock:type_name -> workshop.v1.MaterialStock
-	26,  // 137: workshop.v1.GetMaterialStockResponse.items:type_name -> workshop.v1.MaterialStock
-	7,   // 138: workshop.v1.ListMaterialTransactionsRequest.type:type_name -> workshop.v1.MaterialTransactionType
-	173, // 139: workshop.v1.ListMaterialTransactionsRequest.from:type_name -> google.protobuf.Timestamp
-	173, // 140: workshop.v1.ListMaterialTransactionsRequest.to:type_name -> google.protobuf.Timestamp
-	27,  // 141: workshop.v1.ListMaterialTransactionsResponse.transactions:type_name -> workshop.v1.MaterialTransaction
-	27,  // 142: workshop.v1.GetMasterMaterialExpensesResponse.transactions:type_name -> workshop.v1.MaterialTransaction
-	9,   // 143: workshop.v1.GetClientOrderStatusResponse.order:type_name -> workshop.v1.RepairOrder
-	4,   // 144: workshop.v1.GetClientOrderPhotosRequest.album:type_name -> workshop.v1.PhotoAlbum
-	15,  // 145: workshop.v1.GetClientOrderPhotosResponse.photos:type_name -> workshop.v1.RepairPhoto
-	153, // 146: workshop.v1.GetClientOrderTimelineResponse.entries:type_name -> workshop.v1.TimelineEntry
-	173, // 147: workshop.v1.TimelineEntry.timestamp:type_name -> google.protobuf.Timestamp
-	172, // 148: workshop.v1.CreateOrderFromCRMRequest.crm_metadata:type_name -> workshop.v1.CreateOrderFromCRMRequest.CrmMetadataEntry
-	9,   // 149: workshop.v1.CreateOrderFromCRMResponse.order:type_name -> workshop.v1.RepairOrder
-	173, // 150: workshop.v1.GetCRMSyncStatusResponse.last_sync_at:type_name -> google.protobuf.Timestamp
-	13,  // 151: workshop.v1.SetMasterTelegramResponse.master:type_name -> workshop.v1.Master
-	13,  // 152: workshop.v1.GetMasterByTelegramResponse.master:type_name -> workshop.v1.Master
-	9,   // 153: workshop.v1.SetDiscountResponse.order:type_name -> workshop.v1.RepairOrder
-	9,   // 154: workshop.v1.SetMarkupResponse.order:type_name -> workshop.v1.RepairOrder
-	8,   // 155: workshop.v1.SetWorkshopMarkupResponse.workshop:type_name -> workshop.v1.Workshop
-	11,  // 156: workshop.v1.GetPricingBreakdownResponse.breakdown:type_name -> workshop.v1.PricingBreakdown
-	30,  // 157: workshop.v1.WorkshopService.CreateWorkshop:input_type -> workshop.v1.CreateWorkshopRequest
-	32,  // 158: workshop.v1.WorkshopService.GetWorkshop:input_type -> workshop.v1.GetWorkshopRequest
-	34,  // 159: workshop.v1.WorkshopService.UpdateWorkshop:input_type -> workshop.v1.UpdateWorkshopRequest
-	36,  // 160: workshop.v1.WorkshopService.ListWorkshops:input_type -> workshop.v1.ListWorkshopsRequest
-	38,  // 161: workshop.v1.WorkshopService.CreateRepairOrder:input_type -> workshop.v1.CreateRepairOrderRequest
-	40,  // 162: workshop.v1.WorkshopService.GetRepairOrder:input_type -> workshop.v1.GetRepairOrderRequest
-	42,  // 163: workshop.v1.WorkshopService.UpdateRepairOrder:input_type -> workshop.v1.UpdateRepairOrderRequest
-	44,  // 164: workshop.v1.WorkshopService.UpdateRepairOrderStatus:input_type -> workshop.v1.UpdateRepairOrderStatusRequest
-	46,  // 165: workshop.v1.WorkshopService.ListRepairOrders:input_type -> workshop.v1.ListRepairOrdersRequest
-	48,  // 166: workshop.v1.WorkshopService.GetKanban:input_type -> workshop.v1.GetKanbanRequest
-	50,  // 167: workshop.v1.WorkshopService.CreateCarWork:input_type -> workshop.v1.CreateCarWorkRequest
-	52,  // 168: workshop.v1.WorkshopService.UpdateCarWork:input_type -> workshop.v1.UpdateCarWorkRequest
-	54,  // 169: workshop.v1.WorkshopService.DeleteCarWork:input_type -> workshop.v1.DeleteCarWorkRequest
-	56,  // 170: workshop.v1.WorkshopService.ListCarWorks:input_type -> workshop.v1.ListCarWorksRequest
-	58,  // 171: workshop.v1.WorkshopService.MarkCarWorkDone:input_type -> workshop.v1.MarkCarWorkDoneRequest
-	60,  // 172: workshop.v1.WorkshopService.ClockIn:input_type -> workshop.v1.ClockInRequest
-	62,  // 173: workshop.v1.WorkshopService.ClockOut:input_type -> workshop.v1.ClockOutRequest
-	64,  // 174: workshop.v1.WorkshopService.CreateMaster:input_type -> workshop.v1.CreateMasterRequest
-	66,  // 175: workshop.v1.WorkshopService.GetMaster:input_type -> workshop.v1.GetMasterRequest
-	68,  // 176: workshop.v1.WorkshopService.UpdateMaster:input_type -> workshop.v1.UpdateMasterRequest
-	70,  // 177: workshop.v1.WorkshopService.FireMaster:input_type -> workshop.v1.FireMasterRequest
-	72,  // 178: workshop.v1.WorkshopService.ListMasters:input_type -> workshop.v1.ListMastersRequest
-	88,  // 179: workshop.v1.WorkshopService.SetMasterHourRate:input_type -> workshop.v1.SetMasterHourRateRequest
-	90,  // 180: workshop.v1.WorkshopService.SetMasterFixSalary:input_type -> workshop.v1.SetMasterFixSalaryRequest
-	92,  // 181: workshop.v1.WorkshopService.GetMasterRateHistory:input_type -> workshop.v1.GetMasterRateHistoryRequest
-	74,  // 182: workshop.v1.WorkshopService.CalculateSalary:input_type -> workshop.v1.CalculateSalaryRequest
-	76,  // 183: workshop.v1.WorkshopService.GetSalaryBreakdown:input_type -> workshop.v1.GetSalaryBreakdownRequest
-	78,  // 184: workshop.v1.WorkshopService.CreateBonus:input_type -> workshop.v1.CreateBonusRequest
-	80,  // 185: workshop.v1.WorkshopService.CreateFine:input_type -> workshop.v1.CreateFineRequest
-	82,  // 186: workshop.v1.WorkshopService.CreateAdvance:input_type -> workshop.v1.CreateAdvanceRequest
-	84,  // 187: workshop.v1.WorkshopService.DeleteBonus:input_type -> workshop.v1.DeleteBonusRequest
-	86,  // 188: workshop.v1.WorkshopService.DeleteFine:input_type -> workshop.v1.DeleteFineRequest
-	94,  // 189: workshop.v1.WorkshopService.PublishOutsource:input_type -> workshop.v1.PublishOutsourceRequest
-	96,  // 190: workshop.v1.WorkshopService.AcceptOutsource:input_type -> workshop.v1.AcceptOutsourceRequest
-	98,  // 191: workshop.v1.WorkshopService.ListOutsourceRequests:input_type -> workshop.v1.ListOutsourceRequestsRequest
-	100, // 192: workshop.v1.WorkshopService.GetOutsourceKanban:input_type -> workshop.v1.GetOutsourceKanbanRequest
-	102, // 193: workshop.v1.WorkshopService.UpdateOutsourceStatus:input_type -> workshop.v1.UpdateOutsourceStatusRequest
-	104, // 194: workshop.v1.WorkshopService.GetWorkshopStats:input_type -> workshop.v1.GetWorkshopStatsRequest
-	106, // 195: workshop.v1.WorkshopService.GetMasterPerformance:input_type -> workshop.v1.GetMasterPerformanceRequest
-	109, // 196: workshop.v1.WorkshopService.GetDailyReport:input_type -> workshop.v1.GetDailyReportRequest
-	113, // 197: workshop.v1.WorkshopService.AddComment:input_type -> workshop.v1.AddCommentRequest
-	115, // 198: workshop.v1.WorkshopService.ListComments:input_type -> workshop.v1.ListCommentsRequest
-	117, // 199: workshop.v1.WorkshopService.UploadPhoto:input_type -> workshop.v1.UploadPhotoRequest
-	119, // 200: workshop.v1.WorkshopService.ListPhotos:input_type -> workshop.v1.ListPhotosRequest
-	121, // 201: workshop.v1.WorkshopService.DeletePhoto:input_type -> workshop.v1.DeletePhotoRequest
-	123, // 202: workshop.v1.WorkshopService.GetQCChecklist:input_type -> workshop.v1.GetQCChecklistRequest
-	125, // 203: workshop.v1.WorkshopService.SubmitQCChecklist:input_type -> workshop.v1.SubmitQCChecklistRequest
-	127, // 204: workshop.v1.WorkshopService.RejectQCItem:input_type -> workshop.v1.RejectQCItemRequest
-	129, // 205: workshop.v1.WorkshopService.ListStatusHistory:input_type -> workshop.v1.ListStatusHistoryRequest
-	131, // 206: workshop.v1.WorkshopService.CreateMaterial:input_type -> workshop.v1.CreateMaterialRequest
-	133, // 207: workshop.v1.WorkshopService.UpdateMaterial:input_type -> workshop.v1.UpdateMaterialRequest
-	135, // 208: workshop.v1.WorkshopService.ListMaterials:input_type -> workshop.v1.ListMaterialsRequest
-	137, // 209: workshop.v1.WorkshopService.AddMaterialStock:input_type -> workshop.v1.AddMaterialStockRequest
-	139, // 210: workshop.v1.WorkshopService.WriteOffMaterial:input_type -> workshop.v1.WriteOffMaterialRequest
-	141, // 211: workshop.v1.WorkshopService.GetMaterialStock:input_type -> workshop.v1.GetMaterialStockRequest
-	143, // 212: workshop.v1.WorkshopService.ListMaterialTransactions:input_type -> workshop.v1.ListMaterialTransactionsRequest
-	145, // 213: workshop.v1.WorkshopService.GetMasterMaterialExpenses:input_type -> workshop.v1.GetMasterMaterialExpensesRequest
-	147, // 214: workshop.v1.WorkshopService.GetClientOrderStatus:input_type -> workshop.v1.GetClientOrderStatusRequest
-	149, // 215: workshop.v1.WorkshopService.GetClientOrderPhotos:input_type -> workshop.v1.GetClientOrderPhotosRequest
-	151, // 216: workshop.v1.WorkshopService.GetClientOrderTimeline:input_type -> workshop.v1.GetClientOrderTimelineRequest
-	154, // 217: workshop.v1.WorkshopService.CreateOrderFromCRM:input_type -> workshop.v1.CreateOrderFromCRMRequest
-	156, // 218: workshop.v1.WorkshopService.SyncCRMDeals:input_type -> workshop.v1.SyncCRMDealsRequest
-	158, // 219: workshop.v1.WorkshopService.GetCRMSyncStatus:input_type -> workshop.v1.GetCRMSyncStatusRequest
-	160, // 220: workshop.v1.WorkshopService.SetMasterTelegram:input_type -> workshop.v1.SetMasterTelegramRequest
-	162, // 221: workshop.v1.WorkshopService.GetMasterByTelegram:input_type -> workshop.v1.GetMasterByTelegramRequest
-	164, // 222: workshop.v1.WorkshopService.SetDiscount:input_type -> workshop.v1.SetDiscountRequest
-	166, // 223: workshop.v1.WorkshopService.SetMarkup:input_type -> workshop.v1.SetMarkupRequest
-	168, // 224: workshop.v1.WorkshopService.SetWorkshopMarkup:input_type -> workshop.v1.SetWorkshopMarkupRequest
-	170, // 225: workshop.v1.WorkshopService.GetPricingBreakdown:input_type -> workshop.v1.GetPricingBreakdownRequest
-	31,  // 226: workshop.v1.WorkshopService.CreateWorkshop:output_type -> workshop.v1.CreateWorkshopResponse
-	33,  // 227: workshop.v1.WorkshopService.GetWorkshop:output_type -> workshop.v1.GetWorkshopResponse
-	35,  // 228: workshop.v1.WorkshopService.UpdateWorkshop:output_type -> workshop.v1.UpdateWorkshopResponse
-	37,  // 229: workshop.v1.WorkshopService.ListWorkshops:output_type -> workshop.v1.ListWorkshopsResponse
-	39,  // 230: workshop.v1.WorkshopService.CreateRepairOrder:output_type -> workshop.v1.CreateRepairOrderResponse
-	41,  // 231: workshop.v1.WorkshopService.GetRepairOrder:output_type -> workshop.v1.GetRepairOrderResponse
-	43,  // 232: workshop.v1.WorkshopService.UpdateRepairOrder:output_type -> workshop.v1.UpdateRepairOrderResponse
-	45,  // 233: workshop.v1.WorkshopService.UpdateRepairOrderStatus:output_type -> workshop.v1.UpdateRepairOrderStatusResponse
-	47,  // 234: workshop.v1.WorkshopService.ListRepairOrders:output_type -> workshop.v1.ListRepairOrdersResponse
-	49,  // 235: workshop.v1.WorkshopService.GetKanban:output_type -> workshop.v1.GetKanbanResponse
-	51,  // 236: workshop.v1.WorkshopService.CreateCarWork:output_type -> workshop.v1.CreateCarWorkResponse
-	53,  // 237: workshop.v1.WorkshopService.UpdateCarWork:output_type -> workshop.v1.UpdateCarWorkResponse
-	55,  // 238: workshop.v1.WorkshopService.DeleteCarWork:output_type -> workshop.v1.DeleteCarWorkResponse
-	57,  // 239: workshop.v1.WorkshopService.ListCarWorks:output_type -> workshop.v1.ListCarWorksResponse
-	59,  // 240: workshop.v1.WorkshopService.MarkCarWorkDone:output_type -> workshop.v1.MarkCarWorkDoneResponse
-	61,  // 241: workshop.v1.WorkshopService.ClockIn:output_type -> workshop.v1.ClockInResponse
-	63,  // 242: workshop.v1.WorkshopService.ClockOut:output_type -> workshop.v1.ClockOutResponse
-	65,  // 243: workshop.v1.WorkshopService.CreateMaster:output_type -> workshop.v1.CreateMasterResponse
-	67,  // 244: workshop.v1.WorkshopService.GetMaster:output_type -> workshop.v1.GetMasterResponse
-	69,  // 245: workshop.v1.WorkshopService.UpdateMaster:output_type -> workshop.v1.UpdateMasterResponse
-	71,  // 246: workshop.v1.WorkshopService.FireMaster:output_type -> workshop.v1.FireMasterResponse
-	73,  // 247: workshop.v1.WorkshopService.ListMasters:output_type -> workshop.v1.ListMastersResponse
-	89,  // 248: workshop.v1.WorkshopService.SetMasterHourRate:output_type -> workshop.v1.SetMasterHourRateResponse
-	91,  // 249: workshop.v1.WorkshopService.SetMasterFixSalary:output_type -> workshop.v1.SetMasterFixSalaryResponse
-	93,  // 250: workshop.v1.WorkshopService.GetMasterRateHistory:output_type -> workshop.v1.GetMasterRateHistoryResponse
-	75,  // 251: workshop.v1.WorkshopService.CalculateSalary:output_type -> workshop.v1.CalculateSalaryResponse
-	77,  // 252: workshop.v1.WorkshopService.GetSalaryBreakdown:output_type -> workshop.v1.GetSalaryBreakdownResponse
-	79,  // 253: workshop.v1.WorkshopService.CreateBonus:output_type -> workshop.v1.CreateBonusResponse
-	81,  // 254: workshop.v1.WorkshopService.CreateFine:output_type -> workshop.v1.CreateFineResponse
-	83,  // 255: workshop.v1.WorkshopService.CreateAdvance:output_type -> workshop.v1.CreateAdvanceResponse
-	85,  // 256: workshop.v1.WorkshopService.DeleteBonus:output_type -> workshop.v1.DeleteBonusResponse
-	87,  // 257: workshop.v1.WorkshopService.DeleteFine:output_type -> workshop.v1.DeleteFineResponse
-	95,  // 258: workshop.v1.WorkshopService.PublishOutsource:output_type -> workshop.v1.PublishOutsourceResponse
-	97,  // 259: workshop.v1.WorkshopService.AcceptOutsource:output_type -> workshop.v1.AcceptOutsourceResponse
-	99,  // 260: workshop.v1.WorkshopService.ListOutsourceRequests:output_type -> workshop.v1.ListOutsourceRequestsResponse
-	101, // 261: workshop.v1.WorkshopService.GetOutsourceKanban:output_type -> workshop.v1.GetOutsourceKanbanResponse
-	103, // 262: workshop.v1.WorkshopService.UpdateOutsourceStatus:output_type -> workshop.v1.UpdateOutsourceStatusResponse
-	105, // 263: workshop.v1.WorkshopService.GetWorkshopStats:output_type -> workshop.v1.GetWorkshopStatsResponse
-	107, // 264: workshop.v1.WorkshopService.GetMasterPerformance:output_type -> workshop.v1.GetMasterPerformanceResponse
-	111, // 265: workshop.v1.WorkshopService.GetDailyReport:output_type -> workshop.v1.GetDailyReportResponse
-	114, // 266: workshop.v1.WorkshopService.AddComment:output_type -> workshop.v1.AddCommentResponse
-	116, // 267: workshop.v1.WorkshopService.ListComments:output_type -> workshop.v1.ListCommentsResponse
-	118, // 268: workshop.v1.WorkshopService.UploadPhoto:output_type -> workshop.v1.UploadPhotoResponse
-	120, // 269: workshop.v1.WorkshopService.ListPhotos:output_type -> workshop.v1.ListPhotosResponse
-	122, // 270: workshop.v1.WorkshopService.DeletePhoto:output_type -> workshop.v1.DeletePhotoResponse
-	124, // 271: workshop.v1.WorkshopService.GetQCChecklist:output_type -> workshop.v1.GetQCChecklistResponse
-	126, // 272: workshop.v1.WorkshopService.SubmitQCChecklist:output_type -> workshop.v1.SubmitQCChecklistResponse
-	128, // 273: workshop.v1.WorkshopService.RejectQCItem:output_type -> workshop.v1.RejectQCItemResponse
-	130, // 274: workshop.v1.WorkshopService.ListStatusHistory:output_type -> workshop.v1.ListStatusHistoryResponse
-	132, // 275: workshop.v1.WorkshopService.CreateMaterial:output_type -> workshop.v1.CreateMaterialResponse
-	134, // 276: workshop.v1.WorkshopService.UpdateMaterial:output_type -> workshop.v1.UpdateMaterialResponse
-	136, // 277: workshop.v1.WorkshopService.ListMaterials:output_type -> workshop.v1.ListMaterialsResponse
-	138, // 278: workshop.v1.WorkshopService.AddMaterialStock:output_type -> workshop.v1.AddMaterialStockResponse
-	140, // 279: workshop.v1.WorkshopService.WriteOffMaterial:output_type -> workshop.v1.WriteOffMaterialResponse
-	142, // 280: workshop.v1.WorkshopService.GetMaterialStock:output_type -> workshop.v1.GetMaterialStockResponse
-	144, // 281: workshop.v1.WorkshopService.ListMaterialTransactions:output_type -> workshop.v1.ListMaterialTransactionsResponse
-	146, // 282: workshop.v1.WorkshopService.GetMasterMaterialExpenses:output_type -> workshop.v1.GetMasterMaterialExpensesResponse
-	148, // 283: workshop.v1.WorkshopService.GetClientOrderStatus:output_type -> workshop.v1.GetClientOrderStatusResponse
-	150, // 284: workshop.v1.WorkshopService.GetClientOrderPhotos:output_type -> workshop.v1.GetClientOrderPhotosResponse
-	152, // 285: workshop.v1.WorkshopService.GetClientOrderTimeline:output_type -> workshop.v1.GetClientOrderTimelineResponse
-	155, // 286: workshop.v1.WorkshopService.CreateOrderFromCRM:output_type -> workshop.v1.CreateOrderFromCRMResponse
-	157, // 287: workshop.v1.WorkshopService.SyncCRMDeals:output_type -> workshop.v1.SyncCRMDealsResponse
-	159, // 288: workshop.v1.WorkshopService.GetCRMSyncStatus:output_type -> workshop.v1.GetCRMSyncStatusResponse
-	161, // 289: workshop.v1.WorkshopService.SetMasterTelegram:output_type -> workshop.v1.SetMasterTelegramResponse
-	163, // 290: workshop.v1.WorkshopService.GetMasterByTelegram:output_type -> workshop.v1.GetMasterByTelegramResponse
-	165, // 291: workshop.v1.WorkshopService.SetDiscount:output_type -> workshop.v1.SetDiscountResponse
-	167, // 292: workshop.v1.WorkshopService.SetMarkup:output_type -> workshop.v1.SetMarkupResponse
-	169, // 293: workshop.v1.WorkshopService.SetWorkshopMarkup:output_type -> workshop.v1.SetWorkshopMarkupResponse
-	171, // 294: workshop.v1.WorkshopService.GetPricingBreakdown:output_type -> workshop.v1.GetPricingBreakdownResponse
-	226, // [226:295] is the sub-list for method output_type
-	157, // [157:226] is the sub-list for method input_type
-	157, // [157:157] is the sub-list for extension type_name
-	157, // [157:157] is the sub-list for extension extendee
-	0,   // [0:157] is the sub-list for field type_name
+	182, // 3: workshop.v1.RepairOrder.intake_date:type_name -> google.protobuf.Timestamp
+	182, // 4: workshop.v1.RepairOrder.promised_date:type_name -> google.protobuf.Timestamp
+	182, // 5: workshop.v1.RepairOrder.completion_date:type_name -> google.protobuf.Timestamp
+	15,  // 6: workshop.v1.RepairOrder.works:type_name -> workshop.v1.CarWork
+	12,  // 7: workshop.v1.RepairOrder.masters:type_name -> workshop.v1.MasterSummary
+	182, // 8: workshop.v1.RepairOrder.created_at:type_name -> google.protobuf.Timestamp
+	182, // 9: workshop.v1.RepairOrder.updated_at:type_name -> google.protobuf.Timestamp
+	8,   // 10: workshop.v1.RepairOrder.payment_status:type_name -> workshop.v1.PaymentStatus
+	1,   // 11: workshop.v1.MasterSummary.role:type_name -> workshop.v1.MasterRole
+	9,   // 12: workshop.v1.RepairOrderPayment.method:type_name -> workshop.v1.PaymentMethod
+	182, // 13: workshop.v1.RepairOrderPayment.cancelled_at:type_name -> google.protobuf.Timestamp
+	182, // 14: workshop.v1.RepairOrderPayment.created_at:type_name -> google.protobuf.Timestamp
+	182, // 15: workshop.v1.CarWork.clock_in_at:type_name -> google.protobuf.Timestamp
+	182, // 16: workshop.v1.CarWork.clock_out_at:type_name -> google.protobuf.Timestamp
+	182, // 17: workshop.v1.CarWork.done_at:type_name -> google.protobuf.Timestamp
+	182, // 18: workshop.v1.CarWork.created_at:type_name -> google.protobuf.Timestamp
+	182, // 19: workshop.v1.CarWork.updated_at:type_name -> google.protobuf.Timestamp
+	1,   // 20: workshop.v1.Master.role:type_name -> workshop.v1.MasterRole
+	2,   // 21: workshop.v1.Master.fix_salary_type:type_name -> workshop.v1.FixSalaryType
+	182, // 22: workshop.v1.Master.hired_at:type_name -> google.protobuf.Timestamp
+	182, // 23: workshop.v1.Master.fired_at:type_name -> google.protobuf.Timestamp
+	182, // 24: workshop.v1.Master.created_at:type_name -> google.protobuf.Timestamp
+	182, // 25: workshop.v1.Master.updated_at:type_name -> google.protobuf.Timestamp
+	182, // 26: workshop.v1.Client.created_at:type_name -> google.protobuf.Timestamp
+	182, // 27: workshop.v1.Client.updated_at:type_name -> google.protobuf.Timestamp
+	4,   // 28: workshop.v1.RepairPhoto.album:type_name -> workshop.v1.PhotoAlbum
+	0,   // 29: workshop.v1.RepairPhoto.stage_at_upload:type_name -> workshop.v1.RepairStatus
+	182, // 30: workshop.v1.RepairPhoto.created_at:type_name -> google.protobuf.Timestamp
+	5,   // 31: workshop.v1.RepairComment.type:type_name -> workshop.v1.CommentType
+	182, // 32: workshop.v1.RepairComment.created_at:type_name -> google.protobuf.Timestamp
+	0,   // 33: workshop.v1.StatusHistoryEntry.old_status:type_name -> workshop.v1.RepairStatus
+	0,   // 34: workshop.v1.StatusHistoryEntry.new_status:type_name -> workshop.v1.RepairStatus
+	182, // 35: workshop.v1.StatusHistoryEntry.created_at:type_name -> google.protobuf.Timestamp
+	22,  // 36: workshop.v1.QCChecklist.items:type_name -> workshop.v1.QCItem
+	182, // 37: workshop.v1.QCChecklist.completed_at:type_name -> google.protobuf.Timestamp
+	182, // 38: workshop.v1.QCChecklist.created_at:type_name -> google.protobuf.Timestamp
+	3,   // 39: workshop.v1.OutsourceRequest.status:type_name -> workshop.v1.OutsourceStatus
+	182, // 40: workshop.v1.OutsourceRequest.created_at:type_name -> google.protobuf.Timestamp
+	182, // 41: workshop.v1.OutsourceRequest.updated_at:type_name -> google.protobuf.Timestamp
+	2,   // 42: workshop.v1.SalaryBreakdown.fix_salary_type:type_name -> workshop.v1.FixSalaryType
+	25,  // 43: workshop.v1.SalaryBreakdown.adjustments:type_name -> workshop.v1.SalaryAdjustment
+	182, // 44: workshop.v1.SalaryAdjustment.created_at:type_name -> google.protobuf.Timestamp
+	182, // 45: workshop.v1.MasterHourRate.effective_from:type_name -> google.protobuf.Timestamp
+	182, // 46: workshop.v1.MasterHourRate.created_at:type_name -> google.protobuf.Timestamp
+	182, // 47: workshop.v1.MasterFixSalary.effective_from:type_name -> google.protobuf.Timestamp
+	182, // 48: workshop.v1.MasterFixSalary.created_at:type_name -> google.protobuf.Timestamp
+	6,   // 49: workshop.v1.Material.unit:type_name -> workshop.v1.MaterialUnit
+	182, // 50: workshop.v1.Material.created_at:type_name -> google.protobuf.Timestamp
+	182, // 51: workshop.v1.Material.updated_at:type_name -> google.protobuf.Timestamp
+	182, // 52: workshop.v1.MaterialStock.updated_at:type_name -> google.protobuf.Timestamp
+	28,  // 53: workshop.v1.MaterialStock.material:type_name -> workshop.v1.Material
+	7,   // 54: workshop.v1.MaterialTransaction.type:type_name -> workshop.v1.MaterialTransactionType
+	182, // 55: workshop.v1.MaterialTransaction.created_at:type_name -> google.protobuf.Timestamp
+	0,   // 56: workshop.v1.KanbanColumn.status:type_name -> workshop.v1.RepairStatus
+	11,  // 57: workshop.v1.KanbanColumn.orders:type_name -> workshop.v1.RepairOrder
+	3,   // 58: workshop.v1.OutsourceKanbanColumn.status:type_name -> workshop.v1.OutsourceStatus
+	23,  // 59: workshop.v1.OutsourceKanbanColumn.requests:type_name -> workshop.v1.OutsourceRequest
+	10,  // 60: workshop.v1.CreateWorkshopResponse.workshop:type_name -> workshop.v1.Workshop
+	10,  // 61: workshop.v1.GetWorkshopResponse.workshop:type_name -> workshop.v1.Workshop
+	10,  // 62: workshop.v1.UpdateWorkshopResponse.workshop:type_name -> workshop.v1.Workshop
+	10,  // 63: workshop.v1.ListWorkshopsResponse.workshops:type_name -> workshop.v1.Workshop
+	182, // 64: workshop.v1.CreateRepairOrderRequest.promised_date:type_name -> google.protobuf.Timestamp
+	11,  // 65: workshop.v1.CreateRepairOrderResponse.order:type_name -> workshop.v1.RepairOrder
+	11,  // 66: workshop.v1.GetRepairOrderResponse.order:type_name -> workshop.v1.RepairOrder
+	11,  // 67: workshop.v1.UpdateRepairOrderResponse.order:type_name -> workshop.v1.RepairOrder
+	0,   // 68: workshop.v1.UpdateRepairOrderStatusRequest.new_status:type_name -> workshop.v1.RepairStatus
+	11,  // 69: workshop.v1.UpdateRepairOrderStatusResponse.order:type_name -> workshop.v1.RepairOrder
+	0,   // 70: workshop.v1.ListRepairOrdersRequest.status:type_name -> workshop.v1.RepairStatus
+	11,  // 71: workshop.v1.ListRepairOrdersResponse.orders:type_name -> workshop.v1.RepairOrder
+	31,  // 72: workshop.v1.GetKanbanResponse.columns:type_name -> workshop.v1.KanbanColumn
+	15,  // 73: workshop.v1.CreateCarWorkResponse.work:type_name -> workshop.v1.CarWork
+	15,  // 74: workshop.v1.UpdateCarWorkResponse.work:type_name -> workshop.v1.CarWork
+	15,  // 75: workshop.v1.ListCarWorksResponse.works:type_name -> workshop.v1.CarWork
+	15,  // 76: workshop.v1.MarkCarWorkDoneResponse.work:type_name -> workshop.v1.CarWork
+	15,  // 77: workshop.v1.ClockInResponse.work:type_name -> workshop.v1.CarWork
+	15,  // 78: workshop.v1.ClockOutResponse.work:type_name -> workshop.v1.CarWork
+	1,   // 79: workshop.v1.CreateMasterRequest.role:type_name -> workshop.v1.MasterRole
+	2,   // 80: workshop.v1.CreateMasterRequest.fix_salary_type:type_name -> workshop.v1.FixSalaryType
+	16,  // 81: workshop.v1.CreateMasterResponse.master:type_name -> workshop.v1.Master
+	16,  // 82: workshop.v1.GetMasterResponse.master:type_name -> workshop.v1.Master
+	1,   // 83: workshop.v1.UpdateMasterRequest.role:type_name -> workshop.v1.MasterRole
+	2,   // 84: workshop.v1.UpdateMasterRequest.fix_salary_type:type_name -> workshop.v1.FixSalaryType
+	16,  // 85: workshop.v1.UpdateMasterResponse.master:type_name -> workshop.v1.Master
+	16,  // 86: workshop.v1.FireMasterResponse.master:type_name -> workshop.v1.Master
+	1,   // 87: workshop.v1.ListMastersRequest.role:type_name -> workshop.v1.MasterRole
+	16,  // 88: workshop.v1.ListMastersResponse.masters:type_name -> workshop.v1.Master
+	24,  // 89: workshop.v1.CalculateSalaryResponse.breakdowns:type_name -> workshop.v1.SalaryBreakdown
+	24,  // 90: workshop.v1.GetSalaryBreakdownResponse.breakdown:type_name -> workshop.v1.SalaryBreakdown
+	25,  // 91: workshop.v1.CreateBonusResponse.bonus:type_name -> workshop.v1.SalaryAdjustment
+	25,  // 92: workshop.v1.CreateFineResponse.fine:type_name -> workshop.v1.SalaryAdjustment
+	25,  // 93: workshop.v1.CreateAdvanceResponse.advance:type_name -> workshop.v1.SalaryAdjustment
+	182, // 94: workshop.v1.SetMasterHourRateRequest.effective_from:type_name -> google.protobuf.Timestamp
+	26,  // 95: workshop.v1.SetMasterHourRateResponse.rate:type_name -> workshop.v1.MasterHourRate
+	182, // 96: workshop.v1.SetMasterFixSalaryRequest.effective_from:type_name -> google.protobuf.Timestamp
+	27,  // 97: workshop.v1.SetMasterFixSalaryResponse.rate:type_name -> workshop.v1.MasterFixSalary
+	26,  // 98: workshop.v1.GetMasterRateHistoryResponse.hour_rates:type_name -> workshop.v1.MasterHourRate
+	27,  // 99: workshop.v1.GetMasterRateHistoryResponse.fix_salaries:type_name -> workshop.v1.MasterFixSalary
+	23,  // 100: workshop.v1.PublishOutsourceResponse.request:type_name -> workshop.v1.OutsourceRequest
+	23,  // 101: workshop.v1.AcceptOutsourceResponse.request:type_name -> workshop.v1.OutsourceRequest
+	3,   // 102: workshop.v1.ListOutsourceRequestsRequest.status:type_name -> workshop.v1.OutsourceStatus
+	23,  // 103: workshop.v1.ListOutsourceRequestsResponse.requests:type_name -> workshop.v1.OutsourceRequest
+	32,  // 104: workshop.v1.GetOutsourceKanbanResponse.columns:type_name -> workshop.v1.OutsourceKanbanColumn
+	3,   // 105: workshop.v1.UpdateOutsourceStatusRequest.new_status:type_name -> workshop.v1.OutsourceStatus
+	23,  // 106: workshop.v1.UpdateOutsourceStatusResponse.request:type_name -> workshop.v1.OutsourceRequest
+	182, // 107: workshop.v1.GetWorkshopStatsRequest.from:type_name -> google.protobuf.Timestamp
+	182, // 108: workshop.v1.GetWorkshopStatsRequest.to:type_name -> google.protobuf.Timestamp
+	111, // 109: workshop.v1.GetMasterPerformanceResponse.entries:type_name -> workshop.v1.MasterPerformanceEntry
+	182, // 110: workshop.v1.GetDailyReportRequest.date:type_name -> google.protobuf.Timestamp
+	182, // 111: workshop.v1.GetDailyReportRequest.start_date:type_name -> google.protobuf.Timestamp
+	182, // 112: workshop.v1.GetDailyReportRequest.end_date:type_name -> google.protobuf.Timestamp
+	182, // 113: workshop.v1.DailyReportEntry.date:type_name -> google.protobuf.Timestamp
+	115, // 114: workshop.v1.DailyReportEntry.status_breakdown:type_name -> workshop.v1.StatusCount
+	115, // 115: workshop.v1.GetDailyReportResponse.status_breakdown:type_name -> workshop.v1.StatusCount
+	113, // 116: workshop.v1.GetDailyReportResponse.entries:type_name -> workshop.v1.DailyReportEntry
+	0,   // 117: workshop.v1.StatusCount.status:type_name -> workshop.v1.RepairStatus
+	5,   // 118: workshop.v1.AddCommentRequest.type:type_name -> workshop.v1.CommentType
+	19,  // 119: workshop.v1.AddCommentResponse.comment:type_name -> workshop.v1.RepairComment
+	5,   // 120: workshop.v1.ListCommentsRequest.type:type_name -> workshop.v1.CommentType
+	19,  // 121: workshop.v1.ListCommentsResponse.comments:type_name -> workshop.v1.RepairComment
+	4,   // 122: workshop.v1.UploadPhotoRequest.album:type_name -> workshop.v1.PhotoAlbum
+	18,  // 123: workshop.v1.UploadPhotoResponse.photo:type_name -> workshop.v1.RepairPhoto
+	4,   // 124: workshop.v1.ListPhotosRequest.album:type_name -> workshop.v1.PhotoAlbum
+	18,  // 125: workshop.v1.ListPhotosResponse.photos:type_name -> workshop.v1.RepairPhoto
+	21,  // 126: workshop.v1.GetQCChecklistResponse.checklist:type_name -> workshop.v1.QCChecklist
+	22,  // 127: workshop.v1.SubmitQCChecklistRequest.items:type_name -> workshop.v1.QCItem
+	21,  // 128: workshop.v1.SubmitQCChecklistResponse.checklist:type_name -> workshop.v1.QCChecklist
+	0,   // 129: workshop.v1.RejectQCItemRequest.return_to_status:type_name -> workshop.v1.RepairStatus
+	21,  // 130: workshop.v1.RejectQCItemResponse.checklist:type_name -> workshop.v1.QCChecklist
+	20,  // 131: workshop.v1.ListStatusHistoryResponse.entries:type_name -> workshop.v1.StatusHistoryEntry
+	6,   // 132: workshop.v1.CreateMaterialRequest.unit:type_name -> workshop.v1.MaterialUnit
+	28,  // 133: workshop.v1.CreateMaterialResponse.material:type_name -> workshop.v1.Material
+	6,   // 134: workshop.v1.UpdateMaterialRequest.unit:type_name -> workshop.v1.MaterialUnit
+	28,  // 135: workshop.v1.UpdateMaterialResponse.material:type_name -> workshop.v1.Material
+	28,  // 136: workshop.v1.ListMaterialsResponse.materials:type_name -> workshop.v1.Material
+	30,  // 137: workshop.v1.AddMaterialStockResponse.transaction:type_name -> workshop.v1.MaterialTransaction
+	29,  // 138: workshop.v1.AddMaterialStockResponse.stock:type_name -> workshop.v1.MaterialStock
+	30,  // 139: workshop.v1.WriteOffMaterialResponse.transaction:type_name -> workshop.v1.MaterialTransaction
+	29,  // 140: workshop.v1.WriteOffMaterialResponse.stock:type_name -> workshop.v1.MaterialStock
+	29,  // 141: workshop.v1.GetMaterialStockResponse.items:type_name -> workshop.v1.MaterialStock
+	7,   // 142: workshop.v1.ListMaterialTransactionsRequest.type:type_name -> workshop.v1.MaterialTransactionType
+	182, // 143: workshop.v1.ListMaterialTransactionsRequest.from:type_name -> google.protobuf.Timestamp
+	182, // 144: workshop.v1.ListMaterialTransactionsRequest.to:type_name -> google.protobuf.Timestamp
+	30,  // 145: workshop.v1.ListMaterialTransactionsResponse.transactions:type_name -> workshop.v1.MaterialTransaction
+	30,  // 146: workshop.v1.GetMasterMaterialExpensesResponse.transactions:type_name -> workshop.v1.MaterialTransaction
+	11,  // 147: workshop.v1.GetClientOrderStatusResponse.order:type_name -> workshop.v1.RepairOrder
+	4,   // 148: workshop.v1.GetClientOrderPhotosRequest.album:type_name -> workshop.v1.PhotoAlbum
+	18,  // 149: workshop.v1.GetClientOrderPhotosResponse.photos:type_name -> workshop.v1.RepairPhoto
+	156, // 150: workshop.v1.GetClientOrderTimelineResponse.entries:type_name -> workshop.v1.TimelineEntry
+	182, // 151: workshop.v1.TimelineEntry.timestamp:type_name -> google.protobuf.Timestamp
+	181, // 152: workshop.v1.CreateOrderFromCRMRequest.crm_metadata:type_name -> workshop.v1.CreateOrderFromCRMRequest.CrmMetadataEntry
+	11,  // 153: workshop.v1.CreateOrderFromCRMResponse.order:type_name -> workshop.v1.RepairOrder
+	182, // 154: workshop.v1.GetCRMSyncStatusResponse.last_sync_at:type_name -> google.protobuf.Timestamp
+	16,  // 155: workshop.v1.SetMasterTelegramResponse.master:type_name -> workshop.v1.Master
+	16,  // 156: workshop.v1.GetMasterByTelegramResponse.master:type_name -> workshop.v1.Master
+	11,  // 157: workshop.v1.SetDiscountResponse.order:type_name -> workshop.v1.RepairOrder
+	11,  // 158: workshop.v1.SetMarkupResponse.order:type_name -> workshop.v1.RepairOrder
+	10,  // 159: workshop.v1.SetWorkshopMarkupResponse.workshop:type_name -> workshop.v1.Workshop
+	13,  // 160: workshop.v1.GetPricingBreakdownResponse.breakdown:type_name -> workshop.v1.PricingBreakdown
+	9,   // 161: workshop.v1.MarkPaidManualRequest.method:type_name -> workshop.v1.PaymentMethod
+	14,  // 162: workshop.v1.MarkPaidManualResponse.payment:type_name -> workshop.v1.RepairOrderPayment
+	11,  // 163: workshop.v1.MarkPaidManualResponse.repair_order:type_name -> workshop.v1.RepairOrder
+	14,  // 164: workshop.v1.CancelPaymentResponse.payment:type_name -> workshop.v1.RepairOrderPayment
+	11,  // 165: workshop.v1.CancelPaymentResponse.repair_order:type_name -> workshop.v1.RepairOrder
+	14,  // 166: workshop.v1.GetPaymentHistoryResponse.payments:type_name -> workshop.v1.RepairOrderPayment
+	33,  // 167: workshop.v1.WorkshopService.CreateWorkshop:input_type -> workshop.v1.CreateWorkshopRequest
+	35,  // 168: workshop.v1.WorkshopService.GetWorkshop:input_type -> workshop.v1.GetWorkshopRequest
+	37,  // 169: workshop.v1.WorkshopService.UpdateWorkshop:input_type -> workshop.v1.UpdateWorkshopRequest
+	39,  // 170: workshop.v1.WorkshopService.ListWorkshops:input_type -> workshop.v1.ListWorkshopsRequest
+	41,  // 171: workshop.v1.WorkshopService.CreateRepairOrder:input_type -> workshop.v1.CreateRepairOrderRequest
+	43,  // 172: workshop.v1.WorkshopService.GetRepairOrder:input_type -> workshop.v1.GetRepairOrderRequest
+	45,  // 173: workshop.v1.WorkshopService.UpdateRepairOrder:input_type -> workshop.v1.UpdateRepairOrderRequest
+	47,  // 174: workshop.v1.WorkshopService.UpdateRepairOrderStatus:input_type -> workshop.v1.UpdateRepairOrderStatusRequest
+	49,  // 175: workshop.v1.WorkshopService.ListRepairOrders:input_type -> workshop.v1.ListRepairOrdersRequest
+	51,  // 176: workshop.v1.WorkshopService.GetKanban:input_type -> workshop.v1.GetKanbanRequest
+	53,  // 177: workshop.v1.WorkshopService.CreateCarWork:input_type -> workshop.v1.CreateCarWorkRequest
+	55,  // 178: workshop.v1.WorkshopService.UpdateCarWork:input_type -> workshop.v1.UpdateCarWorkRequest
+	57,  // 179: workshop.v1.WorkshopService.DeleteCarWork:input_type -> workshop.v1.DeleteCarWorkRequest
+	59,  // 180: workshop.v1.WorkshopService.ListCarWorks:input_type -> workshop.v1.ListCarWorksRequest
+	61,  // 181: workshop.v1.WorkshopService.MarkCarWorkDone:input_type -> workshop.v1.MarkCarWorkDoneRequest
+	63,  // 182: workshop.v1.WorkshopService.ClockIn:input_type -> workshop.v1.ClockInRequest
+	65,  // 183: workshop.v1.WorkshopService.ClockOut:input_type -> workshop.v1.ClockOutRequest
+	67,  // 184: workshop.v1.WorkshopService.CreateMaster:input_type -> workshop.v1.CreateMasterRequest
+	69,  // 185: workshop.v1.WorkshopService.GetMaster:input_type -> workshop.v1.GetMasterRequest
+	71,  // 186: workshop.v1.WorkshopService.UpdateMaster:input_type -> workshop.v1.UpdateMasterRequest
+	73,  // 187: workshop.v1.WorkshopService.FireMaster:input_type -> workshop.v1.FireMasterRequest
+	75,  // 188: workshop.v1.WorkshopService.ListMasters:input_type -> workshop.v1.ListMastersRequest
+	91,  // 189: workshop.v1.WorkshopService.SetMasterHourRate:input_type -> workshop.v1.SetMasterHourRateRequest
+	93,  // 190: workshop.v1.WorkshopService.SetMasterFixSalary:input_type -> workshop.v1.SetMasterFixSalaryRequest
+	95,  // 191: workshop.v1.WorkshopService.GetMasterRateHistory:input_type -> workshop.v1.GetMasterRateHistoryRequest
+	77,  // 192: workshop.v1.WorkshopService.CalculateSalary:input_type -> workshop.v1.CalculateSalaryRequest
+	79,  // 193: workshop.v1.WorkshopService.GetSalaryBreakdown:input_type -> workshop.v1.GetSalaryBreakdownRequest
+	81,  // 194: workshop.v1.WorkshopService.CreateBonus:input_type -> workshop.v1.CreateBonusRequest
+	83,  // 195: workshop.v1.WorkshopService.CreateFine:input_type -> workshop.v1.CreateFineRequest
+	85,  // 196: workshop.v1.WorkshopService.CreateAdvance:input_type -> workshop.v1.CreateAdvanceRequest
+	87,  // 197: workshop.v1.WorkshopService.DeleteBonus:input_type -> workshop.v1.DeleteBonusRequest
+	89,  // 198: workshop.v1.WorkshopService.DeleteFine:input_type -> workshop.v1.DeleteFineRequest
+	97,  // 199: workshop.v1.WorkshopService.PublishOutsource:input_type -> workshop.v1.PublishOutsourceRequest
+	99,  // 200: workshop.v1.WorkshopService.AcceptOutsource:input_type -> workshop.v1.AcceptOutsourceRequest
+	101, // 201: workshop.v1.WorkshopService.ListOutsourceRequests:input_type -> workshop.v1.ListOutsourceRequestsRequest
+	103, // 202: workshop.v1.WorkshopService.GetOutsourceKanban:input_type -> workshop.v1.GetOutsourceKanbanRequest
+	105, // 203: workshop.v1.WorkshopService.UpdateOutsourceStatus:input_type -> workshop.v1.UpdateOutsourceStatusRequest
+	107, // 204: workshop.v1.WorkshopService.GetWorkshopStats:input_type -> workshop.v1.GetWorkshopStatsRequest
+	109, // 205: workshop.v1.WorkshopService.GetMasterPerformance:input_type -> workshop.v1.GetMasterPerformanceRequest
+	112, // 206: workshop.v1.WorkshopService.GetDailyReport:input_type -> workshop.v1.GetDailyReportRequest
+	116, // 207: workshop.v1.WorkshopService.AddComment:input_type -> workshop.v1.AddCommentRequest
+	118, // 208: workshop.v1.WorkshopService.ListComments:input_type -> workshop.v1.ListCommentsRequest
+	120, // 209: workshop.v1.WorkshopService.UploadPhoto:input_type -> workshop.v1.UploadPhotoRequest
+	122, // 210: workshop.v1.WorkshopService.ListPhotos:input_type -> workshop.v1.ListPhotosRequest
+	124, // 211: workshop.v1.WorkshopService.DeletePhoto:input_type -> workshop.v1.DeletePhotoRequest
+	126, // 212: workshop.v1.WorkshopService.GetQCChecklist:input_type -> workshop.v1.GetQCChecklistRequest
+	128, // 213: workshop.v1.WorkshopService.SubmitQCChecklist:input_type -> workshop.v1.SubmitQCChecklistRequest
+	130, // 214: workshop.v1.WorkshopService.RejectQCItem:input_type -> workshop.v1.RejectQCItemRequest
+	132, // 215: workshop.v1.WorkshopService.ListStatusHistory:input_type -> workshop.v1.ListStatusHistoryRequest
+	134, // 216: workshop.v1.WorkshopService.CreateMaterial:input_type -> workshop.v1.CreateMaterialRequest
+	136, // 217: workshop.v1.WorkshopService.UpdateMaterial:input_type -> workshop.v1.UpdateMaterialRequest
+	138, // 218: workshop.v1.WorkshopService.ListMaterials:input_type -> workshop.v1.ListMaterialsRequest
+	140, // 219: workshop.v1.WorkshopService.AddMaterialStock:input_type -> workshop.v1.AddMaterialStockRequest
+	142, // 220: workshop.v1.WorkshopService.WriteOffMaterial:input_type -> workshop.v1.WriteOffMaterialRequest
+	144, // 221: workshop.v1.WorkshopService.GetMaterialStock:input_type -> workshop.v1.GetMaterialStockRequest
+	146, // 222: workshop.v1.WorkshopService.ListMaterialTransactions:input_type -> workshop.v1.ListMaterialTransactionsRequest
+	148, // 223: workshop.v1.WorkshopService.GetMasterMaterialExpenses:input_type -> workshop.v1.GetMasterMaterialExpensesRequest
+	150, // 224: workshop.v1.WorkshopService.GetClientOrderStatus:input_type -> workshop.v1.GetClientOrderStatusRequest
+	152, // 225: workshop.v1.WorkshopService.GetClientOrderPhotos:input_type -> workshop.v1.GetClientOrderPhotosRequest
+	154, // 226: workshop.v1.WorkshopService.GetClientOrderTimeline:input_type -> workshop.v1.GetClientOrderTimelineRequest
+	157, // 227: workshop.v1.WorkshopService.CreateOrderFromCRM:input_type -> workshop.v1.CreateOrderFromCRMRequest
+	159, // 228: workshop.v1.WorkshopService.SyncCRMDeals:input_type -> workshop.v1.SyncCRMDealsRequest
+	161, // 229: workshop.v1.WorkshopService.GetCRMSyncStatus:input_type -> workshop.v1.GetCRMSyncStatusRequest
+	163, // 230: workshop.v1.WorkshopService.SetMasterTelegram:input_type -> workshop.v1.SetMasterTelegramRequest
+	165, // 231: workshop.v1.WorkshopService.GetMasterByTelegram:input_type -> workshop.v1.GetMasterByTelegramRequest
+	167, // 232: workshop.v1.WorkshopService.SetDiscount:input_type -> workshop.v1.SetDiscountRequest
+	169, // 233: workshop.v1.WorkshopService.SetMarkup:input_type -> workshop.v1.SetMarkupRequest
+	171, // 234: workshop.v1.WorkshopService.SetWorkshopMarkup:input_type -> workshop.v1.SetWorkshopMarkupRequest
+	173, // 235: workshop.v1.WorkshopService.GetPricingBreakdown:input_type -> workshop.v1.GetPricingBreakdownRequest
+	175, // 236: workshop.v1.WorkshopService.MarkPaidManual:input_type -> workshop.v1.MarkPaidManualRequest
+	177, // 237: workshop.v1.WorkshopService.CancelPayment:input_type -> workshop.v1.CancelPaymentRequest
+	179, // 238: workshop.v1.WorkshopService.GetPaymentHistory:input_type -> workshop.v1.GetPaymentHistoryRequest
+	34,  // 239: workshop.v1.WorkshopService.CreateWorkshop:output_type -> workshop.v1.CreateWorkshopResponse
+	36,  // 240: workshop.v1.WorkshopService.GetWorkshop:output_type -> workshop.v1.GetWorkshopResponse
+	38,  // 241: workshop.v1.WorkshopService.UpdateWorkshop:output_type -> workshop.v1.UpdateWorkshopResponse
+	40,  // 242: workshop.v1.WorkshopService.ListWorkshops:output_type -> workshop.v1.ListWorkshopsResponse
+	42,  // 243: workshop.v1.WorkshopService.CreateRepairOrder:output_type -> workshop.v1.CreateRepairOrderResponse
+	44,  // 244: workshop.v1.WorkshopService.GetRepairOrder:output_type -> workshop.v1.GetRepairOrderResponse
+	46,  // 245: workshop.v1.WorkshopService.UpdateRepairOrder:output_type -> workshop.v1.UpdateRepairOrderResponse
+	48,  // 246: workshop.v1.WorkshopService.UpdateRepairOrderStatus:output_type -> workshop.v1.UpdateRepairOrderStatusResponse
+	50,  // 247: workshop.v1.WorkshopService.ListRepairOrders:output_type -> workshop.v1.ListRepairOrdersResponse
+	52,  // 248: workshop.v1.WorkshopService.GetKanban:output_type -> workshop.v1.GetKanbanResponse
+	54,  // 249: workshop.v1.WorkshopService.CreateCarWork:output_type -> workshop.v1.CreateCarWorkResponse
+	56,  // 250: workshop.v1.WorkshopService.UpdateCarWork:output_type -> workshop.v1.UpdateCarWorkResponse
+	58,  // 251: workshop.v1.WorkshopService.DeleteCarWork:output_type -> workshop.v1.DeleteCarWorkResponse
+	60,  // 252: workshop.v1.WorkshopService.ListCarWorks:output_type -> workshop.v1.ListCarWorksResponse
+	62,  // 253: workshop.v1.WorkshopService.MarkCarWorkDone:output_type -> workshop.v1.MarkCarWorkDoneResponse
+	64,  // 254: workshop.v1.WorkshopService.ClockIn:output_type -> workshop.v1.ClockInResponse
+	66,  // 255: workshop.v1.WorkshopService.ClockOut:output_type -> workshop.v1.ClockOutResponse
+	68,  // 256: workshop.v1.WorkshopService.CreateMaster:output_type -> workshop.v1.CreateMasterResponse
+	70,  // 257: workshop.v1.WorkshopService.GetMaster:output_type -> workshop.v1.GetMasterResponse
+	72,  // 258: workshop.v1.WorkshopService.UpdateMaster:output_type -> workshop.v1.UpdateMasterResponse
+	74,  // 259: workshop.v1.WorkshopService.FireMaster:output_type -> workshop.v1.FireMasterResponse
+	76,  // 260: workshop.v1.WorkshopService.ListMasters:output_type -> workshop.v1.ListMastersResponse
+	92,  // 261: workshop.v1.WorkshopService.SetMasterHourRate:output_type -> workshop.v1.SetMasterHourRateResponse
+	94,  // 262: workshop.v1.WorkshopService.SetMasterFixSalary:output_type -> workshop.v1.SetMasterFixSalaryResponse
+	96,  // 263: workshop.v1.WorkshopService.GetMasterRateHistory:output_type -> workshop.v1.GetMasterRateHistoryResponse
+	78,  // 264: workshop.v1.WorkshopService.CalculateSalary:output_type -> workshop.v1.CalculateSalaryResponse
+	80,  // 265: workshop.v1.WorkshopService.GetSalaryBreakdown:output_type -> workshop.v1.GetSalaryBreakdownResponse
+	82,  // 266: workshop.v1.WorkshopService.CreateBonus:output_type -> workshop.v1.CreateBonusResponse
+	84,  // 267: workshop.v1.WorkshopService.CreateFine:output_type -> workshop.v1.CreateFineResponse
+	86,  // 268: workshop.v1.WorkshopService.CreateAdvance:output_type -> workshop.v1.CreateAdvanceResponse
+	88,  // 269: workshop.v1.WorkshopService.DeleteBonus:output_type -> workshop.v1.DeleteBonusResponse
+	90,  // 270: workshop.v1.WorkshopService.DeleteFine:output_type -> workshop.v1.DeleteFineResponse
+	98,  // 271: workshop.v1.WorkshopService.PublishOutsource:output_type -> workshop.v1.PublishOutsourceResponse
+	100, // 272: workshop.v1.WorkshopService.AcceptOutsource:output_type -> workshop.v1.AcceptOutsourceResponse
+	102, // 273: workshop.v1.WorkshopService.ListOutsourceRequests:output_type -> workshop.v1.ListOutsourceRequestsResponse
+	104, // 274: workshop.v1.WorkshopService.GetOutsourceKanban:output_type -> workshop.v1.GetOutsourceKanbanResponse
+	106, // 275: workshop.v1.WorkshopService.UpdateOutsourceStatus:output_type -> workshop.v1.UpdateOutsourceStatusResponse
+	108, // 276: workshop.v1.WorkshopService.GetWorkshopStats:output_type -> workshop.v1.GetWorkshopStatsResponse
+	110, // 277: workshop.v1.WorkshopService.GetMasterPerformance:output_type -> workshop.v1.GetMasterPerformanceResponse
+	114, // 278: workshop.v1.WorkshopService.GetDailyReport:output_type -> workshop.v1.GetDailyReportResponse
+	117, // 279: workshop.v1.WorkshopService.AddComment:output_type -> workshop.v1.AddCommentResponse
+	119, // 280: workshop.v1.WorkshopService.ListComments:output_type -> workshop.v1.ListCommentsResponse
+	121, // 281: workshop.v1.WorkshopService.UploadPhoto:output_type -> workshop.v1.UploadPhotoResponse
+	123, // 282: workshop.v1.WorkshopService.ListPhotos:output_type -> workshop.v1.ListPhotosResponse
+	125, // 283: workshop.v1.WorkshopService.DeletePhoto:output_type -> workshop.v1.DeletePhotoResponse
+	127, // 284: workshop.v1.WorkshopService.GetQCChecklist:output_type -> workshop.v1.GetQCChecklistResponse
+	129, // 285: workshop.v1.WorkshopService.SubmitQCChecklist:output_type -> workshop.v1.SubmitQCChecklistResponse
+	131, // 286: workshop.v1.WorkshopService.RejectQCItem:output_type -> workshop.v1.RejectQCItemResponse
+	133, // 287: workshop.v1.WorkshopService.ListStatusHistory:output_type -> workshop.v1.ListStatusHistoryResponse
+	135, // 288: workshop.v1.WorkshopService.CreateMaterial:output_type -> workshop.v1.CreateMaterialResponse
+	137, // 289: workshop.v1.WorkshopService.UpdateMaterial:output_type -> workshop.v1.UpdateMaterialResponse
+	139, // 290: workshop.v1.WorkshopService.ListMaterials:output_type -> workshop.v1.ListMaterialsResponse
+	141, // 291: workshop.v1.WorkshopService.AddMaterialStock:output_type -> workshop.v1.AddMaterialStockResponse
+	143, // 292: workshop.v1.WorkshopService.WriteOffMaterial:output_type -> workshop.v1.WriteOffMaterialResponse
+	145, // 293: workshop.v1.WorkshopService.GetMaterialStock:output_type -> workshop.v1.GetMaterialStockResponse
+	147, // 294: workshop.v1.WorkshopService.ListMaterialTransactions:output_type -> workshop.v1.ListMaterialTransactionsResponse
+	149, // 295: workshop.v1.WorkshopService.GetMasterMaterialExpenses:output_type -> workshop.v1.GetMasterMaterialExpensesResponse
+	151, // 296: workshop.v1.WorkshopService.GetClientOrderStatus:output_type -> workshop.v1.GetClientOrderStatusResponse
+	153, // 297: workshop.v1.WorkshopService.GetClientOrderPhotos:output_type -> workshop.v1.GetClientOrderPhotosResponse
+	155, // 298: workshop.v1.WorkshopService.GetClientOrderTimeline:output_type -> workshop.v1.GetClientOrderTimelineResponse
+	158, // 299: workshop.v1.WorkshopService.CreateOrderFromCRM:output_type -> workshop.v1.CreateOrderFromCRMResponse
+	160, // 300: workshop.v1.WorkshopService.SyncCRMDeals:output_type -> workshop.v1.SyncCRMDealsResponse
+	162, // 301: workshop.v1.WorkshopService.GetCRMSyncStatus:output_type -> workshop.v1.GetCRMSyncStatusResponse
+	164, // 302: workshop.v1.WorkshopService.SetMasterTelegram:output_type -> workshop.v1.SetMasterTelegramResponse
+	166, // 303: workshop.v1.WorkshopService.GetMasterByTelegram:output_type -> workshop.v1.GetMasterByTelegramResponse
+	168, // 304: workshop.v1.WorkshopService.SetDiscount:output_type -> workshop.v1.SetDiscountResponse
+	170, // 305: workshop.v1.WorkshopService.SetMarkup:output_type -> workshop.v1.SetMarkupResponse
+	172, // 306: workshop.v1.WorkshopService.SetWorkshopMarkup:output_type -> workshop.v1.SetWorkshopMarkupResponse
+	174, // 307: workshop.v1.WorkshopService.GetPricingBreakdown:output_type -> workshop.v1.GetPricingBreakdownResponse
+	176, // 308: workshop.v1.WorkshopService.MarkPaidManual:output_type -> workshop.v1.MarkPaidManualResponse
+	178, // 309: workshop.v1.WorkshopService.CancelPayment:output_type -> workshop.v1.CancelPaymentResponse
+	180, // 310: workshop.v1.WorkshopService.GetPaymentHistory:output_type -> workshop.v1.GetPaymentHistoryResponse
+	239, // [239:311] is the sub-list for method output_type
+	167, // [167:239] is the sub-list for method input_type
+	167, // [167:167] is the sub-list for extension type_name
+	167, // [167:167] is the sub-list for extension extendee
+	0,   // [0:167] is the sub-list for field type_name
 }
 
 func init() { file_workshop_workshop_proto_init() }
@@ -12209,18 +12864,18 @@ func file_workshop_workshop_proto_init() {
 	if File_workshop_workshop_proto != nil {
 		return
 	}
-	file_workshop_workshop_proto_msgTypes[26].OneofWrappers = []any{}
-	file_workshop_workshop_proto_msgTypes[34].OneofWrappers = []any{}
-	file_workshop_workshop_proto_msgTypes[44].OneofWrappers = []any{}
-	file_workshop_workshop_proto_msgTypes[60].OneofWrappers = []any{}
-	file_workshop_workshop_proto_msgTypes[125].OneofWrappers = []any{}
+	file_workshop_workshop_proto_msgTypes[27].OneofWrappers = []any{}
+	file_workshop_workshop_proto_msgTypes[35].OneofWrappers = []any{}
+	file_workshop_workshop_proto_msgTypes[45].OneofWrappers = []any{}
+	file_workshop_workshop_proto_msgTypes[61].OneofWrappers = []any{}
+	file_workshop_workshop_proto_msgTypes[126].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_workshop_workshop_proto_rawDesc), len(file_workshop_workshop_proto_rawDesc)),
-			NumEnums:      8,
-			NumMessages:   165,
+			NumEnums:      10,
+			NumMessages:   172,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
