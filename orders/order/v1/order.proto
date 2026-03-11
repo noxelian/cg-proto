@@ -87,6 +87,34 @@ enum DeliveryType {
   DELIVERY_TYPE_DELIVERY = 2;
 }
 
+enum OrderType {
+  ORDER_TYPE_UNSPECIFIED = 0;
+  ORDER_TYPE_MARKETPLACE = 1;
+  ORDER_TYPE_WORKSHOP = 2;
+}
+
+enum ItemSource {
+  ITEM_SOURCE_UNSPECIFIED = 0;
+  ITEM_SOURCE_WORKSHOP = 1;  // Part sourced by workshop (has price)
+  ITEM_SOURCE_CLIENT = 2;    // Part brought by client (price=0, no warranty)
+}
+
+enum ItemCondition {
+  ITEM_CONDITION_UNSPECIFIED = 0;
+  ITEM_CONDITION_NEW = 1;
+  ITEM_CONDITION_USED = 2;
+  ITEM_CONDITION_REFURBISHED = 3;
+}
+
+enum DeliveryStatus {
+  DELIVERY_STATUS_UNSPECIFIED = 0;
+  DELIVERY_STATUS_ORDERED = 1;
+  DELIVERY_STATUS_SHIPPED = 2;
+  DELIVERY_STATUS_DELIVERED = 3;
+  DELIVERY_STATUS_INSTALLED = 4;
+  DELIVERY_STATUS_CANCELLED = 5;
+}
+
 // =============================================
 // Core messages
 // =============================================
@@ -168,6 +196,8 @@ message Order {
   string notes = 16;
   google.protobuf.Timestamp created_at = 17;
   google.protobuf.Timestamp updated_at = 18;
+  OrderType order_type = 19;          // MARKETPLACE or WORKSHOP
+  int64 repair_order_id = 20;         // For WORKSHOP orders: linked repair order in cg-workshop
 }
 
 message OrderItem {
@@ -180,6 +210,10 @@ message OrderItem {
   int64 total_price = 7;
   string condition = 8;
   string currency = 9;
+  ItemSource source = 10;             // WORKSHOP or CLIENT
+  DeliveryStatus delivery_status = 11; // Delivery tracking for workshop items
+  ItemCondition item_condition = 12;   // NEW, USED, REFURBISHED (replaces string condition for workshop)
+  google.protobuf.Timestamp deleted_at = 13; // Soft delete timestamp (null = active)
 }
 
 message BidPurchase {
