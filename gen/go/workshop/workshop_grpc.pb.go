@@ -91,6 +91,7 @@ const (
 	WorkshopService_MarkPaidManual_FullMethodName            = "/workshop.v1.WorkshopService/MarkPaidManual"
 	WorkshopService_CancelPayment_FullMethodName             = "/workshop.v1.WorkshopService/CancelPayment"
 	WorkshopService_GetPaymentHistory_FullMethodName         = "/workshop.v1.WorkshopService/GetPaymentHistory"
+	WorkshopService_GetWarrantyOrders_FullMethodName         = "/workshop.v1.WorkshopService/GetWarrantyOrders"
 )
 
 // WorkshopServiceClient is the client API for WorkshopService service.
@@ -187,6 +188,8 @@ type WorkshopServiceClient interface {
 	MarkPaidManual(ctx context.Context, in *MarkPaidManualRequest, opts ...grpc.CallOption) (*MarkPaidManualResponse, error)
 	CancelPayment(ctx context.Context, in *CancelPaymentRequest, opts ...grpc.CallOption) (*CancelPaymentResponse, error)
 	GetPaymentHistory(ctx context.Context, in *GetPaymentHistoryRequest, opts ...grpc.CallOption) (*GetPaymentHistoryResponse, error)
+	// --- Warranty ---
+	GetWarrantyOrders(ctx context.Context, in *GetWarrantyOrdersRequest, opts ...grpc.CallOption) (*GetWarrantyOrdersResponse, error)
 }
 
 type workshopServiceClient struct {
@@ -917,6 +920,16 @@ func (c *workshopServiceClient) GetPaymentHistory(ctx context.Context, in *GetPa
 	return out, nil
 }
 
+func (c *workshopServiceClient) GetWarrantyOrders(ctx context.Context, in *GetWarrantyOrdersRequest, opts ...grpc.CallOption) (*GetWarrantyOrdersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWarrantyOrdersResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_GetWarrantyOrders_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkshopServiceServer is the server API for WorkshopService service.
 // All implementations must embed UnimplementedWorkshopServiceServer
 // for forward compatibility.
@@ -1011,6 +1024,8 @@ type WorkshopServiceServer interface {
 	MarkPaidManual(context.Context, *MarkPaidManualRequest) (*MarkPaidManualResponse, error)
 	CancelPayment(context.Context, *CancelPaymentRequest) (*CancelPaymentResponse, error)
 	GetPaymentHistory(context.Context, *GetPaymentHistoryRequest) (*GetPaymentHistoryResponse, error)
+	// --- Warranty ---
+	GetWarrantyOrders(context.Context, *GetWarrantyOrdersRequest) (*GetWarrantyOrdersResponse, error)
 	mustEmbedUnimplementedWorkshopServiceServer()
 }
 
@@ -1236,6 +1251,9 @@ func (UnimplementedWorkshopServiceServer) CancelPayment(context.Context, *Cancel
 }
 func (UnimplementedWorkshopServiceServer) GetPaymentHistory(context.Context, *GetPaymentHistoryRequest) (*GetPaymentHistoryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPaymentHistory not implemented")
+}
+func (UnimplementedWorkshopServiceServer) GetWarrantyOrders(context.Context, *GetWarrantyOrdersRequest) (*GetWarrantyOrdersResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetWarrantyOrders not implemented")
 }
 func (UnimplementedWorkshopServiceServer) mustEmbedUnimplementedWorkshopServiceServer() {}
 func (UnimplementedWorkshopServiceServer) testEmbeddedByValue()                         {}
@@ -2554,6 +2572,24 @@ func _WorkshopService_GetPaymentHistory_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkshopService_GetWarrantyOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWarrantyOrdersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).GetWarrantyOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_GetWarrantyOrders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).GetWarrantyOrders(ctx, req.(*GetWarrantyOrdersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WorkshopService_ServiceDesc is the grpc.ServiceDesc for WorkshopService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2848,6 +2884,10 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPaymentHistory",
 			Handler:    _WorkshopService_GetPaymentHistory_Handler,
+		},
+		{
+			MethodName: "GetWarrantyOrders",
+			Handler:    _WorkshopService_GetWarrantyOrders_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -118,6 +118,9 @@ service WorkshopService {
   rpc MarkPaidManual(MarkPaidManualRequest) returns (MarkPaidManualResponse);
   rpc CancelPayment(CancelPaymentRequest) returns (CancelPaymentResponse);
   rpc GetPaymentHistory(GetPaymentHistoryRequest) returns (GetPaymentHistoryResponse);
+
+  // --- Warranty ---
+  rpc GetWarrantyOrders(GetWarrantyOrdersRequest) returns (GetWarrantyOrdersResponse);
 }
 
 // =============================================================================
@@ -204,6 +207,12 @@ enum PaymentMethod {
   PAYMENT_METHOD_KASPI = 4;
 }
 
+enum PaymentType {
+  PAYMENT_TYPE_UNSPECIFIED = 0;
+  PAYMENT_TYPE_PREPAID = 1;
+  PAYMENT_TYPE_POSTPAID = 2;
+}
+
 // =============================================================================
 // Core Messages
 // =============================================================================
@@ -259,6 +268,10 @@ message RepairOrder {
   // Payment fields
   PaymentStatus payment_status = 35;
   int64 paid_amount = 36;
+  PaymentType payment_type = 37;
+  // Warranty fields
+  optional int64 parent_order_id = 38;
+  bool is_warranty = 39;
 }
 
 message MasterSummary {
@@ -564,6 +577,8 @@ message CreateRepairOrderRequest {
   string client_name = 10;
   string client_phone = 11;
   google.protobuf.Timestamp promised_date = 12;
+  PaymentType payment_type = 13;
+  optional int64 parent_order_id = 14;
 }
 
 message CreateRepairOrderResponse {
@@ -1361,4 +1376,16 @@ message GetPaymentHistoryRequest {
 message GetPaymentHistoryResponse {
   repeated RepairOrderPayment payments = 1;
   int64 total_paid = 2;
+}
+
+// =============================================================================
+// Warranty RPCs
+// =============================================================================
+
+message GetWarrantyOrdersRequest {
+  int64 parent_order_id = 1;
+}
+
+message GetWarrantyOrdersResponse {
+  repeated RepairOrder orders = 1;
 }
