@@ -37,6 +37,7 @@ const (
 	LedgerEntryType_LEDGER_ENTRY_TYPE_SUBSCRIPTION_PAYMENT LedgerEntryType = 9  // subscription charge
 	LedgerEntryType_LEDGER_ENTRY_TYPE_BOOKING_PAYMENT      LedgerEntryType = 10 // booking charge
 	LedgerEntryType_LEDGER_ENTRY_TYPE_ADJUSTMENT           LedgerEntryType = 11 // manual adjustment
+	LedgerEntryType_LEDGER_ENTRY_TYPE_REPAIR_ORDER_PAYMENT LedgerEntryType = 12 // repair order payment
 )
 
 // Enum value maps for LedgerEntryType.
@@ -54,6 +55,7 @@ var (
 		9:  "LEDGER_ENTRY_TYPE_SUBSCRIPTION_PAYMENT",
 		10: "LEDGER_ENTRY_TYPE_BOOKING_PAYMENT",
 		11: "LEDGER_ENTRY_TYPE_ADJUSTMENT",
+		12: "LEDGER_ENTRY_TYPE_REPAIR_ORDER_PAYMENT",
 	}
 	LedgerEntryType_value = map[string]int32{
 		"LEDGER_ENTRY_TYPE_UNSPECIFIED":          0,
@@ -68,6 +70,7 @@ var (
 		"LEDGER_ENTRY_TYPE_SUBSCRIPTION_PAYMENT": 9,
 		"LEDGER_ENTRY_TYPE_BOOKING_PAYMENT":      10,
 		"LEDGER_ENTRY_TYPE_ADJUSTMENT":           11,
+		"LEDGER_ENTRY_TYPE_REPAIR_ORDER_PAYMENT": 12,
 	}
 )
 
@@ -1881,7 +1884,7 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\vdata_points\x18\x01 \x03(\v2$.billing.billing.v1.RevenueDataPointR\n" +
 	"dataPoints\x12#\n" +
 	"\rtotal_revenue\x18\x02 \x01(\x03R\ftotalRevenue\x12\x1a\n" +
-	"\bcurrency\x18\x03 \x01(\tR\bcurrency*\xc9\x03\n" +
+	"\bcurrency\x18\x03 \x01(\tR\bcurrency*\xf5\x03\n" +
 	"\x0fLedgerEntryType\x12!\n" +
 	"\x1dLEDGER_ENTRY_TYPE_UNSPECIFIED\x10\x00\x12&\n" +
 	"\"LEDGER_ENTRY_TYPE_PAYMENT_RECEIVED\x10\x01\x12'\n" +
@@ -1895,7 +1898,8 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"&LEDGER_ENTRY_TYPE_SUBSCRIPTION_PAYMENT\x10\t\x12%\n" +
 	"!LEDGER_ENTRY_TYPE_BOOKING_PAYMENT\x10\n" +
 	"\x12 \n" +
-	"\x1cLEDGER_ENTRY_TYPE_ADJUSTMENT\x10\v*\xba\x01\n" +
+	"\x1cLEDGER_ENTRY_TYPE_ADJUSTMENT\x10\v\x12*\n" +
+	"&LEDGER_ENTRY_TYPE_REPAIR_ORDER_PAYMENT\x10\f*\xba\x01\n" +
 	"\fPayoutStatus\x12\x1d\n" +
 	"\x19PAYOUT_STATUS_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15PAYOUT_STATUS_PENDING\x10\x01\x12\x1c\n" +

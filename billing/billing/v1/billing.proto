@@ -46,6 +46,7 @@ enum LedgerEntryType {
   LEDGER_ENTRY_TYPE_SUBSCRIPTION_PAYMENT = 9;  // subscription charge
   LEDGER_ENTRY_TYPE_BOOKING_PAYMENT = 10;      // booking charge
   LEDGER_ENTRY_TYPE_ADJUSTMENT = 11;           // manual adjustment
+  LEDGER_ENTRY_TYPE_REPAIR_ORDER_PAYMENT = 12; // repair order payment
 }
 
 enum PayoutStatus {
