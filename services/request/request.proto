@@ -89,6 +89,10 @@ message Request {
   google.protobuf.Timestamp created_at = 17;
   google.protobuf.Timestamp updated_at = 18;
   optional google.protobuf.Timestamp published_at = 19;
+
+  // Workshop integration (parts request from repair order)
+  optional int64 repair_order_id = 20;  // Linked repair order in cg-workshop
+  optional string org_id = 21;          // Organization UUID creating the request
 }
 
 // CreateRequest
@@ -113,6 +117,10 @@ message CreateRequestRequest {
   double longitude = 14;
   
   bool publish = 15;  // Если true, статус = "moderation"
+
+  // Workshop integration (parts request from repair order)
+  optional int64 repair_order_id = 16;  // Linked repair order in cg-workshop
+  optional string org_id = 17;          // Organization UUID creating the request
 }
 
 message CreateRequestResponse {

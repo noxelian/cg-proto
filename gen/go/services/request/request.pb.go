@@ -141,13 +141,16 @@ type Request struct {
 	Note   string   `protobuf:"bytes,11,opt,name=note,proto3" json:"note,omitempty"`
 	Photos []string `protobuf:"bytes,12,rep,name=photos,proto3" json:"photos,omitempty"`
 	// Location
-	CityId        int64                  `protobuf:"varint,13,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
-	Address       string                 `protobuf:"bytes,14,opt,name=address,proto3" json:"address,omitempty"`
-	Latitude      float64                `protobuf:"fixed64,15,opt,name=latitude,proto3" json:"latitude,omitempty"`
-	Longitude     float64                `protobuf:"fixed64,16,opt,name=longitude,proto3" json:"longitude,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,18,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	PublishedAt   *timestamppb.Timestamp `protobuf:"bytes,19,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
+	CityId      int64                  `protobuf:"varint,13,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
+	Address     string                 `protobuf:"bytes,14,opt,name=address,proto3" json:"address,omitempty"`
+	Latitude    float64                `protobuf:"fixed64,15,opt,name=latitude,proto3" json:"latitude,omitempty"`
+	Longitude   float64                `protobuf:"fixed64,16,opt,name=longitude,proto3" json:"longitude,omitempty"`
+	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt   *timestamppb.Timestamp `protobuf:"bytes,18,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	PublishedAt *timestamppb.Timestamp `protobuf:"bytes,19,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
+	// Workshop integration (parts request from repair order)
+	RepairOrderId *int64  `protobuf:"varint,20,opt,name=repair_order_id,json=repairOrderId,proto3,oneof" json:"repair_order_id,omitempty"` // Linked repair order in cg-workshop
+	OrgId         *string `protobuf:"bytes,21,opt,name=org_id,json=orgId,proto3,oneof" json:"org_id,omitempty"`                            // Organization UUID creating the request
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -315,6 +318,20 @@ func (x *Request) GetPublishedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Request) GetRepairOrderId() int64 {
+	if x != nil && x.RepairOrderId != nil {
+		return *x.RepairOrderId
+	}
+	return 0
+}
+
+func (x *Request) GetOrgId() string {
+	if x != nil && x.OrgId != nil {
+		return *x.OrgId
+	}
+	return ""
+}
+
 // CreateRequest
 type CreateRequestRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
@@ -333,8 +350,11 @@ type CreateRequestRequest struct {
 	Latitude        float64                `protobuf:"fixed64,13,opt,name=latitude,proto3" json:"latitude,omitempty"`
 	Longitude       float64                `protobuf:"fixed64,14,opt,name=longitude,proto3" json:"longitude,omitempty"`
 	Publish         bool                   `protobuf:"varint,15,opt,name=publish,proto3" json:"publish,omitempty"` // Если true, статус = "moderation"
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Workshop integration (parts request from repair order)
+	RepairOrderId *int64  `protobuf:"varint,16,opt,name=repair_order_id,json=repairOrderId,proto3,oneof" json:"repair_order_id,omitempty"` // Linked repair order in cg-workshop
+	OrgId         *string `protobuf:"bytes,17,opt,name=org_id,json=orgId,proto3,oneof" json:"org_id,omitempty"`                            // Organization UUID creating the request
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateRequestRequest) Reset() {
@@ -470,6 +490,20 @@ func (x *CreateRequestRequest) GetPublish() bool {
 		return x.Publish
 	}
 	return false
+}
+
+func (x *CreateRequestRequest) GetRepairOrderId() int64 {
+	if x != nil && x.RepairOrderId != nil {
+		return *x.RepairOrderId
+	}
+	return 0
+}
+
+func (x *CreateRequestRequest) GetOrgId() string {
+	if x != nil && x.OrgId != nil {
+		return *x.OrgId
+	}
+	return ""
 }
 
 type CreateRequestResponse struct {
@@ -1884,7 +1918,7 @@ var File_services_request_request_proto protoreflect.FileDescriptor
 
 const file_services_request_request_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/request/request.proto\x12\x13services.request.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe3\x05\n" +
+	"\x1eservices/request/request.proto\x12\x13services.request.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcb\x06\n" +
 	"\aRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x124\n" +
 	"\x04type\x18\x02 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12:\n" +
@@ -1908,9 +1942,13 @@ const file_services_request_request_proto_rawDesc = "" +
 	"created_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12B\n" +
-	"\fpublished_at\x18\x13 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\vpublishedAt\x88\x01\x01B\x14\n" +
+	"\fpublished_at\x18\x13 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\vpublishedAt\x88\x01\x01\x12+\n" +
+	"\x0frepair_order_id\x18\x14 \x01(\x03H\x02R\rrepairOrderId\x88\x01\x01\x12\x1a\n" +
+	"\x06org_id\x18\x15 \x01(\tH\x03R\x05orgId\x88\x01\x01B\x14\n" +
 	"\x12_car_generation_idB\x0f\n" +
-	"\r_published_at\"\xf3\x03\n" +
+	"\r_published_atB\x12\n" +
+	"\x10_repair_order_idB\t\n" +
+	"\a_org_id\"\xdb\x04\n" +
 	"\x14CreateRequestRequest\x124\n" +
 	"\x04type\x18\x01 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
@@ -1928,8 +1966,12 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\aaddress\x18\f \x01(\tR\aaddress\x12\x1a\n" +
 	"\blatitude\x18\r \x01(\x01R\blatitude\x12\x1c\n" +
 	"\tlongitude\x18\x0e \x01(\x01R\tlongitude\x12\x18\n" +
-	"\apublish\x18\x0f \x01(\bR\apublishB\x14\n" +
-	"\x12_car_generation_id\"O\n" +
+	"\apublish\x18\x0f \x01(\bR\apublish\x12+\n" +
+	"\x0frepair_order_id\x18\x10 \x01(\x03H\x01R\rrepairOrderId\x88\x01\x01\x12\x1a\n" +
+	"\x06org_id\x18\x11 \x01(\tH\x02R\x05orgId\x88\x01\x01B\x14\n" +
+	"\x12_car_generation_idB\x12\n" +
+	"\x10_repair_order_idB\t\n" +
+	"\a_org_id\"O\n" +
 	"\x15CreateRequestResponse\x126\n" +
 	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"2\n" +
 	"\x11GetRequestRequest\x12\x1d\n" +
