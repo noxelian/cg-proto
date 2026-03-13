@@ -185,6 +185,9 @@ const (
 	OrganizationType_ORGANIZATION_TYPE_PARTS_SUPPLIER OrganizationType = 4 // Поставщик запчастей
 	OrganizationType_ORGANIZATION_TYPE_TIRE_SERVICE   OrganizationType = 5 // Шиномонтаж
 	OrganizationType_ORGANIZATION_TYPE_DEALER         OrganizationType = 6 // Дилер
+	OrganizationType_ORGANIZATION_TYPE_GAS_SERVICE    OrganizationType = 7 // Установка газа на авто
+	OrganizationType_ORGANIZATION_TYPE_OIL_SERVICE    OrganizationType = 8 // Замена масла и жидкостей
+	OrganizationType_ORGANIZATION_TYPE_EMERGENCY      OrganizationType = 9 // Срочная выездная помощь
 )
 
 // Enum value maps for OrganizationType.
@@ -197,6 +200,9 @@ var (
 		4: "ORGANIZATION_TYPE_PARTS_SUPPLIER",
 		5: "ORGANIZATION_TYPE_TIRE_SERVICE",
 		6: "ORGANIZATION_TYPE_DEALER",
+		7: "ORGANIZATION_TYPE_GAS_SERVICE",
+		8: "ORGANIZATION_TYPE_OIL_SERVICE",
+		9: "ORGANIZATION_TYPE_EMERGENCY",
 	}
 	OrganizationType_value = map[string]int32{
 		"ORGANIZATION_TYPE_UNSPECIFIED":    0,
@@ -206,6 +212,9 @@ var (
 		"ORGANIZATION_TYPE_PARTS_SUPPLIER": 4,
 		"ORGANIZATION_TYPE_TIRE_SERVICE":   5,
 		"ORGANIZATION_TYPE_DEALER":         6,
+		"ORGANIZATION_TYPE_GAS_SERVICE":    7,
+		"ORGANIZATION_TYPE_OIL_SERVICE":    8,
+		"ORGANIZATION_TYPE_EMERGENCY":      9,
 	}
 )
 
@@ -1859,7 +1868,7 @@ const file_services_search_search_proto_rawDesc = "" +
 	"\x13SORT_BY_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11SORT_BY_RELEVANCE\x10\x01\x12\x15\n" +
 	"\x11SORT_BY_DATE_DESC\x10\x02\x12\x14\n" +
-	"\x10SORT_BY_DATE_ASC\x10\x03*\xf9\x01\n" +
+	"\x10SORT_BY_DATE_ASC\x10\x03*\xe0\x02\n" +
 	"\x10OrganizationType\x12!\n" +
 	"\x1dORGANIZATION_TYPE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15ORGANIZATION_TYPE_STO\x10\x01\x12\x1f\n" +
@@ -1867,7 +1876,10 @@ const file_services_search_search_proto_rawDesc = "" +
 	"\x1aORGANIZATION_TYPE_CAR_WASH\x10\x03\x12$\n" +
 	" ORGANIZATION_TYPE_PARTS_SUPPLIER\x10\x04\x12\"\n" +
 	"\x1eORGANIZATION_TYPE_TIRE_SERVICE\x10\x05\x12\x1c\n" +
-	"\x18ORGANIZATION_TYPE_DEALER\x10\x06*\xc1\x01\n" +
+	"\x18ORGANIZATION_TYPE_DEALER\x10\x06\x12!\n" +
+	"\x1dORGANIZATION_TYPE_GAS_SERVICE\x10\a\x12!\n" +
+	"\x1dORGANIZATION_TYPE_OIL_SERVICE\x10\b\x12\x1f\n" +
+	"\x1bORGANIZATION_TYPE_EMERGENCY\x10\t*\xc1\x01\n" +
 	"\x12OrganizationSortBy\x12$\n" +
 	" ORGANIZATION_SORT_BY_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eORGANIZATION_SORT_BY_RELEVANCE\x10\x01\x12!\n" +
