@@ -650,6 +650,7 @@ type CreateTransactionRequest struct {
 	PaymentMethod    PaymentMethod          `protobuf:"varint,8,opt,name=payment_method,json=paymentMethod,proto3,enum=payments.payment.v1.PaymentMethod" json:"payment_method,omitempty"`
 	IdempotencyKey   string                 `protobuf:"bytes,9,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
 	CommissionAmount int64                  `protobuf:"varint,10,opt,name=commission_amount,json=commissionAmount,proto3" json:"commission_amount,omitempty"`
+	ReturnUrl        string                 `protobuf:"bytes,11,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"` // optional HTTPS redirect URL after payment (must be HTTPS, no private IPs)
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -752,6 +753,13 @@ func (x *CreateTransactionRequest) GetCommissionAmount() int64 {
 		return x.CommissionAmount
 	}
 	return 0
+}
+
+func (x *CreateTransactionRequest) GetReturnUrl() string {
+	if x != nil {
+		return x.ReturnUrl
+	}
+	return ""
 }
 
 type CreateTransactionResponse struct {
@@ -1533,7 +1541,7 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"actor_type\x18\a \x01(\tR\tactorType\x12\x19\n" +
 	"\bactor_id\x18\b \x01(\tR\aactorId\x129\n" +
 	"\n" +
-	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xb1\x03\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xd0\x03\n" +
 	"\x18CreateTransactionRequest\x12\x1f\n" +
 	"\ventity_type\x18\x01 \x01(\tR\n" +
 	"entityType\x12\x1b\n" +
@@ -1546,7 +1554,9 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x0epayment_method\x18\b \x01(\x0e2\".payments.payment.v1.PaymentMethodR\rpaymentMethod\x12'\n" +
 	"\x0fidempotency_key\x18\t \x01(\tR\x0eidempotencyKey\x12+\n" +
 	"\x11commission_amount\x18\n" +
-	" \x01(\x03R\x10commissionAmount\"\x80\x01\n" +
+	" \x01(\x03R\x10commissionAmount\x12\x1d\n" +
+	"\n" +
+	"return_url\x18\v \x01(\tR\treturnUrl\"\x80\x01\n" +
 	"\x19CreateTransactionResponse\x12B\n" +
 	"\vtransaction\x18\x01 \x01(\v2 .payments.payment.v1.TransactionR\vtransaction\x12\x1f\n" +
 	"\vpayment_url\x18\x02 \x01(\tR\n" +

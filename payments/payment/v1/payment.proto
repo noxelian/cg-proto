@@ -126,6 +126,7 @@ message CreateTransactionRequest {
   PaymentMethod payment_method = 8;
   string idempotency_key = 9;
   int64 commission_amount = 10;
+  string return_url = 11;       // optional HTTPS redirect URL after payment (must be HTTPS, no private IPs)
 }
 
 message CreateTransactionResponse {
