@@ -272,6 +272,9 @@ message RepairOrder {
   // Warranty fields
   optional int64 parent_order_id = 38;
   bool is_warranty = 39;
+  // Parts request fields
+  optional string parts_request_id = 40;  // UUID reference to request-service Request
+  optional int64 parts_bid_id = 41;       // Reference to bid-service Bid
 }
 
 message MasterSummary {
