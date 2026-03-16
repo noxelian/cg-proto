@@ -32,7 +32,6 @@ const (
 	NsiService_ValidateGroupAndCategories_FullMethodName = "/platform.nsi.v1.NsiService/ValidateGroupAndCategories"
 	NsiService_GetAppVersion_FullMethodName              = "/platform.nsi.v1.NsiService/GetAppVersion"
 	NsiService_GetConfig_FullMethodName                  = "/platform.nsi.v1.NsiService/GetConfig"
-	NsiService_GetFullCatalog_FullMethodName             = "/platform.nsi.v1.NsiService/GetFullCatalog"
 )
 
 // NsiServiceClient is the client API for NsiService service.
@@ -53,9 +52,6 @@ type NsiServiceClient interface {
 	ValidateGroupAndCategories(ctx context.Context, in *ValidateGroupAndCategoriesRequest, opts ...grpc.CallOption) (*ValidateGroupAndCategoriesResponse, error)
 	GetAppVersion(ctx context.Context, in *GetAppVersionRequest, opts ...grpc.CallOption) (*GetAppVersionResponse, error)
 	GetConfig(ctx context.Context, in *GetConfigRequest, opts ...grpc.CallOption) (*GetConfigResponse, error)
-	// Full catalog in one call (marks→models→generations, groups→categories).
-	// Assembled from in-memory/Redis cache on the NSI side.
-	GetFullCatalog(ctx context.Context, in *GetFullCatalogRequest, opts ...grpc.CallOption) (*GetFullCatalogResponse, error)
 }
 
 type nsiServiceClient struct {
@@ -196,16 +192,6 @@ func (c *nsiServiceClient) GetConfig(ctx context.Context, in *GetConfigRequest, 
 	return out, nil
 }
 
-func (c *nsiServiceClient) GetFullCatalog(ctx context.Context, in *GetFullCatalogRequest, opts ...grpc.CallOption) (*GetFullCatalogResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetFullCatalogResponse)
-	err := c.cc.Invoke(ctx, NsiService_GetFullCatalog_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // NsiServiceServer is the server API for NsiService service.
 // All implementations must embed UnimplementedNsiServiceServer
 // for forward compatibility.
@@ -224,9 +210,6 @@ type NsiServiceServer interface {
 	ValidateGroupAndCategories(context.Context, *ValidateGroupAndCategoriesRequest) (*ValidateGroupAndCategoriesResponse, error)
 	GetAppVersion(context.Context, *GetAppVersionRequest) (*GetAppVersionResponse, error)
 	GetConfig(context.Context, *GetConfigRequest) (*GetConfigResponse, error)
-	// Full catalog in one call (marks→models→generations, groups→categories).
-	// Assembled from in-memory/Redis cache on the NSI side.
-	GetFullCatalog(context.Context, *GetFullCatalogRequest) (*GetFullCatalogResponse, error)
 	mustEmbedUnimplementedNsiServiceServer()
 }
 
@@ -275,9 +258,6 @@ func (UnimplementedNsiServiceServer) GetAppVersion(context.Context, *GetAppVersi
 }
 func (UnimplementedNsiServiceServer) GetConfig(context.Context, *GetConfigRequest) (*GetConfigResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetConfig not implemented")
-}
-func (UnimplementedNsiServiceServer) GetFullCatalog(context.Context, *GetFullCatalogRequest) (*GetFullCatalogResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetFullCatalog not implemented")
 }
 func (UnimplementedNsiServiceServer) mustEmbedUnimplementedNsiServiceServer() {}
 func (UnimplementedNsiServiceServer) testEmbeddedByValue()                    {}
@@ -534,24 +514,6 @@ func _NsiService_GetConfig_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NsiService_GetFullCatalog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetFullCatalogRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(NsiServiceServer).GetFullCatalog(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: NsiService_GetFullCatalog_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NsiServiceServer).GetFullCatalog(ctx, req.(*GetFullCatalogRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // NsiService_ServiceDesc is the grpc.ServiceDesc for NsiService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -610,10 +572,6 @@ var NsiService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetConfig",
 			Handler:    _NsiService_GetConfig_Handler,
-		},
-		{
-			MethodName: "GetFullCatalog",
-			Handler:    _NsiService_GetFullCatalog_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
