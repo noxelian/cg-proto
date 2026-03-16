@@ -52,6 +52,13 @@ service OrganizationService {
 
   // Subscription info (for payment service)
   rpc GetOrganizationSubscriptionInfo(GetOrgSubscriptionInfoRequest) returns (GetOrgSubscriptionInfoResponse);
+
+  // Platform roles (CTOgram employee roles)
+  rpc SetPlatformRole(SetPlatformRoleRequest) returns (SetPlatformRoleResponse);
+  rpc GetPlatformRole(GetPlatformRoleRequest) returns (GetPlatformRoleResponse);
+  rpc SetPlatformOrgAccess(SetPlatformOrgAccessRequest) returns (SetPlatformOrgAccessResponse);
+  rpc GetPlatformOrgAccess(GetPlatformOrgAccessRequest) returns (GetPlatformOrgAccessResponse);
+  rpc CheckPlatformRole(CheckPlatformRoleRequest) returns (CheckPlatformRoleResponse);
 }
 
 enum OrganizationType {
@@ -71,6 +78,14 @@ enum MemberStatus {
   MEMBER_STATUS_UNSPECIFIED = 0;
   MEMBER_STATUS_ACTIVE = 1;
   MEMBER_STATUS_FIRED = 2;
+}
+
+enum PlatformRole {
+  PLATFORM_ROLE_UNSPECIFIED = 0;
+  PLATFORM_ROLE_MECHANIC = 1;      // MC — mechanic, scoped to assigned orgs
+  PLATFORM_ROLE_RECEPTIONIST = 2;  // MP — receptionist, platform-wide
+  PLATFORM_ROLE_PARTS_MANAGER = 3; // MZ — parts manager, platform-wide
+  PLATFORM_ROLE_ADMIN = 4;         // Admin CTOgram — full access
 }
 
 message Organization {
@@ -446,4 +461,51 @@ message GetOrgSubscriptionInfoResponse {
   int32 posts_count = 4;
   bool is_rented = 5;
   OrganizationType org_type = 6;
+}
+
+// =============================================
+// Platform Roles (CTOgram employee roles)
+// =============================================
+
+message SetPlatformRoleRequest {
+  int64 user_id = 1;
+  PlatformRole role = 2;
+}
+
+message SetPlatformRoleResponse {
+  bool success = 1;
+}
+
+message GetPlatformRoleRequest {
+  int64 user_id = 1;
+}
+
+message GetPlatformRoleResponse {
+  PlatformRole role = 1;
+}
+
+message SetPlatformOrgAccessRequest {
+  int64 user_id = 1;
+  repeated string org_ids = 2; // replaces entire list
+}
+
+message SetPlatformOrgAccessResponse {
+  bool success = 1;
+}
+
+message GetPlatformOrgAccessRequest {
+  int64 user_id = 1;
+}
+
+message GetPlatformOrgAccessResponse {
+  repeated string org_ids = 1;
+}
+
+message CheckPlatformRoleRequest {
+  int64 user_id = 1;
+}
+
+message CheckPlatformRoleResponse {
+  PlatformRole role = 1;
+  repeated string accessible_org_ids = 2; // populated only for MECHANIC
 }

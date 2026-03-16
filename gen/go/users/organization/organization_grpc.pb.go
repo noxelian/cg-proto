@@ -41,6 +41,11 @@ const (
 	OrganizationService_GetOrgProfile_FullMethodName                   = "/users.organization.v1.OrganizationService/GetOrgProfile"
 	OrganizationService_UpdateOrgProfile_FullMethodName                = "/users.organization.v1.OrganizationService/UpdateOrgProfile"
 	OrganizationService_GetOrganizationSubscriptionInfo_FullMethodName = "/users.organization.v1.OrganizationService/GetOrganizationSubscriptionInfo"
+	OrganizationService_SetPlatformRole_FullMethodName                 = "/users.organization.v1.OrganizationService/SetPlatformRole"
+	OrganizationService_GetPlatformRole_FullMethodName                 = "/users.organization.v1.OrganizationService/GetPlatformRole"
+	OrganizationService_SetPlatformOrgAccess_FullMethodName            = "/users.organization.v1.OrganizationService/SetPlatformOrgAccess"
+	OrganizationService_GetPlatformOrgAccess_FullMethodName            = "/users.organization.v1.OrganizationService/GetPlatformOrgAccess"
+	OrganizationService_CheckPlatformRole_FullMethodName               = "/users.organization.v1.OrganizationService/CheckPlatformRole"
 )
 
 // OrganizationServiceClient is the client API for OrganizationService service.
@@ -81,6 +86,12 @@ type OrganizationServiceClient interface {
 	UpdateOrgProfile(ctx context.Context, in *UpdateOrgProfileRequest, opts ...grpc.CallOption) (*UpdateOrgProfileResponse, error)
 	// Subscription info (for payment service)
 	GetOrganizationSubscriptionInfo(ctx context.Context, in *GetOrgSubscriptionInfoRequest, opts ...grpc.CallOption) (*GetOrgSubscriptionInfoResponse, error)
+	// Platform roles (CTOgram employee roles)
+	SetPlatformRole(ctx context.Context, in *SetPlatformRoleRequest, opts ...grpc.CallOption) (*SetPlatformRoleResponse, error)
+	GetPlatformRole(ctx context.Context, in *GetPlatformRoleRequest, opts ...grpc.CallOption) (*GetPlatformRoleResponse, error)
+	SetPlatformOrgAccess(ctx context.Context, in *SetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*SetPlatformOrgAccessResponse, error)
+	GetPlatformOrgAccess(ctx context.Context, in *GetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*GetPlatformOrgAccessResponse, error)
+	CheckPlatformRole(ctx context.Context, in *CheckPlatformRoleRequest, opts ...grpc.CallOption) (*CheckPlatformRoleResponse, error)
 }
 
 type organizationServiceClient struct {
@@ -311,6 +322,56 @@ func (c *organizationServiceClient) GetOrganizationSubscriptionInfo(ctx context.
 	return out, nil
 }
 
+func (c *organizationServiceClient) SetPlatformRole(ctx context.Context, in *SetPlatformRoleRequest, opts ...grpc.CallOption) (*SetPlatformRoleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetPlatformRoleResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_SetPlatformRole_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) GetPlatformRole(ctx context.Context, in *GetPlatformRoleRequest, opts ...grpc.CallOption) (*GetPlatformRoleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPlatformRoleResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_GetPlatformRole_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) SetPlatformOrgAccess(ctx context.Context, in *SetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*SetPlatformOrgAccessResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetPlatformOrgAccessResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_SetPlatformOrgAccess_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) GetPlatformOrgAccess(ctx context.Context, in *GetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*GetPlatformOrgAccessResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPlatformOrgAccessResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_GetPlatformOrgAccess_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) CheckPlatformRole(ctx context.Context, in *CheckPlatformRoleRequest, opts ...grpc.CallOption) (*CheckPlatformRoleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckPlatformRoleResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_CheckPlatformRole_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationServiceServer is the server API for OrganizationService service.
 // All implementations must embed UnimplementedOrganizationServiceServer
 // for forward compatibility.
@@ -349,6 +410,12 @@ type OrganizationServiceServer interface {
 	UpdateOrgProfile(context.Context, *UpdateOrgProfileRequest) (*UpdateOrgProfileResponse, error)
 	// Subscription info (for payment service)
 	GetOrganizationSubscriptionInfo(context.Context, *GetOrgSubscriptionInfoRequest) (*GetOrgSubscriptionInfoResponse, error)
+	// Platform roles (CTOgram employee roles)
+	SetPlatformRole(context.Context, *SetPlatformRoleRequest) (*SetPlatformRoleResponse, error)
+	GetPlatformRole(context.Context, *GetPlatformRoleRequest) (*GetPlatformRoleResponse, error)
+	SetPlatformOrgAccess(context.Context, *SetPlatformOrgAccessRequest) (*SetPlatformOrgAccessResponse, error)
+	GetPlatformOrgAccess(context.Context, *GetPlatformOrgAccessRequest) (*GetPlatformOrgAccessResponse, error)
+	CheckPlatformRole(context.Context, *CheckPlatformRoleRequest) (*CheckPlatformRoleResponse, error)
 	mustEmbedUnimplementedOrganizationServiceServer()
 }
 
@@ -424,6 +491,21 @@ func (UnimplementedOrganizationServiceServer) UpdateOrgProfile(context.Context, 
 }
 func (UnimplementedOrganizationServiceServer) GetOrganizationSubscriptionInfo(context.Context, *GetOrgSubscriptionInfoRequest) (*GetOrgSubscriptionInfoResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrganizationSubscriptionInfo not implemented")
+}
+func (UnimplementedOrganizationServiceServer) SetPlatformRole(context.Context, *SetPlatformRoleRequest) (*SetPlatformRoleResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetPlatformRole not implemented")
+}
+func (UnimplementedOrganizationServiceServer) GetPlatformRole(context.Context, *GetPlatformRoleRequest) (*GetPlatformRoleResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPlatformRole not implemented")
+}
+func (UnimplementedOrganizationServiceServer) SetPlatformOrgAccess(context.Context, *SetPlatformOrgAccessRequest) (*SetPlatformOrgAccessResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetPlatformOrgAccess not implemented")
+}
+func (UnimplementedOrganizationServiceServer) GetPlatformOrgAccess(context.Context, *GetPlatformOrgAccessRequest) (*GetPlatformOrgAccessResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPlatformOrgAccess not implemented")
+}
+func (UnimplementedOrganizationServiceServer) CheckPlatformRole(context.Context, *CheckPlatformRoleRequest) (*CheckPlatformRoleResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckPlatformRole not implemented")
 }
 func (UnimplementedOrganizationServiceServer) mustEmbedUnimplementedOrganizationServiceServer() {}
 func (UnimplementedOrganizationServiceServer) testEmbeddedByValue()                             {}
@@ -842,6 +924,96 @@ func _OrganizationService_GetOrganizationSubscriptionInfo_Handler(srv interface{
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationService_SetPlatformRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetPlatformRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).SetPlatformRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_SetPlatformRole_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).SetPlatformRole(ctx, req.(*SetPlatformRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_GetPlatformRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPlatformRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).GetPlatformRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_GetPlatformRole_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).GetPlatformRole(ctx, req.(*GetPlatformRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_SetPlatformOrgAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetPlatformOrgAccessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).SetPlatformOrgAccess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_SetPlatformOrgAccess_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).SetPlatformOrgAccess(ctx, req.(*SetPlatformOrgAccessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_GetPlatformOrgAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPlatformOrgAccessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).GetPlatformOrgAccess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_GetPlatformOrgAccess_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).GetPlatformOrgAccess(ctx, req.(*GetPlatformOrgAccessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_CheckPlatformRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckPlatformRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).CheckPlatformRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_CheckPlatformRole_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).CheckPlatformRole(ctx, req.(*CheckPlatformRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrganizationService_ServiceDesc is the grpc.ServiceDesc for OrganizationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -936,6 +1108,26 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOrganizationSubscriptionInfo",
 			Handler:    _OrganizationService_GetOrganizationSubscriptionInfo_Handler,
+		},
+		{
+			MethodName: "SetPlatformRole",
+			Handler:    _OrganizationService_SetPlatformRole_Handler,
+		},
+		{
+			MethodName: "GetPlatformRole",
+			Handler:    _OrganizationService_GetPlatformRole_Handler,
+		},
+		{
+			MethodName: "SetPlatformOrgAccess",
+			Handler:    _OrganizationService_SetPlatformOrgAccess_Handler,
+		},
+		{
+			MethodName: "GetPlatformOrgAccess",
+			Handler:    _OrganizationService_GetPlatformOrgAccess_Handler,
+		},
+		{
+			MethodName: "CheckPlatformRole",
+			Handler:    _OrganizationService_CheckPlatformRole_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
