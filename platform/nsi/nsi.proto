@@ -23,6 +23,10 @@ service NsiService {
   
   rpc GetAppVersion(GetAppVersionRequest) returns (GetAppVersionResponse);
   rpc GetConfig(GetConfigRequest) returns (GetConfigResponse);
+
+  // Full catalog in one call (marks→models→generations, groups→categories).
+  // Assembled from in-memory/Redis cache on the NSI side.
+  rpc GetFullCatalog(GetFullCatalogRequest) returns (GetFullCatalogResponse);
 }
 
 message City {
@@ -198,5 +202,38 @@ message ValidateGroupAndCategoriesRequest {
 message ValidateGroupAndCategoriesResponse {
   bool valid = 1;
   string error_message = 2;  // Populated if invalid
+}
+
+// ==================== Full Catalog ====================
+
+message CarModelWithGenerations {
+  int32 id = 1;
+  int32 mark_id = 2;
+  string name = 3;
+  repeated CarGeneration generations = 4;
+}
+
+message CarMarkWithModels {
+  int32 id = 1;
+  string name = 2;
+  string logo_url = 3;
+  bool is_popular = 4;
+  repeated CarModelWithGenerations models = 5;
+}
+
+message ServiceGroupWithCategories {
+  int64 id = 1;
+  string name = 2;
+  string slug = 3;
+  string icon = 4;
+  int32 sort_order = 5;
+  repeated ServiceCategory categories = 6;
+}
+
+message GetFullCatalogRequest {}
+
+message GetFullCatalogResponse {
+  repeated CarMarkWithModels car_marks = 1;
+  repeated ServiceGroupWithCategories service_groups = 2;
 }
 
