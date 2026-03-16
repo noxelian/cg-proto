@@ -45,6 +45,9 @@ service UserService {
   
   // DeleteAccount deletes user account
   rpc DeleteAccount(DeleteAccountRequest) returns (DeleteAccountResponse);
+
+  // ListUsers returns a paginated list of users (admin-only)
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
 }
 
 message User {
@@ -200,4 +203,16 @@ message DeleteAccountRequest {
 
 message DeleteAccountResponse {
   bool success = 1;
+}
+
+// ListUsers (admin)
+message ListUsersRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  string search = 3;  // Search by phone or name
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+  int32 total = 2;
 }
