@@ -1802,6 +1802,322 @@ func (x *ValidateGroupAndCategoriesResponse) GetErrorMessage() string {
 	return ""
 }
 
+type CarModelWithGenerations struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	MarkId        int32                  `protobuf:"varint,2,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Generations   []*CarGeneration       `protobuf:"bytes,4,rep,name=generations,proto3" json:"generations,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CarModelWithGenerations) Reset() {
+	*x = CarModelWithGenerations{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CarModelWithGenerations) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CarModelWithGenerations) ProtoMessage() {}
+
+func (x *CarModelWithGenerations) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CarModelWithGenerations.ProtoReflect.Descriptor instead.
+func (*CarModelWithGenerations) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *CarModelWithGenerations) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *CarModelWithGenerations) GetMarkId() int32 {
+	if x != nil {
+		return x.MarkId
+	}
+	return 0
+}
+
+func (x *CarModelWithGenerations) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CarModelWithGenerations) GetGenerations() []*CarGeneration {
+	if x != nil {
+		return x.Generations
+	}
+	return nil
+}
+
+type CarMarkWithModels struct {
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Id            int32                      `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                     `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	LogoUrl       string                     `protobuf:"bytes,3,opt,name=logo_url,json=logoUrl,proto3" json:"logo_url,omitempty"`
+	IsPopular     bool                       `protobuf:"varint,4,opt,name=is_popular,json=isPopular,proto3" json:"is_popular,omitempty"`
+	Models        []*CarModelWithGenerations `protobuf:"bytes,5,rep,name=models,proto3" json:"models,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CarMarkWithModels) Reset() {
+	*x = CarMarkWithModels{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CarMarkWithModels) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CarMarkWithModels) ProtoMessage() {}
+
+func (x *CarMarkWithModels) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CarMarkWithModels.ProtoReflect.Descriptor instead.
+func (*CarMarkWithModels) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *CarMarkWithModels) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *CarMarkWithModels) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CarMarkWithModels) GetLogoUrl() string {
+	if x != nil {
+		return x.LogoUrl
+	}
+	return ""
+}
+
+func (x *CarMarkWithModels) GetIsPopular() bool {
+	if x != nil {
+		return x.IsPopular
+	}
+	return false
+}
+
+func (x *CarMarkWithModels) GetModels() []*CarModelWithGenerations {
+	if x != nil {
+		return x.Models
+	}
+	return nil
+}
+
+type ServiceGroupWithCategories struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Slug          string                 `protobuf:"bytes,3,opt,name=slug,proto3" json:"slug,omitempty"`
+	Icon          string                 `protobuf:"bytes,4,opt,name=icon,proto3" json:"icon,omitempty"`
+	SortOrder     int32                  `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	Categories    []*ServiceCategory     `protobuf:"bytes,6,rep,name=categories,proto3" json:"categories,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ServiceGroupWithCategories) Reset() {
+	*x = ServiceGroupWithCategories{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ServiceGroupWithCategories) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ServiceGroupWithCategories) ProtoMessage() {}
+
+func (x *ServiceGroupWithCategories) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ServiceGroupWithCategories.ProtoReflect.Descriptor instead.
+func (*ServiceGroupWithCategories) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *ServiceGroupWithCategories) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ServiceGroupWithCategories) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ServiceGroupWithCategories) GetSlug() string {
+	if x != nil {
+		return x.Slug
+	}
+	return ""
+}
+
+func (x *ServiceGroupWithCategories) GetIcon() string {
+	if x != nil {
+		return x.Icon
+	}
+	return ""
+}
+
+func (x *ServiceGroupWithCategories) GetSortOrder() int32 {
+	if x != nil {
+		return x.SortOrder
+	}
+	return 0
+}
+
+func (x *ServiceGroupWithCategories) GetCategories() []*ServiceCategory {
+	if x != nil {
+		return x.Categories
+	}
+	return nil
+}
+
+type GetFullCatalogRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetFullCatalogRequest) Reset() {
+	*x = GetFullCatalogRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetFullCatalogRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetFullCatalogRequest) ProtoMessage() {}
+
+func (x *GetFullCatalogRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetFullCatalogRequest.ProtoReflect.Descriptor instead.
+func (*GetFullCatalogRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{37}
+}
+
+type GetFullCatalogResponse struct {
+	state         protoimpl.MessageState        `protogen:"open.v1"`
+	CarMarks      []*CarMarkWithModels          `protobuf:"bytes,1,rep,name=car_marks,json=carMarks,proto3" json:"car_marks,omitempty"`
+	ServiceGroups []*ServiceGroupWithCategories `protobuf:"bytes,2,rep,name=service_groups,json=serviceGroups,proto3" json:"service_groups,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetFullCatalogResponse) Reset() {
+	*x = GetFullCatalogResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetFullCatalogResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetFullCatalogResponse) ProtoMessage() {}
+
+func (x *GetFullCatalogResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetFullCatalogResponse.ProtoReflect.Descriptor instead.
+func (*GetFullCatalogResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *GetFullCatalogResponse) GetCarMarks() []*CarMarkWithModels {
+	if x != nil {
+		return x.CarMarks
+	}
+	return nil
+}
+
+func (x *GetFullCatalogResponse) GetServiceGroups() []*ServiceGroupWithCategories {
+	if x != nil {
+		return x.ServiceGroups
+	}
+	return nil
+}
+
 var File_platform_nsi_nsi_proto protoreflect.FileDescriptor
 
 const file_platform_nsi_nsi_proto_rawDesc = "" +
@@ -1923,7 +2239,33 @@ const file_platform_nsi_nsi_proto_rawDesc = "" +
 	"\fcategory_ids\x18\x02 \x03(\x03R\vcategoryIds\"_\n" +
 	"\"ValidateGroupAndCategoriesResponse\x12\x14\n" +
 	"\x05valid\x18\x01 \x01(\bR\x05valid\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage2\x94\n" +
+	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"\x98\x01\n" +
+	"\x17CarModelWithGenerations\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
+	"\amark_id\x18\x02 \x01(\x05R\x06markId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12@\n" +
+	"\vgenerations\x18\x04 \x03(\v2\x1e.platform.nsi.v1.CarGenerationR\vgenerations\"\xb3\x01\n" +
+	"\x11CarMarkWithModels\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x19\n" +
+	"\blogo_url\x18\x03 \x01(\tR\alogoUrl\x12\x1d\n" +
+	"\n" +
+	"is_popular\x18\x04 \x01(\bR\tisPopular\x12@\n" +
+	"\x06models\x18\x05 \x03(\v2(.platform.nsi.v1.CarModelWithGenerationsR\x06models\"\xc9\x01\n" +
+	"\x1aServiceGroupWithCategories\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
+	"\x04slug\x18\x03 \x01(\tR\x04slug\x12\x12\n" +
+	"\x04icon\x18\x04 \x01(\tR\x04icon\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\x05 \x01(\x05R\tsortOrder\x12@\n" +
+	"\n" +
+	"categories\x18\x06 \x03(\v2 .platform.nsi.v1.ServiceCategoryR\n" +
+	"categories\"\x17\n" +
+	"\x15GetFullCatalogRequest\"\xad\x01\n" +
+	"\x16GetFullCatalogResponse\x12?\n" +
+	"\tcar_marks\x18\x01 \x03(\v2\".platform.nsi.v1.CarMarkWithModelsR\bcarMarks\x12R\n" +
+	"\x0eservice_groups\x18\x02 \x03(\v2+.platform.nsi.v1.ServiceGroupWithCategoriesR\rserviceGroups2\xf7\n" +
 	"\n" +
 	"\n" +
 	"NsiService\x12R\n" +
@@ -1939,7 +2281,8 @@ const file_platform_nsi_nsi_proto_rawDesc = "" +
 	"\x12GetServiceCategory\x12*.platform.nsi.v1.GetServiceCategoryRequest\x1a+.platform.nsi.v1.GetServiceCategoryResponse\x12\x85\x01\n" +
 	"\x1aValidateGroupAndCategories\x122.platform.nsi.v1.ValidateGroupAndCategoriesRequest\x1a3.platform.nsi.v1.ValidateGroupAndCategoriesResponse\x12^\n" +
 	"\rGetAppVersion\x12%.platform.nsi.v1.GetAppVersionRequest\x1a&.platform.nsi.v1.GetAppVersionResponse\x12R\n" +
-	"\tGetConfig\x12!.platform.nsi.v1.GetConfigRequest\x1a\".platform.nsi.v1.GetConfigResponseB6Z4gitlab.com/xakpro/cg-proto/gen/go/platform/nsi;nsiv1b\x06proto3"
+	"\tGetConfig\x12!.platform.nsi.v1.GetConfigRequest\x1a\".platform.nsi.v1.GetConfigResponse\x12a\n" +
+	"\x0eGetFullCatalog\x12&.platform.nsi.v1.GetFullCatalogRequest\x1a'.platform.nsi.v1.GetFullCatalogResponseB6Z4gitlab.com/xakpro/cg-proto/gen/go/platform/nsi;nsiv1b\x06proto3"
 
 var (
 	file_platform_nsi_nsi_proto_rawDescOnce sync.Once
@@ -1953,7 +2296,7 @@ func file_platform_nsi_nsi_proto_rawDescGZIP() []byte {
 	return file_platform_nsi_nsi_proto_rawDescData
 }
 
-var file_platform_nsi_nsi_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
+var file_platform_nsi_nsi_proto_msgTypes = make([]protoimpl.MessageInfo, 39)
 var file_platform_nsi_nsi_proto_goTypes = []any{
 	(*City)(nil),                               // 0: platform.nsi.v1.City
 	(*CarMark)(nil),                            // 1: platform.nsi.v1.CarMark
@@ -1989,6 +2332,11 @@ var file_platform_nsi_nsi_proto_goTypes = []any{
 	(*GetServiceCategoryResponse)(nil),         // 31: platform.nsi.v1.GetServiceCategoryResponse
 	(*ValidateGroupAndCategoriesRequest)(nil),  // 32: platform.nsi.v1.ValidateGroupAndCategoriesRequest
 	(*ValidateGroupAndCategoriesResponse)(nil), // 33: platform.nsi.v1.ValidateGroupAndCategoriesResponse
+	(*CarModelWithGenerations)(nil),            // 34: platform.nsi.v1.CarModelWithGenerations
+	(*CarMarkWithModels)(nil),                  // 35: platform.nsi.v1.CarMarkWithModels
+	(*ServiceGroupWithCategories)(nil),         // 36: platform.nsi.v1.ServiceGroupWithCategories
+	(*GetFullCatalogRequest)(nil),              // 37: platform.nsi.v1.GetFullCatalogRequest
+	(*GetFullCatalogResponse)(nil),             // 38: platform.nsi.v1.GetFullCatalogResponse
 }
 var file_platform_nsi_nsi_proto_depIdxs = []int32{
 	0,  // 0: platform.nsi.v1.GetCitiesResponse.cities:type_name -> platform.nsi.v1.City
@@ -2002,37 +2350,44 @@ var file_platform_nsi_nsi_proto_depIdxs = []int32{
 	5,  // 8: platform.nsi.v1.GetServiceGroupsResponse.groups:type_name -> platform.nsi.v1.ServiceGroup
 	6,  // 9: platform.nsi.v1.GetServiceCategoriesResponse.categories:type_name -> platform.nsi.v1.ServiceCategory
 	6,  // 10: platform.nsi.v1.GetServiceCategoryResponse.category:type_name -> platform.nsi.v1.ServiceCategory
-	8,  // 11: platform.nsi.v1.NsiService.GetCities:input_type -> platform.nsi.v1.GetCitiesRequest
-	10, // 12: platform.nsi.v1.NsiService.GetCity:input_type -> platform.nsi.v1.GetCityRequest
-	12, // 13: platform.nsi.v1.NsiService.GetCarMarks:input_type -> platform.nsi.v1.GetCarMarksRequest
-	14, // 14: platform.nsi.v1.NsiService.GetCarModels:input_type -> platform.nsi.v1.GetCarModelsRequest
-	16, // 15: platform.nsi.v1.NsiService.GetCarGenerations:input_type -> platform.nsi.v1.GetCarGenerationsRequest
-	18, // 16: platform.nsi.v1.NsiService.GetCategories:input_type -> platform.nsi.v1.GetCategoriesRequest
-	20, // 17: platform.nsi.v1.NsiService.GetCategory:input_type -> platform.nsi.v1.GetCategoryRequest
-	26, // 18: platform.nsi.v1.NsiService.GetServiceGroups:input_type -> platform.nsi.v1.GetServiceGroupsRequest
-	28, // 19: platform.nsi.v1.NsiService.GetServiceCategories:input_type -> platform.nsi.v1.GetServiceCategoriesRequest
-	30, // 20: platform.nsi.v1.NsiService.GetServiceCategory:input_type -> platform.nsi.v1.GetServiceCategoryRequest
-	32, // 21: platform.nsi.v1.NsiService.ValidateGroupAndCategories:input_type -> platform.nsi.v1.ValidateGroupAndCategoriesRequest
-	22, // 22: platform.nsi.v1.NsiService.GetAppVersion:input_type -> platform.nsi.v1.GetAppVersionRequest
-	24, // 23: platform.nsi.v1.NsiService.GetConfig:input_type -> platform.nsi.v1.GetConfigRequest
-	9,  // 24: platform.nsi.v1.NsiService.GetCities:output_type -> platform.nsi.v1.GetCitiesResponse
-	11, // 25: platform.nsi.v1.NsiService.GetCity:output_type -> platform.nsi.v1.GetCityResponse
-	13, // 26: platform.nsi.v1.NsiService.GetCarMarks:output_type -> platform.nsi.v1.GetCarMarksResponse
-	15, // 27: platform.nsi.v1.NsiService.GetCarModels:output_type -> platform.nsi.v1.GetCarModelsResponse
-	17, // 28: platform.nsi.v1.NsiService.GetCarGenerations:output_type -> platform.nsi.v1.GetCarGenerationsResponse
-	19, // 29: platform.nsi.v1.NsiService.GetCategories:output_type -> platform.nsi.v1.GetCategoriesResponse
-	21, // 30: platform.nsi.v1.NsiService.GetCategory:output_type -> platform.nsi.v1.GetCategoryResponse
-	27, // 31: platform.nsi.v1.NsiService.GetServiceGroups:output_type -> platform.nsi.v1.GetServiceGroupsResponse
-	29, // 32: platform.nsi.v1.NsiService.GetServiceCategories:output_type -> platform.nsi.v1.GetServiceCategoriesResponse
-	31, // 33: platform.nsi.v1.NsiService.GetServiceCategory:output_type -> platform.nsi.v1.GetServiceCategoryResponse
-	33, // 34: platform.nsi.v1.NsiService.ValidateGroupAndCategories:output_type -> platform.nsi.v1.ValidateGroupAndCategoriesResponse
-	23, // 35: platform.nsi.v1.NsiService.GetAppVersion:output_type -> platform.nsi.v1.GetAppVersionResponse
-	25, // 36: platform.nsi.v1.NsiService.GetConfig:output_type -> platform.nsi.v1.GetConfigResponse
-	24, // [24:37] is the sub-list for method output_type
-	11, // [11:24] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	3,  // 11: platform.nsi.v1.CarModelWithGenerations.generations:type_name -> platform.nsi.v1.CarGeneration
+	34, // 12: platform.nsi.v1.CarMarkWithModels.models:type_name -> platform.nsi.v1.CarModelWithGenerations
+	6,  // 13: platform.nsi.v1.ServiceGroupWithCategories.categories:type_name -> platform.nsi.v1.ServiceCategory
+	35, // 14: platform.nsi.v1.GetFullCatalogResponse.car_marks:type_name -> platform.nsi.v1.CarMarkWithModels
+	36, // 15: platform.nsi.v1.GetFullCatalogResponse.service_groups:type_name -> platform.nsi.v1.ServiceGroupWithCategories
+	8,  // 16: platform.nsi.v1.NsiService.GetCities:input_type -> platform.nsi.v1.GetCitiesRequest
+	10, // 17: platform.nsi.v1.NsiService.GetCity:input_type -> platform.nsi.v1.GetCityRequest
+	12, // 18: platform.nsi.v1.NsiService.GetCarMarks:input_type -> platform.nsi.v1.GetCarMarksRequest
+	14, // 19: platform.nsi.v1.NsiService.GetCarModels:input_type -> platform.nsi.v1.GetCarModelsRequest
+	16, // 20: platform.nsi.v1.NsiService.GetCarGenerations:input_type -> platform.nsi.v1.GetCarGenerationsRequest
+	18, // 21: platform.nsi.v1.NsiService.GetCategories:input_type -> platform.nsi.v1.GetCategoriesRequest
+	20, // 22: platform.nsi.v1.NsiService.GetCategory:input_type -> platform.nsi.v1.GetCategoryRequest
+	26, // 23: platform.nsi.v1.NsiService.GetServiceGroups:input_type -> platform.nsi.v1.GetServiceGroupsRequest
+	28, // 24: platform.nsi.v1.NsiService.GetServiceCategories:input_type -> platform.nsi.v1.GetServiceCategoriesRequest
+	30, // 25: platform.nsi.v1.NsiService.GetServiceCategory:input_type -> platform.nsi.v1.GetServiceCategoryRequest
+	32, // 26: platform.nsi.v1.NsiService.ValidateGroupAndCategories:input_type -> platform.nsi.v1.ValidateGroupAndCategoriesRequest
+	22, // 27: platform.nsi.v1.NsiService.GetAppVersion:input_type -> platform.nsi.v1.GetAppVersionRequest
+	24, // 28: platform.nsi.v1.NsiService.GetConfig:input_type -> platform.nsi.v1.GetConfigRequest
+	37, // 29: platform.nsi.v1.NsiService.GetFullCatalog:input_type -> platform.nsi.v1.GetFullCatalogRequest
+	9,  // 30: platform.nsi.v1.NsiService.GetCities:output_type -> platform.nsi.v1.GetCitiesResponse
+	11, // 31: platform.nsi.v1.NsiService.GetCity:output_type -> platform.nsi.v1.GetCityResponse
+	13, // 32: platform.nsi.v1.NsiService.GetCarMarks:output_type -> platform.nsi.v1.GetCarMarksResponse
+	15, // 33: platform.nsi.v1.NsiService.GetCarModels:output_type -> platform.nsi.v1.GetCarModelsResponse
+	17, // 34: platform.nsi.v1.NsiService.GetCarGenerations:output_type -> platform.nsi.v1.GetCarGenerationsResponse
+	19, // 35: platform.nsi.v1.NsiService.GetCategories:output_type -> platform.nsi.v1.GetCategoriesResponse
+	21, // 36: platform.nsi.v1.NsiService.GetCategory:output_type -> platform.nsi.v1.GetCategoryResponse
+	27, // 37: platform.nsi.v1.NsiService.GetServiceGroups:output_type -> platform.nsi.v1.GetServiceGroupsResponse
+	29, // 38: platform.nsi.v1.NsiService.GetServiceCategories:output_type -> platform.nsi.v1.GetServiceCategoriesResponse
+	31, // 39: platform.nsi.v1.NsiService.GetServiceCategory:output_type -> platform.nsi.v1.GetServiceCategoryResponse
+	33, // 40: platform.nsi.v1.NsiService.ValidateGroupAndCategories:output_type -> platform.nsi.v1.ValidateGroupAndCategoriesResponse
+	23, // 41: platform.nsi.v1.NsiService.GetAppVersion:output_type -> platform.nsi.v1.GetAppVersionResponse
+	25, // 42: platform.nsi.v1.NsiService.GetConfig:output_type -> platform.nsi.v1.GetConfigResponse
+	38, // 43: platform.nsi.v1.NsiService.GetFullCatalog:output_type -> platform.nsi.v1.GetFullCatalogResponse
+	30, // [30:44] is the sub-list for method output_type
+	16, // [16:30] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_platform_nsi_nsi_proto_init() }
@@ -2046,7 +2401,7 @@ func file_platform_nsi_nsi_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_platform_nsi_nsi_proto_rawDesc), len(file_platform_nsi_nsi_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   34,
+			NumMessages:   39,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
