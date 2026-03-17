@@ -885,7 +885,8 @@ type ListRequestsRequest struct {
 	CarMakeId     int64                  `protobuf:"varint,7,opt,name=car_make_id,json=carMakeId,proto3" json:"car_make_id,omitempty"`
 	Page          int32                  `protobuf:"varint,8,opt,name=page,proto3" json:"page,omitempty"`
 	PageSize      int32                  `protobuf:"varint,9,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	SortBy        string                 `protobuf:"bytes,10,opt,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"` // created_at, published_at
+	SortBy        string                 `protobuf:"bytes,10,opt,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"`                               // created_at, published_at
+	RepairOrderId *int64                 `protobuf:"varint,11,opt,name=repair_order_id,json=repairOrderId,proto3,oneof" json:"repair_order_id,omitempty"` // Filter by linked repair order
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -988,6 +989,13 @@ func (x *ListRequestsRequest) GetSortBy() string {
 		return x.SortBy
 	}
 	return ""
+}
+
+func (x *ListRequestsRequest) GetRepairOrderId() int64 {
+	if x != nil && x.RepairOrderId != nil {
+		return *x.RepairOrderId
+	}
+	return 0
 }
 
 type ListRequestsResponse struct {
@@ -2001,7 +2009,7 @@ const file_services_request_request_proto_rawDesc = "" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\"1\n" +
 	"\x15DeleteRequestResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xdf\x02\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xa0\x03\n" +
 	"\x13ListRequestsRequest\x124\n" +
 	"\x04type\x18\x01 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12:\n" +
 	"\x06status\x18\x02 \x01(\x0e2\".services.request.v1.RequestStatusR\x06status\x12\x17\n" +
@@ -2014,7 +2022,9 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x04page\x18\b \x01(\x05R\x04page\x12\x1b\n" +
 	"\tpage_size\x18\t \x01(\x05R\bpageSize\x12\x17\n" +
 	"\asort_by\x18\n" +
-	" \x01(\tR\x06sortBy\"f\n" +
+	" \x01(\tR\x06sortBy\x12+\n" +
+	"\x0frepair_order_id\x18\v \x01(\x03H\x00R\rrepairOrderId\x88\x01\x01B\x12\n" +
+	"\x10_repair_order_id\"f\n" +
 	"\x14ListRequestsResponse\x128\n" +
 	"\brequests\x18\x01 \x03(\v2\x1c.services.request.v1.RequestR\brequests\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"\xe3\x02\n" +
@@ -2208,6 +2218,7 @@ func file_services_request_request_proto_init() {
 	file_services_request_request_proto_msgTypes[0].OneofWrappers = []any{}
 	file_services_request_request_proto_msgTypes[1].OneofWrappers = []any{}
 	file_services_request_request_proto_msgTypes[5].OneofWrappers = []any{}
+	file_services_request_request_proto_msgTypes[9].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
