@@ -14,6 +14,11 @@ service GarageService {
   rpc UpdateCar(UpdateCarRequest) returns (UpdateCarResponse);
   rpc DeleteCar(DeleteCarRequest) returns (DeleteCarResponse);
 
+  // FindOrCreateCar looks up a car by (user_id + license_plate) or (user_id + vin).
+  // If found, returns existing car. If not found, creates and returns.
+  // Idempotent: unique index on (user_id, license_plate) prevents duplicates.
+  rpc FindOrCreateCar(FindOrCreateCarRequest) returns (FindOrCreateCarResponse);
+
   // Photos
   rpc AddCarPhoto(AddCarPhotoRequest) returns (AddCarPhotoResponse);
   rpc DeleteCarPhoto(DeleteCarPhotoRequest) returns (DeleteCarPhotoResponse);
@@ -169,6 +174,23 @@ message DeleteCarRequest {
 }
 
 message DeleteCarResponse {}
+
+// FindOrCreateCar — idempotent lookup/create by license_plate or VIN
+message FindOrCreateCarRequest {
+  int64  user_id       = 1;
+  string license_plate = 2;  // primary lookup key
+  string vin           = 3;  // fallback lookup key (if license_plate empty)
+  int32  mark_id       = 4;
+  int32  model_id      = 5;
+  int32  generation_id = 6;
+  int32  year          = 7;
+  string color         = 8;
+}
+
+message FindOrCreateCarResponse {
+  Car  car     = 1;
+  bool created = 2;  // true if a new garage entry was created
+}
 
 // ==================== Photos ====================
 

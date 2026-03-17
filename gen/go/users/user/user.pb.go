@@ -1590,6 +1590,119 @@ func (x *DeleteAccountResponse) GetSuccess() bool {
 	return false
 }
 
+// ListUsers (admin)
+type ListUsersRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      int32                  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	Search        string                 `protobuf:"bytes,3,opt,name=search,proto3" json:"search,omitempty"` // Search by phone or name
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUsersRequest) Reset() {
+	*x = ListUsersRequest{}
+	mi := &file_users_user_user_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUsersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUsersRequest) ProtoMessage() {}
+
+func (x *ListUsersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUsersRequest.ProtoReflect.Descriptor instead.
+func (*ListUsersRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *ListUsersRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListUsersRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListUsersRequest) GetSearch() string {
+	if x != nil {
+		return x.Search
+	}
+	return ""
+}
+
+type ListUsersResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Users         []*User                `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUsersResponse) Reset() {
+	*x = ListUsersResponse{}
+	mi := &file_users_user_user_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUsersResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUsersResponse) ProtoMessage() {}
+
+func (x *ListUsersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUsersResponse.ProtoReflect.Descriptor instead.
+func (*ListUsersResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *ListUsersResponse) GetUsers() []*User {
+	if x != nil {
+		return x.Users
+	}
+	return nil
+}
+
+func (x *ListUsersResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
 var File_users_user_user_proto protoreflect.FileDescriptor
 
 const file_users_user_user_proto_rawDesc = "" +
@@ -1704,7 +1817,15 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x14DeleteAccountRequest\x12\x16\n" +
 	"\x06reason\x18\x01 \x01(\tR\x06reason\"1\n" +
 	"\x15DeleteAccountResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess2\xb6\t\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"[\n" +
+	"\x10ListUsersRequest\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x16\n" +
+	"\x06search\x18\x03 \x01(\tR\x06search\"T\n" +
+	"\x11ListUsersResponse\x12)\n" +
+	"\x05users\x18\x01 \x03(\v2\x13.users.user.v1.UserR\x05users\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total2\x86\n" +
+	"\n" +
 	"\vUserService\x12Q\n" +
 	"\n" +
 	"GetProfile\x12 .users.user.v1.GetProfileRequest\x1a!.users.user.v1.GetProfileResponse\x12Z\n" +
@@ -1721,7 +1842,8 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x10UnregisterDevice\x12&.users.user.v1.UnregisterDeviceRequest\x1a'.users.user.v1.UnregisterDeviceResponse\x12Q\n" +
 	"\n" +
 	"GetDevices\x12 .users.user.v1.GetDevicesRequest\x1a!.users.user.v1.GetDevicesResponse\x12Z\n" +
-	"\rDeleteAccount\x12#.users.user.v1.DeleteAccountRequest\x1a$.users.user.v1.DeleteAccountResponseB5Z3gitlab.com/xakpro/cg-proto/gen/go/users/user;userv1b\x06proto3"
+	"\rDeleteAccount\x12#.users.user.v1.DeleteAccountRequest\x1a$.users.user.v1.DeleteAccountResponse\x12N\n" +
+	"\tListUsers\x12\x1f.users.user.v1.ListUsersRequest\x1a .users.user.v1.ListUsersResponseB5Z3gitlab.com/xakpro/cg-proto/gen/go/users/user;userv1b\x06proto3"
 
 var (
 	file_users_user_user_proto_rawDescOnce sync.Once
@@ -1735,7 +1857,7 @@ func file_users_user_user_proto_rawDescGZIP() []byte {
 	return file_users_user_user_proto_rawDescData
 }
 
-var file_users_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
+var file_users_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
 var file_users_user_user_proto_goTypes = []any{
 	(*User)(nil),                        // 0: users.user.v1.User
 	(*UserCounters)(nil),                // 1: users.user.v1.UserCounters
@@ -1767,11 +1889,13 @@ var file_users_user_user_proto_goTypes = []any{
 	(*GetDevicesResponse)(nil),          // 27: users.user.v1.GetDevicesResponse
 	(*DeleteAccountRequest)(nil),        // 28: users.user.v1.DeleteAccountRequest
 	(*DeleteAccountResponse)(nil),       // 29: users.user.v1.DeleteAccountResponse
-	(*timestamppb.Timestamp)(nil),       // 30: google.protobuf.Timestamp
+	(*ListUsersRequest)(nil),            // 30: users.user.v1.ListUsersRequest
+	(*ListUsersResponse)(nil),           // 31: users.user.v1.ListUsersResponse
+	(*timestamppb.Timestamp)(nil),       // 32: google.protobuf.Timestamp
 }
 var file_users_user_user_proto_depIdxs = []int32{
-	30, // 0: users.user.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	30, // 1: users.user.v1.User.updated_at:type_name -> google.protobuf.Timestamp
+	32, // 0: users.user.v1.User.created_at:type_name -> google.protobuf.Timestamp
+	32, // 1: users.user.v1.User.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: users.user.v1.GetProfileResponse.user:type_name -> users.user.v1.User
 	1,  // 3: users.user.v1.GetProfileResponse.counters:type_name -> users.user.v1.UserCounters
 	0,  // 4: users.user.v1.UpdateProfileResponse.user:type_name -> users.user.v1.User
@@ -1782,40 +1906,43 @@ var file_users_user_user_proto_depIdxs = []int32{
 	0,  // 9: users.user.v1.FindOrCreateByPhoneResponse.user:type_name -> users.user.v1.User
 	16, // 10: users.user.v1.GetSettingsResponse.settings:type_name -> users.user.v1.UserSettings
 	16, // 11: users.user.v1.UpdateSettingsResponse.settings:type_name -> users.user.v1.UserSettings
-	30, // 12: users.user.v1.Device.created_at:type_name -> google.protobuf.Timestamp
-	30, // 13: users.user.v1.Device.last_used_at:type_name -> google.protobuf.Timestamp
+	32, // 12: users.user.v1.Device.created_at:type_name -> google.protobuf.Timestamp
+	32, // 13: users.user.v1.Device.last_used_at:type_name -> google.protobuf.Timestamp
 	21, // 14: users.user.v1.GetDevicesResponse.devices:type_name -> users.user.v1.Device
-	2,  // 15: users.user.v1.UserService.GetProfile:input_type -> users.user.v1.GetProfileRequest
-	4,  // 16: users.user.v1.UserService.UpdateProfile:input_type -> users.user.v1.UpdateProfileRequest
-	6,  // 17: users.user.v1.UserService.GetUserByID:input_type -> users.user.v1.GetUserByIDRequest
-	10, // 18: users.user.v1.UserService.GetUserByPhone:input_type -> users.user.v1.GetUserByPhoneRequest
-	12, // 19: users.user.v1.UserService.CreateUser:input_type -> users.user.v1.CreateUserRequest
-	8,  // 20: users.user.v1.UserService.GetUsersByIDs:input_type -> users.user.v1.GetUsersByIDsRequest
-	14, // 21: users.user.v1.UserService.FindOrCreateByPhone:input_type -> users.user.v1.FindOrCreateByPhoneRequest
-	17, // 22: users.user.v1.UserService.GetSettings:input_type -> users.user.v1.GetSettingsRequest
-	19, // 23: users.user.v1.UserService.UpdateSettings:input_type -> users.user.v1.UpdateSettingsRequest
-	22, // 24: users.user.v1.UserService.RegisterDevice:input_type -> users.user.v1.RegisterDeviceRequest
-	24, // 25: users.user.v1.UserService.UnregisterDevice:input_type -> users.user.v1.UnregisterDeviceRequest
-	26, // 26: users.user.v1.UserService.GetDevices:input_type -> users.user.v1.GetDevicesRequest
-	28, // 27: users.user.v1.UserService.DeleteAccount:input_type -> users.user.v1.DeleteAccountRequest
-	3,  // 28: users.user.v1.UserService.GetProfile:output_type -> users.user.v1.GetProfileResponse
-	5,  // 29: users.user.v1.UserService.UpdateProfile:output_type -> users.user.v1.UpdateProfileResponse
-	7,  // 30: users.user.v1.UserService.GetUserByID:output_type -> users.user.v1.GetUserByIDResponse
-	11, // 31: users.user.v1.UserService.GetUserByPhone:output_type -> users.user.v1.GetUserByPhoneResponse
-	13, // 32: users.user.v1.UserService.CreateUser:output_type -> users.user.v1.CreateUserResponse
-	9,  // 33: users.user.v1.UserService.GetUsersByIDs:output_type -> users.user.v1.GetUsersByIDsResponse
-	15, // 34: users.user.v1.UserService.FindOrCreateByPhone:output_type -> users.user.v1.FindOrCreateByPhoneResponse
-	18, // 35: users.user.v1.UserService.GetSettings:output_type -> users.user.v1.GetSettingsResponse
-	20, // 36: users.user.v1.UserService.UpdateSettings:output_type -> users.user.v1.UpdateSettingsResponse
-	23, // 37: users.user.v1.UserService.RegisterDevice:output_type -> users.user.v1.RegisterDeviceResponse
-	25, // 38: users.user.v1.UserService.UnregisterDevice:output_type -> users.user.v1.UnregisterDeviceResponse
-	27, // 39: users.user.v1.UserService.GetDevices:output_type -> users.user.v1.GetDevicesResponse
-	29, // 40: users.user.v1.UserService.DeleteAccount:output_type -> users.user.v1.DeleteAccountResponse
-	28, // [28:41] is the sub-list for method output_type
-	15, // [15:28] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	0,  // 15: users.user.v1.ListUsersResponse.users:type_name -> users.user.v1.User
+	2,  // 16: users.user.v1.UserService.GetProfile:input_type -> users.user.v1.GetProfileRequest
+	4,  // 17: users.user.v1.UserService.UpdateProfile:input_type -> users.user.v1.UpdateProfileRequest
+	6,  // 18: users.user.v1.UserService.GetUserByID:input_type -> users.user.v1.GetUserByIDRequest
+	10, // 19: users.user.v1.UserService.GetUserByPhone:input_type -> users.user.v1.GetUserByPhoneRequest
+	12, // 20: users.user.v1.UserService.CreateUser:input_type -> users.user.v1.CreateUserRequest
+	8,  // 21: users.user.v1.UserService.GetUsersByIDs:input_type -> users.user.v1.GetUsersByIDsRequest
+	14, // 22: users.user.v1.UserService.FindOrCreateByPhone:input_type -> users.user.v1.FindOrCreateByPhoneRequest
+	17, // 23: users.user.v1.UserService.GetSettings:input_type -> users.user.v1.GetSettingsRequest
+	19, // 24: users.user.v1.UserService.UpdateSettings:input_type -> users.user.v1.UpdateSettingsRequest
+	22, // 25: users.user.v1.UserService.RegisterDevice:input_type -> users.user.v1.RegisterDeviceRequest
+	24, // 26: users.user.v1.UserService.UnregisterDevice:input_type -> users.user.v1.UnregisterDeviceRequest
+	26, // 27: users.user.v1.UserService.GetDevices:input_type -> users.user.v1.GetDevicesRequest
+	28, // 28: users.user.v1.UserService.DeleteAccount:input_type -> users.user.v1.DeleteAccountRequest
+	30, // 29: users.user.v1.UserService.ListUsers:input_type -> users.user.v1.ListUsersRequest
+	3,  // 30: users.user.v1.UserService.GetProfile:output_type -> users.user.v1.GetProfileResponse
+	5,  // 31: users.user.v1.UserService.UpdateProfile:output_type -> users.user.v1.UpdateProfileResponse
+	7,  // 32: users.user.v1.UserService.GetUserByID:output_type -> users.user.v1.GetUserByIDResponse
+	11, // 33: users.user.v1.UserService.GetUserByPhone:output_type -> users.user.v1.GetUserByPhoneResponse
+	13, // 34: users.user.v1.UserService.CreateUser:output_type -> users.user.v1.CreateUserResponse
+	9,  // 35: users.user.v1.UserService.GetUsersByIDs:output_type -> users.user.v1.GetUsersByIDsResponse
+	15, // 36: users.user.v1.UserService.FindOrCreateByPhone:output_type -> users.user.v1.FindOrCreateByPhoneResponse
+	18, // 37: users.user.v1.UserService.GetSettings:output_type -> users.user.v1.GetSettingsResponse
+	20, // 38: users.user.v1.UserService.UpdateSettings:output_type -> users.user.v1.UpdateSettingsResponse
+	23, // 39: users.user.v1.UserService.RegisterDevice:output_type -> users.user.v1.RegisterDeviceResponse
+	25, // 40: users.user.v1.UserService.UnregisterDevice:output_type -> users.user.v1.UnregisterDeviceResponse
+	27, // 41: users.user.v1.UserService.GetDevices:output_type -> users.user.v1.GetDevicesResponse
+	29, // 42: users.user.v1.UserService.DeleteAccount:output_type -> users.user.v1.DeleteAccountResponse
+	31, // 43: users.user.v1.UserService.ListUsers:output_type -> users.user.v1.ListUsersResponse
+	30, // [30:44] is the sub-list for method output_type
+	16, // [16:30] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_users_user_user_proto_init() }
@@ -1831,7 +1958,7 @@ func file_users_user_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_users_user_user_proto_rawDesc), len(file_users_user_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   30,
+			NumMessages:   32,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
