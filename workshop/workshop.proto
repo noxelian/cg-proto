@@ -272,9 +272,9 @@ message RepairOrder {
   // Warranty fields
   optional int64 parent_order_id = 38;
   bool is_warranty = 39;
-  // Parts request fields
-  optional string parts_request_id = 40;  // UUID reference to request-service Request
-  optional int64 parts_bid_id = 41;       // Reference to bid-service Bid
+  // Parts requests are now queried via request-service by repair_order_id (N:1)
+  reserved 40, 41;
+  reserved "parts_request_id", "parts_bid_id";
   // User/Garage integration (ADR-repair-order-user-garage)
   int64 user_id       = 42;  // canonical user ref from cg-users (0 = legacy/unknown)
   int64 garage_car_id = 43;  // ref to cg-users user_cars.id (0 = not in garage)
