@@ -175,6 +175,7 @@ message ListRequestsRequest {
   int32 page = 8;
   int32 page_size = 9;
   string sort_by = 10;  // created_at, published_at
+  optional int64 repair_order_id = 11;  // Filter by linked repair order
 }
 
 message ListRequestsResponse {
