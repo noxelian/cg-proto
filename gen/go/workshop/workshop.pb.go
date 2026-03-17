@@ -773,9 +773,6 @@ type RepairOrder struct {
 	// Warranty fields
 	ParentOrderId *int64 `protobuf:"varint,38,opt,name=parent_order_id,json=parentOrderId,proto3,oneof" json:"parent_order_id,omitempty"`
 	IsWarranty    bool   `protobuf:"varint,39,opt,name=is_warranty,json=isWarranty,proto3" json:"is_warranty,omitempty"`
-	// Parts request fields
-	PartsRequestId *string `protobuf:"bytes,40,opt,name=parts_request_id,json=partsRequestId,proto3,oneof" json:"parts_request_id,omitempty"` // UUID reference to request-service Request
-	PartsBidId     *int64  `protobuf:"varint,41,opt,name=parts_bid_id,json=partsBidId,proto3,oneof" json:"parts_bid_id,omitempty"`            // Reference to bid-service Bid
 	// User/Garage integration (ADR-repair-order-user-garage)
 	UserId        int64 `protobuf:"varint,42,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                  // canonical user ref from cg-users (0 = legacy/unknown)
 	GarageCarId   int64 `protobuf:"varint,43,opt,name=garage_car_id,json=garageCarId,proto3" json:"garage_car_id,omitempty"` // ref to cg-users user_cars.id (0 = not in garage)
@@ -1086,20 +1083,6 @@ func (x *RepairOrder) GetIsWarranty() bool {
 		return x.IsWarranty
 	}
 	return false
-}
-
-func (x *RepairOrder) GetPartsRequestId() string {
-	if x != nil && x.PartsRequestId != nil {
-		return *x.PartsRequestId
-	}
-	return ""
-}
-
-func (x *RepairOrder) GetPartsBidId() int64 {
-	if x != nil && x.PartsBidId != nil {
-		return *x.PartsBidId
-	}
-	return 0
 }
 
 func (x *RepairOrder) GetUserId() int64 {
@@ -11604,7 +11587,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12,\n" +
-	"\x12default_markup_pct\x18\t \x01(\x05R\x10defaultMarkupPct\"\xde\r\n" +
+	"\x12default_markup_pct\x18\t \x01(\x05R\x10defaultMarkupPct\"\x8e\r\n" +
 	"\vRepairOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vworkshop_id\x18\x02 \x01(\x03R\n" +
@@ -11659,17 +11642,12 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\fpayment_type\x18% \x01(\x0e2\x18.workshop.v1.PaymentTypeR\vpaymentType\x12+\n" +
 	"\x0fparent_order_id\x18& \x01(\x03H\x00R\rparentOrderId\x88\x01\x01\x12\x1f\n" +
 	"\vis_warranty\x18' \x01(\bR\n" +
-	"isWarranty\x12-\n" +
-	"\x10parts_request_id\x18( \x01(\tH\x01R\x0epartsRequestId\x88\x01\x01\x12%\n" +
-	"\fparts_bid_id\x18) \x01(\x03H\x02R\n" +
-	"partsBidId\x88\x01\x01\x12\x17\n" +
+	"isWarranty\x12\x17\n" +
 	"\auser_id\x18* \x01(\x03R\x06userId\x12\"\n" +
 	"\rgarage_car_id\x18+ \x01(\x03R\vgarageCarId\x12\x17\n" +
 	"\amark_id\x18, \x01(\x05R\x06markId\x12\x19\n" +
 	"\bmodel_id\x18- \x01(\x05R\amodelIdB\x12\n" +
-	"\x10_parent_order_idB\x13\n" +
-	"\x11_parts_request_idB\x0f\n" +
-	"\r_parts_bid_id\"`\n" +
+	"\x10_parent_order_idJ\x04\b(\x10)J\x04\b)\x10*R\x10parts_request_idR\fparts_bid_id\"`\n" +
 	"\rMasterSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12+\n" +
