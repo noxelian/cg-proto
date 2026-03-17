@@ -1194,6 +1194,159 @@ func (*DeleteCarResponse) Descriptor() ([]byte, []int) {
 	return file_users_garage_garage_proto_rawDescGZIP(), []int{14}
 }
 
+// FindOrCreateCar — idempotent lookup/create by license_plate or VIN
+type FindOrCreateCarRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	LicensePlate  string                 `protobuf:"bytes,2,opt,name=license_plate,json=licensePlate,proto3" json:"license_plate,omitempty"` // primary lookup key
+	Vin           string                 `protobuf:"bytes,3,opt,name=vin,proto3" json:"vin,omitempty"`                                       // fallback lookup key (if license_plate empty)
+	MarkId        int32                  `protobuf:"varint,4,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	ModelId       int32                  `protobuf:"varint,5,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	GenerationId  int32                  `protobuf:"varint,6,opt,name=generation_id,json=generationId,proto3" json:"generation_id,omitempty"`
+	Year          int32                  `protobuf:"varint,7,opt,name=year,proto3" json:"year,omitempty"`
+	Color         string                 `protobuf:"bytes,8,opt,name=color,proto3" json:"color,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FindOrCreateCarRequest) Reset() {
+	*x = FindOrCreateCarRequest{}
+	mi := &file_users_garage_garage_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FindOrCreateCarRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FindOrCreateCarRequest) ProtoMessage() {}
+
+func (x *FindOrCreateCarRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_garage_garage_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FindOrCreateCarRequest.ProtoReflect.Descriptor instead.
+func (*FindOrCreateCarRequest) Descriptor() ([]byte, []int) {
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *FindOrCreateCarRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *FindOrCreateCarRequest) GetLicensePlate() string {
+	if x != nil {
+		return x.LicensePlate
+	}
+	return ""
+}
+
+func (x *FindOrCreateCarRequest) GetVin() string {
+	if x != nil {
+		return x.Vin
+	}
+	return ""
+}
+
+func (x *FindOrCreateCarRequest) GetMarkId() int32 {
+	if x != nil {
+		return x.MarkId
+	}
+	return 0
+}
+
+func (x *FindOrCreateCarRequest) GetModelId() int32 {
+	if x != nil {
+		return x.ModelId
+	}
+	return 0
+}
+
+func (x *FindOrCreateCarRequest) GetGenerationId() int32 {
+	if x != nil {
+		return x.GenerationId
+	}
+	return 0
+}
+
+func (x *FindOrCreateCarRequest) GetYear() int32 {
+	if x != nil {
+		return x.Year
+	}
+	return 0
+}
+
+func (x *FindOrCreateCarRequest) GetColor() string {
+	if x != nil {
+		return x.Color
+	}
+	return ""
+}
+
+type FindOrCreateCarResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Car           *Car                   `protobuf:"bytes,1,opt,name=car,proto3" json:"car,omitempty"`
+	Created       bool                   `protobuf:"varint,2,opt,name=created,proto3" json:"created,omitempty"` // true if a new garage entry was created
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FindOrCreateCarResponse) Reset() {
+	*x = FindOrCreateCarResponse{}
+	mi := &file_users_garage_garage_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FindOrCreateCarResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FindOrCreateCarResponse) ProtoMessage() {}
+
+func (x *FindOrCreateCarResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_garage_garage_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FindOrCreateCarResponse.ProtoReflect.Descriptor instead.
+func (*FindOrCreateCarResponse) Descriptor() ([]byte, []int) {
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *FindOrCreateCarResponse) GetCar() *Car {
+	if x != nil {
+		return x.Car
+	}
+	return nil
+}
+
+func (x *FindOrCreateCarResponse) GetCreated() bool {
+	if x != nil {
+		return x.Created
+	}
+	return false
+}
+
 type AddCarPhotoRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CarId         int64                  `protobuf:"varint,1,opt,name=car_id,json=carId,proto3" json:"car_id,omitempty"`
@@ -1206,7 +1359,7 @@ type AddCarPhotoRequest struct {
 
 func (x *AddCarPhotoRequest) Reset() {
 	*x = AddCarPhotoRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[15]
+	mi := &file_users_garage_garage_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1218,7 +1371,7 @@ func (x *AddCarPhotoRequest) String() string {
 func (*AddCarPhotoRequest) ProtoMessage() {}
 
 func (x *AddCarPhotoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[15]
+	mi := &file_users_garage_garage_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1231,7 +1384,7 @@ func (x *AddCarPhotoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddCarPhotoRequest.ProtoReflect.Descriptor instead.
 func (*AddCarPhotoRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{15}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *AddCarPhotoRequest) GetCarId() int64 {
@@ -1271,7 +1424,7 @@ type AddCarPhotoResponse struct {
 
 func (x *AddCarPhotoResponse) Reset() {
 	*x = AddCarPhotoResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[16]
+	mi := &file_users_garage_garage_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1283,7 +1436,7 @@ func (x *AddCarPhotoResponse) String() string {
 func (*AddCarPhotoResponse) ProtoMessage() {}
 
 func (x *AddCarPhotoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[16]
+	mi := &file_users_garage_garage_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1296,7 +1449,7 @@ func (x *AddCarPhotoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddCarPhotoResponse.ProtoReflect.Descriptor instead.
 func (*AddCarPhotoResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{16}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *AddCarPhotoResponse) GetPhoto() *CarPhoto {
@@ -1316,7 +1469,7 @@ type DeleteCarPhotoRequest struct {
 
 func (x *DeleteCarPhotoRequest) Reset() {
 	*x = DeleteCarPhotoRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[17]
+	mi := &file_users_garage_garage_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1328,7 +1481,7 @@ func (x *DeleteCarPhotoRequest) String() string {
 func (*DeleteCarPhotoRequest) ProtoMessage() {}
 
 func (x *DeleteCarPhotoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[17]
+	mi := &file_users_garage_garage_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1341,7 +1494,7 @@ func (x *DeleteCarPhotoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCarPhotoRequest.ProtoReflect.Descriptor instead.
 func (*DeleteCarPhotoRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{17}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *DeleteCarPhotoRequest) GetCarId() int64 {
@@ -1366,7 +1519,7 @@ type DeleteCarPhotoResponse struct {
 
 func (x *DeleteCarPhotoResponse) Reset() {
 	*x = DeleteCarPhotoResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[18]
+	mi := &file_users_garage_garage_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1378,7 +1531,7 @@ func (x *DeleteCarPhotoResponse) String() string {
 func (*DeleteCarPhotoResponse) ProtoMessage() {}
 
 func (x *DeleteCarPhotoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[18]
+	mi := &file_users_garage_garage_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1391,7 +1544,7 @@ func (x *DeleteCarPhotoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCarPhotoResponse.ProtoReflect.Descriptor instead.
 func (*DeleteCarPhotoResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{18}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{20}
 }
 
 type SetPrimaryPhotoRequest struct {
@@ -1404,7 +1557,7 @@ type SetPrimaryPhotoRequest struct {
 
 func (x *SetPrimaryPhotoRequest) Reset() {
 	*x = SetPrimaryPhotoRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[19]
+	mi := &file_users_garage_garage_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1416,7 +1569,7 @@ func (x *SetPrimaryPhotoRequest) String() string {
 func (*SetPrimaryPhotoRequest) ProtoMessage() {}
 
 func (x *SetPrimaryPhotoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[19]
+	mi := &file_users_garage_garage_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1429,7 +1582,7 @@ func (x *SetPrimaryPhotoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetPrimaryPhotoRequest.ProtoReflect.Descriptor instead.
 func (*SetPrimaryPhotoRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{19}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *SetPrimaryPhotoRequest) GetCarId() int64 {
@@ -1455,7 +1608,7 @@ type SetPrimaryPhotoResponse struct {
 
 func (x *SetPrimaryPhotoResponse) Reset() {
 	*x = SetPrimaryPhotoResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[20]
+	mi := &file_users_garage_garage_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1467,7 +1620,7 @@ func (x *SetPrimaryPhotoResponse) String() string {
 func (*SetPrimaryPhotoResponse) ProtoMessage() {}
 
 func (x *SetPrimaryPhotoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[20]
+	mi := &file_users_garage_garage_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1480,7 +1633,7 @@ func (x *SetPrimaryPhotoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetPrimaryPhotoResponse.ProtoReflect.Descriptor instead.
 func (*SetPrimaryPhotoResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{20}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *SetPrimaryPhotoResponse) GetPhoto() *CarPhoto {
@@ -1504,7 +1657,7 @@ type CreateDocumentRequest struct {
 
 func (x *CreateDocumentRequest) Reset() {
 	*x = CreateDocumentRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[21]
+	mi := &file_users_garage_garage_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1516,7 +1669,7 @@ func (x *CreateDocumentRequest) String() string {
 func (*CreateDocumentRequest) ProtoMessage() {}
 
 func (x *CreateDocumentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[21]
+	mi := &file_users_garage_garage_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1529,7 +1682,7 @@ func (x *CreateDocumentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateDocumentRequest.ProtoReflect.Descriptor instead.
 func (*CreateDocumentRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{21}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *CreateDocumentRequest) GetCarId() int64 {
@@ -1583,7 +1736,7 @@ type CreateDocumentResponse struct {
 
 func (x *CreateDocumentResponse) Reset() {
 	*x = CreateDocumentResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[22]
+	mi := &file_users_garage_garage_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1595,7 +1748,7 @@ func (x *CreateDocumentResponse) String() string {
 func (*CreateDocumentResponse) ProtoMessage() {}
 
 func (x *CreateDocumentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[22]
+	mi := &file_users_garage_garage_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1608,7 +1761,7 @@ func (x *CreateDocumentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateDocumentResponse.ProtoReflect.Descriptor instead.
 func (*CreateDocumentResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{22}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *CreateDocumentResponse) GetDocument() *CarDocument {
@@ -1628,7 +1781,7 @@ type GetDocumentRequest struct {
 
 func (x *GetDocumentRequest) Reset() {
 	*x = GetDocumentRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[23]
+	mi := &file_users_garage_garage_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1640,7 +1793,7 @@ func (x *GetDocumentRequest) String() string {
 func (*GetDocumentRequest) ProtoMessage() {}
 
 func (x *GetDocumentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[23]
+	mi := &file_users_garage_garage_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1653,7 +1806,7 @@ func (x *GetDocumentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDocumentRequest.ProtoReflect.Descriptor instead.
 func (*GetDocumentRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{23}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetDocumentRequest) GetCarId() int64 {
@@ -1679,7 +1832,7 @@ type GetDocumentResponse struct {
 
 func (x *GetDocumentResponse) Reset() {
 	*x = GetDocumentResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[24]
+	mi := &file_users_garage_garage_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1691,7 +1844,7 @@ func (x *GetDocumentResponse) String() string {
 func (*GetDocumentResponse) ProtoMessage() {}
 
 func (x *GetDocumentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[24]
+	mi := &file_users_garage_garage_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1704,7 +1857,7 @@ func (x *GetDocumentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDocumentResponse.ProtoReflect.Descriptor instead.
 func (*GetDocumentResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{24}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *GetDocumentResponse) GetDocument() *CarDocument {
@@ -1723,7 +1876,7 @@ type ListDocumentsRequest struct {
 
 func (x *ListDocumentsRequest) Reset() {
 	*x = ListDocumentsRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[25]
+	mi := &file_users_garage_garage_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1735,7 +1888,7 @@ func (x *ListDocumentsRequest) String() string {
 func (*ListDocumentsRequest) ProtoMessage() {}
 
 func (x *ListDocumentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[25]
+	mi := &file_users_garage_garage_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1748,7 +1901,7 @@ func (x *ListDocumentsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDocumentsRequest.ProtoReflect.Descriptor instead.
 func (*ListDocumentsRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{25}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ListDocumentsRequest) GetCarId() int64 {
@@ -1767,7 +1920,7 @@ type ListDocumentsResponse struct {
 
 func (x *ListDocumentsResponse) Reset() {
 	*x = ListDocumentsResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[26]
+	mi := &file_users_garage_garage_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1779,7 +1932,7 @@ func (x *ListDocumentsResponse) String() string {
 func (*ListDocumentsResponse) ProtoMessage() {}
 
 func (x *ListDocumentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[26]
+	mi := &file_users_garage_garage_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1792,7 +1945,7 @@ func (x *ListDocumentsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDocumentsResponse.ProtoReflect.Descriptor instead.
 func (*ListDocumentsResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{26}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ListDocumentsResponse) GetDocuments() []*CarDocument {
@@ -1817,7 +1970,7 @@ type UpdateDocumentRequest struct {
 
 func (x *UpdateDocumentRequest) Reset() {
 	*x = UpdateDocumentRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[27]
+	mi := &file_users_garage_garage_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1829,7 +1982,7 @@ func (x *UpdateDocumentRequest) String() string {
 func (*UpdateDocumentRequest) ProtoMessage() {}
 
 func (x *UpdateDocumentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[27]
+	mi := &file_users_garage_garage_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1842,7 +1995,7 @@ func (x *UpdateDocumentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateDocumentRequest.ProtoReflect.Descriptor instead.
 func (*UpdateDocumentRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{27}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *UpdateDocumentRequest) GetCarId() int64 {
@@ -1903,7 +2056,7 @@ type UpdateDocumentResponse struct {
 
 func (x *UpdateDocumentResponse) Reset() {
 	*x = UpdateDocumentResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[28]
+	mi := &file_users_garage_garage_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1915,7 +2068,7 @@ func (x *UpdateDocumentResponse) String() string {
 func (*UpdateDocumentResponse) ProtoMessage() {}
 
 func (x *UpdateDocumentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[28]
+	mi := &file_users_garage_garage_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1928,7 +2081,7 @@ func (x *UpdateDocumentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateDocumentResponse.ProtoReflect.Descriptor instead.
 func (*UpdateDocumentResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{28}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *UpdateDocumentResponse) GetDocument() *CarDocument {
@@ -1948,7 +2101,7 @@ type DeleteDocumentRequest struct {
 
 func (x *DeleteDocumentRequest) Reset() {
 	*x = DeleteDocumentRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[29]
+	mi := &file_users_garage_garage_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1960,7 +2113,7 @@ func (x *DeleteDocumentRequest) String() string {
 func (*DeleteDocumentRequest) ProtoMessage() {}
 
 func (x *DeleteDocumentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[29]
+	mi := &file_users_garage_garage_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1973,7 +2126,7 @@ func (x *DeleteDocumentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteDocumentRequest.ProtoReflect.Descriptor instead.
 func (*DeleteDocumentRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{29}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *DeleteDocumentRequest) GetCarId() int64 {
@@ -1998,7 +2151,7 @@ type DeleteDocumentResponse struct {
 
 func (x *DeleteDocumentResponse) Reset() {
 	*x = DeleteDocumentResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[30]
+	mi := &file_users_garage_garage_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2010,7 +2163,7 @@ func (x *DeleteDocumentResponse) String() string {
 func (*DeleteDocumentResponse) ProtoMessage() {}
 
 func (x *DeleteDocumentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[30]
+	mi := &file_users_garage_garage_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2023,7 +2176,7 @@ func (x *DeleteDocumentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteDocumentResponse.ProtoReflect.Descriptor instead.
 func (*DeleteDocumentResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{30}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{32}
 }
 
 type CreateServiceRecordRequest struct {
@@ -2042,7 +2195,7 @@ type CreateServiceRecordRequest struct {
 
 func (x *CreateServiceRecordRequest) Reset() {
 	*x = CreateServiceRecordRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[31]
+	mi := &file_users_garage_garage_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2054,7 +2207,7 @@ func (x *CreateServiceRecordRequest) String() string {
 func (*CreateServiceRecordRequest) ProtoMessage() {}
 
 func (x *CreateServiceRecordRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[31]
+	mi := &file_users_garage_garage_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2067,7 +2220,7 @@ func (x *CreateServiceRecordRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateServiceRecordRequest.ProtoReflect.Descriptor instead.
 func (*CreateServiceRecordRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{31}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *CreateServiceRecordRequest) GetCarId() int64 {
@@ -2135,7 +2288,7 @@ type CreateServiceRecordResponse struct {
 
 func (x *CreateServiceRecordResponse) Reset() {
 	*x = CreateServiceRecordResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[32]
+	mi := &file_users_garage_garage_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2147,7 +2300,7 @@ func (x *CreateServiceRecordResponse) String() string {
 func (*CreateServiceRecordResponse) ProtoMessage() {}
 
 func (x *CreateServiceRecordResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[32]
+	mi := &file_users_garage_garage_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2160,7 +2313,7 @@ func (x *CreateServiceRecordResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateServiceRecordResponse.ProtoReflect.Descriptor instead.
 func (*CreateServiceRecordResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{32}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *CreateServiceRecordResponse) GetRecord() *ServiceRecord {
@@ -2180,7 +2333,7 @@ type GetServiceRecordRequest struct {
 
 func (x *GetServiceRecordRequest) Reset() {
 	*x = GetServiceRecordRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[33]
+	mi := &file_users_garage_garage_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2192,7 +2345,7 @@ func (x *GetServiceRecordRequest) String() string {
 func (*GetServiceRecordRequest) ProtoMessage() {}
 
 func (x *GetServiceRecordRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[33]
+	mi := &file_users_garage_garage_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2205,7 +2358,7 @@ func (x *GetServiceRecordRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetServiceRecordRequest.ProtoReflect.Descriptor instead.
 func (*GetServiceRecordRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{33}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *GetServiceRecordRequest) GetCarId() int64 {
@@ -2231,7 +2384,7 @@ type GetServiceRecordResponse struct {
 
 func (x *GetServiceRecordResponse) Reset() {
 	*x = GetServiceRecordResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[34]
+	mi := &file_users_garage_garage_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2243,7 +2396,7 @@ func (x *GetServiceRecordResponse) String() string {
 func (*GetServiceRecordResponse) ProtoMessage() {}
 
 func (x *GetServiceRecordResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[34]
+	mi := &file_users_garage_garage_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2256,7 +2409,7 @@ func (x *GetServiceRecordResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetServiceRecordResponse.ProtoReflect.Descriptor instead.
 func (*GetServiceRecordResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{34}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *GetServiceRecordResponse) GetRecord() *ServiceRecord {
@@ -2277,7 +2430,7 @@ type ListServiceRecordsRequest struct {
 
 func (x *ListServiceRecordsRequest) Reset() {
 	*x = ListServiceRecordsRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[35]
+	mi := &file_users_garage_garage_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2289,7 +2442,7 @@ func (x *ListServiceRecordsRequest) String() string {
 func (*ListServiceRecordsRequest) ProtoMessage() {}
 
 func (x *ListServiceRecordsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[35]
+	mi := &file_users_garage_garage_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2302,7 +2455,7 @@ func (x *ListServiceRecordsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServiceRecordsRequest.ProtoReflect.Descriptor instead.
 func (*ListServiceRecordsRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{35}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *ListServiceRecordsRequest) GetCarId() int64 {
@@ -2336,7 +2489,7 @@ type ListServiceRecordsResponse struct {
 
 func (x *ListServiceRecordsResponse) Reset() {
 	*x = ListServiceRecordsResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[36]
+	mi := &file_users_garage_garage_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2348,7 +2501,7 @@ func (x *ListServiceRecordsResponse) String() string {
 func (*ListServiceRecordsResponse) ProtoMessage() {}
 
 func (x *ListServiceRecordsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[36]
+	mi := &file_users_garage_garage_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2361,7 +2514,7 @@ func (x *ListServiceRecordsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListServiceRecordsResponse.ProtoReflect.Descriptor instead.
 func (*ListServiceRecordsResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{36}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *ListServiceRecordsResponse) GetRecords() []*ServiceRecord {
@@ -2395,7 +2548,7 @@ type UpdateServiceRecordRequest struct {
 
 func (x *UpdateServiceRecordRequest) Reset() {
 	*x = UpdateServiceRecordRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[37]
+	mi := &file_users_garage_garage_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2407,7 +2560,7 @@ func (x *UpdateServiceRecordRequest) String() string {
 func (*UpdateServiceRecordRequest) ProtoMessage() {}
 
 func (x *UpdateServiceRecordRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[37]
+	mi := &file_users_garage_garage_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2420,7 +2573,7 @@ func (x *UpdateServiceRecordRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateServiceRecordRequest.ProtoReflect.Descriptor instead.
 func (*UpdateServiceRecordRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{37}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *UpdateServiceRecordRequest) GetCarId() int64 {
@@ -2495,7 +2648,7 @@ type UpdateServiceRecordResponse struct {
 
 func (x *UpdateServiceRecordResponse) Reset() {
 	*x = UpdateServiceRecordResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[38]
+	mi := &file_users_garage_garage_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2507,7 +2660,7 @@ func (x *UpdateServiceRecordResponse) String() string {
 func (*UpdateServiceRecordResponse) ProtoMessage() {}
 
 func (x *UpdateServiceRecordResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[38]
+	mi := &file_users_garage_garage_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2520,7 +2673,7 @@ func (x *UpdateServiceRecordResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateServiceRecordResponse.ProtoReflect.Descriptor instead.
 func (*UpdateServiceRecordResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{38}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *UpdateServiceRecordResponse) GetRecord() *ServiceRecord {
@@ -2540,7 +2693,7 @@ type DeleteServiceRecordRequest struct {
 
 func (x *DeleteServiceRecordRequest) Reset() {
 	*x = DeleteServiceRecordRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[39]
+	mi := &file_users_garage_garage_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2552,7 +2705,7 @@ func (x *DeleteServiceRecordRequest) String() string {
 func (*DeleteServiceRecordRequest) ProtoMessage() {}
 
 func (x *DeleteServiceRecordRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[39]
+	mi := &file_users_garage_garage_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2565,7 +2718,7 @@ func (x *DeleteServiceRecordRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteServiceRecordRequest.ProtoReflect.Descriptor instead.
 func (*DeleteServiceRecordRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{39}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *DeleteServiceRecordRequest) GetCarId() int64 {
@@ -2590,7 +2743,7 @@ type DeleteServiceRecordResponse struct {
 
 func (x *DeleteServiceRecordResponse) Reset() {
 	*x = DeleteServiceRecordResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[40]
+	mi := &file_users_garage_garage_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2602,7 +2755,7 @@ func (x *DeleteServiceRecordResponse) String() string {
 func (*DeleteServiceRecordResponse) ProtoMessage() {}
 
 func (x *DeleteServiceRecordResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[40]
+	mi := &file_users_garage_garage_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2615,7 +2768,7 @@ func (x *DeleteServiceRecordResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteServiceRecordResponse.ProtoReflect.Descriptor instead.
 func (*DeleteServiceRecordResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{40}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{42}
 }
 
 type CreateReminderRequest struct {
@@ -2632,7 +2785,7 @@ type CreateReminderRequest struct {
 
 func (x *CreateReminderRequest) Reset() {
 	*x = CreateReminderRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[41]
+	mi := &file_users_garage_garage_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2644,7 +2797,7 @@ func (x *CreateReminderRequest) String() string {
 func (*CreateReminderRequest) ProtoMessage() {}
 
 func (x *CreateReminderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[41]
+	mi := &file_users_garage_garage_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2657,7 +2810,7 @@ func (x *CreateReminderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateReminderRequest.ProtoReflect.Descriptor instead.
 func (*CreateReminderRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{41}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *CreateReminderRequest) GetCarId() int64 {
@@ -2711,7 +2864,7 @@ type CreateReminderResponse struct {
 
 func (x *CreateReminderResponse) Reset() {
 	*x = CreateReminderResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[42]
+	mi := &file_users_garage_garage_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2723,7 +2876,7 @@ func (x *CreateReminderResponse) String() string {
 func (*CreateReminderResponse) ProtoMessage() {}
 
 func (x *CreateReminderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[42]
+	mi := &file_users_garage_garage_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2736,7 +2889,7 @@ func (x *CreateReminderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateReminderResponse.ProtoReflect.Descriptor instead.
 func (*CreateReminderResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{42}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *CreateReminderResponse) GetReminder() *Reminder {
@@ -2756,7 +2909,7 @@ type GetReminderRequest struct {
 
 func (x *GetReminderRequest) Reset() {
 	*x = GetReminderRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[43]
+	mi := &file_users_garage_garage_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2768,7 +2921,7 @@ func (x *GetReminderRequest) String() string {
 func (*GetReminderRequest) ProtoMessage() {}
 
 func (x *GetReminderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[43]
+	mi := &file_users_garage_garage_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2781,7 +2934,7 @@ func (x *GetReminderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetReminderRequest.ProtoReflect.Descriptor instead.
 func (*GetReminderRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{43}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *GetReminderRequest) GetCarId() int64 {
@@ -2807,7 +2960,7 @@ type GetReminderResponse struct {
 
 func (x *GetReminderResponse) Reset() {
 	*x = GetReminderResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[44]
+	mi := &file_users_garage_garage_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2819,7 +2972,7 @@ func (x *GetReminderResponse) String() string {
 func (*GetReminderResponse) ProtoMessage() {}
 
 func (x *GetReminderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[44]
+	mi := &file_users_garage_garage_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2832,7 +2985,7 @@ func (x *GetReminderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetReminderResponse.ProtoReflect.Descriptor instead.
 func (*GetReminderResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{44}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *GetReminderResponse) GetReminder() *Reminder {
@@ -2852,7 +3005,7 @@ type ListRemindersRequest struct {
 
 func (x *ListRemindersRequest) Reset() {
 	*x = ListRemindersRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[45]
+	mi := &file_users_garage_garage_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2864,7 +3017,7 @@ func (x *ListRemindersRequest) String() string {
 func (*ListRemindersRequest) ProtoMessage() {}
 
 func (x *ListRemindersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[45]
+	mi := &file_users_garage_garage_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2877,7 +3030,7 @@ func (x *ListRemindersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRemindersRequest.ProtoReflect.Descriptor instead.
 func (*ListRemindersRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{45}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *ListRemindersRequest) GetCarId() int64 {
@@ -2903,7 +3056,7 @@ type ListRemindersResponse struct {
 
 func (x *ListRemindersResponse) Reset() {
 	*x = ListRemindersResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[46]
+	mi := &file_users_garage_garage_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2915,7 +3068,7 @@ func (x *ListRemindersResponse) String() string {
 func (*ListRemindersResponse) ProtoMessage() {}
 
 func (x *ListRemindersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[46]
+	mi := &file_users_garage_garage_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2928,7 +3081,7 @@ func (x *ListRemindersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRemindersResponse.ProtoReflect.Descriptor instead.
 func (*ListRemindersResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{46}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *ListRemindersResponse) GetReminders() []*Reminder {
@@ -2947,7 +3100,7 @@ type ListUpcomingRemindersRequest struct {
 
 func (x *ListUpcomingRemindersRequest) Reset() {
 	*x = ListUpcomingRemindersRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[47]
+	mi := &file_users_garage_garage_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2959,7 +3112,7 @@ func (x *ListUpcomingRemindersRequest) String() string {
 func (*ListUpcomingRemindersRequest) ProtoMessage() {}
 
 func (x *ListUpcomingRemindersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[47]
+	mi := &file_users_garage_garage_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2972,7 +3125,7 @@ func (x *ListUpcomingRemindersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUpcomingRemindersRequest.ProtoReflect.Descriptor instead.
 func (*ListUpcomingRemindersRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{47}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *ListUpcomingRemindersRequest) GetDaysAhead() int32 {
@@ -2991,7 +3144,7 @@ type ListUpcomingRemindersResponse struct {
 
 func (x *ListUpcomingRemindersResponse) Reset() {
 	*x = ListUpcomingRemindersResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[48]
+	mi := &file_users_garage_garage_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3003,7 +3156,7 @@ func (x *ListUpcomingRemindersResponse) String() string {
 func (*ListUpcomingRemindersResponse) ProtoMessage() {}
 
 func (x *ListUpcomingRemindersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[48]
+	mi := &file_users_garage_garage_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3016,7 +3169,7 @@ func (x *ListUpcomingRemindersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUpcomingRemindersResponse.ProtoReflect.Descriptor instead.
 func (*ListUpcomingRemindersResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{48}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *ListUpcomingRemindersResponse) GetReminders() []*Reminder {
@@ -3041,7 +3194,7 @@ type UpdateReminderRequest struct {
 
 func (x *UpdateReminderRequest) Reset() {
 	*x = UpdateReminderRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[49]
+	mi := &file_users_garage_garage_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3053,7 +3206,7 @@ func (x *UpdateReminderRequest) String() string {
 func (*UpdateReminderRequest) ProtoMessage() {}
 
 func (x *UpdateReminderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[49]
+	mi := &file_users_garage_garage_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3066,7 +3219,7 @@ func (x *UpdateReminderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateReminderRequest.ProtoReflect.Descriptor instead.
 func (*UpdateReminderRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{49}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *UpdateReminderRequest) GetCarId() int64 {
@@ -3127,7 +3280,7 @@ type UpdateReminderResponse struct {
 
 func (x *UpdateReminderResponse) Reset() {
 	*x = UpdateReminderResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[50]
+	mi := &file_users_garage_garage_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3139,7 +3292,7 @@ func (x *UpdateReminderResponse) String() string {
 func (*UpdateReminderResponse) ProtoMessage() {}
 
 func (x *UpdateReminderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[50]
+	mi := &file_users_garage_garage_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3152,7 +3305,7 @@ func (x *UpdateReminderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateReminderResponse.ProtoReflect.Descriptor instead.
 func (*UpdateReminderResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{50}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *UpdateReminderResponse) GetReminder() *Reminder {
@@ -3172,7 +3325,7 @@ type CompleteReminderRequest struct {
 
 func (x *CompleteReminderRequest) Reset() {
 	*x = CompleteReminderRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[51]
+	mi := &file_users_garage_garage_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3184,7 +3337,7 @@ func (x *CompleteReminderRequest) String() string {
 func (*CompleteReminderRequest) ProtoMessage() {}
 
 func (x *CompleteReminderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[51]
+	mi := &file_users_garage_garage_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3197,7 +3350,7 @@ func (x *CompleteReminderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CompleteReminderRequest.ProtoReflect.Descriptor instead.
 func (*CompleteReminderRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{51}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *CompleteReminderRequest) GetCarId() int64 {
@@ -3223,7 +3376,7 @@ type CompleteReminderResponse struct {
 
 func (x *CompleteReminderResponse) Reset() {
 	*x = CompleteReminderResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[52]
+	mi := &file_users_garage_garage_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3235,7 +3388,7 @@ func (x *CompleteReminderResponse) String() string {
 func (*CompleteReminderResponse) ProtoMessage() {}
 
 func (x *CompleteReminderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[52]
+	mi := &file_users_garage_garage_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3248,7 +3401,7 @@ func (x *CompleteReminderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CompleteReminderResponse.ProtoReflect.Descriptor instead.
 func (*CompleteReminderResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{52}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *CompleteReminderResponse) GetReminder() *Reminder {
@@ -3268,7 +3421,7 @@ type DeleteReminderRequest struct {
 
 func (x *DeleteReminderRequest) Reset() {
 	*x = DeleteReminderRequest{}
-	mi := &file_users_garage_garage_proto_msgTypes[53]
+	mi := &file_users_garage_garage_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3280,7 +3433,7 @@ func (x *DeleteReminderRequest) String() string {
 func (*DeleteReminderRequest) ProtoMessage() {}
 
 func (x *DeleteReminderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[53]
+	mi := &file_users_garage_garage_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3293,7 +3446,7 @@ func (x *DeleteReminderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteReminderRequest.ProtoReflect.Descriptor instead.
 func (*DeleteReminderRequest) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{53}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *DeleteReminderRequest) GetCarId() int64 {
@@ -3318,7 +3471,7 @@ type DeleteReminderResponse struct {
 
 func (x *DeleteReminderResponse) Reset() {
 	*x = DeleteReminderResponse{}
-	mi := &file_users_garage_garage_proto_msgTypes[54]
+	mi := &file_users_garage_garage_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3330,7 +3483,7 @@ func (x *DeleteReminderResponse) String() string {
 func (*DeleteReminderResponse) ProtoMessage() {}
 
 func (x *DeleteReminderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_garage_garage_proto_msgTypes[54]
+	mi := &file_users_garage_garage_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3343,7 +3496,7 @@ func (x *DeleteReminderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteReminderResponse.ProtoReflect.Descriptor instead.
 func (*DeleteReminderResponse) Descriptor() ([]byte, []int) {
-	return file_users_garage_garage_proto_rawDescGZIP(), []int{54}
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{56}
 }
 
 var File_users_garage_garage_proto protoreflect.FileDescriptor
@@ -3474,7 +3627,19 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\x03car\x18\x01 \x01(\v2\x14.users.garage.v1.CarR\x03car\")\n" +
 	"\x10DeleteCarRequest\x12\x15\n" +
 	"\x06car_id\x18\x01 \x01(\x03R\x05carId\"\x13\n" +
-	"\x11DeleteCarResponse\"{\n" +
+	"\x11DeleteCarResponse\"\xeb\x01\n" +
+	"\x16FindOrCreateCarRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12#\n" +
+	"\rlicense_plate\x18\x02 \x01(\tR\flicensePlate\x12\x10\n" +
+	"\x03vin\x18\x03 \x01(\tR\x03vin\x12\x17\n" +
+	"\amark_id\x18\x04 \x01(\x05R\x06markId\x12\x19\n" +
+	"\bmodel_id\x18\x05 \x01(\x05R\amodelId\x12#\n" +
+	"\rgeneration_id\x18\x06 \x01(\x05R\fgenerationId\x12\x12\n" +
+	"\x04year\x18\a \x01(\x05R\x04year\x12\x14\n" +
+	"\x05color\x18\b \x01(\tR\x05color\"[\n" +
+	"\x17FindOrCreateCarResponse\x12&\n" +
+	"\x03car\x18\x01 \x01(\v2\x14.users.garage.v1.CarR\x03car\x12\x18\n" +
+	"\acreated\x18\x02 \x01(\bR\acreated\"{\n" +
 	"\x12AddCarPhotoRequest\x12\x15\n" +
 	"\x06car_id\x18\x01 \x01(\x03R\x05carId\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12\x1d\n" +
@@ -3635,13 +3800,14 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\x06car_id\x18\x01 \x01(\x03R\x05carId\x12\x1f\n" +
 	"\vreminder_id\x18\x02 \x01(\x03R\n" +
 	"reminderId\"\x18\n" +
-	"\x16DeleteReminderResponse2\x9f\x13\n" +
+	"\x16DeleteReminderResponse2\x85\x14\n" +
 	"\rGarageService\x12R\n" +
 	"\tCreateCar\x12!.users.garage.v1.CreateCarRequest\x1a\".users.garage.v1.CreateCarResponse\x12I\n" +
 	"\x06GetCar\x12\x1e.users.garage.v1.GetCarRequest\x1a\x1f.users.garage.v1.GetCarResponse\x12O\n" +
 	"\bListCars\x12 .users.garage.v1.ListCarsRequest\x1a!.users.garage.v1.ListCarsResponse\x12R\n" +
 	"\tUpdateCar\x12!.users.garage.v1.UpdateCarRequest\x1a\".users.garage.v1.UpdateCarResponse\x12R\n" +
-	"\tDeleteCar\x12!.users.garage.v1.DeleteCarRequest\x1a\".users.garage.v1.DeleteCarResponse\x12X\n" +
+	"\tDeleteCar\x12!.users.garage.v1.DeleteCarRequest\x1a\".users.garage.v1.DeleteCarResponse\x12d\n" +
+	"\x0fFindOrCreateCar\x12'.users.garage.v1.FindOrCreateCarRequest\x1a(.users.garage.v1.FindOrCreateCarResponse\x12X\n" +
 	"\vAddCarPhoto\x12#.users.garage.v1.AddCarPhotoRequest\x1a$.users.garage.v1.AddCarPhotoResponse\x12a\n" +
 	"\x0eDeleteCarPhoto\x12&.users.garage.v1.DeleteCarPhotoRequest\x1a'.users.garage.v1.DeleteCarPhotoResponse\x12d\n" +
 	"\x0fSetPrimaryPhoto\x12'.users.garage.v1.SetPrimaryPhotoRequest\x1a(.users.garage.v1.SetPrimaryPhotoResponse\x12a\n" +
@@ -3675,7 +3841,7 @@ func file_users_garage_garage_proto_rawDescGZIP() []byte {
 	return file_users_garage_garage_proto_rawDescData
 }
 
-var file_users_garage_garage_proto_msgTypes = make([]protoimpl.MessageInfo, 55)
+var file_users_garage_garage_proto_msgTypes = make([]protoimpl.MessageInfo, 57)
 var file_users_garage_garage_proto_goTypes = []any{
 	(*Car)(nil),                           // 0: users.garage.v1.Car
 	(*CarPhoto)(nil),                      // 1: users.garage.v1.CarPhoto
@@ -3692,147 +3858,152 @@ var file_users_garage_garage_proto_goTypes = []any{
 	(*UpdateCarResponse)(nil),             // 12: users.garage.v1.UpdateCarResponse
 	(*DeleteCarRequest)(nil),              // 13: users.garage.v1.DeleteCarRequest
 	(*DeleteCarResponse)(nil),             // 14: users.garage.v1.DeleteCarResponse
-	(*AddCarPhotoRequest)(nil),            // 15: users.garage.v1.AddCarPhotoRequest
-	(*AddCarPhotoResponse)(nil),           // 16: users.garage.v1.AddCarPhotoResponse
-	(*DeleteCarPhotoRequest)(nil),         // 17: users.garage.v1.DeleteCarPhotoRequest
-	(*DeleteCarPhotoResponse)(nil),        // 18: users.garage.v1.DeleteCarPhotoResponse
-	(*SetPrimaryPhotoRequest)(nil),        // 19: users.garage.v1.SetPrimaryPhotoRequest
-	(*SetPrimaryPhotoResponse)(nil),       // 20: users.garage.v1.SetPrimaryPhotoResponse
-	(*CreateDocumentRequest)(nil),         // 21: users.garage.v1.CreateDocumentRequest
-	(*CreateDocumentResponse)(nil),        // 22: users.garage.v1.CreateDocumentResponse
-	(*GetDocumentRequest)(nil),            // 23: users.garage.v1.GetDocumentRequest
-	(*GetDocumentResponse)(nil),           // 24: users.garage.v1.GetDocumentResponse
-	(*ListDocumentsRequest)(nil),          // 25: users.garage.v1.ListDocumentsRequest
-	(*ListDocumentsResponse)(nil),         // 26: users.garage.v1.ListDocumentsResponse
-	(*UpdateDocumentRequest)(nil),         // 27: users.garage.v1.UpdateDocumentRequest
-	(*UpdateDocumentResponse)(nil),        // 28: users.garage.v1.UpdateDocumentResponse
-	(*DeleteDocumentRequest)(nil),         // 29: users.garage.v1.DeleteDocumentRequest
-	(*DeleteDocumentResponse)(nil),        // 30: users.garage.v1.DeleteDocumentResponse
-	(*CreateServiceRecordRequest)(nil),    // 31: users.garage.v1.CreateServiceRecordRequest
-	(*CreateServiceRecordResponse)(nil),   // 32: users.garage.v1.CreateServiceRecordResponse
-	(*GetServiceRecordRequest)(nil),       // 33: users.garage.v1.GetServiceRecordRequest
-	(*GetServiceRecordResponse)(nil),      // 34: users.garage.v1.GetServiceRecordResponse
-	(*ListServiceRecordsRequest)(nil),     // 35: users.garage.v1.ListServiceRecordsRequest
-	(*ListServiceRecordsResponse)(nil),    // 36: users.garage.v1.ListServiceRecordsResponse
-	(*UpdateServiceRecordRequest)(nil),    // 37: users.garage.v1.UpdateServiceRecordRequest
-	(*UpdateServiceRecordResponse)(nil),   // 38: users.garage.v1.UpdateServiceRecordResponse
-	(*DeleteServiceRecordRequest)(nil),    // 39: users.garage.v1.DeleteServiceRecordRequest
-	(*DeleteServiceRecordResponse)(nil),   // 40: users.garage.v1.DeleteServiceRecordResponse
-	(*CreateReminderRequest)(nil),         // 41: users.garage.v1.CreateReminderRequest
-	(*CreateReminderResponse)(nil),        // 42: users.garage.v1.CreateReminderResponse
-	(*GetReminderRequest)(nil),            // 43: users.garage.v1.GetReminderRequest
-	(*GetReminderResponse)(nil),           // 44: users.garage.v1.GetReminderResponse
-	(*ListRemindersRequest)(nil),          // 45: users.garage.v1.ListRemindersRequest
-	(*ListRemindersResponse)(nil),         // 46: users.garage.v1.ListRemindersResponse
-	(*ListUpcomingRemindersRequest)(nil),  // 47: users.garage.v1.ListUpcomingRemindersRequest
-	(*ListUpcomingRemindersResponse)(nil), // 48: users.garage.v1.ListUpcomingRemindersResponse
-	(*UpdateReminderRequest)(nil),         // 49: users.garage.v1.UpdateReminderRequest
-	(*UpdateReminderResponse)(nil),        // 50: users.garage.v1.UpdateReminderResponse
-	(*CompleteReminderRequest)(nil),       // 51: users.garage.v1.CompleteReminderRequest
-	(*CompleteReminderResponse)(nil),      // 52: users.garage.v1.CompleteReminderResponse
-	(*DeleteReminderRequest)(nil),         // 53: users.garage.v1.DeleteReminderRequest
-	(*DeleteReminderResponse)(nil),        // 54: users.garage.v1.DeleteReminderResponse
-	(*timestamppb.Timestamp)(nil),         // 55: google.protobuf.Timestamp
+	(*FindOrCreateCarRequest)(nil),        // 15: users.garage.v1.FindOrCreateCarRequest
+	(*FindOrCreateCarResponse)(nil),       // 16: users.garage.v1.FindOrCreateCarResponse
+	(*AddCarPhotoRequest)(nil),            // 17: users.garage.v1.AddCarPhotoRequest
+	(*AddCarPhotoResponse)(nil),           // 18: users.garage.v1.AddCarPhotoResponse
+	(*DeleteCarPhotoRequest)(nil),         // 19: users.garage.v1.DeleteCarPhotoRequest
+	(*DeleteCarPhotoResponse)(nil),        // 20: users.garage.v1.DeleteCarPhotoResponse
+	(*SetPrimaryPhotoRequest)(nil),        // 21: users.garage.v1.SetPrimaryPhotoRequest
+	(*SetPrimaryPhotoResponse)(nil),       // 22: users.garage.v1.SetPrimaryPhotoResponse
+	(*CreateDocumentRequest)(nil),         // 23: users.garage.v1.CreateDocumentRequest
+	(*CreateDocumentResponse)(nil),        // 24: users.garage.v1.CreateDocumentResponse
+	(*GetDocumentRequest)(nil),            // 25: users.garage.v1.GetDocumentRequest
+	(*GetDocumentResponse)(nil),           // 26: users.garage.v1.GetDocumentResponse
+	(*ListDocumentsRequest)(nil),          // 27: users.garage.v1.ListDocumentsRequest
+	(*ListDocumentsResponse)(nil),         // 28: users.garage.v1.ListDocumentsResponse
+	(*UpdateDocumentRequest)(nil),         // 29: users.garage.v1.UpdateDocumentRequest
+	(*UpdateDocumentResponse)(nil),        // 30: users.garage.v1.UpdateDocumentResponse
+	(*DeleteDocumentRequest)(nil),         // 31: users.garage.v1.DeleteDocumentRequest
+	(*DeleteDocumentResponse)(nil),        // 32: users.garage.v1.DeleteDocumentResponse
+	(*CreateServiceRecordRequest)(nil),    // 33: users.garage.v1.CreateServiceRecordRequest
+	(*CreateServiceRecordResponse)(nil),   // 34: users.garage.v1.CreateServiceRecordResponse
+	(*GetServiceRecordRequest)(nil),       // 35: users.garage.v1.GetServiceRecordRequest
+	(*GetServiceRecordResponse)(nil),      // 36: users.garage.v1.GetServiceRecordResponse
+	(*ListServiceRecordsRequest)(nil),     // 37: users.garage.v1.ListServiceRecordsRequest
+	(*ListServiceRecordsResponse)(nil),    // 38: users.garage.v1.ListServiceRecordsResponse
+	(*UpdateServiceRecordRequest)(nil),    // 39: users.garage.v1.UpdateServiceRecordRequest
+	(*UpdateServiceRecordResponse)(nil),   // 40: users.garage.v1.UpdateServiceRecordResponse
+	(*DeleteServiceRecordRequest)(nil),    // 41: users.garage.v1.DeleteServiceRecordRequest
+	(*DeleteServiceRecordResponse)(nil),   // 42: users.garage.v1.DeleteServiceRecordResponse
+	(*CreateReminderRequest)(nil),         // 43: users.garage.v1.CreateReminderRequest
+	(*CreateReminderResponse)(nil),        // 44: users.garage.v1.CreateReminderResponse
+	(*GetReminderRequest)(nil),            // 45: users.garage.v1.GetReminderRequest
+	(*GetReminderResponse)(nil),           // 46: users.garage.v1.GetReminderResponse
+	(*ListRemindersRequest)(nil),          // 47: users.garage.v1.ListRemindersRequest
+	(*ListRemindersResponse)(nil),         // 48: users.garage.v1.ListRemindersResponse
+	(*ListUpcomingRemindersRequest)(nil),  // 49: users.garage.v1.ListUpcomingRemindersRequest
+	(*ListUpcomingRemindersResponse)(nil), // 50: users.garage.v1.ListUpcomingRemindersResponse
+	(*UpdateReminderRequest)(nil),         // 51: users.garage.v1.UpdateReminderRequest
+	(*UpdateReminderResponse)(nil),        // 52: users.garage.v1.UpdateReminderResponse
+	(*CompleteReminderRequest)(nil),       // 53: users.garage.v1.CompleteReminderRequest
+	(*CompleteReminderResponse)(nil),      // 54: users.garage.v1.CompleteReminderResponse
+	(*DeleteReminderRequest)(nil),         // 55: users.garage.v1.DeleteReminderRequest
+	(*DeleteReminderResponse)(nil),        // 56: users.garage.v1.DeleteReminderResponse
+	(*timestamppb.Timestamp)(nil),         // 57: google.protobuf.Timestamp
 }
 var file_users_garage_garage_proto_depIdxs = []int32{
 	1,  // 0: users.garage.v1.Car.photos:type_name -> users.garage.v1.CarPhoto
-	55, // 1: users.garage.v1.Car.created_at:type_name -> google.protobuf.Timestamp
-	55, // 2: users.garage.v1.Car.updated_at:type_name -> google.protobuf.Timestamp
-	55, // 3: users.garage.v1.CarPhoto.created_at:type_name -> google.protobuf.Timestamp
-	55, // 4: users.garage.v1.CarDocument.issued_at:type_name -> google.protobuf.Timestamp
-	55, // 5: users.garage.v1.CarDocument.expires_at:type_name -> google.protobuf.Timestamp
-	55, // 6: users.garage.v1.CarDocument.created_at:type_name -> google.protobuf.Timestamp
-	55, // 7: users.garage.v1.CarDocument.updated_at:type_name -> google.protobuf.Timestamp
-	55, // 8: users.garage.v1.ServiceRecord.service_date:type_name -> google.protobuf.Timestamp
-	55, // 9: users.garage.v1.ServiceRecord.created_at:type_name -> google.protobuf.Timestamp
-	55, // 10: users.garage.v1.ServiceRecord.updated_at:type_name -> google.protobuf.Timestamp
-	55, // 11: users.garage.v1.Reminder.remind_at:type_name -> google.protobuf.Timestamp
-	55, // 12: users.garage.v1.Reminder.completed_at:type_name -> google.protobuf.Timestamp
-	55, // 13: users.garage.v1.Reminder.created_at:type_name -> google.protobuf.Timestamp
-	55, // 14: users.garage.v1.Reminder.updated_at:type_name -> google.protobuf.Timestamp
+	57, // 1: users.garage.v1.Car.created_at:type_name -> google.protobuf.Timestamp
+	57, // 2: users.garage.v1.Car.updated_at:type_name -> google.protobuf.Timestamp
+	57, // 3: users.garage.v1.CarPhoto.created_at:type_name -> google.protobuf.Timestamp
+	57, // 4: users.garage.v1.CarDocument.issued_at:type_name -> google.protobuf.Timestamp
+	57, // 5: users.garage.v1.CarDocument.expires_at:type_name -> google.protobuf.Timestamp
+	57, // 6: users.garage.v1.CarDocument.created_at:type_name -> google.protobuf.Timestamp
+	57, // 7: users.garage.v1.CarDocument.updated_at:type_name -> google.protobuf.Timestamp
+	57, // 8: users.garage.v1.ServiceRecord.service_date:type_name -> google.protobuf.Timestamp
+	57, // 9: users.garage.v1.ServiceRecord.created_at:type_name -> google.protobuf.Timestamp
+	57, // 10: users.garage.v1.ServiceRecord.updated_at:type_name -> google.protobuf.Timestamp
+	57, // 11: users.garage.v1.Reminder.remind_at:type_name -> google.protobuf.Timestamp
+	57, // 12: users.garage.v1.Reminder.completed_at:type_name -> google.protobuf.Timestamp
+	57, // 13: users.garage.v1.Reminder.created_at:type_name -> google.protobuf.Timestamp
+	57, // 14: users.garage.v1.Reminder.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 15: users.garage.v1.CreateCarResponse.car:type_name -> users.garage.v1.Car
 	0,  // 16: users.garage.v1.GetCarResponse.car:type_name -> users.garage.v1.Car
 	0,  // 17: users.garage.v1.ListCarsResponse.cars:type_name -> users.garage.v1.Car
 	0,  // 18: users.garage.v1.UpdateCarResponse.car:type_name -> users.garage.v1.Car
-	1,  // 19: users.garage.v1.AddCarPhotoResponse.photo:type_name -> users.garage.v1.CarPhoto
-	1,  // 20: users.garage.v1.SetPrimaryPhotoResponse.photo:type_name -> users.garage.v1.CarPhoto
-	55, // 21: users.garage.v1.CreateDocumentRequest.issued_at:type_name -> google.protobuf.Timestamp
-	55, // 22: users.garage.v1.CreateDocumentRequest.expires_at:type_name -> google.protobuf.Timestamp
-	2,  // 23: users.garage.v1.CreateDocumentResponse.document:type_name -> users.garage.v1.CarDocument
-	2,  // 24: users.garage.v1.GetDocumentResponse.document:type_name -> users.garage.v1.CarDocument
-	2,  // 25: users.garage.v1.ListDocumentsResponse.documents:type_name -> users.garage.v1.CarDocument
-	55, // 26: users.garage.v1.UpdateDocumentRequest.issued_at:type_name -> google.protobuf.Timestamp
-	55, // 27: users.garage.v1.UpdateDocumentRequest.expires_at:type_name -> google.protobuf.Timestamp
-	2,  // 28: users.garage.v1.UpdateDocumentResponse.document:type_name -> users.garage.v1.CarDocument
-	55, // 29: users.garage.v1.CreateServiceRecordRequest.service_date:type_name -> google.protobuf.Timestamp
-	3,  // 30: users.garage.v1.CreateServiceRecordResponse.record:type_name -> users.garage.v1.ServiceRecord
-	3,  // 31: users.garage.v1.GetServiceRecordResponse.record:type_name -> users.garage.v1.ServiceRecord
-	3,  // 32: users.garage.v1.ListServiceRecordsResponse.records:type_name -> users.garage.v1.ServiceRecord
-	55, // 33: users.garage.v1.UpdateServiceRecordRequest.service_date:type_name -> google.protobuf.Timestamp
-	3,  // 34: users.garage.v1.UpdateServiceRecordResponse.record:type_name -> users.garage.v1.ServiceRecord
-	55, // 35: users.garage.v1.CreateReminderRequest.remind_at:type_name -> google.protobuf.Timestamp
-	4,  // 36: users.garage.v1.CreateReminderResponse.reminder:type_name -> users.garage.v1.Reminder
-	4,  // 37: users.garage.v1.GetReminderResponse.reminder:type_name -> users.garage.v1.Reminder
-	4,  // 38: users.garage.v1.ListRemindersResponse.reminders:type_name -> users.garage.v1.Reminder
-	4,  // 39: users.garage.v1.ListUpcomingRemindersResponse.reminders:type_name -> users.garage.v1.Reminder
-	55, // 40: users.garage.v1.UpdateReminderRequest.remind_at:type_name -> google.protobuf.Timestamp
-	4,  // 41: users.garage.v1.UpdateReminderResponse.reminder:type_name -> users.garage.v1.Reminder
-	4,  // 42: users.garage.v1.CompleteReminderResponse.reminder:type_name -> users.garage.v1.Reminder
-	5,  // 43: users.garage.v1.GarageService.CreateCar:input_type -> users.garage.v1.CreateCarRequest
-	7,  // 44: users.garage.v1.GarageService.GetCar:input_type -> users.garage.v1.GetCarRequest
-	9,  // 45: users.garage.v1.GarageService.ListCars:input_type -> users.garage.v1.ListCarsRequest
-	11, // 46: users.garage.v1.GarageService.UpdateCar:input_type -> users.garage.v1.UpdateCarRequest
-	13, // 47: users.garage.v1.GarageService.DeleteCar:input_type -> users.garage.v1.DeleteCarRequest
-	15, // 48: users.garage.v1.GarageService.AddCarPhoto:input_type -> users.garage.v1.AddCarPhotoRequest
-	17, // 49: users.garage.v1.GarageService.DeleteCarPhoto:input_type -> users.garage.v1.DeleteCarPhotoRequest
-	19, // 50: users.garage.v1.GarageService.SetPrimaryPhoto:input_type -> users.garage.v1.SetPrimaryPhotoRequest
-	21, // 51: users.garage.v1.GarageService.CreateDocument:input_type -> users.garage.v1.CreateDocumentRequest
-	23, // 52: users.garage.v1.GarageService.GetDocument:input_type -> users.garage.v1.GetDocumentRequest
-	25, // 53: users.garage.v1.GarageService.ListDocuments:input_type -> users.garage.v1.ListDocumentsRequest
-	27, // 54: users.garage.v1.GarageService.UpdateDocument:input_type -> users.garage.v1.UpdateDocumentRequest
-	29, // 55: users.garage.v1.GarageService.DeleteDocument:input_type -> users.garage.v1.DeleteDocumentRequest
-	31, // 56: users.garage.v1.GarageService.CreateServiceRecord:input_type -> users.garage.v1.CreateServiceRecordRequest
-	33, // 57: users.garage.v1.GarageService.GetServiceRecord:input_type -> users.garage.v1.GetServiceRecordRequest
-	35, // 58: users.garage.v1.GarageService.ListServiceRecords:input_type -> users.garage.v1.ListServiceRecordsRequest
-	37, // 59: users.garage.v1.GarageService.UpdateServiceRecord:input_type -> users.garage.v1.UpdateServiceRecordRequest
-	39, // 60: users.garage.v1.GarageService.DeleteServiceRecord:input_type -> users.garage.v1.DeleteServiceRecordRequest
-	41, // 61: users.garage.v1.GarageService.CreateReminder:input_type -> users.garage.v1.CreateReminderRequest
-	43, // 62: users.garage.v1.GarageService.GetReminder:input_type -> users.garage.v1.GetReminderRequest
-	45, // 63: users.garage.v1.GarageService.ListReminders:input_type -> users.garage.v1.ListRemindersRequest
-	47, // 64: users.garage.v1.GarageService.ListUpcomingReminders:input_type -> users.garage.v1.ListUpcomingRemindersRequest
-	49, // 65: users.garage.v1.GarageService.UpdateReminder:input_type -> users.garage.v1.UpdateReminderRequest
-	51, // 66: users.garage.v1.GarageService.CompleteReminder:input_type -> users.garage.v1.CompleteReminderRequest
-	53, // 67: users.garage.v1.GarageService.DeleteReminder:input_type -> users.garage.v1.DeleteReminderRequest
-	6,  // 68: users.garage.v1.GarageService.CreateCar:output_type -> users.garage.v1.CreateCarResponse
-	8,  // 69: users.garage.v1.GarageService.GetCar:output_type -> users.garage.v1.GetCarResponse
-	10, // 70: users.garage.v1.GarageService.ListCars:output_type -> users.garage.v1.ListCarsResponse
-	12, // 71: users.garage.v1.GarageService.UpdateCar:output_type -> users.garage.v1.UpdateCarResponse
-	14, // 72: users.garage.v1.GarageService.DeleteCar:output_type -> users.garage.v1.DeleteCarResponse
-	16, // 73: users.garage.v1.GarageService.AddCarPhoto:output_type -> users.garage.v1.AddCarPhotoResponse
-	18, // 74: users.garage.v1.GarageService.DeleteCarPhoto:output_type -> users.garage.v1.DeleteCarPhotoResponse
-	20, // 75: users.garage.v1.GarageService.SetPrimaryPhoto:output_type -> users.garage.v1.SetPrimaryPhotoResponse
-	22, // 76: users.garage.v1.GarageService.CreateDocument:output_type -> users.garage.v1.CreateDocumentResponse
-	24, // 77: users.garage.v1.GarageService.GetDocument:output_type -> users.garage.v1.GetDocumentResponse
-	26, // 78: users.garage.v1.GarageService.ListDocuments:output_type -> users.garage.v1.ListDocumentsResponse
-	28, // 79: users.garage.v1.GarageService.UpdateDocument:output_type -> users.garage.v1.UpdateDocumentResponse
-	30, // 80: users.garage.v1.GarageService.DeleteDocument:output_type -> users.garage.v1.DeleteDocumentResponse
-	32, // 81: users.garage.v1.GarageService.CreateServiceRecord:output_type -> users.garage.v1.CreateServiceRecordResponse
-	34, // 82: users.garage.v1.GarageService.GetServiceRecord:output_type -> users.garage.v1.GetServiceRecordResponse
-	36, // 83: users.garage.v1.GarageService.ListServiceRecords:output_type -> users.garage.v1.ListServiceRecordsResponse
-	38, // 84: users.garage.v1.GarageService.UpdateServiceRecord:output_type -> users.garage.v1.UpdateServiceRecordResponse
-	40, // 85: users.garage.v1.GarageService.DeleteServiceRecord:output_type -> users.garage.v1.DeleteServiceRecordResponse
-	42, // 86: users.garage.v1.GarageService.CreateReminder:output_type -> users.garage.v1.CreateReminderResponse
-	44, // 87: users.garage.v1.GarageService.GetReminder:output_type -> users.garage.v1.GetReminderResponse
-	46, // 88: users.garage.v1.GarageService.ListReminders:output_type -> users.garage.v1.ListRemindersResponse
-	48, // 89: users.garage.v1.GarageService.ListUpcomingReminders:output_type -> users.garage.v1.ListUpcomingRemindersResponse
-	50, // 90: users.garage.v1.GarageService.UpdateReminder:output_type -> users.garage.v1.UpdateReminderResponse
-	52, // 91: users.garage.v1.GarageService.CompleteReminder:output_type -> users.garage.v1.CompleteReminderResponse
-	54, // 92: users.garage.v1.GarageService.DeleteReminder:output_type -> users.garage.v1.DeleteReminderResponse
-	68, // [68:93] is the sub-list for method output_type
-	43, // [43:68] is the sub-list for method input_type
-	43, // [43:43] is the sub-list for extension type_name
-	43, // [43:43] is the sub-list for extension extendee
-	0,  // [0:43] is the sub-list for field type_name
+	0,  // 19: users.garage.v1.FindOrCreateCarResponse.car:type_name -> users.garage.v1.Car
+	1,  // 20: users.garage.v1.AddCarPhotoResponse.photo:type_name -> users.garage.v1.CarPhoto
+	1,  // 21: users.garage.v1.SetPrimaryPhotoResponse.photo:type_name -> users.garage.v1.CarPhoto
+	57, // 22: users.garage.v1.CreateDocumentRequest.issued_at:type_name -> google.protobuf.Timestamp
+	57, // 23: users.garage.v1.CreateDocumentRequest.expires_at:type_name -> google.protobuf.Timestamp
+	2,  // 24: users.garage.v1.CreateDocumentResponse.document:type_name -> users.garage.v1.CarDocument
+	2,  // 25: users.garage.v1.GetDocumentResponse.document:type_name -> users.garage.v1.CarDocument
+	2,  // 26: users.garage.v1.ListDocumentsResponse.documents:type_name -> users.garage.v1.CarDocument
+	57, // 27: users.garage.v1.UpdateDocumentRequest.issued_at:type_name -> google.protobuf.Timestamp
+	57, // 28: users.garage.v1.UpdateDocumentRequest.expires_at:type_name -> google.protobuf.Timestamp
+	2,  // 29: users.garage.v1.UpdateDocumentResponse.document:type_name -> users.garage.v1.CarDocument
+	57, // 30: users.garage.v1.CreateServiceRecordRequest.service_date:type_name -> google.protobuf.Timestamp
+	3,  // 31: users.garage.v1.CreateServiceRecordResponse.record:type_name -> users.garage.v1.ServiceRecord
+	3,  // 32: users.garage.v1.GetServiceRecordResponse.record:type_name -> users.garage.v1.ServiceRecord
+	3,  // 33: users.garage.v1.ListServiceRecordsResponse.records:type_name -> users.garage.v1.ServiceRecord
+	57, // 34: users.garage.v1.UpdateServiceRecordRequest.service_date:type_name -> google.protobuf.Timestamp
+	3,  // 35: users.garage.v1.UpdateServiceRecordResponse.record:type_name -> users.garage.v1.ServiceRecord
+	57, // 36: users.garage.v1.CreateReminderRequest.remind_at:type_name -> google.protobuf.Timestamp
+	4,  // 37: users.garage.v1.CreateReminderResponse.reminder:type_name -> users.garage.v1.Reminder
+	4,  // 38: users.garage.v1.GetReminderResponse.reminder:type_name -> users.garage.v1.Reminder
+	4,  // 39: users.garage.v1.ListRemindersResponse.reminders:type_name -> users.garage.v1.Reminder
+	4,  // 40: users.garage.v1.ListUpcomingRemindersResponse.reminders:type_name -> users.garage.v1.Reminder
+	57, // 41: users.garage.v1.UpdateReminderRequest.remind_at:type_name -> google.protobuf.Timestamp
+	4,  // 42: users.garage.v1.UpdateReminderResponse.reminder:type_name -> users.garage.v1.Reminder
+	4,  // 43: users.garage.v1.CompleteReminderResponse.reminder:type_name -> users.garage.v1.Reminder
+	5,  // 44: users.garage.v1.GarageService.CreateCar:input_type -> users.garage.v1.CreateCarRequest
+	7,  // 45: users.garage.v1.GarageService.GetCar:input_type -> users.garage.v1.GetCarRequest
+	9,  // 46: users.garage.v1.GarageService.ListCars:input_type -> users.garage.v1.ListCarsRequest
+	11, // 47: users.garage.v1.GarageService.UpdateCar:input_type -> users.garage.v1.UpdateCarRequest
+	13, // 48: users.garage.v1.GarageService.DeleteCar:input_type -> users.garage.v1.DeleteCarRequest
+	15, // 49: users.garage.v1.GarageService.FindOrCreateCar:input_type -> users.garage.v1.FindOrCreateCarRequest
+	17, // 50: users.garage.v1.GarageService.AddCarPhoto:input_type -> users.garage.v1.AddCarPhotoRequest
+	19, // 51: users.garage.v1.GarageService.DeleteCarPhoto:input_type -> users.garage.v1.DeleteCarPhotoRequest
+	21, // 52: users.garage.v1.GarageService.SetPrimaryPhoto:input_type -> users.garage.v1.SetPrimaryPhotoRequest
+	23, // 53: users.garage.v1.GarageService.CreateDocument:input_type -> users.garage.v1.CreateDocumentRequest
+	25, // 54: users.garage.v1.GarageService.GetDocument:input_type -> users.garage.v1.GetDocumentRequest
+	27, // 55: users.garage.v1.GarageService.ListDocuments:input_type -> users.garage.v1.ListDocumentsRequest
+	29, // 56: users.garage.v1.GarageService.UpdateDocument:input_type -> users.garage.v1.UpdateDocumentRequest
+	31, // 57: users.garage.v1.GarageService.DeleteDocument:input_type -> users.garage.v1.DeleteDocumentRequest
+	33, // 58: users.garage.v1.GarageService.CreateServiceRecord:input_type -> users.garage.v1.CreateServiceRecordRequest
+	35, // 59: users.garage.v1.GarageService.GetServiceRecord:input_type -> users.garage.v1.GetServiceRecordRequest
+	37, // 60: users.garage.v1.GarageService.ListServiceRecords:input_type -> users.garage.v1.ListServiceRecordsRequest
+	39, // 61: users.garage.v1.GarageService.UpdateServiceRecord:input_type -> users.garage.v1.UpdateServiceRecordRequest
+	41, // 62: users.garage.v1.GarageService.DeleteServiceRecord:input_type -> users.garage.v1.DeleteServiceRecordRequest
+	43, // 63: users.garage.v1.GarageService.CreateReminder:input_type -> users.garage.v1.CreateReminderRequest
+	45, // 64: users.garage.v1.GarageService.GetReminder:input_type -> users.garage.v1.GetReminderRequest
+	47, // 65: users.garage.v1.GarageService.ListReminders:input_type -> users.garage.v1.ListRemindersRequest
+	49, // 66: users.garage.v1.GarageService.ListUpcomingReminders:input_type -> users.garage.v1.ListUpcomingRemindersRequest
+	51, // 67: users.garage.v1.GarageService.UpdateReminder:input_type -> users.garage.v1.UpdateReminderRequest
+	53, // 68: users.garage.v1.GarageService.CompleteReminder:input_type -> users.garage.v1.CompleteReminderRequest
+	55, // 69: users.garage.v1.GarageService.DeleteReminder:input_type -> users.garage.v1.DeleteReminderRequest
+	6,  // 70: users.garage.v1.GarageService.CreateCar:output_type -> users.garage.v1.CreateCarResponse
+	8,  // 71: users.garage.v1.GarageService.GetCar:output_type -> users.garage.v1.GetCarResponse
+	10, // 72: users.garage.v1.GarageService.ListCars:output_type -> users.garage.v1.ListCarsResponse
+	12, // 73: users.garage.v1.GarageService.UpdateCar:output_type -> users.garage.v1.UpdateCarResponse
+	14, // 74: users.garage.v1.GarageService.DeleteCar:output_type -> users.garage.v1.DeleteCarResponse
+	16, // 75: users.garage.v1.GarageService.FindOrCreateCar:output_type -> users.garage.v1.FindOrCreateCarResponse
+	18, // 76: users.garage.v1.GarageService.AddCarPhoto:output_type -> users.garage.v1.AddCarPhotoResponse
+	20, // 77: users.garage.v1.GarageService.DeleteCarPhoto:output_type -> users.garage.v1.DeleteCarPhotoResponse
+	22, // 78: users.garage.v1.GarageService.SetPrimaryPhoto:output_type -> users.garage.v1.SetPrimaryPhotoResponse
+	24, // 79: users.garage.v1.GarageService.CreateDocument:output_type -> users.garage.v1.CreateDocumentResponse
+	26, // 80: users.garage.v1.GarageService.GetDocument:output_type -> users.garage.v1.GetDocumentResponse
+	28, // 81: users.garage.v1.GarageService.ListDocuments:output_type -> users.garage.v1.ListDocumentsResponse
+	30, // 82: users.garage.v1.GarageService.UpdateDocument:output_type -> users.garage.v1.UpdateDocumentResponse
+	32, // 83: users.garage.v1.GarageService.DeleteDocument:output_type -> users.garage.v1.DeleteDocumentResponse
+	34, // 84: users.garage.v1.GarageService.CreateServiceRecord:output_type -> users.garage.v1.CreateServiceRecordResponse
+	36, // 85: users.garage.v1.GarageService.GetServiceRecord:output_type -> users.garage.v1.GetServiceRecordResponse
+	38, // 86: users.garage.v1.GarageService.ListServiceRecords:output_type -> users.garage.v1.ListServiceRecordsResponse
+	40, // 87: users.garage.v1.GarageService.UpdateServiceRecord:output_type -> users.garage.v1.UpdateServiceRecordResponse
+	42, // 88: users.garage.v1.GarageService.DeleteServiceRecord:output_type -> users.garage.v1.DeleteServiceRecordResponse
+	44, // 89: users.garage.v1.GarageService.CreateReminder:output_type -> users.garage.v1.CreateReminderResponse
+	46, // 90: users.garage.v1.GarageService.GetReminder:output_type -> users.garage.v1.GetReminderResponse
+	48, // 91: users.garage.v1.GarageService.ListReminders:output_type -> users.garage.v1.ListRemindersResponse
+	50, // 92: users.garage.v1.GarageService.ListUpcomingReminders:output_type -> users.garage.v1.ListUpcomingRemindersResponse
+	52, // 93: users.garage.v1.GarageService.UpdateReminder:output_type -> users.garage.v1.UpdateReminderResponse
+	54, // 94: users.garage.v1.GarageService.CompleteReminder:output_type -> users.garage.v1.CompleteReminderResponse
+	56, // 95: users.garage.v1.GarageService.DeleteReminder:output_type -> users.garage.v1.DeleteReminderResponse
+	70, // [70:96] is the sub-list for method output_type
+	44, // [44:70] is the sub-list for method input_type
+	44, // [44:44] is the sub-list for extension type_name
+	44, // [44:44] is the sub-list for extension extendee
+	0,  // [0:44] is the sub-list for field type_name
 }
 
 func init() { file_users_garage_garage_proto_init() }
@@ -3841,16 +4012,16 @@ func file_users_garage_garage_proto_init() {
 		return
 	}
 	file_users_garage_garage_proto_msgTypes[11].OneofWrappers = []any{}
-	file_users_garage_garage_proto_msgTypes[27].OneofWrappers = []any{}
-	file_users_garage_garage_proto_msgTypes[37].OneofWrappers = []any{}
-	file_users_garage_garage_proto_msgTypes[49].OneofWrappers = []any{}
+	file_users_garage_garage_proto_msgTypes[29].OneofWrappers = []any{}
+	file_users_garage_garage_proto_msgTypes[39].OneofWrappers = []any{}
+	file_users_garage_garage_proto_msgTypes[51].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_users_garage_garage_proto_rawDesc), len(file_users_garage_garage_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   55,
+			NumMessages:   57,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

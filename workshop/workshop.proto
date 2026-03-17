@@ -275,6 +275,11 @@ message RepairOrder {
   // Parts request fields
   optional string parts_request_id = 40;  // UUID reference to request-service Request
   optional int64 parts_bid_id = 41;       // Reference to bid-service Bid
+  // User/Garage integration (ADR-repair-order-user-garage)
+  int64 user_id       = 42;  // canonical user ref from cg-users (0 = legacy/unknown)
+  int64 garage_car_id = 43;  // ref to cg-users user_cars.id (0 = not in garage)
+  int32 mark_id       = 44;  // NSI car mark ID
+  int32 model_id      = 45;  // NSI car model ID
 }
 
 message MasterSummary {
@@ -571,17 +576,22 @@ message CreateRepairOrderRequest {
   int64 workshop_id = 1;
   string license_plate = 2;
   string vin = 3;
-  string car_model = 4;
+  string car_model = 4 [deprecated = true];  // Use mark_id + model_id
   string car_color = 5;
   int32 car_year = 6;
   int64 price = 7;
   string bay_number = 8;
-  int64 client_id = 9;
+  int64 client_id = 9 [deprecated = true];   // Use user_id
   string client_name = 10;
   string client_phone = 11;
   google.protobuf.Timestamp promised_date = 12;
   PaymentType payment_type = 13;
   optional int64 parent_order_id = 14;
+  // User/Garage integration
+  int64 user_id       = 15;  // canonical user ref from cg-users
+  int64 garage_car_id = 16;  // ref to user_cars.id (0 = not linked)
+  int32 mark_id       = 17;  // NSI car mark ID
+  int32 model_id      = 18;  // NSI car model ID
 }
 
 message CreateRepairOrderResponse {
@@ -600,15 +610,20 @@ message UpdateRepairOrderRequest {
   int64 order_id = 1;
   optional string license_plate = 2;
   optional string vin = 3;
-  optional string car_model = 4;
+  optional string car_model = 4 [deprecated = true];
   optional string car_color = 5;
   optional int32 car_year = 6;
   optional int64 price = 7;
   optional string bay_number = 8;
-  optional int64 client_id = 9;
+  optional int64 client_id = 9 [deprecated = true];
   optional string client_name = 10;
   optional string client_phone = 11;
   optional string promised_date_str = 12;
+  // User/Garage integration
+  optional int64 user_id       = 13;
+  optional int64 garage_car_id = 14;
+  optional int32 mark_id       = 15;
+  optional int32 model_id      = 16;
 }
 
 message UpdateRepairOrderResponse {

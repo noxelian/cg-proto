@@ -24,6 +24,7 @@ const (
 	GarageService_ListCars_FullMethodName              = "/users.garage.v1.GarageService/ListCars"
 	GarageService_UpdateCar_FullMethodName             = "/users.garage.v1.GarageService/UpdateCar"
 	GarageService_DeleteCar_FullMethodName             = "/users.garage.v1.GarageService/DeleteCar"
+	GarageService_FindOrCreateCar_FullMethodName       = "/users.garage.v1.GarageService/FindOrCreateCar"
 	GarageService_AddCarPhoto_FullMethodName           = "/users.garage.v1.GarageService/AddCarPhoto"
 	GarageService_DeleteCarPhoto_FullMethodName        = "/users.garage.v1.GarageService/DeleteCarPhoto"
 	GarageService_SetPrimaryPhoto_FullMethodName       = "/users.garage.v1.GarageService/SetPrimaryPhoto"
@@ -56,6 +57,10 @@ type GarageServiceClient interface {
 	ListCars(ctx context.Context, in *ListCarsRequest, opts ...grpc.CallOption) (*ListCarsResponse, error)
 	UpdateCar(ctx context.Context, in *UpdateCarRequest, opts ...grpc.CallOption) (*UpdateCarResponse, error)
 	DeleteCar(ctx context.Context, in *DeleteCarRequest, opts ...grpc.CallOption) (*DeleteCarResponse, error)
+	// FindOrCreateCar looks up a car by (user_id + license_plate) or (user_id + vin).
+	// If found, returns existing car. If not found, creates and returns.
+	// Idempotent: unique index on (user_id, license_plate) prevents duplicates.
+	FindOrCreateCar(ctx context.Context, in *FindOrCreateCarRequest, opts ...grpc.CallOption) (*FindOrCreateCarResponse, error)
 	// Photos
 	AddCarPhoto(ctx context.Context, in *AddCarPhotoRequest, opts ...grpc.CallOption) (*AddCarPhotoResponse, error)
 	DeleteCarPhoto(ctx context.Context, in *DeleteCarPhotoRequest, opts ...grpc.CallOption) (*DeleteCarPhotoResponse, error)
@@ -134,6 +139,16 @@ func (c *garageServiceClient) DeleteCar(ctx context.Context, in *DeleteCarReques
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteCarResponse)
 	err := c.cc.Invoke(ctx, GarageService_DeleteCar_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *garageServiceClient) FindOrCreateCar(ctx context.Context, in *FindOrCreateCarRequest, opts ...grpc.CallOption) (*FindOrCreateCarResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FindOrCreateCarResponse)
+	err := c.cc.Invoke(ctx, GarageService_FindOrCreateCar_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -350,6 +365,10 @@ type GarageServiceServer interface {
 	ListCars(context.Context, *ListCarsRequest) (*ListCarsResponse, error)
 	UpdateCar(context.Context, *UpdateCarRequest) (*UpdateCarResponse, error)
 	DeleteCar(context.Context, *DeleteCarRequest) (*DeleteCarResponse, error)
+	// FindOrCreateCar looks up a car by (user_id + license_plate) or (user_id + vin).
+	// If found, returns existing car. If not found, creates and returns.
+	// Idempotent: unique index on (user_id, license_plate) prevents duplicates.
+	FindOrCreateCar(context.Context, *FindOrCreateCarRequest) (*FindOrCreateCarResponse, error)
 	// Photos
 	AddCarPhoto(context.Context, *AddCarPhotoRequest) (*AddCarPhotoResponse, error)
 	DeleteCarPhoto(context.Context, *DeleteCarPhotoRequest) (*DeleteCarPhotoResponse, error)
@@ -398,6 +417,9 @@ func (UnimplementedGarageServiceServer) UpdateCar(context.Context, *UpdateCarReq
 }
 func (UnimplementedGarageServiceServer) DeleteCar(context.Context, *DeleteCarRequest) (*DeleteCarResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteCar not implemented")
+}
+func (UnimplementedGarageServiceServer) FindOrCreateCar(context.Context, *FindOrCreateCarRequest) (*FindOrCreateCarResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method FindOrCreateCar not implemented")
 }
 func (UnimplementedGarageServiceServer) AddCarPhoto(context.Context, *AddCarPhotoRequest) (*AddCarPhotoResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddCarPhoto not implemented")
@@ -566,6 +588,24 @@ func _GarageService_DeleteCar_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GarageServiceServer).DeleteCar(ctx, req.(*DeleteCarRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GarageService_FindOrCreateCar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindOrCreateCarRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GarageServiceServer).FindOrCreateCar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GarageService_FindOrCreateCar_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GarageServiceServer).FindOrCreateCar(ctx, req.(*FindOrCreateCarRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -956,6 +996,10 @@ var GarageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteCar",
 			Handler:    _GarageService_DeleteCar_Handler,
+		},
+		{
+			MethodName: "FindOrCreateCar",
+			Handler:    _GarageService_FindOrCreateCar_Handler,
 		},
 		{
 			MethodName: "AddCarPhoto",

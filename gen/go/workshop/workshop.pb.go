@@ -776,8 +776,13 @@ type RepairOrder struct {
 	// Parts request fields
 	PartsRequestId *string `protobuf:"bytes,40,opt,name=parts_request_id,json=partsRequestId,proto3,oneof" json:"parts_request_id,omitempty"` // UUID reference to request-service Request
 	PartsBidId     *int64  `protobuf:"varint,41,opt,name=parts_bid_id,json=partsBidId,proto3,oneof" json:"parts_bid_id,omitempty"`            // Reference to bid-service Bid
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// User/Garage integration (ADR-repair-order-user-garage)
+	UserId        int64 `protobuf:"varint,42,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                  // canonical user ref from cg-users (0 = legacy/unknown)
+	GarageCarId   int64 `protobuf:"varint,43,opt,name=garage_car_id,json=garageCarId,proto3" json:"garage_car_id,omitempty"` // ref to cg-users user_cars.id (0 = not in garage)
+	MarkId        int32 `protobuf:"varint,44,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`                  // NSI car mark ID
+	ModelId       int32 `protobuf:"varint,45,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`               // NSI car model ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RepairOrder) Reset() {
@@ -1093,6 +1098,34 @@ func (x *RepairOrder) GetPartsRequestId() string {
 func (x *RepairOrder) GetPartsBidId() int64 {
 	if x != nil && x.PartsBidId != nil {
 		return *x.PartsBidId
+	}
+	return 0
+}
+
+func (x *RepairOrder) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *RepairOrder) GetGarageCarId() int64 {
+	if x != nil {
+		return x.GarageCarId
+	}
+	return 0
+}
+
+func (x *RepairOrder) GetMarkId() int32 {
+	if x != nil {
+		return x.MarkId
+	}
+	return 0
+}
+
+func (x *RepairOrder) GetModelId() int32 {
+	if x != nil {
+		return x.ModelId
 	}
 	return 0
 }
@@ -3670,21 +3703,28 @@ func (x *ListWorkshopsResponse) GetTotal() int32 {
 }
 
 type CreateRepairOrderRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	WorkshopId    int64                  `protobuf:"varint,1,opt,name=workshop_id,json=workshopId,proto3" json:"workshop_id,omitempty"`
-	LicensePlate  string                 `protobuf:"bytes,2,opt,name=license_plate,json=licensePlate,proto3" json:"license_plate,omitempty"`
-	Vin           string                 `protobuf:"bytes,3,opt,name=vin,proto3" json:"vin,omitempty"`
-	CarModel      string                 `protobuf:"bytes,4,opt,name=car_model,json=carModel,proto3" json:"car_model,omitempty"`
-	CarColor      string                 `protobuf:"bytes,5,opt,name=car_color,json=carColor,proto3" json:"car_color,omitempty"`
-	CarYear       int32                  `protobuf:"varint,6,opt,name=car_year,json=carYear,proto3" json:"car_year,omitempty"`
-	Price         int64                  `protobuf:"varint,7,opt,name=price,proto3" json:"price,omitempty"`
-	BayNumber     string                 `protobuf:"bytes,8,opt,name=bay_number,json=bayNumber,proto3" json:"bay_number,omitempty"`
-	ClientId      int64                  `protobuf:"varint,9,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	WorkshopId   int64                  `protobuf:"varint,1,opt,name=workshop_id,json=workshopId,proto3" json:"workshop_id,omitempty"`
+	LicensePlate string                 `protobuf:"bytes,2,opt,name=license_plate,json=licensePlate,proto3" json:"license_plate,omitempty"`
+	Vin          string                 `protobuf:"bytes,3,opt,name=vin,proto3" json:"vin,omitempty"`
+	// Deprecated: Marked as deprecated in workshop/workshop.proto.
+	CarModel  string `protobuf:"bytes,4,opt,name=car_model,json=carModel,proto3" json:"car_model,omitempty"` // Use mark_id + model_id
+	CarColor  string `protobuf:"bytes,5,opt,name=car_color,json=carColor,proto3" json:"car_color,omitempty"`
+	CarYear   int32  `protobuf:"varint,6,opt,name=car_year,json=carYear,proto3" json:"car_year,omitempty"`
+	Price     int64  `protobuf:"varint,7,opt,name=price,proto3" json:"price,omitempty"`
+	BayNumber string `protobuf:"bytes,8,opt,name=bay_number,json=bayNumber,proto3" json:"bay_number,omitempty"`
+	// Deprecated: Marked as deprecated in workshop/workshop.proto.
+	ClientId      int64                  `protobuf:"varint,9,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"` // Use user_id
 	ClientName    string                 `protobuf:"bytes,10,opt,name=client_name,json=clientName,proto3" json:"client_name,omitempty"`
 	ClientPhone   string                 `protobuf:"bytes,11,opt,name=client_phone,json=clientPhone,proto3" json:"client_phone,omitempty"`
 	PromisedDate  *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=promised_date,json=promisedDate,proto3" json:"promised_date,omitempty"`
 	PaymentType   PaymentType            `protobuf:"varint,13,opt,name=payment_type,json=paymentType,proto3,enum=workshop.v1.PaymentType" json:"payment_type,omitempty"`
 	ParentOrderId *int64                 `protobuf:"varint,14,opt,name=parent_order_id,json=parentOrderId,proto3,oneof" json:"parent_order_id,omitempty"`
+	// User/Garage integration
+	UserId        int64 `protobuf:"varint,15,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                  // canonical user ref from cg-users
+	GarageCarId   int64 `protobuf:"varint,16,opt,name=garage_car_id,json=garageCarId,proto3" json:"garage_car_id,omitempty"` // ref to user_cars.id (0 = not linked)
+	MarkId        int32 `protobuf:"varint,17,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`                  // NSI car mark ID
+	ModelId       int32 `protobuf:"varint,18,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`               // NSI car model ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3740,6 +3780,7 @@ func (x *CreateRepairOrderRequest) GetVin() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in workshop/workshop.proto.
 func (x *CreateRepairOrderRequest) GetCarModel() string {
 	if x != nil {
 		return x.CarModel
@@ -3775,6 +3816,7 @@ func (x *CreateRepairOrderRequest) GetBayNumber() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in workshop/workshop.proto.
 func (x *CreateRepairOrderRequest) GetClientId() int64 {
 	if x != nil {
 		return x.ClientId
@@ -3813,6 +3855,34 @@ func (x *CreateRepairOrderRequest) GetPaymentType() PaymentType {
 func (x *CreateRepairOrderRequest) GetParentOrderId() int64 {
 	if x != nil && x.ParentOrderId != nil {
 		return *x.ParentOrderId
+	}
+	return 0
+}
+
+func (x *CreateRepairOrderRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *CreateRepairOrderRequest) GetGarageCarId() int64 {
+	if x != nil {
+		return x.GarageCarId
+	}
+	return 0
+}
+
+func (x *CreateRepairOrderRequest) GetMarkId() int32 {
+	if x != nil {
+		return x.MarkId
+	}
+	return 0
+}
+
+func (x *CreateRepairOrderRequest) GetModelId() int32 {
+	if x != nil {
+		return x.ModelId
 	}
 	return 0
 }
@@ -3950,21 +4020,28 @@ func (x *GetRepairOrderResponse) GetOrder() *RepairOrder {
 }
 
 type UpdateRepairOrderRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	OrderId         int64                  `protobuf:"varint,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	LicensePlate    *string                `protobuf:"bytes,2,opt,name=license_plate,json=licensePlate,proto3,oneof" json:"license_plate,omitempty"`
-	Vin             *string                `protobuf:"bytes,3,opt,name=vin,proto3,oneof" json:"vin,omitempty"`
-	CarModel        *string                `protobuf:"bytes,4,opt,name=car_model,json=carModel,proto3,oneof" json:"car_model,omitempty"`
-	CarColor        *string                `protobuf:"bytes,5,opt,name=car_color,json=carColor,proto3,oneof" json:"car_color,omitempty"`
-	CarYear         *int32                 `protobuf:"varint,6,opt,name=car_year,json=carYear,proto3,oneof" json:"car_year,omitempty"`
-	Price           *int64                 `protobuf:"varint,7,opt,name=price,proto3,oneof" json:"price,omitempty"`
-	BayNumber       *string                `protobuf:"bytes,8,opt,name=bay_number,json=bayNumber,proto3,oneof" json:"bay_number,omitempty"`
-	ClientId        *int64                 `protobuf:"varint,9,opt,name=client_id,json=clientId,proto3,oneof" json:"client_id,omitempty"`
-	ClientName      *string                `protobuf:"bytes,10,opt,name=client_name,json=clientName,proto3,oneof" json:"client_name,omitempty"`
-	ClientPhone     *string                `protobuf:"bytes,11,opt,name=client_phone,json=clientPhone,proto3,oneof" json:"client_phone,omitempty"`
-	PromisedDateStr *string                `protobuf:"bytes,12,opt,name=promised_date_str,json=promisedDateStr,proto3,oneof" json:"promised_date_str,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	OrderId      int64                  `protobuf:"varint,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	LicensePlate *string                `protobuf:"bytes,2,opt,name=license_plate,json=licensePlate,proto3,oneof" json:"license_plate,omitempty"`
+	Vin          *string                `protobuf:"bytes,3,opt,name=vin,proto3,oneof" json:"vin,omitempty"`
+	// Deprecated: Marked as deprecated in workshop/workshop.proto.
+	CarModel  *string `protobuf:"bytes,4,opt,name=car_model,json=carModel,proto3,oneof" json:"car_model,omitempty"`
+	CarColor  *string `protobuf:"bytes,5,opt,name=car_color,json=carColor,proto3,oneof" json:"car_color,omitempty"`
+	CarYear   *int32  `protobuf:"varint,6,opt,name=car_year,json=carYear,proto3,oneof" json:"car_year,omitempty"`
+	Price     *int64  `protobuf:"varint,7,opt,name=price,proto3,oneof" json:"price,omitempty"`
+	BayNumber *string `protobuf:"bytes,8,opt,name=bay_number,json=bayNumber,proto3,oneof" json:"bay_number,omitempty"`
+	// Deprecated: Marked as deprecated in workshop/workshop.proto.
+	ClientId        *int64  `protobuf:"varint,9,opt,name=client_id,json=clientId,proto3,oneof" json:"client_id,omitempty"`
+	ClientName      *string `protobuf:"bytes,10,opt,name=client_name,json=clientName,proto3,oneof" json:"client_name,omitempty"`
+	ClientPhone     *string `protobuf:"bytes,11,opt,name=client_phone,json=clientPhone,proto3,oneof" json:"client_phone,omitempty"`
+	PromisedDateStr *string `protobuf:"bytes,12,opt,name=promised_date_str,json=promisedDateStr,proto3,oneof" json:"promised_date_str,omitempty"`
+	// User/Garage integration
+	UserId        *int64 `protobuf:"varint,13,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	GarageCarId   *int64 `protobuf:"varint,14,opt,name=garage_car_id,json=garageCarId,proto3,oneof" json:"garage_car_id,omitempty"`
+	MarkId        *int32 `protobuf:"varint,15,opt,name=mark_id,json=markId,proto3,oneof" json:"mark_id,omitempty"`
+	ModelId       *int32 `protobuf:"varint,16,opt,name=model_id,json=modelId,proto3,oneof" json:"model_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateRepairOrderRequest) Reset() {
@@ -4018,6 +4095,7 @@ func (x *UpdateRepairOrderRequest) GetVin() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in workshop/workshop.proto.
 func (x *UpdateRepairOrderRequest) GetCarModel() string {
 	if x != nil && x.CarModel != nil {
 		return *x.CarModel
@@ -4053,6 +4131,7 @@ func (x *UpdateRepairOrderRequest) GetBayNumber() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in workshop/workshop.proto.
 func (x *UpdateRepairOrderRequest) GetClientId() int64 {
 	if x != nil && x.ClientId != nil {
 		return *x.ClientId
@@ -4079,6 +4158,34 @@ func (x *UpdateRepairOrderRequest) GetPromisedDateStr() string {
 		return *x.PromisedDateStr
 	}
 	return ""
+}
+
+func (x *UpdateRepairOrderRequest) GetUserId() int64 {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
+	}
+	return 0
+}
+
+func (x *UpdateRepairOrderRequest) GetGarageCarId() int64 {
+	if x != nil && x.GarageCarId != nil {
+		return *x.GarageCarId
+	}
+	return 0
+}
+
+func (x *UpdateRepairOrderRequest) GetMarkId() int32 {
+	if x != nil && x.MarkId != nil {
+		return *x.MarkId
+	}
+	return 0
+}
+
+func (x *UpdateRepairOrderRequest) GetModelId() int32 {
+	if x != nil && x.ModelId != nil {
+		return *x.ModelId
+	}
+	return 0
 }
 
 type UpdateRepairOrderResponse struct {
@@ -11497,7 +11604,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12,\n" +
-	"\x12default_markup_pct\x18\t \x01(\x05R\x10defaultMarkupPct\"\xed\f\n" +
+	"\x12default_markup_pct\x18\t \x01(\x05R\x10defaultMarkupPct\"\xde\r\n" +
 	"\vRepairOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vworkshop_id\x18\x02 \x01(\x03R\n" +
@@ -11555,7 +11662,11 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"isWarranty\x12-\n" +
 	"\x10parts_request_id\x18( \x01(\tH\x01R\x0epartsRequestId\x88\x01\x01\x12%\n" +
 	"\fparts_bid_id\x18) \x01(\x03H\x02R\n" +
-	"partsBidId\x88\x01\x01B\x12\n" +
+	"partsBidId\x88\x01\x01\x12\x17\n" +
+	"\auser_id\x18* \x01(\x03R\x06userId\x12\"\n" +
+	"\rgarage_car_id\x18+ \x01(\x03R\vgarageCarId\x12\x17\n" +
+	"\amark_id\x18, \x01(\x05R\x06markId\x12\x19\n" +
+	"\bmodel_id\x18- \x01(\x05R\amodelIdB\x12\n" +
 	"\x10_parent_order_idB\x13\n" +
 	"\x11_parts_request_idB\x0f\n" +
 	"\r_parts_bid_id\"`\n" +
@@ -11843,50 +11954,58 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"b\n" +
 	"\x15ListWorkshopsResponse\x123\n" +
 	"\tworkshops\x18\x01 \x03(\v2\x15.workshop.v1.WorkshopR\tworkshops\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"\x9c\x04\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\x95\x05\n" +
 	"\x18CreateRepairOrderRequest\x12\x1f\n" +
 	"\vworkshop_id\x18\x01 \x01(\x03R\n" +
 	"workshopId\x12#\n" +
 	"\rlicense_plate\x18\x02 \x01(\tR\flicensePlate\x12\x10\n" +
-	"\x03vin\x18\x03 \x01(\tR\x03vin\x12\x1b\n" +
-	"\tcar_model\x18\x04 \x01(\tR\bcarModel\x12\x1b\n" +
+	"\x03vin\x18\x03 \x01(\tR\x03vin\x12\x1f\n" +
+	"\tcar_model\x18\x04 \x01(\tB\x02\x18\x01R\bcarModel\x12\x1b\n" +
 	"\tcar_color\x18\x05 \x01(\tR\bcarColor\x12\x19\n" +
 	"\bcar_year\x18\x06 \x01(\x05R\acarYear\x12\x14\n" +
 	"\x05price\x18\a \x01(\x03R\x05price\x12\x1d\n" +
 	"\n" +
-	"bay_number\x18\b \x01(\tR\tbayNumber\x12\x1b\n" +
-	"\tclient_id\x18\t \x01(\x03R\bclientId\x12\x1f\n" +
+	"bay_number\x18\b \x01(\tR\tbayNumber\x12\x1f\n" +
+	"\tclient_id\x18\t \x01(\x03B\x02\x18\x01R\bclientId\x12\x1f\n" +
 	"\vclient_name\x18\n" +
 	" \x01(\tR\n" +
 	"clientName\x12!\n" +
 	"\fclient_phone\x18\v \x01(\tR\vclientPhone\x12?\n" +
 	"\rpromised_date\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\fpromisedDate\x12;\n" +
 	"\fpayment_type\x18\r \x01(\x0e2\x18.workshop.v1.PaymentTypeR\vpaymentType\x12+\n" +
-	"\x0fparent_order_id\x18\x0e \x01(\x03H\x00R\rparentOrderId\x88\x01\x01B\x12\n" +
+	"\x0fparent_order_id\x18\x0e \x01(\x03H\x00R\rparentOrderId\x88\x01\x01\x12\x17\n" +
+	"\auser_id\x18\x0f \x01(\x03R\x06userId\x12\"\n" +
+	"\rgarage_car_id\x18\x10 \x01(\x03R\vgarageCarId\x12\x17\n" +
+	"\amark_id\x18\x11 \x01(\x05R\x06markId\x12\x19\n" +
+	"\bmodel_id\x18\x12 \x01(\x05R\amodelIdB\x12\n" +
 	"\x10_parent_order_id\"K\n" +
 	"\x19CreateRepairOrderResponse\x12.\n" +
 	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order\"2\n" +
 	"\x15GetRepairOrderRequest\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\"H\n" +
 	"\x16GetRepairOrderResponse\x12.\n" +
-	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order\"\xdb\x04\n" +
+	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order\"\x9f\x06\n" +
 	"\x18UpdateRepairOrderRequest\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\x12(\n" +
 	"\rlicense_plate\x18\x02 \x01(\tH\x00R\flicensePlate\x88\x01\x01\x12\x15\n" +
-	"\x03vin\x18\x03 \x01(\tH\x01R\x03vin\x88\x01\x01\x12 \n" +
-	"\tcar_model\x18\x04 \x01(\tH\x02R\bcarModel\x88\x01\x01\x12 \n" +
+	"\x03vin\x18\x03 \x01(\tH\x01R\x03vin\x88\x01\x01\x12$\n" +
+	"\tcar_model\x18\x04 \x01(\tB\x02\x18\x01H\x02R\bcarModel\x88\x01\x01\x12 \n" +
 	"\tcar_color\x18\x05 \x01(\tH\x03R\bcarColor\x88\x01\x01\x12\x1e\n" +
 	"\bcar_year\x18\x06 \x01(\x05H\x04R\acarYear\x88\x01\x01\x12\x19\n" +
 	"\x05price\x18\a \x01(\x03H\x05R\x05price\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"bay_number\x18\b \x01(\tH\x06R\tbayNumber\x88\x01\x01\x12 \n" +
-	"\tclient_id\x18\t \x01(\x03H\aR\bclientId\x88\x01\x01\x12$\n" +
+	"bay_number\x18\b \x01(\tH\x06R\tbayNumber\x88\x01\x01\x12$\n" +
+	"\tclient_id\x18\t \x01(\x03B\x02\x18\x01H\aR\bclientId\x88\x01\x01\x12$\n" +
 	"\vclient_name\x18\n" +
 	" \x01(\tH\bR\n" +
 	"clientName\x88\x01\x01\x12&\n" +
 	"\fclient_phone\x18\v \x01(\tH\tR\vclientPhone\x88\x01\x01\x12/\n" +
 	"\x11promised_date_str\x18\f \x01(\tH\n" +
-	"R\x0fpromisedDateStr\x88\x01\x01B\x10\n" +
+	"R\x0fpromisedDateStr\x88\x01\x01\x12\x1c\n" +
+	"\auser_id\x18\r \x01(\x03H\vR\x06userId\x88\x01\x01\x12'\n" +
+	"\rgarage_car_id\x18\x0e \x01(\x03H\fR\vgarageCarId\x88\x01\x01\x12\x1c\n" +
+	"\amark_id\x18\x0f \x01(\x05H\rR\x06markId\x88\x01\x01\x12\x1e\n" +
+	"\bmodel_id\x18\x10 \x01(\x05H\x0eR\amodelId\x88\x01\x01B\x10\n" +
 	"\x0e_license_plateB\x06\n" +
 	"\x04_vinB\f\n" +
 	"\n" +
@@ -11900,7 +12019,13 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"_client_idB\x0e\n" +
 	"\f_client_nameB\x0f\n" +
 	"\r_client_phoneB\x14\n" +
-	"\x12_promised_date_str\"K\n" +
+	"\x12_promised_date_strB\n" +
+	"\n" +
+	"\b_user_idB\x10\n" +
+	"\x0e_garage_car_idB\n" +
+	"\n" +
+	"\b_mark_idB\v\n" +
+	"\t_model_id\"K\n" +
 	"\x19UpdateRepairOrderResponse\x12.\n" +
 	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order\"\x8f\x01\n" +
 	"\x1eUpdateRepairOrderStatusRequest\x12\x19\n" +

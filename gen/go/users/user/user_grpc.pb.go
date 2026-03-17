@@ -32,6 +32,7 @@ const (
 	UserService_UnregisterDevice_FullMethodName    = "/users.user.v1.UserService/UnregisterDevice"
 	UserService_GetDevices_FullMethodName          = "/users.user.v1.UserService/GetDevices"
 	UserService_DeleteAccount_FullMethodName       = "/users.user.v1.UserService/DeleteAccount"
+	UserService_ListUsers_FullMethodName           = "/users.user.v1.UserService/ListUsers"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -64,6 +65,8 @@ type UserServiceClient interface {
 	GetDevices(ctx context.Context, in *GetDevicesRequest, opts ...grpc.CallOption) (*GetDevicesResponse, error)
 	// DeleteAccount deletes user account
 	DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*DeleteAccountResponse, error)
+	// ListUsers returns a paginated list of users (admin-only)
+	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
 }
 
 type userServiceClient struct {
@@ -204,6 +207,16 @@ func (c *userServiceClient) DeleteAccount(ctx context.Context, in *DeleteAccount
 	return out, nil
 }
 
+func (c *userServiceClient) ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUsersResponse)
+	err := c.cc.Invoke(ctx, UserService_ListUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -234,6 +247,8 @@ type UserServiceServer interface {
 	GetDevices(context.Context, *GetDevicesRequest) (*GetDevicesResponse, error)
 	// DeleteAccount deletes user account
 	DeleteAccount(context.Context, *DeleteAccountRequest) (*DeleteAccountResponse, error)
+	// ListUsers returns a paginated list of users (admin-only)
+	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -282,6 +297,9 @@ func (UnimplementedUserServiceServer) GetDevices(context.Context, *GetDevicesReq
 }
 func (UnimplementedUserServiceServer) DeleteAccount(context.Context, *DeleteAccountRequest) (*DeleteAccountResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteAccount not implemented")
+}
+func (UnimplementedUserServiceServer) ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListUsers not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -538,6 +556,24 @@ func _UserService_DeleteAccount_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_ListUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListUsers(ctx, req.(*ListUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -596,6 +632,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteAccount",
 			Handler:    _UserService_DeleteAccount_Handler,
+		},
+		{
+			MethodName: "ListUsers",
+			Handler:    _UserService_ListUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
