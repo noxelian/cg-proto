@@ -145,6 +145,9 @@ message GetCarResponse {
 message ListCarsRequest {
   int32 page = 1;
   int32 limit = 2;
+  // Optional: when set by an admin/service caller, list cars for this user
+  // instead of the JWT-authenticated user.
+  int64 user_id = 3;
 }
 
 message ListCarsResponse {

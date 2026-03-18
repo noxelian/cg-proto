@@ -851,9 +851,12 @@ func (x *GetCarResponse) GetCar() *Car {
 }
 
 type ListCarsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
-	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Page  int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	Limit int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	// Optional: when set by an admin/service caller, list cars for this user
+	// instead of the JWT-authenticated user.
+	UserId        int64 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -898,6 +901,13 @@ func (x *ListCarsRequest) GetPage() int32 {
 func (x *ListCarsRequest) GetLimit() int32 {
 	if x != nil {
 		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListCarsRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
 	}
 	return 0
 }
@@ -3592,10 +3602,11 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\rGetCarRequest\x12\x15\n" +
 	"\x06car_id\x18\x01 \x01(\x03R\x05carId\"8\n" +
 	"\x0eGetCarResponse\x12&\n" +
-	"\x03car\x18\x01 \x01(\v2\x14.users.garage.v1.CarR\x03car\";\n" +
+	"\x03car\x18\x01 \x01(\v2\x14.users.garage.v1.CarR\x03car\"T\n" +
 	"\x0fListCarsRequest\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x14\n" +
-	"\x05limit\x18\x02 \x01(\x05R\x05limit\"R\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\"R\n" +
 	"\x10ListCarsResponse\x12(\n" +
 	"\x04cars\x18\x01 \x03(\v2\x14.users.garage.v1.CarR\x04cars\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"\xbc\x03\n" +
