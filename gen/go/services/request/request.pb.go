@@ -151,6 +151,8 @@ type Request struct {
 	// Workshop integration (parts request from repair order)
 	RepairOrderId *int64  `protobuf:"varint,20,opt,name=repair_order_id,json=repairOrderId,proto3,oneof" json:"repair_order_id,omitempty"` // Linked repair order in cg-workshop
 	OrgId         *string `protobuf:"bytes,21,opt,name=org_id,json=orgId,proto3,oneof" json:"org_id,omitempty"`                            // Organization UUID creating the request
+	// Enriched field: set when listing with organization_id context
+	IsNew         bool `protobuf:"varint,22,opt,name=is_new,json=isNew,proto3" json:"is_new,omitempty"` // true if this request has not been viewed by the requesting organization
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -330,6 +332,13 @@ func (x *Request) GetOrgId() string {
 		return *x.OrgId
 	}
 	return ""
+}
+
+func (x *Request) GetIsNew() bool {
+	if x != nil {
+		return x.IsNew
+	}
+	return false
 }
 
 // CreateRequest
@@ -875,20 +884,21 @@ func (x *DeleteRequestResponse) GetSuccess() bool {
 
 // ListRequests
 type ListRequestsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Type          RequestType            `protobuf:"varint,1,opt,name=type,proto3,enum=services.request.v1.RequestType" json:"type,omitempty"`
-	Status        RequestStatus          `protobuf:"varint,2,opt,name=status,proto3,enum=services.request.v1.RequestStatus" json:"status,omitempty"`
-	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	GroupId       int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	CategoryId    int64                  `protobuf:"varint,5,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // Фильтр по одной категории
-	CityId        int64                  `protobuf:"varint,6,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
-	CarMakeId     int64                  `protobuf:"varint,7,opt,name=car_make_id,json=carMakeId,proto3" json:"car_make_id,omitempty"`
-	Page          int32                  `protobuf:"varint,8,opt,name=page,proto3" json:"page,omitempty"`
-	PageSize      int32                  `protobuf:"varint,9,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	SortBy        string                 `protobuf:"bytes,10,opt,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"`                               // created_at, published_at
-	RepairOrderId *int64                 `protobuf:"varint,11,opt,name=repair_order_id,json=repairOrderId,proto3,oneof" json:"repair_order_id,omitempty"` // Filter by linked repair order
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Type           RequestType            `protobuf:"varint,1,opt,name=type,proto3,enum=services.request.v1.RequestType" json:"type,omitempty"`
+	Status         RequestStatus          `protobuf:"varint,2,opt,name=status,proto3,enum=services.request.v1.RequestStatus" json:"status,omitempty"`
+	UserId         int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	GroupId        int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	CategoryId     int64                  `protobuf:"varint,5,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // Фильтр по одной категории
+	CityId         int64                  `protobuf:"varint,6,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
+	CarMakeId      int64                  `protobuf:"varint,7,opt,name=car_make_id,json=carMakeId,proto3" json:"car_make_id,omitempty"`
+	Page           int32                  `protobuf:"varint,8,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize       int32                  `protobuf:"varint,9,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	SortBy         string                 `protobuf:"bytes,10,opt,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"`                               // created_at, published_at, unread_first
+	RepairOrderId  *int64                 `protobuf:"varint,11,opt,name=repair_order_id,json=repairOrderId,proto3,oneof" json:"repair_order_id,omitempty"` // Filter by linked repair order
+	OrganizationId *string                `protobuf:"bytes,12,opt,name=organization_id,json=organizationId,proto3,oneof" json:"organization_id,omitempty"` // When set, enriches results with is_new flag; enables sort_by=unread_first
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *ListRequestsRequest) Reset() {
@@ -996,6 +1006,13 @@ func (x *ListRequestsRequest) GetRepairOrderId() int64 {
 		return *x.RepairOrderId
 	}
 	return 0
+}
+
+func (x *ListRequestsRequest) GetOrganizationId() string {
+	if x != nil && x.OrganizationId != nil {
+		return *x.OrganizationId
+	}
+	return ""
 }
 
 type ListRequestsResponse struct {
@@ -1926,7 +1943,7 @@ var File_services_request_request_proto protoreflect.FileDescriptor
 
 const file_services_request_request_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/request/request.proto\x12\x13services.request.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcb\x06\n" +
+	"\x1eservices/request/request.proto\x12\x13services.request.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe2\x06\n" +
 	"\aRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x124\n" +
 	"\x04type\x18\x02 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12:\n" +
@@ -1952,7 +1969,8 @@ const file_services_request_request_proto_rawDesc = "" +
 	"updated_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12B\n" +
 	"\fpublished_at\x18\x13 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\vpublishedAt\x88\x01\x01\x12+\n" +
 	"\x0frepair_order_id\x18\x14 \x01(\x03H\x02R\rrepairOrderId\x88\x01\x01\x12\x1a\n" +
-	"\x06org_id\x18\x15 \x01(\tH\x03R\x05orgId\x88\x01\x01B\x14\n" +
+	"\x06org_id\x18\x15 \x01(\tH\x03R\x05orgId\x88\x01\x01\x12\x15\n" +
+	"\x06is_new\x18\x16 \x01(\bR\x05isNewB\x14\n" +
 	"\x12_car_generation_idB\x0f\n" +
 	"\r_published_atB\x12\n" +
 	"\x10_repair_order_idB\t\n" +
@@ -2009,7 +2027,7 @@ const file_services_request_request_proto_rawDesc = "" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\"1\n" +
 	"\x15DeleteRequestResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xa0\x03\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xe2\x03\n" +
 	"\x13ListRequestsRequest\x124\n" +
 	"\x04type\x18\x01 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12:\n" +
 	"\x06status\x18\x02 \x01(\x0e2\".services.request.v1.RequestStatusR\x06status\x12\x17\n" +
@@ -2023,8 +2041,10 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\tpage_size\x18\t \x01(\x05R\bpageSize\x12\x17\n" +
 	"\asort_by\x18\n" +
 	" \x01(\tR\x06sortBy\x12+\n" +
-	"\x0frepair_order_id\x18\v \x01(\x03H\x00R\rrepairOrderId\x88\x01\x01B\x12\n" +
-	"\x10_repair_order_id\"f\n" +
+	"\x0frepair_order_id\x18\v \x01(\x03H\x00R\rrepairOrderId\x88\x01\x01\x12,\n" +
+	"\x0forganization_id\x18\f \x01(\tH\x01R\x0eorganizationId\x88\x01\x01B\x12\n" +
+	"\x10_repair_order_idB\x12\n" +
+	"\x10_organization_id\"f\n" +
 	"\x14ListRequestsResponse\x128\n" +
 	"\brequests\x18\x01 \x03(\v2\x1c.services.request.v1.RequestR\brequests\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"\xe3\x02\n" +
