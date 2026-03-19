@@ -93,6 +93,9 @@ message Request {
   // Workshop integration (parts request from repair order)
   optional int64 repair_order_id = 20;  // Linked repair order in cg-workshop
   optional string org_id = 21;          // Organization UUID creating the request
+
+  // Enriched field: set when listing with organization_id context
+  bool is_new = 22;  // true if this request has not been viewed by the requesting organization
 }
 
 // CreateRequest
@@ -174,8 +177,9 @@ message ListRequestsRequest {
   int64 car_make_id = 7;
   int32 page = 8;
   int32 page_size = 9;
-  string sort_by = 10;  // created_at, published_at
+  string sort_by = 10;  // created_at, published_at, unread_first
   optional int64 repair_order_id = 11;  // Filter by linked repair order
+  optional string organization_id = 12;  // When set, enriches results with is_new flag; enables sort_by=unread_first
 }
 
 message ListRequestsResponse {
