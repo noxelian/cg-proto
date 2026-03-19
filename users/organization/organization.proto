@@ -63,15 +63,15 @@ service OrganizationService {
 
 enum OrganizationType {
   ORGANIZATION_TYPE_UNSPECIFIED = 0;
-  ORGANIZATION_TYPE_STO = 1;            // СТО (group_id = 1)
-  ORGANIZATION_TYPE_BODY_SHOP = 2;      // Кузовной цех (group_id = 3)
-  ORGANIZATION_TYPE_CAR_WASH = 3;       // Автомойка (group_id = 5)
-  ORGANIZATION_TYPE_PARTS_SUPPLIER = 4; // Поставщик запчастей (group_id = 2)
-  ORGANIZATION_TYPE_TIRE_SERVICE = 5;   // Шиномонтаж (group_id = 4)
+  ORGANIZATION_TYPE_STO = 1;            // СТО (NSI group_id = 1)
+  ORGANIZATION_TYPE_BODY_SHOP = 2;      // Кузовной цех (NSI group_id = 3)
+  ORGANIZATION_TYPE_CAR_WASH = 3;       // Автомойка (no NSI group)
+  ORGANIZATION_TYPE_PARTS_SUPPLIER = 4; // Поставщик запчастей (NSI group_id = 2)
+  ORGANIZATION_TYPE_TIRE_SERVICE = 5;   // Шиномонтаж (no NSI group)
   ORGANIZATION_TYPE_DEALER = 6;         // Дилер
-  ORGANIZATION_TYPE_GAS_SERVICE = 7;    // Установка газа на авто
-  ORGANIZATION_TYPE_OIL_SERVICE = 8;    // Замена масла и жидкостей
-  ORGANIZATION_TYPE_EMERGENCY = 9;      // Срочная выездная помощь
+  ORGANIZATION_TYPE_GAS_SERVICE = 7;    // Установка газа на авто (NSI group_id = 23)
+  ORGANIZATION_TYPE_OIL_SERVICE = 8;    // Замена масла и жидкостей (NSI group_id = 25)
+  ORGANIZATION_TYPE_EMERGENCY = 9;      // Срочная выездная помощь (NSI group_id = 34)
 }
 
 enum MemberStatus {
@@ -208,6 +208,8 @@ message UpdateOrganizationRequest {
   optional string avatar = 12;
   optional double latitude = 13;
   optional double longitude = 14;
+  // Admin: set org status (active, suspended, closed)
+  optional string status = 15;
 }
 
 message UpdateOrganizationResponse {
