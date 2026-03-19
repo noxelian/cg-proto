@@ -26,15 +26,15 @@ type OrganizationType int32
 
 const (
 	OrganizationType_ORGANIZATION_TYPE_UNSPECIFIED    OrganizationType = 0
-	OrganizationType_ORGANIZATION_TYPE_STO            OrganizationType = 1 // СТО (group_id = 1)
-	OrganizationType_ORGANIZATION_TYPE_BODY_SHOP      OrganizationType = 2 // Кузовной цех (group_id = 3)
-	OrganizationType_ORGANIZATION_TYPE_CAR_WASH       OrganizationType = 3 // Автомойка (group_id = 5)
-	OrganizationType_ORGANIZATION_TYPE_PARTS_SUPPLIER OrganizationType = 4 // Поставщик запчастей (group_id = 2)
-	OrganizationType_ORGANIZATION_TYPE_TIRE_SERVICE   OrganizationType = 5 // Шиномонтаж (group_id = 4)
+	OrganizationType_ORGANIZATION_TYPE_STO            OrganizationType = 1 // СТО (NSI group_id = 1)
+	OrganizationType_ORGANIZATION_TYPE_BODY_SHOP      OrganizationType = 2 // Кузовной цех (NSI group_id = 3)
+	OrganizationType_ORGANIZATION_TYPE_CAR_WASH       OrganizationType = 3 // Автомойка (no NSI group)
+	OrganizationType_ORGANIZATION_TYPE_PARTS_SUPPLIER OrganizationType = 4 // Поставщик запчастей (NSI group_id = 2)
+	OrganizationType_ORGANIZATION_TYPE_TIRE_SERVICE   OrganizationType = 5 // Шиномонтаж (no NSI group)
 	OrganizationType_ORGANIZATION_TYPE_DEALER         OrganizationType = 6 // Дилер
-	OrganizationType_ORGANIZATION_TYPE_GAS_SERVICE    OrganizationType = 7 // Установка газа на авто
-	OrganizationType_ORGANIZATION_TYPE_OIL_SERVICE    OrganizationType = 8 // Замена масла и жидкостей
-	OrganizationType_ORGANIZATION_TYPE_EMERGENCY      OrganizationType = 9 // Срочная выездная помощь
+	OrganizationType_ORGANIZATION_TYPE_GAS_SERVICE    OrganizationType = 7 // Установка газа на авто (NSI group_id = 23)
+	OrganizationType_ORGANIZATION_TYPE_OIL_SERVICE    OrganizationType = 8 // Замена масла и жидкостей (NSI group_id = 25)
+	OrganizationType_ORGANIZATION_TYPE_EMERGENCY      OrganizationType = 9 // Срочная выездная помощь (NSI group_id = 34)
 )
 
 // Enum value maps for OrganizationType.
@@ -1165,8 +1165,10 @@ type UpdateOrganizationRequest struct {
 	Avatar         *string                `protobuf:"bytes,12,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
 	Latitude       *float64               `protobuf:"fixed64,13,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
 	Longitude      *float64               `protobuf:"fixed64,14,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Admin: set org status (active, suspended, closed)
+	Status        *string `protobuf:"bytes,15,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateOrganizationRequest) Reset() {
@@ -1295,6 +1297,13 @@ func (x *UpdateOrganizationRequest) GetLongitude() float64 {
 		return *x.Longitude
 	}
 	return 0
+}
+
+func (x *UpdateOrganizationRequest) GetStatus() string {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return ""
 }
 
 type UpdateOrganizationResponse struct {
@@ -4314,7 +4323,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x16GetOrganizationRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\"b\n" +
 	"\x17GetOrganizationResponse\x12G\n" +
-	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"\x9c\x05\n" +
+	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"\xc4\x05\n" +
 	"\x19UpdateOrganizationRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
@@ -4332,7 +4341,8 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x06avatar\x18\f \x01(\tH\bR\x06avatar\x88\x01\x01\x12\x1f\n" +
 	"\blatitude\x18\r \x01(\x01H\tR\blatitude\x88\x01\x01\x12!\n" +
 	"\tlongitude\x18\x0e \x01(\x01H\n" +
-	"R\tlongitude\x88\x01\x01B\a\n" +
+	"R\tlongitude\x88\x01\x01\x12\x1b\n" +
+	"\x06status\x18\x0f \x01(\tH\vR\x06status\x88\x01\x01B\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\v\n" +
 	"\t_logo_urlB\n" +
@@ -4347,7 +4357,8 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\a_avatarB\v\n" +
 	"\t_latitudeB\f\n" +
 	"\n" +
-	"_longitude\"e\n" +
+	"_longitudeB\t\n" +
+	"\a_status\"e\n" +
 	"\x1aUpdateOrganizationResponse\x12G\n" +
 	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"D\n" +
 	"\x19DeleteOrganizationRequest\x12'\n" +
