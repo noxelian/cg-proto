@@ -1430,7 +1430,9 @@ func (x *DeleteOrganizationResponse) GetSuccess() bool {
 }
 
 type GetMyOrganizationsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Optional: when set by admin, return orgs for this user instead of JWT user.
+	UserId        int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1463,6 +1465,13 @@ func (x *GetMyOrganizationsRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetMyOrganizationsRequest.ProtoReflect.Descriptor instead.
 func (*GetMyOrganizationsRequest) Descriptor() ([]byte, []int) {
 	return file_users_organization_organization_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *GetMyOrganizationsRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
 }
 
 type GetMyOrganizationsResponse struct {
@@ -4344,8 +4353,9 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x19DeleteOrganizationRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\"6\n" +
 	"\x1aDeleteOrganizationResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x1b\n" +
-	"\x19GetMyOrganizationsRequest\"m\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"4\n" +
+	"\x19GetMyOrganizationsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"m\n" +
 	"\x1aGetMyOrganizationsResponse\x12O\n" +
 	"\vmemberships\x18\x01 \x03(\v2-.users.organization.v1.OrganizationMembershipR\vmemberships\"\xa0\x01\n" +
 	"\x16OrganizationMembership\x12G\n" +
