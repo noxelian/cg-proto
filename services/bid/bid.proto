@@ -101,6 +101,9 @@ message CreateBidRequest {
   
   string description = 8;
   repeated string photos = 9;
+
+  // Admin: skip payment/subscription check when creating bid on behalf of org
+  bool skip_payment_check = 10;
 }
 
 message CreateBidPartRequest {

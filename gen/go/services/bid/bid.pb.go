@@ -379,11 +379,13 @@ type CreateBidRequest struct {
 	Currency string `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`
 	Duration *int32 `protobuf:"varint,6,opt,name=duration,proto3,oneof" json:"duration,omitempty"`
 	// For Parts Supplier
-	Parts         []*CreateBidPartRequest `protobuf:"bytes,7,rep,name=parts,proto3" json:"parts,omitempty"`
-	Description   string                  `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
-	Photos        []string                `protobuf:"bytes,9,rep,name=photos,proto3" json:"photos,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Parts       []*CreateBidPartRequest `protobuf:"bytes,7,rep,name=parts,proto3" json:"parts,omitempty"`
+	Description string                  `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
+	Photos      []string                `protobuf:"bytes,9,rep,name=photos,proto3" json:"photos,omitempty"`
+	// Admin: skip payment/subscription check when creating bid on behalf of org
+	SkipPaymentCheck bool `protobuf:"varint,10,opt,name=skip_payment_check,json=skipPaymentCheck,proto3" json:"skip_payment_check,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *CreateBidRequest) Reset() {
@@ -477,6 +479,13 @@ func (x *CreateBidRequest) GetPhotos() []string {
 		return x.Photos
 	}
 	return nil
+}
+
+func (x *CreateBidRequest) GetSkipPaymentCheck() bool {
+	if x != nil {
+		return x.SkipPaymentCheck
+	}
+	return false
 }
 
 type CreateBidPartRequest struct {
@@ -1642,7 +1651,7 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\bquantity\x18\x05 \x01(\x05R\bquantity\x12\x14\n" +
 	"\x05price\x18\x06 \x01(\x03R\x05price\x12\x1c\n" +
 	"\tcondition\x18\a \x01(\tR\tcondition\x12\"\n" +
-	"\favailability\x18\b \x01(\tR\favailability\"\xee\x02\n" +
+	"\favailability\x18\b \x01(\tR\favailability\"\x9c\x03\n" +
 	"\x10CreateBidRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12,\n" +
@@ -1653,7 +1662,9 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\bduration\x18\x06 \x01(\x05H\x01R\bduration\x88\x01\x01\x12;\n" +
 	"\x05parts\x18\a \x03(\v2%.services.bid.v1.CreateBidPartRequestR\x05parts\x12 \n" +
 	"\vdescription\x18\b \x01(\tR\vdescription\x12\x16\n" +
-	"\x06photos\x18\t \x03(\tR\x06photosB\b\n" +
+	"\x06photos\x18\t \x03(\tR\x06photos\x12,\n" +
+	"\x12skip_payment_check\x18\n" +
+	" \x01(\bR\x10skipPaymentCheckB\b\n" +
 	"\x06_priceB\v\n" +
 	"\t_duration\"\xc8\x01\n" +
 	"\x14CreateBidPartRequest\x12\x1b\n" +
