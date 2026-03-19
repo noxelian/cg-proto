@@ -222,7 +222,10 @@ message DeleteOrganizationResponse {
   bool success = 1;
 }
 
-message GetMyOrganizationsRequest {}
+message GetMyOrganizationsRequest {
+  // Optional: when set by admin, return orgs for this user instead of JWT user.
+  int64 user_id = 1;
+}
 
 message GetMyOrganizationsResponse {
   repeated OrganizationMembership memberships = 1;
