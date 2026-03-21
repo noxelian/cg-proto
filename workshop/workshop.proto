@@ -441,6 +441,7 @@ message SalaryBreakdown {
   int64 total = 14;
   repeated SalaryAdjustment adjustments = 15;
   int64 material_expenses = 16;
+  repeated CompletedWork completed_works = 17;
 }
 
 message SalaryAdjustment {
@@ -449,6 +450,19 @@ message SalaryAdjustment {
   int64 amount = 3;
   string reason = 4;
   google.protobuf.Timestamp created_at = 5;
+}
+
+message CompletedWork {
+  int64 car_work_id = 1;
+  int64 repair_order_id = 2;
+  string order_number = 3;
+  string work_name = 4;
+  string car_model = 5;
+  string license_plate = 6;
+  double hour_rate = 7;
+  int64 hour_price = 8;
+  int64 amount = 9;
+  google.protobuf.Timestamp done_at = 10;
 }
 
 message MasterHourRate {
