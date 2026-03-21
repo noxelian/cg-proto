@@ -1,0 +1,496 @@
+syntax = "proto3";
+
+package ai.v1;
+
+option go_package = "gitlab.com/xakpro/cg-proto/gen/go/ai;aiv1";
+
+import "google/protobuf/timestamp.proto";
+
+// =============================================================================
+// Services
+// =============================================================================
+
+service ChatbotService {
+  // --- Session ---
+  rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+  rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
+  rpc ListSessions(ListSessionsRequest) returns (ListSessionsResponse);
+  rpc CloseSession(CloseSessionRequest) returns (CloseSessionResponse);
+
+  // --- Message ---
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+  rpc StreamResponse(StreamResponseRequest) returns (stream StreamResponseChunk);
+  rpc ListMessages(ListMessagesRequest) returns (ListMessagesResponse);
+
+  // --- Admin / Human Takeover ---
+  rpc TakeOver(TakeOverRequest) returns (TakeOverResponse);
+  rpc ReturnToAI(ReturnToAIRequest) returns (ReturnToAIResponse);
+  rpc SendAdminMessage(SendAdminMessageRequest) returns (SendAdminMessageResponse);
+
+  // --- Conversation ---
+  rpc ListConversations(ListConversationsRequest) returns (ListConversationsResponse);
+  rpc GetConversation(GetConversationRequest) returns (GetConversationResponse);
+
+  // --- Prompt ---
+  rpc CreatePrompt(CreatePromptRequest) returns (CreatePromptResponse);
+  rpc UpdatePrompt(UpdatePromptRequest) returns (UpdatePromptResponse);
+  rpc ListPrompts(ListPromptsRequest) returns (ListPromptsResponse);
+  rpc ActivatePromptVersion(ActivatePromptVersionRequest) returns (ActivatePromptVersionResponse);
+
+  // --- User Memory ---
+  rpc GetUserMemory(GetUserMemoryRequest) returns (GetUserMemoryResponse);
+  rpc UpdateUserMemory(UpdateUserMemoryRequest) returns (UpdateUserMemoryResponse);
+
+  // --- CRM Contact ---
+  rpc GetContact(GetContactRequest) returns (GetContactResponse);
+  rpc ListContacts(ListContactsRequest) returns (ListContactsResponse);
+  rpc UpdateContactSegment(UpdateContactSegmentRequest) returns (UpdateContactSegmentResponse);
+
+  // --- Follow-up ---
+  rpc ListFollowUps(ListFollowUpsRequest) returns (ListFollowUpsResponse);
+  rpc CancelFollowUp(CancelFollowUpRequest) returns (CancelFollowUpResponse);
+}
+
+// =============================================================================
+// Enums
+// =============================================================================
+
+enum SessionStatus {
+  SESSION_STATUS_UNSPECIFIED = 0;
+  SESSION_STATUS_NEW = 1;
+  SESSION_STATUS_ROUTING = 2;
+  SESSION_STATUS_ACTIVE = 3;
+  SESSION_STATUS_AWAITING_BIDS = 4;
+  SESSION_STATUS_RESOLVED = 5;
+  SESSION_STATUS_CLOSED = 6;
+}
+
+enum MessageRole {
+  MESSAGE_ROLE_UNSPECIFIED = 0;
+  MESSAGE_ROLE_USER = 1;
+  MESSAGE_ROLE_ASSISTANT = 2;
+  MESSAGE_ROLE_SYSTEM = 3;
+  MESSAGE_ROLE_TOOL = 4;
+}
+
+enum PromptStatus {
+  PROMPT_STATUS_UNSPECIFIED = 0;
+  PROMPT_STATUS_DRAFT = 1;
+  PROMPT_STATUS_ACTIVE = 2;
+  PROMPT_STATUS_ARCHIVED = 3;
+}
+
+enum ContactSegment {
+  CONTACT_SEGMENT_UNSPECIFIED = 0;
+  CONTACT_SEGMENT_NEW = 1;
+  CONTACT_SEGMENT_ACTIVE = 2;
+  CONTACT_SEGMENT_VIP = 3;
+  CONTACT_SEGMENT_CHURNED = 4;
+}
+
+enum FollowUpType {
+  FOLLOW_UP_TYPE_UNSPECIFIED = 0;
+  FOLLOW_UP_TYPE_REMINDER_2H = 1;
+  FOLLOW_UP_TYPE_REMINDER_24H = 2;
+  FOLLOW_UP_TYPE_CLOSE_48H = 3;
+}
+
+enum FollowUpStatus {
+  FOLLOW_UP_STATUS_UNSPECIFIED = 0;
+  FOLLOW_UP_STATUS_PENDING = 1;
+  FOLLOW_UP_STATUS_SENT = 2;
+  FOLLOW_UP_STATUS_CANCELLED = 3;
+}
+
+enum ToolExecutionStatus {
+  TOOL_EXECUTION_STATUS_UNSPECIFIED = 0;
+  TOOL_EXECUTION_STATUS_RUNNING = 1;
+  TOOL_EXECUTION_STATUS_COMPLETED = 2;
+  TOOL_EXECUTION_STATUS_FAILED = 3;
+}
+
+// =============================================================================
+// Domain Messages
+// =============================================================================
+
+message Session {
+  string id = 1;
+  int64 user_id = 2;
+  string platform = 3;
+  SessionStatus status = 4;
+  string role = 5;
+  string active_turn_id = 6;
+  int64 assigned_to = 7;
+  bool is_human_takeover = 8;
+  google.protobuf.Timestamp closed_at = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message Conversation {
+  string id = 1;
+  string session_id = 2;
+  int64 user_id = 3;
+  string title = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message Message {
+  string id = 1;
+  string conversation_id = 2;
+  string session_id = 3;
+  MessageRole role = 4;
+  string content = 5;
+  string tool_calls = 6;
+  string tool_call_id = 7;
+  string tool_result = 8;
+  int32 prompt_tokens = 9;
+  int32 completion_tokens = 10;
+  int32 total_tokens = 11;
+  string model = 12;
+  google.protobuf.Timestamp created_at = 13;
+}
+
+message Prompt {
+  string id = 1;
+  string name = 2;
+  string role = 3;
+  int32 version = 4;
+  string content = 5;
+  PromptStatus status = 6;
+  repeated string variables = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message UserMemory {
+  int64 user_id = 1;
+  repeated UserFact facts = 2;
+  google.protobuf.Timestamp updated_at = 3;
+}
+
+message UserFact {
+  string key = 1;
+  string value = 2;
+  string source = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
+
+message Contact {
+  string id = 1;
+  int64 user_id = 2;
+  string phone = 3;
+  string name = 4;
+  ContactSegment segment = 5;
+  int64 total_spent = 6;
+  int32 conversations_count = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message FollowUp {
+  string id = 1;
+  string session_id = 2;
+  FollowUpType type = 3;
+  FollowUpStatus status = 4;
+  google.protobuf.Timestamp scheduled_at = 5;
+  google.protobuf.Timestamp sent_at = 6;
+}
+
+// =============================================================================
+// Streaming Messages
+// =============================================================================
+
+message StreamResponseChunk {
+  string session_id = 1;
+  string turn_id = 2;
+
+  oneof payload {
+    string text_delta = 3;
+    ToolStatus tool_status = 4;
+    ActionsPayload actions = 5;
+    ErrorPayload error = 6;
+  }
+}
+
+message ToolStatus {
+  string tool_name = 1;
+  ToolExecutionStatus status = 2;
+  string message = 3;
+}
+
+message ActionsPayload {
+  repeated ActionButton buttons = 1;
+  repeated string quick_replies = 2;
+}
+
+message ActionButton {
+  string label = 1;
+  string action = 2;
+  string payload = 3;
+}
+
+message ErrorPayload {
+  int32 code = 1;
+  string message = 2;
+}
+
+// =============================================================================
+// Session RPCs
+// =============================================================================
+
+message CreateSessionRequest {
+  int64 user_id = 1;
+  string platform = 2;
+  string role = 3;
+}
+
+message CreateSessionResponse {
+  Session session = 1;
+}
+
+message GetSessionRequest {
+  string session_id = 1;
+}
+
+message GetSessionResponse {
+  Session session = 1;
+}
+
+message ListSessionsRequest {
+  int64 user_id = 1;
+  SessionStatus status = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message ListSessionsResponse {
+  repeated Session sessions = 1;
+  int32 total = 2;
+}
+
+message CloseSessionRequest {
+  string session_id = 1;
+}
+
+message CloseSessionResponse {
+  Session session = 1;
+}
+
+// =============================================================================
+// Message RPCs
+// =============================================================================
+
+message Attachment {
+  string type = 1;
+  string url = 2;
+  string name = 3;
+}
+
+message SendMessageRequest {
+  string session_id = 1;
+  string content = 2;
+  repeated Attachment attachments = 3;
+}
+
+message SendMessageResponse {
+  Message message = 1;
+}
+
+message StreamResponseRequest {
+  string session_id = 1;
+  string turn_id = 2;
+}
+
+message ListMessagesRequest {
+  string conversation_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message ListMessagesResponse {
+  repeated Message messages = 1;
+  int32 total = 2;
+}
+
+// =============================================================================
+// Admin / Human Takeover RPCs
+// =============================================================================
+
+message TakeOverRequest {
+  int64 admin_user_id = 1;
+  string session_id = 2;
+}
+
+message TakeOverResponse {
+  Session session = 1;
+}
+
+message ReturnToAIRequest {
+  string session_id = 1;
+}
+
+message ReturnToAIResponse {
+  Session session = 1;
+}
+
+message SendAdminMessageRequest {
+  int64 admin_user_id = 1;
+  string session_id = 2;
+  string content = 3;
+}
+
+message SendAdminMessageResponse {
+  Message message = 1;
+}
+
+// =============================================================================
+// Conversation RPCs
+// =============================================================================
+
+message ListConversationsRequest {
+  string platform = 1;
+  SessionStatus status = 2;
+  string role = 3;
+  int64 assigned_to = 4;
+  int32 page = 5;
+  int32 page_size = 6;
+}
+
+message ListConversationsResponse {
+  repeated Conversation conversations = 1;
+  int32 total = 2;
+}
+
+message GetConversationRequest {
+  string conversation_id = 1;
+}
+
+message GetConversationResponse {
+  Conversation conversation = 1;
+  repeated Message messages = 2;
+}
+
+// =============================================================================
+// Prompt RPCs
+// =============================================================================
+
+message CreatePromptRequest {
+  string name = 1;
+  string role = 2;
+  string content = 3;
+  repeated string variables = 4;
+}
+
+message CreatePromptResponse {
+  Prompt prompt = 1;
+}
+
+message UpdatePromptRequest {
+  string prompt_id = 1;
+  string content = 2;
+  repeated string variables = 3;
+}
+
+message UpdatePromptResponse {
+  Prompt prompt = 1;
+}
+
+message ListPromptsRequest {
+  string role = 1;
+  PromptStatus status = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message ListPromptsResponse {
+  repeated Prompt prompts = 1;
+  int32 total = 2;
+}
+
+message ActivatePromptVersionRequest {
+  string prompt_id = 1;
+  int32 version = 2;
+}
+
+message ActivatePromptVersionResponse {
+  Prompt prompt = 1;
+}
+
+// =============================================================================
+// User Memory RPCs
+// =============================================================================
+
+message GetUserMemoryRequest {
+  int64 user_id = 1;
+}
+
+message GetUserMemoryResponse {
+  UserMemory memory = 1;
+}
+
+message UpdateUserMemoryRequest {
+  int64 user_id = 1;
+  repeated UserFact facts = 2;
+}
+
+message UpdateUserMemoryResponse {
+  UserMemory memory = 1;
+}
+
+// =============================================================================
+// CRM Contact RPCs
+// =============================================================================
+
+message GetContactRequest {
+  string contact_id = 1;
+}
+
+message GetContactResponse {
+  Contact contact = 1;
+}
+
+message ListContactsRequest {
+  ContactSegment segment = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message ListContactsResponse {
+  repeated Contact contacts = 1;
+  int32 total = 2;
+}
+
+message UpdateContactSegmentRequest {
+  string contact_id = 1;
+  ContactSegment segment = 2;
+}
+
+message UpdateContactSegmentResponse {
+  Contact contact = 1;
+}
+
+// =============================================================================
+// Follow-up RPCs
+// =============================================================================
+
+message ListFollowUpsRequest {
+  string session_id = 1;
+  FollowUpStatus status = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message ListFollowUpsResponse {
+  repeated FollowUp follow_ups = 1;
+  int32 total = 2;
+}
+
+message CancelFollowUpRequest {
+  string follow_up_id = 1;
+}
+
+message CancelFollowUpResponse {
+  FollowUp follow_up = 1;
+}
