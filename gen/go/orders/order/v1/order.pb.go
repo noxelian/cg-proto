@@ -1241,6 +1241,7 @@ type OrderItem struct {
 	ItemCondition  ItemCondition          `protobuf:"varint,12,opt,name=item_condition,json=itemCondition,proto3,enum=orders.order.v1.ItemCondition" json:"item_condition,omitempty"`     // NEW, USED, REFURBISHED (replaces string condition for workshop)
 	DeletedAt      *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`                                                     // Soft delete timestamp (null = active)
 	BidId          *int64                 `protobuf:"varint,14,opt,name=bid_id,json=bidId,proto3,oneof" json:"bid_id,omitempty"`                                                          // Bid ID this item was created from (nil if manually added)
+	BidPartId      *int64                 `protobuf:"varint,15,opt,name=bid_part_id,json=bidPartId,proto3,oneof" json:"bid_part_id,omitempty"`                                            // Bid part ID for per-part idempotency
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1369,6 +1370,13 @@ func (x *OrderItem) GetDeletedAt() *timestamppb.Timestamp {
 func (x *OrderItem) GetBidId() int64 {
 	if x != nil && x.BidId != nil {
 		return *x.BidId
+	}
+	return 0
+}
+
+func (x *OrderItem) GetBidPartId() int64 {
+	if x != nil && x.BidPartId != nil {
+		return *x.BidPartId
 	}
 	return 0
 }
@@ -4002,6 +4010,7 @@ type WorkshopOrderItemInput struct {
 	Source        ItemSource             `protobuf:"varint,5,opt,name=source,proto3,enum=orders.order.v1.ItemSource" json:"source,omitempty"`          // WORKSHOP or CLIENT
 	Condition     ItemCondition          `protobuf:"varint,6,opt,name=condition,proto3,enum=orders.order.v1.ItemCondition" json:"condition,omitempty"` // NEW, USED, REFURBISHED
 	BidId         *int64                 `protobuf:"varint,7,opt,name=bid_id,json=bidId,proto3,oneof" json:"bid_id,omitempty"`                         // Bid ID for idempotency tracking (nil if manually added)
+	BidPartId     *int64                 `protobuf:"varint,8,opt,name=bid_part_id,json=bidPartId,proto3,oneof" json:"bid_part_id,omitempty"`           // Bid part ID for per-part idempotency
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4081,6 +4090,13 @@ func (x *WorkshopOrderItemInput) GetCondition() ItemCondition {
 func (x *WorkshopOrderItemInput) GetBidId() int64 {
 	if x != nil && x.BidId != nil {
 		return *x.BidId
+	}
+	return 0
+}
+
+func (x *WorkshopOrderItemInput) GetBidPartId() int64 {
+	if x != nil && x.BidPartId != nil {
+		return *x.BidPartId
 	}
 	return 0
 }
@@ -4726,7 +4742,7 @@ const file_orders_order_v1_order_proto_rawDesc = "" +
 	"updated_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x129\n" +
 	"\n" +
 	"order_type\x18\x13 \x01(\x0e2\x1a.orders.order.v1.OrderTypeR\torderType\x12&\n" +
-	"\x0frepair_order_id\x18\x14 \x01(\x03R\rrepairOrderId\"\xb2\x04\n" +
+	"\x0frepair_order_id\x18\x14 \x01(\x03R\rrepairOrderId\"\xe7\x04\n" +
 	"\tOrderItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\border_id\x18\x02 \x01(\x03R\aorderId\x12\x1b\n" +
@@ -4746,8 +4762,10 @@ const file_orders_order_v1_order_proto_rawDesc = "" +
 	"\x0eitem_condition\x18\f \x01(\x0e2\x1e.orders.order.v1.ItemConditionR\ritemCondition\x129\n" +
 	"\n" +
 	"deleted_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tdeletedAt\x12\x1a\n" +
-	"\x06bid_id\x18\x0e \x01(\x03H\x00R\x05bidId\x88\x01\x01B\t\n" +
-	"\a_bid_id\"\x8e\x02\n" +
+	"\x06bid_id\x18\x0e \x01(\x03H\x00R\x05bidId\x88\x01\x01\x12#\n" +
+	"\vbid_part_id\x18\x0f \x01(\x03H\x01R\tbidPartId\x88\x01\x01B\t\n" +
+	"\a_bid_idB\x0e\n" +
+	"\f_bid_part_id\"\x8e\x02\n" +
 	"\vBidPurchase\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x15\n" +
@@ -4954,7 +4972,7 @@ const file_orders_order_v1_order_proto_rawDesc = "" +
 	"\x1aCreateWorkshopOrderRequest\x12&\n" +
 	"\x0frepair_order_id\x18\x01 \x01(\x03R\rrepairOrderId\x12+\n" +
 	"\x12created_by_user_id\x18\x02 \x01(\x03R\x0fcreatedByUserId\x12=\n" +
-	"\x05items\x18\x03 \x03(\v2'.orders.order.v1.WorkshopOrderItemInputR\x05items\"\xab\x02\n" +
+	"\x05items\x18\x03 \x03(\v2'.orders.order.v1.WorkshopOrderItemInputR\x05items\"\xe0\x02\n" +
 	"\x16WorkshopOrderItemInput\x12\x1b\n" +
 	"\tpart_name\x18\x01 \x01(\tR\bpartName\x12\x1f\n" +
 	"\vpart_number\x18\x02 \x01(\tR\n" +
@@ -4964,8 +4982,10 @@ const file_orders_order_v1_order_proto_rawDesc = "" +
 	"unit_price\x18\x04 \x01(\x03R\tunitPrice\x123\n" +
 	"\x06source\x18\x05 \x01(\x0e2\x1b.orders.order.v1.ItemSourceR\x06source\x12<\n" +
 	"\tcondition\x18\x06 \x01(\x0e2\x1e.orders.order.v1.ItemConditionR\tcondition\x12\x1a\n" +
-	"\x06bid_id\x18\a \x01(\x03H\x00R\x05bidId\x88\x01\x01B\t\n" +
-	"\a_bid_id\"K\n" +
+	"\x06bid_id\x18\a \x01(\x03H\x00R\x05bidId\x88\x01\x01\x12#\n" +
+	"\vbid_part_id\x18\b \x01(\x03H\x01R\tbidPartId\x88\x01\x01B\t\n" +
+	"\a_bid_idB\x0e\n" +
+	"\f_bid_part_id\"K\n" +
 	"\x1bCreateWorkshopOrderResponse\x12,\n" +
 	"\x05order\x18\x01 \x01(\v2\x16.orders.order.v1.OrderR\x05order\"H\n" +
 	"\x1eGetOrderByRepairOrderIdRequest\x12&\n" +
