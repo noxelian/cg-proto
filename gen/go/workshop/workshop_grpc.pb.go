@@ -23,6 +23,7 @@ const (
 	WorkshopService_GetWorkshop_FullMethodName               = "/workshop.v1.WorkshopService/GetWorkshop"
 	WorkshopService_UpdateWorkshop_FullMethodName            = "/workshop.v1.WorkshopService/UpdateWorkshop"
 	WorkshopService_ListWorkshops_FullMethodName             = "/workshop.v1.WorkshopService/ListWorkshops"
+	WorkshopService_ListWorkshopOrgIDs_FullMethodName        = "/workshop.v1.WorkshopService/ListWorkshopOrgIDs"
 	WorkshopService_CreateRepairOrder_FullMethodName         = "/workshop.v1.WorkshopService/CreateRepairOrder"
 	WorkshopService_GetRepairOrder_FullMethodName            = "/workshop.v1.WorkshopService/GetRepairOrder"
 	WorkshopService_UpdateRepairOrder_FullMethodName         = "/workshop.v1.WorkshopService/UpdateRepairOrder"
@@ -103,6 +104,7 @@ type WorkshopServiceClient interface {
 	GetWorkshop(ctx context.Context, in *GetWorkshopRequest, opts ...grpc.CallOption) (*GetWorkshopResponse, error)
 	UpdateWorkshop(ctx context.Context, in *UpdateWorkshopRequest, opts ...grpc.CallOption) (*UpdateWorkshopResponse, error)
 	ListWorkshops(ctx context.Context, in *ListWorkshopsRequest, opts ...grpc.CallOption) (*ListWorkshopsResponse, error)
+	ListWorkshopOrgIDs(ctx context.Context, in *ListWorkshopOrgIDsRequest, opts ...grpc.CallOption) (*ListWorkshopOrgIDsResponse, error)
 	// --- Repair Order ---
 	CreateRepairOrder(ctx context.Context, in *CreateRepairOrderRequest, opts ...grpc.CallOption) (*CreateRepairOrderResponse, error)
 	GetRepairOrder(ctx context.Context, in *GetRepairOrderRequest, opts ...grpc.CallOption) (*GetRepairOrderResponse, error)
@@ -234,6 +236,16 @@ func (c *workshopServiceClient) ListWorkshops(ctx context.Context, in *ListWorks
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListWorkshopsResponse)
 	err := c.cc.Invoke(ctx, WorkshopService_ListWorkshops_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) ListWorkshopOrgIDs(ctx context.Context, in *ListWorkshopOrgIDsRequest, opts ...grpc.CallOption) (*ListWorkshopOrgIDsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWorkshopOrgIDsResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_ListWorkshopOrgIDs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -939,6 +951,7 @@ type WorkshopServiceServer interface {
 	GetWorkshop(context.Context, *GetWorkshopRequest) (*GetWorkshopResponse, error)
 	UpdateWorkshop(context.Context, *UpdateWorkshopRequest) (*UpdateWorkshopResponse, error)
 	ListWorkshops(context.Context, *ListWorkshopsRequest) (*ListWorkshopsResponse, error)
+	ListWorkshopOrgIDs(context.Context, *ListWorkshopOrgIDsRequest) (*ListWorkshopOrgIDsResponse, error)
 	// --- Repair Order ---
 	CreateRepairOrder(context.Context, *CreateRepairOrderRequest) (*CreateRepairOrderResponse, error)
 	GetRepairOrder(context.Context, *GetRepairOrderRequest) (*GetRepairOrderResponse, error)
@@ -1047,6 +1060,9 @@ func (UnimplementedWorkshopServiceServer) UpdateWorkshop(context.Context, *Updat
 }
 func (UnimplementedWorkshopServiceServer) ListWorkshops(context.Context, *ListWorkshopsRequest) (*ListWorkshopsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListWorkshops not implemented")
+}
+func (UnimplementedWorkshopServiceServer) ListWorkshopOrgIDs(context.Context, *ListWorkshopOrgIDsRequest) (*ListWorkshopOrgIDsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListWorkshopOrgIDs not implemented")
 }
 func (UnimplementedWorkshopServiceServer) CreateRepairOrder(context.Context, *CreateRepairOrderRequest) (*CreateRepairOrderResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateRepairOrder not implemented")
@@ -1344,6 +1360,24 @@ func _WorkshopService_ListWorkshops_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WorkshopServiceServer).ListWorkshops(ctx, req.(*ListWorkshopsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_ListWorkshopOrgIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorkshopOrgIDsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).ListWorkshopOrgIDs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_ListWorkshopOrgIDs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).ListWorkshopOrgIDs(ctx, req.(*ListWorkshopOrgIDsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2612,6 +2646,10 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListWorkshops",
 			Handler:    _WorkshopService_ListWorkshops_Handler,
+		},
+		{
+			MethodName: "ListWorkshopOrgIDs",
+			Handler:    _WorkshopService_ListWorkshopOrgIDs_Handler,
 		},
 		{
 			MethodName: "CreateRepairOrder",
