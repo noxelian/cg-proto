@@ -24,6 +24,35 @@ service NsiService {
   rpc GetAppVersion(GetAppVersionRequest) returns (GetAppVersionResponse);
   rpc GetConfig(GetConfigRequest) returns (GetConfigResponse);
 
+  // Admin CRUD — Cities
+  rpc CreateCity(CreateCityRequest) returns (CreateCityResponse);
+  rpc UpdateCity(UpdateCityRequest) returns (UpdateCityResponse);
+  rpc DeleteCity(DeleteCityRequest) returns (DeleteCityResponse);
+
+  // Admin CRUD — Car Marks
+  rpc CreateCarMark(CreateCarMarkRequest) returns (CreateCarMarkResponse);
+  rpc UpdateCarMark(UpdateCarMarkRequest) returns (UpdateCarMarkResponse);
+  rpc DeleteCarMark(DeleteCarMarkRequest) returns (DeleteCarMarkResponse);
+
+  // Admin CRUD — Car Models
+  rpc CreateCarModel(CreateCarModelRequest) returns (CreateCarModelResponse);
+  rpc UpdateCarModel(UpdateCarModelRequest) returns (UpdateCarModelResponse);
+  rpc DeleteCarModel(DeleteCarModelRequest) returns (DeleteCarModelResponse);
+
+  // Admin CRUD — Car Generations
+  rpc CreateCarGeneration(CreateCarGenerationRequest) returns (CreateCarGenerationResponse);
+  rpc UpdateCarGeneration(UpdateCarGenerationRequest) returns (UpdateCarGenerationResponse);
+  rpc DeleteCarGeneration(DeleteCarGenerationRequest) returns (DeleteCarGenerationResponse);
+
+  // Admin CRUD — Service Groups
+  rpc CreateServiceGroup(CreateServiceGroupRequest) returns (CreateServiceGroupResponse);
+  rpc UpdateServiceGroup(UpdateServiceGroupRequest) returns (UpdateServiceGroupResponse);
+  rpc DeleteServiceGroup(DeleteServiceGroupRequest) returns (DeleteServiceGroupResponse);
+
+  // Admin CRUD — Service Categories
+  rpc CreateServiceCategory(CreateServiceCategoryRequest) returns (CreateServiceCategoryResponse);
+  rpc UpdateServiceCategory(UpdateServiceCategoryRequest) returns (UpdateServiceCategoryResponse);
+  rpc DeleteServiceCategory(DeleteServiceCategoryRequest) returns (DeleteServiceCategoryResponse);
 }
 
 message City {
@@ -201,5 +230,133 @@ message ValidateGroupAndCategoriesResponse {
   string error_message = 2;  // Populated if invalid
 }
 
+// ==================== Admin CRUD Messages ====================
 
+// --- Cities ---
+message CreateCityRequest {
+  string name = 1;
+  int64 country_id = 2;
+  string timezone = 3;
+  double lat = 4;
+  double lon = 5;
+  int32 population = 6;
+}
+message CreateCityResponse { City city = 1; }
+
+message UpdateCityRequest {
+  int64 id = 1;
+  string name = 2;
+  int64 country_id = 3;
+  string timezone = 4;
+  double lat = 5;
+  double lon = 6;
+  int32 population = 7;
+}
+message UpdateCityResponse { City city = 1; }
+
+message DeleteCityRequest { int64 id = 1; }
+message DeleteCityResponse {}
+
+// --- Car Marks ---
+message CreateCarMarkRequest {
+  string name = 1;
+  string logo_url = 2;
+  bool is_popular = 3;
+  string country = 4;
+}
+message CreateCarMarkResponse { CarMark mark = 1; }
+
+message UpdateCarMarkRequest {
+  int32 id = 1;
+  string name = 2;
+  string logo_url = 3;
+  bool is_popular = 4;
+  string country = 5;
+}
+message UpdateCarMarkResponse { CarMark mark = 1; }
+
+message DeleteCarMarkRequest { int32 id = 1; }
+message DeleteCarMarkResponse {}
+
+// --- Car Models ---
+message CreateCarModelRequest {
+  int32 mark_id = 1;
+  string name = 2;
+}
+message CreateCarModelResponse { CarModel model = 1; }
+
+message UpdateCarModelRequest {
+  int32 id = 1;
+  int32 mark_id = 2;
+  string name = 3;
+}
+message UpdateCarModelResponse { CarModel model = 1; }
+
+message DeleteCarModelRequest { int32 id = 1; }
+message DeleteCarModelResponse {}
+
+// --- Car Generations ---
+message CreateCarGenerationRequest {
+  int32 model_id = 1;
+  string name = 2;
+  int32 year_start = 3;
+  int32 year_end = 4;
+  string photo_url = 5;
+}
+message CreateCarGenerationResponse { CarGeneration generation = 1; }
+
+message UpdateCarGenerationRequest {
+  int32 id = 1;
+  int32 model_id = 2;
+  string name = 3;
+  int32 year_start = 4;
+  int32 year_end = 5;
+  string photo_url = 6;
+}
+message UpdateCarGenerationResponse { CarGeneration generation = 1; }
+
+message DeleteCarGenerationRequest { int32 id = 1; }
+message DeleteCarGenerationResponse {}
+
+// --- Service Groups ---
+message CreateServiceGroupRequest {
+  string name = 1;
+  string slug = 2;
+  string icon = 3;
+  int32 sort_order = 4;
+}
+message CreateServiceGroupResponse { ServiceGroup group = 1; }
+
+message UpdateServiceGroupRequest {
+  int64 id = 1;
+  string name = 2;
+  string slug = 3;
+  string icon = 4;
+  int32 sort_order = 5;
+}
+message UpdateServiceGroupResponse { ServiceGroup group = 1; }
+
+message DeleteServiceGroupRequest { int64 id = 1; }
+message DeleteServiceGroupResponse {}
+
+// --- Service Categories ---
+message CreateServiceCategoryRequest {
+  int64 group_id = 1;
+  string name = 2;
+  string slug = 3;
+  int32 sort_order = 4;
+}
+message CreateServiceCategoryResponse { ServiceCategory category = 1; }
+
+message UpdateServiceCategoryRequest {
+  int64 id = 1;
+  int64 group_id = 2;
+  string name = 3;
+  string slug = 4;
+  int32 sort_order = 5;
+}
+message UpdateServiceCategoryResponse { ServiceCategory category = 1; }
+
+message DeleteServiceCategoryRequest { int64 id = 1; }
+message DeleteServiceCategoryResponse {}
 
