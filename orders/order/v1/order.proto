@@ -223,6 +223,7 @@ message OrderItem {
   ItemCondition item_condition = 12;   // NEW, USED, REFURBISHED (replaces string condition for workshop)
   google.protobuf.Timestamp deleted_at = 13; // Soft delete timestamp (null = active)
   optional int64 bid_id = 14;         // Bid ID this item was created from (nil if manually added)
+  optional int64 bid_part_id = 15;   // Bid part ID for per-part idempotency
 }
 
 message BidPurchase {
@@ -520,6 +521,7 @@ message WorkshopOrderItemInput {
   ItemSource source = 5;               // WORKSHOP or CLIENT
   ItemCondition condition = 6;         // NEW, USED, REFURBISHED
   optional int64 bid_id = 7;          // Bid ID for idempotency tracking (nil if manually added)
+  optional int64 bid_part_id = 8;    // Bid part ID for per-part idempotency
 }
 
 message CreateWorkshopOrderResponse {
