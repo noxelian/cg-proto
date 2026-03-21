@@ -43,6 +43,7 @@ const (
 	OrderService_UpdateOrderItem_FullMethodName            = "/orders.order.v1.OrderService/UpdateOrderItem"
 	OrderService_DeleteOrderItem_FullMethodName            = "/orders.order.v1.OrderService/DeleteOrderItem"
 	OrderService_UpdateDeliveryStatus_FullMethodName       = "/orders.order.v1.OrderService/UpdateDeliveryStatus"
+	OrderService_SetOrderStatus_FullMethodName             = "/orders.order.v1.OrderService/SetOrderStatus"
 	OrderService_GetSubscriptionStats_FullMethodName       = "/orders.order.v1.OrderService/GetSubscriptionStats"
 )
 
@@ -82,6 +83,7 @@ type OrderServiceClient interface {
 	UpdateOrderItem(ctx context.Context, in *UpdateOrderItemRequest, opts ...grpc.CallOption) (*UpdateOrderItemResponse, error)
 	DeleteOrderItem(ctx context.Context, in *DeleteOrderItemRequest, opts ...grpc.CallOption) (*DeleteOrderItemResponse, error)
 	UpdateDeliveryStatus(ctx context.Context, in *UpdateDeliveryStatusRequest, opts ...grpc.CallOption) (*UpdateDeliveryStatusResponse, error)
+	SetOrderStatus(ctx context.Context, in *SetOrderStatusRequest, opts ...grpc.CallOption) (*SetOrderStatusResponse, error)
 	// === Admin analytics ===
 	GetSubscriptionStats(ctx context.Context, in *GetSubscriptionStatsRequest, opts ...grpc.CallOption) (*GetSubscriptionStatsResponse, error)
 }
@@ -334,6 +336,16 @@ func (c *orderServiceClient) UpdateDeliveryStatus(ctx context.Context, in *Updat
 	return out, nil
 }
 
+func (c *orderServiceClient) SetOrderStatus(ctx context.Context, in *SetOrderStatusRequest, opts ...grpc.CallOption) (*SetOrderStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetOrderStatusResponse)
+	err := c.cc.Invoke(ctx, OrderService_SetOrderStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *orderServiceClient) GetSubscriptionStats(ctx context.Context, in *GetSubscriptionStatsRequest, opts ...grpc.CallOption) (*GetSubscriptionStatsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSubscriptionStatsResponse)
@@ -380,6 +392,7 @@ type OrderServiceServer interface {
 	UpdateOrderItem(context.Context, *UpdateOrderItemRequest) (*UpdateOrderItemResponse, error)
 	DeleteOrderItem(context.Context, *DeleteOrderItemRequest) (*DeleteOrderItemResponse, error)
 	UpdateDeliveryStatus(context.Context, *UpdateDeliveryStatusRequest) (*UpdateDeliveryStatusResponse, error)
+	SetOrderStatus(context.Context, *SetOrderStatusRequest) (*SetOrderStatusResponse, error)
 	// === Admin analytics ===
 	GetSubscriptionStats(context.Context, *GetSubscriptionStatsRequest) (*GetSubscriptionStatsResponse, error)
 	mustEmbedUnimplementedOrderServiceServer()
@@ -463,6 +476,9 @@ func (UnimplementedOrderServiceServer) DeleteOrderItem(context.Context, *DeleteO
 }
 func (UnimplementedOrderServiceServer) UpdateDeliveryStatus(context.Context, *UpdateDeliveryStatusRequest) (*UpdateDeliveryStatusResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateDeliveryStatus not implemented")
+}
+func (UnimplementedOrderServiceServer) SetOrderStatus(context.Context, *SetOrderStatusRequest) (*SetOrderStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetOrderStatus not implemented")
 }
 func (UnimplementedOrderServiceServer) GetSubscriptionStats(context.Context, *GetSubscriptionStatsRequest) (*GetSubscriptionStatsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSubscriptionStats not implemented")
@@ -920,6 +936,24 @@ func _OrderService_UpdateDeliveryStatus_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_SetOrderStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetOrderStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).SetOrderStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_SetOrderStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).SetOrderStatus(ctx, req.(*SetOrderStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrderService_GetSubscriptionStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSubscriptionStatsRequest)
 	if err := dec(in); err != nil {
@@ -1040,6 +1074,10 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateDeliveryStatus",
 			Handler:    _OrderService_UpdateDeliveryStatus_Handler,
+		},
+		{
+			MethodName: "SetOrderStatus",
+			Handler:    _OrderService_SetOrderStatus_Handler,
 		},
 		{
 			MethodName: "GetSubscriptionStats",
