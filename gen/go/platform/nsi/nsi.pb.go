@@ -1802,6 +1802,1900 @@ func (x *ValidateGroupAndCategoriesResponse) GetErrorMessage() string {
 	return ""
 }
 
+// --- Cities ---
+type CreateCityRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	CountryId     int64                  `protobuf:"varint,2,opt,name=country_id,json=countryId,proto3" json:"country_id,omitempty"`
+	Timezone      string                 `protobuf:"bytes,3,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	Lat           float64                `protobuf:"fixed64,4,opt,name=lat,proto3" json:"lat,omitempty"`
+	Lon           float64                `protobuf:"fixed64,5,opt,name=lon,proto3" json:"lon,omitempty"`
+	Population    int32                  `protobuf:"varint,6,opt,name=population,proto3" json:"population,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateCityRequest) Reset() {
+	*x = CreateCityRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateCityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateCityRequest) ProtoMessage() {}
+
+func (x *CreateCityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateCityRequest.ProtoReflect.Descriptor instead.
+func (*CreateCityRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *CreateCityRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateCityRequest) GetCountryId() int64 {
+	if x != nil {
+		return x.CountryId
+	}
+	return 0
+}
+
+func (x *CreateCityRequest) GetTimezone() string {
+	if x != nil {
+		return x.Timezone
+	}
+	return ""
+}
+
+func (x *CreateCityRequest) GetLat() float64 {
+	if x != nil {
+		return x.Lat
+	}
+	return 0
+}
+
+func (x *CreateCityRequest) GetLon() float64 {
+	if x != nil {
+		return x.Lon
+	}
+	return 0
+}
+
+func (x *CreateCityRequest) GetPopulation() int32 {
+	if x != nil {
+		return x.Population
+	}
+	return 0
+}
+
+type CreateCityResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	City          *City                  `protobuf:"bytes,1,opt,name=city,proto3" json:"city,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateCityResponse) Reset() {
+	*x = CreateCityResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateCityResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateCityResponse) ProtoMessage() {}
+
+func (x *CreateCityResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateCityResponse.ProtoReflect.Descriptor instead.
+func (*CreateCityResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *CreateCityResponse) GetCity() *City {
+	if x != nil {
+		return x.City
+	}
+	return nil
+}
+
+type UpdateCityRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	CountryId     int64                  `protobuf:"varint,3,opt,name=country_id,json=countryId,proto3" json:"country_id,omitempty"`
+	Timezone      string                 `protobuf:"bytes,4,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	Lat           float64                `protobuf:"fixed64,5,opt,name=lat,proto3" json:"lat,omitempty"`
+	Lon           float64                `protobuf:"fixed64,6,opt,name=lon,proto3" json:"lon,omitempty"`
+	Population    int32                  `protobuf:"varint,7,opt,name=population,proto3" json:"population,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateCityRequest) Reset() {
+	*x = UpdateCityRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateCityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateCityRequest) ProtoMessage() {}
+
+func (x *UpdateCityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateCityRequest.ProtoReflect.Descriptor instead.
+func (*UpdateCityRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *UpdateCityRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateCityRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *UpdateCityRequest) GetCountryId() int64 {
+	if x != nil {
+		return x.CountryId
+	}
+	return 0
+}
+
+func (x *UpdateCityRequest) GetTimezone() string {
+	if x != nil {
+		return x.Timezone
+	}
+	return ""
+}
+
+func (x *UpdateCityRequest) GetLat() float64 {
+	if x != nil {
+		return x.Lat
+	}
+	return 0
+}
+
+func (x *UpdateCityRequest) GetLon() float64 {
+	if x != nil {
+		return x.Lon
+	}
+	return 0
+}
+
+func (x *UpdateCityRequest) GetPopulation() int32 {
+	if x != nil {
+		return x.Population
+	}
+	return 0
+}
+
+type UpdateCityResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	City          *City                  `protobuf:"bytes,1,opt,name=city,proto3" json:"city,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateCityResponse) Reset() {
+	*x = UpdateCityResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateCityResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateCityResponse) ProtoMessage() {}
+
+func (x *UpdateCityResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateCityResponse.ProtoReflect.Descriptor instead.
+func (*UpdateCityResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *UpdateCityResponse) GetCity() *City {
+	if x != nil {
+		return x.City
+	}
+	return nil
+}
+
+type DeleteCityRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCityRequest) Reset() {
+	*x = DeleteCityRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCityRequest) ProtoMessage() {}
+
+func (x *DeleteCityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCityRequest.ProtoReflect.Descriptor instead.
+func (*DeleteCityRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *DeleteCityRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type DeleteCityResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCityResponse) Reset() {
+	*x = DeleteCityResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCityResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCityResponse) ProtoMessage() {}
+
+func (x *DeleteCityResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCityResponse.ProtoReflect.Descriptor instead.
+func (*DeleteCityResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{39}
+}
+
+// --- Car Marks ---
+type CreateCarMarkRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	LogoUrl       string                 `protobuf:"bytes,2,opt,name=logo_url,json=logoUrl,proto3" json:"logo_url,omitempty"`
+	IsPopular     bool                   `protobuf:"varint,3,opt,name=is_popular,json=isPopular,proto3" json:"is_popular,omitempty"`
+	Country       string                 `protobuf:"bytes,4,opt,name=country,proto3" json:"country,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateCarMarkRequest) Reset() {
+	*x = CreateCarMarkRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateCarMarkRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateCarMarkRequest) ProtoMessage() {}
+
+func (x *CreateCarMarkRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateCarMarkRequest.ProtoReflect.Descriptor instead.
+func (*CreateCarMarkRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *CreateCarMarkRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateCarMarkRequest) GetLogoUrl() string {
+	if x != nil {
+		return x.LogoUrl
+	}
+	return ""
+}
+
+func (x *CreateCarMarkRequest) GetIsPopular() bool {
+	if x != nil {
+		return x.IsPopular
+	}
+	return false
+}
+
+func (x *CreateCarMarkRequest) GetCountry() string {
+	if x != nil {
+		return x.Country
+	}
+	return ""
+}
+
+type CreateCarMarkResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Mark          *CarMark               `protobuf:"bytes,1,opt,name=mark,proto3" json:"mark,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateCarMarkResponse) Reset() {
+	*x = CreateCarMarkResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateCarMarkResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateCarMarkResponse) ProtoMessage() {}
+
+func (x *CreateCarMarkResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateCarMarkResponse.ProtoReflect.Descriptor instead.
+func (*CreateCarMarkResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *CreateCarMarkResponse) GetMark() *CarMark {
+	if x != nil {
+		return x.Mark
+	}
+	return nil
+}
+
+type UpdateCarMarkRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	LogoUrl       string                 `protobuf:"bytes,3,opt,name=logo_url,json=logoUrl,proto3" json:"logo_url,omitempty"`
+	IsPopular     bool                   `protobuf:"varint,4,opt,name=is_popular,json=isPopular,proto3" json:"is_popular,omitempty"`
+	Country       string                 `protobuf:"bytes,5,opt,name=country,proto3" json:"country,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateCarMarkRequest) Reset() {
+	*x = UpdateCarMarkRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateCarMarkRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateCarMarkRequest) ProtoMessage() {}
+
+func (x *UpdateCarMarkRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateCarMarkRequest.ProtoReflect.Descriptor instead.
+func (*UpdateCarMarkRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *UpdateCarMarkRequest) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateCarMarkRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *UpdateCarMarkRequest) GetLogoUrl() string {
+	if x != nil {
+		return x.LogoUrl
+	}
+	return ""
+}
+
+func (x *UpdateCarMarkRequest) GetIsPopular() bool {
+	if x != nil {
+		return x.IsPopular
+	}
+	return false
+}
+
+func (x *UpdateCarMarkRequest) GetCountry() string {
+	if x != nil {
+		return x.Country
+	}
+	return ""
+}
+
+type UpdateCarMarkResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Mark          *CarMark               `protobuf:"bytes,1,opt,name=mark,proto3" json:"mark,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateCarMarkResponse) Reset() {
+	*x = UpdateCarMarkResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateCarMarkResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateCarMarkResponse) ProtoMessage() {}
+
+func (x *UpdateCarMarkResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateCarMarkResponse.ProtoReflect.Descriptor instead.
+func (*UpdateCarMarkResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *UpdateCarMarkResponse) GetMark() *CarMark {
+	if x != nil {
+		return x.Mark
+	}
+	return nil
+}
+
+type DeleteCarMarkRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCarMarkRequest) Reset() {
+	*x = DeleteCarMarkRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCarMarkRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCarMarkRequest) ProtoMessage() {}
+
+func (x *DeleteCarMarkRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCarMarkRequest.ProtoReflect.Descriptor instead.
+func (*DeleteCarMarkRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *DeleteCarMarkRequest) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type DeleteCarMarkResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCarMarkResponse) Reset() {
+	*x = DeleteCarMarkResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCarMarkResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCarMarkResponse) ProtoMessage() {}
+
+func (x *DeleteCarMarkResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCarMarkResponse.ProtoReflect.Descriptor instead.
+func (*DeleteCarMarkResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{45}
+}
+
+// --- Car Models ---
+type CreateCarModelRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MarkId        int32                  `protobuf:"varint,1,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateCarModelRequest) Reset() {
+	*x = CreateCarModelRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateCarModelRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateCarModelRequest) ProtoMessage() {}
+
+func (x *CreateCarModelRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateCarModelRequest.ProtoReflect.Descriptor instead.
+func (*CreateCarModelRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *CreateCarModelRequest) GetMarkId() int32 {
+	if x != nil {
+		return x.MarkId
+	}
+	return 0
+}
+
+func (x *CreateCarModelRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type CreateCarModelResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Model         *CarModel              `protobuf:"bytes,1,opt,name=model,proto3" json:"model,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateCarModelResponse) Reset() {
+	*x = CreateCarModelResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[47]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateCarModelResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateCarModelResponse) ProtoMessage() {}
+
+func (x *CreateCarModelResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[47]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateCarModelResponse.ProtoReflect.Descriptor instead.
+func (*CreateCarModelResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{47}
+}
+
+func (x *CreateCarModelResponse) GetModel() *CarModel {
+	if x != nil {
+		return x.Model
+	}
+	return nil
+}
+
+type UpdateCarModelRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	MarkId        int32                  `protobuf:"varint,2,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateCarModelRequest) Reset() {
+	*x = UpdateCarModelRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[48]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateCarModelRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateCarModelRequest) ProtoMessage() {}
+
+func (x *UpdateCarModelRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[48]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateCarModelRequest.ProtoReflect.Descriptor instead.
+func (*UpdateCarModelRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{48}
+}
+
+func (x *UpdateCarModelRequest) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateCarModelRequest) GetMarkId() int32 {
+	if x != nil {
+		return x.MarkId
+	}
+	return 0
+}
+
+func (x *UpdateCarModelRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type UpdateCarModelResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Model         *CarModel              `protobuf:"bytes,1,opt,name=model,proto3" json:"model,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateCarModelResponse) Reset() {
+	*x = UpdateCarModelResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[49]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateCarModelResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateCarModelResponse) ProtoMessage() {}
+
+func (x *UpdateCarModelResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[49]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateCarModelResponse.ProtoReflect.Descriptor instead.
+func (*UpdateCarModelResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{49}
+}
+
+func (x *UpdateCarModelResponse) GetModel() *CarModel {
+	if x != nil {
+		return x.Model
+	}
+	return nil
+}
+
+type DeleteCarModelRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCarModelRequest) Reset() {
+	*x = DeleteCarModelRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[50]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCarModelRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCarModelRequest) ProtoMessage() {}
+
+func (x *DeleteCarModelRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[50]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCarModelRequest.ProtoReflect.Descriptor instead.
+func (*DeleteCarModelRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{50}
+}
+
+func (x *DeleteCarModelRequest) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type DeleteCarModelResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCarModelResponse) Reset() {
+	*x = DeleteCarModelResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[51]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCarModelResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCarModelResponse) ProtoMessage() {}
+
+func (x *DeleteCarModelResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[51]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCarModelResponse.ProtoReflect.Descriptor instead.
+func (*DeleteCarModelResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{51}
+}
+
+// --- Car Generations ---
+type CreateCarGenerationRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ModelId       int32                  `protobuf:"varint,1,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	YearStart     int32                  `protobuf:"varint,3,opt,name=year_start,json=yearStart,proto3" json:"year_start,omitempty"`
+	YearEnd       int32                  `protobuf:"varint,4,opt,name=year_end,json=yearEnd,proto3" json:"year_end,omitempty"`
+	PhotoUrl      string                 `protobuf:"bytes,5,opt,name=photo_url,json=photoUrl,proto3" json:"photo_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateCarGenerationRequest) Reset() {
+	*x = CreateCarGenerationRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[52]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateCarGenerationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateCarGenerationRequest) ProtoMessage() {}
+
+func (x *CreateCarGenerationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[52]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateCarGenerationRequest.ProtoReflect.Descriptor instead.
+func (*CreateCarGenerationRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{52}
+}
+
+func (x *CreateCarGenerationRequest) GetModelId() int32 {
+	if x != nil {
+		return x.ModelId
+	}
+	return 0
+}
+
+func (x *CreateCarGenerationRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateCarGenerationRequest) GetYearStart() int32 {
+	if x != nil {
+		return x.YearStart
+	}
+	return 0
+}
+
+func (x *CreateCarGenerationRequest) GetYearEnd() int32 {
+	if x != nil {
+		return x.YearEnd
+	}
+	return 0
+}
+
+func (x *CreateCarGenerationRequest) GetPhotoUrl() string {
+	if x != nil {
+		return x.PhotoUrl
+	}
+	return ""
+}
+
+type CreateCarGenerationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Generation    *CarGeneration         `protobuf:"bytes,1,opt,name=generation,proto3" json:"generation,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateCarGenerationResponse) Reset() {
+	*x = CreateCarGenerationResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[53]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateCarGenerationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateCarGenerationResponse) ProtoMessage() {}
+
+func (x *CreateCarGenerationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[53]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateCarGenerationResponse.ProtoReflect.Descriptor instead.
+func (*CreateCarGenerationResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{53}
+}
+
+func (x *CreateCarGenerationResponse) GetGeneration() *CarGeneration {
+	if x != nil {
+		return x.Generation
+	}
+	return nil
+}
+
+type UpdateCarGenerationRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ModelId       int32                  `protobuf:"varint,2,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	YearStart     int32                  `protobuf:"varint,4,opt,name=year_start,json=yearStart,proto3" json:"year_start,omitempty"`
+	YearEnd       int32                  `protobuf:"varint,5,opt,name=year_end,json=yearEnd,proto3" json:"year_end,omitempty"`
+	PhotoUrl      string                 `protobuf:"bytes,6,opt,name=photo_url,json=photoUrl,proto3" json:"photo_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateCarGenerationRequest) Reset() {
+	*x = UpdateCarGenerationRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[54]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateCarGenerationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateCarGenerationRequest) ProtoMessage() {}
+
+func (x *UpdateCarGenerationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[54]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateCarGenerationRequest.ProtoReflect.Descriptor instead.
+func (*UpdateCarGenerationRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{54}
+}
+
+func (x *UpdateCarGenerationRequest) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateCarGenerationRequest) GetModelId() int32 {
+	if x != nil {
+		return x.ModelId
+	}
+	return 0
+}
+
+func (x *UpdateCarGenerationRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *UpdateCarGenerationRequest) GetYearStart() int32 {
+	if x != nil {
+		return x.YearStart
+	}
+	return 0
+}
+
+func (x *UpdateCarGenerationRequest) GetYearEnd() int32 {
+	if x != nil {
+		return x.YearEnd
+	}
+	return 0
+}
+
+func (x *UpdateCarGenerationRequest) GetPhotoUrl() string {
+	if x != nil {
+		return x.PhotoUrl
+	}
+	return ""
+}
+
+type UpdateCarGenerationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Generation    *CarGeneration         `protobuf:"bytes,1,opt,name=generation,proto3" json:"generation,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateCarGenerationResponse) Reset() {
+	*x = UpdateCarGenerationResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[55]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateCarGenerationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateCarGenerationResponse) ProtoMessage() {}
+
+func (x *UpdateCarGenerationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[55]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateCarGenerationResponse.ProtoReflect.Descriptor instead.
+func (*UpdateCarGenerationResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{55}
+}
+
+func (x *UpdateCarGenerationResponse) GetGeneration() *CarGeneration {
+	if x != nil {
+		return x.Generation
+	}
+	return nil
+}
+
+type DeleteCarGenerationRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCarGenerationRequest) Reset() {
+	*x = DeleteCarGenerationRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[56]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCarGenerationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCarGenerationRequest) ProtoMessage() {}
+
+func (x *DeleteCarGenerationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[56]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCarGenerationRequest.ProtoReflect.Descriptor instead.
+func (*DeleteCarGenerationRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{56}
+}
+
+func (x *DeleteCarGenerationRequest) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type DeleteCarGenerationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCarGenerationResponse) Reset() {
+	*x = DeleteCarGenerationResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[57]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCarGenerationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCarGenerationResponse) ProtoMessage() {}
+
+func (x *DeleteCarGenerationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[57]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCarGenerationResponse.ProtoReflect.Descriptor instead.
+func (*DeleteCarGenerationResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{57}
+}
+
+// --- Service Groups ---
+type CreateServiceGroupRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Slug          string                 `protobuf:"bytes,2,opt,name=slug,proto3" json:"slug,omitempty"`
+	Icon          string                 `protobuf:"bytes,3,opt,name=icon,proto3" json:"icon,omitempty"`
+	SortOrder     int32                  `protobuf:"varint,4,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateServiceGroupRequest) Reset() {
+	*x = CreateServiceGroupRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[58]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateServiceGroupRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateServiceGroupRequest) ProtoMessage() {}
+
+func (x *CreateServiceGroupRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[58]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateServiceGroupRequest.ProtoReflect.Descriptor instead.
+func (*CreateServiceGroupRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{58}
+}
+
+func (x *CreateServiceGroupRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateServiceGroupRequest) GetSlug() string {
+	if x != nil {
+		return x.Slug
+	}
+	return ""
+}
+
+func (x *CreateServiceGroupRequest) GetIcon() string {
+	if x != nil {
+		return x.Icon
+	}
+	return ""
+}
+
+func (x *CreateServiceGroupRequest) GetSortOrder() int32 {
+	if x != nil {
+		return x.SortOrder
+	}
+	return 0
+}
+
+type CreateServiceGroupResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Group         *ServiceGroup          `protobuf:"bytes,1,opt,name=group,proto3" json:"group,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateServiceGroupResponse) Reset() {
+	*x = CreateServiceGroupResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[59]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateServiceGroupResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateServiceGroupResponse) ProtoMessage() {}
+
+func (x *CreateServiceGroupResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[59]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateServiceGroupResponse.ProtoReflect.Descriptor instead.
+func (*CreateServiceGroupResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{59}
+}
+
+func (x *CreateServiceGroupResponse) GetGroup() *ServiceGroup {
+	if x != nil {
+		return x.Group
+	}
+	return nil
+}
+
+type UpdateServiceGroupRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Slug          string                 `protobuf:"bytes,3,opt,name=slug,proto3" json:"slug,omitempty"`
+	Icon          string                 `protobuf:"bytes,4,opt,name=icon,proto3" json:"icon,omitempty"`
+	SortOrder     int32                  `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateServiceGroupRequest) Reset() {
+	*x = UpdateServiceGroupRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[60]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateServiceGroupRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateServiceGroupRequest) ProtoMessage() {}
+
+func (x *UpdateServiceGroupRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[60]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateServiceGroupRequest.ProtoReflect.Descriptor instead.
+func (*UpdateServiceGroupRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{60}
+}
+
+func (x *UpdateServiceGroupRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateServiceGroupRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *UpdateServiceGroupRequest) GetSlug() string {
+	if x != nil {
+		return x.Slug
+	}
+	return ""
+}
+
+func (x *UpdateServiceGroupRequest) GetIcon() string {
+	if x != nil {
+		return x.Icon
+	}
+	return ""
+}
+
+func (x *UpdateServiceGroupRequest) GetSortOrder() int32 {
+	if x != nil {
+		return x.SortOrder
+	}
+	return 0
+}
+
+type UpdateServiceGroupResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Group         *ServiceGroup          `protobuf:"bytes,1,opt,name=group,proto3" json:"group,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateServiceGroupResponse) Reset() {
+	*x = UpdateServiceGroupResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[61]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateServiceGroupResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateServiceGroupResponse) ProtoMessage() {}
+
+func (x *UpdateServiceGroupResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[61]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateServiceGroupResponse.ProtoReflect.Descriptor instead.
+func (*UpdateServiceGroupResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{61}
+}
+
+func (x *UpdateServiceGroupResponse) GetGroup() *ServiceGroup {
+	if x != nil {
+		return x.Group
+	}
+	return nil
+}
+
+type DeleteServiceGroupRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteServiceGroupRequest) Reset() {
+	*x = DeleteServiceGroupRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[62]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteServiceGroupRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteServiceGroupRequest) ProtoMessage() {}
+
+func (x *DeleteServiceGroupRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[62]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteServiceGroupRequest.ProtoReflect.Descriptor instead.
+func (*DeleteServiceGroupRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{62}
+}
+
+func (x *DeleteServiceGroupRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type DeleteServiceGroupResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteServiceGroupResponse) Reset() {
+	*x = DeleteServiceGroupResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[63]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteServiceGroupResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteServiceGroupResponse) ProtoMessage() {}
+
+func (x *DeleteServiceGroupResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[63]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteServiceGroupResponse.ProtoReflect.Descriptor instead.
+func (*DeleteServiceGroupResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{63}
+}
+
+// --- Service Categories ---
+type CreateServiceCategoryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	GroupId       int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Slug          string                 `protobuf:"bytes,3,opt,name=slug,proto3" json:"slug,omitempty"`
+	SortOrder     int32                  `protobuf:"varint,4,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateServiceCategoryRequest) Reset() {
+	*x = CreateServiceCategoryRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[64]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateServiceCategoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateServiceCategoryRequest) ProtoMessage() {}
+
+func (x *CreateServiceCategoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[64]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateServiceCategoryRequest.ProtoReflect.Descriptor instead.
+func (*CreateServiceCategoryRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{64}
+}
+
+func (x *CreateServiceCategoryRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.GroupId
+	}
+	return 0
+}
+
+func (x *CreateServiceCategoryRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateServiceCategoryRequest) GetSlug() string {
+	if x != nil {
+		return x.Slug
+	}
+	return ""
+}
+
+func (x *CreateServiceCategoryRequest) GetSortOrder() int32 {
+	if x != nil {
+		return x.SortOrder
+	}
+	return 0
+}
+
+type CreateServiceCategoryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Category      *ServiceCategory       `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateServiceCategoryResponse) Reset() {
+	*x = CreateServiceCategoryResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[65]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateServiceCategoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateServiceCategoryResponse) ProtoMessage() {}
+
+func (x *CreateServiceCategoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[65]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateServiceCategoryResponse.ProtoReflect.Descriptor instead.
+func (*CreateServiceCategoryResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{65}
+}
+
+func (x *CreateServiceCategoryResponse) GetCategory() *ServiceCategory {
+	if x != nil {
+		return x.Category
+	}
+	return nil
+}
+
+type UpdateServiceCategoryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	GroupId       int64                  `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Slug          string                 `protobuf:"bytes,4,opt,name=slug,proto3" json:"slug,omitempty"`
+	SortOrder     int32                  `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateServiceCategoryRequest) Reset() {
+	*x = UpdateServiceCategoryRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[66]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateServiceCategoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateServiceCategoryRequest) ProtoMessage() {}
+
+func (x *UpdateServiceCategoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[66]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateServiceCategoryRequest.ProtoReflect.Descriptor instead.
+func (*UpdateServiceCategoryRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{66}
+}
+
+func (x *UpdateServiceCategoryRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateServiceCategoryRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.GroupId
+	}
+	return 0
+}
+
+func (x *UpdateServiceCategoryRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *UpdateServiceCategoryRequest) GetSlug() string {
+	if x != nil {
+		return x.Slug
+	}
+	return ""
+}
+
+func (x *UpdateServiceCategoryRequest) GetSortOrder() int32 {
+	if x != nil {
+		return x.SortOrder
+	}
+	return 0
+}
+
+type UpdateServiceCategoryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Category      *ServiceCategory       `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateServiceCategoryResponse) Reset() {
+	*x = UpdateServiceCategoryResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[67]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateServiceCategoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateServiceCategoryResponse) ProtoMessage() {}
+
+func (x *UpdateServiceCategoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[67]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateServiceCategoryResponse.ProtoReflect.Descriptor instead.
+func (*UpdateServiceCategoryResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{67}
+}
+
+func (x *UpdateServiceCategoryResponse) GetCategory() *ServiceCategory {
+	if x != nil {
+		return x.Category
+	}
+	return nil
+}
+
+type DeleteServiceCategoryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteServiceCategoryRequest) Reset() {
+	*x = DeleteServiceCategoryRequest{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[68]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteServiceCategoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteServiceCategoryRequest) ProtoMessage() {}
+
+func (x *DeleteServiceCategoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[68]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteServiceCategoryRequest.ProtoReflect.Descriptor instead.
+func (*DeleteServiceCategoryRequest) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{68}
+}
+
+func (x *DeleteServiceCategoryRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type DeleteServiceCategoryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteServiceCategoryResponse) Reset() {
+	*x = DeleteServiceCategoryResponse{}
+	mi := &file_platform_nsi_nsi_proto_msgTypes[69]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteServiceCategoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteServiceCategoryResponse) ProtoMessage() {}
+
+func (x *DeleteServiceCategoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_nsi_nsi_proto_msgTypes[69]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteServiceCategoryResponse.ProtoReflect.Descriptor instead.
+func (*DeleteServiceCategoryResponse) Descriptor() ([]byte, []int) {
+	return file_platform_nsi_nsi_proto_rawDescGZIP(), []int{69}
+}
+
 var File_platform_nsi_nsi_proto protoreflect.FileDescriptor
 
 const file_platform_nsi_nsi_proto_rawDesc = "" +
@@ -1923,8 +3817,135 @@ const file_platform_nsi_nsi_proto_rawDesc = "" +
 	"\fcategory_ids\x18\x02 \x03(\x03R\vcategoryIds\"_\n" +
 	"\"ValidateGroupAndCategoriesResponse\x12\x14\n" +
 	"\x05valid\x18\x01 \x01(\bR\x05valid\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage2\x94\n" +
+	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"\xa6\x01\n" +
+	"\x11CreateCityRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1d\n" +
 	"\n" +
+	"country_id\x18\x02 \x01(\x03R\tcountryId\x12\x1a\n" +
+	"\btimezone\x18\x03 \x01(\tR\btimezone\x12\x10\n" +
+	"\x03lat\x18\x04 \x01(\x01R\x03lat\x12\x10\n" +
+	"\x03lon\x18\x05 \x01(\x01R\x03lon\x12\x1e\n" +
+	"\n" +
+	"population\x18\x06 \x01(\x05R\n" +
+	"population\"?\n" +
+	"\x12CreateCityResponse\x12)\n" +
+	"\x04city\x18\x01 \x01(\v2\x15.platform.nsi.v1.CityR\x04city\"\xb6\x01\n" +
+	"\x11UpdateCityRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1d\n" +
+	"\n" +
+	"country_id\x18\x03 \x01(\x03R\tcountryId\x12\x1a\n" +
+	"\btimezone\x18\x04 \x01(\tR\btimezone\x12\x10\n" +
+	"\x03lat\x18\x05 \x01(\x01R\x03lat\x12\x10\n" +
+	"\x03lon\x18\x06 \x01(\x01R\x03lon\x12\x1e\n" +
+	"\n" +
+	"population\x18\a \x01(\x05R\n" +
+	"population\"?\n" +
+	"\x12UpdateCityResponse\x12)\n" +
+	"\x04city\x18\x01 \x01(\v2\x15.platform.nsi.v1.CityR\x04city\"#\n" +
+	"\x11DeleteCityRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x14\n" +
+	"\x12DeleteCityResponse\"~\n" +
+	"\x14CreateCarMarkRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x19\n" +
+	"\blogo_url\x18\x02 \x01(\tR\alogoUrl\x12\x1d\n" +
+	"\n" +
+	"is_popular\x18\x03 \x01(\bR\tisPopular\x12\x18\n" +
+	"\acountry\x18\x04 \x01(\tR\acountry\"E\n" +
+	"\x15CreateCarMarkResponse\x12,\n" +
+	"\x04mark\x18\x01 \x01(\v2\x18.platform.nsi.v1.CarMarkR\x04mark\"\x8e\x01\n" +
+	"\x14UpdateCarMarkRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x19\n" +
+	"\blogo_url\x18\x03 \x01(\tR\alogoUrl\x12\x1d\n" +
+	"\n" +
+	"is_popular\x18\x04 \x01(\bR\tisPopular\x12\x18\n" +
+	"\acountry\x18\x05 \x01(\tR\acountry\"E\n" +
+	"\x15UpdateCarMarkResponse\x12,\n" +
+	"\x04mark\x18\x01 \x01(\v2\x18.platform.nsi.v1.CarMarkR\x04mark\"&\n" +
+	"\x14DeleteCarMarkRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\"\x17\n" +
+	"\x15DeleteCarMarkResponse\"D\n" +
+	"\x15CreateCarModelRequest\x12\x17\n" +
+	"\amark_id\x18\x01 \x01(\x05R\x06markId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"I\n" +
+	"\x16CreateCarModelResponse\x12/\n" +
+	"\x05model\x18\x01 \x01(\v2\x19.platform.nsi.v1.CarModelR\x05model\"T\n" +
+	"\x15UpdateCarModelRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
+	"\amark_id\x18\x02 \x01(\x05R\x06markId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\"I\n" +
+	"\x16UpdateCarModelResponse\x12/\n" +
+	"\x05model\x18\x01 \x01(\v2\x19.platform.nsi.v1.CarModelR\x05model\"'\n" +
+	"\x15DeleteCarModelRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\"\x18\n" +
+	"\x16DeleteCarModelResponse\"\xa2\x01\n" +
+	"\x1aCreateCarGenerationRequest\x12\x19\n" +
+	"\bmodel_id\x18\x01 \x01(\x05R\amodelId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1d\n" +
+	"\n" +
+	"year_start\x18\x03 \x01(\x05R\tyearStart\x12\x19\n" +
+	"\byear_end\x18\x04 \x01(\x05R\ayearEnd\x12\x1b\n" +
+	"\tphoto_url\x18\x05 \x01(\tR\bphotoUrl\"]\n" +
+	"\x1bCreateCarGenerationResponse\x12>\n" +
+	"\n" +
+	"generation\x18\x01 \x01(\v2\x1e.platform.nsi.v1.CarGenerationR\n" +
+	"generation\"\xb2\x01\n" +
+	"\x1aUpdateCarGenerationRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x19\n" +
+	"\bmodel_id\x18\x02 \x01(\x05R\amodelId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1d\n" +
+	"\n" +
+	"year_start\x18\x04 \x01(\x05R\tyearStart\x12\x19\n" +
+	"\byear_end\x18\x05 \x01(\x05R\ayearEnd\x12\x1b\n" +
+	"\tphoto_url\x18\x06 \x01(\tR\bphotoUrl\"]\n" +
+	"\x1bUpdateCarGenerationResponse\x12>\n" +
+	"\n" +
+	"generation\x18\x01 \x01(\v2\x1e.platform.nsi.v1.CarGenerationR\n" +
+	"generation\",\n" +
+	"\x1aDeleteCarGenerationRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\"\x1d\n" +
+	"\x1bDeleteCarGenerationResponse\"v\n" +
+	"\x19CreateServiceGroupRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
+	"\x04slug\x18\x02 \x01(\tR\x04slug\x12\x12\n" +
+	"\x04icon\x18\x03 \x01(\tR\x04icon\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\x04 \x01(\x05R\tsortOrder\"Q\n" +
+	"\x1aCreateServiceGroupResponse\x123\n" +
+	"\x05group\x18\x01 \x01(\v2\x1d.platform.nsi.v1.ServiceGroupR\x05group\"\x86\x01\n" +
+	"\x19UpdateServiceGroupRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
+	"\x04slug\x18\x03 \x01(\tR\x04slug\x12\x12\n" +
+	"\x04icon\x18\x04 \x01(\tR\x04icon\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\x05 \x01(\x05R\tsortOrder\"Q\n" +
+	"\x1aUpdateServiceGroupResponse\x123\n" +
+	"\x05group\x18\x01 \x01(\v2\x1d.platform.nsi.v1.ServiceGroupR\x05group\"+\n" +
+	"\x19DeleteServiceGroupRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1c\n" +
+	"\x1aDeleteServiceGroupResponse\"\x80\x01\n" +
+	"\x1cCreateServiceCategoryRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
+	"\x04slug\x18\x03 \x01(\tR\x04slug\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\x04 \x01(\x05R\tsortOrder\"]\n" +
+	"\x1dCreateServiceCategoryResponse\x12<\n" +
+	"\bcategory\x18\x01 \x01(\v2 .platform.nsi.v1.ServiceCategoryR\bcategory\"\x90\x01\n" +
+	"\x1cUpdateServiceCategoryRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
+	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
+	"\x04slug\x18\x04 \x01(\tR\x04slug\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\x05 \x01(\x05R\tsortOrder\"]\n" +
+	"\x1dUpdateServiceCategoryResponse\x12<\n" +
+	"\bcategory\x18\x01 \x01(\v2 .platform.nsi.v1.ServiceCategoryR\bcategory\".\n" +
+	"\x1cDeleteServiceCategoryRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1f\n" +
+	"\x1dDeleteServiceCategoryResponse2\xed\x18\n" +
 	"\n" +
 	"NsiService\x12R\n" +
 	"\tGetCities\x12!.platform.nsi.v1.GetCitiesRequest\x1a\".platform.nsi.v1.GetCitiesResponse\x12L\n" +
@@ -1939,7 +3960,28 @@ const file_platform_nsi_nsi_proto_rawDesc = "" +
 	"\x12GetServiceCategory\x12*.platform.nsi.v1.GetServiceCategoryRequest\x1a+.platform.nsi.v1.GetServiceCategoryResponse\x12\x85\x01\n" +
 	"\x1aValidateGroupAndCategories\x122.platform.nsi.v1.ValidateGroupAndCategoriesRequest\x1a3.platform.nsi.v1.ValidateGroupAndCategoriesResponse\x12^\n" +
 	"\rGetAppVersion\x12%.platform.nsi.v1.GetAppVersionRequest\x1a&.platform.nsi.v1.GetAppVersionResponse\x12R\n" +
-	"\tGetConfig\x12!.platform.nsi.v1.GetConfigRequest\x1a\".platform.nsi.v1.GetConfigResponseB6Z4gitlab.com/xakpro/cg-proto/gen/go/platform/nsi;nsiv1b\x06proto3"
+	"\tGetConfig\x12!.platform.nsi.v1.GetConfigRequest\x1a\".platform.nsi.v1.GetConfigResponse\x12U\n" +
+	"\n" +
+	"CreateCity\x12\".platform.nsi.v1.CreateCityRequest\x1a#.platform.nsi.v1.CreateCityResponse\x12U\n" +
+	"\n" +
+	"UpdateCity\x12\".platform.nsi.v1.UpdateCityRequest\x1a#.platform.nsi.v1.UpdateCityResponse\x12U\n" +
+	"\n" +
+	"DeleteCity\x12\".platform.nsi.v1.DeleteCityRequest\x1a#.platform.nsi.v1.DeleteCityResponse\x12^\n" +
+	"\rCreateCarMark\x12%.platform.nsi.v1.CreateCarMarkRequest\x1a&.platform.nsi.v1.CreateCarMarkResponse\x12^\n" +
+	"\rUpdateCarMark\x12%.platform.nsi.v1.UpdateCarMarkRequest\x1a&.platform.nsi.v1.UpdateCarMarkResponse\x12^\n" +
+	"\rDeleteCarMark\x12%.platform.nsi.v1.DeleteCarMarkRequest\x1a&.platform.nsi.v1.DeleteCarMarkResponse\x12a\n" +
+	"\x0eCreateCarModel\x12&.platform.nsi.v1.CreateCarModelRequest\x1a'.platform.nsi.v1.CreateCarModelResponse\x12a\n" +
+	"\x0eUpdateCarModel\x12&.platform.nsi.v1.UpdateCarModelRequest\x1a'.platform.nsi.v1.UpdateCarModelResponse\x12a\n" +
+	"\x0eDeleteCarModel\x12&.platform.nsi.v1.DeleteCarModelRequest\x1a'.platform.nsi.v1.DeleteCarModelResponse\x12p\n" +
+	"\x13CreateCarGeneration\x12+.platform.nsi.v1.CreateCarGenerationRequest\x1a,.platform.nsi.v1.CreateCarGenerationResponse\x12p\n" +
+	"\x13UpdateCarGeneration\x12+.platform.nsi.v1.UpdateCarGenerationRequest\x1a,.platform.nsi.v1.UpdateCarGenerationResponse\x12p\n" +
+	"\x13DeleteCarGeneration\x12+.platform.nsi.v1.DeleteCarGenerationRequest\x1a,.platform.nsi.v1.DeleteCarGenerationResponse\x12m\n" +
+	"\x12CreateServiceGroup\x12*.platform.nsi.v1.CreateServiceGroupRequest\x1a+.platform.nsi.v1.CreateServiceGroupResponse\x12m\n" +
+	"\x12UpdateServiceGroup\x12*.platform.nsi.v1.UpdateServiceGroupRequest\x1a+.platform.nsi.v1.UpdateServiceGroupResponse\x12m\n" +
+	"\x12DeleteServiceGroup\x12*.platform.nsi.v1.DeleteServiceGroupRequest\x1a+.platform.nsi.v1.DeleteServiceGroupResponse\x12v\n" +
+	"\x15CreateServiceCategory\x12-.platform.nsi.v1.CreateServiceCategoryRequest\x1a..platform.nsi.v1.CreateServiceCategoryResponse\x12v\n" +
+	"\x15UpdateServiceCategory\x12-.platform.nsi.v1.UpdateServiceCategoryRequest\x1a..platform.nsi.v1.UpdateServiceCategoryResponse\x12v\n" +
+	"\x15DeleteServiceCategory\x12-.platform.nsi.v1.DeleteServiceCategoryRequest\x1a..platform.nsi.v1.DeleteServiceCategoryResponseB6Z4gitlab.com/xakpro/cg-proto/gen/go/platform/nsi;nsiv1b\x06proto3"
 
 var (
 	file_platform_nsi_nsi_proto_rawDescOnce sync.Once
@@ -1953,7 +3995,7 @@ func file_platform_nsi_nsi_proto_rawDescGZIP() []byte {
 	return file_platform_nsi_nsi_proto_rawDescData
 }
 
-var file_platform_nsi_nsi_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
+var file_platform_nsi_nsi_proto_msgTypes = make([]protoimpl.MessageInfo, 70)
 var file_platform_nsi_nsi_proto_goTypes = []any{
 	(*City)(nil),                               // 0: platform.nsi.v1.City
 	(*CarMark)(nil),                            // 1: platform.nsi.v1.CarMark
@@ -1989,6 +4031,42 @@ var file_platform_nsi_nsi_proto_goTypes = []any{
 	(*GetServiceCategoryResponse)(nil),         // 31: platform.nsi.v1.GetServiceCategoryResponse
 	(*ValidateGroupAndCategoriesRequest)(nil),  // 32: platform.nsi.v1.ValidateGroupAndCategoriesRequest
 	(*ValidateGroupAndCategoriesResponse)(nil), // 33: platform.nsi.v1.ValidateGroupAndCategoriesResponse
+	(*CreateCityRequest)(nil),                  // 34: platform.nsi.v1.CreateCityRequest
+	(*CreateCityResponse)(nil),                 // 35: platform.nsi.v1.CreateCityResponse
+	(*UpdateCityRequest)(nil),                  // 36: platform.nsi.v1.UpdateCityRequest
+	(*UpdateCityResponse)(nil),                 // 37: platform.nsi.v1.UpdateCityResponse
+	(*DeleteCityRequest)(nil),                  // 38: platform.nsi.v1.DeleteCityRequest
+	(*DeleteCityResponse)(nil),                 // 39: platform.nsi.v1.DeleteCityResponse
+	(*CreateCarMarkRequest)(nil),               // 40: platform.nsi.v1.CreateCarMarkRequest
+	(*CreateCarMarkResponse)(nil),              // 41: platform.nsi.v1.CreateCarMarkResponse
+	(*UpdateCarMarkRequest)(nil),               // 42: platform.nsi.v1.UpdateCarMarkRequest
+	(*UpdateCarMarkResponse)(nil),              // 43: platform.nsi.v1.UpdateCarMarkResponse
+	(*DeleteCarMarkRequest)(nil),               // 44: platform.nsi.v1.DeleteCarMarkRequest
+	(*DeleteCarMarkResponse)(nil),              // 45: platform.nsi.v1.DeleteCarMarkResponse
+	(*CreateCarModelRequest)(nil),              // 46: platform.nsi.v1.CreateCarModelRequest
+	(*CreateCarModelResponse)(nil),             // 47: platform.nsi.v1.CreateCarModelResponse
+	(*UpdateCarModelRequest)(nil),              // 48: platform.nsi.v1.UpdateCarModelRequest
+	(*UpdateCarModelResponse)(nil),             // 49: platform.nsi.v1.UpdateCarModelResponse
+	(*DeleteCarModelRequest)(nil),              // 50: platform.nsi.v1.DeleteCarModelRequest
+	(*DeleteCarModelResponse)(nil),             // 51: platform.nsi.v1.DeleteCarModelResponse
+	(*CreateCarGenerationRequest)(nil),         // 52: platform.nsi.v1.CreateCarGenerationRequest
+	(*CreateCarGenerationResponse)(nil),        // 53: platform.nsi.v1.CreateCarGenerationResponse
+	(*UpdateCarGenerationRequest)(nil),         // 54: platform.nsi.v1.UpdateCarGenerationRequest
+	(*UpdateCarGenerationResponse)(nil),        // 55: platform.nsi.v1.UpdateCarGenerationResponse
+	(*DeleteCarGenerationRequest)(nil),         // 56: platform.nsi.v1.DeleteCarGenerationRequest
+	(*DeleteCarGenerationResponse)(nil),        // 57: platform.nsi.v1.DeleteCarGenerationResponse
+	(*CreateServiceGroupRequest)(nil),          // 58: platform.nsi.v1.CreateServiceGroupRequest
+	(*CreateServiceGroupResponse)(nil),         // 59: platform.nsi.v1.CreateServiceGroupResponse
+	(*UpdateServiceGroupRequest)(nil),          // 60: platform.nsi.v1.UpdateServiceGroupRequest
+	(*UpdateServiceGroupResponse)(nil),         // 61: platform.nsi.v1.UpdateServiceGroupResponse
+	(*DeleteServiceGroupRequest)(nil),          // 62: platform.nsi.v1.DeleteServiceGroupRequest
+	(*DeleteServiceGroupResponse)(nil),         // 63: platform.nsi.v1.DeleteServiceGroupResponse
+	(*CreateServiceCategoryRequest)(nil),       // 64: platform.nsi.v1.CreateServiceCategoryRequest
+	(*CreateServiceCategoryResponse)(nil),      // 65: platform.nsi.v1.CreateServiceCategoryResponse
+	(*UpdateServiceCategoryRequest)(nil),       // 66: platform.nsi.v1.UpdateServiceCategoryRequest
+	(*UpdateServiceCategoryResponse)(nil),      // 67: platform.nsi.v1.UpdateServiceCategoryResponse
+	(*DeleteServiceCategoryRequest)(nil),       // 68: platform.nsi.v1.DeleteServiceCategoryRequest
+	(*DeleteServiceCategoryResponse)(nil),      // 69: platform.nsi.v1.DeleteServiceCategoryResponse
 }
 var file_platform_nsi_nsi_proto_depIdxs = []int32{
 	0,  // 0: platform.nsi.v1.GetCitiesResponse.cities:type_name -> platform.nsi.v1.City
@@ -2002,37 +4080,85 @@ var file_platform_nsi_nsi_proto_depIdxs = []int32{
 	5,  // 8: platform.nsi.v1.GetServiceGroupsResponse.groups:type_name -> platform.nsi.v1.ServiceGroup
 	6,  // 9: platform.nsi.v1.GetServiceCategoriesResponse.categories:type_name -> platform.nsi.v1.ServiceCategory
 	6,  // 10: platform.nsi.v1.GetServiceCategoryResponse.category:type_name -> platform.nsi.v1.ServiceCategory
-	8,  // 11: platform.nsi.v1.NsiService.GetCities:input_type -> platform.nsi.v1.GetCitiesRequest
-	10, // 12: platform.nsi.v1.NsiService.GetCity:input_type -> platform.nsi.v1.GetCityRequest
-	12, // 13: platform.nsi.v1.NsiService.GetCarMarks:input_type -> platform.nsi.v1.GetCarMarksRequest
-	14, // 14: platform.nsi.v1.NsiService.GetCarModels:input_type -> platform.nsi.v1.GetCarModelsRequest
-	16, // 15: platform.nsi.v1.NsiService.GetCarGenerations:input_type -> platform.nsi.v1.GetCarGenerationsRequest
-	18, // 16: platform.nsi.v1.NsiService.GetCategories:input_type -> platform.nsi.v1.GetCategoriesRequest
-	20, // 17: platform.nsi.v1.NsiService.GetCategory:input_type -> platform.nsi.v1.GetCategoryRequest
-	26, // 18: platform.nsi.v1.NsiService.GetServiceGroups:input_type -> platform.nsi.v1.GetServiceGroupsRequest
-	28, // 19: platform.nsi.v1.NsiService.GetServiceCategories:input_type -> platform.nsi.v1.GetServiceCategoriesRequest
-	30, // 20: platform.nsi.v1.NsiService.GetServiceCategory:input_type -> platform.nsi.v1.GetServiceCategoryRequest
-	32, // 21: platform.nsi.v1.NsiService.ValidateGroupAndCategories:input_type -> platform.nsi.v1.ValidateGroupAndCategoriesRequest
-	22, // 22: platform.nsi.v1.NsiService.GetAppVersion:input_type -> platform.nsi.v1.GetAppVersionRequest
-	24, // 23: platform.nsi.v1.NsiService.GetConfig:input_type -> platform.nsi.v1.GetConfigRequest
-	9,  // 24: platform.nsi.v1.NsiService.GetCities:output_type -> platform.nsi.v1.GetCitiesResponse
-	11, // 25: platform.nsi.v1.NsiService.GetCity:output_type -> platform.nsi.v1.GetCityResponse
-	13, // 26: platform.nsi.v1.NsiService.GetCarMarks:output_type -> platform.nsi.v1.GetCarMarksResponse
-	15, // 27: platform.nsi.v1.NsiService.GetCarModels:output_type -> platform.nsi.v1.GetCarModelsResponse
-	17, // 28: platform.nsi.v1.NsiService.GetCarGenerations:output_type -> platform.nsi.v1.GetCarGenerationsResponse
-	19, // 29: platform.nsi.v1.NsiService.GetCategories:output_type -> platform.nsi.v1.GetCategoriesResponse
-	21, // 30: platform.nsi.v1.NsiService.GetCategory:output_type -> platform.nsi.v1.GetCategoryResponse
-	27, // 31: platform.nsi.v1.NsiService.GetServiceGroups:output_type -> platform.nsi.v1.GetServiceGroupsResponse
-	29, // 32: platform.nsi.v1.NsiService.GetServiceCategories:output_type -> platform.nsi.v1.GetServiceCategoriesResponse
-	31, // 33: platform.nsi.v1.NsiService.GetServiceCategory:output_type -> platform.nsi.v1.GetServiceCategoryResponse
-	33, // 34: platform.nsi.v1.NsiService.ValidateGroupAndCategories:output_type -> platform.nsi.v1.ValidateGroupAndCategoriesResponse
-	23, // 35: platform.nsi.v1.NsiService.GetAppVersion:output_type -> platform.nsi.v1.GetAppVersionResponse
-	25, // 36: platform.nsi.v1.NsiService.GetConfig:output_type -> platform.nsi.v1.GetConfigResponse
-	24, // [24:37] is the sub-list for method output_type
-	11, // [11:24] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	0,  // 11: platform.nsi.v1.CreateCityResponse.city:type_name -> platform.nsi.v1.City
+	0,  // 12: platform.nsi.v1.UpdateCityResponse.city:type_name -> platform.nsi.v1.City
+	1,  // 13: platform.nsi.v1.CreateCarMarkResponse.mark:type_name -> platform.nsi.v1.CarMark
+	1,  // 14: platform.nsi.v1.UpdateCarMarkResponse.mark:type_name -> platform.nsi.v1.CarMark
+	2,  // 15: platform.nsi.v1.CreateCarModelResponse.model:type_name -> platform.nsi.v1.CarModel
+	2,  // 16: platform.nsi.v1.UpdateCarModelResponse.model:type_name -> platform.nsi.v1.CarModel
+	3,  // 17: platform.nsi.v1.CreateCarGenerationResponse.generation:type_name -> platform.nsi.v1.CarGeneration
+	3,  // 18: platform.nsi.v1.UpdateCarGenerationResponse.generation:type_name -> platform.nsi.v1.CarGeneration
+	5,  // 19: platform.nsi.v1.CreateServiceGroupResponse.group:type_name -> platform.nsi.v1.ServiceGroup
+	5,  // 20: platform.nsi.v1.UpdateServiceGroupResponse.group:type_name -> platform.nsi.v1.ServiceGroup
+	6,  // 21: platform.nsi.v1.CreateServiceCategoryResponse.category:type_name -> platform.nsi.v1.ServiceCategory
+	6,  // 22: platform.nsi.v1.UpdateServiceCategoryResponse.category:type_name -> platform.nsi.v1.ServiceCategory
+	8,  // 23: platform.nsi.v1.NsiService.GetCities:input_type -> platform.nsi.v1.GetCitiesRequest
+	10, // 24: platform.nsi.v1.NsiService.GetCity:input_type -> platform.nsi.v1.GetCityRequest
+	12, // 25: platform.nsi.v1.NsiService.GetCarMarks:input_type -> platform.nsi.v1.GetCarMarksRequest
+	14, // 26: platform.nsi.v1.NsiService.GetCarModels:input_type -> platform.nsi.v1.GetCarModelsRequest
+	16, // 27: platform.nsi.v1.NsiService.GetCarGenerations:input_type -> platform.nsi.v1.GetCarGenerationsRequest
+	18, // 28: platform.nsi.v1.NsiService.GetCategories:input_type -> platform.nsi.v1.GetCategoriesRequest
+	20, // 29: platform.nsi.v1.NsiService.GetCategory:input_type -> platform.nsi.v1.GetCategoryRequest
+	26, // 30: platform.nsi.v1.NsiService.GetServiceGroups:input_type -> platform.nsi.v1.GetServiceGroupsRequest
+	28, // 31: platform.nsi.v1.NsiService.GetServiceCategories:input_type -> platform.nsi.v1.GetServiceCategoriesRequest
+	30, // 32: platform.nsi.v1.NsiService.GetServiceCategory:input_type -> platform.nsi.v1.GetServiceCategoryRequest
+	32, // 33: platform.nsi.v1.NsiService.ValidateGroupAndCategories:input_type -> platform.nsi.v1.ValidateGroupAndCategoriesRequest
+	22, // 34: platform.nsi.v1.NsiService.GetAppVersion:input_type -> platform.nsi.v1.GetAppVersionRequest
+	24, // 35: platform.nsi.v1.NsiService.GetConfig:input_type -> platform.nsi.v1.GetConfigRequest
+	34, // 36: platform.nsi.v1.NsiService.CreateCity:input_type -> platform.nsi.v1.CreateCityRequest
+	36, // 37: platform.nsi.v1.NsiService.UpdateCity:input_type -> platform.nsi.v1.UpdateCityRequest
+	38, // 38: platform.nsi.v1.NsiService.DeleteCity:input_type -> platform.nsi.v1.DeleteCityRequest
+	40, // 39: platform.nsi.v1.NsiService.CreateCarMark:input_type -> platform.nsi.v1.CreateCarMarkRequest
+	42, // 40: platform.nsi.v1.NsiService.UpdateCarMark:input_type -> platform.nsi.v1.UpdateCarMarkRequest
+	44, // 41: platform.nsi.v1.NsiService.DeleteCarMark:input_type -> platform.nsi.v1.DeleteCarMarkRequest
+	46, // 42: platform.nsi.v1.NsiService.CreateCarModel:input_type -> platform.nsi.v1.CreateCarModelRequest
+	48, // 43: platform.nsi.v1.NsiService.UpdateCarModel:input_type -> platform.nsi.v1.UpdateCarModelRequest
+	50, // 44: platform.nsi.v1.NsiService.DeleteCarModel:input_type -> platform.nsi.v1.DeleteCarModelRequest
+	52, // 45: platform.nsi.v1.NsiService.CreateCarGeneration:input_type -> platform.nsi.v1.CreateCarGenerationRequest
+	54, // 46: platform.nsi.v1.NsiService.UpdateCarGeneration:input_type -> platform.nsi.v1.UpdateCarGenerationRequest
+	56, // 47: platform.nsi.v1.NsiService.DeleteCarGeneration:input_type -> platform.nsi.v1.DeleteCarGenerationRequest
+	58, // 48: platform.nsi.v1.NsiService.CreateServiceGroup:input_type -> platform.nsi.v1.CreateServiceGroupRequest
+	60, // 49: platform.nsi.v1.NsiService.UpdateServiceGroup:input_type -> platform.nsi.v1.UpdateServiceGroupRequest
+	62, // 50: platform.nsi.v1.NsiService.DeleteServiceGroup:input_type -> platform.nsi.v1.DeleteServiceGroupRequest
+	64, // 51: platform.nsi.v1.NsiService.CreateServiceCategory:input_type -> platform.nsi.v1.CreateServiceCategoryRequest
+	66, // 52: platform.nsi.v1.NsiService.UpdateServiceCategory:input_type -> platform.nsi.v1.UpdateServiceCategoryRequest
+	68, // 53: platform.nsi.v1.NsiService.DeleteServiceCategory:input_type -> platform.nsi.v1.DeleteServiceCategoryRequest
+	9,  // 54: platform.nsi.v1.NsiService.GetCities:output_type -> platform.nsi.v1.GetCitiesResponse
+	11, // 55: platform.nsi.v1.NsiService.GetCity:output_type -> platform.nsi.v1.GetCityResponse
+	13, // 56: platform.nsi.v1.NsiService.GetCarMarks:output_type -> platform.nsi.v1.GetCarMarksResponse
+	15, // 57: platform.nsi.v1.NsiService.GetCarModels:output_type -> platform.nsi.v1.GetCarModelsResponse
+	17, // 58: platform.nsi.v1.NsiService.GetCarGenerations:output_type -> platform.nsi.v1.GetCarGenerationsResponse
+	19, // 59: platform.nsi.v1.NsiService.GetCategories:output_type -> platform.nsi.v1.GetCategoriesResponse
+	21, // 60: platform.nsi.v1.NsiService.GetCategory:output_type -> platform.nsi.v1.GetCategoryResponse
+	27, // 61: platform.nsi.v1.NsiService.GetServiceGroups:output_type -> platform.nsi.v1.GetServiceGroupsResponse
+	29, // 62: platform.nsi.v1.NsiService.GetServiceCategories:output_type -> platform.nsi.v1.GetServiceCategoriesResponse
+	31, // 63: platform.nsi.v1.NsiService.GetServiceCategory:output_type -> platform.nsi.v1.GetServiceCategoryResponse
+	33, // 64: platform.nsi.v1.NsiService.ValidateGroupAndCategories:output_type -> platform.nsi.v1.ValidateGroupAndCategoriesResponse
+	23, // 65: platform.nsi.v1.NsiService.GetAppVersion:output_type -> platform.nsi.v1.GetAppVersionResponse
+	25, // 66: platform.nsi.v1.NsiService.GetConfig:output_type -> platform.nsi.v1.GetConfigResponse
+	35, // 67: platform.nsi.v1.NsiService.CreateCity:output_type -> platform.nsi.v1.CreateCityResponse
+	37, // 68: platform.nsi.v1.NsiService.UpdateCity:output_type -> platform.nsi.v1.UpdateCityResponse
+	39, // 69: platform.nsi.v1.NsiService.DeleteCity:output_type -> platform.nsi.v1.DeleteCityResponse
+	41, // 70: platform.nsi.v1.NsiService.CreateCarMark:output_type -> platform.nsi.v1.CreateCarMarkResponse
+	43, // 71: platform.nsi.v1.NsiService.UpdateCarMark:output_type -> platform.nsi.v1.UpdateCarMarkResponse
+	45, // 72: platform.nsi.v1.NsiService.DeleteCarMark:output_type -> platform.nsi.v1.DeleteCarMarkResponse
+	47, // 73: platform.nsi.v1.NsiService.CreateCarModel:output_type -> platform.nsi.v1.CreateCarModelResponse
+	49, // 74: platform.nsi.v1.NsiService.UpdateCarModel:output_type -> platform.nsi.v1.UpdateCarModelResponse
+	51, // 75: platform.nsi.v1.NsiService.DeleteCarModel:output_type -> platform.nsi.v1.DeleteCarModelResponse
+	53, // 76: platform.nsi.v1.NsiService.CreateCarGeneration:output_type -> platform.nsi.v1.CreateCarGenerationResponse
+	55, // 77: platform.nsi.v1.NsiService.UpdateCarGeneration:output_type -> platform.nsi.v1.UpdateCarGenerationResponse
+	57, // 78: platform.nsi.v1.NsiService.DeleteCarGeneration:output_type -> platform.nsi.v1.DeleteCarGenerationResponse
+	59, // 79: platform.nsi.v1.NsiService.CreateServiceGroup:output_type -> platform.nsi.v1.CreateServiceGroupResponse
+	61, // 80: platform.nsi.v1.NsiService.UpdateServiceGroup:output_type -> platform.nsi.v1.UpdateServiceGroupResponse
+	63, // 81: platform.nsi.v1.NsiService.DeleteServiceGroup:output_type -> platform.nsi.v1.DeleteServiceGroupResponse
+	65, // 82: platform.nsi.v1.NsiService.CreateServiceCategory:output_type -> platform.nsi.v1.CreateServiceCategoryResponse
+	67, // 83: platform.nsi.v1.NsiService.UpdateServiceCategory:output_type -> platform.nsi.v1.UpdateServiceCategoryResponse
+	69, // 84: platform.nsi.v1.NsiService.DeleteServiceCategory:output_type -> platform.nsi.v1.DeleteServiceCategoryResponse
+	54, // [54:85] is the sub-list for method output_type
+	23, // [23:54] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_platform_nsi_nsi_proto_init() }
@@ -2046,7 +4172,7 @@ func file_platform_nsi_nsi_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_platform_nsi_nsi_proto_rawDesc), len(file_platform_nsi_nsi_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   34,
+			NumMessages:   70,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

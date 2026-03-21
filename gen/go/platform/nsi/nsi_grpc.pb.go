@@ -32,6 +32,24 @@ const (
 	NsiService_ValidateGroupAndCategories_FullMethodName = "/platform.nsi.v1.NsiService/ValidateGroupAndCategories"
 	NsiService_GetAppVersion_FullMethodName              = "/platform.nsi.v1.NsiService/GetAppVersion"
 	NsiService_GetConfig_FullMethodName                  = "/platform.nsi.v1.NsiService/GetConfig"
+	NsiService_CreateCity_FullMethodName                 = "/platform.nsi.v1.NsiService/CreateCity"
+	NsiService_UpdateCity_FullMethodName                 = "/platform.nsi.v1.NsiService/UpdateCity"
+	NsiService_DeleteCity_FullMethodName                 = "/platform.nsi.v1.NsiService/DeleteCity"
+	NsiService_CreateCarMark_FullMethodName              = "/platform.nsi.v1.NsiService/CreateCarMark"
+	NsiService_UpdateCarMark_FullMethodName              = "/platform.nsi.v1.NsiService/UpdateCarMark"
+	NsiService_DeleteCarMark_FullMethodName              = "/platform.nsi.v1.NsiService/DeleteCarMark"
+	NsiService_CreateCarModel_FullMethodName             = "/platform.nsi.v1.NsiService/CreateCarModel"
+	NsiService_UpdateCarModel_FullMethodName             = "/platform.nsi.v1.NsiService/UpdateCarModel"
+	NsiService_DeleteCarModel_FullMethodName             = "/platform.nsi.v1.NsiService/DeleteCarModel"
+	NsiService_CreateCarGeneration_FullMethodName        = "/platform.nsi.v1.NsiService/CreateCarGeneration"
+	NsiService_UpdateCarGeneration_FullMethodName        = "/platform.nsi.v1.NsiService/UpdateCarGeneration"
+	NsiService_DeleteCarGeneration_FullMethodName        = "/platform.nsi.v1.NsiService/DeleteCarGeneration"
+	NsiService_CreateServiceGroup_FullMethodName         = "/platform.nsi.v1.NsiService/CreateServiceGroup"
+	NsiService_UpdateServiceGroup_FullMethodName         = "/platform.nsi.v1.NsiService/UpdateServiceGroup"
+	NsiService_DeleteServiceGroup_FullMethodName         = "/platform.nsi.v1.NsiService/DeleteServiceGroup"
+	NsiService_CreateServiceCategory_FullMethodName      = "/platform.nsi.v1.NsiService/CreateServiceCategory"
+	NsiService_UpdateServiceCategory_FullMethodName      = "/platform.nsi.v1.NsiService/UpdateServiceCategory"
+	NsiService_DeleteServiceCategory_FullMethodName      = "/platform.nsi.v1.NsiService/DeleteServiceCategory"
 )
 
 // NsiServiceClient is the client API for NsiService service.
@@ -52,6 +70,30 @@ type NsiServiceClient interface {
 	ValidateGroupAndCategories(ctx context.Context, in *ValidateGroupAndCategoriesRequest, opts ...grpc.CallOption) (*ValidateGroupAndCategoriesResponse, error)
 	GetAppVersion(ctx context.Context, in *GetAppVersionRequest, opts ...grpc.CallOption) (*GetAppVersionResponse, error)
 	GetConfig(ctx context.Context, in *GetConfigRequest, opts ...grpc.CallOption) (*GetConfigResponse, error)
+	// Admin CRUD — Cities
+	CreateCity(ctx context.Context, in *CreateCityRequest, opts ...grpc.CallOption) (*CreateCityResponse, error)
+	UpdateCity(ctx context.Context, in *UpdateCityRequest, opts ...grpc.CallOption) (*UpdateCityResponse, error)
+	DeleteCity(ctx context.Context, in *DeleteCityRequest, opts ...grpc.CallOption) (*DeleteCityResponse, error)
+	// Admin CRUD — Car Marks
+	CreateCarMark(ctx context.Context, in *CreateCarMarkRequest, opts ...grpc.CallOption) (*CreateCarMarkResponse, error)
+	UpdateCarMark(ctx context.Context, in *UpdateCarMarkRequest, opts ...grpc.CallOption) (*UpdateCarMarkResponse, error)
+	DeleteCarMark(ctx context.Context, in *DeleteCarMarkRequest, opts ...grpc.CallOption) (*DeleteCarMarkResponse, error)
+	// Admin CRUD — Car Models
+	CreateCarModel(ctx context.Context, in *CreateCarModelRequest, opts ...grpc.CallOption) (*CreateCarModelResponse, error)
+	UpdateCarModel(ctx context.Context, in *UpdateCarModelRequest, opts ...grpc.CallOption) (*UpdateCarModelResponse, error)
+	DeleteCarModel(ctx context.Context, in *DeleteCarModelRequest, opts ...grpc.CallOption) (*DeleteCarModelResponse, error)
+	// Admin CRUD — Car Generations
+	CreateCarGeneration(ctx context.Context, in *CreateCarGenerationRequest, opts ...grpc.CallOption) (*CreateCarGenerationResponse, error)
+	UpdateCarGeneration(ctx context.Context, in *UpdateCarGenerationRequest, opts ...grpc.CallOption) (*UpdateCarGenerationResponse, error)
+	DeleteCarGeneration(ctx context.Context, in *DeleteCarGenerationRequest, opts ...grpc.CallOption) (*DeleteCarGenerationResponse, error)
+	// Admin CRUD — Service Groups
+	CreateServiceGroup(ctx context.Context, in *CreateServiceGroupRequest, opts ...grpc.CallOption) (*CreateServiceGroupResponse, error)
+	UpdateServiceGroup(ctx context.Context, in *UpdateServiceGroupRequest, opts ...grpc.CallOption) (*UpdateServiceGroupResponse, error)
+	DeleteServiceGroup(ctx context.Context, in *DeleteServiceGroupRequest, opts ...grpc.CallOption) (*DeleteServiceGroupResponse, error)
+	// Admin CRUD — Service Categories
+	CreateServiceCategory(ctx context.Context, in *CreateServiceCategoryRequest, opts ...grpc.CallOption) (*CreateServiceCategoryResponse, error)
+	UpdateServiceCategory(ctx context.Context, in *UpdateServiceCategoryRequest, opts ...grpc.CallOption) (*UpdateServiceCategoryResponse, error)
+	DeleteServiceCategory(ctx context.Context, in *DeleteServiceCategoryRequest, opts ...grpc.CallOption) (*DeleteServiceCategoryResponse, error)
 }
 
 type nsiServiceClient struct {
@@ -192,6 +234,186 @@ func (c *nsiServiceClient) GetConfig(ctx context.Context, in *GetConfigRequest, 
 	return out, nil
 }
 
+func (c *nsiServiceClient) CreateCity(ctx context.Context, in *CreateCityRequest, opts ...grpc.CallOption) (*CreateCityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateCityResponse)
+	err := c.cc.Invoke(ctx, NsiService_CreateCity_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) UpdateCity(ctx context.Context, in *UpdateCityRequest, opts ...grpc.CallOption) (*UpdateCityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateCityResponse)
+	err := c.cc.Invoke(ctx, NsiService_UpdateCity_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) DeleteCity(ctx context.Context, in *DeleteCityRequest, opts ...grpc.CallOption) (*DeleteCityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteCityResponse)
+	err := c.cc.Invoke(ctx, NsiService_DeleteCity_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) CreateCarMark(ctx context.Context, in *CreateCarMarkRequest, opts ...grpc.CallOption) (*CreateCarMarkResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateCarMarkResponse)
+	err := c.cc.Invoke(ctx, NsiService_CreateCarMark_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) UpdateCarMark(ctx context.Context, in *UpdateCarMarkRequest, opts ...grpc.CallOption) (*UpdateCarMarkResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateCarMarkResponse)
+	err := c.cc.Invoke(ctx, NsiService_UpdateCarMark_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) DeleteCarMark(ctx context.Context, in *DeleteCarMarkRequest, opts ...grpc.CallOption) (*DeleteCarMarkResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteCarMarkResponse)
+	err := c.cc.Invoke(ctx, NsiService_DeleteCarMark_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) CreateCarModel(ctx context.Context, in *CreateCarModelRequest, opts ...grpc.CallOption) (*CreateCarModelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateCarModelResponse)
+	err := c.cc.Invoke(ctx, NsiService_CreateCarModel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) UpdateCarModel(ctx context.Context, in *UpdateCarModelRequest, opts ...grpc.CallOption) (*UpdateCarModelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateCarModelResponse)
+	err := c.cc.Invoke(ctx, NsiService_UpdateCarModel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) DeleteCarModel(ctx context.Context, in *DeleteCarModelRequest, opts ...grpc.CallOption) (*DeleteCarModelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteCarModelResponse)
+	err := c.cc.Invoke(ctx, NsiService_DeleteCarModel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) CreateCarGeneration(ctx context.Context, in *CreateCarGenerationRequest, opts ...grpc.CallOption) (*CreateCarGenerationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateCarGenerationResponse)
+	err := c.cc.Invoke(ctx, NsiService_CreateCarGeneration_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) UpdateCarGeneration(ctx context.Context, in *UpdateCarGenerationRequest, opts ...grpc.CallOption) (*UpdateCarGenerationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateCarGenerationResponse)
+	err := c.cc.Invoke(ctx, NsiService_UpdateCarGeneration_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) DeleteCarGeneration(ctx context.Context, in *DeleteCarGenerationRequest, opts ...grpc.CallOption) (*DeleteCarGenerationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteCarGenerationResponse)
+	err := c.cc.Invoke(ctx, NsiService_DeleteCarGeneration_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) CreateServiceGroup(ctx context.Context, in *CreateServiceGroupRequest, opts ...grpc.CallOption) (*CreateServiceGroupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateServiceGroupResponse)
+	err := c.cc.Invoke(ctx, NsiService_CreateServiceGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) UpdateServiceGroup(ctx context.Context, in *UpdateServiceGroupRequest, opts ...grpc.CallOption) (*UpdateServiceGroupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateServiceGroupResponse)
+	err := c.cc.Invoke(ctx, NsiService_UpdateServiceGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) DeleteServiceGroup(ctx context.Context, in *DeleteServiceGroupRequest, opts ...grpc.CallOption) (*DeleteServiceGroupResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteServiceGroupResponse)
+	err := c.cc.Invoke(ctx, NsiService_DeleteServiceGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) CreateServiceCategory(ctx context.Context, in *CreateServiceCategoryRequest, opts ...grpc.CallOption) (*CreateServiceCategoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateServiceCategoryResponse)
+	err := c.cc.Invoke(ctx, NsiService_CreateServiceCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) UpdateServiceCategory(ctx context.Context, in *UpdateServiceCategoryRequest, opts ...grpc.CallOption) (*UpdateServiceCategoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateServiceCategoryResponse)
+	err := c.cc.Invoke(ctx, NsiService_UpdateServiceCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nsiServiceClient) DeleteServiceCategory(ctx context.Context, in *DeleteServiceCategoryRequest, opts ...grpc.CallOption) (*DeleteServiceCategoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteServiceCategoryResponse)
+	err := c.cc.Invoke(ctx, NsiService_DeleteServiceCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NsiServiceServer is the server API for NsiService service.
 // All implementations must embed UnimplementedNsiServiceServer
 // for forward compatibility.
@@ -210,6 +432,30 @@ type NsiServiceServer interface {
 	ValidateGroupAndCategories(context.Context, *ValidateGroupAndCategoriesRequest) (*ValidateGroupAndCategoriesResponse, error)
 	GetAppVersion(context.Context, *GetAppVersionRequest) (*GetAppVersionResponse, error)
 	GetConfig(context.Context, *GetConfigRequest) (*GetConfigResponse, error)
+	// Admin CRUD — Cities
+	CreateCity(context.Context, *CreateCityRequest) (*CreateCityResponse, error)
+	UpdateCity(context.Context, *UpdateCityRequest) (*UpdateCityResponse, error)
+	DeleteCity(context.Context, *DeleteCityRequest) (*DeleteCityResponse, error)
+	// Admin CRUD — Car Marks
+	CreateCarMark(context.Context, *CreateCarMarkRequest) (*CreateCarMarkResponse, error)
+	UpdateCarMark(context.Context, *UpdateCarMarkRequest) (*UpdateCarMarkResponse, error)
+	DeleteCarMark(context.Context, *DeleteCarMarkRequest) (*DeleteCarMarkResponse, error)
+	// Admin CRUD — Car Models
+	CreateCarModel(context.Context, *CreateCarModelRequest) (*CreateCarModelResponse, error)
+	UpdateCarModel(context.Context, *UpdateCarModelRequest) (*UpdateCarModelResponse, error)
+	DeleteCarModel(context.Context, *DeleteCarModelRequest) (*DeleteCarModelResponse, error)
+	// Admin CRUD — Car Generations
+	CreateCarGeneration(context.Context, *CreateCarGenerationRequest) (*CreateCarGenerationResponse, error)
+	UpdateCarGeneration(context.Context, *UpdateCarGenerationRequest) (*UpdateCarGenerationResponse, error)
+	DeleteCarGeneration(context.Context, *DeleteCarGenerationRequest) (*DeleteCarGenerationResponse, error)
+	// Admin CRUD — Service Groups
+	CreateServiceGroup(context.Context, *CreateServiceGroupRequest) (*CreateServiceGroupResponse, error)
+	UpdateServiceGroup(context.Context, *UpdateServiceGroupRequest) (*UpdateServiceGroupResponse, error)
+	DeleteServiceGroup(context.Context, *DeleteServiceGroupRequest) (*DeleteServiceGroupResponse, error)
+	// Admin CRUD — Service Categories
+	CreateServiceCategory(context.Context, *CreateServiceCategoryRequest) (*CreateServiceCategoryResponse, error)
+	UpdateServiceCategory(context.Context, *UpdateServiceCategoryRequest) (*UpdateServiceCategoryResponse, error)
+	DeleteServiceCategory(context.Context, *DeleteServiceCategoryRequest) (*DeleteServiceCategoryResponse, error)
 	mustEmbedUnimplementedNsiServiceServer()
 }
 
@@ -258,6 +504,60 @@ func (UnimplementedNsiServiceServer) GetAppVersion(context.Context, *GetAppVersi
 }
 func (UnimplementedNsiServiceServer) GetConfig(context.Context, *GetConfigRequest) (*GetConfigResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetConfig not implemented")
+}
+func (UnimplementedNsiServiceServer) CreateCity(context.Context, *CreateCityRequest) (*CreateCityResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateCity not implemented")
+}
+func (UnimplementedNsiServiceServer) UpdateCity(context.Context, *UpdateCityRequest) (*UpdateCityResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateCity not implemented")
+}
+func (UnimplementedNsiServiceServer) DeleteCity(context.Context, *DeleteCityRequest) (*DeleteCityResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteCity not implemented")
+}
+func (UnimplementedNsiServiceServer) CreateCarMark(context.Context, *CreateCarMarkRequest) (*CreateCarMarkResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateCarMark not implemented")
+}
+func (UnimplementedNsiServiceServer) UpdateCarMark(context.Context, *UpdateCarMarkRequest) (*UpdateCarMarkResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateCarMark not implemented")
+}
+func (UnimplementedNsiServiceServer) DeleteCarMark(context.Context, *DeleteCarMarkRequest) (*DeleteCarMarkResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteCarMark not implemented")
+}
+func (UnimplementedNsiServiceServer) CreateCarModel(context.Context, *CreateCarModelRequest) (*CreateCarModelResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateCarModel not implemented")
+}
+func (UnimplementedNsiServiceServer) UpdateCarModel(context.Context, *UpdateCarModelRequest) (*UpdateCarModelResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateCarModel not implemented")
+}
+func (UnimplementedNsiServiceServer) DeleteCarModel(context.Context, *DeleteCarModelRequest) (*DeleteCarModelResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteCarModel not implemented")
+}
+func (UnimplementedNsiServiceServer) CreateCarGeneration(context.Context, *CreateCarGenerationRequest) (*CreateCarGenerationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateCarGeneration not implemented")
+}
+func (UnimplementedNsiServiceServer) UpdateCarGeneration(context.Context, *UpdateCarGenerationRequest) (*UpdateCarGenerationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateCarGeneration not implemented")
+}
+func (UnimplementedNsiServiceServer) DeleteCarGeneration(context.Context, *DeleteCarGenerationRequest) (*DeleteCarGenerationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteCarGeneration not implemented")
+}
+func (UnimplementedNsiServiceServer) CreateServiceGroup(context.Context, *CreateServiceGroupRequest) (*CreateServiceGroupResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateServiceGroup not implemented")
+}
+func (UnimplementedNsiServiceServer) UpdateServiceGroup(context.Context, *UpdateServiceGroupRequest) (*UpdateServiceGroupResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateServiceGroup not implemented")
+}
+func (UnimplementedNsiServiceServer) DeleteServiceGroup(context.Context, *DeleteServiceGroupRequest) (*DeleteServiceGroupResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteServiceGroup not implemented")
+}
+func (UnimplementedNsiServiceServer) CreateServiceCategory(context.Context, *CreateServiceCategoryRequest) (*CreateServiceCategoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateServiceCategory not implemented")
+}
+func (UnimplementedNsiServiceServer) UpdateServiceCategory(context.Context, *UpdateServiceCategoryRequest) (*UpdateServiceCategoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateServiceCategory not implemented")
+}
+func (UnimplementedNsiServiceServer) DeleteServiceCategory(context.Context, *DeleteServiceCategoryRequest) (*DeleteServiceCategoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteServiceCategory not implemented")
 }
 func (UnimplementedNsiServiceServer) mustEmbedUnimplementedNsiServiceServer() {}
 func (UnimplementedNsiServiceServer) testEmbeddedByValue()                    {}
@@ -514,6 +814,330 @@ func _NsiService_GetConfig_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NsiService_CreateCity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).CreateCity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_CreateCity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).CreateCity(ctx, req.(*CreateCityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_UpdateCity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).UpdateCity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_UpdateCity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).UpdateCity(ctx, req.(*UpdateCityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_DeleteCity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).DeleteCity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_DeleteCity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).DeleteCity(ctx, req.(*DeleteCityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_CreateCarMark_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCarMarkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).CreateCarMark(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_CreateCarMark_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).CreateCarMark(ctx, req.(*CreateCarMarkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_UpdateCarMark_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCarMarkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).UpdateCarMark(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_UpdateCarMark_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).UpdateCarMark(ctx, req.(*UpdateCarMarkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_DeleteCarMark_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCarMarkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).DeleteCarMark(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_DeleteCarMark_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).DeleteCarMark(ctx, req.(*DeleteCarMarkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_CreateCarModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCarModelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).CreateCarModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_CreateCarModel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).CreateCarModel(ctx, req.(*CreateCarModelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_UpdateCarModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCarModelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).UpdateCarModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_UpdateCarModel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).UpdateCarModel(ctx, req.(*UpdateCarModelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_DeleteCarModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCarModelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).DeleteCarModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_DeleteCarModel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).DeleteCarModel(ctx, req.(*DeleteCarModelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_CreateCarGeneration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCarGenerationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).CreateCarGeneration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_CreateCarGeneration_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).CreateCarGeneration(ctx, req.(*CreateCarGenerationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_UpdateCarGeneration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCarGenerationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).UpdateCarGeneration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_UpdateCarGeneration_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).UpdateCarGeneration(ctx, req.(*UpdateCarGenerationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_DeleteCarGeneration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCarGenerationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).DeleteCarGeneration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_DeleteCarGeneration_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).DeleteCarGeneration(ctx, req.(*DeleteCarGenerationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_CreateServiceGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateServiceGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).CreateServiceGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_CreateServiceGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).CreateServiceGroup(ctx, req.(*CreateServiceGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_UpdateServiceGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateServiceGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).UpdateServiceGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_UpdateServiceGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).UpdateServiceGroup(ctx, req.(*UpdateServiceGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_DeleteServiceGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteServiceGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).DeleteServiceGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_DeleteServiceGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).DeleteServiceGroup(ctx, req.(*DeleteServiceGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_CreateServiceCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateServiceCategoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).CreateServiceCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_CreateServiceCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).CreateServiceCategory(ctx, req.(*CreateServiceCategoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_UpdateServiceCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateServiceCategoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).UpdateServiceCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_UpdateServiceCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).UpdateServiceCategory(ctx, req.(*UpdateServiceCategoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NsiService_DeleteServiceCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteServiceCategoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NsiServiceServer).DeleteServiceCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NsiService_DeleteServiceCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NsiServiceServer).DeleteServiceCategory(ctx, req.(*DeleteServiceCategoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // NsiService_ServiceDesc is the grpc.ServiceDesc for NsiService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -572,6 +1196,78 @@ var NsiService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetConfig",
 			Handler:    _NsiService_GetConfig_Handler,
+		},
+		{
+			MethodName: "CreateCity",
+			Handler:    _NsiService_CreateCity_Handler,
+		},
+		{
+			MethodName: "UpdateCity",
+			Handler:    _NsiService_UpdateCity_Handler,
+		},
+		{
+			MethodName: "DeleteCity",
+			Handler:    _NsiService_DeleteCity_Handler,
+		},
+		{
+			MethodName: "CreateCarMark",
+			Handler:    _NsiService_CreateCarMark_Handler,
+		},
+		{
+			MethodName: "UpdateCarMark",
+			Handler:    _NsiService_UpdateCarMark_Handler,
+		},
+		{
+			MethodName: "DeleteCarMark",
+			Handler:    _NsiService_DeleteCarMark_Handler,
+		},
+		{
+			MethodName: "CreateCarModel",
+			Handler:    _NsiService_CreateCarModel_Handler,
+		},
+		{
+			MethodName: "UpdateCarModel",
+			Handler:    _NsiService_UpdateCarModel_Handler,
+		},
+		{
+			MethodName: "DeleteCarModel",
+			Handler:    _NsiService_DeleteCarModel_Handler,
+		},
+		{
+			MethodName: "CreateCarGeneration",
+			Handler:    _NsiService_CreateCarGeneration_Handler,
+		},
+		{
+			MethodName: "UpdateCarGeneration",
+			Handler:    _NsiService_UpdateCarGeneration_Handler,
+		},
+		{
+			MethodName: "DeleteCarGeneration",
+			Handler:    _NsiService_DeleteCarGeneration_Handler,
+		},
+		{
+			MethodName: "CreateServiceGroup",
+			Handler:    _NsiService_CreateServiceGroup_Handler,
+		},
+		{
+			MethodName: "UpdateServiceGroup",
+			Handler:    _NsiService_UpdateServiceGroup_Handler,
+		},
+		{
+			MethodName: "DeleteServiceGroup",
+			Handler:    _NsiService_DeleteServiceGroup_Handler,
+		},
+		{
+			MethodName: "CreateServiceCategory",
+			Handler:    _NsiService_CreateServiceCategory_Handler,
+		},
+		{
+			MethodName: "UpdateServiceCategory",
+			Handler:    _NsiService_UpdateServiceCategory_Handler,
+		},
+		{
+			MethodName: "DeleteServiceCategory",
+			Handler:    _NsiService_DeleteServiceCategory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
