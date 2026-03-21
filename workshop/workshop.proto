@@ -16,6 +16,7 @@ service WorkshopService {
   rpc GetWorkshop(GetWorkshopRequest) returns (GetWorkshopResponse);
   rpc UpdateWorkshop(UpdateWorkshopRequest) returns (UpdateWorkshopResponse);
   rpc ListWorkshops(ListWorkshopsRequest) returns (ListWorkshopsResponse);
+  rpc ListWorkshopOrgIDs(ListWorkshopOrgIDsRequest) returns (ListWorkshopOrgIDsResponse);
 
   // --- Repair Order ---
   rpc CreateRepairOrder(CreateRepairOrderRequest) returns (CreateRepairOrderResponse);
@@ -566,6 +567,14 @@ message ListWorkshopsRequest {
 message ListWorkshopsResponse {
   repeated Workshop workshops = 1;
   int32 total = 2;
+}
+
+message ListWorkshopOrgIDsRequest {
+  bool active_only = 1;
+}
+
+message ListWorkshopOrgIDsResponse {
+  repeated string org_ids = 1;
 }
 
 // =============================================================================
