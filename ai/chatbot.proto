@@ -26,6 +26,7 @@ service ChatbotService {
   rpc TakeOver(TakeOverRequest) returns (TakeOverResponse);
   rpc ReturnToAI(ReturnToAIRequest) returns (ReturnToAIResponse);
   rpc SendAdminMessage(SendAdminMessageRequest) returns (SendAdminMessageResponse);
+  rpc ListAllSessions(ListAllSessionsRequest) returns (ListAllSessionsResponse);
 
   // --- Conversation ---
   rpc ListConversations(ListConversationsRequest) returns (ListConversationsResponse);
@@ -162,6 +163,7 @@ message Message {
   int32 total_tokens = 11;
   string model = 12;
   google.protobuf.Timestamp created_at = 13;
+  int64 admin_user_id = 14;
 }
 
 message PromptSection {
@@ -382,6 +384,22 @@ message SendAdminMessageRequest {
 
 message SendAdminMessageResponse {
   Message message = 1;
+}
+
+message ListAllSessionsRequest {
+  string status = 1;
+  string platform = 2;
+  string role = 3;
+  int64 assigned_to = 4;
+  bool is_human_takeover = 5;
+  bool filter_human_takeover = 6;
+  int32 page = 7;
+  int32 page_size = 8;
+}
+
+message ListAllSessionsResponse {
+  repeated Session sessions = 1;
+  int32 total = 2;
 }
 
 // =============================================================================
