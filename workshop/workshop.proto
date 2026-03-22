@@ -670,6 +670,7 @@ message ListRepairOrdersRequest {
   string search = 4;
   int32 page = 5;
   int32 page_size = 6;
+  int64 user_id = 7;
 }
 
 message ListRepairOrdersResponse {
