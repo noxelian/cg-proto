@@ -36,6 +36,7 @@ service BidService {
   
   // CancelBid cancels a bid (organization cancels their bid)
   rpc CancelBid(CancelBidRequest) returns (CancelBidResponse);
+  rpc MarkPartsPurchased(MarkPartsPurchasedRequest) returns (MarkPartsPurchasedResponse);
 }
 
 enum BidType {
@@ -83,6 +84,7 @@ message BidPart {
   int64 price = 6;
   string condition = 7;        // new, used, refurbished
   string availability = 8;     // in_stock, on_order, unavailable
+  string status = 9;           // pending, purchased
 }
 
 // CreateBid
@@ -226,3 +228,11 @@ message CancelBidResponse {
   Bid bid = 1;
 }
 
+
+// MarkPartsPurchased
+message MarkPartsPurchasedRequest {
+  int64 bid_id = 1;
+  repeated int64 part_ids = 2;
+}
+
+message MarkPartsPurchasedResponse {}

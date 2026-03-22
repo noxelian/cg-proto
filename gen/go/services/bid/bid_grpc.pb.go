@@ -29,6 +29,7 @@ const (
 	BidService_AcceptBid_FullMethodName             = "/services.bid.v1.BidService/AcceptBid"
 	BidService_RejectBid_FullMethodName             = "/services.bid.v1.BidService/RejectBid"
 	BidService_CancelBid_FullMethodName             = "/services.bid.v1.BidService/CancelBid"
+	BidService_MarkPartsPurchased_FullMethodName    = "/services.bid.v1.BidService/MarkPartsPurchased"
 )
 
 // BidServiceClient is the client API for BidService service.
@@ -55,6 +56,7 @@ type BidServiceClient interface {
 	RejectBid(ctx context.Context, in *RejectBidRequest, opts ...grpc.CallOption) (*RejectBidResponse, error)
 	// CancelBid cancels a bid (organization cancels their bid)
 	CancelBid(ctx context.Context, in *CancelBidRequest, opts ...grpc.CallOption) (*CancelBidResponse, error)
+	MarkPartsPurchased(ctx context.Context, in *MarkPartsPurchasedRequest, opts ...grpc.CallOption) (*MarkPartsPurchasedResponse, error)
 }
 
 type bidServiceClient struct {
@@ -165,6 +167,16 @@ func (c *bidServiceClient) CancelBid(ctx context.Context, in *CancelBidRequest, 
 	return out, nil
 }
 
+func (c *bidServiceClient) MarkPartsPurchased(ctx context.Context, in *MarkPartsPurchasedRequest, opts ...grpc.CallOption) (*MarkPartsPurchasedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MarkPartsPurchasedResponse)
+	err := c.cc.Invoke(ctx, BidService_MarkPartsPurchased_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BidServiceServer is the server API for BidService service.
 // All implementations must embed UnimplementedBidServiceServer
 // for forward compatibility.
@@ -189,6 +201,7 @@ type BidServiceServer interface {
 	RejectBid(context.Context, *RejectBidRequest) (*RejectBidResponse, error)
 	// CancelBid cancels a bid (organization cancels their bid)
 	CancelBid(context.Context, *CancelBidRequest) (*CancelBidResponse, error)
+	MarkPartsPurchased(context.Context, *MarkPartsPurchasedRequest) (*MarkPartsPurchasedResponse, error)
 	mustEmbedUnimplementedBidServiceServer()
 }
 
@@ -228,6 +241,9 @@ func (UnimplementedBidServiceServer) RejectBid(context.Context, *RejectBidReques
 }
 func (UnimplementedBidServiceServer) CancelBid(context.Context, *CancelBidRequest) (*CancelBidResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelBid not implemented")
+}
+func (UnimplementedBidServiceServer) MarkPartsPurchased(context.Context, *MarkPartsPurchasedRequest) (*MarkPartsPurchasedResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MarkPartsPurchased not implemented")
 }
 func (UnimplementedBidServiceServer) mustEmbedUnimplementedBidServiceServer() {}
 func (UnimplementedBidServiceServer) testEmbeddedByValue()                    {}
@@ -430,6 +446,24 @@ func _BidService_CancelBid_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BidService_MarkPartsPurchased_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MarkPartsPurchasedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BidServiceServer).MarkPartsPurchased(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BidService_MarkPartsPurchased_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BidServiceServer).MarkPartsPurchased(ctx, req.(*MarkPartsPurchasedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BidService_ServiceDesc is the grpc.ServiceDesc for BidService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -476,6 +510,10 @@ var BidService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CancelBid",
 			Handler:    _BidService_CancelBid_Handler,
+		},
+		{
+			MethodName: "MarkPartsPurchased",
+			Handler:    _BidService_MarkPartsPurchased_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
