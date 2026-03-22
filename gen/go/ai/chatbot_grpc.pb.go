@@ -29,6 +29,7 @@ const (
 	ChatbotService_TakeOver_FullMethodName              = "/ai.v1.ChatbotService/TakeOver"
 	ChatbotService_ReturnToAI_FullMethodName            = "/ai.v1.ChatbotService/ReturnToAI"
 	ChatbotService_SendAdminMessage_FullMethodName      = "/ai.v1.ChatbotService/SendAdminMessage"
+	ChatbotService_ListAllSessions_FullMethodName       = "/ai.v1.ChatbotService/ListAllSessions"
 	ChatbotService_ListConversations_FullMethodName     = "/ai.v1.ChatbotService/ListConversations"
 	ChatbotService_GetConversation_FullMethodName       = "/ai.v1.ChatbotService/GetConversation"
 	ChatbotService_CreatePromptSection_FullMethodName   = "/ai.v1.ChatbotService/CreatePromptSection"
@@ -67,6 +68,7 @@ type ChatbotServiceClient interface {
 	TakeOver(ctx context.Context, in *TakeOverRequest, opts ...grpc.CallOption) (*TakeOverResponse, error)
 	ReturnToAI(ctx context.Context, in *ReturnToAIRequest, opts ...grpc.CallOption) (*ReturnToAIResponse, error)
 	SendAdminMessage(ctx context.Context, in *SendAdminMessageRequest, opts ...grpc.CallOption) (*SendAdminMessageResponse, error)
+	ListAllSessions(ctx context.Context, in *ListAllSessionsRequest, opts ...grpc.CallOption) (*ListAllSessionsResponse, error)
 	// --- Conversation ---
 	ListConversations(ctx context.Context, in *ListConversationsRequest, opts ...grpc.CallOption) (*ListConversationsResponse, error)
 	GetConversation(ctx context.Context, in *GetConversationRequest, opts ...grpc.CallOption) (*GetConversationResponse, error)
@@ -207,6 +209,16 @@ func (c *chatbotServiceClient) SendAdminMessage(ctx context.Context, in *SendAdm
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SendAdminMessageResponse)
 	err := c.cc.Invoke(ctx, ChatbotService_SendAdminMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotServiceClient) ListAllSessions(ctx context.Context, in *ListAllSessionsRequest, opts ...grpc.CallOption) (*ListAllSessionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAllSessionsResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_ListAllSessions_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -420,6 +432,7 @@ type ChatbotServiceServer interface {
 	TakeOver(context.Context, *TakeOverRequest) (*TakeOverResponse, error)
 	ReturnToAI(context.Context, *ReturnToAIRequest) (*ReturnToAIResponse, error)
 	SendAdminMessage(context.Context, *SendAdminMessageRequest) (*SendAdminMessageResponse, error)
+	ListAllSessions(context.Context, *ListAllSessionsRequest) (*ListAllSessionsResponse, error)
 	// --- Conversation ---
 	ListConversations(context.Context, *ListConversationsRequest) (*ListConversationsResponse, error)
 	GetConversation(context.Context, *GetConversationRequest) (*GetConversationResponse, error)
@@ -486,6 +499,9 @@ func (UnimplementedChatbotServiceServer) ReturnToAI(context.Context, *ReturnToAI
 }
 func (UnimplementedChatbotServiceServer) SendAdminMessage(context.Context, *SendAdminMessageRequest) (*SendAdminMessageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendAdminMessage not implemented")
+}
+func (UnimplementedChatbotServiceServer) ListAllSessions(context.Context, *ListAllSessionsRequest) (*ListAllSessionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListAllSessions not implemented")
 }
 func (UnimplementedChatbotServiceServer) ListConversations(context.Context, *ListConversationsRequest) (*ListConversationsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListConversations not implemented")
@@ -734,6 +750,24 @@ func _ChatbotService_SendAdminMessage_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatbotServiceServer).SendAdminMessage(ctx, req.(*SendAdminMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotService_ListAllSessions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAllSessionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotServiceServer).ListAllSessions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatbotService_ListAllSessions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotServiceServer).ListAllSessions(ctx, req.(*ListAllSessionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1122,6 +1156,10 @@ var ChatbotService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendAdminMessage",
 			Handler:    _ChatbotService_SendAdminMessage_Handler,
+		},
+		{
+			MethodName: "ListAllSessions",
+			Handler:    _ChatbotService_ListAllSessions_Handler,
 		},
 		{
 			MethodName: "ListConversations",
