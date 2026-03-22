@@ -4539,6 +4539,7 @@ type ListRepairOrdersRequest struct {
 	Search        string                 `protobuf:"bytes,4,opt,name=search,proto3" json:"search,omitempty"`
 	Page          int32                  `protobuf:"varint,5,opt,name=page,proto3" json:"page,omitempty"`
 	PageSize      int32                  `protobuf:"varint,6,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	UserId        int64                  `protobuf:"varint,7,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4611,6 +4612,13 @@ func (x *ListRepairOrdersRequest) GetPage() int32 {
 func (x *ListRepairOrdersRequest) GetPageSize() int32 {
 	if x != nil {
 		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListRepairOrdersRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
 	}
 	return 0
 }
@@ -12243,7 +12251,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"new_status\x18\x02 \x01(\x0e2\x19.workshop.v1.RepairStatusR\tnewStatus\x12\x18\n" +
 	"\acomment\x18\x03 \x01(\tR\acomment\"Q\n" +
 	"\x1fUpdateRepairOrderStatusResponse\x12.\n" +
-	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order\"\xd3\x01\n" +
+	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order\"\xec\x01\n" +
 	"\x17ListRepairOrdersRequest\x12\x1f\n" +
 	"\vworkshop_id\x18\x01 \x01(\x03R\n" +
 	"workshopId\x121\n" +
@@ -12251,7 +12259,8 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\tmaster_id\x18\x03 \x01(\x03R\bmasterId\x12\x16\n" +
 	"\x06search\x18\x04 \x01(\tR\x06search\x12\x12\n" +
 	"\x04page\x18\x05 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x06 \x01(\x05R\bpageSize\"b\n" +
+	"\tpage_size\x18\x06 \x01(\x05R\bpageSize\x12\x17\n" +
+	"\auser_id\x18\a \x01(\x03R\x06userId\"b\n" +
 	"\x18ListRepairOrdersResponse\x120\n" +
 	"\x06orders\x18\x01 \x03(\v2\x18.workshop.v1.RepairOrderR\x06orders\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"3\n" +
