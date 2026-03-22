@@ -31,11 +31,23 @@ service ChatbotService {
   rpc ListConversations(ListConversationsRequest) returns (ListConversationsResponse);
   rpc GetConversation(GetConversationRequest) returns (GetConversationResponse);
 
-  // --- Prompt ---
-  rpc CreatePrompt(CreatePromptRequest) returns (CreatePromptResponse);
-  rpc UpdatePrompt(UpdatePromptRequest) returns (UpdatePromptResponse);
-  rpc ListPrompts(ListPromptsRequest) returns (ListPromptsResponse);
-  rpc ActivatePromptVersion(ActivatePromptVersionRequest) returns (ActivatePromptVersionResponse);
+  // --- Prompt Section ---
+  rpc CreatePromptSection(CreatePromptSectionRequest) returns (CreatePromptSectionResponse);
+  rpc ListPromptSections(ListPromptSectionsRequest) returns (ListPromptSectionsResponse);
+  rpc ActivatePromptSection(ActivatePromptSectionRequest) returns (ActivatePromptSectionResponse);
+
+  // --- Prompt Role ---
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
+  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse);
+  rpc UpdateRoleTools(UpdateRoleToolsRequest) returns (UpdateRoleToolsResponse);
+
+  // --- Prompt Experiment ---
+  rpc CreateExperiment(CreateExperimentRequest) returns (CreateExperimentResponse);
+  rpc GetActiveExperiment(GetActiveExperimentRequest) returns (GetActiveExperimentResponse);
+  rpc CompleteExperiment(CompleteExperimentRequest) returns (CompleteExperimentResponse);
+
+  // --- Prompt Sandbox ---
+  rpc TestPromptDraft(TestPromptDraftRequest) returns (TestPromptDraftResponse);
 
   // --- User Memory ---
   rpc GetUserMemory(GetUserMemoryRequest) returns (GetUserMemoryResponse);
@@ -152,16 +164,43 @@ message Message {
   google.protobuf.Timestamp created_at = 13;
 }
 
-message Prompt {
+message PromptSection {
   string id = 1;
-  string name = 2;
-  string role = 3;
+  string role = 2;
+  string section = 3;
   int32 version = 4;
   string content = 5;
   PromptStatus status = 6;
   repeated string variables = 7;
-  google.protobuf.Timestamp created_at = 8;
-  google.protobuf.Timestamp updated_at = 9;
+  int64 created_by = 8;
+  int64 activated_by = 9;
+  google.protobuf.Timestamp activated_at = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+}
+
+message PromptRole {
+  string role = 1;
+  string display_name = 2;
+  repeated string tool_names = 3;
+  int64 created_by = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message Experiment {
+  string id = 1;
+  string role = 2;
+  string section = 3;
+  string variant_a_id = 4;
+  string variant_b_id = 5;
+  int32 traffic_pct_b = 6;
+  string status = 7;
+  string winner_id = 8;
+  int64 created_by = 9;
+  int64 completed_by = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp completed_at = 12;
 }
 
 message UserMemory {
@@ -373,49 +412,124 @@ message GetConversationResponse {
 }
 
 // =============================================================================
-// Prompt RPCs
+// Prompt Section RPCs
 // =============================================================================
 
-message CreatePromptRequest {
-  string name = 1;
-  string role = 2;
+message CreatePromptSectionRequest {
+  string role = 1;
+  string section = 2;
   string content = 3;
   repeated string variables = 4;
+  int64 created_by = 5;
 }
 
-message CreatePromptResponse {
-  Prompt prompt = 1;
+message CreatePromptSectionResponse {
+  PromptSection prompt_section = 1;
 }
 
-message UpdatePromptRequest {
-  string prompt_id = 1;
-  string content = 2;
-  repeated string variables = 3;
-}
-
-message UpdatePromptResponse {
-  Prompt prompt = 1;
-}
-
-message ListPromptsRequest {
+message ListPromptSectionsRequest {
   string role = 1;
-  PromptStatus status = 2;
-  int32 page = 3;
-  int32 page_size = 4;
+  string section = 2;
+  PromptStatus status = 3;
+  int32 page = 4;
+  int32 page_size = 5;
 }
 
-message ListPromptsResponse {
-  repeated Prompt prompts = 1;
+message ListPromptSectionsResponse {
+  repeated PromptSection prompt_sections = 1;
   int32 total = 2;
 }
 
-message ActivatePromptVersionRequest {
-  string prompt_id = 1;
-  int32 version = 2;
+message ActivatePromptSectionRequest {
+  string prompt_section_id = 1;
+  int64 activated_by = 2;
 }
 
-message ActivatePromptVersionResponse {
-  Prompt prompt = 1;
+message ActivatePromptSectionResponse {
+  PromptSection prompt_section = 1;
+}
+
+// =============================================================================
+// Prompt Role RPCs
+// =============================================================================
+
+message CreateRoleRequest {
+  string role = 1;
+  string display_name = 2;
+  repeated string tool_names = 3;
+  int64 created_by = 4;
+}
+
+message CreateRoleResponse {
+  PromptRole prompt_role = 1;
+}
+
+message ListRolesRequest {}
+
+message ListRolesResponse {
+  repeated PromptRole prompt_roles = 1;
+}
+
+message UpdateRoleToolsRequest {
+  string role = 1;
+  repeated string tool_names = 2;
+}
+
+message UpdateRoleToolsResponse {
+  PromptRole prompt_role = 1;
+}
+
+// =============================================================================
+// Prompt Experiment RPCs
+// =============================================================================
+
+message CreateExperimentRequest {
+  string role = 1;
+  string section = 2;
+  string variant_a_id = 3;
+  string variant_b_id = 4;
+  int32 traffic_pct_b = 5;
+  int64 created_by = 6;
+}
+
+message CreateExperimentResponse {
+  Experiment experiment = 1;
+}
+
+message GetActiveExperimentRequest {
+  string role = 1;
+  string section = 2;
+}
+
+message GetActiveExperimentResponse {
+  Experiment experiment = 1;
+}
+
+message CompleteExperimentRequest {
+  string experiment_id = 1;
+  string winner_id = 2;
+  int64 completed_by = 3;
+}
+
+message CompleteExperimentResponse {
+  Experiment experiment = 1;
+}
+
+// =============================================================================
+// Prompt Sandbox RPCs
+// =============================================================================
+
+message TestPromptDraftRequest {
+  string role = 1;
+  string section = 2;
+  string draft_content = 3;
+  string test_message = 4;
+}
+
+message TestPromptDraftResponse {
+  string ai_response = 1;
+  int32 prompt_tokens = 2;
+  int32 completion_tokens = 3;
 }
 
 // =============================================================================

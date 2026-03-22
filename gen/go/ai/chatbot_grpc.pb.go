@@ -31,10 +31,16 @@ const (
 	ChatbotService_SendAdminMessage_FullMethodName      = "/ai.v1.ChatbotService/SendAdminMessage"
 	ChatbotService_ListConversations_FullMethodName     = "/ai.v1.ChatbotService/ListConversations"
 	ChatbotService_GetConversation_FullMethodName       = "/ai.v1.ChatbotService/GetConversation"
-	ChatbotService_CreatePrompt_FullMethodName          = "/ai.v1.ChatbotService/CreatePrompt"
-	ChatbotService_UpdatePrompt_FullMethodName          = "/ai.v1.ChatbotService/UpdatePrompt"
-	ChatbotService_ListPrompts_FullMethodName           = "/ai.v1.ChatbotService/ListPrompts"
-	ChatbotService_ActivatePromptVersion_FullMethodName = "/ai.v1.ChatbotService/ActivatePromptVersion"
+	ChatbotService_CreatePromptSection_FullMethodName   = "/ai.v1.ChatbotService/CreatePromptSection"
+	ChatbotService_ListPromptSections_FullMethodName    = "/ai.v1.ChatbotService/ListPromptSections"
+	ChatbotService_ActivatePromptSection_FullMethodName = "/ai.v1.ChatbotService/ActivatePromptSection"
+	ChatbotService_CreateRole_FullMethodName            = "/ai.v1.ChatbotService/CreateRole"
+	ChatbotService_ListRoles_FullMethodName             = "/ai.v1.ChatbotService/ListRoles"
+	ChatbotService_UpdateRoleTools_FullMethodName       = "/ai.v1.ChatbotService/UpdateRoleTools"
+	ChatbotService_CreateExperiment_FullMethodName      = "/ai.v1.ChatbotService/CreateExperiment"
+	ChatbotService_GetActiveExperiment_FullMethodName   = "/ai.v1.ChatbotService/GetActiveExperiment"
+	ChatbotService_CompleteExperiment_FullMethodName    = "/ai.v1.ChatbotService/CompleteExperiment"
+	ChatbotService_TestPromptDraft_FullMethodName       = "/ai.v1.ChatbotService/TestPromptDraft"
 	ChatbotService_GetUserMemory_FullMethodName         = "/ai.v1.ChatbotService/GetUserMemory"
 	ChatbotService_UpdateUserMemory_FullMethodName      = "/ai.v1.ChatbotService/UpdateUserMemory"
 	ChatbotService_GetContact_FullMethodName            = "/ai.v1.ChatbotService/GetContact"
@@ -64,11 +70,20 @@ type ChatbotServiceClient interface {
 	// --- Conversation ---
 	ListConversations(ctx context.Context, in *ListConversationsRequest, opts ...grpc.CallOption) (*ListConversationsResponse, error)
 	GetConversation(ctx context.Context, in *GetConversationRequest, opts ...grpc.CallOption) (*GetConversationResponse, error)
-	// --- Prompt ---
-	CreatePrompt(ctx context.Context, in *CreatePromptRequest, opts ...grpc.CallOption) (*CreatePromptResponse, error)
-	UpdatePrompt(ctx context.Context, in *UpdatePromptRequest, opts ...grpc.CallOption) (*UpdatePromptResponse, error)
-	ListPrompts(ctx context.Context, in *ListPromptsRequest, opts ...grpc.CallOption) (*ListPromptsResponse, error)
-	ActivatePromptVersion(ctx context.Context, in *ActivatePromptVersionRequest, opts ...grpc.CallOption) (*ActivatePromptVersionResponse, error)
+	// --- Prompt Section ---
+	CreatePromptSection(ctx context.Context, in *CreatePromptSectionRequest, opts ...grpc.CallOption) (*CreatePromptSectionResponse, error)
+	ListPromptSections(ctx context.Context, in *ListPromptSectionsRequest, opts ...grpc.CallOption) (*ListPromptSectionsResponse, error)
+	ActivatePromptSection(ctx context.Context, in *ActivatePromptSectionRequest, opts ...grpc.CallOption) (*ActivatePromptSectionResponse, error)
+	// --- Prompt Role ---
+	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error)
+	ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error)
+	UpdateRoleTools(ctx context.Context, in *UpdateRoleToolsRequest, opts ...grpc.CallOption) (*UpdateRoleToolsResponse, error)
+	// --- Prompt Experiment ---
+	CreateExperiment(ctx context.Context, in *CreateExperimentRequest, opts ...grpc.CallOption) (*CreateExperimentResponse, error)
+	GetActiveExperiment(ctx context.Context, in *GetActiveExperimentRequest, opts ...grpc.CallOption) (*GetActiveExperimentResponse, error)
+	CompleteExperiment(ctx context.Context, in *CompleteExperimentRequest, opts ...grpc.CallOption) (*CompleteExperimentResponse, error)
+	// --- Prompt Sandbox ---
+	TestPromptDraft(ctx context.Context, in *TestPromptDraftRequest, opts ...grpc.CallOption) (*TestPromptDraftResponse, error)
 	// --- User Memory ---
 	GetUserMemory(ctx context.Context, in *GetUserMemoryRequest, opts ...grpc.CallOption) (*GetUserMemoryResponse, error)
 	UpdateUserMemory(ctx context.Context, in *UpdateUserMemoryRequest, opts ...grpc.CallOption) (*UpdateUserMemoryResponse, error)
@@ -218,40 +233,100 @@ func (c *chatbotServiceClient) GetConversation(ctx context.Context, in *GetConve
 	return out, nil
 }
 
-func (c *chatbotServiceClient) CreatePrompt(ctx context.Context, in *CreatePromptRequest, opts ...grpc.CallOption) (*CreatePromptResponse, error) {
+func (c *chatbotServiceClient) CreatePromptSection(ctx context.Context, in *CreatePromptSectionRequest, opts ...grpc.CallOption) (*CreatePromptSectionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreatePromptResponse)
-	err := c.cc.Invoke(ctx, ChatbotService_CreatePrompt_FullMethodName, in, out, cOpts...)
+	out := new(CreatePromptSectionResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_CreatePromptSection_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *chatbotServiceClient) UpdatePrompt(ctx context.Context, in *UpdatePromptRequest, opts ...grpc.CallOption) (*UpdatePromptResponse, error) {
+func (c *chatbotServiceClient) ListPromptSections(ctx context.Context, in *ListPromptSectionsRequest, opts ...grpc.CallOption) (*ListPromptSectionsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdatePromptResponse)
-	err := c.cc.Invoke(ctx, ChatbotService_UpdatePrompt_FullMethodName, in, out, cOpts...)
+	out := new(ListPromptSectionsResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_ListPromptSections_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *chatbotServiceClient) ListPrompts(ctx context.Context, in *ListPromptsRequest, opts ...grpc.CallOption) (*ListPromptsResponse, error) {
+func (c *chatbotServiceClient) ActivatePromptSection(ctx context.Context, in *ActivatePromptSectionRequest, opts ...grpc.CallOption) (*ActivatePromptSectionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListPromptsResponse)
-	err := c.cc.Invoke(ctx, ChatbotService_ListPrompts_FullMethodName, in, out, cOpts...)
+	out := new(ActivatePromptSectionResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_ActivatePromptSection_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *chatbotServiceClient) ActivatePromptVersion(ctx context.Context, in *ActivatePromptVersionRequest, opts ...grpc.CallOption) (*ActivatePromptVersionResponse, error) {
+func (c *chatbotServiceClient) CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ActivatePromptVersionResponse)
-	err := c.cc.Invoke(ctx, ChatbotService_ActivatePromptVersion_FullMethodName, in, out, cOpts...)
+	out := new(CreateRoleResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_CreateRole_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotServiceClient) ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRolesResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_ListRoles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotServiceClient) UpdateRoleTools(ctx context.Context, in *UpdateRoleToolsRequest, opts ...grpc.CallOption) (*UpdateRoleToolsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateRoleToolsResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_UpdateRoleTools_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotServiceClient) CreateExperiment(ctx context.Context, in *CreateExperimentRequest, opts ...grpc.CallOption) (*CreateExperimentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateExperimentResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_CreateExperiment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotServiceClient) GetActiveExperiment(ctx context.Context, in *GetActiveExperimentRequest, opts ...grpc.CallOption) (*GetActiveExperimentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetActiveExperimentResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_GetActiveExperiment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotServiceClient) CompleteExperiment(ctx context.Context, in *CompleteExperimentRequest, opts ...grpc.CallOption) (*CompleteExperimentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CompleteExperimentResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_CompleteExperiment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotServiceClient) TestPromptDraft(ctx context.Context, in *TestPromptDraftRequest, opts ...grpc.CallOption) (*TestPromptDraftResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TestPromptDraftResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_TestPromptDraft_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -348,11 +423,20 @@ type ChatbotServiceServer interface {
 	// --- Conversation ---
 	ListConversations(context.Context, *ListConversationsRequest) (*ListConversationsResponse, error)
 	GetConversation(context.Context, *GetConversationRequest) (*GetConversationResponse, error)
-	// --- Prompt ---
-	CreatePrompt(context.Context, *CreatePromptRequest) (*CreatePromptResponse, error)
-	UpdatePrompt(context.Context, *UpdatePromptRequest) (*UpdatePromptResponse, error)
-	ListPrompts(context.Context, *ListPromptsRequest) (*ListPromptsResponse, error)
-	ActivatePromptVersion(context.Context, *ActivatePromptVersionRequest) (*ActivatePromptVersionResponse, error)
+	// --- Prompt Section ---
+	CreatePromptSection(context.Context, *CreatePromptSectionRequest) (*CreatePromptSectionResponse, error)
+	ListPromptSections(context.Context, *ListPromptSectionsRequest) (*ListPromptSectionsResponse, error)
+	ActivatePromptSection(context.Context, *ActivatePromptSectionRequest) (*ActivatePromptSectionResponse, error)
+	// --- Prompt Role ---
+	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error)
+	ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error)
+	UpdateRoleTools(context.Context, *UpdateRoleToolsRequest) (*UpdateRoleToolsResponse, error)
+	// --- Prompt Experiment ---
+	CreateExperiment(context.Context, *CreateExperimentRequest) (*CreateExperimentResponse, error)
+	GetActiveExperiment(context.Context, *GetActiveExperimentRequest) (*GetActiveExperimentResponse, error)
+	CompleteExperiment(context.Context, *CompleteExperimentRequest) (*CompleteExperimentResponse, error)
+	// --- Prompt Sandbox ---
+	TestPromptDraft(context.Context, *TestPromptDraftRequest) (*TestPromptDraftResponse, error)
 	// --- User Memory ---
 	GetUserMemory(context.Context, *GetUserMemoryRequest) (*GetUserMemoryResponse, error)
 	UpdateUserMemory(context.Context, *UpdateUserMemoryRequest) (*UpdateUserMemoryResponse, error)
@@ -409,17 +493,35 @@ func (UnimplementedChatbotServiceServer) ListConversations(context.Context, *Lis
 func (UnimplementedChatbotServiceServer) GetConversation(context.Context, *GetConversationRequest) (*GetConversationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetConversation not implemented")
 }
-func (UnimplementedChatbotServiceServer) CreatePrompt(context.Context, *CreatePromptRequest) (*CreatePromptResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method CreatePrompt not implemented")
+func (UnimplementedChatbotServiceServer) CreatePromptSection(context.Context, *CreatePromptSectionRequest) (*CreatePromptSectionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreatePromptSection not implemented")
 }
-func (UnimplementedChatbotServiceServer) UpdatePrompt(context.Context, *UpdatePromptRequest) (*UpdatePromptResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpdatePrompt not implemented")
+func (UnimplementedChatbotServiceServer) ListPromptSections(context.Context, *ListPromptSectionsRequest) (*ListPromptSectionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPromptSections not implemented")
 }
-func (UnimplementedChatbotServiceServer) ListPrompts(context.Context, *ListPromptsRequest) (*ListPromptsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListPrompts not implemented")
+func (UnimplementedChatbotServiceServer) ActivatePromptSection(context.Context, *ActivatePromptSectionRequest) (*ActivatePromptSectionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ActivatePromptSection not implemented")
 }
-func (UnimplementedChatbotServiceServer) ActivatePromptVersion(context.Context, *ActivatePromptVersionRequest) (*ActivatePromptVersionResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ActivatePromptVersion not implemented")
+func (UnimplementedChatbotServiceServer) CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateRole not implemented")
+}
+func (UnimplementedChatbotServiceServer) ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListRoles not implemented")
+}
+func (UnimplementedChatbotServiceServer) UpdateRoleTools(context.Context, *UpdateRoleToolsRequest) (*UpdateRoleToolsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateRoleTools not implemented")
+}
+func (UnimplementedChatbotServiceServer) CreateExperiment(context.Context, *CreateExperimentRequest) (*CreateExperimentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateExperiment not implemented")
+}
+func (UnimplementedChatbotServiceServer) GetActiveExperiment(context.Context, *GetActiveExperimentRequest) (*GetActiveExperimentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetActiveExperiment not implemented")
+}
+func (UnimplementedChatbotServiceServer) CompleteExperiment(context.Context, *CompleteExperimentRequest) (*CompleteExperimentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CompleteExperiment not implemented")
+}
+func (UnimplementedChatbotServiceServer) TestPromptDraft(context.Context, *TestPromptDraftRequest) (*TestPromptDraftResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method TestPromptDraft not implemented")
 }
 func (UnimplementedChatbotServiceServer) GetUserMemory(context.Context, *GetUserMemoryRequest) (*GetUserMemoryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserMemory not implemented")
@@ -672,74 +774,182 @@ func _ChatbotService_GetConversation_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ChatbotService_CreatePrompt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreatePromptRequest)
+func _ChatbotService_CreatePromptSection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePromptSectionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ChatbotServiceServer).CreatePrompt(ctx, in)
+		return srv.(ChatbotServiceServer).CreatePromptSection(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ChatbotService_CreatePrompt_FullMethodName,
+		FullMethod: ChatbotService_CreatePromptSection_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatbotServiceServer).CreatePrompt(ctx, req.(*CreatePromptRequest))
+		return srv.(ChatbotServiceServer).CreatePromptSection(ctx, req.(*CreatePromptSectionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ChatbotService_UpdatePrompt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdatePromptRequest)
+func _ChatbotService_ListPromptSections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPromptSectionsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ChatbotServiceServer).UpdatePrompt(ctx, in)
+		return srv.(ChatbotServiceServer).ListPromptSections(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ChatbotService_UpdatePrompt_FullMethodName,
+		FullMethod: ChatbotService_ListPromptSections_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatbotServiceServer).UpdatePrompt(ctx, req.(*UpdatePromptRequest))
+		return srv.(ChatbotServiceServer).ListPromptSections(ctx, req.(*ListPromptSectionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ChatbotService_ListPrompts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListPromptsRequest)
+func _ChatbotService_ActivatePromptSection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ActivatePromptSectionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ChatbotServiceServer).ListPrompts(ctx, in)
+		return srv.(ChatbotServiceServer).ActivatePromptSection(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ChatbotService_ListPrompts_FullMethodName,
+		FullMethod: ChatbotService_ActivatePromptSection_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatbotServiceServer).ListPrompts(ctx, req.(*ListPromptsRequest))
+		return srv.(ChatbotServiceServer).ActivatePromptSection(ctx, req.(*ActivatePromptSectionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ChatbotService_ActivatePromptVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ActivatePromptVersionRequest)
+func _ChatbotService_CreateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRoleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ChatbotServiceServer).ActivatePromptVersion(ctx, in)
+		return srv.(ChatbotServiceServer).CreateRole(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ChatbotService_ActivatePromptVersion_FullMethodName,
+		FullMethod: ChatbotService_CreateRole_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatbotServiceServer).ActivatePromptVersion(ctx, req.(*ActivatePromptVersionRequest))
+		return srv.(ChatbotServiceServer).CreateRole(ctx, req.(*CreateRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotService_ListRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotServiceServer).ListRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatbotService_ListRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotServiceServer).ListRoles(ctx, req.(*ListRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotService_UpdateRoleTools_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRoleToolsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotServiceServer).UpdateRoleTools(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatbotService_UpdateRoleTools_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotServiceServer).UpdateRoleTools(ctx, req.(*UpdateRoleToolsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotService_CreateExperiment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateExperimentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotServiceServer).CreateExperiment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatbotService_CreateExperiment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotServiceServer).CreateExperiment(ctx, req.(*CreateExperimentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotService_GetActiveExperiment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetActiveExperimentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotServiceServer).GetActiveExperiment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatbotService_GetActiveExperiment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotServiceServer).GetActiveExperiment(ctx, req.(*GetActiveExperimentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotService_CompleteExperiment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CompleteExperimentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotServiceServer).CompleteExperiment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatbotService_CompleteExperiment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotServiceServer).CompleteExperiment(ctx, req.(*CompleteExperimentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotService_TestPromptDraft_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestPromptDraftRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotServiceServer).TestPromptDraft(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatbotService_TestPromptDraft_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotServiceServer).TestPromptDraft(ctx, req.(*TestPromptDraftRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -922,20 +1132,44 @@ var ChatbotService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ChatbotService_GetConversation_Handler,
 		},
 		{
-			MethodName: "CreatePrompt",
-			Handler:    _ChatbotService_CreatePrompt_Handler,
+			MethodName: "CreatePromptSection",
+			Handler:    _ChatbotService_CreatePromptSection_Handler,
 		},
 		{
-			MethodName: "UpdatePrompt",
-			Handler:    _ChatbotService_UpdatePrompt_Handler,
+			MethodName: "ListPromptSections",
+			Handler:    _ChatbotService_ListPromptSections_Handler,
 		},
 		{
-			MethodName: "ListPrompts",
-			Handler:    _ChatbotService_ListPrompts_Handler,
+			MethodName: "ActivatePromptSection",
+			Handler:    _ChatbotService_ActivatePromptSection_Handler,
 		},
 		{
-			MethodName: "ActivatePromptVersion",
-			Handler:    _ChatbotService_ActivatePromptVersion_Handler,
+			MethodName: "CreateRole",
+			Handler:    _ChatbotService_CreateRole_Handler,
+		},
+		{
+			MethodName: "ListRoles",
+			Handler:    _ChatbotService_ListRoles_Handler,
+		},
+		{
+			MethodName: "UpdateRoleTools",
+			Handler:    _ChatbotService_UpdateRoleTools_Handler,
+		},
+		{
+			MethodName: "CreateExperiment",
+			Handler:    _ChatbotService_CreateExperiment_Handler,
+		},
+		{
+			MethodName: "GetActiveExperiment",
+			Handler:    _ChatbotService_GetActiveExperiment_Handler,
+		},
+		{
+			MethodName: "CompleteExperiment",
+			Handler:    _ChatbotService_CompleteExperiment_Handler,
+		},
+		{
+			MethodName: "TestPromptDraft",
+			Handler:    _ChatbotService_TestPromptDraft_Handler,
 		},
 		{
 			MethodName: "GetUserMemory",
