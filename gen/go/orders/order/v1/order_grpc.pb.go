@@ -19,32 +19,34 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OrderService_ListPlans_FullMethodName                  = "/orders.order.v1.OrderService/ListPlans"
-	OrderService_CreatePlan_FullMethodName                 = "/orders.order.v1.OrderService/CreatePlan"
-	OrderService_UpdatePlan_FullMethodName                 = "/orders.order.v1.OrderService/UpdatePlan"
-	OrderService_SetPlanPrices_FullMethodName              = "/orders.order.v1.OrderService/SetPlanPrices"
-	OrderService_CreateSubscription_FullMethodName         = "/orders.order.v1.OrderService/CreateSubscription"
-	OrderService_GetSubscription_FullMethodName            = "/orders.order.v1.OrderService/GetSubscription"
-	OrderService_GetSubscriptionsByOrg_FullMethodName      = "/orders.order.v1.OrderService/GetSubscriptionsByOrg"
-	OrderService_CancelSubscription_FullMethodName         = "/orders.order.v1.OrderService/CancelSubscription"
-	OrderService_CheckBidAccess_FullMethodName             = "/orders.order.v1.OrderService/CheckBidAccess"
-	OrderService_CalculateSubscriptionPrice_FullMethodName = "/orders.order.v1.OrderService/CalculateSubscriptionPrice"
-	OrderService_PurchaseBid_FullMethodName                = "/orders.order.v1.OrderService/PurchaseBid"
-	OrderService_GetBidPurchasePrice_FullMethodName        = "/orders.order.v1.OrderService/GetBidPurchasePrice"
-	OrderService_CreateOrder_FullMethodName                = "/orders.order.v1.OrderService/CreateOrder"
-	OrderService_GetOrder_FullMethodName                   = "/orders.order.v1.OrderService/GetOrder"
-	OrderService_ListOrders_FullMethodName                 = "/orders.order.v1.OrderService/ListOrders"
-	OrderService_ConfirmShipment_FullMethodName            = "/orders.order.v1.OrderService/ConfirmShipment"
-	OrderService_ConfirmReceipt_FullMethodName             = "/orders.order.v1.OrderService/ConfirmReceipt"
-	OrderService_CancelOrder_FullMethodName                = "/orders.order.v1.OrderService/CancelOrder"
-	OrderService_CreateWorkshopOrder_FullMethodName        = "/orders.order.v1.OrderService/CreateWorkshopOrder"
-	OrderService_GetOrderByRepairOrderId_FullMethodName    = "/orders.order.v1.OrderService/GetOrderByRepairOrderId"
-	OrderService_AddOrderItem_FullMethodName               = "/orders.order.v1.OrderService/AddOrderItem"
-	OrderService_UpdateOrderItem_FullMethodName            = "/orders.order.v1.OrderService/UpdateOrderItem"
-	OrderService_DeleteOrderItem_FullMethodName            = "/orders.order.v1.OrderService/DeleteOrderItem"
-	OrderService_UpdateDeliveryStatus_FullMethodName       = "/orders.order.v1.OrderService/UpdateDeliveryStatus"
-	OrderService_SetOrderStatus_FullMethodName             = "/orders.order.v1.OrderService/SetOrderStatus"
-	OrderService_GetSubscriptionStats_FullMethodName       = "/orders.order.v1.OrderService/GetSubscriptionStats"
+	OrderService_ListPlans_FullMethodName                      = "/orders.order.v1.OrderService/ListPlans"
+	OrderService_CreatePlan_FullMethodName                     = "/orders.order.v1.OrderService/CreatePlan"
+	OrderService_UpdatePlan_FullMethodName                     = "/orders.order.v1.OrderService/UpdatePlan"
+	OrderService_SetPlanPrices_FullMethodName                  = "/orders.order.v1.OrderService/SetPlanPrices"
+	OrderService_CreateSubscription_FullMethodName             = "/orders.order.v1.OrderService/CreateSubscription"
+	OrderService_GetSubscription_FullMethodName                = "/orders.order.v1.OrderService/GetSubscription"
+	OrderService_GetSubscriptionsByOrg_FullMethodName          = "/orders.order.v1.OrderService/GetSubscriptionsByOrg"
+	OrderService_CancelSubscription_FullMethodName             = "/orders.order.v1.OrderService/CancelSubscription"
+	OrderService_CheckBidAccess_FullMethodName                 = "/orders.order.v1.OrderService/CheckBidAccess"
+	OrderService_CalculateSubscriptionPrice_FullMethodName     = "/orders.order.v1.OrderService/CalculateSubscriptionPrice"
+	OrderService_PurchaseBid_FullMethodName                    = "/orders.order.v1.OrderService/PurchaseBid"
+	OrderService_GetBidPurchasePrice_FullMethodName            = "/orders.order.v1.OrderService/GetBidPurchasePrice"
+	OrderService_CreateOrder_FullMethodName                    = "/orders.order.v1.OrderService/CreateOrder"
+	OrderService_GetOrder_FullMethodName                       = "/orders.order.v1.OrderService/GetOrder"
+	OrderService_ListOrders_FullMethodName                     = "/orders.order.v1.OrderService/ListOrders"
+	OrderService_ConfirmShipment_FullMethodName                = "/orders.order.v1.OrderService/ConfirmShipment"
+	OrderService_ConfirmReceipt_FullMethodName                 = "/orders.order.v1.OrderService/ConfirmReceipt"
+	OrderService_CancelOrder_FullMethodName                    = "/orders.order.v1.OrderService/CancelOrder"
+	OrderService_CreateWorkshopOrder_FullMethodName            = "/orders.order.v1.OrderService/CreateWorkshopOrder"
+	OrderService_GetOrderByRepairOrderId_FullMethodName        = "/orders.order.v1.OrderService/GetOrderByRepairOrderId"
+	OrderService_GetOrderByRepairOrderAndSeller_FullMethodName = "/orders.order.v1.OrderService/GetOrderByRepairOrderAndSeller"
+	OrderService_ListOrdersByRepairOrderId_FullMethodName      = "/orders.order.v1.OrderService/ListOrdersByRepairOrderId"
+	OrderService_AddOrderItem_FullMethodName                   = "/orders.order.v1.OrderService/AddOrderItem"
+	OrderService_UpdateOrderItem_FullMethodName                = "/orders.order.v1.OrderService/UpdateOrderItem"
+	OrderService_DeleteOrderItem_FullMethodName                = "/orders.order.v1.OrderService/DeleteOrderItem"
+	OrderService_UpdateDeliveryStatus_FullMethodName           = "/orders.order.v1.OrderService/UpdateDeliveryStatus"
+	OrderService_SetOrderStatus_FullMethodName                 = "/orders.order.v1.OrderService/SetOrderStatus"
+	OrderService_GetSubscriptionStats_FullMethodName           = "/orders.order.v1.OrderService/GetSubscriptionStats"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -79,6 +81,8 @@ type OrderServiceClient interface {
 	// === Workshop orders (parts in repair orders) ===
 	CreateWorkshopOrder(ctx context.Context, in *CreateWorkshopOrderRequest, opts ...grpc.CallOption) (*CreateWorkshopOrderResponse, error)
 	GetOrderByRepairOrderId(ctx context.Context, in *GetOrderByRepairOrderIdRequest, opts ...grpc.CallOption) (*GetOrderByRepairOrderIdResponse, error)
+	GetOrderByRepairOrderAndSeller(ctx context.Context, in *GetOrderByRepairOrderAndSellerRequest, opts ...grpc.CallOption) (*GetOrderByRepairOrderAndSellerResponse, error)
+	ListOrdersByRepairOrderId(ctx context.Context, in *ListOrdersByRepairOrderIdRequest, opts ...grpc.CallOption) (*ListOrdersByRepairOrderIdResponse, error)
 	AddOrderItem(ctx context.Context, in *AddOrderItemRequest, opts ...grpc.CallOption) (*AddOrderItemResponse, error)
 	UpdateOrderItem(ctx context.Context, in *UpdateOrderItemRequest, opts ...grpc.CallOption) (*UpdateOrderItemResponse, error)
 	DeleteOrderItem(ctx context.Context, in *DeleteOrderItemRequest, opts ...grpc.CallOption) (*DeleteOrderItemResponse, error)
@@ -296,6 +300,26 @@ func (c *orderServiceClient) GetOrderByRepairOrderId(ctx context.Context, in *Ge
 	return out, nil
 }
 
+func (c *orderServiceClient) GetOrderByRepairOrderAndSeller(ctx context.Context, in *GetOrderByRepairOrderAndSellerRequest, opts ...grpc.CallOption) (*GetOrderByRepairOrderAndSellerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOrderByRepairOrderAndSellerResponse)
+	err := c.cc.Invoke(ctx, OrderService_GetOrderByRepairOrderAndSeller_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) ListOrdersByRepairOrderId(ctx context.Context, in *ListOrdersByRepairOrderIdRequest, opts ...grpc.CallOption) (*ListOrdersByRepairOrderIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListOrdersByRepairOrderIdResponse)
+	err := c.cc.Invoke(ctx, OrderService_ListOrdersByRepairOrderId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *orderServiceClient) AddOrderItem(ctx context.Context, in *AddOrderItemRequest, opts ...grpc.CallOption) (*AddOrderItemResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddOrderItemResponse)
@@ -388,6 +412,8 @@ type OrderServiceServer interface {
 	// === Workshop orders (parts in repair orders) ===
 	CreateWorkshopOrder(context.Context, *CreateWorkshopOrderRequest) (*CreateWorkshopOrderResponse, error)
 	GetOrderByRepairOrderId(context.Context, *GetOrderByRepairOrderIdRequest) (*GetOrderByRepairOrderIdResponse, error)
+	GetOrderByRepairOrderAndSeller(context.Context, *GetOrderByRepairOrderAndSellerRequest) (*GetOrderByRepairOrderAndSellerResponse, error)
+	ListOrdersByRepairOrderId(context.Context, *ListOrdersByRepairOrderIdRequest) (*ListOrdersByRepairOrderIdResponse, error)
 	AddOrderItem(context.Context, *AddOrderItemRequest) (*AddOrderItemResponse, error)
 	UpdateOrderItem(context.Context, *UpdateOrderItemRequest) (*UpdateOrderItemResponse, error)
 	DeleteOrderItem(context.Context, *DeleteOrderItemRequest) (*DeleteOrderItemResponse, error)
@@ -464,6 +490,12 @@ func (UnimplementedOrderServiceServer) CreateWorkshopOrder(context.Context, *Cre
 }
 func (UnimplementedOrderServiceServer) GetOrderByRepairOrderId(context.Context, *GetOrderByRepairOrderIdRequest) (*GetOrderByRepairOrderIdResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrderByRepairOrderId not implemented")
+}
+func (UnimplementedOrderServiceServer) GetOrderByRepairOrderAndSeller(context.Context, *GetOrderByRepairOrderAndSellerRequest) (*GetOrderByRepairOrderAndSellerResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOrderByRepairOrderAndSeller not implemented")
+}
+func (UnimplementedOrderServiceServer) ListOrdersByRepairOrderId(context.Context, *ListOrdersByRepairOrderIdRequest) (*ListOrdersByRepairOrderIdResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListOrdersByRepairOrderId not implemented")
 }
 func (UnimplementedOrderServiceServer) AddOrderItem(context.Context, *AddOrderItemRequest) (*AddOrderItemResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddOrderItem not implemented")
@@ -864,6 +896,42 @@ func _OrderService_GetOrderByRepairOrderId_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_GetOrderByRepairOrderAndSeller_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrderByRepairOrderAndSellerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).GetOrderByRepairOrderAndSeller(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_GetOrderByRepairOrderAndSeller_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).GetOrderByRepairOrderAndSeller(ctx, req.(*GetOrderByRepairOrderAndSellerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_ListOrdersByRepairOrderId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOrdersByRepairOrderIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).ListOrdersByRepairOrderId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_ListOrdersByRepairOrderId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).ListOrdersByRepairOrderId(ctx, req.(*ListOrdersByRepairOrderIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrderService_AddOrderItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddOrderItemRequest)
 	if err := dec(in); err != nil {
@@ -1058,6 +1126,14 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOrderByRepairOrderId",
 			Handler:    _OrderService_GetOrderByRepairOrderId_Handler,
+		},
+		{
+			MethodName: "GetOrderByRepairOrderAndSeller",
+			Handler:    _OrderService_GetOrderByRepairOrderAndSeller_Handler,
+		},
+		{
+			MethodName: "ListOrdersByRepairOrderId",
+			Handler:    _OrderService_ListOrdersByRepairOrderId_Handler,
 		},
 		{
 			MethodName: "AddOrderItem",
