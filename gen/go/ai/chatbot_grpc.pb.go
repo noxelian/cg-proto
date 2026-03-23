@@ -47,6 +47,11 @@ const (
 	ChatbotService_GetContact_FullMethodName            = "/ai.v1.ChatbotService/GetContact"
 	ChatbotService_ListContacts_FullMethodName          = "/ai.v1.ChatbotService/ListContacts"
 	ChatbotService_UpdateContactSegment_FullMethodName  = "/ai.v1.ChatbotService/UpdateContactSegment"
+	ChatbotService_InitiateCall_FullMethodName          = "/ai.v1.ChatbotService/InitiateCall"
+	ChatbotService_ListCalls_FullMethodName             = "/ai.v1.ChatbotService/ListCalls"
+	ChatbotService_GetAnalyticsDashboard_FullMethodName = "/ai.v1.ChatbotService/GetAnalyticsDashboard"
+	ChatbotService_GetFunnelAnalytics_FullMethodName    = "/ai.v1.ChatbotService/GetFunnelAnalytics"
+	ChatbotService_GetPromptPerformance_FullMethodName  = "/ai.v1.ChatbotService/GetPromptPerformance"
 	ChatbotService_ListFollowUps_FullMethodName         = "/ai.v1.ChatbotService/ListFollowUps"
 	ChatbotService_CancelFollowUp_FullMethodName        = "/ai.v1.ChatbotService/CancelFollowUp"
 )
@@ -93,6 +98,12 @@ type ChatbotServiceClient interface {
 	GetContact(ctx context.Context, in *GetContactRequest, opts ...grpc.CallOption) (*GetContactResponse, error)
 	ListContacts(ctx context.Context, in *ListContactsRequest, opts ...grpc.CallOption) (*ListContactsResponse, error)
 	UpdateContactSegment(ctx context.Context, in *UpdateContactSegmentRequest, opts ...grpc.CallOption) (*UpdateContactSegmentResponse, error)
+	InitiateCall(ctx context.Context, in *InitiateCallRequest, opts ...grpc.CallOption) (*InitiateCallResponse, error)
+	ListCalls(ctx context.Context, in *ListCallsRequest, opts ...grpc.CallOption) (*ListCallsResponse, error)
+	// --- Analytics ---
+	GetAnalyticsDashboard(ctx context.Context, in *GetAnalyticsDashboardRequest, opts ...grpc.CallOption) (*GetAnalyticsDashboardResponse, error)
+	GetFunnelAnalytics(ctx context.Context, in *GetFunnelAnalyticsRequest, opts ...grpc.CallOption) (*GetFunnelAnalyticsResponse, error)
+	GetPromptPerformance(ctx context.Context, in *GetPromptPerformanceRequest, opts ...grpc.CallOption) (*GetPromptPerformanceResponse, error)
 	// --- Follow-up ---
 	ListFollowUps(ctx context.Context, in *ListFollowUpsRequest, opts ...grpc.CallOption) (*ListFollowUpsResponse, error)
 	CancelFollowUp(ctx context.Context, in *CancelFollowUpRequest, opts ...grpc.CallOption) (*CancelFollowUpResponse, error)
@@ -395,6 +406,56 @@ func (c *chatbotServiceClient) UpdateContactSegment(ctx context.Context, in *Upd
 	return out, nil
 }
 
+func (c *chatbotServiceClient) InitiateCall(ctx context.Context, in *InitiateCallRequest, opts ...grpc.CallOption) (*InitiateCallResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(InitiateCallResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_InitiateCall_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotServiceClient) ListCalls(ctx context.Context, in *ListCallsRequest, opts ...grpc.CallOption) (*ListCallsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCallsResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_ListCalls_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotServiceClient) GetAnalyticsDashboard(ctx context.Context, in *GetAnalyticsDashboardRequest, opts ...grpc.CallOption) (*GetAnalyticsDashboardResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAnalyticsDashboardResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_GetAnalyticsDashboard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotServiceClient) GetFunnelAnalytics(ctx context.Context, in *GetFunnelAnalyticsRequest, opts ...grpc.CallOption) (*GetFunnelAnalyticsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetFunnelAnalyticsResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_GetFunnelAnalytics_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatbotServiceClient) GetPromptPerformance(ctx context.Context, in *GetPromptPerformanceRequest, opts ...grpc.CallOption) (*GetPromptPerformanceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPromptPerformanceResponse)
+	err := c.cc.Invoke(ctx, ChatbotService_GetPromptPerformance_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *chatbotServiceClient) ListFollowUps(ctx context.Context, in *ListFollowUpsRequest, opts ...grpc.CallOption) (*ListFollowUpsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListFollowUpsResponse)
@@ -457,6 +518,12 @@ type ChatbotServiceServer interface {
 	GetContact(context.Context, *GetContactRequest) (*GetContactResponse, error)
 	ListContacts(context.Context, *ListContactsRequest) (*ListContactsResponse, error)
 	UpdateContactSegment(context.Context, *UpdateContactSegmentRequest) (*UpdateContactSegmentResponse, error)
+	InitiateCall(context.Context, *InitiateCallRequest) (*InitiateCallResponse, error)
+	ListCalls(context.Context, *ListCallsRequest) (*ListCallsResponse, error)
+	// --- Analytics ---
+	GetAnalyticsDashboard(context.Context, *GetAnalyticsDashboardRequest) (*GetAnalyticsDashboardResponse, error)
+	GetFunnelAnalytics(context.Context, *GetFunnelAnalyticsRequest) (*GetFunnelAnalyticsResponse, error)
+	GetPromptPerformance(context.Context, *GetPromptPerformanceRequest) (*GetPromptPerformanceResponse, error)
 	// --- Follow-up ---
 	ListFollowUps(context.Context, *ListFollowUpsRequest) (*ListFollowUpsResponse, error)
 	CancelFollowUp(context.Context, *CancelFollowUpRequest) (*CancelFollowUpResponse, error)
@@ -553,6 +620,21 @@ func (UnimplementedChatbotServiceServer) ListContacts(context.Context, *ListCont
 }
 func (UnimplementedChatbotServiceServer) UpdateContactSegment(context.Context, *UpdateContactSegmentRequest) (*UpdateContactSegmentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateContactSegment not implemented")
+}
+func (UnimplementedChatbotServiceServer) InitiateCall(context.Context, *InitiateCallRequest) (*InitiateCallResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method InitiateCall not implemented")
+}
+func (UnimplementedChatbotServiceServer) ListCalls(context.Context, *ListCallsRequest) (*ListCallsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListCalls not implemented")
+}
+func (UnimplementedChatbotServiceServer) GetAnalyticsDashboard(context.Context, *GetAnalyticsDashboardRequest) (*GetAnalyticsDashboardResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAnalyticsDashboard not implemented")
+}
+func (UnimplementedChatbotServiceServer) GetFunnelAnalytics(context.Context, *GetFunnelAnalyticsRequest) (*GetFunnelAnalyticsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFunnelAnalytics not implemented")
+}
+func (UnimplementedChatbotServiceServer) GetPromptPerformance(context.Context, *GetPromptPerformanceRequest) (*GetPromptPerformanceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPromptPerformance not implemented")
 }
 func (UnimplementedChatbotServiceServer) ListFollowUps(context.Context, *ListFollowUpsRequest) (*ListFollowUpsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListFollowUps not implemented")
@@ -1078,6 +1160,96 @@ func _ChatbotService_UpdateContactSegment_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatbotService_InitiateCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InitiateCallRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotServiceServer).InitiateCall(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatbotService_InitiateCall_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotServiceServer).InitiateCall(ctx, req.(*InitiateCallRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotService_ListCalls_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCallsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotServiceServer).ListCalls(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatbotService_ListCalls_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotServiceServer).ListCalls(ctx, req.(*ListCallsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotService_GetAnalyticsDashboard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAnalyticsDashboardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotServiceServer).GetAnalyticsDashboard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatbotService_GetAnalyticsDashboard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotServiceServer).GetAnalyticsDashboard(ctx, req.(*GetAnalyticsDashboardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotService_GetFunnelAnalytics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFunnelAnalyticsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotServiceServer).GetFunnelAnalytics(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatbotService_GetFunnelAnalytics_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotServiceServer).GetFunnelAnalytics(ctx, req.(*GetFunnelAnalyticsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatbotService_GetPromptPerformance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPromptPerformanceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatbotServiceServer).GetPromptPerformance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatbotService_GetPromptPerformance_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatbotServiceServer).GetPromptPerformance(ctx, req.(*GetPromptPerformanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ChatbotService_ListFollowUps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListFollowUpsRequest)
 	if err := dec(in); err != nil {
@@ -1228,6 +1400,26 @@ var ChatbotService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateContactSegment",
 			Handler:    _ChatbotService_UpdateContactSegment_Handler,
+		},
+		{
+			MethodName: "InitiateCall",
+			Handler:    _ChatbotService_InitiateCall_Handler,
+		},
+		{
+			MethodName: "ListCalls",
+			Handler:    _ChatbotService_ListCalls_Handler,
+		},
+		{
+			MethodName: "GetAnalyticsDashboard",
+			Handler:    _ChatbotService_GetAnalyticsDashboard_Handler,
+		},
+		{
+			MethodName: "GetFunnelAnalytics",
+			Handler:    _ChatbotService_GetFunnelAnalytics_Handler,
+		},
+		{
+			MethodName: "GetPromptPerformance",
+			Handler:    _ChatbotService_GetPromptPerformance_Handler,
 		},
 		{
 			MethodName: "ListFollowUps",
