@@ -5464,6 +5464,7 @@ type GetAnalyticsDashboardResponse struct {
 	TotalTokens         int64                  `protobuf:"varint,5,opt,name=total_tokens,json=totalTokens,proto3" json:"total_tokens,omitempty"`
 	TokenSpendUsd       float64                `protobuf:"fixed64,6,opt,name=token_spend_usd,json=tokenSpendUsd,proto3" json:"token_spend_usd,omitempty"`
 	DailyStats          []*DailyStat           `protobuf:"bytes,7,rep,name=daily_stats,json=dailyStats,proto3" json:"daily_stats,omitempty"`
+	LastRefreshedAt     string                 `protobuf:"bytes,8,opt,name=last_refreshed_at,json=lastRefreshedAt,proto3" json:"last_refreshed_at,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -5545,6 +5546,13 @@ func (x *GetAnalyticsDashboardResponse) GetDailyStats() []*DailyStat {
 		return x.DailyStats
 	}
 	return nil
+}
+
+func (x *GetAnalyticsDashboardResponse) GetLastRefreshedAt() string {
+	if x != nil {
+		return x.LastRefreshedAt
+	}
+	return ""
 }
 
 type FunnelStage struct {
@@ -6353,7 +6361,7 @@ const file_ai_chatbot_proto_rawDesc = "" +
 	"\tdate_from\x18\x01 \x01(\tR\bdateFrom\x12\x17\n" +
 	"\adate_to\x18\x02 \x01(\tR\x06dateTo\x12\x12\n" +
 	"\x04role\x18\x03 \x01(\tR\x04role\x12\x1a\n" +
-	"\bplatform\x18\x04 \x01(\tR\bplatform\"\xd0\x02\n" +
+	"\bplatform\x18\x04 \x01(\tR\bplatform\"\xfc\x02\n" +
 	"\x1dGetAnalyticsDashboardResponse\x121\n" +
 	"\x14active_conversations\x18\x01 \x01(\x05R\x13activeConversations\x12/\n" +
 	"\x13total_conversations\x18\x02 \x01(\x05R\x12totalConversations\x12'\n" +
@@ -6362,7 +6370,8 @@ const file_ai_chatbot_proto_rawDesc = "" +
 	"\ftotal_tokens\x18\x05 \x01(\x03R\vtotalTokens\x12&\n" +
 	"\x0ftoken_spend_usd\x18\x06 \x01(\x01R\rtokenSpendUsd\x121\n" +
 	"\vdaily_stats\x18\a \x03(\v2\x10.ai.v1.DailyStatR\n" +
-	"dailyStats\"m\n" +
+	"dailyStats\x12*\n" +
+	"\x11last_refreshed_at\x18\b \x01(\tR\x0flastRefreshedAt\"m\n" +
 	"\vFunnelStage\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05label\x18\x02 \x01(\tR\x05label\x12\x14\n" +
