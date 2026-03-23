@@ -2,38 +2,59 @@
 
 Централизованное хранилище Proto контрактов для всех микросервисов CG Platform.
 
+Go 1.24.5, gRPC v1.78.0.
+
 ## Структура
 
 ```
 cg-proto/
 ├── users/                    # Домен пользователей
-│   ├── auth.proto           # Авторизация
-│   ├── user.proto           # Профили
-│   └── organization.proto   # Организации
+│   ├── auth/auth.proto       # Авторизация
+│   ├── user/user.proto       # Профили
+│   ├── garage/garage.proto   # Гараж (автомобили)
+│   └── organization/organization.proto  # Организации
 │
-├── marketplace/              # Домен маркетплейса
-│   └── ad.proto             # Объявления
+├── services/                 # Домен сервисов
+│   ├── request/request.proto # Заявки
+│   ├── bid/bid.proto         # Отклики
+│   └── search/search.proto   # Поиск
 │
 ├── communication/            # Домен коммуникаций
-│   ├── chat.proto           # Чаты
-│   └── notification.proto   # Уведомления
-│
-├── jobs/                     # Домен вакансий
-│   └── job.proto            # Вакансии и резюме
+│   ├── chat/chat.proto       # Чаты
+│   └── notification/notification.proto  # Уведомления
 │
 ├── platform/                 # Инфраструктура
-│   ├── counter.proto        # Счётчики
-│   └── nsi.proto            # Справочники
+│   ├── counter/counter.proto # Счётчики
+│   └── nsi/nsi.proto         # Справочники
+│
+├── jobs/                     # Домен вакансий
+│   └── job/job.proto         # Вакансии и резюме
+│
+├── workshop/                 # Домен мастерских
+│   └── workshop.proto        # Ремонтные заказы, мастера, зарплата
+│
+├── orders/                   # Домен заказов
+│   └── order/v1/order.proto  # Заказы запчастей
+│
+├── payments/                 # Домен платежей
+│   └── payment/v1/payment.proto  # Платежи
+│
+├── billing/                  # Домен биллинга
+│   └── billing/v1/billing.proto  # Биллинг
+│
+├── booking/                  # Домен бронирования
+│   └── booking/v1/booking.proto  # Бронирование
+│
+├── ai/                       # Домен AI
+│   └── chatbot.proto         # AI чатбот
 │
 ├── gen/go/                   # Сгенерированный Go код
 │   ├── users/
 │   │   ├── auth.pb.go        # Protobuf типы
-│   │   ├── auth_grpc.pb.go   # Стандартный gRPC сервисы
-│   │   ├── authv1connect/     # Connect handlers & clients
-│   │   │   └── auth.connect.go
+│   │   ├── auth_grpc.pb.go   # gRPC сервисы
 │   │   └── ...
 ├── buf.yaml                  # Buf конфигурация
-├── buf.gen.yaml              # Генерация кода (Connect + gRPC)
+├── buf.gen.yaml              # Генерация кода (стандартный gRPC)
 └── go.mod
 ```
 
@@ -43,152 +64,31 @@ cg-proto/
 go get gitlab.com/xakpro/cg-proto@latest
 ```
 
-## API протоколы: Connect-go и стандартный gRPC
+## buf.gen.yaml
 
-В платформе используются **два подхода** в зависимости от требований сервиса:
-
-### 1. Connect-go (HTTP + gRPC) — для публичных API
-
-**Когда использовать:**
-- Сервисы, которым нужен доступ из фронтенда (HTTP/JSON)
-- Сервисы, которые должны поддерживать и HTTP/JSON, и gRPC одновременно
-- Примеры: `auth`, `user`, `organization`, `counter`, `nsi`
-
-**Connect-go** даёт:
-- **gRPC** для сервис-к-сервис коммуникации
-- **HTTP/JSON** для фронтенда (без прокси)
-- **gRPC-Web** для браузеров
-
-### 2. Стандартный gRPC — для внутренних сервисов
-
-**Когда использовать:**
-- Сервисы, которые используются только для сервис-к-сервис коммуникации
-- Сервисы, которым не нужен HTTP/JSON доступ
-- Примеры: `search`, `catalog`, `notification`, `chat`
-
-### buf.gen.yaml
+Генерирует только стандартный gRPC код (protobuf типы + gRPC сервисы):
 
 ```yaml
 version: v1
 plugins:
-  # Standard protobuf Go code
-  - plugin: go
-    out: gen/go
-    opt:
-      - paths=source_relative
-
-  # Connect-go (HTTP/JSON + gRPC)
-  - plugin: buf.build/connectrpc/go
-    out: gen/go
-    opt:
-      - paths=source_relative
-
-  # Standard gRPC (для внутренних сервисов)
+  # Standard protobuf Go code (типы)
   - plugin: buf.build/protocolbuffers/go
+    out: gen/go
+    opt:
+      - paths=source_relative
+
+  # Standard gRPC сервисы (*_grpc.pb.go)
+  - plugin: buf.build/grpc/go
     out: gen/go
     opt:
       - paths=source_relative
 ```
 
 **Генерируемые файлы:**
-- `.pb.go` — protobuf типы (общие для обоих)
-- `*_grpc.pb.go` — стандартный gRPC сервисы (для стандартного gRPC)
-- `*connect/*.connect.go` — Connect handlers & clients (для Connect)
+- `.pb.go` -- protobuf типы
+- `*_grpc.pb.go` -- стандартный gRPC сервисы
 
 ## Использование
-
-### Server (Connect Handler)
-
-```go
-import (
-    "connectrpc.com/connect"
-    "net/http"
-    
-    pb "gitlab.com/xakpro/cg-proto/gen/go/users/auth/v1"
-    "gitlab.com/xakpro/cg-proto/gen/go/users/authv1connect"
-)
-
-// Implement the handler interface
-type AuthHandler struct {
-    authv1connect.UnimplementedAuthServiceHandler
-    authService AuthServiceI
-}
-
-func (h *AuthHandler) SendCode(
-    ctx context.Context,
-    req *connect.Request[pb.SendCodeRequest],
-) (*connect.Response[pb.SendCodeResponse], error) {
-    // Your logic here
-    return connect.NewResponse(&pb.SendCodeResponse{
-        Success: true,
-    }), nil
-}
-
-// Register handler
-func main() {
-    mux := http.NewServeMux()
-    path, handler := authv1connect.NewAuthServiceHandler(&AuthHandler{})
-    mux.Handle(path, handler)
-    
-    http.ListenAndServe(":8080", h2c.NewHandler(mux, &http2.Server{}))
-}
-```
-
-### Client (Connect Client)
-
-```go
-import (
-    "net/http"
-    "connectrpc.com/connect"
-    
-    pb "gitlab.com/xakpro/cg-proto/gen/go/users/auth/v1"
-    "gitlab.com/xakpro/cg-proto/gen/go/users/authv1connect"
-)
-
-// Create client
-client := authv1connect.NewAuthServiceClient(
-    http.DefaultClient,
-    "http://auth-service:8080",
-    connect.WithGRPC(), // Use gRPC protocol for service-to-service
-)
-
-// Call method
-resp, err := client.ValidateToken(ctx, connect.NewRequest(&pb.ValidateTokenRequest{
-    AccessToken: token,
-}))
-if err != nil {
-    // Handle error (connect.CodeOf(err) returns error code)
-}
-userID := resp.Msg.UserId
-```
-
-### HTTP/JSON (для фронтенда)
-
-```bash
-# POST запрос с JSON
-curl -X POST http://localhost:8080/users.auth.v1.AuthService/SendCode \
-  -H "Content-Type: application/json" \
-  -d '{"phone": "+77001234567", "device_id": "abc123"}'
-
-# Response
-{
-  "success": true,
-  "retryAfter": 60,
-  "message": "Code sent"
-}
-```
-
-### gRPC (для сервис-к-сервис)
-
-```bash
-grpcurl -plaintext localhost:8080 \
-  users.auth.v1.AuthService/SendCode \
-  -d '{"phone": "+77001234567", "device_id": "abc123"}'
-```
-
----
-
-## Стандартный gRPC (для внутренних сервисов)
 
 ### Server (gRPC Server)
 
@@ -220,9 +120,9 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    
+
     pb.RegisterSearchServiceServer(grpcServer.Server(), &SearchHandler{})
-    
+
     if err := grpcServer.Start(); err != nil {
         log.Fatal(err)
     }
@@ -280,7 +180,6 @@ package {domain}.{service}.v1;
 
 // Примеры:
 package users.auth.v1;
-package marketplace.ad.v1;
 package communication.chat.v1;
 ```
 
@@ -313,7 +212,6 @@ rpc List{Entities}(...) returns (...);
 // Бизнес-действия
 rpc SendCode(...) returns (...);
 rpc VerifyCode(...) returns (...);
-rpc SearchAds(...) returns (...);
 ```
 
 ### Сообщения
@@ -325,42 +223,10 @@ message Get{Entity}Response { ... }
 
 // Entity
 message User { ... }
-message Ad { ... }
 message Message { ... }
 ```
 
-## Interceptors
-
-### Connect Interceptors
-
-```go
-import "connectrpc.com/connect"
-
-// Logging interceptor
-type LoggingInterceptor struct{}
-
-func (i *LoggingInterceptor) WrapUnary(next connect.UnaryFunc) connect.UnaryFunc {
-    return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-        start := time.Now()
-        resp, err := next(ctx, req)
-        log.Printf("%s took %v", req.Spec().Procedure, time.Since(start))
-        return resp, err
-    }
-}
-
-// Implement other methods: WrapStreamingClient, WrapStreamingHandler
-
-// Use interceptors
-path, handler := authv1connect.NewAuthServiceHandler(
-    &AuthHandler{},
-    connect.WithInterceptors(
-        &LoggingInterceptor{},
-        &AuthInterceptor{},
-    ),
-)
-```
-
-### Стандартный gRPC Interceptors
+## gRPC Interceptors
 
 ```go
 import (
@@ -369,14 +235,14 @@ import (
 )
 
 // Используйте interceptors из cg-shared-libs/grpc
-grpcServer, err := sharedGRPC.NewServer(cfg.GRPC, 
+grpcServer, err := sharedGRPC.NewServer(cfg.GRPC,
     grpc.ChainUnaryInterceptor(
         customInterceptor1,
         customInterceptor2,
     ),
 )
 
-// Или используйте встроенные interceptors:
+// Встроенные interceptors:
 // - recoveryInterceptor (автоматически)
 // - loggingInterceptor (автоматически)
 // - timeoutInterceptor (автоматически)
@@ -384,29 +250,6 @@ grpcServer, err := sharedGRPC.NewServer(cfg.GRPC,
 ```
 
 ## Error Handling
-
-### Connect Error Handling
-
-```go
-import "connectrpc.com/connect"
-
-// Return error
-return nil, connect.NewError(connect.CodeNotFound, errors.New("user not found"))
-
-// Check error code
-if connect.CodeOf(err) == connect.CodeNotFound {
-    // Handle not found
-}
-
-// Common codes:
-// - connect.CodeInvalidArgument
-// - connect.CodeNotFound
-// - connect.CodeUnauthenticated
-// - connect.CodePermissionDenied
-// - connect.CodeInternal
-```
-
-### Стандартный gRPC Error Handling
 
 ```go
 import (
@@ -483,13 +326,11 @@ git push github v1.1.0  # если используете GitHub mirror
 ### Для проектов с GitHub replace
 
 ```bash
-# В каждом сервисе выполните:
-cd cg-users/services/auth
-go get gitlab.com/xakpro/cg-proto@v1.1.0
+# В каждом сервисе обновите версию в go.mod (require + replace)
+# Затем:
 go mod tidy
-
-# Или используйте скрипт:
-./cg-proto/update-dependencies.sh v1.1.0
+go build ./...
+go vet ./...
 ```
 
 ### Для проектов с локальным replace
@@ -497,15 +338,5 @@ go mod tidy
 Проекты с `replace gitlab.com/xakpro/cg-proto => ../cg-proto` автоматически используют последнюю версию из локальной директории. Просто выполните:
 
 ```bash
-cd cg-services
 go mod tidy
-```
-
-### Автоматическое обновление
-
-Используйте скрипт для автоматического обновления всех проектов:
-
-```bash
-cd cg-proto
-./update-dependencies.sh v1.1.0
 ```
