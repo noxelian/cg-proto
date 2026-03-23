@@ -453,6 +453,7 @@ message ListOrdersRequest {
   OrderStatus status = 3;
   int32 page = 4;
   int32 page_size = 5;
+  OrderType order_type = 6;
 }
 
 message ListOrdersResponse {
