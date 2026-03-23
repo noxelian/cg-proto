@@ -702,6 +702,7 @@ message GetAnalyticsDashboardResponse {
   int64 total_tokens = 5;
   double token_spend_usd = 6;
   repeated DailyStat daily_stats = 7;
+  string last_refreshed_at = 8;
 }
 
 message FunnelStage {
