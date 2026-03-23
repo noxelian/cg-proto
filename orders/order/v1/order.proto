@@ -38,6 +38,8 @@ service OrderService {
   // === Workshop orders (parts in repair orders) ===
   rpc CreateWorkshopOrder(CreateWorkshopOrderRequest) returns (CreateWorkshopOrderResponse);
   rpc GetOrderByRepairOrderId(GetOrderByRepairOrderIdRequest) returns (GetOrderByRepairOrderIdResponse);
+  rpc GetOrderByRepairOrderAndSeller(GetOrderByRepairOrderAndSellerRequest) returns (GetOrderByRepairOrderAndSellerResponse);
+  rpc ListOrdersByRepairOrderId(ListOrdersByRepairOrderIdRequest) returns (ListOrdersByRepairOrderIdResponse);
   rpc AddOrderItem(AddOrderItemRequest) returns (AddOrderItemResponse);
   rpc UpdateOrderItem(UpdateOrderItemRequest) returns (UpdateOrderItemResponse);
   rpc DeleteOrderItem(DeleteOrderItemRequest) returns (DeleteOrderItemResponse);
@@ -512,6 +514,7 @@ message CreateWorkshopOrderRequest {
   int64 repair_order_id = 1;           // Linked repair order ID in cg-workshop
   int64 created_by_user_id = 2;        // User creating the order (MP or MZ)
   repeated WorkshopOrderItemInput items = 3; // Initial items (at least one required)
+  string seller_org_id = 4;            // Supplier organization UUID (one order per supplier)
 }
 
 message WorkshopOrderItemInput {
@@ -535,6 +538,23 @@ message GetOrderByRepairOrderIdRequest {
 
 message GetOrderByRepairOrderIdResponse {
   Order order = 1;                     // null if no parts order exists for this repair order
+}
+
+message GetOrderByRepairOrderAndSellerRequest {
+  int64 repair_order_id = 1;
+  string seller_org_id = 2;
+}
+
+message GetOrderByRepairOrderAndSellerResponse {
+  Order order = 1;
+}
+
+message ListOrdersByRepairOrderIdRequest {
+  int64 repair_order_id = 1;
+}
+
+message ListOrdersByRepairOrderIdResponse {
+  repeated Order orders = 1;
 }
 
 message AddOrderItemRequest {
