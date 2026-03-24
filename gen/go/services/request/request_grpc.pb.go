@@ -32,6 +32,7 @@ const (
 	RequestService_GetNewRequestsForOrganization_FullMethodName = "/services.request.v1.RequestService/GetNewRequestsForOrganization"
 	RequestService_MarkRequestAsViewed_FullMethodName           = "/services.request.v1.RequestService/MarkRequestAsViewed"
 	RequestService_IsRequestNew_FullMethodName                  = "/services.request.v1.RequestService/IsRequestNew"
+	RequestService_ClassifyRequest_FullMethodName               = "/services.request.v1.RequestService/ClassifyRequest"
 )
 
 // RequestServiceClient is the client API for RequestService service.
@@ -64,6 +65,9 @@ type RequestServiceClient interface {
 	MarkRequestAsViewed(ctx context.Context, in *MarkRequestAsViewedRequest, opts ...grpc.CallOption) (*MarkRequestAsViewedResponse, error)
 	// IsRequestNew checks if request is new for organization
 	IsRequestNew(ctx context.Context, in *IsRequestNewRequest, opts ...grpc.CallOption) (*IsRequestNewResponse, error)
+	// ClassifyRequest sets group_id, category_ids and cleaned note for a request.
+	// Used by AI classify service after auto-classification.
+	ClassifyRequest(ctx context.Context, in *ClassifyRequestRequest, opts ...grpc.CallOption) (*ClassifyRequestResponse, error)
 }
 
 type requestServiceClient struct {
@@ -204,6 +208,16 @@ func (c *requestServiceClient) IsRequestNew(ctx context.Context, in *IsRequestNe
 	return out, nil
 }
 
+func (c *requestServiceClient) ClassifyRequest(ctx context.Context, in *ClassifyRequestRequest, opts ...grpc.CallOption) (*ClassifyRequestResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ClassifyRequestResponse)
+	err := c.cc.Invoke(ctx, RequestService_ClassifyRequest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RequestServiceServer is the server API for RequestService service.
 // All implementations must embed UnimplementedRequestServiceServer
 // for forward compatibility.
@@ -234,6 +248,9 @@ type RequestServiceServer interface {
 	MarkRequestAsViewed(context.Context, *MarkRequestAsViewedRequest) (*MarkRequestAsViewedResponse, error)
 	// IsRequestNew checks if request is new for organization
 	IsRequestNew(context.Context, *IsRequestNewRequest) (*IsRequestNewResponse, error)
+	// ClassifyRequest sets group_id, category_ids and cleaned note for a request.
+	// Used by AI classify service after auto-classification.
+	ClassifyRequest(context.Context, *ClassifyRequestRequest) (*ClassifyRequestResponse, error)
 	mustEmbedUnimplementedRequestServiceServer()
 }
 
@@ -282,6 +299,9 @@ func (UnimplementedRequestServiceServer) MarkRequestAsViewed(context.Context, *M
 }
 func (UnimplementedRequestServiceServer) IsRequestNew(context.Context, *IsRequestNewRequest) (*IsRequestNewResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method IsRequestNew not implemented")
+}
+func (UnimplementedRequestServiceServer) ClassifyRequest(context.Context, *ClassifyRequestRequest) (*ClassifyRequestResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ClassifyRequest not implemented")
 }
 func (UnimplementedRequestServiceServer) mustEmbedUnimplementedRequestServiceServer() {}
 func (UnimplementedRequestServiceServer) testEmbeddedByValue()                        {}
@@ -538,6 +558,24 @@ func _RequestService_IsRequestNew_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestService_ClassifyRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClassifyRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).ClassifyRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_ClassifyRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).ClassifyRequest(ctx, req.(*ClassifyRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RequestService_ServiceDesc is the grpc.ServiceDesc for RequestService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -596,6 +634,10 @@ var RequestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsRequestNew",
 			Handler:    _RequestService_IsRequestNew_Handler,
+		},
+		{
+			MethodName: "ClassifyRequest",
+			Handler:    _RequestService_ClassifyRequest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

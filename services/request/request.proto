@@ -45,6 +45,10 @@ service RequestService {
   
   // IsRequestNew checks if request is new for organization
   rpc IsRequestNew(IsRequestNewRequest) returns (IsRequestNewResponse);
+
+  // ClassifyRequest sets group_id, category_ids and cleaned note for a request.
+  // Used by AI classify service after auto-classification.
+  rpc ClassifyRequest(ClassifyRequestRequest) returns (ClassifyRequestResponse);
 }
 
 enum RequestType {
@@ -277,5 +281,18 @@ message IsRequestNewRequest {
 
 message IsRequestNewResponse {
   bool is_new = 1;
+}
+
+// ClassifyRequest — AI auto-classification of repair/parts requests
+message ClassifyRequestRequest {
+  string request_id = 1;          // UUID of the request to classify
+  int64 group_id = 2;             // Service group (1=STO/Repair, 2=Bodyshop)
+  repeated int64 category_ids = 3; // Service categories
+  string cleaned_note = 4;        // Moderated/cleaned description text
+  bool publish = 5;               // If true, also transition status to PUBLISHED
+}
+
+message ClassifyRequestResponse {
+  Request request = 1;
 }
 
