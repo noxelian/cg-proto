@@ -1,0 +1,137 @@
+syntax = "proto3";
+
+package agents.memory.v1;
+
+option go_package = "gitlab.com/xakpro/cg-proto/gen/go/agents/memory;memoryv1";
+
+import "google/protobuf/timestamp.proto";
+
+// SharedMemory represents a shared knowledge entry accessible across agent runs.
+message SharedMemory {
+  string id = 1;
+  string category = 2;
+  string title = 3;
+  string content = 4;
+  optional string metadata = 5; // JSON string
+  optional string created_by_run_id = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+// MemoryEntry represents a sub-entry within a shared memory.
+message MemoryEntry {
+  string id = 1;
+  string memory_id = 2;
+  string entry_type = 3;
+  string content = 4;
+  optional string metadata = 5; // JSON string
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+// MemorySearchResult wraps a memory with its search relevance score.
+message MemorySearchResult {
+  SharedMemory memory = 1;
+  double relevance_score = 2;
+}
+
+// MemoryService provides CRUD, search, and entry management for shared memories.
+service MemoryService {
+  // CreateMemory creates a new shared memory.
+  rpc CreateMemory(CreateMemoryRequest) returns (CreateMemoryResponse);
+
+  // GetMemory returns a memory by ID with its entries.
+  rpc GetMemory(GetMemoryRequest) returns (GetMemoryResponse);
+
+  // ListMemories returns a filtered, paginated list of memories.
+  rpc ListMemories(ListMemoriesRequest) returns (ListMemoriesResponse);
+
+  // UpdateMemory updates memory fields.
+  rpc UpdateMemory(UpdateMemoryRequest) returns (UpdateMemoryResponse);
+
+  // DeleteMemory soft-deletes a memory.
+  rpc DeleteMemory(DeleteMemoryRequest) returns (DeleteMemoryResponse);
+
+  // SearchMemories performs semantic search across memories.
+  rpc SearchMemories(SearchMemoriesRequest) returns (SearchMemoriesResponse);
+
+  // AddMemoryEntry appends an entry to a memory.
+  rpc AddMemoryEntry(AddMemoryEntryRequest) returns (AddMemoryEntryResponse);
+}
+
+// CreateMemory
+message CreateMemoryRequest {
+  string category = 1;
+  string title = 2;
+  string content = 3;
+  optional string metadata = 4;
+}
+
+message CreateMemoryResponse {
+  SharedMemory memory = 1;
+}
+
+// GetMemory
+message GetMemoryRequest {
+  string id = 1;
+}
+
+message GetMemoryResponse {
+  SharedMemory memory = 1;
+  repeated MemoryEntry entries = 2;
+}
+
+// ListMemories
+message ListMemoriesRequest {
+  optional string category = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListMemoriesResponse {
+  repeated SharedMemory memories = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+// UpdateMemory
+message UpdateMemoryRequest {
+  string id = 1;
+  optional string title = 2;
+  optional string content = 3;
+  optional string metadata = 4;
+}
+
+message UpdateMemoryResponse {
+  SharedMemory memory = 1;
+}
+
+// DeleteMemory
+message DeleteMemoryRequest {
+  string id = 1;
+}
+
+message DeleteMemoryResponse {}
+
+// SearchMemories
+message SearchMemoriesRequest {
+  string query = 1;
+  optional string category = 2;
+  int32 limit = 3;
+}
+
+message SearchMemoriesResponse {
+  repeated MemorySearchResult results = 1;
+}
+
+// AddMemoryEntry
+message AddMemoryEntryRequest {
+  string memory_id = 1;
+  string entry_type = 2;
+  string content = 3;
+  optional string metadata = 4;
+}
+
+message AddMemoryEntryResponse {
+  MemoryEntry entry = 1;
+}

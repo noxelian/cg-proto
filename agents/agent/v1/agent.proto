@@ -1,0 +1,183 @@
+syntax = "proto3";
+
+package agents.agent.v1;
+
+option go_package = "gitlab.com/xakpro/cg-proto/gen/go/agents/agent;agentv1";
+
+import "google/protobuf/timestamp.proto";
+
+// AgentRunStatus represents the execution state of an agent run.
+enum AgentRunStatus {
+  AGENT_RUN_STATUS_UNSPECIFIED = 0;
+  AGENT_RUN_STATUS_PENDING = 1;
+  AGENT_RUN_STATUS_RUNNING = 2;
+  AGENT_RUN_STATUS_PAUSED = 3;
+  AGENT_RUN_STATUS_COMPLETED = 4;
+  AGENT_RUN_STATUS_FAILED = 5;
+  AGENT_RUN_STATUS_CANCELLED = 6;
+}
+
+// AgentRun represents a single execution of an agent for a task.
+message AgentRun {
+  string id = 1;
+  string task_id = 2;
+  string role = 3;
+  AgentRunStatus status = 4;
+  int32 iteration_count = 5;
+  int32 max_iterations = 6;
+  int64 input_tokens = 7;
+  int64 output_tokens = 8;
+  double cost_usd = 9;
+  optional string error_message = 10;
+  optional google.protobuf.Timestamp started_at = 11;
+  optional google.protobuf.Timestamp completed_at = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Timestamp updated_at = 14;
+}
+
+// AgentRoleConfig defines the configuration for an agent role.
+message AgentRoleConfig {
+  string id = 1;
+  string name = 2;
+  string display_name = 3;
+  string system_prompt = 4;
+  repeated string tool_whitelist = 5;
+  optional string output_schema = 6; // JSON string
+  int32 max_iterations = 7;
+  int32 timeout_seconds = 8;
+  bool is_active = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+// AgentOutputEvent represents a streaming output event from an agent run.
+message AgentOutputEvent {
+  string content = 1;
+  optional string tool_use = 2;
+  google.protobuf.Timestamp timestamp = 3;
+}
+
+// AgentService provides agent run management, role configuration, and output streaming.
+service AgentService {
+  // StartAgentRun initiates a new agent run for a task.
+  rpc StartAgentRun(StartAgentRunRequest) returns (StartAgentRunResponse);
+
+  // GetAgentRun returns an agent run by ID.
+  rpc GetAgentRun(GetAgentRunRequest) returns (GetAgentRunResponse);
+
+  // ListAgentRuns returns a filtered, paginated list of agent runs.
+  rpc ListAgentRuns(ListAgentRunsRequest) returns (ListAgentRunsResponse);
+
+  // PauseAgentRun pauses a running agent.
+  rpc PauseAgentRun(PauseAgentRunRequest) returns (PauseAgentRunResponse);
+
+  // ResumeAgentRun resumes a paused agent.
+  rpc ResumeAgentRun(ResumeAgentRunRequest) returns (ResumeAgentRunResponse);
+
+  // StopAgentRun stops a running or paused agent.
+  rpc StopAgentRun(StopAgentRunRequest) returns (StopAgentRunResponse);
+
+  // RetryAgentRun creates a new run retrying a failed agent run.
+  rpc RetryAgentRun(RetryAgentRunRequest) returns (RetryAgentRunResponse);
+
+  // ListRoleConfigs returns available agent role configurations.
+  rpc ListRoleConfigs(ListRoleConfigsRequest) returns (ListRoleConfigsResponse);
+
+  // GetRoleConfig returns a role configuration by name.
+  rpc GetRoleConfig(GetRoleConfigRequest) returns (GetRoleConfigResponse);
+
+  // StreamAgentOutput streams real-time output from an agent run.
+  rpc StreamAgentOutput(StreamAgentOutputRequest) returns (stream AgentOutputEvent);
+}
+
+// StartAgentRun
+message StartAgentRunRequest {
+  string task_id = 1;
+  string role = 2;
+}
+
+message StartAgentRunResponse {
+  AgentRun agent_run = 1;
+}
+
+// GetAgentRun
+message GetAgentRunRequest {
+  string id = 1;
+}
+
+message GetAgentRunResponse {
+  AgentRun agent_run = 1;
+}
+
+// ListAgentRuns
+message ListAgentRunsRequest {
+  optional string task_id = 1;
+  optional AgentRunStatus status = 2;
+  int32 page_size = 3;
+  string page_token = 4;
+}
+
+message ListAgentRunsResponse {
+  repeated AgentRun agent_runs = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+// PauseAgentRun
+message PauseAgentRunRequest {
+  string id = 1;
+}
+
+message PauseAgentRunResponse {
+  AgentRun agent_run = 1;
+}
+
+// ResumeAgentRun
+message ResumeAgentRunRequest {
+  string id = 1;
+}
+
+message ResumeAgentRunResponse {
+  AgentRun agent_run = 1;
+}
+
+// StopAgentRun
+message StopAgentRunRequest {
+  string id = 1;
+}
+
+message StopAgentRunResponse {
+  AgentRun agent_run = 1;
+}
+
+// RetryAgentRun
+message RetryAgentRunRequest {
+  string id = 1;
+}
+
+message RetryAgentRunResponse {
+  AgentRun agent_run = 1;
+}
+
+// ListRoleConfigs
+message ListRoleConfigsRequest {
+  optional bool active_only = 1;
+}
+
+message ListRoleConfigsResponse {
+  repeated AgentRoleConfig configs = 1;
+}
+
+// GetRoleConfig
+message GetRoleConfigRequest {
+  string name = 1;
+}
+
+message GetRoleConfigResponse {
+  AgentRoleConfig config = 1;
+}
+
+// StreamAgentOutput
+message StreamAgentOutputRequest {
+  string agent_run_id = 1;
+}

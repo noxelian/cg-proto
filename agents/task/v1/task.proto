@@ -1,0 +1,191 @@
+syntax = "proto3";
+
+package agents.task.v1;
+
+option go_package = "gitlab.com/xakpro/cg-proto/gen/go/agents/task;taskv1";
+
+import "google/protobuf/timestamp.proto";
+
+// TaskStatus represents the workflow state of a task.
+enum TaskStatus {
+  TASK_STATUS_UNSPECIFIED = 0;
+  TASK_STATUS_BACKLOG = 1;
+  TASK_STATUS_PLANNING = 2;
+  TASK_STATUS_APPROVED = 3;
+  TASK_STATUS_READY = 4;
+  TASK_STATUS_IN_PROGRESS = 5;
+  TASK_STATUS_REVIEW = 6;
+  TASK_STATUS_TESTING = 7;
+  TASK_STATUS_DONE = 8;
+  TASK_STATUS_CANCELLED = 9;
+  TASK_STATUS_BLOCKED = 10;
+}
+
+// TaskPriority represents the urgency level of a task.
+enum TaskPriority {
+  TASK_PRIORITY_UNSPECIFIED = 0;
+  TASK_PRIORITY_CRITICAL = 1;
+  TASK_PRIORITY_HIGH = 2;
+  TASK_PRIORITY_MEDIUM = 3;
+  TASK_PRIORITY_LOW = 4;
+}
+
+// Task represents a unit of work managed by the agents system.
+message Task {
+  string id = 1;
+  optional string parent_id = 2;
+  string title = 3;
+  optional string description = 4;
+  TaskStatus status = 5;
+  TaskPriority priority = 6;
+  optional string assigned_role = 7;
+  optional string branch_name = 8;
+  optional string mr_url = 9;
+  optional string agent_notes = 10; // JSON string
+  optional int64 creator_user_id = 11;
+  google.protobuf.Timestamp created_at = 12;
+  google.protobuf.Timestamp updated_at = 13;
+}
+
+// TaskDependency represents a dependency between two tasks.
+message TaskDependency {
+  string id = 1;
+  string task_id = 2;
+  string depends_on_task_id = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
+
+// TaskLabel represents a label attached to a task.
+message TaskLabel {
+  string id = 1;
+  string task_id = 2;
+  string label = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
+
+// TaskEvent represents a real-time task update event.
+message TaskEvent {
+  string event_type = 1;
+  Task task = 2;
+  google.protobuf.Timestamp timestamp = 3;
+}
+
+// TaskService provides CRUD operations, dependency management, and streaming for tasks.
+service TaskService {
+  // CreateTask creates a new task.
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
+
+  // GetTask returns a task by ID with its dependencies and labels.
+  rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
+
+  // ListTasks returns a filtered, paginated list of tasks.
+  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse);
+
+  // UpdateTask updates task fields.
+  rpc UpdateTask(UpdateTaskRequest) returns (UpdateTaskResponse);
+
+  // DeleteTask soft-deletes a task.
+  rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse);
+
+  // MoveTask transitions a task to a new status.
+  rpc MoveTask(MoveTaskRequest) returns (MoveTaskResponse);
+
+  // AddTaskDependency creates a dependency between tasks.
+  rpc AddTaskDependency(AddTaskDependencyRequest) returns (AddTaskDependencyResponse);
+
+  // RemoveTaskDependency removes a task dependency.
+  rpc RemoveTaskDependency(RemoveTaskDependencyRequest) returns (RemoveTaskDependencyResponse);
+
+  // WatchTaskUpdates streams real-time task update events.
+  rpc WatchTaskUpdates(WatchTaskUpdatesRequest) returns (stream TaskEvent);
+}
+
+// CreateTask
+message CreateTaskRequest {
+  string title = 1;
+  optional string description = 2;
+  TaskPriority priority = 3;
+  repeated string labels = 4;
+}
+
+message CreateTaskResponse {
+  Task task = 1;
+}
+
+// GetTask
+message GetTaskRequest {
+  string id = 1;
+}
+
+message GetTaskResponse {
+  Task task = 1;
+  repeated TaskDependency dependencies = 2;
+  repeated TaskLabel labels = 3;
+}
+
+// ListTasks
+message ListTasksRequest {
+  optional TaskStatus status = 1;
+  optional TaskPriority priority = 2;
+  optional string label = 3;
+  int32 page_size = 4;
+  string page_token = 5;
+}
+
+message ListTasksResponse {
+  repeated Task tasks = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+// UpdateTask
+message UpdateTaskRequest {
+  string id = 1;
+  optional string title = 2;
+  optional string description = 3;
+  optional TaskPriority priority = 4;
+  optional string assigned_role = 5;
+}
+
+message UpdateTaskResponse {
+  Task task = 1;
+}
+
+// DeleteTask
+message DeleteTaskRequest {
+  string id = 1;
+}
+
+message DeleteTaskResponse {}
+
+// MoveTask
+message MoveTaskRequest {
+  string id = 1;
+  TaskStatus new_status = 2;
+}
+
+message MoveTaskResponse {
+  Task task = 1;
+}
+
+// AddTaskDependency
+message AddTaskDependencyRequest {
+  string task_id = 1;
+  string depends_on_task_id = 2;
+}
+
+message AddTaskDependencyResponse {
+  TaskDependency dependency = 1;
+}
+
+// RemoveTaskDependency
+message RemoveTaskDependencyRequest {
+  string id = 1;
+}
+
+message RemoveTaskDependencyResponse {}
+
+// WatchTaskUpdates
+message WatchTaskUpdatesRequest {
+  optional string task_id = 1;
+}
