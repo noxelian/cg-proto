@@ -27,6 +27,9 @@ const (
 	TaskService_MoveTask_FullMethodName             = "/agents.task.v1.TaskService/MoveTask"
 	TaskService_AddTaskDependency_FullMethodName    = "/agents.task.v1.TaskService/AddTaskDependency"
 	TaskService_RemoveTaskDependency_FullMethodName = "/agents.task.v1.TaskService/RemoveTaskDependency"
+	TaskService_GetActivityLog_FullMethodName       = "/agents.task.v1.TaskService/GetActivityLog"
+	TaskService_AddLabel_FullMethodName             = "/agents.task.v1.TaskService/AddLabel"
+	TaskService_RemoveLabel_FullMethodName          = "/agents.task.v1.TaskService/RemoveLabel"
 	TaskService_WatchTaskUpdates_FullMethodName     = "/agents.task.v1.TaskService/WatchTaskUpdates"
 )
 
@@ -52,6 +55,12 @@ type TaskServiceClient interface {
 	AddTaskDependency(ctx context.Context, in *AddTaskDependencyRequest, opts ...grpc.CallOption) (*AddTaskDependencyResponse, error)
 	// RemoveTaskDependency removes a task dependency.
 	RemoveTaskDependency(ctx context.Context, in *RemoveTaskDependencyRequest, opts ...grpc.CallOption) (*RemoveTaskDependencyResponse, error)
+	// GetActivityLog returns paginated activity logs for a task.
+	GetActivityLog(ctx context.Context, in *GetActivityLogRequest, opts ...grpc.CallOption) (*GetActivityLogResponse, error)
+	// AddLabel adds a label to an existing task.
+	AddLabel(ctx context.Context, in *AddLabelRequest, opts ...grpc.CallOption) (*AddLabelResponse, error)
+	// RemoveLabel removes a label from a task.
+	RemoveLabel(ctx context.Context, in *RemoveLabelRequest, opts ...grpc.CallOption) (*RemoveLabelResponse, error)
 	// WatchTaskUpdates streams real-time task update events.
 	WatchTaskUpdates(ctx context.Context, in *WatchTaskUpdatesRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[TaskEvent], error)
 }
@@ -144,6 +153,36 @@ func (c *taskServiceClient) RemoveTaskDependency(ctx context.Context, in *Remove
 	return out, nil
 }
 
+func (c *taskServiceClient) GetActivityLog(ctx context.Context, in *GetActivityLogRequest, opts ...grpc.CallOption) (*GetActivityLogResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetActivityLogResponse)
+	err := c.cc.Invoke(ctx, TaskService_GetActivityLog_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *taskServiceClient) AddLabel(ctx context.Context, in *AddLabelRequest, opts ...grpc.CallOption) (*AddLabelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddLabelResponse)
+	err := c.cc.Invoke(ctx, TaskService_AddLabel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *taskServiceClient) RemoveLabel(ctx context.Context, in *RemoveLabelRequest, opts ...grpc.CallOption) (*RemoveLabelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RemoveLabelResponse)
+	err := c.cc.Invoke(ctx, TaskService_RemoveLabel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *taskServiceClient) WatchTaskUpdates(ctx context.Context, in *WatchTaskUpdatesRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[TaskEvent], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &TaskService_ServiceDesc.Streams[0], TaskService_WatchTaskUpdates_FullMethodName, cOpts...)
@@ -185,6 +224,12 @@ type TaskServiceServer interface {
 	AddTaskDependency(context.Context, *AddTaskDependencyRequest) (*AddTaskDependencyResponse, error)
 	// RemoveTaskDependency removes a task dependency.
 	RemoveTaskDependency(context.Context, *RemoveTaskDependencyRequest) (*RemoveTaskDependencyResponse, error)
+	// GetActivityLog returns paginated activity logs for a task.
+	GetActivityLog(context.Context, *GetActivityLogRequest) (*GetActivityLogResponse, error)
+	// AddLabel adds a label to an existing task.
+	AddLabel(context.Context, *AddLabelRequest) (*AddLabelResponse, error)
+	// RemoveLabel removes a label from a task.
+	RemoveLabel(context.Context, *RemoveLabelRequest) (*RemoveLabelResponse, error)
 	// WatchTaskUpdates streams real-time task update events.
 	WatchTaskUpdates(*WatchTaskUpdatesRequest, grpc.ServerStreamingServer[TaskEvent]) error
 	mustEmbedUnimplementedTaskServiceServer()
@@ -220,6 +265,15 @@ func (UnimplementedTaskServiceServer) AddTaskDependency(context.Context, *AddTas
 }
 func (UnimplementedTaskServiceServer) RemoveTaskDependency(context.Context, *RemoveTaskDependencyRequest) (*RemoveTaskDependencyResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RemoveTaskDependency not implemented")
+}
+func (UnimplementedTaskServiceServer) GetActivityLog(context.Context, *GetActivityLogRequest) (*GetActivityLogResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetActivityLog not implemented")
+}
+func (UnimplementedTaskServiceServer) AddLabel(context.Context, *AddLabelRequest) (*AddLabelResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddLabel not implemented")
+}
+func (UnimplementedTaskServiceServer) RemoveLabel(context.Context, *RemoveLabelRequest) (*RemoveLabelResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RemoveLabel not implemented")
 }
 func (UnimplementedTaskServiceServer) WatchTaskUpdates(*WatchTaskUpdatesRequest, grpc.ServerStreamingServer[TaskEvent]) error {
 	return status.Error(codes.Unimplemented, "method WatchTaskUpdates not implemented")
@@ -389,6 +443,60 @@ func _TaskService_RemoveTaskDependency_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TaskService_GetActivityLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetActivityLogRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServiceServer).GetActivityLog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TaskService_GetActivityLog_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServiceServer).GetActivityLog(ctx, req.(*GetActivityLogRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TaskService_AddLabel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddLabelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServiceServer).AddLabel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TaskService_AddLabel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServiceServer).AddLabel(ctx, req.(*AddLabelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TaskService_RemoveLabel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveLabelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServiceServer).RemoveLabel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TaskService_RemoveLabel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServiceServer).RemoveLabel(ctx, req.(*RemoveLabelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TaskService_WatchTaskUpdates_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(WatchTaskUpdatesRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -438,6 +546,18 @@ var TaskService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveTaskDependency",
 			Handler:    _TaskService_RemoveTaskDependency_Handler,
+		},
+		{
+			MethodName: "GetActivityLog",
+			Handler:    _TaskService_GetActivityLog_Handler,
+		},
+		{
+			MethodName: "AddLabel",
+			Handler:    _TaskService_AddLabel_Handler,
+		},
+		{
+			MethodName: "RemoveLabel",
+			Handler:    _TaskService_RemoveLabel_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

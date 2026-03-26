@@ -70,6 +70,18 @@ message TaskEvent {
   google.protobuf.Timestamp timestamp = 3;
 }
 
+// ActivityLog represents a single activity log entry for a task.
+message ActivityLog {
+  string id = 1;
+  string task_id = 2;
+  optional string agent_run_id = 3;
+  string action = 4;
+  string details = 5; // JSON string
+  string actor_type = 6;
+  optional string actor_id = 7;
+  google.protobuf.Timestamp created_at = 8;
+}
+
 // TaskService provides CRUD operations, dependency management, and streaming for tasks.
 service TaskService {
   // CreateTask creates a new task.
@@ -96,6 +108,15 @@ service TaskService {
   // RemoveTaskDependency removes a task dependency.
   rpc RemoveTaskDependency(RemoveTaskDependencyRequest) returns (RemoveTaskDependencyResponse);
 
+  // GetActivityLog returns paginated activity logs for a task.
+  rpc GetActivityLog(GetActivityLogRequest) returns (GetActivityLogResponse);
+
+  // AddLabel adds a label to an existing task.
+  rpc AddLabel(AddLabelRequest) returns (AddLabelResponse);
+
+  // RemoveLabel removes a label from a task.
+  rpc RemoveLabel(RemoveLabelRequest) returns (RemoveLabelResponse);
+
   // WatchTaskUpdates streams real-time task update events.
   rpc WatchTaskUpdates(WatchTaskUpdatesRequest) returns (stream TaskEvent);
 }
@@ -106,6 +127,7 @@ message CreateTaskRequest {
   optional string description = 2;
   TaskPriority priority = 3;
   repeated string labels = 4;
+  optional string parent_id = 5;
 }
 
 message CreateTaskResponse {
@@ -189,3 +211,31 @@ message RemoveTaskDependencyResponse {}
 message WatchTaskUpdatesRequest {
   optional string task_id = 1;
 }
+
+// GetActivityLog
+message GetActivityLogRequest {
+  string task_id = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message GetActivityLogResponse {
+  repeated ActivityLog entries = 1;
+}
+
+// AddLabel
+message AddLabelRequest {
+  string task_id = 1;
+  string label = 2;
+}
+
+message AddLabelResponse {
+  TaskLabel label = 1;
+}
+
+// RemoveLabel
+message RemoveLabelRequest {
+  string id = 1;
+}
+
+message RemoveLabelResponse {}
