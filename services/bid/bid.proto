@@ -37,6 +37,10 @@ service BidService {
   // CancelBid cancels a bid (organization cancels their bid)
   rpc CancelBid(CancelBidRequest) returns (CancelBidResponse);
   rpc MarkPartsPurchased(MarkPartsPurchasedRequest) returns (MarkPartsPurchasedResponse);
+
+  // GetBidPartPrices fetches current prices for a batch of bid parts.
+  // Used by CartService.RefreshPrices to detect price changes on cart items.
+  rpc GetBidPartPrices(GetBidPartPricesRequest) returns (GetBidPartPricesResponse);
 }
 
 enum BidType {
@@ -228,6 +232,40 @@ message CancelBidResponse {
   Bid bid = 1;
 }
 
+
+// GetBidPartPrices
+
+// BidPartPriceQuery identifies a single bid part to look up.
+message BidPartPriceQuery {
+  int64 bid_id = 1;
+  int64 bid_part_id = 2;
+}
+
+// BidPartPriceResult carries the current price and validity of a bid part.
+message BidPartPriceResult {
+  int64 bid_id = 1;
+  int64 bid_part_id = 2;
+
+  // unit_price is the current price in minor currency units (tenge).
+  int64 unit_price = 3;
+
+  // is_valid is false when the bid is expired, cancelled, or the part is unavailable.
+  bool is_valid = 4;
+
+  // invalid_reason is set when is_valid = false. Examples: "bid_expired", "bid_cancelled", "part_unavailable".
+  string invalid_reason = 5;
+
+  // availability reflects the current stock status: in_stock, on_order, unavailable.
+  string availability = 6;
+}
+
+message GetBidPartPricesRequest {
+  repeated BidPartPriceQuery items = 1;
+}
+
+message GetBidPartPricesResponse {
+  repeated BidPartPriceResult results = 1;
+}
 
 // MarkPartsPurchased
 message MarkPartsPurchasedRequest {

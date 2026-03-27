@@ -30,6 +30,7 @@ const (
 	BidService_RejectBid_FullMethodName             = "/services.bid.v1.BidService/RejectBid"
 	BidService_CancelBid_FullMethodName             = "/services.bid.v1.BidService/CancelBid"
 	BidService_MarkPartsPurchased_FullMethodName    = "/services.bid.v1.BidService/MarkPartsPurchased"
+	BidService_GetBidPartPrices_FullMethodName      = "/services.bid.v1.BidService/GetBidPartPrices"
 )
 
 // BidServiceClient is the client API for BidService service.
@@ -57,6 +58,9 @@ type BidServiceClient interface {
 	// CancelBid cancels a bid (organization cancels their bid)
 	CancelBid(ctx context.Context, in *CancelBidRequest, opts ...grpc.CallOption) (*CancelBidResponse, error)
 	MarkPartsPurchased(ctx context.Context, in *MarkPartsPurchasedRequest, opts ...grpc.CallOption) (*MarkPartsPurchasedResponse, error)
+	// GetBidPartPrices fetches current prices for a batch of bid parts.
+	// Used by CartService.RefreshPrices to detect price changes on cart items.
+	GetBidPartPrices(ctx context.Context, in *GetBidPartPricesRequest, opts ...grpc.CallOption) (*GetBidPartPricesResponse, error)
 }
 
 type bidServiceClient struct {
@@ -177,6 +181,16 @@ func (c *bidServiceClient) MarkPartsPurchased(ctx context.Context, in *MarkParts
 	return out, nil
 }
 
+func (c *bidServiceClient) GetBidPartPrices(ctx context.Context, in *GetBidPartPricesRequest, opts ...grpc.CallOption) (*GetBidPartPricesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBidPartPricesResponse)
+	err := c.cc.Invoke(ctx, BidService_GetBidPartPrices_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BidServiceServer is the server API for BidService service.
 // All implementations must embed UnimplementedBidServiceServer
 // for forward compatibility.
@@ -202,6 +216,9 @@ type BidServiceServer interface {
 	// CancelBid cancels a bid (organization cancels their bid)
 	CancelBid(context.Context, *CancelBidRequest) (*CancelBidResponse, error)
 	MarkPartsPurchased(context.Context, *MarkPartsPurchasedRequest) (*MarkPartsPurchasedResponse, error)
+	// GetBidPartPrices fetches current prices for a batch of bid parts.
+	// Used by CartService.RefreshPrices to detect price changes on cart items.
+	GetBidPartPrices(context.Context, *GetBidPartPricesRequest) (*GetBidPartPricesResponse, error)
 	mustEmbedUnimplementedBidServiceServer()
 }
 
@@ -244,6 +261,9 @@ func (UnimplementedBidServiceServer) CancelBid(context.Context, *CancelBidReques
 }
 func (UnimplementedBidServiceServer) MarkPartsPurchased(context.Context, *MarkPartsPurchasedRequest) (*MarkPartsPurchasedResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method MarkPartsPurchased not implemented")
+}
+func (UnimplementedBidServiceServer) GetBidPartPrices(context.Context, *GetBidPartPricesRequest) (*GetBidPartPricesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBidPartPrices not implemented")
 }
 func (UnimplementedBidServiceServer) mustEmbedUnimplementedBidServiceServer() {}
 func (UnimplementedBidServiceServer) testEmbeddedByValue()                    {}
@@ -464,6 +484,24 @@ func _BidService_MarkPartsPurchased_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BidService_GetBidPartPrices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBidPartPricesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BidServiceServer).GetBidPartPrices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BidService_GetBidPartPrices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BidServiceServer).GetBidPartPrices(ctx, req.(*GetBidPartPricesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BidService_ServiceDesc is the grpc.ServiceDesc for BidService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -514,6 +552,10 @@ var BidService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MarkPartsPurchased",
 			Handler:    _BidService_MarkPartsPurchased_Handler,
+		},
+		{
+			MethodName: "GetBidPartPrices",
+			Handler:    _BidService_GetBidPartPrices_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

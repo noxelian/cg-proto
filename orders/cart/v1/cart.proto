@@ -1,0 +1,368 @@
+syntax = "proto3";
+
+package orders.cart.v1;
+
+option go_package = "gitlab.com/xakpro/cg-proto/gen/go/orders/cart;cartv1";
+
+import "google/protobuf/timestamp.proto";
+
+// CartService manages the shopping cart for the parts marketplace.
+// Cart is singleton per user. Orders are created ONLY after successful payment.
+// Checkout flow: validate cart → get payment URL → payment success → create Orders → clear cart.
+service CartService {
+  // GetCart returns the user's cart with items grouped by supplier.
+  rpc GetCart(GetCartRequest) returns (GetCartResponse);
+
+  // AddItem adds a bid part item to the cart. Idempotent by idempotency_key.
+  rpc AddItem(AddItemRequest) returns (AddItemResponse);
+
+  // UpdateItemQuantity changes the quantity of a catalog-sourced cart item.
+  // Only applicable to CATALOG source_type items.
+  rpc UpdateItemQuantity(UpdateItemQuantityRequest) returns (UpdateItemQuantityResponse);
+
+  // RemoveItem removes a single item from the cart.
+  rpc RemoveItem(RemoveItemRequest) returns (RemoveItemResponse);
+
+  // ClearCart empties the entire cart.
+  rpc ClearCart(ClearCartRequest) returns (ClearCartResponse);
+
+  // RefreshPrices fetches current prices from the bid service and flags
+  // items where the price has changed by more than 5%.
+  rpc RefreshPrices(RefreshPricesRequest) returns (RefreshPricesResponse);
+
+  // ConfirmPriceChanges marks flagged price-changed items as confirmed by the user.
+  rpc ConfirmPriceChanges(ConfirmPriceChangesRequest) returns (ConfirmPriceChangesResponse);
+
+  // SetDeliveryOption sets the delivery option for a specific supplier group.
+  rpc SetDeliveryOption(SetDeliveryOptionRequest) returns (SetDeliveryOptionResponse);
+
+  // Checkout validates the cart, calculates totals, and returns payment info.
+  // No orders are created at this stage.
+  rpc Checkout(CheckoutRequest) returns (CheckoutResponse);
+
+  // GetCartSummary returns a lightweight summary (item count + total) for UI badge display.
+  rpc GetCartSummary(GetCartSummaryRequest) returns (GetCartSummaryResponse);
+
+  // ProcessPaymentSuccess is called when payment is confirmed.
+  // Creates marketplace orders per supplier and clears the cart.
+  rpc ProcessPaymentSuccess(ProcessPaymentSuccessRequest) returns (ProcessPaymentSuccessResponse);
+}
+
+// =============================================
+// Enums
+// =============================================
+
+enum CartItemSourceType {
+  CART_ITEM_SOURCE_TYPE_UNSPECIFIED = 0;
+  CART_ITEM_SOURCE_TYPE_BID = 1;      // Item sourced from a supplier's bid response
+  CART_ITEM_SOURCE_TYPE_CATALOG = 2;  // Item sourced from a parts catalog listing
+}
+
+enum CartStatus {
+  CART_STATUS_UNSPECIFIED = 0;
+  CART_STATUS_ACTIVE = 1;            // Cart is editable, accepting items
+  CART_STATUS_AWAITING_PAYMENT = 2;  // Checkout initiated, payment pending
+  CART_STATUS_EXPIRED = 3;           // Cart expired (no activity / payment timeout)
+}
+
+enum CartDeliveryType {
+  CART_DELIVERY_TYPE_UNSPECIFIED = 0;
+  CART_DELIVERY_TYPE_PICKUP = 1;    // Self-pickup from supplier
+  CART_DELIVERY_TYPE_DELIVERY = 2;  // Delivery to buyer address
+}
+
+// =============================================
+// Core messages
+// =============================================
+
+// Cart is the top-level container for a user's shopping session.
+// One active cart per user at any time.
+message Cart {
+  int64 id = 1;
+  int64 buyer_user_id = 2;
+  CartStatus status = 3;
+  int32 item_count = 4;
+  google.protobuf.Timestamp expires_at = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+// CartItem represents a single part from a specific supplier in the cart.
+message CartItem {
+  int64 id = 1;
+
+  // Source of this cart item.
+  CartItemSourceType source_type = 2;
+
+  // source_id maps to bid_id when source_type = BID.
+  int64 source_id = 3;
+
+  // source_part_id maps to bid_part_id when source_type = BID.
+  int64 source_part_id = 4;
+
+  // Seller who supplies this part.
+  string seller_org_id = 5;
+
+  // Part details (denormalized at add time for display).
+  string part_name = 6;
+  string part_number = 7;
+  int32 quantity = 8;
+
+  // unit_price is the current confirmed price in minor currency units (tenge).
+  int64 unit_price = 9;
+
+  // original_price is the price at the time the item was added.
+  int64 original_price = 10;
+
+  // price_confirmed is true when the buyer has acknowledged a price change.
+  bool price_confirmed = 11;
+
+  // Part metadata.
+  string condition = 12;     // new, used, refurbished
+  string availability = 13;  // in_stock, on_order, unavailable
+
+  // Delivery choice for this item (may be overridden at supplier group level).
+  CartDeliveryType delivery_type = 14;
+  int64 delivery_cost = 15;
+  int64 delivery_city_id = 16;
+
+  // Client-supplied idempotency key to prevent duplicate additions.
+  string idempotency_key = 17;
+
+  // Stale flags are set by RefreshPrices when the item is no longer valid.
+  bool is_stale = 18;
+  string stale_reason = 19;  // e.g. "price_changed", "out_of_stock", "bid_expired"
+
+  google.protobuf.Timestamp added_at = 20;
+}
+
+// SupplierGroup aggregates cart items from a single seller with delivery info and totals.
+message SupplierGroup {
+  string seller_org_id = 1;
+  string seller_name = 2;
+  double seller_rating = 3;
+  int32 seller_reviews_count = 4;
+
+  repeated CartItem items = 5;
+
+  // Financials in minor currency units (tenge).
+  int64 subtotal = 6;
+  int64 delivery_cost = 7;
+  int64 free_delivery_threshold = 8;  // Order threshold to qualify for free delivery (0 = no threshold).
+  int64 total = 9;
+
+  CartDeliveryType delivery_type = 10;
+}
+
+// CartSummary contains full grouped cart content with aggregated totals.
+message CartSummary {
+  repeated SupplierGroup supplier_groups = 1;
+
+  // Aggregated totals in minor currency units (tenge).
+  int64 grand_total = 2;
+
+  int32 items_count = 3;
+
+  // stale_count is the number of items flagged as stale (price changed, out of stock, etc.).
+  int32 stale_count = 4;
+
+  // unconfirmed_count is the number of items with price changes not yet confirmed by buyer.
+  int32 unconfirmed_count = 5;
+}
+
+// SupplierCheckoutBreakdown holds per-supplier payment details for the checkout summary.
+message SupplierCheckoutBreakdown {
+  string seller_org_id = 1;
+  string seller_name = 2;
+  int64 subtotal = 3;
+  int64 delivery_cost = 4;
+  int64 total = 5;
+  CartDeliveryType delivery_type = 6;
+}
+
+// =============================================
+// RPC request / response messages
+// =============================================
+
+// --- GetCart ---
+
+message GetCartRequest {
+  int64 buyer_user_id = 1;
+}
+
+message GetCartResponse {
+  Cart cart = 1;
+  CartSummary summary = 2;
+}
+
+// --- AddItem ---
+
+message AddItemRequest {
+  int64 buyer_user_id = 1;
+
+  CartItemSourceType source_type = 2;
+  int64 source_id = 3;       // bid_id for BID source
+  int64 source_part_id = 4;  // bid_part_id for BID source
+
+  string seller_org_id = 5;
+
+  // Part details provided by the caller (from bid/catalog response).
+  string part_name = 6;
+  string part_number = 7;
+  int32 quantity = 8;
+  int64 unit_price = 9;
+  string condition = 10;
+  string availability = 11;
+
+  CartDeliveryType delivery_type = 12;
+  int64 delivery_cost = 13;
+  int64 delivery_city_id = 14;
+
+  // Idempotency key to prevent duplicate adds on retry.
+  string idempotency_key = 15;
+}
+
+message AddItemResponse {
+  CartItem item = 1;
+  Cart cart = 2;
+}
+
+// --- UpdateItemQuantity ---
+
+message UpdateItemQuantityRequest {
+  int64 buyer_user_id = 1;
+  int64 cart_item_id = 2;
+  int32 quantity = 3;
+}
+
+message UpdateItemQuantityResponse {
+  CartItem item = 1;
+  Cart cart = 2;
+}
+
+// --- RemoveItem ---
+
+message RemoveItemRequest {
+  int64 buyer_user_id = 1;
+  int64 cart_item_id = 2;
+}
+
+message RemoveItemResponse {
+  Cart cart = 1;
+}
+
+// --- ClearCart ---
+
+message ClearCartRequest {
+  int64 buyer_user_id = 1;
+}
+
+message ClearCartResponse {
+  Cart cart = 1;
+}
+
+// --- RefreshPrices ---
+
+message RefreshPricesRequest {
+  int64 buyer_user_id = 1;
+}
+
+// PriceChangeResult describes a single item whose price changed during refresh.
+message PriceChangeResult {
+  int64 cart_item_id = 1;
+  string part_name = 2;
+  string part_number = 3;
+  int64 old_price = 4;
+  int64 new_price = 5;
+  // change_pct is positive for price increases, negative for decreases.
+  double change_pct = 6;
+}
+
+message RefreshPricesResponse {
+  CartSummary summary = 1;
+  // price_changes contains items where |change_pct| > 5%.
+  repeated PriceChangeResult price_changes = 2;
+  // stale_items contains items that became invalid (out of stock, bid expired, etc.).
+  repeated int64 stale_item_ids = 3;
+}
+
+// --- ConfirmPriceChanges ---
+
+message ConfirmPriceChangesRequest {
+  int64 buyer_user_id = 1;
+  // cart_item_ids lists the items whose new prices the buyer explicitly accepts.
+  // Pass empty to confirm all unconfirmed items.
+  repeated int64 cart_item_ids = 2;
+}
+
+message ConfirmPriceChangesResponse {
+  CartSummary summary = 1;
+}
+
+// --- SetDeliveryOption ---
+
+message SetDeliveryOptionRequest {
+  int64 buyer_user_id = 1;
+  string seller_org_id = 2;
+  CartDeliveryType delivery_type = 3;
+  // delivery_city_id is required when delivery_type = DELIVERY.
+  int64 delivery_city_id = 4;
+}
+
+message SetDeliveryOptionResponse {
+  SupplierGroup supplier_group = 1;
+  Cart cart = 2;
+}
+
+// --- Checkout ---
+
+message CheckoutRequest {
+  int64 buyer_user_id = 1;
+  // idempotency_key prevents duplicate payment sessions on retry.
+  string idempotency_key = 2;
+}
+
+// CheckoutResponse returns payment intent details. No orders are created yet.
+message CheckoutResponse {
+  // payment_url is the redirect URL to the payment gateway.
+  string payment_url = 1;
+  // payment_id is the internal payment record ID (from cg-payments).
+  string payment_id = 2;
+
+  repeated SupplierCheckoutBreakdown supplier_breakdowns = 3;
+
+  // grand_total is the total amount that will be charged in minor currency units (tenge).
+  int64 grand_total = 4;
+
+  string currency = 5;
+}
+
+// --- GetCartSummary ---
+
+message GetCartSummaryRequest {
+  int64 buyer_user_id = 1;
+}
+
+// GetCartSummaryResponse is a lightweight response for UI badge display.
+message GetCartSummaryResponse {
+  int32 items_count = 1;
+  int64 grand_total = 2;
+  string currency = 3;
+}
+
+// --- ProcessPaymentSuccess ---
+
+message ProcessPaymentSuccessRequest {
+  int64 buyer_user_id = 1;
+  // payment_id is the payment record that was confirmed by the payment gateway.
+  string payment_id = 2;
+  // idempotency_key must match the key used in CheckoutRequest to guard against double processing.
+  string idempotency_key = 3;
+}
+
+// ProcessPaymentSuccessResponse returns the IDs of the newly created marketplace orders.
+// One order is created per supplier group.
+message ProcessPaymentSuccessResponse {
+  // created_order_ids maps seller_org_id → order_id for each created order.
+  map<string, int64> created_order_ids = 1;
+}

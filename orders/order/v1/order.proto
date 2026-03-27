@@ -34,6 +34,7 @@ service OrderService {
   rpc ConfirmShipment(ConfirmShipmentRequest) returns (ConfirmShipmentResponse);
   rpc ConfirmReceipt(ConfirmReceiptRequest) returns (ConfirmReceiptResponse);
   rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse);
+  rpc GetOrdersByCheckoutId(GetOrdersByCheckoutIdRequest) returns (GetOrdersByCheckoutIdResponse);
 
   // === Workshop orders (parts in repair orders) ===
   rpc CreateWorkshopOrder(CreateWorkshopOrderRequest) returns (CreateWorkshopOrderResponse);
@@ -454,6 +455,15 @@ message ListOrdersRequest {
   int32 page = 4;
   int32 page_size = 5;
   OrderType order_type = 6;
+  string cart_checkout_id = 7; // optional: filter orders by cart checkout session
+}
+
+message GetOrdersByCheckoutIdRequest {
+  string checkout_id = 1;
+}
+
+message GetOrdersByCheckoutIdResponse {
+  repeated Order orders = 1;
 }
 
 message ListOrdersResponse {

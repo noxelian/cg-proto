@@ -37,6 +37,7 @@ const (
 	OrderService_ConfirmShipment_FullMethodName                = "/orders.order.v1.OrderService/ConfirmShipment"
 	OrderService_ConfirmReceipt_FullMethodName                 = "/orders.order.v1.OrderService/ConfirmReceipt"
 	OrderService_CancelOrder_FullMethodName                    = "/orders.order.v1.OrderService/CancelOrder"
+	OrderService_GetOrdersByCheckoutId_FullMethodName          = "/orders.order.v1.OrderService/GetOrdersByCheckoutId"
 	OrderService_CreateWorkshopOrder_FullMethodName            = "/orders.order.v1.OrderService/CreateWorkshopOrder"
 	OrderService_GetOrderByRepairOrderId_FullMethodName        = "/orders.order.v1.OrderService/GetOrderByRepairOrderId"
 	OrderService_GetOrderByRepairOrderAndSeller_FullMethodName = "/orders.order.v1.OrderService/GetOrderByRepairOrderAndSeller"
@@ -78,6 +79,7 @@ type OrderServiceClient interface {
 	ConfirmShipment(ctx context.Context, in *ConfirmShipmentRequest, opts ...grpc.CallOption) (*ConfirmShipmentResponse, error)
 	ConfirmReceipt(ctx context.Context, in *ConfirmReceiptRequest, opts ...grpc.CallOption) (*ConfirmReceiptResponse, error)
 	CancelOrder(ctx context.Context, in *CancelOrderRequest, opts ...grpc.CallOption) (*CancelOrderResponse, error)
+	GetOrdersByCheckoutId(ctx context.Context, in *GetOrdersByCheckoutIdRequest, opts ...grpc.CallOption) (*GetOrdersByCheckoutIdResponse, error)
 	// === Workshop orders (parts in repair orders) ===
 	CreateWorkshopOrder(ctx context.Context, in *CreateWorkshopOrderRequest, opts ...grpc.CallOption) (*CreateWorkshopOrderResponse, error)
 	GetOrderByRepairOrderId(ctx context.Context, in *GetOrderByRepairOrderIdRequest, opts ...grpc.CallOption) (*GetOrderByRepairOrderIdResponse, error)
@@ -280,6 +282,16 @@ func (c *orderServiceClient) CancelOrder(ctx context.Context, in *CancelOrderReq
 	return out, nil
 }
 
+func (c *orderServiceClient) GetOrdersByCheckoutId(ctx context.Context, in *GetOrdersByCheckoutIdRequest, opts ...grpc.CallOption) (*GetOrdersByCheckoutIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOrdersByCheckoutIdResponse)
+	err := c.cc.Invoke(ctx, OrderService_GetOrdersByCheckoutId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *orderServiceClient) CreateWorkshopOrder(ctx context.Context, in *CreateWorkshopOrderRequest, opts ...grpc.CallOption) (*CreateWorkshopOrderResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateWorkshopOrderResponse)
@@ -409,6 +421,7 @@ type OrderServiceServer interface {
 	ConfirmShipment(context.Context, *ConfirmShipmentRequest) (*ConfirmShipmentResponse, error)
 	ConfirmReceipt(context.Context, *ConfirmReceiptRequest) (*ConfirmReceiptResponse, error)
 	CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error)
+	GetOrdersByCheckoutId(context.Context, *GetOrdersByCheckoutIdRequest) (*GetOrdersByCheckoutIdResponse, error)
 	// === Workshop orders (parts in repair orders) ===
 	CreateWorkshopOrder(context.Context, *CreateWorkshopOrderRequest) (*CreateWorkshopOrderResponse, error)
 	GetOrderByRepairOrderId(context.Context, *GetOrderByRepairOrderIdRequest) (*GetOrderByRepairOrderIdResponse, error)
@@ -484,6 +497,9 @@ func (UnimplementedOrderServiceServer) ConfirmReceipt(context.Context, *ConfirmR
 }
 func (UnimplementedOrderServiceServer) CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelOrder not implemented")
+}
+func (UnimplementedOrderServiceServer) GetOrdersByCheckoutId(context.Context, *GetOrdersByCheckoutIdRequest) (*GetOrdersByCheckoutIdResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOrdersByCheckoutId not implemented")
 }
 func (UnimplementedOrderServiceServer) CreateWorkshopOrder(context.Context, *CreateWorkshopOrderRequest) (*CreateWorkshopOrderResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateWorkshopOrder not implemented")
@@ -860,6 +876,24 @@ func _OrderService_CancelOrder_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_GetOrdersByCheckoutId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrdersByCheckoutIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).GetOrdersByCheckoutId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_GetOrdersByCheckoutId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).GetOrdersByCheckoutId(ctx, req.(*GetOrdersByCheckoutIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrderService_CreateWorkshopOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateWorkshopOrderRequest)
 	if err := dec(in); err != nil {
@@ -1118,6 +1152,10 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CancelOrder",
 			Handler:    _OrderService_CancelOrder_Handler,
+		},
+		{
+			MethodName: "GetOrdersByCheckoutId",
+			Handler:    _OrderService_GetOrdersByCheckoutId_Handler,
 		},
 		{
 			MethodName: "CreateWorkshopOrder",
