@@ -80,6 +80,10 @@ const (
 	WorkshopService_GetClientOrderStatus_FullMethodName      = "/workshop.v1.WorkshopService/GetClientOrderStatus"
 	WorkshopService_GetClientOrderPhotos_FullMethodName      = "/workshop.v1.WorkshopService/GetClientOrderPhotos"
 	WorkshopService_GetClientOrderTimeline_FullMethodName    = "/workshop.v1.WorkshopService/GetClientOrderTimeline"
+	WorkshopService_GetClientEstimate_FullMethodName         = "/workshop.v1.WorkshopService/GetClientEstimate"
+	WorkshopService_SendForApproval_FullMethodName           = "/workshop.v1.WorkshopService/SendForApproval"
+	WorkshopService_ApproveEstimate_FullMethodName           = "/workshop.v1.WorkshopService/ApproveEstimate"
+	WorkshopService_RejectEstimate_FullMethodName            = "/workshop.v1.WorkshopService/RejectEstimate"
 	WorkshopService_CreateOrderFromCRM_FullMethodName        = "/workshop.v1.WorkshopService/CreateOrderFromCRM"
 	WorkshopService_SyncCRMDeals_FullMethodName              = "/workshop.v1.WorkshopService/SyncCRMDeals"
 	WorkshopService_GetCRMSyncStatus_FullMethodName          = "/workshop.v1.WorkshopService/GetCRMSyncStatus"
@@ -174,6 +178,10 @@ type WorkshopServiceClient interface {
 	GetClientOrderStatus(ctx context.Context, in *GetClientOrderStatusRequest, opts ...grpc.CallOption) (*GetClientOrderStatusResponse, error)
 	GetClientOrderPhotos(ctx context.Context, in *GetClientOrderPhotosRequest, opts ...grpc.CallOption) (*GetClientOrderPhotosResponse, error)
 	GetClientOrderTimeline(ctx context.Context, in *GetClientOrderTimelineRequest, opts ...grpc.CallOption) (*GetClientOrderTimelineResponse, error)
+	GetClientEstimate(ctx context.Context, in *GetClientEstimateRequest, opts ...grpc.CallOption) (*GetClientEstimateResponse, error)
+	SendForApproval(ctx context.Context, in *SendForApprovalRequest, opts ...grpc.CallOption) (*SendForApprovalResponse, error)
+	ApproveEstimate(ctx context.Context, in *ApproveEstimateRequest, opts ...grpc.CallOption) (*ApproveEstimateResponse, error)
+	RejectEstimate(ctx context.Context, in *RejectEstimateRequest, opts ...grpc.CallOption) (*RejectEstimateResponse, error)
 	// --- CRM Integration ---
 	CreateOrderFromCRM(ctx context.Context, in *CreateOrderFromCRMRequest, opts ...grpc.CallOption) (*CreateOrderFromCRMResponse, error)
 	SyncCRMDeals(ctx context.Context, in *SyncCRMDealsRequest, opts ...grpc.CallOption) (*SyncCRMDealsResponse, error)
@@ -812,6 +820,46 @@ func (c *workshopServiceClient) GetClientOrderTimeline(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *workshopServiceClient) GetClientEstimate(ctx context.Context, in *GetClientEstimateRequest, opts ...grpc.CallOption) (*GetClientEstimateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetClientEstimateResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_GetClientEstimate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) SendForApproval(ctx context.Context, in *SendForApprovalRequest, opts ...grpc.CallOption) (*SendForApprovalResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendForApprovalResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_SendForApproval_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) ApproveEstimate(ctx context.Context, in *ApproveEstimateRequest, opts ...grpc.CallOption) (*ApproveEstimateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ApproveEstimateResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_ApproveEstimate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) RejectEstimate(ctx context.Context, in *RejectEstimateRequest, opts ...grpc.CallOption) (*RejectEstimateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RejectEstimateResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_RejectEstimate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *workshopServiceClient) CreateOrderFromCRM(ctx context.Context, in *CreateOrderFromCRMRequest, opts ...grpc.CallOption) (*CreateOrderFromCRMResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateOrderFromCRMResponse)
@@ -1021,6 +1069,10 @@ type WorkshopServiceServer interface {
 	GetClientOrderStatus(context.Context, *GetClientOrderStatusRequest) (*GetClientOrderStatusResponse, error)
 	GetClientOrderPhotos(context.Context, *GetClientOrderPhotosRequest) (*GetClientOrderPhotosResponse, error)
 	GetClientOrderTimeline(context.Context, *GetClientOrderTimelineRequest) (*GetClientOrderTimelineResponse, error)
+	GetClientEstimate(context.Context, *GetClientEstimateRequest) (*GetClientEstimateResponse, error)
+	SendForApproval(context.Context, *SendForApprovalRequest) (*SendForApprovalResponse, error)
+	ApproveEstimate(context.Context, *ApproveEstimateRequest) (*ApproveEstimateResponse, error)
+	RejectEstimate(context.Context, *RejectEstimateRequest) (*RejectEstimateResponse, error)
 	// --- CRM Integration ---
 	CreateOrderFromCRM(context.Context, *CreateOrderFromCRMRequest) (*CreateOrderFromCRMResponse, error)
 	SyncCRMDeals(context.Context, *SyncCRMDealsRequest) (*SyncCRMDealsResponse, error)
@@ -1231,6 +1283,18 @@ func (UnimplementedWorkshopServiceServer) GetClientOrderPhotos(context.Context, 
 }
 func (UnimplementedWorkshopServiceServer) GetClientOrderTimeline(context.Context, *GetClientOrderTimelineRequest) (*GetClientOrderTimelineResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetClientOrderTimeline not implemented")
+}
+func (UnimplementedWorkshopServiceServer) GetClientEstimate(context.Context, *GetClientEstimateRequest) (*GetClientEstimateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetClientEstimate not implemented")
+}
+func (UnimplementedWorkshopServiceServer) SendForApproval(context.Context, *SendForApprovalRequest) (*SendForApprovalResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SendForApproval not implemented")
+}
+func (UnimplementedWorkshopServiceServer) ApproveEstimate(context.Context, *ApproveEstimateRequest) (*ApproveEstimateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ApproveEstimate not implemented")
+}
+func (UnimplementedWorkshopServiceServer) RejectEstimate(context.Context, *RejectEstimateRequest) (*RejectEstimateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RejectEstimate not implemented")
 }
 func (UnimplementedWorkshopServiceServer) CreateOrderFromCRM(context.Context, *CreateOrderFromCRMRequest) (*CreateOrderFromCRMResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateOrderFromCRM not implemented")
@@ -2390,6 +2454,78 @@ func _WorkshopService_GetClientOrderTimeline_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkshopService_GetClientEstimate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetClientEstimateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).GetClientEstimate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_GetClientEstimate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).GetClientEstimate(ctx, req.(*GetClientEstimateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_SendForApproval_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendForApprovalRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).SendForApproval(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_SendForApproval_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).SendForApproval(ctx, req.(*SendForApprovalRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_ApproveEstimate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApproveEstimateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).ApproveEstimate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_ApproveEstimate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).ApproveEstimate(ctx, req.(*ApproveEstimateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_RejectEstimate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RejectEstimateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).RejectEstimate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_RejectEstimate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).RejectEstimate(ctx, req.(*RejectEstimateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _WorkshopService_CreateOrderFromCRM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateOrderFromCRMRequest)
 	if err := dec(in); err != nil {
@@ -2874,6 +3010,22 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetClientOrderTimeline",
 			Handler:    _WorkshopService_GetClientOrderTimeline_Handler,
+		},
+		{
+			MethodName: "GetClientEstimate",
+			Handler:    _WorkshopService_GetClientEstimate_Handler,
+		},
+		{
+			MethodName: "SendForApproval",
+			Handler:    _WorkshopService_SendForApproval_Handler,
+		},
+		{
+			MethodName: "ApproveEstimate",
+			Handler:    _WorkshopService_ApproveEstimate_Handler,
+		},
+		{
+			MethodName: "RejectEstimate",
+			Handler:    _WorkshopService_RejectEstimate_Handler,
 		},
 		{
 			MethodName: "CreateOrderFromCRM",

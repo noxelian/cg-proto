@@ -99,6 +99,10 @@ service WorkshopService {
   rpc GetClientOrderStatus(GetClientOrderStatusRequest) returns (GetClientOrderStatusResponse);
   rpc GetClientOrderPhotos(GetClientOrderPhotosRequest) returns (GetClientOrderPhotosResponse);
   rpc GetClientOrderTimeline(GetClientOrderTimelineRequest) returns (GetClientOrderTimelineResponse);
+  rpc GetClientEstimate(GetClientEstimateRequest) returns (GetClientEstimateResponse);
+  rpc SendForApproval(SendForApprovalRequest) returns (SendForApprovalResponse);
+  rpc ApproveEstimate(ApproveEstimateRequest) returns (ApproveEstimateResponse);
+  rpc RejectEstimate(RejectEstimateRequest) returns (RejectEstimateResponse);
 
   // --- CRM Integration ---
   rpc CreateOrderFromCRM(CreateOrderFromCRMRequest) returns (CreateOrderFromCRMResponse);
@@ -140,6 +144,8 @@ enum RepairStatus {
   REPAIR_STATUS_POLISHING = 8;
   REPAIR_STATUS_READY = 9;
   REPAIR_STATUS_DELIVERED = 10;
+  REPAIR_STATUS_WAITING_APPROVAL = 11;
+  REPAIR_STATUS_ESTIMATE_REJECTED = 12;
 }
 
 enum MasterRole {
@@ -1430,4 +1436,56 @@ message GetWarrantyOrdersRequest {
 
 message GetWarrantyOrdersResponse {
   repeated RepairOrder orders = 1;
+}
+
+// =============================================================================
+// Estimate Approval RPCs
+// =============================================================================
+
+message SendForApprovalRequest {
+  int64 order_id = 1;
+}
+
+message SendForApprovalResponse {
+  RepairOrder order = 1;
+}
+
+message GetClientEstimateRequest {
+  int64 order_id = 1;
+}
+
+message EstimateLineItem {
+  string name = 1;
+  int64  amount = 2;
+  string item_type = 3; // "work" | "part" | "material_markup"
+}
+
+message GetClientEstimateResponse {
+  int64 order_id = 1;
+  string order_number = 2;
+  repeated EstimateLineItem items = 3;
+  int64 works_price = 4;
+  int64 parts_price = 5;
+  int64 materials_markup = 6;
+  int64 discount = 7;
+  string discount_reason = 8;
+  int64 total = 9;
+  RepairStatus status = 10;
+}
+
+message ApproveEstimateRequest {
+  int64 order_id = 1;
+}
+
+message ApproveEstimateResponse {
+  RepairOrder order = 1;
+}
+
+message RejectEstimateRequest {
+  int64 order_id = 1;
+  string reason = 2;
+}
+
+message RejectEstimateResponse {
+  RepairOrder order = 1;
 }
