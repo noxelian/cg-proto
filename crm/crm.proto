@@ -1,0 +1,886 @@
+syntax = "proto3";
+
+package crm.v1;
+
+option go_package = "gitlab.com/xakpro/cg-proto/gen/go/crm;crmv1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+service CRMService {
+  rpc CreatePipeline(CreatePipelineRequest)   returns (CreatePipelineResponse);
+  rpc GetPipeline(GetPipelineRequest)         returns (GetPipelineResponse);
+  rpc ListPipelines(ListPipelinesRequest)     returns (ListPipelinesResponse);
+  rpc UpdatePipeline(UpdatePipelineRequest)   returns (UpdatePipelineResponse);
+  rpc ArchivePipeline(ArchivePipelineRequest) returns (ArchivePipelineResponse);
+  rpc CreateStage(CreateStageRequest)         returns (CreateStageResponse);
+  rpc UpdateStage(UpdateStageRequest)         returns (UpdateStageResponse);
+  rpc DeleteStage(DeleteStageRequest)         returns (DeleteStageResponse);
+  rpc ReorderStages(ReorderStagesRequest)     returns (ReorderStagesResponse);
+
+  // Contact RPCs (Phase 3 -- integration with cg-users)
+  rpc CreateContact(CreateContactRequest)     returns (CreateContactResponse);
+  rpc GetContact(GetContactRequest)           returns (GetContactResponse);
+  rpc ListContacts(ListContactsRequest)       returns (ListContactsResponse);
+  rpc SearchContacts(SearchContactsRequest)   returns (SearchContactsResponse);
+  rpc UpdateContact(UpdateContactRequest)     returns (UpdateContactResponse);
+  rpc DeleteContact(DeleteContactRequest)     returns (DeleteContactResponse);
+
+  // Vehicle RPCs (Phase 3 -- integration with cg-users garage)
+  rpc AddVehicle(AddVehicleRequest)           returns (AddVehicleResponse);
+  rpc GetVehicle(GetVehicleRequest)           returns (GetVehicleResponse);
+  rpc ListVehiclesByContact(ListVehiclesByContactRequest) returns (ListVehiclesByContactResponse);
+  rpc GetServiceHistory(GetServiceHistoryRequest) returns (GetServiceHistoryResponse);
+  rpc GetGarageByPhone(GetGarageByPhoneRequest) returns (GetGarageByPhoneResponse);
+  rpc LookupVehicle(LookupVehicleRequest)     returns (LookupVehicleResponse);
+
+  // NOTE: Company RPCs (COMP-01/02/03) are DEFERRED per D-04.
+  // NOTE: LinkContactToCompany (CONT-03) DEFERRED per D-04 -- companies not in scope.
+
+  // Deal RPCs (Phase 4 -- deal lifecycle)
+  rpc CreateDeal(CreateDealRequest)                         returns (CreateDealResponse);
+  rpc GetDeal(GetDealRequest)                               returns (GetDealResponse);
+  rpc ListDeals(ListDealsRequest)                           returns (ListDealsResponse);
+  rpc UpdateDeal(UpdateDealRequest)                         returns (UpdateDealResponse);
+  rpc MoveDealStage(MoveDealStageRequest)                   returns (MoveDealStageResponse);
+  rpc CloseDeal(CloseDealRequest)                           returns (CloseDealResponse);
+  rpc ReOpenDeal(ReOpenDealRequest)                         returns (ReOpenDealResponse);
+  rpc GetDealActivities(GetDealActivitiesRequest)           returns (GetDealActivitiesResponse);
+  rpc GetContactActivities(GetContactActivitiesRequest)     returns (GetContactActivitiesResponse);
+
+  // Lead RPCs (Phase 5 -- lead capture and conversion)
+  rpc CreateLead(CreateLeadRequest)                         returns (CreateLeadResponse);
+  rpc GetLead(GetLeadRequest)                               returns (GetLeadResponse);
+  rpc ListLeads(ListLeadsRequest)                           returns (ListLeadsResponse);
+  rpc ChangeLeadStatus(ChangeLeadStatusRequest)             returns (ChangeLeadStatusResponse);
+  rpc ConvertLead(ConvertLeadRequest)                       returns (ConvertLeadResponse);
+
+  // Task RPCs (Phase 6 -- task management with RBAC)
+  rpc CreateTask(CreateTaskRequest)                         returns (CreateTaskResponse);
+  rpc GetTask(GetTaskRequest)                               returns (GetTaskResponse);
+  rpc ListTasks(ListTasksRequest)                           returns (ListTasksResponse);
+  rpc UpdateTaskStatus(UpdateTaskStatusRequest)             returns (UpdateTaskStatusResponse);
+  rpc UpdateTask(UpdateTaskRequest)                         returns (UpdateTaskResponse);
+
+  // Custom Field RPCs (Phase 7 -- custom field definitions per org/entity)
+  rpc CreateCustomFieldDefinition(CreateCustomFieldDefinitionRequest) returns (CreateCustomFieldDefinitionResponse);
+  rpc GetCustomFieldDefinition(GetCustomFieldDefinitionRequest)       returns (GetCustomFieldDefinitionResponse);
+  rpc ListCustomFieldDefinitions(ListCustomFieldDefinitionsRequest)   returns (ListCustomFieldDefinitionsResponse);
+  rpc UpdateCustomFieldDefinition(UpdateCustomFieldDefinitionRequest) returns (UpdateCustomFieldDefinitionResponse);
+  rpc DeleteCustomFieldDefinition(DeleteCustomFieldDefinitionRequest) returns (DeleteCustomFieldDefinitionResponse);
+
+  // Webhook Subscription RPCs (Phase 7 -- webhook delivery)
+  rpc CreateWebhookSubscription(CreateWebhookSubscriptionRequest) returns (CreateWebhookSubscriptionResponse);
+  rpc ListWebhookSubscriptions(ListWebhookSubscriptionsRequest)   returns (ListWebhookSubscriptionsResponse);
+  rpc UpdateWebhookSubscription(UpdateWebhookSubscriptionRequest) returns (UpdateWebhookSubscriptionResponse);
+  rpc DeleteWebhookSubscription(DeleteWebhookSubscriptionRequest) returns (DeleteWebhookSubscriptionResponse);
+
+  // Analytics RPCs (Phase 8)
+  rpc GetFunnelConversion(GetFunnelConversionRequest) returns (GetFunnelConversionResponse);
+  rpc GetManagerStats(GetManagerStatsRequest)         returns (GetManagerStatsResponse);
+  rpc GetDealVolume(GetDealVolumeRequest)             returns (GetDealVolumeResponse);
+}
+
+message Pipeline {
+  string id              = 1;
+  string organization_id = 2;
+  string name            = 3;
+  string description     = 4;
+  bool   is_default      = 5;
+  bool   is_archived     = 6;
+  int64  created_by      = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+  repeated Stage stages  = 10;
+}
+
+message Stage {
+  string id            = 1;
+  string pipeline_id   = 2;
+  string name          = 3;
+  string color         = 4;
+  int32  position      = 5;
+  bool   is_terminal   = 6;
+  string terminal_type = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message CreatePipelineRequest {
+  string organization_id = 1;
+  string name            = 2;
+  string description     = 3;
+}
+
+message CreatePipelineResponse {
+  Pipeline pipeline = 1;
+}
+
+message GetPipelineRequest {
+  string organization_id = 1;
+  string id              = 2;
+}
+
+message GetPipelineResponse {
+  Pipeline pipeline = 1;
+}
+
+message ListPipelinesRequest {
+  string organization_id  = 1;
+  bool   include_archived = 2;
+}
+
+message ListPipelinesResponse {
+  repeated Pipeline pipelines = 1;
+}
+
+message UpdatePipelineRequest {
+  string organization_id = 1;
+  string id              = 2;
+  string name            = 3;
+  string description     = 4;
+}
+
+message UpdatePipelineResponse {
+  Pipeline pipeline = 1;
+}
+
+message ArchivePipelineRequest {
+  string organization_id = 1;
+  string id              = 2;
+}
+
+message ArchivePipelineResponse {}
+
+message CreateStageRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+  string name            = 3;
+  string color           = 4;
+  bool   is_terminal     = 5;
+  string terminal_type   = 6;
+}
+
+message CreateStageResponse {
+  Stage stage = 1;
+}
+
+message UpdateStageRequest {
+  string organization_id = 1;
+  string id              = 2;
+  string name            = 3;
+  string color           = 4;
+}
+
+message UpdateStageResponse {
+  Stage stage = 1;
+}
+
+message DeleteStageRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+  string id              = 3;
+}
+
+message DeleteStageResponse {}
+
+message ReorderStagesRequest {
+  string organization_id    = 1;
+  string pipeline_id        = 2;
+  repeated string stage_ids = 3;
+}
+
+message ReorderStagesResponse {}
+
+// ==================== Contact Messages ====================
+
+// ContactProto is the wire representation of a CRM contact enriched with user data.
+// name, phone, and email come from the linked cg-users UserInfo (nil if user service unavailable).
+message ContactProto {
+  string id              = 1;
+  string organization_id = 2;
+  int64  user_id         = 3;
+  string display_name    = 4;
+  string name            = 5;   // from UserInfo
+  string phone           = 6;   // from UserInfo
+  string email           = 7;   // from UserInfo
+  string notes           = 8;
+  google.protobuf.Struct custom_fields = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message CreateContactRequest {
+  string organization_id = 1;
+  string phone           = 2; // required
+  string display_name    = 3;
+  string notes           = 4;
+}
+
+message CreateContactResponse {
+  ContactProto contact = 1;
+}
+
+message GetContactRequest {
+  string organization_id = 1;
+  string id              = 2;
+}
+
+message GetContactResponse {
+  ContactProto contact = 1;
+}
+
+message ListContactsRequest {
+  string organization_id = 1;
+  string search          = 2;
+  int32  page            = 3;
+  int32  page_size       = 4;
+}
+
+message ListContactsResponse {
+  repeated ContactProto contacts = 1;
+  int64  total                   = 2;
+}
+
+message SearchContactsRequest {
+  string organization_id = 1;
+  string query           = 2;
+  int32  page            = 3;
+  int32  page_size       = 4;
+}
+
+message SearchContactsResponse {
+  repeated ContactProto contacts = 1;
+  int32  total                   = 2;
+}
+
+message UpdateContactRequest {
+  string organization_id = 1;
+  string id              = 2;
+  string display_name    = 3;
+  string notes           = 4;
+}
+
+message UpdateContactResponse {
+  ContactProto contact = 1;
+}
+
+message DeleteContactRequest {
+  string organization_id = 1;
+  string id              = 2;
+}
+
+message DeleteContactResponse {}
+
+// ==================== Vehicle Messages ====================
+
+// VehicleProto is the wire representation of a CRM vehicle enriched with car data.
+// mark_name, model_name, year, vin, license_plate, color, mileage come from garage service CarInfo.
+message VehicleProto {
+  string id              = 1;
+  string organization_id = 2;
+  string contact_id      = 3;  // empty string if no contact linked
+  int64  car_id          = 4;
+  string mark_name       = 5;  // from CarInfo
+  string model_name      = 6;  // from CarInfo
+  int32  year            = 7;  // from CarInfo
+  string vin             = 8;  // from CarInfo
+  string license_plate   = 9;  // from CarInfo
+  string color           = 10; // from CarInfo
+  int32  mileage         = 11; // from CarInfo
+  google.protobuf.Timestamp created_at = 12;
+  google.protobuf.Timestamp updated_at = 13;
+}
+
+message AddVehicleRequest {
+  string organization_id = 1;
+  string contact_id      = 2;  // optional
+  int64  user_id         = 3;
+  string license_plate   = 4;
+  string vin             = 5;
+  int32  mark_id         = 6;
+  int32  model_id        = 7;
+  int32  generation_id   = 8;
+  int32  year            = 9;
+  string color           = 10;
+}
+
+message AddVehicleResponse {
+  VehicleProto vehicle = 1;
+}
+
+message GetVehicleRequest {
+  string organization_id = 1;
+  string id              = 2;
+}
+
+message GetVehicleResponse {
+  VehicleProto vehicle = 1;
+}
+
+message ListVehiclesByContactRequest {
+  string organization_id = 1;
+  string contact_id      = 2;
+}
+
+message ListVehiclesByContactResponse {
+  repeated VehicleProto vehicles = 1;
+}
+
+// ServiceRecordProto represents a service history entry from the garage service.
+message ServiceRecordProto {
+  int64  id          = 1;
+  int64  car_id      = 2;
+  string title       = 3;
+  string description = 4;
+  int32  mileage     = 5;
+  google.protobuf.Timestamp date = 6;
+}
+
+message GetServiceHistoryRequest {
+  int64 car_id = 1;
+  int32 page   = 2;
+  int32 limit  = 3;
+}
+
+message GetServiceHistoryResponse {
+  repeated ServiceRecordProto records = 1;
+  int32  total                        = 2;
+}
+
+// CarInfoProto represents car data from the garage service.
+message CarInfoProto {
+  int64  id            = 1;
+  int64  user_id       = 2;
+  string mark_name     = 3;
+  string model_name    = 4;
+  int32  year          = 5;
+  string vin           = 6;
+  string license_plate = 7;
+  string color         = 8;
+  int32  mileage       = 9;
+}
+
+message GetGarageByPhoneRequest {
+  string phone = 1;
+}
+
+message GetGarageByPhoneResponse {
+  repeated CarInfoProto cars = 1;
+}
+
+message LookupVehicleRequest {
+  int64  user_id       = 1;
+  string vin           = 2;
+  string license_plate = 3;
+}
+
+message LookupVehicleResponse {
+  CarInfoProto car = 1;
+}
+
+// ==================== Deal Messages ====================
+
+message DealProto {
+  string id              = 1;
+  string organization_id = 2;
+  string pipeline_id     = 3;
+  string stage_id        = 4;
+  string contact_id      = 5;
+  string company_id      = 6;  // empty if null
+  string vehicle_id      = 7;  // empty if null
+  int64  assigned_to     = 8;  // 0 if null
+  string title           = 9;
+  double amount          = 10;
+  string currency        = 11;
+  string status          = 12; // "open", "won", "lost"
+  string close_reason    = 13;
+  google.protobuf.Timestamp expected_close = 14;
+  google.protobuf.Struct custom_fields     = 15;
+  int64  created_by      = 16;
+  google.protobuf.Timestamp created_at     = 17;
+  google.protobuf.Timestamp updated_at     = 18;
+}
+
+message DealStageHistoryProto {
+  string id            = 1;
+  string deal_id       = 2;
+  string from_stage_id = 3; // empty if first stage
+  string to_stage_id   = 4;
+  int64  changed_by    = 5;
+  google.protobuf.Timestamp changed_at = 6;
+}
+
+message ActivityProto {
+  string id              = 1;
+  string organization_id = 2;
+  string deal_id         = 3; // empty if null
+  string contact_id      = 4; // empty if null
+  string entity_type     = 5;
+  string entity_id       = 6;
+  string type            = 7;
+  google.protobuf.Struct payload = 8;
+  int64  created_by      = 9;
+  google.protobuf.Timestamp created_at = 10;
+}
+
+message CreateDealRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+  string stage_id        = 3;
+  string contact_id      = 4; // required per D-08
+  string vehicle_id      = 5; // optional per D-09
+  int64  assigned_to     = 6; // optional
+  string title           = 7;
+  double amount          = 8;
+  string currency        = 9;
+  google.protobuf.Timestamp expected_close = 10;
+}
+
+message CreateDealResponse {
+  DealProto deal = 1;
+}
+
+message GetDealRequest {
+  string organization_id = 1;
+  string id              = 2;
+}
+
+message GetDealResponse {
+  DealProto deal = 1;
+}
+
+message ListDealsRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2; // optional filter
+  string stage_id        = 3; // optional filter
+  int64  assigned_to     = 4; // optional filter
+  string status          = 5; // optional filter
+  google.protobuf.Timestamp date_from = 6;
+  google.protobuf.Timestamp date_to   = 7;
+  string vehicle_id      = 8; // optional filter for VEH-03
+  int32  page            = 9;
+  int32  page_size       = 10;
+}
+
+message ListDealsResponse {
+  repeated DealProto deals = 1;
+}
+
+message UpdateDealRequest {
+  string organization_id = 1;
+  string id              = 2;
+  string title           = 3;
+  double amount          = 4;
+  string currency        = 5;
+  int64  assigned_to     = 6;
+  google.protobuf.Timestamp expected_close = 7;
+}
+
+message UpdateDealResponse {
+  DealProto deal = 1;
+}
+
+message MoveDealStageRequest {
+  string organization_id = 1;
+  string deal_id         = 2;
+  string stage_id        = 3;
+}
+
+message MoveDealStageResponse {
+  DealProto deal = 1;
+}
+
+message CloseDealRequest {
+  string organization_id = 1;
+  string deal_id         = 2;
+  string status          = 3; // "won" or "lost"
+  string reason          = 4;
+}
+
+message CloseDealResponse {
+  DealProto deal = 1;
+}
+
+message ReOpenDealRequest {
+  string organization_id = 1;
+  string deal_id         = 2;
+}
+
+message ReOpenDealResponse {
+  DealProto deal = 1;
+}
+
+message GetDealActivitiesRequest {
+  string organization_id = 1;
+  string deal_id         = 2;
+  int32  page            = 3;
+  int32  page_size       = 4;
+}
+
+message GetDealActivitiesResponse {
+  repeated ActivityProto activities = 1;
+}
+
+message GetContactActivitiesRequest {
+  string organization_id = 1;
+  string contact_id      = 2;
+  int32  page            = 3;
+  int32  page_size       = 4;
+}
+
+message GetContactActivitiesResponse {
+  repeated ActivityProto activities = 1;
+}
+
+// ==================== Lead Messages (Phase 5) ====================
+
+// LeadProto is the wire representation of a CRM lead (inbound prospect before conversion).
+message LeadProto {
+  string id                = 1;
+  string organization_id   = 2;
+  string first_name        = 3;
+  string last_name         = 4;
+  string phone             = 5;
+  string email             = 6;
+  string source            = 7;  // "website", "phone", "referral", etc.
+  string status            = 8;  // "new", "in_progress", "qualified", "rejected"
+  int64  assigned_to       = 9;  // 0 if null
+  string converted_deal_id = 10; // empty if not converted
+  google.protobuf.Timestamp converted_at = 11; // null if not converted
+  int64  created_by        = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Timestamp updated_at = 14;
+}
+
+message CreateLeadRequest {
+  string organization_id = 1;
+  string first_name      = 2;
+  string last_name       = 3;
+  string phone           = 4;
+  string email           = 5;
+  string source          = 6;
+  int64  assigned_to     = 7; // optional -- 0 means unassigned
+}
+
+message CreateLeadResponse {
+  LeadProto lead = 1;
+}
+
+message GetLeadRequest {
+  string organization_id = 1;
+  string lead_id         = 2;
+}
+
+message GetLeadResponse {
+  LeadProto lead = 1;
+}
+
+message ListLeadsRequest {
+  string organization_id = 1;
+  string status          = 2; // optional filter: "new", "in_progress", "qualified", "rejected"
+  string source          = 3; // optional filter
+  string date_from       = 4; // optional filter (RFC3339)
+  string date_to         = 5; // optional filter (RFC3339)
+  int32  limit           = 6;
+  int32  offset          = 7;
+}
+
+message ListLeadsResponse {
+  repeated LeadProto leads = 1;
+}
+
+message ChangeLeadStatusRequest {
+  string organization_id = 1;
+  string lead_id         = 2;
+  string new_status      = 3; // "new", "in_progress", "qualified", "rejected"
+}
+
+message ChangeLeadStatusResponse {
+  LeadProto lead = 1;
+}
+
+message ConvertLeadRequest {
+  string organization_id = 1;
+  string lead_id         = 2;
+  string pipeline_id     = 3; // optional -- uses default pipeline if empty
+  string stage_id        = 4; // optional -- uses first stage if empty
+  string deal_title      = 5; // optional -- auto-generated from lead name if empty
+}
+
+message ConvertLeadResponse {
+  LeadProto    lead    = 1;
+  DealProto    deal    = 2;
+  ContactProto contact = 3;
+}
+
+// ==================== Task Messages (Phase 6) ====================
+
+// TaskProto is the wire representation of a CRM task.
+message TaskProto {
+  string id              = 1;
+  string organization_id = 2;
+  string title           = 3;
+  string description     = 4;
+  string deal_id         = 5;    // empty if null
+  string contact_id      = 6;    // empty if null
+  string company_id      = 7;    // empty if null
+  int64  assigned_to     = 8;
+  string status          = 9;    // "pending", "in_progress", "done", "cancelled"
+  google.protobuf.Timestamp due_at       = 10; // null if no deadline
+  google.protobuf.Timestamp completed_at = 11; // null if not completed
+  int64  created_by      = 12;
+  google.protobuf.Timestamp created_at   = 13;
+  google.protobuf.Timestamp updated_at   = 14;
+}
+
+message CreateTaskRequest {
+  string organization_id = 1;
+  string title           = 2;
+  string description     = 3;
+  string deal_id         = 4;    // optional
+  string contact_id      = 5;    // optional
+  int64  assigned_to     = 6;    // required
+  google.protobuf.Timestamp due_at = 7; // optional
+}
+
+message CreateTaskResponse {
+  TaskProto task = 1;
+}
+
+message GetTaskRequest {
+  string organization_id = 1;
+  string id              = 2;
+}
+
+message GetTaskResponse {
+  TaskProto task = 1;
+}
+
+message ListTasksRequest {
+  string organization_id = 1;
+  string status          = 2;    // optional filter
+  int64  assigned_to     = 3;    // optional filter (0 means no filter)
+  google.protobuf.Timestamp due_before = 4; // optional filter
+  string deal_id         = 5;    // optional filter
+  string contact_id      = 6;    // optional filter
+  int32  limit           = 7;
+  int32  offset          = 8;
+}
+
+message ListTasksResponse {
+  repeated TaskProto tasks = 1;
+  int32              total = 2;
+}
+
+message UpdateTaskStatusRequest {
+  string organization_id = 1;
+  string id              = 2;
+  string status          = 3;
+}
+
+message UpdateTaskStatusResponse {
+  TaskProto task = 1;
+}
+
+message UpdateTaskRequest {
+  string organization_id = 1;
+  string id              = 2;
+  string title           = 3;
+  string description     = 4;
+  string deal_id         = 5;    // optional
+  string contact_id      = 6;    // optional
+  int64  assigned_to     = 7;    // 0 means unassigned
+  google.protobuf.Timestamp due_at = 8; // optional
+}
+
+message UpdateTaskResponse {
+  TaskProto task = 1;
+}
+
+// ==================== Custom Field Messages (Phase 7) ====================
+
+message FieldOptionProto {
+  string value = 1;
+  string label = 2;
+}
+
+message CustomFieldDefinitionProto {
+  string id              = 1;
+  string organization_id = 2;
+  string entity_type     = 3;  // "deal" or "contact"
+  string name            = 4;
+  string field_key       = 5;
+  string field_type      = 6;  // "text", "number", "date", "select", "checkbox"
+  repeated FieldOptionProto options = 7;
+  bool   is_required     = 8;
+  int32  position        = 9;
+  string created_at      = 10; // RFC3339
+  string updated_at      = 11; // RFC3339
+}
+
+message CreateCustomFieldDefinitionRequest {
+  string organization_id = 1;
+  string entity_type     = 2;
+  string name            = 3;
+  string field_key       = 4;
+  string field_type      = 5;
+  repeated FieldOptionProto options = 6;
+  bool   is_required     = 7;
+  int32  position        = 8;
+}
+
+message CreateCustomFieldDefinitionResponse {
+  CustomFieldDefinitionProto definition = 1;
+}
+
+message GetCustomFieldDefinitionRequest {
+  string organization_id = 1;
+  string id              = 2;
+}
+
+message GetCustomFieldDefinitionResponse {
+  CustomFieldDefinitionProto definition = 1;
+}
+
+message ListCustomFieldDefinitionsRequest {
+  string organization_id = 1;
+  string entity_type     = 2;
+}
+
+message ListCustomFieldDefinitionsResponse {
+  repeated CustomFieldDefinitionProto definitions = 1;
+}
+
+message UpdateCustomFieldDefinitionRequest {
+  string organization_id = 1;
+  string id              = 2;
+  string name            = 3;
+  string field_key       = 4;
+  string field_type      = 5;
+  repeated FieldOptionProto options = 6;
+  bool   is_required     = 7;
+  int32  position        = 8;
+}
+
+message UpdateCustomFieldDefinitionResponse {
+  CustomFieldDefinitionProto definition = 1;
+}
+
+message DeleteCustomFieldDefinitionRequest {
+  string organization_id = 1;
+  string id              = 2;
+}
+
+message DeleteCustomFieldDefinitionResponse {}
+
+// ==================== Webhook Subscription Messages (Phase 7) ====================
+
+// WebhookSubscriptionProto is the wire representation of a webhook subscription.
+// NOTE: secret is write-only and NEVER returned in responses (Pitfall 5).
+message WebhookSubscriptionProto {
+  string id              = 1;
+  string organization_id = 2;
+  string url             = 3;
+  repeated string event_types = 4;
+  bool   is_active       = 5;
+  string created_at      = 6; // RFC3339
+  string updated_at      = 7; // RFC3339
+}
+
+message CreateWebhookSubscriptionRequest {
+  string organization_id = 1;
+  string url             = 2;
+  repeated string event_types = 3;
+  string secret          = 4; // optional -- auto-generated if empty
+}
+
+message CreateWebhookSubscriptionResponse {
+  WebhookSubscriptionProto subscription = 1;
+}
+
+message ListWebhookSubscriptionsRequest {
+  string organization_id = 1;
+}
+
+message ListWebhookSubscriptionsResponse {
+  repeated WebhookSubscriptionProto subscriptions = 1;
+}
+
+message UpdateWebhookSubscriptionRequest {
+  string organization_id = 1;
+  string id              = 2;
+  string url             = 3;
+  repeated string event_types = 4;
+  string secret          = 5; // optional -- if empty, existing secret is kept
+  bool   is_active       = 6;
+}
+
+message UpdateWebhookSubscriptionResponse {
+  WebhookSubscriptionProto subscription = 1;
+}
+
+message DeleteWebhookSubscriptionRequest {
+  string organization_id = 1;
+  string id              = 2;
+}
+
+message DeleteWebhookSubscriptionResponse {}
+
+// ==================== Analytics Messages (Phase 8) ====================
+
+message GetFunnelConversionRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+  google.protobuf.Timestamp date_from = 3;
+  google.protobuf.Timestamp date_to   = 4;
+}
+
+message FunnelStageProto {
+  string stage_id         = 1;
+  string stage_name       = 2;
+  int32  position         = 3;
+  int64  total_deals      = 4;
+  int64  converted_deals  = 5;
+  double conversion_rate  = 6;
+}
+
+message GetFunnelConversionResponse {
+  repeated FunnelStageProto stages = 1;
+}
+
+message GetManagerStatsRequest {
+  string organization_id           = 1;
+  google.protobuf.Timestamp date_from = 2;
+  google.protobuf.Timestamp date_to   = 3;
+}
+
+message ManagerStatProto {
+  int64  user_id     = 1;
+  int64  deal_count  = 2;
+  double total_value = 3;
+  int64  won_count   = 4;
+  int64  lost_count  = 5;
+  double win_rate    = 6;
+}
+
+message GetManagerStatsResponse {
+  repeated ManagerStatProto managers = 1;
+}
+
+message GetDealVolumeRequest {
+  string organization_id           = 1;
+  google.protobuf.Timestamp date_from = 2;
+  google.protobuf.Timestamp date_to   = 3;
+}
+
+message GetDealVolumeResponse {
+  int64  open_count  = 1;
+  double open_value  = 2;
+  int64  won_count   = 3;
+  double won_value   = 4;
+  int64  lost_count  = 5;
+  double lost_value  = 6;
+  int64  total_count = 7;
+  double total_value = 8;
+}
