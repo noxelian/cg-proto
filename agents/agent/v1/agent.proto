@@ -55,6 +55,8 @@ message AgentOutputEvent {
   string content = 1;
   optional string tool_use = 2;
   google.protobuf.Timestamp timestamp = 3;
+  optional string tool_result = 4;
+  string event_type = 5; // content, tool_use, tool_result, status
 }
 
 // AgentService provides agent run management, role configuration, and output streaming.
@@ -88,6 +90,12 @@ service AgentService {
 
   // StreamAgentOutput streams real-time output from an agent run.
   rpc StreamAgentOutput(StreamAgentOutputRequest) returns (stream AgentOutputEvent);
+
+  // GetAnalytics returns cost analytics aggregations for a date range.
+  rpc GetAnalytics(GetAnalyticsRequest) returns (GetAnalyticsResponse);
+
+  // GetDashboard returns per-role agent status summary.
+  rpc GetDashboard(GetDashboardRequest) returns (GetDashboardResponse);
 }
 
 // StartAgentRun
@@ -180,4 +188,68 @@ message GetRoleConfigResponse {
 // StreamAgentOutput
 message StreamAgentOutputRequest {
   string agent_run_id = 1;
+}
+
+// GetAnalytics
+message GetAnalyticsRequest {
+  google.protobuf.Timestamp from_time = 1;
+  google.protobuf.Timestamp to_time = 2;
+}
+
+message GetAnalyticsResponse {
+  repeated CostByDay daily_costs = 1;
+  repeated CostByRole role_costs = 2;
+  repeated TaskCostSummary task_costs = 3;
+  AnalyticsSummary summary = 4;
+}
+
+// CostByDay represents daily cost aggregation.
+message CostByDay {
+  string date = 1;
+  double cost_usd = 2;
+  int32 run_count = 3;
+  int64 input_tokens = 4;
+  int64 output_tokens = 5;
+}
+
+// CostByRole represents per-role cost aggregation.
+message CostByRole {
+  string role = 1;
+  double cost_usd = 2;
+  int32 run_count = 3;
+  double avg_cost_usd = 4;
+}
+
+// TaskCostSummary represents per-task cost breakdown.
+message TaskCostSummary {
+  string task_id = 1;
+  string task_title = 2;
+  double total_cost_usd = 3;
+  int32 run_count = 4;
+}
+
+// AnalyticsSummary represents overall analytics summary.
+message AnalyticsSummary {
+  double total_cost_usd = 1;
+  int32 total_runs = 2;
+  double avg_cost_per_task = 3;
+  double avg_cost_per_run = 4;
+}
+
+// GetDashboard
+message GetDashboardRequest {}
+
+message GetDashboardResponse {
+  repeated AgentDashboardEntry entries = 1;
+}
+
+// AgentDashboardEntry represents a single role's dashboard status.
+message AgentDashboardEntry {
+  string role = 1;
+  string status = 2;
+  string current_task_id = 3;
+  int32 queue_depth = 4;
+  double success_rate = 5;
+  string circuit_state = 6;
+  int32 active_runs = 7;
 }

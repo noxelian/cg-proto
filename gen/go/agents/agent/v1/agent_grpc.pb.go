@@ -29,6 +29,8 @@ const (
 	AgentService_ListRoleConfigs_FullMethodName   = "/agents.agent.v1.AgentService/ListRoleConfigs"
 	AgentService_GetRoleConfig_FullMethodName     = "/agents.agent.v1.AgentService/GetRoleConfig"
 	AgentService_StreamAgentOutput_FullMethodName = "/agents.agent.v1.AgentService/StreamAgentOutput"
+	AgentService_GetAnalytics_FullMethodName      = "/agents.agent.v1.AgentService/GetAnalytics"
+	AgentService_GetDashboard_FullMethodName      = "/agents.agent.v1.AgentService/GetDashboard"
 )
 
 // AgentServiceClient is the client API for AgentService service.
@@ -57,6 +59,10 @@ type AgentServiceClient interface {
 	GetRoleConfig(ctx context.Context, in *GetRoleConfigRequest, opts ...grpc.CallOption) (*GetRoleConfigResponse, error)
 	// StreamAgentOutput streams real-time output from an agent run.
 	StreamAgentOutput(ctx context.Context, in *StreamAgentOutputRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[AgentOutputEvent], error)
+	// GetAnalytics returns cost analytics aggregations for a date range.
+	GetAnalytics(ctx context.Context, in *GetAnalyticsRequest, opts ...grpc.CallOption) (*GetAnalyticsResponse, error)
+	// GetDashboard returns per-role agent status summary.
+	GetDashboard(ctx context.Context, in *GetDashboardRequest, opts ...grpc.CallOption) (*GetDashboardResponse, error)
 }
 
 type agentServiceClient struct {
@@ -176,6 +182,26 @@ func (c *agentServiceClient) StreamAgentOutput(ctx context.Context, in *StreamAg
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type AgentService_StreamAgentOutputClient = grpc.ServerStreamingClient[AgentOutputEvent]
 
+func (c *agentServiceClient) GetAnalytics(ctx context.Context, in *GetAnalyticsRequest, opts ...grpc.CallOption) (*GetAnalyticsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAnalyticsResponse)
+	err := c.cc.Invoke(ctx, AgentService_GetAnalytics_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *agentServiceClient) GetDashboard(ctx context.Context, in *GetDashboardRequest, opts ...grpc.CallOption) (*GetDashboardResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDashboardResponse)
+	err := c.cc.Invoke(ctx, AgentService_GetDashboard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AgentServiceServer is the server API for AgentService service.
 // All implementations must embed UnimplementedAgentServiceServer
 // for forward compatibility.
@@ -202,6 +228,10 @@ type AgentServiceServer interface {
 	GetRoleConfig(context.Context, *GetRoleConfigRequest) (*GetRoleConfigResponse, error)
 	// StreamAgentOutput streams real-time output from an agent run.
 	StreamAgentOutput(*StreamAgentOutputRequest, grpc.ServerStreamingServer[AgentOutputEvent]) error
+	// GetAnalytics returns cost analytics aggregations for a date range.
+	GetAnalytics(context.Context, *GetAnalyticsRequest) (*GetAnalyticsResponse, error)
+	// GetDashboard returns per-role agent status summary.
+	GetDashboard(context.Context, *GetDashboardRequest) (*GetDashboardResponse, error)
 	mustEmbedUnimplementedAgentServiceServer()
 }
 
@@ -241,6 +271,12 @@ func (UnimplementedAgentServiceServer) GetRoleConfig(context.Context, *GetRoleCo
 }
 func (UnimplementedAgentServiceServer) StreamAgentOutput(*StreamAgentOutputRequest, grpc.ServerStreamingServer[AgentOutputEvent]) error {
 	return status.Error(codes.Unimplemented, "method StreamAgentOutput not implemented")
+}
+func (UnimplementedAgentServiceServer) GetAnalytics(context.Context, *GetAnalyticsRequest) (*GetAnalyticsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAnalytics not implemented")
+}
+func (UnimplementedAgentServiceServer) GetDashboard(context.Context, *GetDashboardRequest) (*GetDashboardResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetDashboard not implemented")
 }
 func (UnimplementedAgentServiceServer) mustEmbedUnimplementedAgentServiceServer() {}
 func (UnimplementedAgentServiceServer) testEmbeddedByValue()                      {}
@@ -436,6 +472,42 @@ func _AgentService_StreamAgentOutput_Handler(srv interface{}, stream grpc.Server
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type AgentService_StreamAgentOutputServer = grpc.ServerStreamingServer[AgentOutputEvent]
 
+func _AgentService_GetAnalytics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAnalyticsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentServiceServer).GetAnalytics(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentService_GetAnalytics_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentServiceServer).GetAnalytics(ctx, req.(*GetAnalyticsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AgentService_GetDashboard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDashboardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentServiceServer).GetDashboard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentService_GetDashboard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentServiceServer).GetDashboard(ctx, req.(*GetDashboardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AgentService_ServiceDesc is the grpc.ServiceDesc for AgentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -478,6 +550,14 @@ var AgentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRoleConfig",
 			Handler:    _AgentService_GetRoleConfig_Handler,
+		},
+		{
+			MethodName: "GetAnalytics",
+			Handler:    _AgentService_GetAnalytics_Handler,
+		},
+		{
+			MethodName: "GetDashboard",
+			Handler:    _AgentService_GetDashboard_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

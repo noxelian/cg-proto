@@ -364,6 +364,8 @@ type AgentOutputEvent struct {
 	Content       string                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
 	ToolUse       *string                `protobuf:"bytes,2,opt,name=tool_use,json=toolUse,proto3,oneof" json:"tool_use,omitempty"`
 	Timestamp     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	ToolResult    *string                `protobuf:"bytes,4,opt,name=tool_result,json=toolResult,proto3,oneof" json:"tool_result,omitempty"`
+	EventType     string                 `protobuf:"bytes,5,opt,name=event_type,json=eventType,proto3" json:"event_type,omitempty"` // content, tool_use, tool_result, status
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -417,6 +419,20 @@ func (x *AgentOutputEvent) GetTimestamp() *timestamppb.Timestamp {
 		return x.Timestamp
 	}
 	return nil
+}
+
+func (x *AgentOutputEvent) GetToolResult() string {
+	if x != nil && x.ToolResult != nil {
+		return *x.ToolResult
+	}
+	return ""
+}
+
+func (x *AgentOutputEvent) GetEventType() string {
+	if x != nil {
+		return x.EventType
+	}
+	return ""
 }
 
 // StartAgentRun
@@ -1313,6 +1329,585 @@ func (x *StreamAgentOutputRequest) GetAgentRunId() string {
 	return ""
 }
 
+// GetAnalytics
+type GetAnalyticsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FromTime      *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=from_time,json=fromTime,proto3" json:"from_time,omitempty"`
+	ToTime        *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=to_time,json=toTime,proto3" json:"to_time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAnalyticsRequest) Reset() {
+	*x = GetAnalyticsRequest{}
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAnalyticsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAnalyticsRequest) ProtoMessage() {}
+
+func (x *GetAnalyticsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAnalyticsRequest.ProtoReflect.Descriptor instead.
+func (*GetAnalyticsRequest) Descriptor() ([]byte, []int) {
+	return file_agents_agent_v1_agent_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *GetAnalyticsRequest) GetFromTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.FromTime
+	}
+	return nil
+}
+
+func (x *GetAnalyticsRequest) GetToTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ToTime
+	}
+	return nil
+}
+
+type GetAnalyticsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DailyCosts    []*CostByDay           `protobuf:"bytes,1,rep,name=daily_costs,json=dailyCosts,proto3" json:"daily_costs,omitempty"`
+	RoleCosts     []*CostByRole          `protobuf:"bytes,2,rep,name=role_costs,json=roleCosts,proto3" json:"role_costs,omitempty"`
+	TaskCosts     []*TaskCostSummary     `protobuf:"bytes,3,rep,name=task_costs,json=taskCosts,proto3" json:"task_costs,omitempty"`
+	Summary       *AnalyticsSummary      `protobuf:"bytes,4,opt,name=summary,proto3" json:"summary,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAnalyticsResponse) Reset() {
+	*x = GetAnalyticsResponse{}
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAnalyticsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAnalyticsResponse) ProtoMessage() {}
+
+func (x *GetAnalyticsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAnalyticsResponse.ProtoReflect.Descriptor instead.
+func (*GetAnalyticsResponse) Descriptor() ([]byte, []int) {
+	return file_agents_agent_v1_agent_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *GetAnalyticsResponse) GetDailyCosts() []*CostByDay {
+	if x != nil {
+		return x.DailyCosts
+	}
+	return nil
+}
+
+func (x *GetAnalyticsResponse) GetRoleCosts() []*CostByRole {
+	if x != nil {
+		return x.RoleCosts
+	}
+	return nil
+}
+
+func (x *GetAnalyticsResponse) GetTaskCosts() []*TaskCostSummary {
+	if x != nil {
+		return x.TaskCosts
+	}
+	return nil
+}
+
+func (x *GetAnalyticsResponse) GetSummary() *AnalyticsSummary {
+	if x != nil {
+		return x.Summary
+	}
+	return nil
+}
+
+// CostByDay represents daily cost aggregation.
+type CostByDay struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Date          string                 `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
+	CostUsd       float64                `protobuf:"fixed64,2,opt,name=cost_usd,json=costUsd,proto3" json:"cost_usd,omitempty"`
+	RunCount      int32                  `protobuf:"varint,3,opt,name=run_count,json=runCount,proto3" json:"run_count,omitempty"`
+	InputTokens   int64                  `protobuf:"varint,4,opt,name=input_tokens,json=inputTokens,proto3" json:"input_tokens,omitempty"`
+	OutputTokens  int64                  `protobuf:"varint,5,opt,name=output_tokens,json=outputTokens,proto3" json:"output_tokens,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CostByDay) Reset() {
+	*x = CostByDay{}
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CostByDay) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CostByDay) ProtoMessage() {}
+
+func (x *CostByDay) ProtoReflect() protoreflect.Message {
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CostByDay.ProtoReflect.Descriptor instead.
+func (*CostByDay) Descriptor() ([]byte, []int) {
+	return file_agents_agent_v1_agent_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *CostByDay) GetDate() string {
+	if x != nil {
+		return x.Date
+	}
+	return ""
+}
+
+func (x *CostByDay) GetCostUsd() float64 {
+	if x != nil {
+		return x.CostUsd
+	}
+	return 0
+}
+
+func (x *CostByDay) GetRunCount() int32 {
+	if x != nil {
+		return x.RunCount
+	}
+	return 0
+}
+
+func (x *CostByDay) GetInputTokens() int64 {
+	if x != nil {
+		return x.InputTokens
+	}
+	return 0
+}
+
+func (x *CostByDay) GetOutputTokens() int64 {
+	if x != nil {
+		return x.OutputTokens
+	}
+	return 0
+}
+
+// CostByRole represents per-role cost aggregation.
+type CostByRole struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Role          string                 `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	CostUsd       float64                `protobuf:"fixed64,2,opt,name=cost_usd,json=costUsd,proto3" json:"cost_usd,omitempty"`
+	RunCount      int32                  `protobuf:"varint,3,opt,name=run_count,json=runCount,proto3" json:"run_count,omitempty"`
+	AvgCostUsd    float64                `protobuf:"fixed64,4,opt,name=avg_cost_usd,json=avgCostUsd,proto3" json:"avg_cost_usd,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CostByRole) Reset() {
+	*x = CostByRole{}
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CostByRole) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CostByRole) ProtoMessage() {}
+
+func (x *CostByRole) ProtoReflect() protoreflect.Message {
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CostByRole.ProtoReflect.Descriptor instead.
+func (*CostByRole) Descriptor() ([]byte, []int) {
+	return file_agents_agent_v1_agent_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *CostByRole) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
+func (x *CostByRole) GetCostUsd() float64 {
+	if x != nil {
+		return x.CostUsd
+	}
+	return 0
+}
+
+func (x *CostByRole) GetRunCount() int32 {
+	if x != nil {
+		return x.RunCount
+	}
+	return 0
+}
+
+func (x *CostByRole) GetAvgCostUsd() float64 {
+	if x != nil {
+		return x.AvgCostUsd
+	}
+	return 0
+}
+
+// TaskCostSummary represents per-task cost breakdown.
+type TaskCostSummary struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TaskId        string                 `protobuf:"bytes,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	TaskTitle     string                 `protobuf:"bytes,2,opt,name=task_title,json=taskTitle,proto3" json:"task_title,omitempty"`
+	TotalCostUsd  float64                `protobuf:"fixed64,3,opt,name=total_cost_usd,json=totalCostUsd,proto3" json:"total_cost_usd,omitempty"`
+	RunCount      int32                  `protobuf:"varint,4,opt,name=run_count,json=runCount,proto3" json:"run_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TaskCostSummary) Reset() {
+	*x = TaskCostSummary{}
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TaskCostSummary) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TaskCostSummary) ProtoMessage() {}
+
+func (x *TaskCostSummary) ProtoReflect() protoreflect.Message {
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TaskCostSummary.ProtoReflect.Descriptor instead.
+func (*TaskCostSummary) Descriptor() ([]byte, []int) {
+	return file_agents_agent_v1_agent_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *TaskCostSummary) GetTaskId() string {
+	if x != nil {
+		return x.TaskId
+	}
+	return ""
+}
+
+func (x *TaskCostSummary) GetTaskTitle() string {
+	if x != nil {
+		return x.TaskTitle
+	}
+	return ""
+}
+
+func (x *TaskCostSummary) GetTotalCostUsd() float64 {
+	if x != nil {
+		return x.TotalCostUsd
+	}
+	return 0
+}
+
+func (x *TaskCostSummary) GetRunCount() int32 {
+	if x != nil {
+		return x.RunCount
+	}
+	return 0
+}
+
+// AnalyticsSummary represents overall analytics summary.
+type AnalyticsSummary struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	TotalCostUsd   float64                `protobuf:"fixed64,1,opt,name=total_cost_usd,json=totalCostUsd,proto3" json:"total_cost_usd,omitempty"`
+	TotalRuns      int32                  `protobuf:"varint,2,opt,name=total_runs,json=totalRuns,proto3" json:"total_runs,omitempty"`
+	AvgCostPerTask float64                `protobuf:"fixed64,3,opt,name=avg_cost_per_task,json=avgCostPerTask,proto3" json:"avg_cost_per_task,omitempty"`
+	AvgCostPerRun  float64                `protobuf:"fixed64,4,opt,name=avg_cost_per_run,json=avgCostPerRun,proto3" json:"avg_cost_per_run,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *AnalyticsSummary) Reset() {
+	*x = AnalyticsSummary{}
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnalyticsSummary) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnalyticsSummary) ProtoMessage() {}
+
+func (x *AnalyticsSummary) ProtoReflect() protoreflect.Message {
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnalyticsSummary.ProtoReflect.Descriptor instead.
+func (*AnalyticsSummary) Descriptor() ([]byte, []int) {
+	return file_agents_agent_v1_agent_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *AnalyticsSummary) GetTotalCostUsd() float64 {
+	if x != nil {
+		return x.TotalCostUsd
+	}
+	return 0
+}
+
+func (x *AnalyticsSummary) GetTotalRuns() int32 {
+	if x != nil {
+		return x.TotalRuns
+	}
+	return 0
+}
+
+func (x *AnalyticsSummary) GetAvgCostPerTask() float64 {
+	if x != nil {
+		return x.AvgCostPerTask
+	}
+	return 0
+}
+
+func (x *AnalyticsSummary) GetAvgCostPerRun() float64 {
+	if x != nil {
+		return x.AvgCostPerRun
+	}
+	return 0
+}
+
+// GetDashboard
+type GetDashboardRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDashboardRequest) Reset() {
+	*x = GetDashboardRequest{}
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDashboardRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDashboardRequest) ProtoMessage() {}
+
+func (x *GetDashboardRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDashboardRequest.ProtoReflect.Descriptor instead.
+func (*GetDashboardRequest) Descriptor() ([]byte, []int) {
+	return file_agents_agent_v1_agent_proto_rawDescGZIP(), []int{28}
+}
+
+type GetDashboardResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Entries       []*AgentDashboardEntry `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDashboardResponse) Reset() {
+	*x = GetDashboardResponse{}
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDashboardResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDashboardResponse) ProtoMessage() {}
+
+func (x *GetDashboardResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDashboardResponse.ProtoReflect.Descriptor instead.
+func (*GetDashboardResponse) Descriptor() ([]byte, []int) {
+	return file_agents_agent_v1_agent_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *GetDashboardResponse) GetEntries() []*AgentDashboardEntry {
+	if x != nil {
+		return x.Entries
+	}
+	return nil
+}
+
+// AgentDashboardEntry represents a single role's dashboard status.
+type AgentDashboardEntry struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Role          string                 `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	CurrentTaskId string                 `protobuf:"bytes,3,opt,name=current_task_id,json=currentTaskId,proto3" json:"current_task_id,omitempty"`
+	QueueDepth    int32                  `protobuf:"varint,4,opt,name=queue_depth,json=queueDepth,proto3" json:"queue_depth,omitempty"`
+	SuccessRate   float64                `protobuf:"fixed64,5,opt,name=success_rate,json=successRate,proto3" json:"success_rate,omitempty"`
+	CircuitState  string                 `protobuf:"bytes,6,opt,name=circuit_state,json=circuitState,proto3" json:"circuit_state,omitempty"`
+	ActiveRuns    int32                  `protobuf:"varint,7,opt,name=active_runs,json=activeRuns,proto3" json:"active_runs,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AgentDashboardEntry) Reset() {
+	*x = AgentDashboardEntry{}
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AgentDashboardEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AgentDashboardEntry) ProtoMessage() {}
+
+func (x *AgentDashboardEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AgentDashboardEntry.ProtoReflect.Descriptor instead.
+func (*AgentDashboardEntry) Descriptor() ([]byte, []int) {
+	return file_agents_agent_v1_agent_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *AgentDashboardEntry) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
+func (x *AgentDashboardEntry) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *AgentDashboardEntry) GetCurrentTaskId() string {
+	if x != nil {
+		return x.CurrentTaskId
+	}
+	return ""
+}
+
+func (x *AgentDashboardEntry) GetQueueDepth() int32 {
+	if x != nil {
+		return x.QueueDepth
+	}
+	return 0
+}
+
+func (x *AgentDashboardEntry) GetSuccessRate() float64 {
+	if x != nil {
+		return x.SuccessRate
+	}
+	return 0
+}
+
+func (x *AgentDashboardEntry) GetCircuitState() string {
+	if x != nil {
+		return x.CircuitState
+	}
+	return ""
+}
+
+func (x *AgentDashboardEntry) GetActiveRuns() int32 {
+	if x != nil {
+		return x.ActiveRuns
+	}
+	return 0
+}
+
 var File_agents_agent_v1_agent_proto protoreflect.FileDescriptor
 
 const file_agents_agent_v1_agent_proto_rawDesc = "" +
@@ -1355,12 +1950,17 @@ const file_agents_agent_v1_agent_proto_rawDesc = "" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\x10\n" +
-	"\x0e_output_schema\"\x93\x01\n" +
+	"\x0e_output_schema\"\xe8\x01\n" +
 	"\x10AgentOutputEvent\x12\x18\n" +
 	"\acontent\x18\x01 \x01(\tR\acontent\x12\x1e\n" +
 	"\btool_use\x18\x02 \x01(\tH\x00R\atoolUse\x88\x01\x01\x128\n" +
-	"\ttimestamp\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestampB\v\n" +
-	"\t_tool_use\"C\n" +
+	"\ttimestamp\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12$\n" +
+	"\vtool_result\x18\x04 \x01(\tH\x01R\n" +
+	"toolResult\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"event_type\x18\x05 \x01(\tR\teventTypeB\v\n" +
+	"\t_tool_useB\x0e\n" +
+	"\f_tool_result\"C\n" +
 	"\x14StartAgentRunRequest\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\tR\x06taskId\x12\x12\n" +
 	"\x04role\x18\x02 \x01(\tR\x04role\"O\n" +
@@ -1413,7 +2013,56 @@ const file_agents_agent_v1_agent_proto_rawDesc = "" +
 	"\x06config\x18\x01 \x01(\v2 .agents.agent.v1.AgentRoleConfigR\x06config\"<\n" +
 	"\x18StreamAgentOutputRequest\x12 \n" +
 	"\fagent_run_id\x18\x01 \x01(\tR\n" +
-	"agentRunId*\xe8\x01\n" +
+	"agentRunId\"\x83\x01\n" +
+	"\x13GetAnalyticsRequest\x127\n" +
+	"\tfrom_time\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\bfromTime\x123\n" +
+	"\ato_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x06toTime\"\x8d\x02\n" +
+	"\x14GetAnalyticsResponse\x12;\n" +
+	"\vdaily_costs\x18\x01 \x03(\v2\x1a.agents.agent.v1.CostByDayR\n" +
+	"dailyCosts\x12:\n" +
+	"\n" +
+	"role_costs\x18\x02 \x03(\v2\x1b.agents.agent.v1.CostByRoleR\troleCosts\x12?\n" +
+	"\n" +
+	"task_costs\x18\x03 \x03(\v2 .agents.agent.v1.TaskCostSummaryR\ttaskCosts\x12;\n" +
+	"\asummary\x18\x04 \x01(\v2!.agents.agent.v1.AnalyticsSummaryR\asummary\"\x9f\x01\n" +
+	"\tCostByDay\x12\x12\n" +
+	"\x04date\x18\x01 \x01(\tR\x04date\x12\x19\n" +
+	"\bcost_usd\x18\x02 \x01(\x01R\acostUsd\x12\x1b\n" +
+	"\trun_count\x18\x03 \x01(\x05R\brunCount\x12!\n" +
+	"\finput_tokens\x18\x04 \x01(\x03R\vinputTokens\x12#\n" +
+	"\routput_tokens\x18\x05 \x01(\x03R\foutputTokens\"z\n" +
+	"\n" +
+	"CostByRole\x12\x12\n" +
+	"\x04role\x18\x01 \x01(\tR\x04role\x12\x19\n" +
+	"\bcost_usd\x18\x02 \x01(\x01R\acostUsd\x12\x1b\n" +
+	"\trun_count\x18\x03 \x01(\x05R\brunCount\x12 \n" +
+	"\favg_cost_usd\x18\x04 \x01(\x01R\n" +
+	"avgCostUsd\"\x8c\x01\n" +
+	"\x0fTaskCostSummary\x12\x17\n" +
+	"\atask_id\x18\x01 \x01(\tR\x06taskId\x12\x1d\n" +
+	"\n" +
+	"task_title\x18\x02 \x01(\tR\ttaskTitle\x12$\n" +
+	"\x0etotal_cost_usd\x18\x03 \x01(\x01R\ftotalCostUsd\x12\x1b\n" +
+	"\trun_count\x18\x04 \x01(\x05R\brunCount\"\xab\x01\n" +
+	"\x10AnalyticsSummary\x12$\n" +
+	"\x0etotal_cost_usd\x18\x01 \x01(\x01R\ftotalCostUsd\x12\x1d\n" +
+	"\n" +
+	"total_runs\x18\x02 \x01(\x05R\ttotalRuns\x12)\n" +
+	"\x11avg_cost_per_task\x18\x03 \x01(\x01R\x0eavgCostPerTask\x12'\n" +
+	"\x10avg_cost_per_run\x18\x04 \x01(\x01R\ravgCostPerRun\"\x15\n" +
+	"\x13GetDashboardRequest\"V\n" +
+	"\x14GetDashboardResponse\x12>\n" +
+	"\aentries\x18\x01 \x03(\v2$.agents.agent.v1.AgentDashboardEntryR\aentries\"\xf3\x01\n" +
+	"\x13AgentDashboardEntry\x12\x12\n" +
+	"\x04role\x18\x01 \x01(\tR\x04role\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\x12&\n" +
+	"\x0fcurrent_task_id\x18\x03 \x01(\tR\rcurrentTaskId\x12\x1f\n" +
+	"\vqueue_depth\x18\x04 \x01(\x05R\n" +
+	"queueDepth\x12!\n" +
+	"\fsuccess_rate\x18\x05 \x01(\x01R\vsuccessRate\x12#\n" +
+	"\rcircuit_state\x18\x06 \x01(\tR\fcircuitState\x12\x1f\n" +
+	"\vactive_runs\x18\a \x01(\x05R\n" +
+	"activeRuns*\xe8\x01\n" +
 	"\x0eAgentRunStatus\x12 \n" +
 	"\x1cAGENT_RUN_STATUS_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18AGENT_RUN_STATUS_PENDING\x10\x01\x12\x1c\n" +
@@ -1421,7 +2070,7 @@ const file_agents_agent_v1_agent_proto_rawDesc = "" +
 	"\x17AGENT_RUN_STATUS_PAUSED\x10\x03\x12\x1e\n" +
 	"\x1aAGENT_RUN_STATUS_COMPLETED\x10\x04\x12\x1b\n" +
 	"\x17AGENT_RUN_STATUS_FAILED\x10\x05\x12\x1e\n" +
-	"\x1aAGENT_RUN_STATUS_CANCELLED\x10\x062\xd3\a\n" +
+	"\x1aAGENT_RUN_STATUS_CANCELLED\x10\x062\x8d\t\n" +
 	"\fAgentService\x12^\n" +
 	"\rStartAgentRun\x12%.agents.agent.v1.StartAgentRunRequest\x1a&.agents.agent.v1.StartAgentRunResponse\x12X\n" +
 	"\vGetAgentRun\x12#.agents.agent.v1.GetAgentRunRequest\x1a$.agents.agent.v1.GetAgentRunResponse\x12^\n" +
@@ -1432,7 +2081,9 @@ const file_agents_agent_v1_agent_proto_rawDesc = "" +
 	"\rRetryAgentRun\x12%.agents.agent.v1.RetryAgentRunRequest\x1a&.agents.agent.v1.RetryAgentRunResponse\x12d\n" +
 	"\x0fListRoleConfigs\x12'.agents.agent.v1.ListRoleConfigsRequest\x1a(.agents.agent.v1.ListRoleConfigsResponse\x12^\n" +
 	"\rGetRoleConfig\x12%.agents.agent.v1.GetRoleConfigRequest\x1a&.agents.agent.v1.GetRoleConfigResponse\x12c\n" +
-	"\x11StreamAgentOutput\x12).agents.agent.v1.StreamAgentOutputRequest\x1a!.agents.agent.v1.AgentOutputEvent0\x01B8Z6gitlab.com/xakpro/cg-proto/gen/go/agents/agent;agentv1b\x06proto3"
+	"\x11StreamAgentOutput\x12).agents.agent.v1.StreamAgentOutputRequest\x1a!.agents.agent.v1.AgentOutputEvent0\x01\x12[\n" +
+	"\fGetAnalytics\x12$.agents.agent.v1.GetAnalyticsRequest\x1a%.agents.agent.v1.GetAnalyticsResponse\x12[\n" +
+	"\fGetDashboard\x12$.agents.agent.v1.GetDashboardRequest\x1a%.agents.agent.v1.GetDashboardResponseB8Z6gitlab.com/xakpro/cg-proto/gen/go/agents/agent;agentv1b\x06proto3"
 
 var (
 	file_agents_agent_v1_agent_proto_rawDescOnce sync.Once
@@ -1447,7 +2098,7 @@ func file_agents_agent_v1_agent_proto_rawDescGZIP() []byte {
 }
 
 var file_agents_agent_v1_agent_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_agents_agent_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_agents_agent_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_agents_agent_v1_agent_proto_goTypes = []any{
 	(AgentRunStatus)(0),              // 0: agents.agent.v1.AgentRunStatus
 	(*AgentRun)(nil),                 // 1: agents.agent.v1.AgentRun
@@ -1472,17 +2123,26 @@ var file_agents_agent_v1_agent_proto_goTypes = []any{
 	(*GetRoleConfigRequest)(nil),     // 20: agents.agent.v1.GetRoleConfigRequest
 	(*GetRoleConfigResponse)(nil),    // 21: agents.agent.v1.GetRoleConfigResponse
 	(*StreamAgentOutputRequest)(nil), // 22: agents.agent.v1.StreamAgentOutputRequest
-	(*timestamppb.Timestamp)(nil),    // 23: google.protobuf.Timestamp
+	(*GetAnalyticsRequest)(nil),      // 23: agents.agent.v1.GetAnalyticsRequest
+	(*GetAnalyticsResponse)(nil),     // 24: agents.agent.v1.GetAnalyticsResponse
+	(*CostByDay)(nil),                // 25: agents.agent.v1.CostByDay
+	(*CostByRole)(nil),               // 26: agents.agent.v1.CostByRole
+	(*TaskCostSummary)(nil),          // 27: agents.agent.v1.TaskCostSummary
+	(*AnalyticsSummary)(nil),         // 28: agents.agent.v1.AnalyticsSummary
+	(*GetDashboardRequest)(nil),      // 29: agents.agent.v1.GetDashboardRequest
+	(*GetDashboardResponse)(nil),     // 30: agents.agent.v1.GetDashboardResponse
+	(*AgentDashboardEntry)(nil),      // 31: agents.agent.v1.AgentDashboardEntry
+	(*timestamppb.Timestamp)(nil),    // 32: google.protobuf.Timestamp
 }
 var file_agents_agent_v1_agent_proto_depIdxs = []int32{
 	0,  // 0: agents.agent.v1.AgentRun.status:type_name -> agents.agent.v1.AgentRunStatus
-	23, // 1: agents.agent.v1.AgentRun.started_at:type_name -> google.protobuf.Timestamp
-	23, // 2: agents.agent.v1.AgentRun.completed_at:type_name -> google.protobuf.Timestamp
-	23, // 3: agents.agent.v1.AgentRun.created_at:type_name -> google.protobuf.Timestamp
-	23, // 4: agents.agent.v1.AgentRun.updated_at:type_name -> google.protobuf.Timestamp
-	23, // 5: agents.agent.v1.AgentRoleConfig.created_at:type_name -> google.protobuf.Timestamp
-	23, // 6: agents.agent.v1.AgentRoleConfig.updated_at:type_name -> google.protobuf.Timestamp
-	23, // 7: agents.agent.v1.AgentOutputEvent.timestamp:type_name -> google.protobuf.Timestamp
+	32, // 1: agents.agent.v1.AgentRun.started_at:type_name -> google.protobuf.Timestamp
+	32, // 2: agents.agent.v1.AgentRun.completed_at:type_name -> google.protobuf.Timestamp
+	32, // 3: agents.agent.v1.AgentRun.created_at:type_name -> google.protobuf.Timestamp
+	32, // 4: agents.agent.v1.AgentRun.updated_at:type_name -> google.protobuf.Timestamp
+	32, // 5: agents.agent.v1.AgentRoleConfig.created_at:type_name -> google.protobuf.Timestamp
+	32, // 6: agents.agent.v1.AgentRoleConfig.updated_at:type_name -> google.protobuf.Timestamp
+	32, // 7: agents.agent.v1.AgentOutputEvent.timestamp:type_name -> google.protobuf.Timestamp
 	1,  // 8: agents.agent.v1.StartAgentRunResponse.agent_run:type_name -> agents.agent.v1.AgentRun
 	1,  // 9: agents.agent.v1.GetAgentRunResponse.agent_run:type_name -> agents.agent.v1.AgentRun
 	0,  // 10: agents.agent.v1.ListAgentRunsRequest.status:type_name -> agents.agent.v1.AgentRunStatus
@@ -1493,31 +2153,42 @@ var file_agents_agent_v1_agent_proto_depIdxs = []int32{
 	1,  // 15: agents.agent.v1.RetryAgentRunResponse.agent_run:type_name -> agents.agent.v1.AgentRun
 	2,  // 16: agents.agent.v1.ListRoleConfigsResponse.configs:type_name -> agents.agent.v1.AgentRoleConfig
 	2,  // 17: agents.agent.v1.GetRoleConfigResponse.config:type_name -> agents.agent.v1.AgentRoleConfig
-	4,  // 18: agents.agent.v1.AgentService.StartAgentRun:input_type -> agents.agent.v1.StartAgentRunRequest
-	6,  // 19: agents.agent.v1.AgentService.GetAgentRun:input_type -> agents.agent.v1.GetAgentRunRequest
-	8,  // 20: agents.agent.v1.AgentService.ListAgentRuns:input_type -> agents.agent.v1.ListAgentRunsRequest
-	10, // 21: agents.agent.v1.AgentService.PauseAgentRun:input_type -> agents.agent.v1.PauseAgentRunRequest
-	12, // 22: agents.agent.v1.AgentService.ResumeAgentRun:input_type -> agents.agent.v1.ResumeAgentRunRequest
-	14, // 23: agents.agent.v1.AgentService.StopAgentRun:input_type -> agents.agent.v1.StopAgentRunRequest
-	16, // 24: agents.agent.v1.AgentService.RetryAgentRun:input_type -> agents.agent.v1.RetryAgentRunRequest
-	18, // 25: agents.agent.v1.AgentService.ListRoleConfigs:input_type -> agents.agent.v1.ListRoleConfigsRequest
-	20, // 26: agents.agent.v1.AgentService.GetRoleConfig:input_type -> agents.agent.v1.GetRoleConfigRequest
-	22, // 27: agents.agent.v1.AgentService.StreamAgentOutput:input_type -> agents.agent.v1.StreamAgentOutputRequest
-	5,  // 28: agents.agent.v1.AgentService.StartAgentRun:output_type -> agents.agent.v1.StartAgentRunResponse
-	7,  // 29: agents.agent.v1.AgentService.GetAgentRun:output_type -> agents.agent.v1.GetAgentRunResponse
-	9,  // 30: agents.agent.v1.AgentService.ListAgentRuns:output_type -> agents.agent.v1.ListAgentRunsResponse
-	11, // 31: agents.agent.v1.AgentService.PauseAgentRun:output_type -> agents.agent.v1.PauseAgentRunResponse
-	13, // 32: agents.agent.v1.AgentService.ResumeAgentRun:output_type -> agents.agent.v1.ResumeAgentRunResponse
-	15, // 33: agents.agent.v1.AgentService.StopAgentRun:output_type -> agents.agent.v1.StopAgentRunResponse
-	17, // 34: agents.agent.v1.AgentService.RetryAgentRun:output_type -> agents.agent.v1.RetryAgentRunResponse
-	19, // 35: agents.agent.v1.AgentService.ListRoleConfigs:output_type -> agents.agent.v1.ListRoleConfigsResponse
-	21, // 36: agents.agent.v1.AgentService.GetRoleConfig:output_type -> agents.agent.v1.GetRoleConfigResponse
-	3,  // 37: agents.agent.v1.AgentService.StreamAgentOutput:output_type -> agents.agent.v1.AgentOutputEvent
-	28, // [28:38] is the sub-list for method output_type
-	18, // [18:28] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	32, // 18: agents.agent.v1.GetAnalyticsRequest.from_time:type_name -> google.protobuf.Timestamp
+	32, // 19: agents.agent.v1.GetAnalyticsRequest.to_time:type_name -> google.protobuf.Timestamp
+	25, // 20: agents.agent.v1.GetAnalyticsResponse.daily_costs:type_name -> agents.agent.v1.CostByDay
+	26, // 21: agents.agent.v1.GetAnalyticsResponse.role_costs:type_name -> agents.agent.v1.CostByRole
+	27, // 22: agents.agent.v1.GetAnalyticsResponse.task_costs:type_name -> agents.agent.v1.TaskCostSummary
+	28, // 23: agents.agent.v1.GetAnalyticsResponse.summary:type_name -> agents.agent.v1.AnalyticsSummary
+	31, // 24: agents.agent.v1.GetDashboardResponse.entries:type_name -> agents.agent.v1.AgentDashboardEntry
+	4,  // 25: agents.agent.v1.AgentService.StartAgentRun:input_type -> agents.agent.v1.StartAgentRunRequest
+	6,  // 26: agents.agent.v1.AgentService.GetAgentRun:input_type -> agents.agent.v1.GetAgentRunRequest
+	8,  // 27: agents.agent.v1.AgentService.ListAgentRuns:input_type -> agents.agent.v1.ListAgentRunsRequest
+	10, // 28: agents.agent.v1.AgentService.PauseAgentRun:input_type -> agents.agent.v1.PauseAgentRunRequest
+	12, // 29: agents.agent.v1.AgentService.ResumeAgentRun:input_type -> agents.agent.v1.ResumeAgentRunRequest
+	14, // 30: agents.agent.v1.AgentService.StopAgentRun:input_type -> agents.agent.v1.StopAgentRunRequest
+	16, // 31: agents.agent.v1.AgentService.RetryAgentRun:input_type -> agents.agent.v1.RetryAgentRunRequest
+	18, // 32: agents.agent.v1.AgentService.ListRoleConfigs:input_type -> agents.agent.v1.ListRoleConfigsRequest
+	20, // 33: agents.agent.v1.AgentService.GetRoleConfig:input_type -> agents.agent.v1.GetRoleConfigRequest
+	22, // 34: agents.agent.v1.AgentService.StreamAgentOutput:input_type -> agents.agent.v1.StreamAgentOutputRequest
+	23, // 35: agents.agent.v1.AgentService.GetAnalytics:input_type -> agents.agent.v1.GetAnalyticsRequest
+	29, // 36: agents.agent.v1.AgentService.GetDashboard:input_type -> agents.agent.v1.GetDashboardRequest
+	5,  // 37: agents.agent.v1.AgentService.StartAgentRun:output_type -> agents.agent.v1.StartAgentRunResponse
+	7,  // 38: agents.agent.v1.AgentService.GetAgentRun:output_type -> agents.agent.v1.GetAgentRunResponse
+	9,  // 39: agents.agent.v1.AgentService.ListAgentRuns:output_type -> agents.agent.v1.ListAgentRunsResponse
+	11, // 40: agents.agent.v1.AgentService.PauseAgentRun:output_type -> agents.agent.v1.PauseAgentRunResponse
+	13, // 41: agents.agent.v1.AgentService.ResumeAgentRun:output_type -> agents.agent.v1.ResumeAgentRunResponse
+	15, // 42: agents.agent.v1.AgentService.StopAgentRun:output_type -> agents.agent.v1.StopAgentRunResponse
+	17, // 43: agents.agent.v1.AgentService.RetryAgentRun:output_type -> agents.agent.v1.RetryAgentRunResponse
+	19, // 44: agents.agent.v1.AgentService.ListRoleConfigs:output_type -> agents.agent.v1.ListRoleConfigsResponse
+	21, // 45: agents.agent.v1.AgentService.GetRoleConfig:output_type -> agents.agent.v1.GetRoleConfigResponse
+	3,  // 46: agents.agent.v1.AgentService.StreamAgentOutput:output_type -> agents.agent.v1.AgentOutputEvent
+	24, // 47: agents.agent.v1.AgentService.GetAnalytics:output_type -> agents.agent.v1.GetAnalyticsResponse
+	30, // 48: agents.agent.v1.AgentService.GetDashboard:output_type -> agents.agent.v1.GetDashboardResponse
+	37, // [37:49] is the sub-list for method output_type
+	25, // [25:37] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_agents_agent_v1_agent_proto_init() }
@@ -1536,7 +2207,7 @@ func file_agents_agent_v1_agent_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_agents_agent_v1_agent_proto_rawDesc), len(file_agents_agent_v1_agent_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   22,
+			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
