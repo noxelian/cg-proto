@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package agents.pipeline.v1;
+
+option go_package = "gitlab.com/xakpro/cg-proto/gen/go/agents/pipeline;pipelinev1";
+
+import "google/protobuf/timestamp.proto";
+
+// ReviewArtifact represents a document produced by an agent during pipeline execution.
+message ReviewArtifact {
+  string id = 1;
+  string task_id = 2;
+  string agent_run_id = 3;
+  string role = 4;
+  string artifact_type = 5;
+  string content = 6;
+  string metadata = 7; // JSON string
+  google.protobuf.Timestamp created_at = 8;
+}
+
+// PipelineService provides pipeline orchestration RPCs.
+service PipelineService {
+  // StartPipeline dispatches the first agent (PM) for a task.
+  rpc StartPipeline(StartPipelineRequest) returns (StartPipelineResponse);
+
+  // ApproveTask approves a gate checkpoint.
+  rpc ApproveTask(ApproveTaskRequest) returns (ApproveTaskResponse);
+
+  // RejectTask rejects a gate checkpoint with feedback.
+  rpc RejectTask(RejectTaskRequest) returns (RejectTaskResponse);
+
+  // GetReviewArtifact returns a single review artifact by ID.
+  rpc GetReviewArtifact(GetReviewArtifactRequest) returns (GetReviewArtifactResponse);
+
+  // ListReviewArtifacts returns review artifacts for a task.
+  rpc ListReviewArtifacts(ListReviewArtifactsRequest) returns (ListReviewArtifactsResponse);
+}
+
+// StartPipeline
+message StartPipelineRequest {
+  string task_id = 1;
+}
+
+message StartPipelineResponse {
+  string status = 1;
+  string dispatched_role = 2;
+}
+
+// ApproveTask
+message ApproveTaskRequest {
+  string task_id = 1;
+  string actor_id = 2;
+  optional string feedback = 3;
+}
+
+message ApproveTaskResponse {}
+
+// RejectTask
+message RejectTaskRequest {
+  string task_id = 1;
+  string actor_id = 2;
+  string feedback = 3;
+}
+
+message RejectTaskResponse {}
+
+// GetReviewArtifact
+message GetReviewArtifactRequest {
+  string id = 1;
+}
+
+message GetReviewArtifactResponse {
+  ReviewArtifact artifact = 1;
+}
+
+// ListReviewArtifacts
+message ListReviewArtifactsRequest {
+  string task_id = 1;
+  optional string role = 2;
+}
+
+message ListReviewArtifactsResponse {
+  repeated ReviewArtifact artifacts = 1;
+}
