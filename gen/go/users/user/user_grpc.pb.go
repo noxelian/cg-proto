@@ -19,20 +19,25 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserService_GetProfile_FullMethodName          = "/users.user.v1.UserService/GetProfile"
-	UserService_UpdateProfile_FullMethodName       = "/users.user.v1.UserService/UpdateProfile"
-	UserService_GetUserByID_FullMethodName         = "/users.user.v1.UserService/GetUserByID"
-	UserService_GetUserByPhone_FullMethodName      = "/users.user.v1.UserService/GetUserByPhone"
-	UserService_CreateUser_FullMethodName          = "/users.user.v1.UserService/CreateUser"
-	UserService_GetUsersByIDs_FullMethodName       = "/users.user.v1.UserService/GetUsersByIDs"
-	UserService_FindOrCreateByPhone_FullMethodName = "/users.user.v1.UserService/FindOrCreateByPhone"
-	UserService_GetSettings_FullMethodName         = "/users.user.v1.UserService/GetSettings"
-	UserService_UpdateSettings_FullMethodName      = "/users.user.v1.UserService/UpdateSettings"
-	UserService_RegisterDevice_FullMethodName      = "/users.user.v1.UserService/RegisterDevice"
-	UserService_UnregisterDevice_FullMethodName    = "/users.user.v1.UserService/UnregisterDevice"
-	UserService_GetDevices_FullMethodName          = "/users.user.v1.UserService/GetDevices"
-	UserService_DeleteAccount_FullMethodName       = "/users.user.v1.UserService/DeleteAccount"
-	UserService_ListUsers_FullMethodName           = "/users.user.v1.UserService/ListUsers"
+	UserService_GetProfile_FullMethodName           = "/users.user.v1.UserService/GetProfile"
+	UserService_UpdateProfile_FullMethodName        = "/users.user.v1.UserService/UpdateProfile"
+	UserService_GetUserByID_FullMethodName          = "/users.user.v1.UserService/GetUserByID"
+	UserService_GetUserByPhone_FullMethodName       = "/users.user.v1.UserService/GetUserByPhone"
+	UserService_CreateUser_FullMethodName           = "/users.user.v1.UserService/CreateUser"
+	UserService_GetUsersByIDs_FullMethodName        = "/users.user.v1.UserService/GetUsersByIDs"
+	UserService_FindOrCreateByPhone_FullMethodName  = "/users.user.v1.UserService/FindOrCreateByPhone"
+	UserService_GetSettings_FullMethodName          = "/users.user.v1.UserService/GetSettings"
+	UserService_UpdateSettings_FullMethodName       = "/users.user.v1.UserService/UpdateSettings"
+	UserService_RegisterDevice_FullMethodName       = "/users.user.v1.UserService/RegisterDevice"
+	UserService_UnregisterDevice_FullMethodName     = "/users.user.v1.UserService/UnregisterDevice"
+	UserService_GetDevices_FullMethodName           = "/users.user.v1.UserService/GetDevices"
+	UserService_DeleteAccount_FullMethodName        = "/users.user.v1.UserService/DeleteAccount"
+	UserService_ListUsers_FullMethodName            = "/users.user.v1.UserService/ListUsers"
+	UserService_SetPlatformRoles_FullMethodName     = "/users.user.v1.UserService/SetPlatformRoles"
+	UserService_GetPlatformRoles_FullMethodName     = "/users.user.v1.UserService/GetPlatformRoles"
+	UserService_CheckPlatformRoles_FullMethodName   = "/users.user.v1.UserService/CheckPlatformRoles"
+	UserService_SetPlatformOrgAccess_FullMethodName = "/users.user.v1.UserService/SetPlatformOrgAccess"
+	UserService_GetPlatformOrgAccess_FullMethodName = "/users.user.v1.UserService/GetPlatformOrgAccess"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -67,6 +72,12 @@ type UserServiceClient interface {
 	DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*DeleteAccountResponse, error)
 	// ListUsers returns a paginated list of users (admin-only)
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
+	// Platform roles (CTOgram employee roles — many-to-many)
+	SetPlatformRoles(ctx context.Context, in *SetPlatformRolesRequest, opts ...grpc.CallOption) (*SetPlatformRolesResponse, error)
+	GetPlatformRoles(ctx context.Context, in *GetPlatformRolesRequest, opts ...grpc.CallOption) (*GetPlatformRolesResponse, error)
+	CheckPlatformRoles(ctx context.Context, in *CheckPlatformRolesRequest, opts ...grpc.CallOption) (*CheckPlatformRolesResponse, error)
+	SetPlatformOrgAccess(ctx context.Context, in *SetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*SetPlatformOrgAccessResponse, error)
+	GetPlatformOrgAccess(ctx context.Context, in *GetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*GetPlatformOrgAccessResponse, error)
 }
 
 type userServiceClient struct {
@@ -217,6 +228,56 @@ func (c *userServiceClient) ListUsers(ctx context.Context, in *ListUsersRequest,
 	return out, nil
 }
 
+func (c *userServiceClient) SetPlatformRoles(ctx context.Context, in *SetPlatformRolesRequest, opts ...grpc.CallOption) (*SetPlatformRolesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetPlatformRolesResponse)
+	err := c.cc.Invoke(ctx, UserService_SetPlatformRoles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetPlatformRoles(ctx context.Context, in *GetPlatformRolesRequest, opts ...grpc.CallOption) (*GetPlatformRolesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPlatformRolesResponse)
+	err := c.cc.Invoke(ctx, UserService_GetPlatformRoles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) CheckPlatformRoles(ctx context.Context, in *CheckPlatformRolesRequest, opts ...grpc.CallOption) (*CheckPlatformRolesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckPlatformRolesResponse)
+	err := c.cc.Invoke(ctx, UserService_CheckPlatformRoles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) SetPlatformOrgAccess(ctx context.Context, in *SetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*SetPlatformOrgAccessResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetPlatformOrgAccessResponse)
+	err := c.cc.Invoke(ctx, UserService_SetPlatformOrgAccess_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetPlatformOrgAccess(ctx context.Context, in *GetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*GetPlatformOrgAccessResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPlatformOrgAccessResponse)
+	err := c.cc.Invoke(ctx, UserService_GetPlatformOrgAccess_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -249,6 +310,12 @@ type UserServiceServer interface {
 	DeleteAccount(context.Context, *DeleteAccountRequest) (*DeleteAccountResponse, error)
 	// ListUsers returns a paginated list of users (admin-only)
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
+	// Platform roles (CTOgram employee roles — many-to-many)
+	SetPlatformRoles(context.Context, *SetPlatformRolesRequest) (*SetPlatformRolesResponse, error)
+	GetPlatformRoles(context.Context, *GetPlatformRolesRequest) (*GetPlatformRolesResponse, error)
+	CheckPlatformRoles(context.Context, *CheckPlatformRolesRequest) (*CheckPlatformRolesResponse, error)
+	SetPlatformOrgAccess(context.Context, *SetPlatformOrgAccessRequest) (*SetPlatformOrgAccessResponse, error)
+	GetPlatformOrgAccess(context.Context, *GetPlatformOrgAccessRequest) (*GetPlatformOrgAccessResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -300,6 +367,21 @@ func (UnimplementedUserServiceServer) DeleteAccount(context.Context, *DeleteAcco
 }
 func (UnimplementedUserServiceServer) ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUsers not implemented")
+}
+func (UnimplementedUserServiceServer) SetPlatformRoles(context.Context, *SetPlatformRolesRequest) (*SetPlatformRolesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetPlatformRoles not implemented")
+}
+func (UnimplementedUserServiceServer) GetPlatformRoles(context.Context, *GetPlatformRolesRequest) (*GetPlatformRolesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPlatformRoles not implemented")
+}
+func (UnimplementedUserServiceServer) CheckPlatformRoles(context.Context, *CheckPlatformRolesRequest) (*CheckPlatformRolesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckPlatformRoles not implemented")
+}
+func (UnimplementedUserServiceServer) SetPlatformOrgAccess(context.Context, *SetPlatformOrgAccessRequest) (*SetPlatformOrgAccessResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetPlatformOrgAccess not implemented")
+}
+func (UnimplementedUserServiceServer) GetPlatformOrgAccess(context.Context, *GetPlatformOrgAccessRequest) (*GetPlatformOrgAccessResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPlatformOrgAccess not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -574,6 +656,96 @@ func _UserService_ListUsers_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_SetPlatformRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetPlatformRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SetPlatformRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_SetPlatformRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SetPlatformRoles(ctx, req.(*SetPlatformRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetPlatformRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPlatformRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetPlatformRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetPlatformRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetPlatformRoles(ctx, req.(*GetPlatformRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_CheckPlatformRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckPlatformRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CheckPlatformRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_CheckPlatformRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CheckPlatformRoles(ctx, req.(*CheckPlatformRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_SetPlatformOrgAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetPlatformOrgAccessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SetPlatformOrgAccess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_SetPlatformOrgAccess_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SetPlatformOrgAccess(ctx, req.(*SetPlatformOrgAccessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetPlatformOrgAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPlatformOrgAccessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetPlatformOrgAccess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetPlatformOrgAccess_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetPlatformOrgAccess(ctx, req.(*GetPlatformOrgAccessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -636,6 +808,26 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUsers",
 			Handler:    _UserService_ListUsers_Handler,
+		},
+		{
+			MethodName: "SetPlatformRoles",
+			Handler:    _UserService_SetPlatformRoles_Handler,
+		},
+		{
+			MethodName: "GetPlatformRoles",
+			Handler:    _UserService_GetPlatformRoles_Handler,
+		},
+		{
+			MethodName: "CheckPlatformRoles",
+			Handler:    _UserService_CheckPlatformRoles_Handler,
+		},
+		{
+			MethodName: "SetPlatformOrgAccess",
+			Handler:    _UserService_SetPlatformOrgAccess_Handler,
+		},
+		{
+			MethodName: "GetPlatformOrgAccess",
+			Handler:    _UserService_GetPlatformOrgAccess_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -48,6 +48,24 @@ service UserService {
 
   // ListUsers returns a paginated list of users (admin-only)
   rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+
+  // Platform roles (CTOgram employee roles — many-to-many)
+  rpc SetPlatformRoles(SetPlatformRolesRequest) returns (SetPlatformRolesResponse);
+  rpc GetPlatformRoles(GetPlatformRolesRequest) returns (GetPlatformRolesResponse);
+  rpc CheckPlatformRoles(CheckPlatformRolesRequest) returns (CheckPlatformRolesResponse);
+  rpc SetPlatformOrgAccess(SetPlatformOrgAccessRequest) returns (SetPlatformOrgAccessResponse);
+  rpc GetPlatformOrgAccess(GetPlatformOrgAccessRequest) returns (GetPlatformOrgAccessResponse);
+}
+
+enum PlatformRole {
+  PLATFORM_ROLE_UNSPECIFIED = 0;
+  PLATFORM_ROLE_MECHANIC = 1;          // MC — mechanic, scoped to assigned orgs
+  PLATFORM_ROLE_RECEPTIONIST = 2;      // MP — receptionist, platform-wide
+  PLATFORM_ROLE_PARTS_MANAGER = 3;     // MZ — parts manager, platform-wide
+  PLATFORM_ROLE_ADMIN = 4;             // Admin CTOgram — full access
+  PLATFORM_ROLE_SALES_MANAGER = 5;     // Sales manager
+  PLATFORM_ROLE_RECRUITER = 6;         // Recruiter
+  PLATFORM_ROLE_AUTOBODY_MANAGER = 7;  // Autobody manager
 }
 
 message User {
@@ -203,6 +221,49 @@ message DeleteAccountRequest {
 
 message DeleteAccountResponse {
   bool success = 1;
+}
+
+// =============================================
+// Platform Roles (CTOgram employee roles — many-to-many)
+// =============================================
+
+message SetPlatformRolesRequest {
+  int64 user_id = 1;
+  repeated PlatformRole roles = 2;  // replaces entire set
+}
+
+message SetPlatformRolesResponse {}
+
+message GetPlatformRolesRequest {
+  int64 user_id = 1;
+}
+
+message GetPlatformRolesResponse {
+  repeated PlatformRole roles = 1;
+}
+
+message CheckPlatformRolesRequest {
+  int64 user_id = 1;
+}
+
+message CheckPlatformRolesResponse {
+  repeated PlatformRole roles = 1;
+  repeated string accessible_org_ids = 2;  // populated only for MECHANIC
+}
+
+message SetPlatformOrgAccessRequest {
+  int64 user_id = 1;
+  repeated string org_ids = 2;  // replaces entire list
+}
+
+message SetPlatformOrgAccessResponse {}
+
+message GetPlatformOrgAccessRequest {
+  int64 user_id = 1;
+}
+
+message GetPlatformOrgAccessResponse {
+  repeated string org_ids = 1;
 }
 
 // ListUsers (admin)

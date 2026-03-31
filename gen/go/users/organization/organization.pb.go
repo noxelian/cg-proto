@@ -4588,7 +4588,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x16PLATFORM_ROLE_MECHANIC\x10\x01\x12\x1e\n" +
 	"\x1aPLATFORM_ROLE_RECEPTIONIST\x10\x02\x12\x1f\n" +
 	"\x1bPLATFORM_ROLE_PARTS_MANAGER\x10\x03\x12\x17\n" +
-	"\x13PLATFORM_ROLE_ADMIN\x10\x042\xab\x18\n" +
+	"\x13PLATFORM_ROLE_ADMIN\x10\x042\xc6\x18\n" +
 	"\x13OrganizationService\x12y\n" +
 	"\x12CreateOrganization\x120.users.organization.v1.CreateOrganizationRequest\x1a1.users.organization.v1.CreateOrganizationResponse\x12p\n" +
 	"\x0fGetOrganization\x12-.users.organization.v1.GetOrganizationRequest\x1a..users.organization.v1.GetOrganizationResponse\x12y\n" +
@@ -4613,12 +4613,12 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\bGetRoles\x12&.users.organization.v1.GetRolesRequest\x1a'.users.organization.v1.GetRolesResponse\x12j\n" +
 	"\rGetOrgProfile\x12+.users.organization.v1.GetOrgProfileRequest\x1a,.users.organization.v1.GetOrgProfileResponse\x12s\n" +
 	"\x10UpdateOrgProfile\x12..users.organization.v1.UpdateOrgProfileRequest\x1a/.users.organization.v1.UpdateOrgProfileResponse\x12\x8e\x01\n" +
-	"\x1fGetOrganizationSubscriptionInfo\x124.users.organization.v1.GetOrgSubscriptionInfoRequest\x1a5.users.organization.v1.GetOrgSubscriptionInfoResponse\x12p\n" +
-	"\x0fSetPlatformRole\x12-.users.organization.v1.SetPlatformRoleRequest\x1a..users.organization.v1.SetPlatformRoleResponse\x12p\n" +
-	"\x0fGetPlatformRole\x12-.users.organization.v1.GetPlatformRoleRequest\x1a..users.organization.v1.GetPlatformRoleResponse\x12\x7f\n" +
-	"\x14SetPlatformOrgAccess\x122.users.organization.v1.SetPlatformOrgAccessRequest\x1a3.users.organization.v1.SetPlatformOrgAccessResponse\x12\x7f\n" +
-	"\x14GetPlatformOrgAccess\x122.users.organization.v1.GetPlatformOrgAccessRequest\x1a3.users.organization.v1.GetPlatformOrgAccessResponse\x12v\n" +
-	"\x11CheckPlatformRole\x12/.users.organization.v1.CheckPlatformRoleRequest\x1a0.users.organization.v1.CheckPlatformRoleResponseBEZCgitlab.com/xakpro/cg-proto/gen/go/users/organization;organizationv1b\x06proto3"
+	"\x1fGetOrganizationSubscriptionInfo\x124.users.organization.v1.GetOrgSubscriptionInfoRequest\x1a5.users.organization.v1.GetOrgSubscriptionInfoResponse\x12u\n" +
+	"\x0fSetPlatformRole\x12-.users.organization.v1.SetPlatformRoleRequest\x1a..users.organization.v1.SetPlatformRoleResponse\"\x03\x88\x02\x01\x12u\n" +
+	"\x0fGetPlatformRole\x12-.users.organization.v1.GetPlatformRoleRequest\x1a..users.organization.v1.GetPlatformRoleResponse\"\x03\x88\x02\x01\x12\x84\x01\n" +
+	"\x14SetPlatformOrgAccess\x122.users.organization.v1.SetPlatformOrgAccessRequest\x1a3.users.organization.v1.SetPlatformOrgAccessResponse\"\x03\x88\x02\x01\x12\x84\x01\n" +
+	"\x14GetPlatformOrgAccess\x122.users.organization.v1.GetPlatformOrgAccessRequest\x1a3.users.organization.v1.GetPlatformOrgAccessResponse\"\x03\x88\x02\x01\x12{\n" +
+	"\x11CheckPlatformRole\x12/.users.organization.v1.CheckPlatformRoleRequest\x1a0.users.organization.v1.CheckPlatformRoleResponse\"\x03\x88\x02\x01BEZCgitlab.com/xakpro/cg-proto/gen/go/users/organization;organizationv1b\x06proto3"
 
 var (
 	file_users_organization_organization_proto_rawDescOnce sync.Once

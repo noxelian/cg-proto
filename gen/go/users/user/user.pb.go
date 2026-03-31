@@ -22,6 +22,70 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type PlatformRole int32
+
+const (
+	PlatformRole_PLATFORM_ROLE_UNSPECIFIED      PlatformRole = 0
+	PlatformRole_PLATFORM_ROLE_MECHANIC         PlatformRole = 1 // MC — mechanic, scoped to assigned orgs
+	PlatformRole_PLATFORM_ROLE_RECEPTIONIST     PlatformRole = 2 // MP — receptionist, platform-wide
+	PlatformRole_PLATFORM_ROLE_PARTS_MANAGER    PlatformRole = 3 // MZ — parts manager, platform-wide
+	PlatformRole_PLATFORM_ROLE_ADMIN            PlatformRole = 4 // Admin CTOgram — full access
+	PlatformRole_PLATFORM_ROLE_SALES_MANAGER    PlatformRole = 5 // Sales manager
+	PlatformRole_PLATFORM_ROLE_RECRUITER        PlatformRole = 6 // Recruiter
+	PlatformRole_PLATFORM_ROLE_AUTOBODY_MANAGER PlatformRole = 7 // Autobody manager
+)
+
+// Enum value maps for PlatformRole.
+var (
+	PlatformRole_name = map[int32]string{
+		0: "PLATFORM_ROLE_UNSPECIFIED",
+		1: "PLATFORM_ROLE_MECHANIC",
+		2: "PLATFORM_ROLE_RECEPTIONIST",
+		3: "PLATFORM_ROLE_PARTS_MANAGER",
+		4: "PLATFORM_ROLE_ADMIN",
+		5: "PLATFORM_ROLE_SALES_MANAGER",
+		6: "PLATFORM_ROLE_RECRUITER",
+		7: "PLATFORM_ROLE_AUTOBODY_MANAGER",
+	}
+	PlatformRole_value = map[string]int32{
+		"PLATFORM_ROLE_UNSPECIFIED":      0,
+		"PLATFORM_ROLE_MECHANIC":         1,
+		"PLATFORM_ROLE_RECEPTIONIST":     2,
+		"PLATFORM_ROLE_PARTS_MANAGER":    3,
+		"PLATFORM_ROLE_ADMIN":            4,
+		"PLATFORM_ROLE_SALES_MANAGER":    5,
+		"PLATFORM_ROLE_RECRUITER":        6,
+		"PLATFORM_ROLE_AUTOBODY_MANAGER": 7,
+	}
+)
+
+func (x PlatformRole) Enum() *PlatformRole {
+	p := new(PlatformRole)
+	*p = x
+	return p
+}
+
+func (x PlatformRole) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PlatformRole) Descriptor() protoreflect.EnumDescriptor {
+	return file_users_user_user_proto_enumTypes[0].Descriptor()
+}
+
+func (PlatformRole) Type() protoreflect.EnumType {
+	return &file_users_user_user_proto_enumTypes[0]
+}
+
+func (x PlatformRole) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PlatformRole.Descriptor instead.
+func (PlatformRole) EnumDescriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{0}
+}
+
 type User struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -1590,6 +1654,454 @@ func (x *DeleteAccountResponse) GetSuccess() bool {
 	return false
 }
 
+type SetPlatformRolesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Roles         []PlatformRole         `protobuf:"varint,2,rep,packed,name=roles,proto3,enum=users.user.v1.PlatformRole" json:"roles,omitempty"` // replaces entire set
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetPlatformRolesRequest) Reset() {
+	*x = SetPlatformRolesRequest{}
+	mi := &file_users_user_user_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetPlatformRolesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetPlatformRolesRequest) ProtoMessage() {}
+
+func (x *SetPlatformRolesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetPlatformRolesRequest.ProtoReflect.Descriptor instead.
+func (*SetPlatformRolesRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *SetPlatformRolesRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *SetPlatformRolesRequest) GetRoles() []PlatformRole {
+	if x != nil {
+		return x.Roles
+	}
+	return nil
+}
+
+type SetPlatformRolesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetPlatformRolesResponse) Reset() {
+	*x = SetPlatformRolesResponse{}
+	mi := &file_users_user_user_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetPlatformRolesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetPlatformRolesResponse) ProtoMessage() {}
+
+func (x *SetPlatformRolesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetPlatformRolesResponse.ProtoReflect.Descriptor instead.
+func (*SetPlatformRolesResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{31}
+}
+
+type GetPlatformRolesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPlatformRolesRequest) Reset() {
+	*x = GetPlatformRolesRequest{}
+	mi := &file_users_user_user_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPlatformRolesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPlatformRolesRequest) ProtoMessage() {}
+
+func (x *GetPlatformRolesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPlatformRolesRequest.ProtoReflect.Descriptor instead.
+func (*GetPlatformRolesRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *GetPlatformRolesRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type GetPlatformRolesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Roles         []PlatformRole         `protobuf:"varint,1,rep,packed,name=roles,proto3,enum=users.user.v1.PlatformRole" json:"roles,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPlatformRolesResponse) Reset() {
+	*x = GetPlatformRolesResponse{}
+	mi := &file_users_user_user_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPlatformRolesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPlatformRolesResponse) ProtoMessage() {}
+
+func (x *GetPlatformRolesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPlatformRolesResponse.ProtoReflect.Descriptor instead.
+func (*GetPlatformRolesResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *GetPlatformRolesResponse) GetRoles() []PlatformRole {
+	if x != nil {
+		return x.Roles
+	}
+	return nil
+}
+
+type CheckPlatformRolesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckPlatformRolesRequest) Reset() {
+	*x = CheckPlatformRolesRequest{}
+	mi := &file_users_user_user_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckPlatformRolesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckPlatformRolesRequest) ProtoMessage() {}
+
+func (x *CheckPlatformRolesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckPlatformRolesRequest.ProtoReflect.Descriptor instead.
+func (*CheckPlatformRolesRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *CheckPlatformRolesRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type CheckPlatformRolesResponse struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Roles            []PlatformRole         `protobuf:"varint,1,rep,packed,name=roles,proto3,enum=users.user.v1.PlatformRole" json:"roles,omitempty"`
+	AccessibleOrgIds []string               `protobuf:"bytes,2,rep,name=accessible_org_ids,json=accessibleOrgIds,proto3" json:"accessible_org_ids,omitempty"` // populated only for MECHANIC
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *CheckPlatformRolesResponse) Reset() {
+	*x = CheckPlatformRolesResponse{}
+	mi := &file_users_user_user_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckPlatformRolesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckPlatformRolesResponse) ProtoMessage() {}
+
+func (x *CheckPlatformRolesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckPlatformRolesResponse.ProtoReflect.Descriptor instead.
+func (*CheckPlatformRolesResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *CheckPlatformRolesResponse) GetRoles() []PlatformRole {
+	if x != nil {
+		return x.Roles
+	}
+	return nil
+}
+
+func (x *CheckPlatformRolesResponse) GetAccessibleOrgIds() []string {
+	if x != nil {
+		return x.AccessibleOrgIds
+	}
+	return nil
+}
+
+type SetPlatformOrgAccessRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrgIds        []string               `protobuf:"bytes,2,rep,name=org_ids,json=orgIds,proto3" json:"org_ids,omitempty"` // replaces entire list
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetPlatformOrgAccessRequest) Reset() {
+	*x = SetPlatformOrgAccessRequest{}
+	mi := &file_users_user_user_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetPlatformOrgAccessRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetPlatformOrgAccessRequest) ProtoMessage() {}
+
+func (x *SetPlatformOrgAccessRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetPlatformOrgAccessRequest.ProtoReflect.Descriptor instead.
+func (*SetPlatformOrgAccessRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *SetPlatformOrgAccessRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *SetPlatformOrgAccessRequest) GetOrgIds() []string {
+	if x != nil {
+		return x.OrgIds
+	}
+	return nil
+}
+
+type SetPlatformOrgAccessResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetPlatformOrgAccessResponse) Reset() {
+	*x = SetPlatformOrgAccessResponse{}
+	mi := &file_users_user_user_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetPlatformOrgAccessResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetPlatformOrgAccessResponse) ProtoMessage() {}
+
+func (x *SetPlatformOrgAccessResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetPlatformOrgAccessResponse.ProtoReflect.Descriptor instead.
+func (*SetPlatformOrgAccessResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{37}
+}
+
+type GetPlatformOrgAccessRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPlatformOrgAccessRequest) Reset() {
+	*x = GetPlatformOrgAccessRequest{}
+	mi := &file_users_user_user_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPlatformOrgAccessRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPlatformOrgAccessRequest) ProtoMessage() {}
+
+func (x *GetPlatformOrgAccessRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPlatformOrgAccessRequest.ProtoReflect.Descriptor instead.
+func (*GetPlatformOrgAccessRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *GetPlatformOrgAccessRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type GetPlatformOrgAccessResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrgIds        []string               `protobuf:"bytes,1,rep,name=org_ids,json=orgIds,proto3" json:"org_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPlatformOrgAccessResponse) Reset() {
+	*x = GetPlatformOrgAccessResponse{}
+	mi := &file_users_user_user_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPlatformOrgAccessResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPlatformOrgAccessResponse) ProtoMessage() {}
+
+func (x *GetPlatformOrgAccessResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPlatformOrgAccessResponse.ProtoReflect.Descriptor instead.
+func (*GetPlatformOrgAccessResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *GetPlatformOrgAccessResponse) GetOrgIds() []string {
+	if x != nil {
+		return x.OrgIds
+	}
+	return nil
+}
+
 // ListUsers (admin)
 type ListUsersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -1602,7 +2114,7 @@ type ListUsersRequest struct {
 
 func (x *ListUsersRequest) Reset() {
 	*x = ListUsersRequest{}
-	mi := &file_users_user_user_proto_msgTypes[30]
+	mi := &file_users_user_user_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1614,7 +2126,7 @@ func (x *ListUsersRequest) String() string {
 func (*ListUsersRequest) ProtoMessage() {}
 
 func (x *ListUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[30]
+	mi := &file_users_user_user_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1627,7 +2139,7 @@ func (x *ListUsersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUsersRequest.ProtoReflect.Descriptor instead.
 func (*ListUsersRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{30}
+	return file_users_user_user_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ListUsersRequest) GetPage() int32 {
@@ -1661,7 +2173,7 @@ type ListUsersResponse struct {
 
 func (x *ListUsersResponse) Reset() {
 	*x = ListUsersResponse{}
-	mi := &file_users_user_user_proto_msgTypes[31]
+	mi := &file_users_user_user_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1673,7 +2185,7 @@ func (x *ListUsersResponse) String() string {
 func (*ListUsersResponse) ProtoMessage() {}
 
 func (x *ListUsersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[31]
+	mi := &file_users_user_user_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1686,7 +2198,7 @@ func (x *ListUsersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUsersResponse.ProtoReflect.Descriptor instead.
 func (*ListUsersResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{31}
+	return file_users_user_user_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *ListUsersResponse) GetUsers() []*User {
@@ -1817,15 +2329,44 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x14DeleteAccountRequest\x12\x16\n" +
 	"\x06reason\x18\x01 \x01(\tR\x06reason\"1\n" +
 	"\x15DeleteAccountResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"[\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"e\n" +
+	"\x17SetPlatformRolesRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x121\n" +
+	"\x05roles\x18\x02 \x03(\x0e2\x1b.users.user.v1.PlatformRoleR\x05roles\"\x1a\n" +
+	"\x18SetPlatformRolesResponse\"2\n" +
+	"\x17GetPlatformRolesRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"M\n" +
+	"\x18GetPlatformRolesResponse\x121\n" +
+	"\x05roles\x18\x01 \x03(\x0e2\x1b.users.user.v1.PlatformRoleR\x05roles\"4\n" +
+	"\x19CheckPlatformRolesRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"}\n" +
+	"\x1aCheckPlatformRolesResponse\x121\n" +
+	"\x05roles\x18\x01 \x03(\x0e2\x1b.users.user.v1.PlatformRoleR\x05roles\x12,\n" +
+	"\x12accessible_org_ids\x18\x02 \x03(\tR\x10accessibleOrgIds\"O\n" +
+	"\x1bSetPlatformOrgAccessRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x17\n" +
+	"\aorg_ids\x18\x02 \x03(\tR\x06orgIds\"\x1e\n" +
+	"\x1cSetPlatformOrgAccessResponse\"6\n" +
+	"\x1bGetPlatformOrgAccessRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"7\n" +
+	"\x1cGetPlatformOrgAccessResponse\x12\x17\n" +
+	"\aorg_ids\x18\x01 \x03(\tR\x06orgIds\"[\n" +
 	"\x10ListUsersRequest\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x1b\n" +
 	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x16\n" +
 	"\x06search\x18\x03 \x01(\tR\x06search\"T\n" +
 	"\x11ListUsersResponse\x12)\n" +
 	"\x05users\x18\x01 \x03(\v2\x13.users.user.v1.UserR\x05users\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total2\x86\n" +
-	"\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total*\x85\x02\n" +
+	"\fPlatformRole\x12\x1d\n" +
+	"\x19PLATFORM_ROLE_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x16PLATFORM_ROLE_MECHANIC\x10\x01\x12\x1e\n" +
+	"\x1aPLATFORM_ROLE_RECEPTIONIST\x10\x02\x12\x1f\n" +
+	"\x1bPLATFORM_ROLE_PARTS_MANAGER\x10\x03\x12\x17\n" +
+	"\x13PLATFORM_ROLE_ADMIN\x10\x04\x12\x1f\n" +
+	"\x1bPLATFORM_ROLE_SALES_MANAGER\x10\x05\x12\x1b\n" +
+	"\x17PLATFORM_ROLE_RECRUITER\x10\x06\x12\"\n" +
+	"\x1ePLATFORM_ROLE_AUTOBODY_MANAGER\x10\a2\x9d\x0e\n" +
 	"\vUserService\x12Q\n" +
 	"\n" +
 	"GetProfile\x12 .users.user.v1.GetProfileRequest\x1a!.users.user.v1.GetProfileResponse\x12Z\n" +
@@ -1843,7 +2384,12 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\n" +
 	"GetDevices\x12 .users.user.v1.GetDevicesRequest\x1a!.users.user.v1.GetDevicesResponse\x12Z\n" +
 	"\rDeleteAccount\x12#.users.user.v1.DeleteAccountRequest\x1a$.users.user.v1.DeleteAccountResponse\x12N\n" +
-	"\tListUsers\x12\x1f.users.user.v1.ListUsersRequest\x1a .users.user.v1.ListUsersResponseB5Z3gitlab.com/xakpro/cg-proto/gen/go/users/user;userv1b\x06proto3"
+	"\tListUsers\x12\x1f.users.user.v1.ListUsersRequest\x1a .users.user.v1.ListUsersResponse\x12c\n" +
+	"\x10SetPlatformRoles\x12&.users.user.v1.SetPlatformRolesRequest\x1a'.users.user.v1.SetPlatformRolesResponse\x12c\n" +
+	"\x10GetPlatformRoles\x12&.users.user.v1.GetPlatformRolesRequest\x1a'.users.user.v1.GetPlatformRolesResponse\x12i\n" +
+	"\x12CheckPlatformRoles\x12(.users.user.v1.CheckPlatformRolesRequest\x1a).users.user.v1.CheckPlatformRolesResponse\x12o\n" +
+	"\x14SetPlatformOrgAccess\x12*.users.user.v1.SetPlatformOrgAccessRequest\x1a+.users.user.v1.SetPlatformOrgAccessResponse\x12o\n" +
+	"\x14GetPlatformOrgAccess\x12*.users.user.v1.GetPlatformOrgAccessRequest\x1a+.users.user.v1.GetPlatformOrgAccessResponseB5Z3gitlab.com/xakpro/cg-proto/gen/go/users/user;userv1b\x06proto3"
 
 var (
 	file_users_user_user_proto_rawDescOnce sync.Once
@@ -1857,92 +2403,117 @@ func file_users_user_user_proto_rawDescGZIP() []byte {
 	return file_users_user_user_proto_rawDescData
 }
 
-var file_users_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
+var file_users_user_user_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_users_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 42)
 var file_users_user_user_proto_goTypes = []any{
-	(*User)(nil),                        // 0: users.user.v1.User
-	(*UserCounters)(nil),                // 1: users.user.v1.UserCounters
-	(*GetProfileRequest)(nil),           // 2: users.user.v1.GetProfileRequest
-	(*GetProfileResponse)(nil),          // 3: users.user.v1.GetProfileResponse
-	(*UpdateProfileRequest)(nil),        // 4: users.user.v1.UpdateProfileRequest
-	(*UpdateProfileResponse)(nil),       // 5: users.user.v1.UpdateProfileResponse
-	(*GetUserByIDRequest)(nil),          // 6: users.user.v1.GetUserByIDRequest
-	(*GetUserByIDResponse)(nil),         // 7: users.user.v1.GetUserByIDResponse
-	(*GetUsersByIDsRequest)(nil),        // 8: users.user.v1.GetUsersByIDsRequest
-	(*GetUsersByIDsResponse)(nil),       // 9: users.user.v1.GetUsersByIDsResponse
-	(*GetUserByPhoneRequest)(nil),       // 10: users.user.v1.GetUserByPhoneRequest
-	(*GetUserByPhoneResponse)(nil),      // 11: users.user.v1.GetUserByPhoneResponse
-	(*CreateUserRequest)(nil),           // 12: users.user.v1.CreateUserRequest
-	(*CreateUserResponse)(nil),          // 13: users.user.v1.CreateUserResponse
-	(*FindOrCreateByPhoneRequest)(nil),  // 14: users.user.v1.FindOrCreateByPhoneRequest
-	(*FindOrCreateByPhoneResponse)(nil), // 15: users.user.v1.FindOrCreateByPhoneResponse
-	(*UserSettings)(nil),                // 16: users.user.v1.UserSettings
-	(*GetSettingsRequest)(nil),          // 17: users.user.v1.GetSettingsRequest
-	(*GetSettingsResponse)(nil),         // 18: users.user.v1.GetSettingsResponse
-	(*UpdateSettingsRequest)(nil),       // 19: users.user.v1.UpdateSettingsRequest
-	(*UpdateSettingsResponse)(nil),      // 20: users.user.v1.UpdateSettingsResponse
-	(*Device)(nil),                      // 21: users.user.v1.Device
-	(*RegisterDeviceRequest)(nil),       // 22: users.user.v1.RegisterDeviceRequest
-	(*RegisterDeviceResponse)(nil),      // 23: users.user.v1.RegisterDeviceResponse
-	(*UnregisterDeviceRequest)(nil),     // 24: users.user.v1.UnregisterDeviceRequest
-	(*UnregisterDeviceResponse)(nil),    // 25: users.user.v1.UnregisterDeviceResponse
-	(*GetDevicesRequest)(nil),           // 26: users.user.v1.GetDevicesRequest
-	(*GetDevicesResponse)(nil),          // 27: users.user.v1.GetDevicesResponse
-	(*DeleteAccountRequest)(nil),        // 28: users.user.v1.DeleteAccountRequest
-	(*DeleteAccountResponse)(nil),       // 29: users.user.v1.DeleteAccountResponse
-	(*ListUsersRequest)(nil),            // 30: users.user.v1.ListUsersRequest
-	(*ListUsersResponse)(nil),           // 31: users.user.v1.ListUsersResponse
-	(*timestamppb.Timestamp)(nil),       // 32: google.protobuf.Timestamp
+	(PlatformRole)(0),                    // 0: users.user.v1.PlatformRole
+	(*User)(nil),                         // 1: users.user.v1.User
+	(*UserCounters)(nil),                 // 2: users.user.v1.UserCounters
+	(*GetProfileRequest)(nil),            // 3: users.user.v1.GetProfileRequest
+	(*GetProfileResponse)(nil),           // 4: users.user.v1.GetProfileResponse
+	(*UpdateProfileRequest)(nil),         // 5: users.user.v1.UpdateProfileRequest
+	(*UpdateProfileResponse)(nil),        // 6: users.user.v1.UpdateProfileResponse
+	(*GetUserByIDRequest)(nil),           // 7: users.user.v1.GetUserByIDRequest
+	(*GetUserByIDResponse)(nil),          // 8: users.user.v1.GetUserByIDResponse
+	(*GetUsersByIDsRequest)(nil),         // 9: users.user.v1.GetUsersByIDsRequest
+	(*GetUsersByIDsResponse)(nil),        // 10: users.user.v1.GetUsersByIDsResponse
+	(*GetUserByPhoneRequest)(nil),        // 11: users.user.v1.GetUserByPhoneRequest
+	(*GetUserByPhoneResponse)(nil),       // 12: users.user.v1.GetUserByPhoneResponse
+	(*CreateUserRequest)(nil),            // 13: users.user.v1.CreateUserRequest
+	(*CreateUserResponse)(nil),           // 14: users.user.v1.CreateUserResponse
+	(*FindOrCreateByPhoneRequest)(nil),   // 15: users.user.v1.FindOrCreateByPhoneRequest
+	(*FindOrCreateByPhoneResponse)(nil),  // 16: users.user.v1.FindOrCreateByPhoneResponse
+	(*UserSettings)(nil),                 // 17: users.user.v1.UserSettings
+	(*GetSettingsRequest)(nil),           // 18: users.user.v1.GetSettingsRequest
+	(*GetSettingsResponse)(nil),          // 19: users.user.v1.GetSettingsResponse
+	(*UpdateSettingsRequest)(nil),        // 20: users.user.v1.UpdateSettingsRequest
+	(*UpdateSettingsResponse)(nil),       // 21: users.user.v1.UpdateSettingsResponse
+	(*Device)(nil),                       // 22: users.user.v1.Device
+	(*RegisterDeviceRequest)(nil),        // 23: users.user.v1.RegisterDeviceRequest
+	(*RegisterDeviceResponse)(nil),       // 24: users.user.v1.RegisterDeviceResponse
+	(*UnregisterDeviceRequest)(nil),      // 25: users.user.v1.UnregisterDeviceRequest
+	(*UnregisterDeviceResponse)(nil),     // 26: users.user.v1.UnregisterDeviceResponse
+	(*GetDevicesRequest)(nil),            // 27: users.user.v1.GetDevicesRequest
+	(*GetDevicesResponse)(nil),           // 28: users.user.v1.GetDevicesResponse
+	(*DeleteAccountRequest)(nil),         // 29: users.user.v1.DeleteAccountRequest
+	(*DeleteAccountResponse)(nil),        // 30: users.user.v1.DeleteAccountResponse
+	(*SetPlatformRolesRequest)(nil),      // 31: users.user.v1.SetPlatformRolesRequest
+	(*SetPlatformRolesResponse)(nil),     // 32: users.user.v1.SetPlatformRolesResponse
+	(*GetPlatformRolesRequest)(nil),      // 33: users.user.v1.GetPlatformRolesRequest
+	(*GetPlatformRolesResponse)(nil),     // 34: users.user.v1.GetPlatformRolesResponse
+	(*CheckPlatformRolesRequest)(nil),    // 35: users.user.v1.CheckPlatformRolesRequest
+	(*CheckPlatformRolesResponse)(nil),   // 36: users.user.v1.CheckPlatformRolesResponse
+	(*SetPlatformOrgAccessRequest)(nil),  // 37: users.user.v1.SetPlatformOrgAccessRequest
+	(*SetPlatformOrgAccessResponse)(nil), // 38: users.user.v1.SetPlatformOrgAccessResponse
+	(*GetPlatformOrgAccessRequest)(nil),  // 39: users.user.v1.GetPlatformOrgAccessRequest
+	(*GetPlatformOrgAccessResponse)(nil), // 40: users.user.v1.GetPlatformOrgAccessResponse
+	(*ListUsersRequest)(nil),             // 41: users.user.v1.ListUsersRequest
+	(*ListUsersResponse)(nil),            // 42: users.user.v1.ListUsersResponse
+	(*timestamppb.Timestamp)(nil),        // 43: google.protobuf.Timestamp
 }
 var file_users_user_user_proto_depIdxs = []int32{
-	32, // 0: users.user.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	32, // 1: users.user.v1.User.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 2: users.user.v1.GetProfileResponse.user:type_name -> users.user.v1.User
-	1,  // 3: users.user.v1.GetProfileResponse.counters:type_name -> users.user.v1.UserCounters
-	0,  // 4: users.user.v1.UpdateProfileResponse.user:type_name -> users.user.v1.User
-	0,  // 5: users.user.v1.GetUserByIDResponse.user:type_name -> users.user.v1.User
-	0,  // 6: users.user.v1.GetUsersByIDsResponse.users:type_name -> users.user.v1.User
-	0,  // 7: users.user.v1.GetUserByPhoneResponse.user:type_name -> users.user.v1.User
-	0,  // 8: users.user.v1.CreateUserResponse.user:type_name -> users.user.v1.User
-	0,  // 9: users.user.v1.FindOrCreateByPhoneResponse.user:type_name -> users.user.v1.User
-	16, // 10: users.user.v1.GetSettingsResponse.settings:type_name -> users.user.v1.UserSettings
-	16, // 11: users.user.v1.UpdateSettingsResponse.settings:type_name -> users.user.v1.UserSettings
-	32, // 12: users.user.v1.Device.created_at:type_name -> google.protobuf.Timestamp
-	32, // 13: users.user.v1.Device.last_used_at:type_name -> google.protobuf.Timestamp
-	21, // 14: users.user.v1.GetDevicesResponse.devices:type_name -> users.user.v1.Device
-	0,  // 15: users.user.v1.ListUsersResponse.users:type_name -> users.user.v1.User
-	2,  // 16: users.user.v1.UserService.GetProfile:input_type -> users.user.v1.GetProfileRequest
-	4,  // 17: users.user.v1.UserService.UpdateProfile:input_type -> users.user.v1.UpdateProfileRequest
-	6,  // 18: users.user.v1.UserService.GetUserByID:input_type -> users.user.v1.GetUserByIDRequest
-	10, // 19: users.user.v1.UserService.GetUserByPhone:input_type -> users.user.v1.GetUserByPhoneRequest
-	12, // 20: users.user.v1.UserService.CreateUser:input_type -> users.user.v1.CreateUserRequest
-	8,  // 21: users.user.v1.UserService.GetUsersByIDs:input_type -> users.user.v1.GetUsersByIDsRequest
-	14, // 22: users.user.v1.UserService.FindOrCreateByPhone:input_type -> users.user.v1.FindOrCreateByPhoneRequest
-	17, // 23: users.user.v1.UserService.GetSettings:input_type -> users.user.v1.GetSettingsRequest
-	19, // 24: users.user.v1.UserService.UpdateSettings:input_type -> users.user.v1.UpdateSettingsRequest
-	22, // 25: users.user.v1.UserService.RegisterDevice:input_type -> users.user.v1.RegisterDeviceRequest
-	24, // 26: users.user.v1.UserService.UnregisterDevice:input_type -> users.user.v1.UnregisterDeviceRequest
-	26, // 27: users.user.v1.UserService.GetDevices:input_type -> users.user.v1.GetDevicesRequest
-	28, // 28: users.user.v1.UserService.DeleteAccount:input_type -> users.user.v1.DeleteAccountRequest
-	30, // 29: users.user.v1.UserService.ListUsers:input_type -> users.user.v1.ListUsersRequest
-	3,  // 30: users.user.v1.UserService.GetProfile:output_type -> users.user.v1.GetProfileResponse
-	5,  // 31: users.user.v1.UserService.UpdateProfile:output_type -> users.user.v1.UpdateProfileResponse
-	7,  // 32: users.user.v1.UserService.GetUserByID:output_type -> users.user.v1.GetUserByIDResponse
-	11, // 33: users.user.v1.UserService.GetUserByPhone:output_type -> users.user.v1.GetUserByPhoneResponse
-	13, // 34: users.user.v1.UserService.CreateUser:output_type -> users.user.v1.CreateUserResponse
-	9,  // 35: users.user.v1.UserService.GetUsersByIDs:output_type -> users.user.v1.GetUsersByIDsResponse
-	15, // 36: users.user.v1.UserService.FindOrCreateByPhone:output_type -> users.user.v1.FindOrCreateByPhoneResponse
-	18, // 37: users.user.v1.UserService.GetSettings:output_type -> users.user.v1.GetSettingsResponse
-	20, // 38: users.user.v1.UserService.UpdateSettings:output_type -> users.user.v1.UpdateSettingsResponse
-	23, // 39: users.user.v1.UserService.RegisterDevice:output_type -> users.user.v1.RegisterDeviceResponse
-	25, // 40: users.user.v1.UserService.UnregisterDevice:output_type -> users.user.v1.UnregisterDeviceResponse
-	27, // 41: users.user.v1.UserService.GetDevices:output_type -> users.user.v1.GetDevicesResponse
-	29, // 42: users.user.v1.UserService.DeleteAccount:output_type -> users.user.v1.DeleteAccountResponse
-	31, // 43: users.user.v1.UserService.ListUsers:output_type -> users.user.v1.ListUsersResponse
-	30, // [30:44] is the sub-list for method output_type
-	16, // [16:30] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	43, // 0: users.user.v1.User.created_at:type_name -> google.protobuf.Timestamp
+	43, // 1: users.user.v1.User.updated_at:type_name -> google.protobuf.Timestamp
+	1,  // 2: users.user.v1.GetProfileResponse.user:type_name -> users.user.v1.User
+	2,  // 3: users.user.v1.GetProfileResponse.counters:type_name -> users.user.v1.UserCounters
+	1,  // 4: users.user.v1.UpdateProfileResponse.user:type_name -> users.user.v1.User
+	1,  // 5: users.user.v1.GetUserByIDResponse.user:type_name -> users.user.v1.User
+	1,  // 6: users.user.v1.GetUsersByIDsResponse.users:type_name -> users.user.v1.User
+	1,  // 7: users.user.v1.GetUserByPhoneResponse.user:type_name -> users.user.v1.User
+	1,  // 8: users.user.v1.CreateUserResponse.user:type_name -> users.user.v1.User
+	1,  // 9: users.user.v1.FindOrCreateByPhoneResponse.user:type_name -> users.user.v1.User
+	17, // 10: users.user.v1.GetSettingsResponse.settings:type_name -> users.user.v1.UserSettings
+	17, // 11: users.user.v1.UpdateSettingsResponse.settings:type_name -> users.user.v1.UserSettings
+	43, // 12: users.user.v1.Device.created_at:type_name -> google.protobuf.Timestamp
+	43, // 13: users.user.v1.Device.last_used_at:type_name -> google.protobuf.Timestamp
+	22, // 14: users.user.v1.GetDevicesResponse.devices:type_name -> users.user.v1.Device
+	0,  // 15: users.user.v1.SetPlatformRolesRequest.roles:type_name -> users.user.v1.PlatformRole
+	0,  // 16: users.user.v1.GetPlatformRolesResponse.roles:type_name -> users.user.v1.PlatformRole
+	0,  // 17: users.user.v1.CheckPlatformRolesResponse.roles:type_name -> users.user.v1.PlatformRole
+	1,  // 18: users.user.v1.ListUsersResponse.users:type_name -> users.user.v1.User
+	3,  // 19: users.user.v1.UserService.GetProfile:input_type -> users.user.v1.GetProfileRequest
+	5,  // 20: users.user.v1.UserService.UpdateProfile:input_type -> users.user.v1.UpdateProfileRequest
+	7,  // 21: users.user.v1.UserService.GetUserByID:input_type -> users.user.v1.GetUserByIDRequest
+	11, // 22: users.user.v1.UserService.GetUserByPhone:input_type -> users.user.v1.GetUserByPhoneRequest
+	13, // 23: users.user.v1.UserService.CreateUser:input_type -> users.user.v1.CreateUserRequest
+	9,  // 24: users.user.v1.UserService.GetUsersByIDs:input_type -> users.user.v1.GetUsersByIDsRequest
+	15, // 25: users.user.v1.UserService.FindOrCreateByPhone:input_type -> users.user.v1.FindOrCreateByPhoneRequest
+	18, // 26: users.user.v1.UserService.GetSettings:input_type -> users.user.v1.GetSettingsRequest
+	20, // 27: users.user.v1.UserService.UpdateSettings:input_type -> users.user.v1.UpdateSettingsRequest
+	23, // 28: users.user.v1.UserService.RegisterDevice:input_type -> users.user.v1.RegisterDeviceRequest
+	25, // 29: users.user.v1.UserService.UnregisterDevice:input_type -> users.user.v1.UnregisterDeviceRequest
+	27, // 30: users.user.v1.UserService.GetDevices:input_type -> users.user.v1.GetDevicesRequest
+	29, // 31: users.user.v1.UserService.DeleteAccount:input_type -> users.user.v1.DeleteAccountRequest
+	41, // 32: users.user.v1.UserService.ListUsers:input_type -> users.user.v1.ListUsersRequest
+	31, // 33: users.user.v1.UserService.SetPlatformRoles:input_type -> users.user.v1.SetPlatformRolesRequest
+	33, // 34: users.user.v1.UserService.GetPlatformRoles:input_type -> users.user.v1.GetPlatformRolesRequest
+	35, // 35: users.user.v1.UserService.CheckPlatformRoles:input_type -> users.user.v1.CheckPlatformRolesRequest
+	37, // 36: users.user.v1.UserService.SetPlatformOrgAccess:input_type -> users.user.v1.SetPlatformOrgAccessRequest
+	39, // 37: users.user.v1.UserService.GetPlatformOrgAccess:input_type -> users.user.v1.GetPlatformOrgAccessRequest
+	4,  // 38: users.user.v1.UserService.GetProfile:output_type -> users.user.v1.GetProfileResponse
+	6,  // 39: users.user.v1.UserService.UpdateProfile:output_type -> users.user.v1.UpdateProfileResponse
+	8,  // 40: users.user.v1.UserService.GetUserByID:output_type -> users.user.v1.GetUserByIDResponse
+	12, // 41: users.user.v1.UserService.GetUserByPhone:output_type -> users.user.v1.GetUserByPhoneResponse
+	14, // 42: users.user.v1.UserService.CreateUser:output_type -> users.user.v1.CreateUserResponse
+	10, // 43: users.user.v1.UserService.GetUsersByIDs:output_type -> users.user.v1.GetUsersByIDsResponse
+	16, // 44: users.user.v1.UserService.FindOrCreateByPhone:output_type -> users.user.v1.FindOrCreateByPhoneResponse
+	19, // 45: users.user.v1.UserService.GetSettings:output_type -> users.user.v1.GetSettingsResponse
+	21, // 46: users.user.v1.UserService.UpdateSettings:output_type -> users.user.v1.UpdateSettingsResponse
+	24, // 47: users.user.v1.UserService.RegisterDevice:output_type -> users.user.v1.RegisterDeviceResponse
+	26, // 48: users.user.v1.UserService.UnregisterDevice:output_type -> users.user.v1.UnregisterDeviceResponse
+	28, // 49: users.user.v1.UserService.GetDevices:output_type -> users.user.v1.GetDevicesResponse
+	30, // 50: users.user.v1.UserService.DeleteAccount:output_type -> users.user.v1.DeleteAccountResponse
+	42, // 51: users.user.v1.UserService.ListUsers:output_type -> users.user.v1.ListUsersResponse
+	32, // 52: users.user.v1.UserService.SetPlatformRoles:output_type -> users.user.v1.SetPlatformRolesResponse
+	34, // 53: users.user.v1.UserService.GetPlatformRoles:output_type -> users.user.v1.GetPlatformRolesResponse
+	36, // 54: users.user.v1.UserService.CheckPlatformRoles:output_type -> users.user.v1.CheckPlatformRolesResponse
+	38, // 55: users.user.v1.UserService.SetPlatformOrgAccess:output_type -> users.user.v1.SetPlatformOrgAccessResponse
+	40, // 56: users.user.v1.UserService.GetPlatformOrgAccess:output_type -> users.user.v1.GetPlatformOrgAccessResponse
+	38, // [38:57] is the sub-list for method output_type
+	19, // [19:38] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_users_user_user_proto_init() }
@@ -1957,13 +2528,14 @@ func file_users_user_user_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_users_user_user_proto_rawDesc), len(file_users_user_user_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   32,
+			NumEnums:      1,
+			NumMessages:   42,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_users_user_user_proto_goTypes,
 		DependencyIndexes: file_users_user_user_proto_depIdxs,
+		EnumInfos:         file_users_user_user_proto_enumTypes,
 		MessageInfos:      file_users_user_user_proto_msgTypes,
 	}.Build()
 	File_users_user_user_proto = out.File

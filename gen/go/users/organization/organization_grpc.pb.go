@@ -86,11 +86,21 @@ type OrganizationServiceClient interface {
 	UpdateOrgProfile(ctx context.Context, in *UpdateOrgProfileRequest, opts ...grpc.CallOption) (*UpdateOrgProfileResponse, error)
 	// Subscription info (for payment service)
 	GetOrganizationSubscriptionInfo(ctx context.Context, in *GetOrgSubscriptionInfoRequest, opts ...grpc.CallOption) (*GetOrgSubscriptionInfoResponse, error)
+	// Deprecated: Do not use.
 	// Platform roles (CTOgram employee roles)
+	// Deprecated: Use UserService.SetPlatformRoles instead.
 	SetPlatformRole(ctx context.Context, in *SetPlatformRoleRequest, opts ...grpc.CallOption) (*SetPlatformRoleResponse, error)
+	// Deprecated: Do not use.
+	// Deprecated: Use UserService.GetPlatformRoles instead.
 	GetPlatformRole(ctx context.Context, in *GetPlatformRoleRequest, opts ...grpc.CallOption) (*GetPlatformRoleResponse, error)
+	// Deprecated: Do not use.
+	// Deprecated: Use UserService.SetPlatformOrgAccess instead.
 	SetPlatformOrgAccess(ctx context.Context, in *SetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*SetPlatformOrgAccessResponse, error)
+	// Deprecated: Do not use.
+	// Deprecated: Use UserService.GetPlatformOrgAccess instead.
 	GetPlatformOrgAccess(ctx context.Context, in *GetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*GetPlatformOrgAccessResponse, error)
+	// Deprecated: Do not use.
+	// Deprecated: Use UserService.CheckPlatformRole instead.
 	CheckPlatformRole(ctx context.Context, in *CheckPlatformRoleRequest, opts ...grpc.CallOption) (*CheckPlatformRoleResponse, error)
 }
 
@@ -322,6 +332,7 @@ func (c *organizationServiceClient) GetOrganizationSubscriptionInfo(ctx context.
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *organizationServiceClient) SetPlatformRole(ctx context.Context, in *SetPlatformRoleRequest, opts ...grpc.CallOption) (*SetPlatformRoleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SetPlatformRoleResponse)
@@ -332,6 +343,7 @@ func (c *organizationServiceClient) SetPlatformRole(ctx context.Context, in *Set
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *organizationServiceClient) GetPlatformRole(ctx context.Context, in *GetPlatformRoleRequest, opts ...grpc.CallOption) (*GetPlatformRoleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPlatformRoleResponse)
@@ -342,6 +354,7 @@ func (c *organizationServiceClient) GetPlatformRole(ctx context.Context, in *Get
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *organizationServiceClient) SetPlatformOrgAccess(ctx context.Context, in *SetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*SetPlatformOrgAccessResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SetPlatformOrgAccessResponse)
@@ -352,6 +365,7 @@ func (c *organizationServiceClient) SetPlatformOrgAccess(ctx context.Context, in
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *organizationServiceClient) GetPlatformOrgAccess(ctx context.Context, in *GetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*GetPlatformOrgAccessResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPlatformOrgAccessResponse)
@@ -362,6 +376,7 @@ func (c *organizationServiceClient) GetPlatformOrgAccess(ctx context.Context, in
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *organizationServiceClient) CheckPlatformRole(ctx context.Context, in *CheckPlatformRoleRequest, opts ...grpc.CallOption) (*CheckPlatformRoleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CheckPlatformRoleResponse)
@@ -410,11 +425,21 @@ type OrganizationServiceServer interface {
 	UpdateOrgProfile(context.Context, *UpdateOrgProfileRequest) (*UpdateOrgProfileResponse, error)
 	// Subscription info (for payment service)
 	GetOrganizationSubscriptionInfo(context.Context, *GetOrgSubscriptionInfoRequest) (*GetOrgSubscriptionInfoResponse, error)
+	// Deprecated: Do not use.
 	// Platform roles (CTOgram employee roles)
+	// Deprecated: Use UserService.SetPlatformRoles instead.
 	SetPlatformRole(context.Context, *SetPlatformRoleRequest) (*SetPlatformRoleResponse, error)
+	// Deprecated: Do not use.
+	// Deprecated: Use UserService.GetPlatformRoles instead.
 	GetPlatformRole(context.Context, *GetPlatformRoleRequest) (*GetPlatformRoleResponse, error)
+	// Deprecated: Do not use.
+	// Deprecated: Use UserService.SetPlatformOrgAccess instead.
 	SetPlatformOrgAccess(context.Context, *SetPlatformOrgAccessRequest) (*SetPlatformOrgAccessResponse, error)
+	// Deprecated: Do not use.
+	// Deprecated: Use UserService.GetPlatformOrgAccess instead.
 	GetPlatformOrgAccess(context.Context, *GetPlatformOrgAccessRequest) (*GetPlatformOrgAccessResponse, error)
+	// Deprecated: Do not use.
+	// Deprecated: Use UserService.CheckPlatformRole instead.
 	CheckPlatformRole(context.Context, *CheckPlatformRoleRequest) (*CheckPlatformRoleResponse, error)
 	mustEmbedUnimplementedOrganizationServiceServer()
 }

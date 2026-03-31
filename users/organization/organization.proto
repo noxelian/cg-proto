@@ -54,11 +54,26 @@ service OrganizationService {
   rpc GetOrganizationSubscriptionInfo(GetOrgSubscriptionInfoRequest) returns (GetOrgSubscriptionInfoResponse);
 
   // Platform roles (CTOgram employee roles)
-  rpc SetPlatformRole(SetPlatformRoleRequest) returns (SetPlatformRoleResponse);
-  rpc GetPlatformRole(GetPlatformRoleRequest) returns (GetPlatformRoleResponse);
-  rpc SetPlatformOrgAccess(SetPlatformOrgAccessRequest) returns (SetPlatformOrgAccessResponse);
-  rpc GetPlatformOrgAccess(GetPlatformOrgAccessRequest) returns (GetPlatformOrgAccessResponse);
-  rpc CheckPlatformRole(CheckPlatformRoleRequest) returns (CheckPlatformRoleResponse);
+  // Deprecated: Use UserService.SetPlatformRoles instead.
+  rpc SetPlatformRole(SetPlatformRoleRequest) returns (SetPlatformRoleResponse) {
+    option deprecated = true;
+  }
+  // Deprecated: Use UserService.GetPlatformRoles instead.
+  rpc GetPlatformRole(GetPlatformRoleRequest) returns (GetPlatformRoleResponse) {
+    option deprecated = true;
+  }
+  // Deprecated: Use UserService.SetPlatformOrgAccess instead.
+  rpc SetPlatformOrgAccess(SetPlatformOrgAccessRequest) returns (SetPlatformOrgAccessResponse) {
+    option deprecated = true;
+  }
+  // Deprecated: Use UserService.GetPlatformOrgAccess instead.
+  rpc GetPlatformOrgAccess(GetPlatformOrgAccessRequest) returns (GetPlatformOrgAccessResponse) {
+    option deprecated = true;
+  }
+  // Deprecated: Use UserService.CheckPlatformRole instead.
+  rpc CheckPlatformRole(CheckPlatformRoleRequest) returns (CheckPlatformRoleResponse) {
+    option deprecated = true;
+  }
 }
 
 enum OrganizationType {
