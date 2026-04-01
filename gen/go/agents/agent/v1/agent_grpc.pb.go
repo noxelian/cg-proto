@@ -31,6 +31,7 @@ const (
 	AgentService_StreamAgentOutput_FullMethodName = "/agents.agent.v1.AgentService/StreamAgentOutput"
 	AgentService_GetAnalytics_FullMethodName      = "/agents.agent.v1.AgentService/GetAnalytics"
 	AgentService_GetDashboard_FullMethodName      = "/agents.agent.v1.AgentService/GetDashboard"
+	AgentService_ListRepos_FullMethodName         = "/agents.agent.v1.AgentService/ListRepos"
 )
 
 // AgentServiceClient is the client API for AgentService service.
@@ -63,6 +64,8 @@ type AgentServiceClient interface {
 	GetAnalytics(ctx context.Context, in *GetAnalyticsRequest, opts ...grpc.CallOption) (*GetAnalyticsResponse, error)
 	// GetDashboard returns per-role agent status summary.
 	GetDashboard(ctx context.Context, in *GetDashboardRequest, opts ...grpc.CallOption) (*GetDashboardResponse, error)
+	// ListRepos returns available git repositories that agents can work with.
+	ListRepos(ctx context.Context, in *ListReposRequest, opts ...grpc.CallOption) (*ListReposResponse, error)
 }
 
 type agentServiceClient struct {
@@ -202,6 +205,16 @@ func (c *agentServiceClient) GetDashboard(ctx context.Context, in *GetDashboardR
 	return out, nil
 }
 
+func (c *agentServiceClient) ListRepos(ctx context.Context, in *ListReposRequest, opts ...grpc.CallOption) (*ListReposResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListReposResponse)
+	err := c.cc.Invoke(ctx, AgentService_ListRepos_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AgentServiceServer is the server API for AgentService service.
 // All implementations must embed UnimplementedAgentServiceServer
 // for forward compatibility.
@@ -232,6 +245,8 @@ type AgentServiceServer interface {
 	GetAnalytics(context.Context, *GetAnalyticsRequest) (*GetAnalyticsResponse, error)
 	// GetDashboard returns per-role agent status summary.
 	GetDashboard(context.Context, *GetDashboardRequest) (*GetDashboardResponse, error)
+	// ListRepos returns available git repositories that agents can work with.
+	ListRepos(context.Context, *ListReposRequest) (*ListReposResponse, error)
 	mustEmbedUnimplementedAgentServiceServer()
 }
 
@@ -277,6 +292,9 @@ func (UnimplementedAgentServiceServer) GetAnalytics(context.Context, *GetAnalyti
 }
 func (UnimplementedAgentServiceServer) GetDashboard(context.Context, *GetDashboardRequest) (*GetDashboardResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetDashboard not implemented")
+}
+func (UnimplementedAgentServiceServer) ListRepos(context.Context, *ListReposRequest) (*ListReposResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListRepos not implemented")
 }
 func (UnimplementedAgentServiceServer) mustEmbedUnimplementedAgentServiceServer() {}
 func (UnimplementedAgentServiceServer) testEmbeddedByValue()                      {}
@@ -508,6 +526,24 @@ func _AgentService_GetDashboard_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AgentService_ListRepos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListReposRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentServiceServer).ListRepos(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentService_ListRepos_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentServiceServer).ListRepos(ctx, req.(*ListReposRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AgentService_ServiceDesc is the grpc.ServiceDesc for AgentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -558,6 +594,10 @@ var AgentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDashboard",
 			Handler:    _AgentService_GetDashboard_Handler,
+		},
+		{
+			MethodName: "ListRepos",
+			Handler:    _AgentService_ListRepos_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

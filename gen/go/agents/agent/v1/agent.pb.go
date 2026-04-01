@@ -1908,6 +1908,188 @@ func (x *AgentDashboardEntry) GetActiveRuns() int32 {
 	return 0
 }
 
+// ListRepos
+type ListReposRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ActiveOnly    bool                   `protobuf:"varint,1,opt,name=active_only,json=activeOnly,proto3" json:"active_only,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListReposRequest) Reset() {
+	*x = ListReposRequest{}
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListReposRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListReposRequest) ProtoMessage() {}
+
+func (x *ListReposRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListReposRequest.ProtoReflect.Descriptor instead.
+func (*ListReposRequest) Descriptor() ([]byte, []int) {
+	return file_agents_agent_v1_agent_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *ListReposRequest) GetActiveOnly() bool {
+	if x != nil {
+		return x.ActiveOnly
+	}
+	return false
+}
+
+type ListReposResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Repos         []*AgentRepo           `protobuf:"bytes,1,rep,name=repos,proto3" json:"repos,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListReposResponse) Reset() {
+	*x = ListReposResponse{}
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListReposResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListReposResponse) ProtoMessage() {}
+
+func (x *ListReposResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListReposResponse.ProtoReflect.Descriptor instead.
+func (*ListReposResponse) Descriptor() ([]byte, []int) {
+	return file_agents_agent_v1_agent_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *ListReposResponse) GetRepos() []*AgentRepo {
+	if x != nil {
+		return x.Repos
+	}
+	return nil
+}
+
+// AgentRepo represents a git repository available to agents.
+type AgentRepo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	DisplayName   string                 `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	GitUrl        string                 `protobuf:"bytes,5,opt,name=git_url,json=gitUrl,proto3" json:"git_url,omitempty"`
+	DefaultBranch string                 `protobuf:"bytes,6,opt,name=default_branch,json=defaultBranch,proto3" json:"default_branch,omitempty"`
+	IsActive      bool                   `protobuf:"varint,7,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AgentRepo) Reset() {
+	*x = AgentRepo{}
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AgentRepo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AgentRepo) ProtoMessage() {}
+
+func (x *AgentRepo) ProtoReflect() protoreflect.Message {
+	mi := &file_agents_agent_v1_agent_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AgentRepo.ProtoReflect.Descriptor instead.
+func (*AgentRepo) Descriptor() ([]byte, []int) {
+	return file_agents_agent_v1_agent_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *AgentRepo) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *AgentRepo) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *AgentRepo) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *AgentRepo) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *AgentRepo) GetGitUrl() string {
+	if x != nil {
+		return x.GitUrl
+	}
+	return ""
+}
+
+func (x *AgentRepo) GetDefaultBranch() string {
+	if x != nil {
+		return x.DefaultBranch
+	}
+	return ""
+}
+
+func (x *AgentRepo) GetIsActive() bool {
+	if x != nil {
+		return x.IsActive
+	}
+	return false
+}
+
 var File_agents_agent_v1_agent_proto protoreflect.FileDescriptor
 
 const file_agents_agent_v1_agent_proto_rawDesc = "" +
@@ -2062,7 +2244,20 @@ const file_agents_agent_v1_agent_proto_rawDesc = "" +
 	"\fsuccess_rate\x18\x05 \x01(\x01R\vsuccessRate\x12#\n" +
 	"\rcircuit_state\x18\x06 \x01(\tR\fcircuitState\x12\x1f\n" +
 	"\vactive_runs\x18\a \x01(\x05R\n" +
-	"activeRuns*\xe8\x01\n" +
+	"activeRuns\"3\n" +
+	"\x10ListReposRequest\x12\x1f\n" +
+	"\vactive_only\x18\x01 \x01(\bR\n" +
+	"activeOnly\"E\n" +
+	"\x11ListReposResponse\x120\n" +
+	"\x05repos\x18\x01 \x03(\v2\x1a.agents.agent.v1.AgentRepoR\x05repos\"\xd1\x01\n" +
+	"\tAgentRepo\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12!\n" +
+	"\fdisplay_name\x18\x03 \x01(\tR\vdisplayName\x12 \n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x17\n" +
+	"\agit_url\x18\x05 \x01(\tR\x06gitUrl\x12%\n" +
+	"\x0edefault_branch\x18\x06 \x01(\tR\rdefaultBranch\x12\x1b\n" +
+	"\tis_active\x18\a \x01(\bR\bisActive*\xe8\x01\n" +
 	"\x0eAgentRunStatus\x12 \n" +
 	"\x1cAGENT_RUN_STATUS_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18AGENT_RUN_STATUS_PENDING\x10\x01\x12\x1c\n" +
@@ -2070,7 +2265,7 @@ const file_agents_agent_v1_agent_proto_rawDesc = "" +
 	"\x17AGENT_RUN_STATUS_PAUSED\x10\x03\x12\x1e\n" +
 	"\x1aAGENT_RUN_STATUS_COMPLETED\x10\x04\x12\x1b\n" +
 	"\x17AGENT_RUN_STATUS_FAILED\x10\x05\x12\x1e\n" +
-	"\x1aAGENT_RUN_STATUS_CANCELLED\x10\x062\x8d\t\n" +
+	"\x1aAGENT_RUN_STATUS_CANCELLED\x10\x062\xe1\t\n" +
 	"\fAgentService\x12^\n" +
 	"\rStartAgentRun\x12%.agents.agent.v1.StartAgentRunRequest\x1a&.agents.agent.v1.StartAgentRunResponse\x12X\n" +
 	"\vGetAgentRun\x12#.agents.agent.v1.GetAgentRunRequest\x1a$.agents.agent.v1.GetAgentRunResponse\x12^\n" +
@@ -2083,7 +2278,8 @@ const file_agents_agent_v1_agent_proto_rawDesc = "" +
 	"\rGetRoleConfig\x12%.agents.agent.v1.GetRoleConfigRequest\x1a&.agents.agent.v1.GetRoleConfigResponse\x12c\n" +
 	"\x11StreamAgentOutput\x12).agents.agent.v1.StreamAgentOutputRequest\x1a!.agents.agent.v1.AgentOutputEvent0\x01\x12[\n" +
 	"\fGetAnalytics\x12$.agents.agent.v1.GetAnalyticsRequest\x1a%.agents.agent.v1.GetAnalyticsResponse\x12[\n" +
-	"\fGetDashboard\x12$.agents.agent.v1.GetDashboardRequest\x1a%.agents.agent.v1.GetDashboardResponseB8Z6gitlab.com/xakpro/cg-proto/gen/go/agents/agent;agentv1b\x06proto3"
+	"\fGetDashboard\x12$.agents.agent.v1.GetDashboardRequest\x1a%.agents.agent.v1.GetDashboardResponse\x12R\n" +
+	"\tListRepos\x12!.agents.agent.v1.ListReposRequest\x1a\".agents.agent.v1.ListReposResponseB8Z6gitlab.com/xakpro/cg-proto/gen/go/agents/agent;agentv1b\x06proto3"
 
 var (
 	file_agents_agent_v1_agent_proto_rawDescOnce sync.Once
@@ -2098,7 +2294,7 @@ func file_agents_agent_v1_agent_proto_rawDescGZIP() []byte {
 }
 
 var file_agents_agent_v1_agent_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_agents_agent_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
+var file_agents_agent_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
 var file_agents_agent_v1_agent_proto_goTypes = []any{
 	(AgentRunStatus)(0),              // 0: agents.agent.v1.AgentRunStatus
 	(*AgentRun)(nil),                 // 1: agents.agent.v1.AgentRun
@@ -2132,17 +2328,20 @@ var file_agents_agent_v1_agent_proto_goTypes = []any{
 	(*GetDashboardRequest)(nil),      // 29: agents.agent.v1.GetDashboardRequest
 	(*GetDashboardResponse)(nil),     // 30: agents.agent.v1.GetDashboardResponse
 	(*AgentDashboardEntry)(nil),      // 31: agents.agent.v1.AgentDashboardEntry
-	(*timestamppb.Timestamp)(nil),    // 32: google.protobuf.Timestamp
+	(*ListReposRequest)(nil),         // 32: agents.agent.v1.ListReposRequest
+	(*ListReposResponse)(nil),        // 33: agents.agent.v1.ListReposResponse
+	(*AgentRepo)(nil),                // 34: agents.agent.v1.AgentRepo
+	(*timestamppb.Timestamp)(nil),    // 35: google.protobuf.Timestamp
 }
 var file_agents_agent_v1_agent_proto_depIdxs = []int32{
 	0,  // 0: agents.agent.v1.AgentRun.status:type_name -> agents.agent.v1.AgentRunStatus
-	32, // 1: agents.agent.v1.AgentRun.started_at:type_name -> google.protobuf.Timestamp
-	32, // 2: agents.agent.v1.AgentRun.completed_at:type_name -> google.protobuf.Timestamp
-	32, // 3: agents.agent.v1.AgentRun.created_at:type_name -> google.protobuf.Timestamp
-	32, // 4: agents.agent.v1.AgentRun.updated_at:type_name -> google.protobuf.Timestamp
-	32, // 5: agents.agent.v1.AgentRoleConfig.created_at:type_name -> google.protobuf.Timestamp
-	32, // 6: agents.agent.v1.AgentRoleConfig.updated_at:type_name -> google.protobuf.Timestamp
-	32, // 7: agents.agent.v1.AgentOutputEvent.timestamp:type_name -> google.protobuf.Timestamp
+	35, // 1: agents.agent.v1.AgentRun.started_at:type_name -> google.protobuf.Timestamp
+	35, // 2: agents.agent.v1.AgentRun.completed_at:type_name -> google.protobuf.Timestamp
+	35, // 3: agents.agent.v1.AgentRun.created_at:type_name -> google.protobuf.Timestamp
+	35, // 4: agents.agent.v1.AgentRun.updated_at:type_name -> google.protobuf.Timestamp
+	35, // 5: agents.agent.v1.AgentRoleConfig.created_at:type_name -> google.protobuf.Timestamp
+	35, // 6: agents.agent.v1.AgentRoleConfig.updated_at:type_name -> google.protobuf.Timestamp
+	35, // 7: agents.agent.v1.AgentOutputEvent.timestamp:type_name -> google.protobuf.Timestamp
 	1,  // 8: agents.agent.v1.StartAgentRunResponse.agent_run:type_name -> agents.agent.v1.AgentRun
 	1,  // 9: agents.agent.v1.GetAgentRunResponse.agent_run:type_name -> agents.agent.v1.AgentRun
 	0,  // 10: agents.agent.v1.ListAgentRunsRequest.status:type_name -> agents.agent.v1.AgentRunStatus
@@ -2153,42 +2352,45 @@ var file_agents_agent_v1_agent_proto_depIdxs = []int32{
 	1,  // 15: agents.agent.v1.RetryAgentRunResponse.agent_run:type_name -> agents.agent.v1.AgentRun
 	2,  // 16: agents.agent.v1.ListRoleConfigsResponse.configs:type_name -> agents.agent.v1.AgentRoleConfig
 	2,  // 17: agents.agent.v1.GetRoleConfigResponse.config:type_name -> agents.agent.v1.AgentRoleConfig
-	32, // 18: agents.agent.v1.GetAnalyticsRequest.from_time:type_name -> google.protobuf.Timestamp
-	32, // 19: agents.agent.v1.GetAnalyticsRequest.to_time:type_name -> google.protobuf.Timestamp
+	35, // 18: agents.agent.v1.GetAnalyticsRequest.from_time:type_name -> google.protobuf.Timestamp
+	35, // 19: agents.agent.v1.GetAnalyticsRequest.to_time:type_name -> google.protobuf.Timestamp
 	25, // 20: agents.agent.v1.GetAnalyticsResponse.daily_costs:type_name -> agents.agent.v1.CostByDay
 	26, // 21: agents.agent.v1.GetAnalyticsResponse.role_costs:type_name -> agents.agent.v1.CostByRole
 	27, // 22: agents.agent.v1.GetAnalyticsResponse.task_costs:type_name -> agents.agent.v1.TaskCostSummary
 	28, // 23: agents.agent.v1.GetAnalyticsResponse.summary:type_name -> agents.agent.v1.AnalyticsSummary
 	31, // 24: agents.agent.v1.GetDashboardResponse.entries:type_name -> agents.agent.v1.AgentDashboardEntry
-	4,  // 25: agents.agent.v1.AgentService.StartAgentRun:input_type -> agents.agent.v1.StartAgentRunRequest
-	6,  // 26: agents.agent.v1.AgentService.GetAgentRun:input_type -> agents.agent.v1.GetAgentRunRequest
-	8,  // 27: agents.agent.v1.AgentService.ListAgentRuns:input_type -> agents.agent.v1.ListAgentRunsRequest
-	10, // 28: agents.agent.v1.AgentService.PauseAgentRun:input_type -> agents.agent.v1.PauseAgentRunRequest
-	12, // 29: agents.agent.v1.AgentService.ResumeAgentRun:input_type -> agents.agent.v1.ResumeAgentRunRequest
-	14, // 30: agents.agent.v1.AgentService.StopAgentRun:input_type -> agents.agent.v1.StopAgentRunRequest
-	16, // 31: agents.agent.v1.AgentService.RetryAgentRun:input_type -> agents.agent.v1.RetryAgentRunRequest
-	18, // 32: agents.agent.v1.AgentService.ListRoleConfigs:input_type -> agents.agent.v1.ListRoleConfigsRequest
-	20, // 33: agents.agent.v1.AgentService.GetRoleConfig:input_type -> agents.agent.v1.GetRoleConfigRequest
-	22, // 34: agents.agent.v1.AgentService.StreamAgentOutput:input_type -> agents.agent.v1.StreamAgentOutputRequest
-	23, // 35: agents.agent.v1.AgentService.GetAnalytics:input_type -> agents.agent.v1.GetAnalyticsRequest
-	29, // 36: agents.agent.v1.AgentService.GetDashboard:input_type -> agents.agent.v1.GetDashboardRequest
-	5,  // 37: agents.agent.v1.AgentService.StartAgentRun:output_type -> agents.agent.v1.StartAgentRunResponse
-	7,  // 38: agents.agent.v1.AgentService.GetAgentRun:output_type -> agents.agent.v1.GetAgentRunResponse
-	9,  // 39: agents.agent.v1.AgentService.ListAgentRuns:output_type -> agents.agent.v1.ListAgentRunsResponse
-	11, // 40: agents.agent.v1.AgentService.PauseAgentRun:output_type -> agents.agent.v1.PauseAgentRunResponse
-	13, // 41: agents.agent.v1.AgentService.ResumeAgentRun:output_type -> agents.agent.v1.ResumeAgentRunResponse
-	15, // 42: agents.agent.v1.AgentService.StopAgentRun:output_type -> agents.agent.v1.StopAgentRunResponse
-	17, // 43: agents.agent.v1.AgentService.RetryAgentRun:output_type -> agents.agent.v1.RetryAgentRunResponse
-	19, // 44: agents.agent.v1.AgentService.ListRoleConfigs:output_type -> agents.agent.v1.ListRoleConfigsResponse
-	21, // 45: agents.agent.v1.AgentService.GetRoleConfig:output_type -> agents.agent.v1.GetRoleConfigResponse
-	3,  // 46: agents.agent.v1.AgentService.StreamAgentOutput:output_type -> agents.agent.v1.AgentOutputEvent
-	24, // 47: agents.agent.v1.AgentService.GetAnalytics:output_type -> agents.agent.v1.GetAnalyticsResponse
-	30, // 48: agents.agent.v1.AgentService.GetDashboard:output_type -> agents.agent.v1.GetDashboardResponse
-	37, // [37:49] is the sub-list for method output_type
-	25, // [25:37] is the sub-list for method input_type
-	25, // [25:25] is the sub-list for extension type_name
-	25, // [25:25] is the sub-list for extension extendee
-	0,  // [0:25] is the sub-list for field type_name
+	34, // 25: agents.agent.v1.ListReposResponse.repos:type_name -> agents.agent.v1.AgentRepo
+	4,  // 26: agents.agent.v1.AgentService.StartAgentRun:input_type -> agents.agent.v1.StartAgentRunRequest
+	6,  // 27: agents.agent.v1.AgentService.GetAgentRun:input_type -> agents.agent.v1.GetAgentRunRequest
+	8,  // 28: agents.agent.v1.AgentService.ListAgentRuns:input_type -> agents.agent.v1.ListAgentRunsRequest
+	10, // 29: agents.agent.v1.AgentService.PauseAgentRun:input_type -> agents.agent.v1.PauseAgentRunRequest
+	12, // 30: agents.agent.v1.AgentService.ResumeAgentRun:input_type -> agents.agent.v1.ResumeAgentRunRequest
+	14, // 31: agents.agent.v1.AgentService.StopAgentRun:input_type -> agents.agent.v1.StopAgentRunRequest
+	16, // 32: agents.agent.v1.AgentService.RetryAgentRun:input_type -> agents.agent.v1.RetryAgentRunRequest
+	18, // 33: agents.agent.v1.AgentService.ListRoleConfigs:input_type -> agents.agent.v1.ListRoleConfigsRequest
+	20, // 34: agents.agent.v1.AgentService.GetRoleConfig:input_type -> agents.agent.v1.GetRoleConfigRequest
+	22, // 35: agents.agent.v1.AgentService.StreamAgentOutput:input_type -> agents.agent.v1.StreamAgentOutputRequest
+	23, // 36: agents.agent.v1.AgentService.GetAnalytics:input_type -> agents.agent.v1.GetAnalyticsRequest
+	29, // 37: agents.agent.v1.AgentService.GetDashboard:input_type -> agents.agent.v1.GetDashboardRequest
+	32, // 38: agents.agent.v1.AgentService.ListRepos:input_type -> agents.agent.v1.ListReposRequest
+	5,  // 39: agents.agent.v1.AgentService.StartAgentRun:output_type -> agents.agent.v1.StartAgentRunResponse
+	7,  // 40: agents.agent.v1.AgentService.GetAgentRun:output_type -> agents.agent.v1.GetAgentRunResponse
+	9,  // 41: agents.agent.v1.AgentService.ListAgentRuns:output_type -> agents.agent.v1.ListAgentRunsResponse
+	11, // 42: agents.agent.v1.AgentService.PauseAgentRun:output_type -> agents.agent.v1.PauseAgentRunResponse
+	13, // 43: agents.agent.v1.AgentService.ResumeAgentRun:output_type -> agents.agent.v1.ResumeAgentRunResponse
+	15, // 44: agents.agent.v1.AgentService.StopAgentRun:output_type -> agents.agent.v1.StopAgentRunResponse
+	17, // 45: agents.agent.v1.AgentService.RetryAgentRun:output_type -> agents.agent.v1.RetryAgentRunResponse
+	19, // 46: agents.agent.v1.AgentService.ListRoleConfigs:output_type -> agents.agent.v1.ListRoleConfigsResponse
+	21, // 47: agents.agent.v1.AgentService.GetRoleConfig:output_type -> agents.agent.v1.GetRoleConfigResponse
+	3,  // 48: agents.agent.v1.AgentService.StreamAgentOutput:output_type -> agents.agent.v1.AgentOutputEvent
+	24, // 49: agents.agent.v1.AgentService.GetAnalytics:output_type -> agents.agent.v1.GetAnalyticsResponse
+	30, // 50: agents.agent.v1.AgentService.GetDashboard:output_type -> agents.agent.v1.GetDashboardResponse
+	33, // 51: agents.agent.v1.AgentService.ListRepos:output_type -> agents.agent.v1.ListReposResponse
+	39, // [39:52] is the sub-list for method output_type
+	26, // [26:39] is the sub-list for method input_type
+	26, // [26:26] is the sub-list for extension type_name
+	26, // [26:26] is the sub-list for extension extendee
+	0,  // [0:26] is the sub-list for field type_name
 }
 
 func init() { file_agents_agent_v1_agent_proto_init() }
@@ -2207,7 +2409,7 @@ func file_agents_agent_v1_agent_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_agents_agent_v1_agent_proto_rawDesc), len(file_agents_agent_v1_agent_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   31,
+			NumMessages:   34,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

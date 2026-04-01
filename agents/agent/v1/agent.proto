@@ -96,6 +96,9 @@ service AgentService {
 
   // GetDashboard returns per-role agent status summary.
   rpc GetDashboard(GetDashboardRequest) returns (GetDashboardResponse);
+
+  // ListRepos returns available git repositories that agents can work with.
+  rpc ListRepos(ListReposRequest) returns (ListReposResponse);
 }
 
 // StartAgentRun
@@ -252,4 +255,24 @@ message AgentDashboardEntry {
   double success_rate = 5;
   string circuit_state = 6;
   int32 active_runs = 7;
+}
+
+// ListRepos
+message ListReposRequest {
+  bool active_only = 1;
+}
+
+message ListReposResponse {
+  repeated AgentRepo repos = 1;
+}
+
+// AgentRepo represents a git repository available to agents.
+message AgentRepo {
+  string id = 1;
+  string name = 2;
+  string display_name = 3;
+  string description = 4;
+  string git_url = 5;
+  string default_branch = 6;
+  bool is_active = 7;
 }
