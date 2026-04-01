@@ -402,6 +402,10 @@ message DealProto {
   int64  created_by      = 16;
   google.protobuf.Timestamp created_at     = 17;
   google.protobuf.Timestamp updated_at     = 18;
+
+  // Enriched contact info (populated server-side from cg-users)
+  string contact_name    = 19; // display name of the user linked via user_id
+  string contact_phone   = 20; // phone of the user linked via user_id
 }
 
 message DealStageHistoryProto {
