@@ -903,7 +903,7 @@ const file_users_auth_auth_proto_rawDesc = "" +
 	"\fRefreshToken\x12\".users.auth.v1.RefreshTokenRequest\x1a#.users.auth.v1.RefreshTokenResponse\x12E\n" +
 	"\x06Logout\x12\x1c.users.auth.v1.LogoutRequest\x1a\x1d.users.auth.v1.LogoutResponse\x12Z\n" +
 	"\rValidateToken\x12#.users.auth.v1.ValidateTokenRequest\x1a$.users.auth.v1.ValidateTokenResponse\x12T\n" +
-	"\vGetSessions\x12!.users.auth.v1.GetSessionsRequest\x1a\".users.auth.v1.GetSessionsResponseB5Z3github.com/4ubak/cg-proto/gen/go/users/auth;authv1b\x06proto3"
+	"\vGetSessions\x12!.users.auth.v1.GetSessionsRequest\x1a\".users.auth.v1.GetSessionsResponseB4Z2github.com/4ubak/cg-proto/gen/go/users/auth;authv1b\x06proto3"
 
 var (
 	file_users_auth_auth_proto_rawDescOnce sync.Once

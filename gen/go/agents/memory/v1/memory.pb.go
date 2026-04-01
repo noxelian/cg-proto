@@ -1106,7 +1106,7 @@ const file_agents_memory_v1_memory_proto_rawDesc = "" +
 	"\fUpdateMemory\x12%.agents.memory.v1.UpdateMemoryRequest\x1a&.agents.memory.v1.UpdateMemoryResponse\x12]\n" +
 	"\fDeleteMemory\x12%.agents.memory.v1.DeleteMemoryRequest\x1a&.agents.memory.v1.DeleteMemoryResponse\x12c\n" +
 	"\x0eSearchMemories\x12'.agents.memory.v1.SearchMemoriesRequest\x1a(.agents.memory.v1.SearchMemoriesResponse\x12c\n" +
-	"\x0eAddMemoryEntry\x12'.agents.memory.v1.AddMemoryEntryRequest\x1a(.agents.memory.v1.AddMemoryEntryResponseB:Z8github.com/4ubak/cg-proto/gen/go/agents/memory;memoryv1b\x06proto3"
+	"\x0eAddMemoryEntry\x12'.agents.memory.v1.AddMemoryEntryRequest\x1a(.agents.memory.v1.AddMemoryEntryResponseB9Z7github.com/4ubak/cg-proto/gen/go/agents/memory;memoryv1b\x06proto3"
 
 var (
 	file_agents_memory_v1_memory_proto_rawDescOnce sync.Once

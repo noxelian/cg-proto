@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package users.user.v1;
 
-option go_package = "gitlab.com/xakpro/cg-proto/gen/go/users/user;userv1";
+option go_package = "github.com/4ubak/cg-proto/gen/go/users/user;userv1";
 
 import "google/protobuf/timestamp.proto";
 

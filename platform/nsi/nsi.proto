@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package platform.nsi.v1;
 
-option go_package = "gitlab.com/xakpro/cg-proto/gen/go/platform/nsi;nsiv1";
+option go_package = "github.com/4ubak/cg-proto/gen/go/platform/nsi;nsiv1";
 
 service NsiService {
   rpc GetCities(GetCitiesRequest) returns (GetCitiesResponse);

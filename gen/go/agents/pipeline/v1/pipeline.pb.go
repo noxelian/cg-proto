@@ -648,7 +648,7 @@ const file_agents_pipeline_v1_pipeline_proto_rawDesc = "" +
 	"\n" +
 	"RejectTask\x12%.agents.pipeline.v1.RejectTaskRequest\x1a&.agents.pipeline.v1.RejectTaskResponse\x12p\n" +
 	"\x11GetReviewArtifact\x12,.agents.pipeline.v1.GetReviewArtifactRequest\x1a-.agents.pipeline.v1.GetReviewArtifactResponse\x12v\n" +
-	"\x13ListReviewArtifacts\x12..agents.pipeline.v1.ListReviewArtifactsRequest\x1a/.agents.pipeline.v1.ListReviewArtifactsResponseB>Z<github.com/4ubak/cg-proto/gen/go/agents/pipeline;pipelinev1b\x06proto3"
+	"\x13ListReviewArtifacts\x12..agents.pipeline.v1.ListReviewArtifactsRequest\x1a/.agents.pipeline.v1.ListReviewArtifactsResponseB=Z;github.com/4ubak/cg-proto/gen/go/agents/pipeline;pipelinev1b\x06proto3"
 
 var (
 	file_agents_pipeline_v1_pipeline_proto_rawDescOnce sync.Once

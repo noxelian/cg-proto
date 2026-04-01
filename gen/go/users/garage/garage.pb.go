@@ -3838,7 +3838,7 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\x15ListUpcomingReminders\x12-.users.garage.v1.ListUpcomingRemindersRequest\x1a..users.garage.v1.ListUpcomingRemindersResponse\x12a\n" +
 	"\x0eUpdateReminder\x12&.users.garage.v1.UpdateReminderRequest\x1a'.users.garage.v1.UpdateReminderResponse\x12g\n" +
 	"\x10CompleteReminder\x12(.users.garage.v1.CompleteReminderRequest\x1a).users.garage.v1.CompleteReminderResponse\x12a\n" +
-	"\x0eDeleteReminder\x12&.users.garage.v1.DeleteReminderRequest\x1a'.users.garage.v1.DeleteReminderResponseB9Z7github.com/4ubak/cg-proto/gen/go/users/garage;garagev1b\x06proto3"
+	"\x0eDeleteReminder\x12&.users.garage.v1.DeleteReminderRequest\x1a'.users.garage.v1.DeleteReminderResponseB8Z6github.com/4ubak/cg-proto/gen/go/users/garage;garagev1b\x06proto3"
 
 var (
 	file_users_garage_garage_proto_rawDescOnce sync.Once

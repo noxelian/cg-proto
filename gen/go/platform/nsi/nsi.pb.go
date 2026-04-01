@@ -3981,7 +3981,7 @@ const file_platform_nsi_nsi_proto_rawDesc = "" +
 	"\x12DeleteServiceGroup\x12*.platform.nsi.v1.DeleteServiceGroupRequest\x1a+.platform.nsi.v1.DeleteServiceGroupResponse\x12v\n" +
 	"\x15CreateServiceCategory\x12-.platform.nsi.v1.CreateServiceCategoryRequest\x1a..platform.nsi.v1.CreateServiceCategoryResponse\x12v\n" +
 	"\x15UpdateServiceCategory\x12-.platform.nsi.v1.UpdateServiceCategoryRequest\x1a..platform.nsi.v1.UpdateServiceCategoryResponse\x12v\n" +
-	"\x15DeleteServiceCategory\x12-.platform.nsi.v1.DeleteServiceCategoryRequest\x1a..platform.nsi.v1.DeleteServiceCategoryResponseB6Z4github.com/4ubak/cg-proto/gen/go/platform/nsi;nsiv1b\x06proto3"
+	"\x15DeleteServiceCategory\x12-.platform.nsi.v1.DeleteServiceCategoryRequest\x1a..platform.nsi.v1.DeleteServiceCategoryResponseB5Z3github.com/4ubak/cg-proto/gen/go/platform/nsi;nsiv1b\x06proto3"
 
 var (
 	file_platform_nsi_nsi_proto_rawDescOnce sync.Once

@@ -6481,7 +6481,7 @@ const file_ai_chatbot_proto_rawDesc = "" +
 	"\x12GetFunnelAnalytics\x12 .ai.v1.GetFunnelAnalyticsRequest\x1a!.ai.v1.GetFunnelAnalyticsResponse\x12_\n" +
 	"\x14GetPromptPerformance\x12\".ai.v1.GetPromptPerformanceRequest\x1a#.ai.v1.GetPromptPerformanceResponse\x12J\n" +
 	"\rListFollowUps\x12\x1b.ai.v1.ListFollowUpsRequest\x1a\x1c.ai.v1.ListFollowUpsResponse\x12M\n" +
-	"\x0eCancelFollowUp\x12\x1c.ai.v1.CancelFollowUpRequest\x1a\x1d.ai.v1.CancelFollowUpResponseB+Z)github.com/4ubak/cg-proto/gen/go/ai;aiv1b\x06proto3"
+	"\x0eCancelFollowUp\x12\x1c.ai.v1.CancelFollowUpRequest\x1a\x1d.ai.v1.CancelFollowUpResponseB*Z(github.com/4ubak/cg-proto/gen/go/ai;aiv1b\x06proto3"
 
 var (
 	file_ai_chatbot_proto_rawDescOnce sync.Once

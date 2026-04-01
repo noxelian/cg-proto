@@ -2251,7 +2251,7 @@ const file_booking_booking_v1_booking_proto_rawDesc = "" +
 	"\x11UpdateWashService\x12,.booking.booking.v1.UpdateWashServiceRequest\x1a-.booking.booking.v1.UpdateWashServiceResponse\x12g\n" +
 	"\x0eSetWashPricing\x12).booking.booking.v1.SetWashPricingRequest\x1a*.booking.booking.v1.SetWashPricingResponse\x12p\n" +
 	"\x11GetAvailableSlots\x12,.booking.booking.v1.GetAvailableSlotsRequest\x1a-.booking.booking.v1.GetAvailableSlotsResponse\x12p\n" +
-	"\x11GenerateWashSlots\x12,.booking.booking.v1.GenerateWashSlotsRequest\x1a-.booking.booking.v1.GenerateWashSlotsResponseB=Z;github.com/4ubak/cg-proto/gen/go/booking/booking;bookingv1b\x06proto3"
+	"\x11GenerateWashSlots\x12,.booking.booking.v1.GenerateWashSlotsRequest\x1a-.booking.booking.v1.GenerateWashSlotsResponseB<Z:github.com/4ubak/cg-proto/gen/go/booking/booking;bookingv1b\x06proto3"
 
 var (
 	file_booking_booking_v1_booking_proto_rawDescOnce sync.Once

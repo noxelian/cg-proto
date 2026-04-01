@@ -1951,7 +1951,7 @@ const file_agents_task_v1_task_proto_rawDesc = "" +
 	"\x0eGetActivityLog\x12%.agents.task.v1.GetActivityLogRequest\x1a&.agents.task.v1.GetActivityLogResponse\x12M\n" +
 	"\bAddLabel\x12\x1f.agents.task.v1.AddLabelRequest\x1a .agents.task.v1.AddLabelResponse\x12V\n" +
 	"\vRemoveLabel\x12\".agents.task.v1.RemoveLabelRequest\x1a#.agents.task.v1.RemoveLabelResponse\x12X\n" +
-	"\x10WatchTaskUpdates\x12'.agents.task.v1.WatchTaskUpdatesRequest\x1a\x19.agents.task.v1.TaskEvent0\x01B6Z4github.com/4ubak/cg-proto/gen/go/agents/task;taskv1b\x06proto3"
+	"\x10WatchTaskUpdates\x12'.agents.task.v1.WatchTaskUpdatesRequest\x1a\x19.agents.task.v1.TaskEvent0\x01B5Z3github.com/4ubak/cg-proto/gen/go/agents/task;taskv1b\x06proto3"
 
 var (
 	file_agents_task_v1_task_proto_rawDescOnce sync.Once

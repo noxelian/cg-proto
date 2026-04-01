@@ -5529,7 +5529,7 @@ const file_orders_order_v1_order_proto_rawDesc = "" +
 	"\x0fDeleteOrderItem\x12'.orders.order.v1.DeleteOrderItemRequest\x1a(.orders.order.v1.DeleteOrderItemResponse\x12s\n" +
 	"\x14UpdateDeliveryStatus\x12,.orders.order.v1.UpdateDeliveryStatusRequest\x1a-.orders.order.v1.UpdateDeliveryStatusResponse\x12a\n" +
 	"\x0eSetOrderStatus\x12&.orders.order.v1.SetOrderStatusRequest\x1a'.orders.order.v1.SetOrderStatusResponse\x12s\n" +
-	"\x14GetSubscriptionStats\x12,.orders.order.v1.GetSubscriptionStatsRequest\x1a-.orders.order.v1.GetSubscriptionStatsResponseB8Z6github.com/4ubak/cg-proto/gen/go/orders/order;orderv1b\x06proto3"
+	"\x14GetSubscriptionStats\x12,.orders.order.v1.GetSubscriptionStatsRequest\x1a-.orders.order.v1.GetSubscriptionStatsResponseB7Z5github.com/4ubak/cg-proto/gen/go/orders/order;orderv1b\x06proto3"
 
 var (
 	file_orders_order_v1_order_proto_rawDescOnce sync.Once

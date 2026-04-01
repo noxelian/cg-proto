@@ -13436,7 +13436,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\x0eMarkPaidManual\x12\".workshop.v1.MarkPaidManualRequest\x1a#.workshop.v1.MarkPaidManualResponse\x12V\n" +
 	"\rCancelPayment\x12!.workshop.v1.CancelPaymentRequest\x1a\".workshop.v1.CancelPaymentResponse\x12b\n" +
 	"\x11GetPaymentHistory\x12%.workshop.v1.GetPaymentHistoryRequest\x1a&.workshop.v1.GetPaymentHistoryResponse\x12b\n" +
-	"\x11GetWarrantyOrders\x12%.workshop.v1.GetWarrantyOrdersRequest\x1a&.workshop.v1.GetWarrantyOrdersResponseB7Z5github.com/4ubak/cg-proto/gen/go/workshop;workshopv1b\x06proto3"
+	"\x11GetWarrantyOrders\x12%.workshop.v1.GetWarrantyOrdersRequest\x1a&.workshop.v1.GetWarrantyOrdersResponseB6Z4github.com/4ubak/cg-proto/gen/go/workshop;workshopv1b\x06proto3"
 
 var (
 	file_workshop_workshop_proto_rawDescOnce sync.Once

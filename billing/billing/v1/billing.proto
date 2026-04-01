@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package billing.billing.v1;
 
-option go_package = "gitlab.com/xakpro/cg-proto/gen/go/billing/billing;billingv1";
+option go_package = "github.com/4ubak/cg-proto/gen/go/billing/billing;billingv1";
 
 import "google/protobuf/timestamp.proto";
 

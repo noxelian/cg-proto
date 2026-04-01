@@ -1674,7 +1674,7 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\x10UnregisterDevice\x126.communication.notification.v1.UnregisterDeviceRequest\x1a7.communication.notification.v1.UnregisterDeviceResponse\x12z\n" +
 	"\rGetSMSBalance\x123.communication.notification.v1.GetSMSBalanceRequest\x1a4.communication.notification.v1.GetSMSBalanceResponse\x12}\n" +
 	"\x0eGetPreferences\x124.communication.notification.v1.GetPreferencesRequest\x1a5.communication.notification.v1.GetPreferencesResponse\x12\x86\x01\n" +
-	"\x11UpdatePreferences\x127.communication.notification.v1.UpdatePreferencesRequest\x1a8.communication.notification.v1.UpdatePreferencesResponseBMZKgithub.com/4ubak/cg-proto/gen/go/communication/notification;notificationv1b\x06proto3"
+	"\x11UpdatePreferences\x127.communication.notification.v1.UpdatePreferencesRequest\x1a8.communication.notification.v1.UpdatePreferencesResponseBLZJgithub.com/4ubak/cg-proto/gen/go/communication/notification;notificationv1b\x06proto3"
 
 var (
 	file_communication_notification_notification_proto_rawDescOnce sync.Once

@@ -934,7 +934,7 @@ const file_communication_chat_chat_proto_rawDesc = "" +
 	"\vSendMessage\x12).communication.chat.v1.SendMessageRequest\x1a*.communication.chat.v1.SendMessageResponse\x12d\n" +
 	"\vGetMessages\x12).communication.chat.v1.GetMessagesRequest\x1a*.communication.chat.v1.GetMessagesResponse\x12a\n" +
 	"\n" +
-	"MarkAsRead\x12(.communication.chat.v1.MarkAsReadRequest\x1a).communication.chat.v1.MarkAsReadResponseB=Z;github.com/4ubak/cg-proto/gen/go/communication/chat;chatv1b\x06proto3"
+	"MarkAsRead\x12(.communication.chat.v1.MarkAsReadRequest\x1a).communication.chat.v1.MarkAsReadResponseB<Z:github.com/4ubak/cg-proto/gen/go/communication/chat;chatv1b\x06proto3"
 
 var (
 	file_communication_chat_chat_proto_rawDescOnce sync.Once

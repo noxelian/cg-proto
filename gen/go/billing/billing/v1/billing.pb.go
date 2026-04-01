@@ -1921,7 +1921,7 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\x10GetPayoutHistory\x12+.billing.billing.v1.GetPayoutHistoryRequest\x1a,.billing.billing.v1.GetPayoutHistoryResponse\x12y\n" +
 	"\x14ReconcileTransaction\x12/.billing.billing.v1.ReconcileTransactionRequest\x1a0.billing.billing.v1.ReconcileTransactionResponse\x12j\n" +
 	"\x0fGetOrgStatement\x12*.billing.billing.v1.GetOrgStatementRequest\x1a+.billing.billing.v1.GetOrgStatementResponse\x12j\n" +
-	"\x0fGetRevenueStats\x12*.billing.billing.v1.GetRevenueStatsRequest\x1a+.billing.billing.v1.GetRevenueStatsResponseB=Z;github.com/4ubak/cg-proto/gen/go/billing/billing;billingv1b\x06proto3"
+	"\x0fGetRevenueStats\x12*.billing.billing.v1.GetRevenueStatsRequest\x1a+.billing.billing.v1.GetRevenueStatsResponseB<Z:github.com/4ubak/cg-proto/gen/go/billing/billing;billingv1b\x06proto3"
 
 var (
 	file_billing_billing_v1_billing_proto_rawDescOnce sync.Once

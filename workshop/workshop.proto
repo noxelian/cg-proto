@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package workshop.v1;
 
-option go_package = "gitlab.com/xakpro/cg-proto/gen/go/workshop;workshopv1";
+option go_package = "github.com/4ubak/cg-proto/gen/go/workshop;workshopv1";
 
 import "google/protobuf/timestamp.proto";
 

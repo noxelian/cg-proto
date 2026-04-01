@@ -8465,7 +8465,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x19DeleteWebhookSubscription\x12(.crm.v1.DeleteWebhookSubscriptionRequest\x1a).crm.v1.DeleteWebhookSubscriptionResponse\x12^\n" +
 	"\x13GetFunnelConversion\x12\".crm.v1.GetFunnelConversionRequest\x1a#.crm.v1.GetFunnelConversionResponse\x12R\n" +
 	"\x0fGetManagerStats\x12\x1e.crm.v1.GetManagerStatsRequest\x1a\x1f.crm.v1.GetManagerStatsResponse\x12L\n" +
-	"\rGetDealVolume\x12\x1c.crm.v1.GetDealVolumeRequest\x1a\x1d.crm.v1.GetDealVolumeResponseB-Z+github.com/4ubak/cg-proto/gen/go/crm;crmv1b\x06proto3"
+	"\rGetDealVolume\x12\x1c.crm.v1.GetDealVolumeRequest\x1a\x1d.crm.v1.GetDealVolumeResponseB,Z*github.com/4ubak/cg-proto/gen/go/crm;crmv1b\x06proto3"
 
 var (
 	file_crm_crm_proto_rawDescOnce sync.Once
