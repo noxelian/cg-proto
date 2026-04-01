@@ -2947,9 +2947,8 @@ type DealProto struct {
 	OrganizationId string                 `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	PipelineId     string                 `protobuf:"bytes,3,opt,name=pipeline_id,json=pipelineId,proto3" json:"pipeline_id,omitempty"`
 	StageId        string                 `protobuf:"bytes,4,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
-	ContactId      string                 `protobuf:"bytes,5,opt,name=contact_id,json=contactId,proto3" json:"contact_id,omitempty"`
+	UserId         int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // 0 if null — cg-users user linked to this deal
 	CompanyId      string                 `protobuf:"bytes,6,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`     // empty if null
-	VehicleId      string                 `protobuf:"bytes,7,opt,name=vehicle_id,json=vehicleId,proto3" json:"vehicle_id,omitempty"`     // empty if null
 	AssignedTo     int64                  `protobuf:"varint,8,opt,name=assigned_to,json=assignedTo,proto3" json:"assigned_to,omitempty"` // 0 if null
 	Title          string                 `protobuf:"bytes,9,opt,name=title,proto3" json:"title,omitempty"`
 	Amount         float64                `protobuf:"fixed64,10,opt,name=amount,proto3" json:"amount,omitempty"`
@@ -3023,23 +3022,16 @@ func (x *DealProto) GetStageId() string {
 	return ""
 }
 
-func (x *DealProto) GetContactId() string {
+func (x *DealProto) GetUserId() int64 {
 	if x != nil {
-		return x.ContactId
+		return x.UserId
 	}
-	return ""
+	return 0
 }
 
 func (x *DealProto) GetCompanyId() string {
 	if x != nil {
 		return x.CompanyId
-	}
-	return ""
-}
-
-func (x *DealProto) GetVehicleId() string {
-	if x != nil {
-		return x.VehicleId
 	}
 	return ""
 }
@@ -3209,8 +3201,8 @@ type ActivityProto struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	DealId         string                 `protobuf:"bytes,3,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`          // empty if null
-	ContactId      string                 `protobuf:"bytes,4,opt,name=contact_id,json=contactId,proto3" json:"contact_id,omitempty"` // empty if null
+	DealId         string                 `protobuf:"bytes,3,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`  // empty if null
+	UserId         int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // 0 if null — cg-users user linked to this activity
 	EntityType     string                 `protobuf:"bytes,5,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
 	EntityId       string                 `protobuf:"bytes,6,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
 	Type           string                 `protobuf:"bytes,7,opt,name=type,proto3" json:"type,omitempty"`
@@ -3272,11 +3264,11 @@ func (x *ActivityProto) GetDealId() string {
 	return ""
 }
 
-func (x *ActivityProto) GetContactId() string {
+func (x *ActivityProto) GetUserId() int64 {
 	if x != nil {
-		return x.ContactId
+		return x.UserId
 	}
-	return ""
+	return 0
 }
 
 func (x *ActivityProto) GetEntityType() string {
@@ -3326,8 +3318,7 @@ type CreateDealRequest struct {
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	PipelineId     string                 `protobuf:"bytes,2,opt,name=pipeline_id,json=pipelineId,proto3" json:"pipeline_id,omitempty"`
 	StageId        string                 `protobuf:"bytes,3,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
-	ContactId      string                 `protobuf:"bytes,4,opt,name=contact_id,json=contactId,proto3" json:"contact_id,omitempty"`     // required per D-08
-	VehicleId      string                 `protobuf:"bytes,5,opt,name=vehicle_id,json=vehicleId,proto3" json:"vehicle_id,omitempty"`     // optional per D-09
+	UserId         int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // optional — cg-users user linked to this deal
 	AssignedTo     int64                  `protobuf:"varint,6,opt,name=assigned_to,json=assignedTo,proto3" json:"assigned_to,omitempty"` // optional
 	Title          string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
 	Amount         float64                `protobuf:"fixed64,8,opt,name=amount,proto3" json:"amount,omitempty"`
@@ -3388,18 +3379,11 @@ func (x *CreateDealRequest) GetStageId() string {
 	return ""
 }
 
-func (x *CreateDealRequest) GetContactId() string {
+func (x *CreateDealRequest) GetUserId() int64 {
 	if x != nil {
-		return x.ContactId
+		return x.UserId
 	}
-	return ""
-}
-
-func (x *CreateDealRequest) GetVehicleId() string {
-	if x != nil {
-		return x.VehicleId
-	}
-	return ""
+	return 0
 }
 
 func (x *CreateDealRequest) GetAssignedTo() int64 {
@@ -3586,7 +3570,7 @@ type ListDealsRequest struct {
 	Status         string                 `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`                            // optional filter
 	DateFrom       *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=date_from,json=dateFrom,proto3" json:"date_from,omitempty"`
 	DateTo         *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=date_to,json=dateTo,proto3" json:"date_to,omitempty"`
-	VehicleId      string                 `protobuf:"bytes,8,opt,name=vehicle_id,json=vehicleId,proto3" json:"vehicle_id,omitempty"` // optional filter for VEH-03
+	UserId         int64                  `protobuf:"varint,8,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // optional filter — filter by linked cg-users user_id
 	Page           int32                  `protobuf:"varint,9,opt,name=page,proto3" json:"page,omitempty"`
 	PageSize       int32                  `protobuf:"varint,10,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	unknownFields  protoimpl.UnknownFields
@@ -3672,11 +3656,11 @@ func (x *ListDealsRequest) GetDateTo() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *ListDealsRequest) GetVehicleId() string {
+func (x *ListDealsRequest) GetUserId() int64 {
 	if x != nil {
-		return x.VehicleId
+		return x.UserId
 	}
-	return ""
+	return 0
 }
 
 func (x *ListDealsRequest) GetPage() int32 {
@@ -4297,10 +4281,12 @@ func (x *GetDealActivitiesResponse) GetActivities() []*ActivityProto {
 	return nil
 }
 
+// GetUserActivitiesRequest fetches paginated activities for a cg-users user.
+// Replaces GetContactActivitiesRequest (contact_id UUID -> user_id BIGINT).
 type GetContactActivitiesRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	ContactId      string                 `protobuf:"bytes,2,opt,name=contact_id,json=contactId,proto3" json:"contact_id,omitempty"`
+	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // cg-users user_id; replaces contact_id UUID
 	Page           int32                  `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
 	PageSize       int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	unknownFields  protoimpl.UnknownFields
@@ -4344,11 +4330,11 @@ func (x *GetContactActivitiesRequest) GetOrganizationId() string {
 	return ""
 }
 
-func (x *GetContactActivitiesRequest) GetContactId() string {
+func (x *GetContactActivitiesRequest) GetUserId() int64 {
 	if x != nil {
-		return x.ContactId
+		return x.UserId
 	}
-	return ""
+	return 0
 }
 
 func (x *GetContactActivitiesRequest) GetPage() int32 {
@@ -5174,7 +5160,7 @@ type TaskProto struct {
 	Title          string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
 	Description    string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
 	DealId         string                 `protobuf:"bytes,5,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`          // empty if null
-	ContactId      string                 `protobuf:"bytes,6,opt,name=contact_id,json=contactId,proto3" json:"contact_id,omitempty"` // empty if null
+	UserId         int64                  `protobuf:"varint,6,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`         // 0 if null — cg-users user linked to this task
 	CompanyId      string                 `protobuf:"bytes,7,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"` // empty if null
 	AssignedTo     int64                  `protobuf:"varint,8,opt,name=assigned_to,json=assignedTo,proto3" json:"assigned_to,omitempty"`
 	Status         string                 `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`                               // "pending", "in_progress", "done", "cancelled"
@@ -5252,11 +5238,11 @@ func (x *TaskProto) GetDealId() string {
 	return ""
 }
 
-func (x *TaskProto) GetContactId() string {
+func (x *TaskProto) GetUserId() int64 {
 	if x != nil {
-		return x.ContactId
+		return x.UserId
 	}
-	return ""
+	return 0
 }
 
 func (x *TaskProto) GetCompanyId() string {
@@ -5321,7 +5307,7 @@ type CreateTaskRequest struct {
 	Title          string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	Description    string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	DealId         string                 `protobuf:"bytes,4,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`              // optional
-	ContactId      string                 `protobuf:"bytes,5,opt,name=contact_id,json=contactId,proto3" json:"contact_id,omitempty"`     // optional
+	UserId         int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // optional — cg-users user linked to this task
 	AssignedTo     int64                  `protobuf:"varint,6,opt,name=assigned_to,json=assignedTo,proto3" json:"assigned_to,omitempty"` // required
 	DueAt          *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=due_at,json=dueAt,proto3" json:"due_at,omitempty"`                 // optional
 	unknownFields  protoimpl.UnknownFields
@@ -5386,11 +5372,11 @@ func (x *CreateTaskRequest) GetDealId() string {
 	return ""
 }
 
-func (x *CreateTaskRequest) GetContactId() string {
+func (x *CreateTaskRequest) GetUserId() int64 {
 	if x != nil {
-		return x.ContactId
+		return x.UserId
 	}
-	return ""
+	return 0
 }
 
 func (x *CreateTaskRequest) GetAssignedTo() int64 {
@@ -5554,7 +5540,7 @@ type ListTasksRequest struct {
 	AssignedTo     int64                  `protobuf:"varint,3,opt,name=assigned_to,json=assignedTo,proto3" json:"assigned_to,omitempty"` // optional filter (0 means no filter)
 	DueBefore      *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=due_before,json=dueBefore,proto3" json:"due_before,omitempty"`     // optional filter
 	DealId         string                 `protobuf:"bytes,5,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`              // optional filter
-	ContactId      string                 `protobuf:"bytes,6,opt,name=contact_id,json=contactId,proto3" json:"contact_id,omitempty"`     // optional filter
+	UserId         int64                  `protobuf:"varint,6,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // optional filter — filter by linked cg-users user_id
 	Limit          int32                  `protobuf:"varint,7,opt,name=limit,proto3" json:"limit,omitempty"`
 	Offset         int32                  `protobuf:"varint,8,opt,name=offset,proto3" json:"offset,omitempty"`
 	unknownFields  protoimpl.UnknownFields
@@ -5626,11 +5612,11 @@ func (x *ListTasksRequest) GetDealId() string {
 	return ""
 }
 
-func (x *ListTasksRequest) GetContactId() string {
+func (x *ListTasksRequest) GetUserId() int64 {
 	if x != nil {
-		return x.ContactId
+		return x.UserId
 	}
-	return ""
+	return 0
 }
 
 func (x *ListTasksRequest) GetLimit() int32 {
@@ -5810,7 +5796,7 @@ type UpdateTaskRequest struct {
 	Title          string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
 	Description    string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
 	DealId         string                 `protobuf:"bytes,5,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`              // optional
-	ContactId      string                 `protobuf:"bytes,6,opt,name=contact_id,json=contactId,proto3" json:"contact_id,omitempty"`     // optional
+	UserId         int64                  `protobuf:"varint,6,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // optional — cg-users user linked to this task
 	AssignedTo     int64                  `protobuf:"varint,7,opt,name=assigned_to,json=assignedTo,proto3" json:"assigned_to,omitempty"` // 0 means unassigned
 	DueAt          *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=due_at,json=dueAt,proto3" json:"due_at,omitempty"`                 // optional
 	unknownFields  protoimpl.UnknownFields
@@ -5882,11 +5868,11 @@ func (x *UpdateTaskRequest) GetDealId() string {
 	return ""
 }
 
-func (x *UpdateTaskRequest) GetContactId() string {
+func (x *UpdateTaskRequest) GetUserId() int64 {
 	if x != nil {
-		return x.ContactId
+		return x.UserId
 	}
-	return ""
+	return 0
 }
 
 func (x *UpdateTaskRequest) GetAssignedTo() int64 {
@@ -7971,19 +7957,16 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x03vin\x18\x02 \x01(\tR\x03vin\x12#\n" +
 	"\rlicense_plate\x18\x03 \x01(\tR\flicensePlate\"?\n" +
 	"\x15LookupVehicleResponse\x12&\n" +
-	"\x03car\x18\x01 \x01(\v2\x14.crm.v1.CarInfoProtoR\x03car\"\x99\x05\n" +
+	"\x03car\x18\x01 \x01(\v2\x14.crm.v1.CarInfoProtoR\x03car\"\xfa\x04\n" +
 	"\tDealProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x03 \x01(\tR\n" +
 	"pipelineId\x12\x19\n" +
-	"\bstage_id\x18\x04 \x01(\tR\astageId\x12\x1d\n" +
+	"\bstage_id\x18\x04 \x01(\tR\astageId\x12\x17\n" +
+	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
-	"contact_id\x18\x05 \x01(\tR\tcontactId\x12\x1d\n" +
-	"\n" +
-	"company_id\x18\x06 \x01(\tR\tcompanyId\x12\x1d\n" +
-	"\n" +
-	"vehicle_id\x18\a \x01(\tR\tvehicleId\x12\x1f\n" +
+	"company_id\x18\x06 \x01(\tR\tcompanyId\x12\x1f\n" +
 	"\vassigned_to\x18\b \x01(\x03R\n" +
 	"assignedTo\x12\x14\n" +
 	"\x05title\x18\t \x01(\tR\x05title\x12\x16\n" +
@@ -7999,7 +7982,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xde\x01\n" +
+	"updated_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtJ\x04\b\a\x10\b\"\xde\x01\n" +
 	"\x15DealStageHistoryProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\"\n" +
@@ -8008,13 +7991,12 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\n" +
 	"changed_by\x18\x05 \x01(\x03R\tchangedBy\x129\n" +
 	"\n" +
-	"changed_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tchangedAt\"\xdf\x02\n" +
+	"changed_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tchangedAt\"\xd9\x02\n" +
 	"\rActivityProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x17\n" +
-	"\adeal_id\x18\x03 \x01(\tR\x06dealId\x12\x1d\n" +
-	"\n" +
-	"contact_id\x18\x04 \x01(\tR\tcontactId\x12\x1f\n" +
+	"\adeal_id\x18\x03 \x01(\tR\x06dealId\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1f\n" +
 	"\ventity_type\x18\x05 \x01(\tR\n" +
 	"entityType\x12\x1b\n" +
 	"\tentity_id\x18\x06 \x01(\tR\bentityId\x12\x12\n" +
@@ -8024,30 +8006,27 @@ const file_crm_crm_proto_rawDesc = "" +
 	"created_by\x18\t \x01(\x03R\tcreatedBy\x129\n" +
 	"\n" +
 	"created_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xe4\x02\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xc5\x02\n" +
 	"\x11CreateDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
 	"pipelineId\x12\x19\n" +
-	"\bstage_id\x18\x03 \x01(\tR\astageId\x12\x1d\n" +
-	"\n" +
-	"contact_id\x18\x04 \x01(\tR\tcontactId\x12\x1d\n" +
-	"\n" +
-	"vehicle_id\x18\x05 \x01(\tR\tvehicleId\x12\x1f\n" +
+	"\bstage_id\x18\x03 \x01(\tR\astageId\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1f\n" +
 	"\vassigned_to\x18\x06 \x01(\x03R\n" +
 	"assignedTo\x12\x14\n" +
 	"\x05title\x18\a \x01(\tR\x05title\x12\x16\n" +
 	"\x06amount\x18\b \x01(\x01R\x06amount\x12\x1a\n" +
 	"\bcurrency\x18\t \x01(\tR\bcurrency\x12A\n" +
 	"\x0eexpected_close\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\rexpectedClose\";\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\rexpectedCloseJ\x04\b\x05\x10\x06\";\n" +
 	"\x12CreateDealResponse\x12%\n" +
 	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"I\n" +
 	"\x0eGetDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"8\n" +
 	"\x0fGetDealResponse\x12%\n" +
-	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xee\x02\n" +
+	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xe8\x02\n" +
 	"\x10ListDealsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -8057,9 +8036,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"assignedTo\x12\x16\n" +
 	"\x06status\x18\x05 \x01(\tR\x06status\x127\n" +
 	"\tdate_from\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\bdateFrom\x123\n" +
-	"\adate_to\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x06dateTo\x12\x1d\n" +
-	"\n" +
-	"vehicle_id\x18\b \x01(\tR\tvehicleId\x12\x12\n" +
+	"\adate_to\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x06dateTo\x12\x17\n" +
+	"\auser_id\x18\b \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04page\x18\t \x01(\x05R\x04page\x12\x1b\n" +
 	"\tpage_size\x18\n" +
 	" \x01(\x05R\bpageSize\"<\n" +
@@ -8102,11 +8080,10 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x19GetDealActivitiesResponse\x125\n" +
 	"\n" +
 	"activities\x18\x01 \x03(\v2\x15.crm.v1.ActivityProtoR\n" +
-	"activities\"\x96\x01\n" +
+	"activities\"\x90\x01\n" +
 	"\x1bGetContactActivitiesRequest\x12'\n" +
-	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1d\n" +
-	"\n" +
-	"contact_id\x18\x02 \x01(\tR\tcontactId\x12\x12\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04page\x18\x03 \x01(\x05R\x04page\x12\x1b\n" +
 	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"U\n" +
 	"\x1cGetContactActivitiesResponse\x125\n" +
@@ -8179,15 +8156,14 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x13ConvertLeadResponse\x12%\n" +
 	"\x04lead\x18\x01 \x01(\v2\x11.crm.v1.LeadProtoR\x04lead\x12%\n" +
 	"\x04deal\x18\x02 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\x12.\n" +
-	"\acontact\x18\x03 \x01(\v2\x14.crm.v1.ContactProtoR\acontact\"\x93\x04\n" +
+	"\acontact\x18\x03 \x01(\v2\x14.crm.v1.ContactProtoR\acontact\"\x8d\x04\n" +
 	"\tTaskProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x17\n" +
-	"\adeal_id\x18\x05 \x01(\tR\x06dealId\x12\x1d\n" +
-	"\n" +
-	"contact_id\x18\x06 \x01(\tR\tcontactId\x12\x1d\n" +
+	"\adeal_id\x18\x05 \x01(\tR\x06dealId\x12\x17\n" +
+	"\auser_id\x18\x06 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"company_id\x18\a \x01(\tR\tcompanyId\x12\x1f\n" +
 	"\vassigned_to\x18\b \x01(\x03R\n" +
@@ -8201,14 +8177,13 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x80\x02\n" +
+	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xfa\x01\n" +
 	"\x11CreateTaskRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x17\n" +
-	"\adeal_id\x18\x04 \x01(\tR\x06dealId\x12\x1d\n" +
-	"\n" +
-	"contact_id\x18\x05 \x01(\tR\tcontactId\x12\x1f\n" +
+	"\adeal_id\x18\x04 \x01(\tR\x06dealId\x12\x17\n" +
+	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x1f\n" +
 	"\vassigned_to\x18\x06 \x01(\x03R\n" +
 	"assignedTo\x121\n" +
 	"\x06due_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x05dueAt\";\n" +
@@ -8218,7 +8193,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"8\n" +
 	"\x0fGetTaskResponse\x12%\n" +
-	"\x04task\x18\x01 \x01(\v2\x11.crm.v1.TaskProtoR\x04task\"\x95\x02\n" +
+	"\x04task\x18\x01 \x01(\v2\x11.crm.v1.TaskProtoR\x04task\"\x8f\x02\n" +
 	"\x10ListTasksRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\x12\x1f\n" +
@@ -8226,9 +8201,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"assignedTo\x129\n" +
 	"\n" +
 	"due_before\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tdueBefore\x12\x17\n" +
-	"\adeal_id\x18\x05 \x01(\tR\x06dealId\x12\x1d\n" +
-	"\n" +
-	"contact_id\x18\x06 \x01(\tR\tcontactId\x12\x14\n" +
+	"\adeal_id\x18\x05 \x01(\tR\x06dealId\x12\x17\n" +
+	"\auser_id\x18\x06 \x01(\x03R\x06userId\x12\x14\n" +
 	"\x05limit\x18\a \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\b \x01(\x05R\x06offset\"R\n" +
 	"\x11ListTasksResponse\x12'\n" +
@@ -8239,15 +8213,14 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x16\n" +
 	"\x06status\x18\x03 \x01(\tR\x06status\"A\n" +
 	"\x18UpdateTaskStatusResponse\x12%\n" +
-	"\x04task\x18\x01 \x01(\v2\x11.crm.v1.TaskProtoR\x04task\"\x90\x02\n" +
+	"\x04task\x18\x01 \x01(\v2\x11.crm.v1.TaskProtoR\x04task\"\x8a\x02\n" +
 	"\x11UpdateTaskRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x17\n" +
-	"\adeal_id\x18\x05 \x01(\tR\x06dealId\x12\x1d\n" +
-	"\n" +
-	"contact_id\x18\x06 \x01(\tR\tcontactId\x12\x1f\n" +
+	"\adeal_id\x18\x05 \x01(\tR\x06dealId\x12\x17\n" +
+	"\auser_id\x18\x06 \x01(\x03R\x06userId\x12\x1f\n" +
 	"\vassigned_to\x18\a \x01(\x03R\n" +
 	"assignedTo\x121\n" +
 	"\x06due_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\x05dueAt\";\n" +
@@ -8410,7 +8383,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\vtotal_count\x18\a \x01(\x03R\n" +
 	"totalCount\x12\x1f\n" +
 	"\vtotal_value\x18\b \x01(\x01R\n" +
-	"totalValue2\xe6!\n" +
+	"totalValue2\xa2\"\n" +
 	"\n" +
 	"CRMService\x12O\n" +
 	"\x0eCreatePipeline\x12\x1d.crm.v1.CreatePipelineRequest\x1a\x1e.crm.v1.CreatePipelineResponse\x12F\n" +
@@ -8421,22 +8394,22 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\vCreateStage\x12\x1a.crm.v1.CreateStageRequest\x1a\x1b.crm.v1.CreateStageResponse\x12F\n" +
 	"\vUpdateStage\x12\x1a.crm.v1.UpdateStageRequest\x1a\x1b.crm.v1.UpdateStageResponse\x12F\n" +
 	"\vDeleteStage\x12\x1a.crm.v1.DeleteStageRequest\x1a\x1b.crm.v1.DeleteStageResponse\x12L\n" +
-	"\rReorderStages\x12\x1c.crm.v1.ReorderStagesRequest\x1a\x1d.crm.v1.ReorderStagesResponse\x12L\n" +
-	"\rCreateContact\x12\x1c.crm.v1.CreateContactRequest\x1a\x1d.crm.v1.CreateContactResponse\x12C\n" +
+	"\rReorderStages\x12\x1c.crm.v1.ReorderStagesRequest\x1a\x1d.crm.v1.ReorderStagesResponse\x12Q\n" +
+	"\rCreateContact\x12\x1c.crm.v1.CreateContactRequest\x1a\x1d.crm.v1.CreateContactResponse\"\x03\x88\x02\x01\x12H\n" +
 	"\n" +
-	"GetContact\x12\x19.crm.v1.GetContactRequest\x1a\x1a.crm.v1.GetContactResponse\x12I\n" +
-	"\fListContacts\x12\x1b.crm.v1.ListContactsRequest\x1a\x1c.crm.v1.ListContactsResponse\x12O\n" +
-	"\x0eSearchContacts\x12\x1d.crm.v1.SearchContactsRequest\x1a\x1e.crm.v1.SearchContactsResponse\x12L\n" +
-	"\rUpdateContact\x12\x1c.crm.v1.UpdateContactRequest\x1a\x1d.crm.v1.UpdateContactResponse\x12L\n" +
-	"\rDeleteContact\x12\x1c.crm.v1.DeleteContactRequest\x1a\x1d.crm.v1.DeleteContactResponse\x12C\n" +
+	"GetContact\x12\x19.crm.v1.GetContactRequest\x1a\x1a.crm.v1.GetContactResponse\"\x03\x88\x02\x01\x12N\n" +
+	"\fListContacts\x12\x1b.crm.v1.ListContactsRequest\x1a\x1c.crm.v1.ListContactsResponse\"\x03\x88\x02\x01\x12T\n" +
+	"\x0eSearchContacts\x12\x1d.crm.v1.SearchContactsRequest\x1a\x1e.crm.v1.SearchContactsResponse\"\x03\x88\x02\x01\x12Q\n" +
+	"\rUpdateContact\x12\x1c.crm.v1.UpdateContactRequest\x1a\x1d.crm.v1.UpdateContactResponse\"\x03\x88\x02\x01\x12Q\n" +
+	"\rDeleteContact\x12\x1c.crm.v1.DeleteContactRequest\x1a\x1d.crm.v1.DeleteContactResponse\"\x03\x88\x02\x01\x12H\n" +
 	"\n" +
-	"AddVehicle\x12\x19.crm.v1.AddVehicleRequest\x1a\x1a.crm.v1.AddVehicleResponse\x12C\n" +
+	"AddVehicle\x12\x19.crm.v1.AddVehicleRequest\x1a\x1a.crm.v1.AddVehicleResponse\"\x03\x88\x02\x01\x12H\n" +
 	"\n" +
-	"GetVehicle\x12\x19.crm.v1.GetVehicleRequest\x1a\x1a.crm.v1.GetVehicleResponse\x12d\n" +
-	"\x15ListVehiclesByContact\x12$.crm.v1.ListVehiclesByContactRequest\x1a%.crm.v1.ListVehiclesByContactResponse\x12X\n" +
-	"\x11GetServiceHistory\x12 .crm.v1.GetServiceHistoryRequest\x1a!.crm.v1.GetServiceHistoryResponse\x12U\n" +
-	"\x10GetGarageByPhone\x12\x1f.crm.v1.GetGarageByPhoneRequest\x1a .crm.v1.GetGarageByPhoneResponse\x12L\n" +
-	"\rLookupVehicle\x12\x1c.crm.v1.LookupVehicleRequest\x1a\x1d.crm.v1.LookupVehicleResponse\x12C\n" +
+	"GetVehicle\x12\x19.crm.v1.GetVehicleRequest\x1a\x1a.crm.v1.GetVehicleResponse\"\x03\x88\x02\x01\x12i\n" +
+	"\x15ListVehiclesByContact\x12$.crm.v1.ListVehiclesByContactRequest\x1a%.crm.v1.ListVehiclesByContactResponse\"\x03\x88\x02\x01\x12]\n" +
+	"\x11GetServiceHistory\x12 .crm.v1.GetServiceHistoryRequest\x1a!.crm.v1.GetServiceHistoryResponse\"\x03\x88\x02\x01\x12Z\n" +
+	"\x10GetGarageByPhone\x12\x1f.crm.v1.GetGarageByPhoneRequest\x1a .crm.v1.GetGarageByPhoneResponse\"\x03\x88\x02\x01\x12Q\n" +
+	"\rLookupVehicle\x12\x1c.crm.v1.LookupVehicleRequest\x1a\x1d.crm.v1.LookupVehicleResponse\"\x03\x88\x02\x01\x12C\n" +
 	"\n" +
 	"CreateDeal\x12\x19.crm.v1.CreateDealRequest\x1a\x1a.crm.v1.CreateDealResponse\x12:\n" +
 	"\aGetDeal\x12\x16.crm.v1.GetDealRequest\x1a\x17.crm.v1.GetDealResponse\x12@\n" +

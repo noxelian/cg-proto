@@ -18,21 +18,23 @@ service CRMService {
   rpc DeleteStage(DeleteStageRequest)         returns (DeleteStageResponse);
   rpc ReorderStages(ReorderStagesRequest)     returns (ReorderStagesResponse);
 
-  // Contact RPCs (Phase 3 -- integration with cg-users)
-  rpc CreateContact(CreateContactRequest)     returns (CreateContactResponse);
-  rpc GetContact(GetContactRequest)           returns (GetContactResponse);
-  rpc ListContacts(ListContactsRequest)       returns (ListContactsResponse);
-  rpc SearchContacts(SearchContactsRequest)   returns (SearchContactsResponse);
-  rpc UpdateContact(UpdateContactRequest)     returns (UpdateContactResponse);
-  rpc DeleteContact(DeleteContactRequest)     returns (DeleteContactResponse);
+  // Contact RPCs -- DEPRECATED: crm_contacts table removed; user data fetched from cg-users directly.
+  // These RPCs are retained for wire compatibility only and will be removed in a future version.
+  rpc CreateContact(CreateContactRequest)     returns (CreateContactResponse)     { option deprecated = true; };
+  rpc GetContact(GetContactRequest)           returns (GetContactResponse)        { option deprecated = true; };
+  rpc ListContacts(ListContactsRequest)       returns (ListContactsResponse)      { option deprecated = true; };
+  rpc SearchContacts(SearchContactsRequest)   returns (SearchContactsResponse)    { option deprecated = true; };
+  rpc UpdateContact(UpdateContactRequest)     returns (UpdateContactResponse)     { option deprecated = true; };
+  rpc DeleteContact(DeleteContactRequest)     returns (DeleteContactResponse)     { option deprecated = true; };
 
-  // Vehicle RPCs (Phase 3 -- integration with cg-users garage)
-  rpc AddVehicle(AddVehicleRequest)           returns (AddVehicleResponse);
-  rpc GetVehicle(GetVehicleRequest)           returns (GetVehicleResponse);
-  rpc ListVehiclesByContact(ListVehiclesByContactRequest) returns (ListVehiclesByContactResponse);
-  rpc GetServiceHistory(GetServiceHistoryRequest) returns (GetServiceHistoryResponse);
-  rpc GetGarageByPhone(GetGarageByPhoneRequest) returns (GetGarageByPhoneResponse);
-  rpc LookupVehicle(LookupVehicleRequest)     returns (LookupVehicleResponse);
+  // Vehicle RPCs -- DEPRECATED: crm_vehicles table removed; garage data fetched from cg-users directly.
+  // These RPCs are retained for wire compatibility only and will be removed in a future version.
+  rpc AddVehicle(AddVehicleRequest)           returns (AddVehicleResponse)        { option deprecated = true; };
+  rpc GetVehicle(GetVehicleRequest)           returns (GetVehicleResponse)        { option deprecated = true; };
+  rpc ListVehiclesByContact(ListVehiclesByContactRequest) returns (ListVehiclesByContactResponse) { option deprecated = true; };
+  rpc GetServiceHistory(GetServiceHistoryRequest) returns (GetServiceHistoryResponse)             { option deprecated = true; };
+  rpc GetGarageByPhone(GetGarageByPhoneRequest) returns (GetGarageByPhoneResponse)               { option deprecated = true; };
+  rpc LookupVehicle(LookupVehicleRequest)     returns (LookupVehicleResponse)     { option deprecated = true; };
 
   // NOTE: Company RPCs (COMP-01/02/03) are DEFERRED per D-04.
   // NOTE: LinkContactToCompany (CONT-03) DEFERRED per D-04 -- companies not in scope.
@@ -386,9 +388,9 @@ message DealProto {
   string organization_id = 2;
   string pipeline_id     = 3;
   string stage_id        = 4;
-  string contact_id      = 5;
+  int64  user_id         = 5;  // 0 if null — cg-users user linked to this deal
   string company_id      = 6;  // empty if null
-  string vehicle_id      = 7;  // empty if null
+  reserved 7;                  // formerly vehicle_id — removed in migration 000012
   int64  assigned_to     = 8;  // 0 if null
   string title           = 9;
   double amount          = 10;
@@ -415,7 +417,7 @@ message ActivityProto {
   string id              = 1;
   string organization_id = 2;
   string deal_id         = 3; // empty if null
-  string contact_id      = 4; // empty if null
+  int64  user_id         = 4; // 0 if null — cg-users user linked to this activity
   string entity_type     = 5;
   string entity_id       = 6;
   string type            = 7;
@@ -428,8 +430,8 @@ message CreateDealRequest {
   string organization_id = 1;
   string pipeline_id     = 2;
   string stage_id        = 3;
-  string contact_id      = 4; // required per D-08
-  string vehicle_id      = 5; // optional per D-09
+  int64  user_id         = 4; // optional — cg-users user linked to this deal
+  reserved 5;                 // formerly vehicle_id — removed in migration 000012
   int64  assigned_to     = 6; // optional
   string title           = 7;
   double amount          = 8;
@@ -458,7 +460,7 @@ message ListDealsRequest {
   string status          = 5; // optional filter
   google.protobuf.Timestamp date_from = 6;
   google.protobuf.Timestamp date_to   = 7;
-  string vehicle_id      = 8; // optional filter for VEH-03
+  int64  user_id         = 8; // optional filter — filter by linked cg-users user_id
   int32  page            = 9;
   int32  page_size       = 10;
 }
@@ -522,9 +524,11 @@ message GetDealActivitiesResponse {
   repeated ActivityProto activities = 1;
 }
 
+// GetUserActivitiesRequest fetches paginated activities for a cg-users user.
+// Replaces GetContactActivitiesRequest (contact_id UUID -> user_id BIGINT).
 message GetContactActivitiesRequest {
   string organization_id = 1;
-  string contact_id      = 2;
+  int64  user_id         = 2; // cg-users user_id; replaces contact_id UUID
   int32  page            = 3;
   int32  page_size       = 4;
 }
@@ -623,7 +627,7 @@ message TaskProto {
   string title           = 3;
   string description     = 4;
   string deal_id         = 5;    // empty if null
-  string contact_id      = 6;    // empty if null
+  int64  user_id         = 6;    // 0 if null — cg-users user linked to this task
   string company_id      = 7;    // empty if null
   int64  assigned_to     = 8;
   string status          = 9;    // "pending", "in_progress", "done", "cancelled"
@@ -639,7 +643,7 @@ message CreateTaskRequest {
   string title           = 2;
   string description     = 3;
   string deal_id         = 4;    // optional
-  string contact_id      = 5;    // optional
+  int64  user_id         = 5;    // optional — cg-users user linked to this task
   int64  assigned_to     = 6;    // required
   google.protobuf.Timestamp due_at = 7; // optional
 }
@@ -663,7 +667,7 @@ message ListTasksRequest {
   int64  assigned_to     = 3;    // optional filter (0 means no filter)
   google.protobuf.Timestamp due_before = 4; // optional filter
   string deal_id         = 5;    // optional filter
-  string contact_id      = 6;    // optional filter
+  int64  user_id         = 6;    // optional filter — filter by linked cg-users user_id
   int32  limit           = 7;
   int32  offset          = 8;
 }
@@ -689,7 +693,7 @@ message UpdateTaskRequest {
   string title           = 3;
   string description     = 4;
   string deal_id         = 5;    // optional
-  string contact_id      = 6;    // optional
+  int64  user_id         = 6;    // optional — cg-users user linked to this task
   int64  assigned_to     = 7;    // 0 means unassigned
   google.protobuf.Timestamp due_at = 8; // optional
 }

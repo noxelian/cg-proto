@@ -86,19 +86,33 @@ type CRMServiceClient interface {
 	UpdateStage(ctx context.Context, in *UpdateStageRequest, opts ...grpc.CallOption) (*UpdateStageResponse, error)
 	DeleteStage(ctx context.Context, in *DeleteStageRequest, opts ...grpc.CallOption) (*DeleteStageResponse, error)
 	ReorderStages(ctx context.Context, in *ReorderStagesRequest, opts ...grpc.CallOption) (*ReorderStagesResponse, error)
-	// Contact RPCs (Phase 3 -- integration with cg-users)
+	// Deprecated: Do not use.
+	// Contact RPCs -- DEPRECATED: crm_contacts table removed; user data fetched from cg-users directly.
+	// These RPCs are retained for wire compatibility only and will be removed in a future version.
 	CreateContact(ctx context.Context, in *CreateContactRequest, opts ...grpc.CallOption) (*CreateContactResponse, error)
+	// Deprecated: Do not use.
 	GetContact(ctx context.Context, in *GetContactRequest, opts ...grpc.CallOption) (*GetContactResponse, error)
+	// Deprecated: Do not use.
 	ListContacts(ctx context.Context, in *ListContactsRequest, opts ...grpc.CallOption) (*ListContactsResponse, error)
+	// Deprecated: Do not use.
 	SearchContacts(ctx context.Context, in *SearchContactsRequest, opts ...grpc.CallOption) (*SearchContactsResponse, error)
+	// Deprecated: Do not use.
 	UpdateContact(ctx context.Context, in *UpdateContactRequest, opts ...grpc.CallOption) (*UpdateContactResponse, error)
+	// Deprecated: Do not use.
 	DeleteContact(ctx context.Context, in *DeleteContactRequest, opts ...grpc.CallOption) (*DeleteContactResponse, error)
-	// Vehicle RPCs (Phase 3 -- integration with cg-users garage)
+	// Deprecated: Do not use.
+	// Vehicle RPCs -- DEPRECATED: crm_vehicles table removed; garage data fetched from cg-users directly.
+	// These RPCs are retained for wire compatibility only and will be removed in a future version.
 	AddVehicle(ctx context.Context, in *AddVehicleRequest, opts ...grpc.CallOption) (*AddVehicleResponse, error)
+	// Deprecated: Do not use.
 	GetVehicle(ctx context.Context, in *GetVehicleRequest, opts ...grpc.CallOption) (*GetVehicleResponse, error)
+	// Deprecated: Do not use.
 	ListVehiclesByContact(ctx context.Context, in *ListVehiclesByContactRequest, opts ...grpc.CallOption) (*ListVehiclesByContactResponse, error)
+	// Deprecated: Do not use.
 	GetServiceHistory(ctx context.Context, in *GetServiceHistoryRequest, opts ...grpc.CallOption) (*GetServiceHistoryResponse, error)
+	// Deprecated: Do not use.
 	GetGarageByPhone(ctx context.Context, in *GetGarageByPhoneRequest, opts ...grpc.CallOption) (*GetGarageByPhoneResponse, error)
+	// Deprecated: Do not use.
 	LookupVehicle(ctx context.Context, in *LookupVehicleRequest, opts ...grpc.CallOption) (*LookupVehicleResponse, error)
 	// Deal RPCs (Phase 4 -- deal lifecycle)
 	CreateDeal(ctx context.Context, in *CreateDealRequest, opts ...grpc.CallOption) (*CreateDealResponse, error)
@@ -237,6 +251,7 @@ func (c *cRMServiceClient) ReorderStages(ctx context.Context, in *ReorderStagesR
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *cRMServiceClient) CreateContact(ctx context.Context, in *CreateContactRequest, opts ...grpc.CallOption) (*CreateContactResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateContactResponse)
@@ -247,6 +262,7 @@ func (c *cRMServiceClient) CreateContact(ctx context.Context, in *CreateContactR
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *cRMServiceClient) GetContact(ctx context.Context, in *GetContactRequest, opts ...grpc.CallOption) (*GetContactResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetContactResponse)
@@ -257,6 +273,7 @@ func (c *cRMServiceClient) GetContact(ctx context.Context, in *GetContactRequest
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *cRMServiceClient) ListContacts(ctx context.Context, in *ListContactsRequest, opts ...grpc.CallOption) (*ListContactsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListContactsResponse)
@@ -267,6 +284,7 @@ func (c *cRMServiceClient) ListContacts(ctx context.Context, in *ListContactsReq
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *cRMServiceClient) SearchContacts(ctx context.Context, in *SearchContactsRequest, opts ...grpc.CallOption) (*SearchContactsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SearchContactsResponse)
@@ -277,6 +295,7 @@ func (c *cRMServiceClient) SearchContacts(ctx context.Context, in *SearchContact
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *cRMServiceClient) UpdateContact(ctx context.Context, in *UpdateContactRequest, opts ...grpc.CallOption) (*UpdateContactResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateContactResponse)
@@ -287,6 +306,7 @@ func (c *cRMServiceClient) UpdateContact(ctx context.Context, in *UpdateContactR
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *cRMServiceClient) DeleteContact(ctx context.Context, in *DeleteContactRequest, opts ...grpc.CallOption) (*DeleteContactResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteContactResponse)
@@ -297,6 +317,7 @@ func (c *cRMServiceClient) DeleteContact(ctx context.Context, in *DeleteContactR
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *cRMServiceClient) AddVehicle(ctx context.Context, in *AddVehicleRequest, opts ...grpc.CallOption) (*AddVehicleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddVehicleResponse)
@@ -307,6 +328,7 @@ func (c *cRMServiceClient) AddVehicle(ctx context.Context, in *AddVehicleRequest
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *cRMServiceClient) GetVehicle(ctx context.Context, in *GetVehicleRequest, opts ...grpc.CallOption) (*GetVehicleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetVehicleResponse)
@@ -317,6 +339,7 @@ func (c *cRMServiceClient) GetVehicle(ctx context.Context, in *GetVehicleRequest
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *cRMServiceClient) ListVehiclesByContact(ctx context.Context, in *ListVehiclesByContactRequest, opts ...grpc.CallOption) (*ListVehiclesByContactResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListVehiclesByContactResponse)
@@ -327,6 +350,7 @@ func (c *cRMServiceClient) ListVehiclesByContact(ctx context.Context, in *ListVe
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *cRMServiceClient) GetServiceHistory(ctx context.Context, in *GetServiceHistoryRequest, opts ...grpc.CallOption) (*GetServiceHistoryResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetServiceHistoryResponse)
@@ -337,6 +361,7 @@ func (c *cRMServiceClient) GetServiceHistory(ctx context.Context, in *GetService
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *cRMServiceClient) GetGarageByPhone(ctx context.Context, in *GetGarageByPhoneRequest, opts ...grpc.CallOption) (*GetGarageByPhoneResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetGarageByPhoneResponse)
@@ -347,6 +372,7 @@ func (c *cRMServiceClient) GetGarageByPhone(ctx context.Context, in *GetGarageBy
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *cRMServiceClient) LookupVehicle(ctx context.Context, in *LookupVehicleRequest, opts ...grpc.CallOption) (*LookupVehicleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LookupVehicleResponse)
@@ -680,19 +706,33 @@ type CRMServiceServer interface {
 	UpdateStage(context.Context, *UpdateStageRequest) (*UpdateStageResponse, error)
 	DeleteStage(context.Context, *DeleteStageRequest) (*DeleteStageResponse, error)
 	ReorderStages(context.Context, *ReorderStagesRequest) (*ReorderStagesResponse, error)
-	// Contact RPCs (Phase 3 -- integration with cg-users)
+	// Deprecated: Do not use.
+	// Contact RPCs -- DEPRECATED: crm_contacts table removed; user data fetched from cg-users directly.
+	// These RPCs are retained for wire compatibility only and will be removed in a future version.
 	CreateContact(context.Context, *CreateContactRequest) (*CreateContactResponse, error)
+	// Deprecated: Do not use.
 	GetContact(context.Context, *GetContactRequest) (*GetContactResponse, error)
+	// Deprecated: Do not use.
 	ListContacts(context.Context, *ListContactsRequest) (*ListContactsResponse, error)
+	// Deprecated: Do not use.
 	SearchContacts(context.Context, *SearchContactsRequest) (*SearchContactsResponse, error)
+	// Deprecated: Do not use.
 	UpdateContact(context.Context, *UpdateContactRequest) (*UpdateContactResponse, error)
+	// Deprecated: Do not use.
 	DeleteContact(context.Context, *DeleteContactRequest) (*DeleteContactResponse, error)
-	// Vehicle RPCs (Phase 3 -- integration with cg-users garage)
+	// Deprecated: Do not use.
+	// Vehicle RPCs -- DEPRECATED: crm_vehicles table removed; garage data fetched from cg-users directly.
+	// These RPCs are retained for wire compatibility only and will be removed in a future version.
 	AddVehicle(context.Context, *AddVehicleRequest) (*AddVehicleResponse, error)
+	// Deprecated: Do not use.
 	GetVehicle(context.Context, *GetVehicleRequest) (*GetVehicleResponse, error)
+	// Deprecated: Do not use.
 	ListVehiclesByContact(context.Context, *ListVehiclesByContactRequest) (*ListVehiclesByContactResponse, error)
+	// Deprecated: Do not use.
 	GetServiceHistory(context.Context, *GetServiceHistoryRequest) (*GetServiceHistoryResponse, error)
+	// Deprecated: Do not use.
 	GetGarageByPhone(context.Context, *GetGarageByPhoneRequest) (*GetGarageByPhoneResponse, error)
+	// Deprecated: Do not use.
 	LookupVehicle(context.Context, *LookupVehicleRequest) (*LookupVehicleResponse, error)
 	// Deal RPCs (Phase 4 -- deal lifecycle)
 	CreateDeal(context.Context, *CreateDealRequest) (*CreateDealResponse, error)

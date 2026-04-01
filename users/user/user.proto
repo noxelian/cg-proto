@@ -55,6 +55,10 @@ service UserService {
   rpc CheckPlatformRoles(CheckPlatformRolesRequest) returns (CheckPlatformRolesResponse);
   rpc SetPlatformOrgAccess(SetPlatformOrgAccessRequest) returns (SetPlatformOrgAccessResponse);
   rpc GetPlatformOrgAccess(GetPlatformOrgAccessRequest) returns (GetPlatformOrgAccessResponse);
+
+  // ListUsersByPlatformRoles returns users that have any of the given platform roles.
+  // If roles is empty, returns all users that have at least one platform role.
+  rpc ListUsersByPlatformRoles(ListUsersByPlatformRolesRequest) returns (ListUsersByPlatformRolesResponse);
 }
 
 enum PlatformRole {
@@ -276,4 +280,20 @@ message ListUsersRequest {
 message ListUsersResponse {
   repeated User users = 1;
   int32 total = 2;
+}
+
+// ListUsersByPlatformRoles
+message PlatformMember {
+  int64 user_id = 1;
+  string name = 2;
+  string phone = 3;
+  repeated PlatformRole roles = 4;
+}
+
+message ListUsersByPlatformRolesRequest {
+  repeated PlatformRole roles = 1;  // filter by these roles; empty = all users with any role
+}
+
+message ListUsersByPlatformRolesResponse {
+  repeated PlatformMember members = 1;
 }
