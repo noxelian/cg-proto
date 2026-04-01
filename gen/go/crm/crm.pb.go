@@ -2963,6 +2963,7 @@ type DealProto struct {
 	// Enriched contact info (populated server-side from cg-users)
 	ContactName   string `protobuf:"bytes,19,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`    // display name of the user linked via user_id
 	ContactPhone  string `protobuf:"bytes,20,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"` // phone of the user linked via user_id
+	VehicleId     int64  `protobuf:"varint,21,opt,name=vehicle_id,json=vehicleId,proto3" json:"vehicle_id,omitempty"`         // 0 if null — car ID from cg-users garage
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3128,6 +3129,13 @@ func (x *DealProto) GetContactPhone() string {
 		return x.ContactPhone
 	}
 	return ""
+}
+
+func (x *DealProto) GetVehicleId() int64 {
+	if x != nil {
+		return x.VehicleId
+	}
+	return 0
 }
 
 type DealStageHistoryProto struct {
@@ -3336,6 +3344,7 @@ type CreateDealRequest struct {
 	PipelineId     string                 `protobuf:"bytes,2,opt,name=pipeline_id,json=pipelineId,proto3" json:"pipeline_id,omitempty"`
 	StageId        string                 `protobuf:"bytes,3,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
 	UserId         int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // optional — cg-users user linked to this deal
+	VehicleId      int64                  `protobuf:"varint,5,opt,name=vehicle_id,json=vehicleId,proto3" json:"vehicle_id,omitempty"`    // optional — car ID from cg-users garage
 	AssignedTo     int64                  `protobuf:"varint,6,opt,name=assigned_to,json=assignedTo,proto3" json:"assigned_to,omitempty"` // optional
 	Title          string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
 	Amount         float64                `protobuf:"fixed64,8,opt,name=amount,proto3" json:"amount,omitempty"`
@@ -3399,6 +3408,13 @@ func (x *CreateDealRequest) GetStageId() string {
 func (x *CreateDealRequest) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
+	}
+	return 0
+}
+
+func (x *CreateDealRequest) GetVehicleId() int64 {
+	if x != nil {
+		return x.VehicleId
 	}
 	return 0
 }
@@ -3747,6 +3763,7 @@ type UpdateDealRequest struct {
 	Currency       string                 `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`
 	AssignedTo     int64                  `protobuf:"varint,6,opt,name=assigned_to,json=assignedTo,proto3" json:"assigned_to,omitempty"`
 	ExpectedClose  *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=expected_close,json=expectedClose,proto3" json:"expected_close,omitempty"`
+	VehicleId      int64                  `protobuf:"varint,8,opt,name=vehicle_id,json=vehicleId,proto3" json:"vehicle_id,omitempty"` // 0 to clear, >0 to set
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -3828,6 +3845,13 @@ func (x *UpdateDealRequest) GetExpectedClose() *timestamppb.Timestamp {
 		return x.ExpectedClose
 	}
 	return nil
+}
+
+func (x *UpdateDealRequest) GetVehicleId() int64 {
+	if x != nil {
+		return x.VehicleId
+	}
+	return 0
 }
 
 type UpdateDealResponse struct {
@@ -7974,7 +7998,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x03vin\x18\x02 \x01(\tR\x03vin\x12#\n" +
 	"\rlicense_plate\x18\x03 \x01(\tR\flicensePlate\"?\n" +
 	"\x15LookupVehicleResponse\x12&\n" +
-	"\x03car\x18\x01 \x01(\v2\x14.crm.v1.CarInfoProtoR\x03car\"\xc2\x05\n" +
+	"\x03car\x18\x01 \x01(\v2\x14.crm.v1.CarInfoProtoR\x03car\"\xe1\x05\n" +
 	"\tDealProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x1f\n" +
@@ -8001,7 +8025,9 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12!\n" +
 	"\fcontact_name\x18\x13 \x01(\tR\vcontactName\x12#\n" +
-	"\rcontact_phone\x18\x14 \x01(\tR\fcontactPhoneJ\x04\b\a\x10\b\"\xde\x01\n" +
+	"\rcontact_phone\x18\x14 \x01(\tR\fcontactPhone\x12\x1d\n" +
+	"\n" +
+	"vehicle_id\x18\x15 \x01(\x03R\tvehicleIdJ\x04\b\a\x10\b\"\xde\x01\n" +
 	"\x15DealStageHistoryProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\"\n" +
@@ -8025,20 +8051,22 @@ const file_crm_crm_proto_rawDesc = "" +
 	"created_by\x18\t \x01(\x03R\tcreatedBy\x129\n" +
 	"\n" +
 	"created_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xc5\x02\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xde\x02\n" +
 	"\x11CreateDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
 	"pipelineId\x12\x19\n" +
 	"\bstage_id\x18\x03 \x01(\tR\astageId\x12\x17\n" +
-	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1f\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\n" +
+	"vehicle_id\x18\x05 \x01(\x03R\tvehicleId\x12\x1f\n" +
 	"\vassigned_to\x18\x06 \x01(\x03R\n" +
 	"assignedTo\x12\x14\n" +
 	"\x05title\x18\a \x01(\tR\x05title\x12\x16\n" +
 	"\x06amount\x18\b \x01(\x01R\x06amount\x12\x1a\n" +
 	"\bcurrency\x18\t \x01(\tR\bcurrency\x12A\n" +
 	"\x0eexpected_close\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\rexpectedCloseJ\x04\b\x05\x10\x06\";\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\rexpectedClose\";\n" +
 	"\x12CreateDealResponse\x12%\n" +
 	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"I\n" +
 	"\x0eGetDealRequest\x12'\n" +
@@ -8061,7 +8089,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\tpage_size\x18\n" +
 	" \x01(\x05R\bpageSize\"<\n" +
 	"\x11ListDealsResponse\x12'\n" +
-	"\x05deals\x18\x01 \x03(\v2\x11.crm.v1.DealProtoR\x05deals\"\xfa\x01\n" +
+	"\x05deals\x18\x01 \x03(\v2\x11.crm.v1.DealProtoR\x05deals\"\x99\x02\n" +
 	"\x11UpdateDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x14\n" +
@@ -8070,7 +8098,9 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\bcurrency\x18\x05 \x01(\tR\bcurrency\x12\x1f\n" +
 	"\vassigned_to\x18\x06 \x01(\x03R\n" +
 	"assignedTo\x12A\n" +
-	"\x0eexpected_close\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\rexpectedClose\";\n" +
+	"\x0eexpected_close\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\rexpectedClose\x12\x1d\n" +
+	"\n" +
+	"vehicle_id\x18\b \x01(\x03R\tvehicleId\";\n" +
 	"\x12UpdateDealResponse\x12%\n" +
 	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"s\n" +
 	"\x14MoveDealStageRequest\x12'\n" +
@@ -8465,7 +8495,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x19DeleteWebhookSubscription\x12(.crm.v1.DeleteWebhookSubscriptionRequest\x1a).crm.v1.DeleteWebhookSubscriptionResponse\x12^\n" +
 	"\x13GetFunnelConversion\x12\".crm.v1.GetFunnelConversionRequest\x1a#.crm.v1.GetFunnelConversionResponse\x12R\n" +
 	"\x0fGetManagerStats\x12\x1e.crm.v1.GetManagerStatsRequest\x1a\x1f.crm.v1.GetManagerStatsResponse\x12L\n" +
-	"\rGetDealVolume\x12\x1c.crm.v1.GetDealVolumeRequest\x1a\x1d.crm.v1.GetDealVolumeResponseB-Z+github.com/4ubak/cg-proto/gen/go/crm;crmv1b\x06proto3"
+	"\rGetDealVolume\x12\x1c.crm.v1.GetDealVolumeRequest\x1a\x1d.crm.v1.GetDealVolumeResponseB-Z+gitlab.com/xakpro/cg-proto/gen/go/crm;crmv1b\x06proto3"
 
 var (
 	file_crm_crm_proto_rawDescOnce sync.Once

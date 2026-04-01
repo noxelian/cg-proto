@@ -406,6 +406,8 @@ message DealProto {
   // Enriched contact info (populated server-side from cg-users)
   string contact_name    = 19; // display name of the user linked via user_id
   string contact_phone   = 20; // phone of the user linked via user_id
+
+  int64  vehicle_id      = 21; // 0 if null — car ID from cg-users garage
 }
 
 message DealStageHistoryProto {
@@ -435,7 +437,7 @@ message CreateDealRequest {
   string pipeline_id     = 2;
   string stage_id        = 3;
   int64  user_id         = 4; // optional — cg-users user linked to this deal
-  reserved 5;                 // formerly vehicle_id — removed in migration 000012
+  int64  vehicle_id      = 5; // optional — car ID from cg-users garage
   int64  assigned_to     = 6; // optional
   string title           = 7;
   double amount          = 8;
@@ -481,6 +483,7 @@ message UpdateDealRequest {
   string currency        = 5;
   int64  assigned_to     = 6;
   google.protobuf.Timestamp expected_close = 7;
+  int64  vehicle_id      = 8; // 0 to clear, >0 to set
 }
 
 message UpdateDealResponse {
