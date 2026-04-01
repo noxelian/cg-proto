@@ -2321,7 +2321,7 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\x11SetDeliveryOption\x12(.orders.cart.v1.SetDeliveryOptionRequest\x1a).orders.cart.v1.SetDeliveryOptionResponse\x12M\n" +
 	"\bCheckout\x12\x1f.orders.cart.v1.CheckoutRequest\x1a .orders.cart.v1.CheckoutResponse\x12_\n" +
 	"\x0eGetCartSummary\x12%.orders.cart.v1.GetCartSummaryRequest\x1a&.orders.cart.v1.GetCartSummaryResponse\x12t\n" +
-	"\x15ProcessPaymentSuccess\x12,.orders.cart.v1.ProcessPaymentSuccessRequest\x1a-.orders.cart.v1.ProcessPaymentSuccessResponseB6Z4gitlab.com/xakpro/cg-proto/gen/go/orders/cart;cartv1b\x06proto3"
+	"\x15ProcessPaymentSuccess\x12,.orders.cart.v1.ProcessPaymentSuccessRequest\x1a-.orders.cart.v1.ProcessPaymentSuccessResponseB6Z4github.com/4ubak/cg-proto/gen/go/orders/cart;cartv1b\x06proto3"
 
 var (
 	file_orders_cart_v1_cart_proto_rawDescOnce sync.Once

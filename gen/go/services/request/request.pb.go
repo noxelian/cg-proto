@@ -2261,7 +2261,7 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x1dGetNewRequestsForOrganization\x129.services.request.v1.GetNewRequestsForOrganizationRequest\x1a:.services.request.v1.GetNewRequestsForOrganizationResponse\x12x\n" +
 	"\x13MarkRequestAsViewed\x12/.services.request.v1.MarkRequestAsViewedRequest\x1a0.services.request.v1.MarkRequestAsViewedResponse\x12c\n" +
 	"\fIsRequestNew\x12(.services.request.v1.IsRequestNewRequest\x1a).services.request.v1.IsRequestNewResponse\x12l\n" +
-	"\x0fClassifyRequest\x12+.services.request.v1.ClassifyRequestRequest\x1a,.services.request.v1.ClassifyRequestResponseB>Z<gitlab.com/xakpro/cg-proto/gen/go/services/request;requestv1b\x06proto3"
+	"\x0fClassifyRequest\x12+.services.request.v1.ClassifyRequestRequest\x1a,.services.request.v1.ClassifyRequestResponseB>Z<github.com/4ubak/cg-proto/gen/go/services/request;requestv1b\x06proto3"
 
 var (
 	file_services_request_request_proto_rawDescOnce sync.Once

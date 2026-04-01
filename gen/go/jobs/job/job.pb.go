@@ -2075,7 +2075,7 @@ const file_jobs_job_job_proto_rawDesc = "" +
 	"\fUpdateResume\x12 .jobs.job.v1.UpdateResumeRequest\x1a!.jobs.job.v1.UpdateResumeResponse\x12V\n" +
 	"\rSearchResumes\x12!.jobs.job.v1.SearchResumesRequest\x1a\".jobs.job.v1.SearchResumesResponse\x12>\n" +
 	"\x05Apply\x12\x19.jobs.job.v1.ApplyRequest\x1a\x1a.jobs.job.v1.ApplyResponse\x12\\\n" +
-	"\x0fGetApplications\x12#.jobs.job.v1.GetApplicationsRequest\x1a$.jobs.job.v1.GetApplicationsResponseB2Z0gitlab.com/xakpro/cg-proto/gen/go/jobs/job;jobv1b\x06proto3"
+	"\x0fGetApplications\x12#.jobs.job.v1.GetApplicationsRequest\x1a$.jobs.job.v1.GetApplicationsResponseB2Z0github.com/4ubak/cg-proto/gen/go/jobs/job;jobv1b\x06proto3"
 
 var (
 	file_jobs_job_job_proto_rawDescOnce sync.Once

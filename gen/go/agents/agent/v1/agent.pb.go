@@ -2279,7 +2279,7 @@ const file_agents_agent_v1_agent_proto_rawDesc = "" +
 	"\x11StreamAgentOutput\x12).agents.agent.v1.StreamAgentOutputRequest\x1a!.agents.agent.v1.AgentOutputEvent0\x01\x12[\n" +
 	"\fGetAnalytics\x12$.agents.agent.v1.GetAnalyticsRequest\x1a%.agents.agent.v1.GetAnalyticsResponse\x12[\n" +
 	"\fGetDashboard\x12$.agents.agent.v1.GetDashboardRequest\x1a%.agents.agent.v1.GetDashboardResponse\x12R\n" +
-	"\tListRepos\x12!.agents.agent.v1.ListReposRequest\x1a\".agents.agent.v1.ListReposResponseB8Z6gitlab.com/xakpro/cg-proto/gen/go/agents/agent;agentv1b\x06proto3"
+	"\tListRepos\x12!.agents.agent.v1.ListReposRequest\x1a\".agents.agent.v1.ListReposResponseB8Z6github.com/4ubak/cg-proto/gen/go/agents/agent;agentv1b\x06proto3"
 
 var (
 	file_agents_agent_v1_agent_proto_rawDescOnce sync.Once

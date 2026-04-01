@@ -2556,7 +2556,7 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x12CheckPlatformRoles\x12(.users.user.v1.CheckPlatformRolesRequest\x1a).users.user.v1.CheckPlatformRolesResponse\x12o\n" +
 	"\x14SetPlatformOrgAccess\x12*.users.user.v1.SetPlatformOrgAccessRequest\x1a+.users.user.v1.SetPlatformOrgAccessResponse\x12o\n" +
 	"\x14GetPlatformOrgAccess\x12*.users.user.v1.GetPlatformOrgAccessRequest\x1a+.users.user.v1.GetPlatformOrgAccessResponse\x12{\n" +
-	"\x18ListUsersByPlatformRoles\x12..users.user.v1.ListUsersByPlatformRolesRequest\x1a/.users.user.v1.ListUsersByPlatformRolesResponseB5Z3gitlab.com/xakpro/cg-proto/gen/go/users/user;userv1b\x06proto3"
+	"\x18ListUsersByPlatformRoles\x12..users.user.v1.ListUsersByPlatformRolesRequest\x1a/.users.user.v1.ListUsersByPlatformRolesResponseB5Z3github.com/4ubak/cg-proto/gen/go/users/user;userv1b\x06proto3"
 
 var (
 	file_users_user_user_proto_rawDescOnce sync.Once

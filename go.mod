@@ -1,4 +1,4 @@
-module gitlab.com/xakpro/cg-proto
+module github.com/4ubak/cg-proto
 
 go 1.24.5
 

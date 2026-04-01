@@ -4618,7 +4618,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x0fGetPlatformRole\x12-.users.organization.v1.GetPlatformRoleRequest\x1a..users.organization.v1.GetPlatformRoleResponse\"\x03\x88\x02\x01\x12\x84\x01\n" +
 	"\x14SetPlatformOrgAccess\x122.users.organization.v1.SetPlatformOrgAccessRequest\x1a3.users.organization.v1.SetPlatformOrgAccessResponse\"\x03\x88\x02\x01\x12\x84\x01\n" +
 	"\x14GetPlatformOrgAccess\x122.users.organization.v1.GetPlatformOrgAccessRequest\x1a3.users.organization.v1.GetPlatformOrgAccessResponse\"\x03\x88\x02\x01\x12{\n" +
-	"\x11CheckPlatformRole\x12/.users.organization.v1.CheckPlatformRoleRequest\x1a0.users.organization.v1.CheckPlatformRoleResponse\"\x03\x88\x02\x01BEZCgitlab.com/xakpro/cg-proto/gen/go/users/organization;organizationv1b\x06proto3"
+	"\x11CheckPlatformRole\x12/.users.organization.v1.CheckPlatformRoleRequest\x1a0.users.organization.v1.CheckPlatformRoleResponse\"\x03\x88\x02\x01BEZCgithub.com/4ubak/cg-proto/gen/go/users/organization;organizationv1b\x06proto3"
 
 var (
 	file_users_organization_organization_proto_rawDescOnce sync.Once

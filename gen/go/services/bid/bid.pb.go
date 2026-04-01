@@ -2113,7 +2113,7 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\tRejectBid\x12!.services.bid.v1.RejectBidRequest\x1a\".services.bid.v1.RejectBidResponse\x12R\n" +
 	"\tCancelBid\x12!.services.bid.v1.CancelBidRequest\x1a\".services.bid.v1.CancelBidResponse\x12m\n" +
 	"\x12MarkPartsPurchased\x12*.services.bid.v1.MarkPartsPurchasedRequest\x1a+.services.bid.v1.MarkPartsPurchasedResponse\x12g\n" +
-	"\x10GetBidPartPrices\x12(.services.bid.v1.GetBidPartPricesRequest\x1a).services.bid.v1.GetBidPartPricesResponseB6Z4gitlab.com/xakpro/cg-proto/gen/go/services/bid;bidv1b\x06proto3"
+	"\x10GetBidPartPrices\x12(.services.bid.v1.GetBidPartPricesRequest\x1a).services.bid.v1.GetBidPartPricesResponseB6Z4github.com/4ubak/cg-proto/gen/go/services/bid;bidv1b\x06proto3"
 
 var (
 	file_services_bid_bid_proto_rawDescOnce sync.Once

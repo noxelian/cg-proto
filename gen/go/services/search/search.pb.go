@@ -1893,7 +1893,7 @@ const file_services_search_search_proto_rawDesc = "" +
 	"\aSimilar\x12\".services.search.v1.SimilarRequest\x1a#.services.search.v1.SimilarResponse\x12R\n" +
 	"\aReindex\x12\".services.search.v1.ReindexRequest\x1a#.services.search.v1.ReindexResponse\x12a\n" +
 	"\fIndexRequest\x12'.services.search.v1.IndexRequestRequest\x1a(.services.search.v1.IndexRequestResponse\x12j\n" +
-	"\x0fDeleteFromIndex\x12*.services.search.v1.DeleteFromIndexRequest\x1a+.services.search.v1.DeleteFromIndexResponseB<Z:gitlab.com/xakpro/cg-proto/gen/go/services/search;searchv1b\x06proto3"
+	"\x0fDeleteFromIndex\x12*.services.search.v1.DeleteFromIndexRequest\x1a+.services.search.v1.DeleteFromIndexResponseB<Z:github.com/4ubak/cg-proto/gen/go/services/search;searchv1b\x06proto3"
 
 var (
 	file_services_search_search_proto_rawDescOnce sync.Once
