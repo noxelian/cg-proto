@@ -827,6 +827,7 @@ type ListTasksRequest struct {
 	Label         *string                `protobuf:"bytes,3,opt,name=label,proto3,oneof" json:"label,omitempty"`
 	PageSize      int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	PageToken     string                 `protobuf:"bytes,5,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+	ParentId      *string                `protobuf:"bytes,6,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -892,6 +893,13 @@ func (x *ListTasksRequest) GetPageSize() int32 {
 func (x *ListTasksRequest) GetPageToken() string {
 	if x != nil {
 		return x.PageToken
+	}
+	return ""
+}
+
+func (x *ListTasksRequest) GetParentId() string {
+	if x != nil && x.ParentId != nil {
+		return *x.ParentId
 	}
 	return ""
 }
@@ -1840,17 +1848,20 @@ const file_agents_task_v1_task_proto_rawDesc = "" +
 	"\x0fGetTaskResponse\x12(\n" +
 	"\x04task\x18\x01 \x01(\v2\x14.agents.task.v1.TaskR\x04task\x12B\n" +
 	"\fdependencies\x18\x02 \x03(\v2\x1e.agents.task.v1.TaskDependencyR\fdependencies\x121\n" +
-	"\x06labels\x18\x03 \x03(\v2\x19.agents.task.v1.TaskLabelR\x06labels\"\x83\x02\n" +
+	"\x06labels\x18\x03 \x03(\v2\x19.agents.task.v1.TaskLabelR\x06labels\"\xb3\x02\n" +
 	"\x10ListTasksRequest\x127\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x1a.agents.task.v1.TaskStatusH\x00R\x06status\x88\x01\x01\x12=\n" +
 	"\bpriority\x18\x02 \x01(\x0e2\x1c.agents.task.v1.TaskPriorityH\x01R\bpriority\x88\x01\x01\x12\x19\n" +
 	"\x05label\x18\x03 \x01(\tH\x02R\x05label\x88\x01\x01\x12\x1b\n" +
 	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +
-	"page_token\x18\x05 \x01(\tR\tpageTokenB\t\n" +
+	"page_token\x18\x05 \x01(\tR\tpageToken\x12 \n" +
+	"\tparent_id\x18\x06 \x01(\tH\x03R\bparentId\x88\x01\x01B\t\n" +
 	"\a_statusB\v\n" +
 	"\t_priorityB\b\n" +
-	"\x06_label\"\x88\x01\n" +
+	"\x06_labelB\f\n" +
+	"\n" +
+	"_parent_id\"\x88\x01\n" +
 	"\x11ListTasksResponse\x12*\n" +
 	"\x05tasks\x18\x01 \x03(\v2\x14.agents.task.v1.TaskR\x05tasks\x12&\n" +
 	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\x12\x1f\n" +

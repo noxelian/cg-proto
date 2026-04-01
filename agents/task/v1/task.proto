@@ -152,6 +152,7 @@ message ListTasksRequest {
   optional string label = 3;
   int32 page_size = 4;
   string page_token = 5;
+  optional string parent_id = 6;
 }
 
 message ListTasksResponse {
