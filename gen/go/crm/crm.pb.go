@@ -3606,6 +3606,7 @@ type ListDealsRequest struct {
 	UserId         int64                  `protobuf:"varint,8,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // optional filter — filter by linked cg-users user_id
 	Page           int32                  `protobuf:"varint,9,opt,name=page,proto3" json:"page,omitempty"`
 	PageSize       int32                  `protobuf:"varint,10,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	Search         string                 `protobuf:"bytes,11,opt,name=search,proto3" json:"search,omitempty"` // optional — search by title (ILIKE)
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -3708,6 +3709,13 @@ func (x *ListDealsRequest) GetPageSize() int32 {
 		return x.PageSize
 	}
 	return 0
+}
+
+func (x *ListDealsRequest) GetSearch() string {
+	if x != nil {
+		return x.Search
+	}
+	return ""
 }
 
 type ListDealsResponse struct {
@@ -8511,7 +8519,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"8\n" +
 	"\x0fGetDealResponse\x12%\n" +
-	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xe8\x02\n" +
+	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\x80\x03\n" +
 	"\x10ListDealsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -8525,7 +8533,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\auser_id\x18\b \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04page\x18\t \x01(\x05R\x04page\x12\x1b\n" +
 	"\tpage_size\x18\n" +
-	" \x01(\x05R\bpageSize\"<\n" +
+	" \x01(\x05R\bpageSize\x12\x16\n" +
+	"\x06search\x18\v \x01(\tR\x06search\"<\n" +
 	"\x11ListDealsResponse\x12'\n" +
 	"\x05deals\x18\x01 \x03(\v2\x11.crm.v1.DealProtoR\x05deals\"\x99\x02\n" +
 	"\x11UpdateDealRequest\x12'\n" +

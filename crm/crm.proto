@@ -474,6 +474,7 @@ message ListDealsRequest {
   int64  user_id         = 8; // optional filter — filter by linked cg-users user_id
   int32  page            = 9;
   int32  page_size       = 10;
+  string search          = 11; // optional — search by title (ILIKE)
 }
 
 message ListDealsResponse {
