@@ -71,6 +71,9 @@ const (
 	CRMService_GetFunnelConversion_FullMethodName         = "/crm.v1.CRMService/GetFunnelConversion"
 	CRMService_GetManagerStats_FullMethodName             = "/crm.v1.CRMService/GetManagerStats"
 	CRMService_GetDealVolume_FullMethodName               = "/crm.v1.CRMService/GetDealVolume"
+	CRMService_GetStageStats_FullMethodName               = "/crm.v1.CRMService/GetStageStats"
+	CRMService_CreateNote_FullMethodName                  = "/crm.v1.CRMService/CreateNote"
+	CRMService_UpdateNote_FullMethodName                  = "/crm.v1.CRMService/UpdateNote"
 	CRMService_SendWhatsAppMessage_FullMethodName         = "/crm.v1.CRMService/SendWhatsAppMessage"
 	CRMService_SendWhatsAppTemplate_FullMethodName        = "/crm.v1.CRMService/SendWhatsAppTemplate"
 	CRMService_ListWhatsAppMessages_FullMethodName        = "/crm.v1.CRMService/ListWhatsAppMessages"
@@ -156,6 +159,10 @@ type CRMServiceClient interface {
 	GetFunnelConversion(ctx context.Context, in *GetFunnelConversionRequest, opts ...grpc.CallOption) (*GetFunnelConversionResponse, error)
 	GetManagerStats(ctx context.Context, in *GetManagerStatsRequest, opts ...grpc.CallOption) (*GetManagerStatsResponse, error)
 	GetDealVolume(ctx context.Context, in *GetDealVolumeRequest, opts ...grpc.CallOption) (*GetDealVolumeResponse, error)
+	GetStageStats(ctx context.Context, in *GetStageStatsRequest, opts ...grpc.CallOption) (*GetStageStatsResponse, error)
+	// Notes RPCs
+	CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error)
+	UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error)
 	// WhatsApp messaging RPCs
 	SendWhatsAppMessage(ctx context.Context, in *SendWhatsAppMessageRequest, opts ...grpc.CallOption) (*SendWhatsAppMessageResponse, error)
 	SendWhatsAppTemplate(ctx context.Context, in *SendWhatsAppTemplateRequest, opts ...grpc.CallOption) (*SendWhatsAppTemplateResponse, error)
@@ -704,6 +711,36 @@ func (c *cRMServiceClient) GetDealVolume(ctx context.Context, in *GetDealVolumeR
 	return out, nil
 }
 
+func (c *cRMServiceClient) GetStageStats(ctx context.Context, in *GetStageStatsRequest, opts ...grpc.CallOption) (*GetStageStatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetStageStatsResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetStageStats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateNoteResponse)
+	err := c.cc.Invoke(ctx, CRMService_CreateNote_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateNoteResponse)
+	err := c.cc.Invoke(ctx, CRMService_UpdateNote_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) SendWhatsAppMessage(ctx context.Context, in *SendWhatsAppMessageRequest, opts ...grpc.CallOption) (*SendWhatsAppMessageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SendWhatsAppMessageResponse)
@@ -832,6 +869,10 @@ type CRMServiceServer interface {
 	GetFunnelConversion(context.Context, *GetFunnelConversionRequest) (*GetFunnelConversionResponse, error)
 	GetManagerStats(context.Context, *GetManagerStatsRequest) (*GetManagerStatsResponse, error)
 	GetDealVolume(context.Context, *GetDealVolumeRequest) (*GetDealVolumeResponse, error)
+	GetStageStats(context.Context, *GetStageStatsRequest) (*GetStageStatsResponse, error)
+	// Notes RPCs
+	CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error)
+	UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error)
 	// WhatsApp messaging RPCs
 	SendWhatsAppMessage(context.Context, *SendWhatsAppMessageRequest) (*SendWhatsAppMessageResponse, error)
 	SendWhatsAppTemplate(context.Context, *SendWhatsAppTemplateRequest) (*SendWhatsAppTemplateResponse, error)
@@ -1003,6 +1044,15 @@ func (UnimplementedCRMServiceServer) GetManagerStats(context.Context, *GetManage
 }
 func (UnimplementedCRMServiceServer) GetDealVolume(context.Context, *GetDealVolumeRequest) (*GetDealVolumeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetDealVolume not implemented")
+}
+func (UnimplementedCRMServiceServer) GetStageStats(context.Context, *GetStageStatsRequest) (*GetStageStatsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetStageStats not implemented")
+}
+func (UnimplementedCRMServiceServer) CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateNote not implemented")
+}
+func (UnimplementedCRMServiceServer) UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateNote not implemented")
 }
 func (UnimplementedCRMServiceServer) SendWhatsAppMessage(context.Context, *SendWhatsAppMessageRequest) (*SendWhatsAppMessageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendWhatsAppMessage not implemented")
@@ -1976,6 +2026,60 @@ func _CRMService_GetDealVolume_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_GetStageStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStageStatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetStageStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetStageStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetStageStats(ctx, req.(*GetStageStatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_CreateNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateNoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).CreateNote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_CreateNote_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).CreateNote(ctx, req.(*CreateNoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_UpdateNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateNoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).UpdateNote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_UpdateNote_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).UpdateNote(ctx, req.(*UpdateNoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_SendWhatsAppMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SendWhatsAppMessageRequest)
 	if err := dec(in); err != nil {
@@ -2280,6 +2384,18 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDealVolume",
 			Handler:    _CRMService_GetDealVolume_Handler,
+		},
+		{
+			MethodName: "GetStageStats",
+			Handler:    _CRMService_GetStageStats_Handler,
+		},
+		{
+			MethodName: "CreateNote",
+			Handler:    _CRMService_CreateNote_Handler,
+		},
+		{
+			MethodName: "UpdateNote",
+			Handler:    _CRMService_UpdateNote_Handler,
 		},
 		{
 			MethodName: "SendWhatsAppMessage",

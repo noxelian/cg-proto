@@ -81,6 +81,11 @@ service CRMService {
   rpc GetFunnelConversion(GetFunnelConversionRequest) returns (GetFunnelConversionResponse);
   rpc GetManagerStats(GetManagerStatsRequest)         returns (GetManagerStatsResponse);
   rpc GetDealVolume(GetDealVolumeRequest)             returns (GetDealVolumeResponse);
+  rpc GetStageStats(GetStageStatsRequest)             returns (GetStageStatsResponse);
+
+  // Notes RPCs
+  rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse);
+  rpc UpdateNote(UpdateNoteRequest) returns (UpdateNoteResponse);
 
   // WhatsApp messaging RPCs
   rpc SendWhatsAppMessage(SendWhatsAppMessageRequest)     returns (SendWhatsAppMessageResponse);
@@ -909,6 +914,53 @@ message GetDealVolumeResponse {
   double lost_value  = 6;
   int64  total_count = 7;
   double total_value = 8;
+}
+
+message GetStageStatsRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+}
+
+message StageStatProto {
+  string stage_id                   = 1;
+  int64  total_deals                = 2;
+  int64  deals_without_active_tasks = 3;
+}
+
+message GetStageStatsResponse {
+  repeated StageStatProto stats = 1;
+}
+
+// ==================== Notes ====================
+
+message NoteProto {
+  string id              = 1;
+  string organization_id = 2;
+  string deal_id         = 3;
+  string body            = 4;
+  int64  author_id       = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message CreateNoteRequest {
+  string organization_id = 1;
+  string deal_id         = 2;
+  string body            = 3;
+}
+
+message CreateNoteResponse {
+  NoteProto note = 1;
+}
+
+message UpdateNoteRequest {
+  string organization_id = 1;
+  string note_id         = 2;
+  string body            = 3;
+}
+
+message UpdateNoteResponse {
+  NoteProto note = 1;
 }
 
 // ==================== WhatsApp Messages ====================
