@@ -878,20 +878,22 @@ func (x *InviteCode) GetExpiresAt() *timestamppb.Timestamp {
 
 // Organization CRUD
 type CreateOrganizationRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Type          OrganizationType       `protobuf:"varint,2,opt,name=type,proto3,enum=users.organization.v1.OrganizationType" json:"type,omitempty"`
-	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Address       string                 `protobuf:"bytes,4,opt,name=address,proto3" json:"address,omitempty"`
-	Phone         string                 `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone,omitempty"`
-	CityId        int64                  `protobuf:"varint,6,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
-	CategoryIds   []int64                `protobuf:"varint,7,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
-	CarMakeIds    []int64                `protobuf:"varint,8,rep,packed,name=car_make_ids,json=carMakeIds,proto3" json:"car_make_ids,omitempty"`
-	CarModelIds   []int64                `protobuf:"varint,9,rep,packed,name=car_model_ids,json=carModelIds,proto3" json:"car_model_ids,omitempty"`
-	YearFrom      *int32                 `protobuf:"varint,10,opt,name=year_from,json=yearFrom,proto3,oneof" json:"year_from,omitempty"`
-	YearTo        *int32                 `protobuf:"varint,11,opt,name=year_to,json=yearTo,proto3,oneof" json:"year_to,omitempty"`
-	Latitude      *float64               `protobuf:"fixed64,12,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
-	Longitude     *float64               `protobuf:"fixed64,13,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Name        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Type        OrganizationType       `protobuf:"varint,2,opt,name=type,proto3,enum=users.organization.v1.OrganizationType" json:"type,omitempty"`
+	Description string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Address     string                 `protobuf:"bytes,4,opt,name=address,proto3" json:"address,omitempty"`
+	Phone       string                 `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone,omitempty"`
+	CityId      int64                  `protobuf:"varint,6,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
+	CategoryIds []int64                `protobuf:"varint,7,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
+	CarMakeIds  []int64                `protobuf:"varint,8,rep,packed,name=car_make_ids,json=carMakeIds,proto3" json:"car_make_ids,omitempty"`
+	CarModelIds []int64                `protobuf:"varint,9,rep,packed,name=car_model_ids,json=carModelIds,proto3" json:"car_model_ids,omitempty"`
+	YearFrom    *int32                 `protobuf:"varint,10,opt,name=year_from,json=yearFrom,proto3,oneof" json:"year_from,omitempty"`
+	YearTo      *int32                 `protobuf:"varint,11,opt,name=year_to,json=yearTo,proto3,oneof" json:"year_to,omitempty"`
+	Latitude    *float64               `protobuf:"fixed64,12,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
+	Longitude   *float64               `protobuf:"fixed64,13,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
+	// When set, create org owned by this user instead of the JWT caller (admin use).
+	OwnerId       *int64 `protobuf:"varint,14,opt,name=owner_id,json=ownerId,proto3,oneof" json:"owner_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1013,6 +1015,13 @@ func (x *CreateOrganizationRequest) GetLatitude() float64 {
 func (x *CreateOrganizationRequest) GetLongitude() float64 {
 	if x != nil && x.Longitude != nil {
 		return *x.Longitude
+	}
+	return 0
+}
+
+func (x *CreateOrganizationRequest) GetOwnerId() int64 {
+	if x != nil && x.OwnerId != nil {
+		return *x.OwnerId
 	}
 	return 0
 }
@@ -4294,7 +4303,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"expires_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\xf9\x03\n" +
+	"expires_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\xa6\x04\n" +
 	"\x19CreateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12;\n" +
 	"\x04type\x18\x02 \x01(\x0e2'.users.organization.v1.OrganizationTypeR\x04type\x12 \n" +
@@ -4310,14 +4319,16 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	" \x01(\x05H\x00R\byearFrom\x88\x01\x01\x12\x1c\n" +
 	"\ayear_to\x18\v \x01(\x05H\x01R\x06yearTo\x88\x01\x01\x12\x1f\n" +
 	"\blatitude\x18\f \x01(\x01H\x02R\blatitude\x88\x01\x01\x12!\n" +
-	"\tlongitude\x18\r \x01(\x01H\x03R\tlongitude\x88\x01\x01B\f\n" +
+	"\tlongitude\x18\r \x01(\x01H\x03R\tlongitude\x88\x01\x01\x12\x1e\n" +
+	"\bowner_id\x18\x0e \x01(\x03H\x04R\aownerId\x88\x01\x01B\f\n" +
 	"\n" +
 	"_year_fromB\n" +
 	"\n" +
 	"\b_year_toB\v\n" +
 	"\t_latitudeB\f\n" +
 	"\n" +
-	"_longitude\"e\n" +
+	"_longitudeB\v\n" +
+	"\t_owner_id\"e\n" +
 	"\x1aCreateOrganizationResponse\x12G\n" +
 	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"A\n" +
 	"\x16GetOrganizationRequest\x12'\n" +
