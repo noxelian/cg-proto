@@ -427,6 +427,10 @@ message DealProto {
 
   // Enriched manager info (populated server-side from cg-users via assigned_to)
   string assigned_name    = 23;
+
+  // Unread inbound WhatsApp message count for this deal.
+  // Incremented on each inbound webhook message; reset to 0 when a manager calls GetDeal.
+  int32 unread_wa_count   = 24;
 }
 
 message DealStageHistoryProto {

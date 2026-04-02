@@ -2968,7 +2968,10 @@ type DealProto struct {
 	// Populated server-side by ListDeals for kanban board display.
 	LastTask *TaskProto `protobuf:"bytes,22,opt,name=last_task,json=lastTask,proto3" json:"last_task,omitempty"`
 	// Enriched manager info (populated server-side from cg-users via assigned_to)
-	AssignedName  string `protobuf:"bytes,23,opt,name=assigned_name,json=assignedName,proto3" json:"assigned_name,omitempty"`
+	AssignedName string `protobuf:"bytes,23,opt,name=assigned_name,json=assignedName,proto3" json:"assigned_name,omitempty"`
+	// Unread inbound WhatsApp message count for this deal.
+	// Incremented on each inbound webhook message; reset to 0 when a manager calls GetDeal.
+	UnreadWaCount int32 `protobuf:"varint,24,opt,name=unread_wa_count,json=unreadWaCount,proto3" json:"unread_wa_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3155,6 +3158,13 @@ func (x *DealProto) GetAssignedName() string {
 		return x.AssignedName
 	}
 	return ""
+}
+
+func (x *DealProto) GetUnreadWaCount() int32 {
+	if x != nil {
+		return x.UnreadWaCount
+	}
+	return 0
 }
 
 type DealStageHistoryProto struct {
@@ -9289,7 +9299,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x03vin\x18\x02 \x01(\tR\x03vin\x12#\n" +
 	"\rlicense_plate\x18\x03 \x01(\tR\flicensePlate\"?\n" +
 	"\x15LookupVehicleResponse\x12&\n" +
-	"\x03car\x18\x01 \x01(\v2\x14.crm.v1.CarInfoProtoR\x03car\"\xb6\x06\n" +
+	"\x03car\x18\x01 \x01(\v2\x14.crm.v1.CarInfoProtoR\x03car\"\xde\x06\n" +
 	"\tDealProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x1f\n" +
@@ -9320,7 +9330,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\n" +
 	"vehicle_id\x18\x15 \x01(\x03R\tvehicleId\x12.\n" +
 	"\tlast_task\x18\x16 \x01(\v2\x11.crm.v1.TaskProtoR\blastTask\x12#\n" +
-	"\rassigned_name\x18\x17 \x01(\tR\fassignedNameJ\x04\b\a\x10\b\"\xde\x01\n" +
+	"\rassigned_name\x18\x17 \x01(\tR\fassignedName\x12&\n" +
+	"\x0funread_wa_count\x18\x18 \x01(\x05R\runreadWaCountJ\x04\b\a\x10\b\"\xde\x01\n" +
 	"\x15DealStageHistoryProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\"\n" +
