@@ -81,6 +81,11 @@ service CRMService {
   rpc GetFunnelConversion(GetFunnelConversionRequest) returns (GetFunnelConversionResponse);
   rpc GetManagerStats(GetManagerStatsRequest)         returns (GetManagerStatsResponse);
   rpc GetDealVolume(GetDealVolumeRequest)             returns (GetDealVolumeResponse);
+
+  // WhatsApp messaging RPCs
+  rpc SendWhatsAppMessage(SendWhatsAppMessageRequest)   returns (SendWhatsAppMessageResponse);
+  rpc ListWhatsAppMessages(ListWhatsAppMessagesRequest) returns (ListWhatsAppMessagesResponse);
+  rpc HandleWhatsAppWebhook(WhatsAppWebhookRequest)     returns (WhatsAppWebhookResponse);
 }
 
 message Pipeline {
@@ -894,4 +899,52 @@ message GetDealVolumeResponse {
   double lost_value  = 6;
   int64  total_count = 7;
   double total_value = 8;
+}
+
+// ==================== WhatsApp Messages ====================
+
+message WAMessageProto {
+  string id           = 1;
+  string phone        = 2;
+  string direction    = 3;  // "inbound" / "outbound"
+  string content_type = 4;  // "text" / "image" / "document" / "video" / "audio" / "template"
+  string body         = 5;
+  string media_url    = 6;
+  string status       = 7;  // "sent" / "delivered" / "read" / "failed" / "received"
+  string deal_id      = 8;
+  string wa_message_id = 9;
+  google.protobuf.Timestamp created_at = 10;
+}
+
+message SendWhatsAppMessageRequest {
+  string organization_id = 1;
+  string deal_id         = 2;  // optional
+  string phone           = 3;
+  string text            = 4;
+}
+
+message SendWhatsAppMessageResponse {
+  WAMessageProto message = 1;
+}
+
+message ListWhatsAppMessagesRequest {
+  string organization_id = 1;
+  string deal_id         = 2;  // filter by deal
+  string phone           = 3;  // or filter by phone
+  int32  limit           = 4;
+  int32  offset          = 5;
+}
+
+message ListWhatsAppMessagesResponse {
+  repeated WAMessageProto messages = 1;
+}
+
+// WhatsAppWebhookRequest wraps the raw Meta webhook JSON payload.
+// BFF forwards the raw body so cg-crm can parse and process it.
+message WhatsAppWebhookRequest {
+  bytes raw_body = 1;
+}
+
+message WhatsAppWebhookResponse {
+  bool ok = 1;
 }

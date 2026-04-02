@@ -71,6 +71,9 @@ const (
 	CRMService_GetFunnelConversion_FullMethodName         = "/crm.v1.CRMService/GetFunnelConversion"
 	CRMService_GetManagerStats_FullMethodName             = "/crm.v1.CRMService/GetManagerStats"
 	CRMService_GetDealVolume_FullMethodName               = "/crm.v1.CRMService/GetDealVolume"
+	CRMService_SendWhatsAppMessage_FullMethodName         = "/crm.v1.CRMService/SendWhatsAppMessage"
+	CRMService_ListWhatsAppMessages_FullMethodName        = "/crm.v1.CRMService/ListWhatsAppMessages"
+	CRMService_HandleWhatsAppWebhook_FullMethodName       = "/crm.v1.CRMService/HandleWhatsAppWebhook"
 )
 
 // CRMServiceClient is the client API for CRMService service.
@@ -151,6 +154,10 @@ type CRMServiceClient interface {
 	GetFunnelConversion(ctx context.Context, in *GetFunnelConversionRequest, opts ...grpc.CallOption) (*GetFunnelConversionResponse, error)
 	GetManagerStats(ctx context.Context, in *GetManagerStatsRequest, opts ...grpc.CallOption) (*GetManagerStatsResponse, error)
 	GetDealVolume(ctx context.Context, in *GetDealVolumeRequest, opts ...grpc.CallOption) (*GetDealVolumeResponse, error)
+	// WhatsApp messaging RPCs
+	SendWhatsAppMessage(ctx context.Context, in *SendWhatsAppMessageRequest, opts ...grpc.CallOption) (*SendWhatsAppMessageResponse, error)
+	ListWhatsAppMessages(ctx context.Context, in *ListWhatsAppMessagesRequest, opts ...grpc.CallOption) (*ListWhatsAppMessagesResponse, error)
+	HandleWhatsAppWebhook(ctx context.Context, in *WhatsAppWebhookRequest, opts ...grpc.CallOption) (*WhatsAppWebhookResponse, error)
 }
 
 type cRMServiceClient struct {
@@ -693,6 +700,36 @@ func (c *cRMServiceClient) GetDealVolume(ctx context.Context, in *GetDealVolumeR
 	return out, nil
 }
 
+func (c *cRMServiceClient) SendWhatsAppMessage(ctx context.Context, in *SendWhatsAppMessageRequest, opts ...grpc.CallOption) (*SendWhatsAppMessageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendWhatsAppMessageResponse)
+	err := c.cc.Invoke(ctx, CRMService_SendWhatsAppMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ListWhatsAppMessages(ctx context.Context, in *ListWhatsAppMessagesRequest, opts ...grpc.CallOption) (*ListWhatsAppMessagesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWhatsAppMessagesResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListWhatsAppMessages_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) HandleWhatsAppWebhook(ctx context.Context, in *WhatsAppWebhookRequest, opts ...grpc.CallOption) (*WhatsAppWebhookResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WhatsAppWebhookResponse)
+	err := c.cc.Invoke(ctx, CRMService_HandleWhatsAppWebhook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CRMServiceServer is the server API for CRMService service.
 // All implementations must embed UnimplementedCRMServiceServer
 // for forward compatibility.
@@ -771,6 +808,10 @@ type CRMServiceServer interface {
 	GetFunnelConversion(context.Context, *GetFunnelConversionRequest) (*GetFunnelConversionResponse, error)
 	GetManagerStats(context.Context, *GetManagerStatsRequest) (*GetManagerStatsResponse, error)
 	GetDealVolume(context.Context, *GetDealVolumeRequest) (*GetDealVolumeResponse, error)
+	// WhatsApp messaging RPCs
+	SendWhatsAppMessage(context.Context, *SendWhatsAppMessageRequest) (*SendWhatsAppMessageResponse, error)
+	ListWhatsAppMessages(context.Context, *ListWhatsAppMessagesRequest) (*ListWhatsAppMessagesResponse, error)
+	HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
 
@@ -936,6 +977,15 @@ func (UnimplementedCRMServiceServer) GetManagerStats(context.Context, *GetManage
 }
 func (UnimplementedCRMServiceServer) GetDealVolume(context.Context, *GetDealVolumeRequest) (*GetDealVolumeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetDealVolume not implemented")
+}
+func (UnimplementedCRMServiceServer) SendWhatsAppMessage(context.Context, *SendWhatsAppMessageRequest) (*SendWhatsAppMessageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SendWhatsAppMessage not implemented")
+}
+func (UnimplementedCRMServiceServer) ListWhatsAppMessages(context.Context, *ListWhatsAppMessagesRequest) (*ListWhatsAppMessagesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListWhatsAppMessages not implemented")
+}
+func (UnimplementedCRMServiceServer) HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method HandleWhatsAppWebhook not implemented")
 }
 func (UnimplementedCRMServiceServer) mustEmbedUnimplementedCRMServiceServer() {}
 func (UnimplementedCRMServiceServer) testEmbeddedByValue()                    {}
@@ -1894,6 +1944,60 @@ func _CRMService_GetDealVolume_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_SendWhatsAppMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendWhatsAppMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).SendWhatsAppMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_SendWhatsAppMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).SendWhatsAppMessage(ctx, req.(*SendWhatsAppMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ListWhatsAppMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWhatsAppMessagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListWhatsAppMessages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListWhatsAppMessages_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListWhatsAppMessages(ctx, req.(*ListWhatsAppMessagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_HandleWhatsAppWebhook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WhatsAppWebhookRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).HandleWhatsAppWebhook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_HandleWhatsAppWebhook_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).HandleWhatsAppWebhook(ctx, req.(*WhatsAppWebhookRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CRMService_ServiceDesc is the grpc.ServiceDesc for CRMService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2108,6 +2212,18 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDealVolume",
 			Handler:    _CRMService_GetDealVolume_Handler,
+		},
+		{
+			MethodName: "SendWhatsAppMessage",
+			Handler:    _CRMService_SendWhatsAppMessage_Handler,
+		},
+		{
+			MethodName: "ListWhatsAppMessages",
+			Handler:    _CRMService_ListWhatsAppMessages_Handler,
+		},
+		{
+			MethodName: "HandleWhatsAppWebhook",
+			Handler:    _CRMService_HandleWhatsAppWebhook_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
