@@ -419,6 +419,9 @@ message DealProto {
   // Last active (non-done/non-cancelled) task for this deal, sorted by due_at.
   // Populated server-side by ListDeals for kanban board display.
   TaskProto last_task     = 22;
+
+  // Enriched manager info (populated server-side from cg-users via assigned_to)
+  string assigned_name    = 23;
 }
 
 message DealStageHistoryProto {
