@@ -74,6 +74,7 @@ const (
 	CRMService_SendWhatsAppMessage_FullMethodName         = "/crm.v1.CRMService/SendWhatsAppMessage"
 	CRMService_SendWhatsAppTemplate_FullMethodName        = "/crm.v1.CRMService/SendWhatsAppTemplate"
 	CRMService_ListWhatsAppMessages_FullMethodName        = "/crm.v1.CRMService/ListWhatsAppMessages"
+	CRMService_ListWhatsAppTemplates_FullMethodName       = "/crm.v1.CRMService/ListWhatsAppTemplates"
 	CRMService_HandleWhatsAppWebhook_FullMethodName       = "/crm.v1.CRMService/HandleWhatsAppWebhook"
 )
 
@@ -159,6 +160,7 @@ type CRMServiceClient interface {
 	SendWhatsAppMessage(ctx context.Context, in *SendWhatsAppMessageRequest, opts ...grpc.CallOption) (*SendWhatsAppMessageResponse, error)
 	SendWhatsAppTemplate(ctx context.Context, in *SendWhatsAppTemplateRequest, opts ...grpc.CallOption) (*SendWhatsAppTemplateResponse, error)
 	ListWhatsAppMessages(ctx context.Context, in *ListWhatsAppMessagesRequest, opts ...grpc.CallOption) (*ListWhatsAppMessagesResponse, error)
+	ListWhatsAppTemplates(ctx context.Context, in *ListWhatsAppTemplatesRequest, opts ...grpc.CallOption) (*ListWhatsAppTemplatesResponse, error)
 	HandleWhatsAppWebhook(ctx context.Context, in *WhatsAppWebhookRequest, opts ...grpc.CallOption) (*WhatsAppWebhookResponse, error)
 }
 
@@ -732,6 +734,16 @@ func (c *cRMServiceClient) ListWhatsAppMessages(ctx context.Context, in *ListWha
 	return out, nil
 }
 
+func (c *cRMServiceClient) ListWhatsAppTemplates(ctx context.Context, in *ListWhatsAppTemplatesRequest, opts ...grpc.CallOption) (*ListWhatsAppTemplatesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWhatsAppTemplatesResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListWhatsAppTemplates_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) HandleWhatsAppWebhook(ctx context.Context, in *WhatsAppWebhookRequest, opts ...grpc.CallOption) (*WhatsAppWebhookResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(WhatsAppWebhookResponse)
@@ -824,6 +836,7 @@ type CRMServiceServer interface {
 	SendWhatsAppMessage(context.Context, *SendWhatsAppMessageRequest) (*SendWhatsAppMessageResponse, error)
 	SendWhatsAppTemplate(context.Context, *SendWhatsAppTemplateRequest) (*SendWhatsAppTemplateResponse, error)
 	ListWhatsAppMessages(context.Context, *ListWhatsAppMessagesRequest) (*ListWhatsAppMessagesResponse, error)
+	ListWhatsAppTemplates(context.Context, *ListWhatsAppTemplatesRequest) (*ListWhatsAppTemplatesResponse, error)
 	HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
@@ -999,6 +1012,9 @@ func (UnimplementedCRMServiceServer) SendWhatsAppTemplate(context.Context, *Send
 }
 func (UnimplementedCRMServiceServer) ListWhatsAppMessages(context.Context, *ListWhatsAppMessagesRequest) (*ListWhatsAppMessagesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListWhatsAppMessages not implemented")
+}
+func (UnimplementedCRMServiceServer) ListWhatsAppTemplates(context.Context, *ListWhatsAppTemplatesRequest) (*ListWhatsAppTemplatesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListWhatsAppTemplates not implemented")
 }
 func (UnimplementedCRMServiceServer) HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HandleWhatsAppWebhook not implemented")
@@ -2014,6 +2030,24 @@ func _CRMService_ListWhatsAppMessages_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_ListWhatsAppTemplates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWhatsAppTemplatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListWhatsAppTemplates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListWhatsAppTemplates_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListWhatsAppTemplates(ctx, req.(*ListWhatsAppTemplatesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_HandleWhatsAppWebhook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WhatsAppWebhookRequest)
 	if err := dec(in); err != nil {
@@ -2258,6 +2292,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListWhatsAppMessages",
 			Handler:    _CRMService_ListWhatsAppMessages_Handler,
+		},
+		{
+			MethodName: "ListWhatsAppTemplates",
+			Handler:    _CRMService_ListWhatsAppTemplates_Handler,
 		},
 		{
 			MethodName: "HandleWhatsAppWebhook",

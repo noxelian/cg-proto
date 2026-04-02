@@ -86,6 +86,7 @@ service CRMService {
   rpc SendWhatsAppMessage(SendWhatsAppMessageRequest)     returns (SendWhatsAppMessageResponse);
   rpc SendWhatsAppTemplate(SendWhatsAppTemplateRequest)   returns (SendWhatsAppTemplateResponse);
   rpc ListWhatsAppMessages(ListWhatsAppMessagesRequest)   returns (ListWhatsAppMessagesResponse);
+  rpc ListWhatsAppTemplates(ListWhatsAppTemplatesRequest) returns (ListWhatsAppTemplatesResponse);
   rpc HandleWhatsAppWebhook(WhatsAppWebhookRequest)       returns (WhatsAppWebhookResponse);
 }
 
@@ -943,8 +944,7 @@ message ListWhatsAppMessagesResponse {
   repeated WAMessageProto messages = 1;
 }
 
-// WhatsAppWebhookRequest wraps the raw Meta webhook JSON payload.
-// BFF forwards the raw body so cg-crm can parse and process it.
+// SendWhatsAppTemplate — send a pre-approved template message.
 message SendWhatsAppTemplateRequest {
   string organization_id = 1;
   string deal_id         = 2;
@@ -958,10 +958,35 @@ message SendWhatsAppTemplateResponse {
   WAMessageProto message = 1;
 }
 
+// WhatsAppWebhookRequest wraps the raw Meta webhook JSON payload.
+// BFF forwards the raw body so cg-crm can parse and process it.
 message WhatsAppWebhookRequest {
   bytes raw_body = 1;
 }
 
 message WhatsAppWebhookResponse {
   bool ok = 1;
+}
+
+// ListWhatsAppTemplates — fetch approved templates from Meta WABA
+message ListWhatsAppTemplatesRequest {
+  string organization_id = 1;
+}
+
+message ListWhatsAppTemplatesResponse {
+  repeated WhatsAppTemplate templates = 1;
+}
+
+message WhatsAppTemplate {
+  string name     = 1;
+  string language = 2;  // e.g. "ru", "en_US"
+  string status   = 3;  // "APPROVED", "PENDING", etc.
+  string category = 4;  // "MARKETING", "UTILITY", "AUTHENTICATION"
+  string body     = 5;  // body text with {{1}} placeholders
+  repeated WhatsAppTemplateParam params = 6;
+}
+
+message WhatsAppTemplateParam {
+  int32  index = 1;  // 1-based index matching {{1}}, {{2}}, etc.
+  string example = 2;  // example value from Meta
 }
