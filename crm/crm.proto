@@ -83,9 +83,10 @@ service CRMService {
   rpc GetDealVolume(GetDealVolumeRequest)             returns (GetDealVolumeResponse);
 
   // WhatsApp messaging RPCs
-  rpc SendWhatsAppMessage(SendWhatsAppMessageRequest)   returns (SendWhatsAppMessageResponse);
-  rpc ListWhatsAppMessages(ListWhatsAppMessagesRequest) returns (ListWhatsAppMessagesResponse);
-  rpc HandleWhatsAppWebhook(WhatsAppWebhookRequest)     returns (WhatsAppWebhookResponse);
+  rpc SendWhatsAppMessage(SendWhatsAppMessageRequest)     returns (SendWhatsAppMessageResponse);
+  rpc SendWhatsAppTemplate(SendWhatsAppTemplateRequest)   returns (SendWhatsAppTemplateResponse);
+  rpc ListWhatsAppMessages(ListWhatsAppMessagesRequest)   returns (ListWhatsAppMessagesResponse);
+  rpc HandleWhatsAppWebhook(WhatsAppWebhookRequest)       returns (WhatsAppWebhookResponse);
 }
 
 message Pipeline {
@@ -944,6 +945,19 @@ message ListWhatsAppMessagesResponse {
 
 // WhatsAppWebhookRequest wraps the raw Meta webhook JSON payload.
 // BFF forwards the raw body so cg-crm can parse and process it.
+message SendWhatsAppTemplateRequest {
+  string organization_id = 1;
+  string deal_id         = 2;
+  string phone           = 3;
+  string template_name   = 4;
+  string lang_code       = 5;
+  repeated string params = 6;
+}
+
+message SendWhatsAppTemplateResponse {
+  WAMessageProto message = 1;
+}
+
 message WhatsAppWebhookRequest {
   bytes raw_body = 1;
 }
