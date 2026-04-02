@@ -194,6 +194,8 @@ message CreateOrganizationRequest {
   optional int32 year_to = 11;
   optional double latitude = 12;
   optional double longitude = 13;
+  // When set, create org owned by this user instead of the JWT caller (admin use).
+  optional int64 owner_id = 14;
 }
 
 message CreateOrganizationResponse {
