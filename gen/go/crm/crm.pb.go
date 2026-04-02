@@ -7902,6 +7902,8 @@ type SendWhatsAppMessageRequest struct {
 	DealId         string                 `protobuf:"bytes,2,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"` // optional
 	Phone          string                 `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
 	Text           string                 `protobuf:"bytes,4,opt,name=text,proto3" json:"text,omitempty"`
+	MediaUrl       string                 `protobuf:"bytes,5,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`          // optional — URL of uploaded media file
+	ContentType    string                 `protobuf:"bytes,6,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"` // optional — "image", "video", "audio", "document"
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -7960,6 +7962,20 @@ func (x *SendWhatsAppMessageRequest) GetPhone() string {
 func (x *SendWhatsAppMessageRequest) GetText() string {
 	if x != nil {
 		return x.Text
+	}
+	return ""
+}
+
+func (x *SendWhatsAppMessageRequest) GetMediaUrl() string {
+	if x != nil {
+		return x.MediaUrl
+	}
+	return ""
+}
+
+func (x *SendWhatsAppMessageRequest) GetContentType() string {
+	if x != nil {
+		return x.ContentType
 	}
 	return ""
 }
@@ -8892,12 +8908,14 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\rwa_message_id\x18\t \x01(\tR\vwaMessageId\x129\n" +
 	"\n" +
 	"created_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x88\x01\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xc8\x01\n" +
 	"\x1aSendWhatsAppMessageRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\x14\n" +
 	"\x05phone\x18\x03 \x01(\tR\x05phone\x12\x12\n" +
-	"\x04text\x18\x04 \x01(\tR\x04text\"O\n" +
+	"\x04text\x18\x04 \x01(\tR\x04text\x12\x1b\n" +
+	"\tmedia_url\x18\x05 \x01(\tR\bmediaUrl\x12!\n" +
+	"\fcontent_type\x18\x06 \x01(\tR\vcontentType\"O\n" +
 	"\x1bSendWhatsAppMessageResponse\x120\n" +
 	"\amessage\x18\x01 \x01(\v2\x16.crm.v1.WAMessageProtoR\amessage\"\xa3\x01\n" +
 	"\x1bListWhatsAppMessagesRequest\x12'\n" +

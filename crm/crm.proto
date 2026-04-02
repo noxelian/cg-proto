@@ -922,6 +922,8 @@ message SendWhatsAppMessageRequest {
   string deal_id         = 2;  // optional
   string phone           = 3;
   string text            = 4;
+  string media_url       = 5;  // optional — URL of uploaded media file
+  string content_type    = 6;  // optional — "image", "video", "audio", "document"
 }
 
 message SendWhatsAppMessageResponse {
