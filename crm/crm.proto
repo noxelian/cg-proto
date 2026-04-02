@@ -415,6 +415,10 @@ message DealProto {
   string contact_phone   = 20; // phone of the user linked via user_id
 
   int64  vehicle_id      = 21; // 0 if null — car ID from cg-users garage
+
+  // Last active (non-done/non-cancelled) task for this deal, sorted by due_at.
+  // Populated server-side by ListDeals for kanban board display.
+  TaskProto last_task     = 22;
 }
 
 message DealStageHistoryProto {
