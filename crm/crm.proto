@@ -97,6 +97,7 @@ service CRMService {
   // Telephony RPCs
   rpc HandleSipuniEvent(SipuniEventRequest)   returns (SipuniEventResponse);
   rpc ListCalls(ListCallsRequest)             returns (ListCallsResponse);
+  rpc InitiateCall(InitiateCallRequest)       returns (InitiateCallResponse);
 }
 
 message Pipeline {
@@ -1106,4 +1107,16 @@ message ListCallsRequest {
 
 message ListCallsResponse {
   repeated CallProto calls = 1;
+}
+
+// InitiateCall — click-to-call via Sipuni callback API
+message InitiateCallRequest {
+  string organization_id = 1;
+  string phone           = 2;  // client phone number to call
+  string tree            = 3;  // Sipuni tree/scheme ID (e.g. "000-3138618")
+}
+
+message InitiateCallResponse {
+  bool   success     = 1;
+  string callback_id = 2;  // Sipuni callback ID for tracking/cancellation
 }

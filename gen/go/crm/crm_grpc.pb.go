@@ -81,6 +81,7 @@ const (
 	CRMService_HandleWhatsAppWebhook_FullMethodName       = "/crm.v1.CRMService/HandleWhatsAppWebhook"
 	CRMService_HandleSipuniEvent_FullMethodName           = "/crm.v1.CRMService/HandleSipuniEvent"
 	CRMService_ListCalls_FullMethodName                   = "/crm.v1.CRMService/ListCalls"
+	CRMService_InitiateCall_FullMethodName                = "/crm.v1.CRMService/InitiateCall"
 )
 
 // CRMServiceClient is the client API for CRMService service.
@@ -174,6 +175,7 @@ type CRMServiceClient interface {
 	// Telephony RPCs
 	HandleSipuniEvent(ctx context.Context, in *SipuniEventRequest, opts ...grpc.CallOption) (*SipuniEventResponse, error)
 	ListCalls(ctx context.Context, in *ListCallsRequest, opts ...grpc.CallOption) (*ListCallsResponse, error)
+	InitiateCall(ctx context.Context, in *InitiateCallRequest, opts ...grpc.CallOption) (*InitiateCallResponse, error)
 }
 
 type cRMServiceClient struct {
@@ -816,6 +818,16 @@ func (c *cRMServiceClient) ListCalls(ctx context.Context, in *ListCallsRequest, 
 	return out, nil
 }
 
+func (c *cRMServiceClient) InitiateCall(ctx context.Context, in *InitiateCallRequest, opts ...grpc.CallOption) (*InitiateCallResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(InitiateCallResponse)
+	err := c.cc.Invoke(ctx, CRMService_InitiateCall_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CRMServiceServer is the server API for CRMService service.
 // All implementations must embed UnimplementedCRMServiceServer
 // for forward compatibility.
@@ -907,6 +919,7 @@ type CRMServiceServer interface {
 	// Telephony RPCs
 	HandleSipuniEvent(context.Context, *SipuniEventRequest) (*SipuniEventResponse, error)
 	ListCalls(context.Context, *ListCallsRequest) (*ListCallsResponse, error)
+	InitiateCall(context.Context, *InitiateCallRequest) (*InitiateCallResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
 
@@ -1102,6 +1115,9 @@ func (UnimplementedCRMServiceServer) HandleSipuniEvent(context.Context, *SipuniE
 }
 func (UnimplementedCRMServiceServer) ListCalls(context.Context, *ListCallsRequest) (*ListCallsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCalls not implemented")
+}
+func (UnimplementedCRMServiceServer) InitiateCall(context.Context, *InitiateCallRequest) (*InitiateCallResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method InitiateCall not implemented")
 }
 func (UnimplementedCRMServiceServer) mustEmbedUnimplementedCRMServiceServer() {}
 func (UnimplementedCRMServiceServer) testEmbeddedByValue()                    {}
@@ -2240,6 +2256,24 @@ func _CRMService_ListCalls_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_InitiateCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InitiateCallRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).InitiateCall(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_InitiateCall_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).InitiateCall(ctx, req.(*InitiateCallRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CRMService_ServiceDesc is the grpc.ServiceDesc for CRMService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2494,6 +2528,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListCalls",
 			Handler:    _CRMService_ListCalls_Handler,
+		},
+		{
+			MethodName: "InitiateCall",
+			Handler:    _CRMService_InitiateCall_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
