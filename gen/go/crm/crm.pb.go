@@ -9087,6 +9087,7 @@ type SipuniEventRequest struct {
 	CallStartTimestamp  int64                  `protobuf:"varint,10,opt,name=call_start_timestamp,json=callStartTimestamp,proto3" json:"call_start_timestamp,omitempty"`
 	CallAnswerTimestamp int64                  `protobuf:"varint,11,opt,name=call_answer_timestamp,json=callAnswerTimestamp,proto3" json:"call_answer_timestamp,omitempty"`
 	CallRecordLink      string                 `protobuf:"bytes,12,opt,name=call_record_link,json=callRecordLink,proto3" json:"call_record_link,omitempty"`
+	PipelineId          string                 `protobuf:"bytes,13,opt,name=pipeline_id,json=pipelineId,proto3" json:"pipeline_id,omitempty"` // which pipeline this number is routed to
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -9205,6 +9206,13 @@ func (x *SipuniEventRequest) GetCallRecordLink() string {
 	return ""
 }
 
+func (x *SipuniEventRequest) GetPipelineId() string {
+	if x != nil {
+		return x.PipelineId
+	}
+	return ""
+}
+
 type SipuniEventResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
@@ -9252,6 +9260,7 @@ func (x *SipuniEventResponse) GetSuccess() bool {
 type CallProto struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	PipelineId    string                 `protobuf:"bytes,13,opt,name=pipeline_id,json=pipelineId,proto3" json:"pipeline_id,omitempty"`
 	DealId        string                 `protobuf:"bytes,2,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
 	CallId        string                 `protobuf:"bytes,3,opt,name=call_id,json=callId,proto3" json:"call_id,omitempty"`
 	SrcNum        string                 `protobuf:"bytes,4,opt,name=src_num,json=srcNum,proto3" json:"src_num,omitempty"`
@@ -9300,6 +9309,13 @@ func (*CallProto) Descriptor() ([]byte, []int) {
 func (x *CallProto) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *CallProto) GetPipelineId() string {
+	if x != nil {
+		return x.PipelineId
 	}
 	return ""
 }
@@ -10255,7 +10271,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x06params\x18\x06 \x03(\v2\x1d.crm.v1.WhatsAppTemplateParamR\x06params\"G\n" +
 	"\x15WhatsAppTemplateParam\x12\x14\n" +
 	"\x05index\x18\x01 \x01(\x05R\x05index\x12\x18\n" +
-	"\aexample\x18\x02 \x01(\tR\aexample\"\x9a\x03\n" +
+	"\aexample\x18\x02 \x01(\tR\aexample\"\xbb\x03\n" +
 	"\x12SipuniEventRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
 	"\x05event\x18\x02 \x01(\x05R\x05event\x12\x17\n" +
@@ -10269,11 +10285,15 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x14call_start_timestamp\x18\n" +
 	" \x01(\x03R\x12callStartTimestamp\x122\n" +
 	"\x15call_answer_timestamp\x18\v \x01(\x03R\x13callAnswerTimestamp\x12(\n" +
-	"\x10call_record_link\x18\f \x01(\tR\x0ecallRecordLink\"/\n" +
+	"\x10call_record_link\x18\f \x01(\tR\x0ecallRecordLink\x12\x1f\n" +
+	"\vpipeline_id\x18\r \x01(\tR\n" +
+	"pipelineId\"/\n" +
 	"\x13SipuniEventResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x9f\x03\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xc0\x03\n" +
 	"\tCallProto\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vpipeline_id\x18\r \x01(\tR\n" +
+	"pipelineId\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\x17\n" +
 	"\acall_id\x18\x03 \x01(\tR\x06callId\x12\x17\n" +
 	"\asrc_num\x18\x04 \x01(\tR\x06srcNum\x12\x17\n" +

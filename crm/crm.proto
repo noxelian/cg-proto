@@ -1073,6 +1073,7 @@ message SipuniEventRequest {
   int64  call_start_timestamp = 10;
   int64  call_answer_timestamp = 11;
   string call_record_link     = 12;
+  string pipeline_id          = 13; // which pipeline this number is routed to
 }
 
 message SipuniEventResponse {
@@ -1081,6 +1082,7 @@ message SipuniEventResponse {
 
 message CallProto {
   string id              = 1;
+  string pipeline_id     = 13;
   string deal_id         = 2;
   string call_id         = 3;
   string src_num         = 4;
