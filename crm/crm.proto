@@ -93,6 +93,10 @@ service CRMService {
   rpc ListWhatsAppMessages(ListWhatsAppMessagesRequest)   returns (ListWhatsAppMessagesResponse);
   rpc ListWhatsAppTemplates(ListWhatsAppTemplatesRequest) returns (ListWhatsAppTemplatesResponse);
   rpc HandleWhatsAppWebhook(WhatsAppWebhookRequest)       returns (WhatsAppWebhookResponse);
+
+  // Telephony RPCs
+  rpc HandleSipuniEvent(SipuniEventRequest)   returns (SipuniEventResponse);
+  rpc ListCalls(ListCallsRequest)             returns (ListCallsResponse);
 }
 
 message Pipeline {
@@ -1052,4 +1056,52 @@ message WhatsAppTemplate {
 message WhatsAppTemplateParam {
   int32  index = 1;  // 1-based index matching {{1}}, {{2}}, etc.
   string example = 2;  // example value from Meta
+}
+
+// ==================== Telephony (Sipuni) ====================
+
+message SipuniEventRequest {
+  string organization_id      = 1;
+  int32  event                = 2;  // 1=call, 2=hangup, 3=answer, 4=transfer
+  string call_id              = 3;
+  string src_num              = 4;
+  int32  src_type             = 5;  // 1=external, 2=internal
+  string dst_num              = 6;
+  int32  dst_type             = 7;
+  string status               = 8;  // ANSWER, BUSY, NOANSWER, CANCEL
+  int64  timestamp            = 9;
+  int64  call_start_timestamp = 10;
+  int64  call_answer_timestamp = 11;
+  string call_record_link     = 12;
+}
+
+message SipuniEventResponse {
+  bool success = 1;
+}
+
+message CallProto {
+  string id              = 1;
+  string deal_id         = 2;
+  string call_id         = 3;
+  string src_num         = 4;
+  string dst_num         = 5;
+  string direction       = 6;
+  string status          = 7;
+  int32  duration        = 8;
+  string record_url      = 9;
+  google.protobuf.Timestamp answered_at = 10;
+  google.protobuf.Timestamp ended_at    = 11;
+  google.protobuf.Timestamp created_at  = 12;
+}
+
+message ListCallsRequest {
+  string organization_id = 1;
+  string deal_id         = 2;  // filter by deal
+  string phone           = 3;  // or filter by phone
+  int32  limit           = 4;
+  int32  offset          = 5;
+}
+
+message ListCallsResponse {
+  repeated CallProto calls = 1;
 }

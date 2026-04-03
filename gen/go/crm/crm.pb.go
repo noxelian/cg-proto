@@ -9073,6 +9073,434 @@ func (x *WhatsAppTemplateParam) GetExample() string {
 	return ""
 }
 
+type SipuniEventRequest struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId      string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	Event               int32                  `protobuf:"varint,2,opt,name=event,proto3" json:"event,omitempty"` // 1=call, 2=hangup, 3=answer, 4=transfer
+	CallId              string                 `protobuf:"bytes,3,opt,name=call_id,json=callId,proto3" json:"call_id,omitempty"`
+	SrcNum              string                 `protobuf:"bytes,4,opt,name=src_num,json=srcNum,proto3" json:"src_num,omitempty"`
+	SrcType             int32                  `protobuf:"varint,5,opt,name=src_type,json=srcType,proto3" json:"src_type,omitempty"` // 1=external, 2=internal
+	DstNum              string                 `protobuf:"bytes,6,opt,name=dst_num,json=dstNum,proto3" json:"dst_num,omitempty"`
+	DstType             int32                  `protobuf:"varint,7,opt,name=dst_type,json=dstType,proto3" json:"dst_type,omitempty"`
+	Status              string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"` // ANSWER, BUSY, NOANSWER, CANCEL
+	Timestamp           int64                  `protobuf:"varint,9,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	CallStartTimestamp  int64                  `protobuf:"varint,10,opt,name=call_start_timestamp,json=callStartTimestamp,proto3" json:"call_start_timestamp,omitempty"`
+	CallAnswerTimestamp int64                  `protobuf:"varint,11,opt,name=call_answer_timestamp,json=callAnswerTimestamp,proto3" json:"call_answer_timestamp,omitempty"`
+	CallRecordLink      string                 `protobuf:"bytes,12,opt,name=call_record_link,json=callRecordLink,proto3" json:"call_record_link,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *SipuniEventRequest) Reset() {
+	*x = SipuniEventRequest{}
+	mi := &file_crm_crm_proto_msgTypes[141]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SipuniEventRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SipuniEventRequest) ProtoMessage() {}
+
+func (x *SipuniEventRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_crm_crm_proto_msgTypes[141]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SipuniEventRequest.ProtoReflect.Descriptor instead.
+func (*SipuniEventRequest) Descriptor() ([]byte, []int) {
+	return file_crm_crm_proto_rawDescGZIP(), []int{141}
+}
+
+func (x *SipuniEventRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *SipuniEventRequest) GetEvent() int32 {
+	if x != nil {
+		return x.Event
+	}
+	return 0
+}
+
+func (x *SipuniEventRequest) GetCallId() string {
+	if x != nil {
+		return x.CallId
+	}
+	return ""
+}
+
+func (x *SipuniEventRequest) GetSrcNum() string {
+	if x != nil {
+		return x.SrcNum
+	}
+	return ""
+}
+
+func (x *SipuniEventRequest) GetSrcType() int32 {
+	if x != nil {
+		return x.SrcType
+	}
+	return 0
+}
+
+func (x *SipuniEventRequest) GetDstNum() string {
+	if x != nil {
+		return x.DstNum
+	}
+	return ""
+}
+
+func (x *SipuniEventRequest) GetDstType() int32 {
+	if x != nil {
+		return x.DstType
+	}
+	return 0
+}
+
+func (x *SipuniEventRequest) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *SipuniEventRequest) GetTimestamp() int64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *SipuniEventRequest) GetCallStartTimestamp() int64 {
+	if x != nil {
+		return x.CallStartTimestamp
+	}
+	return 0
+}
+
+func (x *SipuniEventRequest) GetCallAnswerTimestamp() int64 {
+	if x != nil {
+		return x.CallAnswerTimestamp
+	}
+	return 0
+}
+
+func (x *SipuniEventRequest) GetCallRecordLink() string {
+	if x != nil {
+		return x.CallRecordLink
+	}
+	return ""
+}
+
+type SipuniEventResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SipuniEventResponse) Reset() {
+	*x = SipuniEventResponse{}
+	mi := &file_crm_crm_proto_msgTypes[142]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SipuniEventResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SipuniEventResponse) ProtoMessage() {}
+
+func (x *SipuniEventResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_crm_crm_proto_msgTypes[142]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SipuniEventResponse.ProtoReflect.Descriptor instead.
+func (*SipuniEventResponse) Descriptor() ([]byte, []int) {
+	return file_crm_crm_proto_rawDescGZIP(), []int{142}
+}
+
+func (x *SipuniEventResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+type CallProto struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	DealId        string                 `protobuf:"bytes,2,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
+	CallId        string                 `protobuf:"bytes,3,opt,name=call_id,json=callId,proto3" json:"call_id,omitempty"`
+	SrcNum        string                 `protobuf:"bytes,4,opt,name=src_num,json=srcNum,proto3" json:"src_num,omitempty"`
+	DstNum        string                 `protobuf:"bytes,5,opt,name=dst_num,json=dstNum,proto3" json:"dst_num,omitempty"`
+	Direction     string                 `protobuf:"bytes,6,opt,name=direction,proto3" json:"direction,omitempty"`
+	Status        string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
+	Duration      int32                  `protobuf:"varint,8,opt,name=duration,proto3" json:"duration,omitempty"`
+	RecordUrl     string                 `protobuf:"bytes,9,opt,name=record_url,json=recordUrl,proto3" json:"record_url,omitempty"`
+	AnsweredAt    *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=answered_at,json=answeredAt,proto3" json:"answered_at,omitempty"`
+	EndedAt       *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CallProto) Reset() {
+	*x = CallProto{}
+	mi := &file_crm_crm_proto_msgTypes[143]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CallProto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CallProto) ProtoMessage() {}
+
+func (x *CallProto) ProtoReflect() protoreflect.Message {
+	mi := &file_crm_crm_proto_msgTypes[143]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CallProto.ProtoReflect.Descriptor instead.
+func (*CallProto) Descriptor() ([]byte, []int) {
+	return file_crm_crm_proto_rawDescGZIP(), []int{143}
+}
+
+func (x *CallProto) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *CallProto) GetDealId() string {
+	if x != nil {
+		return x.DealId
+	}
+	return ""
+}
+
+func (x *CallProto) GetCallId() string {
+	if x != nil {
+		return x.CallId
+	}
+	return ""
+}
+
+func (x *CallProto) GetSrcNum() string {
+	if x != nil {
+		return x.SrcNum
+	}
+	return ""
+}
+
+func (x *CallProto) GetDstNum() string {
+	if x != nil {
+		return x.DstNum
+	}
+	return ""
+}
+
+func (x *CallProto) GetDirection() string {
+	if x != nil {
+		return x.Direction
+	}
+	return ""
+}
+
+func (x *CallProto) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *CallProto) GetDuration() int32 {
+	if x != nil {
+		return x.Duration
+	}
+	return 0
+}
+
+func (x *CallProto) GetRecordUrl() string {
+	if x != nil {
+		return x.RecordUrl
+	}
+	return ""
+}
+
+func (x *CallProto) GetAnsweredAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.AnsweredAt
+	}
+	return nil
+}
+
+func (x *CallProto) GetEndedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.EndedAt
+	}
+	return nil
+}
+
+func (x *CallProto) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type ListCallsRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	DealId         string                 `protobuf:"bytes,2,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"` // filter by deal
+	Phone          string                 `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`                 // or filter by phone
+	Limit          int32                  `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset         int32                  `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ListCallsRequest) Reset() {
+	*x = ListCallsRequest{}
+	mi := &file_crm_crm_proto_msgTypes[144]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListCallsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListCallsRequest) ProtoMessage() {}
+
+func (x *ListCallsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_crm_crm_proto_msgTypes[144]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListCallsRequest.ProtoReflect.Descriptor instead.
+func (*ListCallsRequest) Descriptor() ([]byte, []int) {
+	return file_crm_crm_proto_rawDescGZIP(), []int{144}
+}
+
+func (x *ListCallsRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *ListCallsRequest) GetDealId() string {
+	if x != nil {
+		return x.DealId
+	}
+	return ""
+}
+
+func (x *ListCallsRequest) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *ListCallsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListCallsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type ListCallsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Calls         []*CallProto           `protobuf:"bytes,1,rep,name=calls,proto3" json:"calls,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListCallsResponse) Reset() {
+	*x = ListCallsResponse{}
+	mi := &file_crm_crm_proto_msgTypes[145]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListCallsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListCallsResponse) ProtoMessage() {}
+
+func (x *ListCallsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_crm_crm_proto_msgTypes[145]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListCallsResponse.ProtoReflect.Descriptor instead.
+func (*ListCallsResponse) Descriptor() ([]byte, []int) {
+	return file_crm_crm_proto_rawDescGZIP(), []int{145}
+}
+
+func (x *ListCallsResponse) GetCalls() []*CallProto {
+	if x != nil {
+		return x.Calls
+	}
+	return nil
+}
+
 var File_crm_crm_proto protoreflect.FileDescriptor
 
 const file_crm_crm_proto_rawDesc = "" +
@@ -9827,7 +10255,48 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x06params\x18\x06 \x03(\v2\x1d.crm.v1.WhatsAppTemplateParamR\x06params\"G\n" +
 	"\x15WhatsAppTemplateParam\x12\x14\n" +
 	"\x05index\x18\x01 \x01(\x05R\x05index\x12\x18\n" +
-	"\aexample\x18\x02 \x01(\tR\aexample2\xe0'\n" +
+	"\aexample\x18\x02 \x01(\tR\aexample\"\x9a\x03\n" +
+	"\x12SipuniEventRequest\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
+	"\x05event\x18\x02 \x01(\x05R\x05event\x12\x17\n" +
+	"\acall_id\x18\x03 \x01(\tR\x06callId\x12\x17\n" +
+	"\asrc_num\x18\x04 \x01(\tR\x06srcNum\x12\x19\n" +
+	"\bsrc_type\x18\x05 \x01(\x05R\asrcType\x12\x17\n" +
+	"\adst_num\x18\x06 \x01(\tR\x06dstNum\x12\x19\n" +
+	"\bdst_type\x18\a \x01(\x05R\adstType\x12\x16\n" +
+	"\x06status\x18\b \x01(\tR\x06status\x12\x1c\n" +
+	"\ttimestamp\x18\t \x01(\x03R\ttimestamp\x120\n" +
+	"\x14call_start_timestamp\x18\n" +
+	" \x01(\x03R\x12callStartTimestamp\x122\n" +
+	"\x15call_answer_timestamp\x18\v \x01(\x03R\x13callAnswerTimestamp\x12(\n" +
+	"\x10call_record_link\x18\f \x01(\tR\x0ecallRecordLink\"/\n" +
+	"\x13SipuniEventResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x9f\x03\n" +
+	"\tCallProto\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\x17\n" +
+	"\acall_id\x18\x03 \x01(\tR\x06callId\x12\x17\n" +
+	"\asrc_num\x18\x04 \x01(\tR\x06srcNum\x12\x17\n" +
+	"\adst_num\x18\x05 \x01(\tR\x06dstNum\x12\x1c\n" +
+	"\tdirection\x18\x06 \x01(\tR\tdirection\x12\x16\n" +
+	"\x06status\x18\a \x01(\tR\x06status\x12\x1a\n" +
+	"\bduration\x18\b \x01(\x05R\bduration\x12\x1d\n" +
+	"\n" +
+	"record_url\x18\t \x01(\tR\trecordUrl\x12;\n" +
+	"\vanswered_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"answeredAt\x125\n" +
+	"\bended_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x129\n" +
+	"\n" +
+	"created_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x98\x01\n" +
+	"\x10ListCallsRequest\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
+	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\x14\n" +
+	"\x05phone\x18\x03 \x01(\tR\x05phone\x12\x14\n" +
+	"\x05limit\x18\x04 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x05 \x01(\x05R\x06offset\"<\n" +
+	"\x11ListCallsResponse\x12'\n" +
+	"\x05calls\x18\x01 \x03(\v2\x11.crm.v1.CallProtoR\x05calls2\xf0(\n" +
 	"\n" +
 	"CRMService\x12O\n" +
 	"\x0eCreatePipeline\x12\x1d.crm.v1.CreatePipelineRequest\x1a\x1e.crm.v1.CreatePipelineResponse\x12F\n" +
@@ -9900,7 +10369,9 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x14SendWhatsAppTemplate\x12#.crm.v1.SendWhatsAppTemplateRequest\x1a$.crm.v1.SendWhatsAppTemplateResponse\x12a\n" +
 	"\x14ListWhatsAppMessages\x12#.crm.v1.ListWhatsAppMessagesRequest\x1a$.crm.v1.ListWhatsAppMessagesResponse\x12d\n" +
 	"\x15ListWhatsAppTemplates\x12$.crm.v1.ListWhatsAppTemplatesRequest\x1a%.crm.v1.ListWhatsAppTemplatesResponse\x12X\n" +
-	"\x15HandleWhatsAppWebhook\x12\x1e.crm.v1.WhatsAppWebhookRequest\x1a\x1f.crm.v1.WhatsAppWebhookResponseB,Z*github.com/4ubak/cg-proto/gen/go/crm;crmv1b\x06proto3"
+	"\x15HandleWhatsAppWebhook\x12\x1e.crm.v1.WhatsAppWebhookRequest\x1a\x1f.crm.v1.WhatsAppWebhookResponse\x12L\n" +
+	"\x11HandleSipuniEvent\x12\x1a.crm.v1.SipuniEventRequest\x1a\x1b.crm.v1.SipuniEventResponse\x12@\n" +
+	"\tListCalls\x12\x18.crm.v1.ListCallsRequest\x1a\x19.crm.v1.ListCallsResponseB,Z*github.com/4ubak/cg-proto/gen/go/crm;crmv1b\x06proto3"
 
 var (
 	file_crm_crm_proto_rawDescOnce sync.Once
@@ -9914,7 +10385,7 @@ func file_crm_crm_proto_rawDescGZIP() []byte {
 	return file_crm_crm_proto_rawDescData
 }
 
-var file_crm_crm_proto_msgTypes = make([]protoimpl.MessageInfo, 141)
+var file_crm_crm_proto_msgTypes = make([]protoimpl.MessageInfo, 146)
 var file_crm_crm_proto_goTypes = []any{
 	(*Pipeline)(nil),                            // 0: crm.v1.Pipeline
 	(*Stage)(nil),                               // 1: crm.v1.Stage
@@ -10057,62 +10528,67 @@ var file_crm_crm_proto_goTypes = []any{
 	(*ListWhatsAppTemplatesResponse)(nil),       // 138: crm.v1.ListWhatsAppTemplatesResponse
 	(*WhatsAppTemplate)(nil),                    // 139: crm.v1.WhatsAppTemplate
 	(*WhatsAppTemplateParam)(nil),               // 140: crm.v1.WhatsAppTemplateParam
-	(*timestamppb.Timestamp)(nil),               // 141: google.protobuf.Timestamp
-	(*structpb.Struct)(nil),                     // 142: google.protobuf.Struct
+	(*SipuniEventRequest)(nil),                  // 141: crm.v1.SipuniEventRequest
+	(*SipuniEventResponse)(nil),                 // 142: crm.v1.SipuniEventResponse
+	(*CallProto)(nil),                           // 143: crm.v1.CallProto
+	(*ListCallsRequest)(nil),                    // 144: crm.v1.ListCallsRequest
+	(*ListCallsResponse)(nil),                   // 145: crm.v1.ListCallsResponse
+	(*timestamppb.Timestamp)(nil),               // 146: google.protobuf.Timestamp
+	(*structpb.Struct)(nil),                     // 147: google.protobuf.Struct
 }
 var file_crm_crm_proto_depIdxs = []int32{
-	141, // 0: crm.v1.Pipeline.created_at:type_name -> google.protobuf.Timestamp
-	141, // 1: crm.v1.Pipeline.updated_at:type_name -> google.protobuf.Timestamp
+	146, // 0: crm.v1.Pipeline.created_at:type_name -> google.protobuf.Timestamp
+	146, // 1: crm.v1.Pipeline.updated_at:type_name -> google.protobuf.Timestamp
 	1,   // 2: crm.v1.Pipeline.stages:type_name -> crm.v1.Stage
-	141, // 3: crm.v1.Stage.created_at:type_name -> google.protobuf.Timestamp
-	141, // 4: crm.v1.Stage.updated_at:type_name -> google.protobuf.Timestamp
+	146, // 3: crm.v1.Stage.created_at:type_name -> google.protobuf.Timestamp
+	146, // 4: crm.v1.Stage.updated_at:type_name -> google.protobuf.Timestamp
 	0,   // 5: crm.v1.CreatePipelineResponse.pipeline:type_name -> crm.v1.Pipeline
 	0,   // 6: crm.v1.GetPipelineResponse.pipeline:type_name -> crm.v1.Pipeline
 	0,   // 7: crm.v1.ListPipelinesResponse.pipelines:type_name -> crm.v1.Pipeline
 	0,   // 8: crm.v1.UpdatePipelineResponse.pipeline:type_name -> crm.v1.Pipeline
 	1,   // 9: crm.v1.CreateStageResponse.stage:type_name -> crm.v1.Stage
 	1,   // 10: crm.v1.UpdateStageResponse.stage:type_name -> crm.v1.Stage
-	142, // 11: crm.v1.ContactProto.custom_fields:type_name -> google.protobuf.Struct
-	141, // 12: crm.v1.ContactProto.created_at:type_name -> google.protobuf.Timestamp
-	141, // 13: crm.v1.ContactProto.updated_at:type_name -> google.protobuf.Timestamp
+	147, // 11: crm.v1.ContactProto.custom_fields:type_name -> google.protobuf.Struct
+	146, // 12: crm.v1.ContactProto.created_at:type_name -> google.protobuf.Timestamp
+	146, // 13: crm.v1.ContactProto.updated_at:type_name -> google.protobuf.Timestamp
 	20,  // 14: crm.v1.CreateContactResponse.contact:type_name -> crm.v1.ContactProto
 	20,  // 15: crm.v1.GetContactResponse.contact:type_name -> crm.v1.ContactProto
 	20,  // 16: crm.v1.ListContactsResponse.contacts:type_name -> crm.v1.ContactProto
 	20,  // 17: crm.v1.SearchContactsResponse.contacts:type_name -> crm.v1.ContactProto
 	20,  // 18: crm.v1.UpdateContactResponse.contact:type_name -> crm.v1.ContactProto
-	141, // 19: crm.v1.VehicleProto.created_at:type_name -> google.protobuf.Timestamp
-	141, // 20: crm.v1.VehicleProto.updated_at:type_name -> google.protobuf.Timestamp
+	146, // 19: crm.v1.VehicleProto.created_at:type_name -> google.protobuf.Timestamp
+	146, // 20: crm.v1.VehicleProto.updated_at:type_name -> google.protobuf.Timestamp
 	33,  // 21: crm.v1.AddVehicleResponse.vehicle:type_name -> crm.v1.VehicleProto
 	33,  // 22: crm.v1.GetVehicleResponse.vehicle:type_name -> crm.v1.VehicleProto
 	33,  // 23: crm.v1.ListVehiclesByContactResponse.vehicles:type_name -> crm.v1.VehicleProto
-	141, // 24: crm.v1.ServiceRecordProto.date:type_name -> google.protobuf.Timestamp
+	146, // 24: crm.v1.ServiceRecordProto.date:type_name -> google.protobuf.Timestamp
 	40,  // 25: crm.v1.GetServiceHistoryResponse.records:type_name -> crm.v1.ServiceRecordProto
 	43,  // 26: crm.v1.GetGarageByPhoneResponse.cars:type_name -> crm.v1.CarInfoProto
 	43,  // 27: crm.v1.LookupVehicleResponse.car:type_name -> crm.v1.CarInfoProto
-	141, // 28: crm.v1.DealProto.expected_close:type_name -> google.protobuf.Timestamp
-	142, // 29: crm.v1.DealProto.custom_fields:type_name -> google.protobuf.Struct
-	141, // 30: crm.v1.DealProto.created_at:type_name -> google.protobuf.Timestamp
-	141, // 31: crm.v1.DealProto.updated_at:type_name -> google.protobuf.Timestamp
+	146, // 28: crm.v1.DealProto.expected_close:type_name -> google.protobuf.Timestamp
+	147, // 29: crm.v1.DealProto.custom_fields:type_name -> google.protobuf.Struct
+	146, // 30: crm.v1.DealProto.created_at:type_name -> google.protobuf.Timestamp
+	146, // 31: crm.v1.DealProto.updated_at:type_name -> google.protobuf.Timestamp
 	80,  // 32: crm.v1.DealProto.last_task:type_name -> crm.v1.TaskProto
-	141, // 33: crm.v1.DealStageHistoryProto.changed_at:type_name -> google.protobuf.Timestamp
-	142, // 34: crm.v1.ActivityProto.payload:type_name -> google.protobuf.Struct
-	141, // 35: crm.v1.ActivityProto.created_at:type_name -> google.protobuf.Timestamp
-	141, // 36: crm.v1.CreateDealRequest.expected_close:type_name -> google.protobuf.Timestamp
+	146, // 33: crm.v1.DealStageHistoryProto.changed_at:type_name -> google.protobuf.Timestamp
+	147, // 34: crm.v1.ActivityProto.payload:type_name -> google.protobuf.Struct
+	146, // 35: crm.v1.ActivityProto.created_at:type_name -> google.protobuf.Timestamp
+	146, // 36: crm.v1.CreateDealRequest.expected_close:type_name -> google.protobuf.Timestamp
 	48,  // 37: crm.v1.CreateDealResponse.deal:type_name -> crm.v1.DealProto
 	48,  // 38: crm.v1.GetDealResponse.deal:type_name -> crm.v1.DealProto
-	141, // 39: crm.v1.ListDealsRequest.date_from:type_name -> google.protobuf.Timestamp
-	141, // 40: crm.v1.ListDealsRequest.date_to:type_name -> google.protobuf.Timestamp
+	146, // 39: crm.v1.ListDealsRequest.date_from:type_name -> google.protobuf.Timestamp
+	146, // 40: crm.v1.ListDealsRequest.date_to:type_name -> google.protobuf.Timestamp
 	48,  // 41: crm.v1.ListDealsResponse.deals:type_name -> crm.v1.DealProto
-	141, // 42: crm.v1.UpdateDealRequest.expected_close:type_name -> google.protobuf.Timestamp
+	146, // 42: crm.v1.UpdateDealRequest.expected_close:type_name -> google.protobuf.Timestamp
 	48,  // 43: crm.v1.UpdateDealResponse.deal:type_name -> crm.v1.DealProto
 	48,  // 44: crm.v1.MoveDealStageResponse.deal:type_name -> crm.v1.DealProto
 	48,  // 45: crm.v1.CloseDealResponse.deal:type_name -> crm.v1.DealProto
 	48,  // 46: crm.v1.ReOpenDealResponse.deal:type_name -> crm.v1.DealProto
 	50,  // 47: crm.v1.GetDealActivitiesResponse.activities:type_name -> crm.v1.ActivityProto
 	50,  // 48: crm.v1.GetContactActivitiesResponse.activities:type_name -> crm.v1.ActivityProto
-	141, // 49: crm.v1.LeadProto.converted_at:type_name -> google.protobuf.Timestamp
-	141, // 50: crm.v1.LeadProto.created_at:type_name -> google.protobuf.Timestamp
-	141, // 51: crm.v1.LeadProto.updated_at:type_name -> google.protobuf.Timestamp
+	146, // 49: crm.v1.LeadProto.converted_at:type_name -> google.protobuf.Timestamp
+	146, // 50: crm.v1.LeadProto.created_at:type_name -> google.protobuf.Timestamp
+	146, // 51: crm.v1.LeadProto.updated_at:type_name -> google.protobuf.Timestamp
 	69,  // 52: crm.v1.CreateLeadResponse.lead:type_name -> crm.v1.LeadProto
 	69,  // 53: crm.v1.GetLeadResponse.lead:type_name -> crm.v1.LeadProto
 	69,  // 54: crm.v1.ListLeadsResponse.leads:type_name -> crm.v1.LeadProto
@@ -10120,17 +10596,17 @@ var file_crm_crm_proto_depIdxs = []int32{
 	69,  // 56: crm.v1.ConvertLeadResponse.lead:type_name -> crm.v1.LeadProto
 	48,  // 57: crm.v1.ConvertLeadResponse.deal:type_name -> crm.v1.DealProto
 	20,  // 58: crm.v1.ConvertLeadResponse.contact:type_name -> crm.v1.ContactProto
-	141, // 59: crm.v1.TaskProto.due_at:type_name -> google.protobuf.Timestamp
-	141, // 60: crm.v1.TaskProto.completed_at:type_name -> google.protobuf.Timestamp
-	141, // 61: crm.v1.TaskProto.created_at:type_name -> google.protobuf.Timestamp
-	141, // 62: crm.v1.TaskProto.updated_at:type_name -> google.protobuf.Timestamp
-	141, // 63: crm.v1.CreateTaskRequest.due_at:type_name -> google.protobuf.Timestamp
+	146, // 59: crm.v1.TaskProto.due_at:type_name -> google.protobuf.Timestamp
+	146, // 60: crm.v1.TaskProto.completed_at:type_name -> google.protobuf.Timestamp
+	146, // 61: crm.v1.TaskProto.created_at:type_name -> google.protobuf.Timestamp
+	146, // 62: crm.v1.TaskProto.updated_at:type_name -> google.protobuf.Timestamp
+	146, // 63: crm.v1.CreateTaskRequest.due_at:type_name -> google.protobuf.Timestamp
 	80,  // 64: crm.v1.CreateTaskResponse.task:type_name -> crm.v1.TaskProto
 	80,  // 65: crm.v1.GetTaskResponse.task:type_name -> crm.v1.TaskProto
-	141, // 66: crm.v1.ListTasksRequest.due_before:type_name -> google.protobuf.Timestamp
+	146, // 66: crm.v1.ListTasksRequest.due_before:type_name -> google.protobuf.Timestamp
 	80,  // 67: crm.v1.ListTasksResponse.tasks:type_name -> crm.v1.TaskProto
 	80,  // 68: crm.v1.UpdateTaskStatusResponse.task:type_name -> crm.v1.TaskProto
-	141, // 69: crm.v1.UpdateTaskRequest.due_at:type_name -> google.protobuf.Timestamp
+	146, // 69: crm.v1.UpdateTaskRequest.due_at:type_name -> google.protobuf.Timestamp
 	80,  // 70: crm.v1.UpdateTaskResponse.task:type_name -> crm.v1.TaskProto
 	91,  // 71: crm.v1.CustomFieldDefinitionProto.options:type_name -> crm.v1.FieldOptionProto
 	91,  // 72: crm.v1.CreateCustomFieldDefinitionRequest.options:type_name -> crm.v1.FieldOptionProto
@@ -10142,150 +10618,158 @@ var file_crm_crm_proto_depIdxs = []int32{
 	103, // 78: crm.v1.CreateWebhookSubscriptionResponse.subscription:type_name -> crm.v1.WebhookSubscriptionProto
 	103, // 79: crm.v1.ListWebhookSubscriptionsResponse.subscriptions:type_name -> crm.v1.WebhookSubscriptionProto
 	103, // 80: crm.v1.UpdateWebhookSubscriptionResponse.subscription:type_name -> crm.v1.WebhookSubscriptionProto
-	141, // 81: crm.v1.GetFunnelConversionRequest.date_from:type_name -> google.protobuf.Timestamp
-	141, // 82: crm.v1.GetFunnelConversionRequest.date_to:type_name -> google.protobuf.Timestamp
+	146, // 81: crm.v1.GetFunnelConversionRequest.date_from:type_name -> google.protobuf.Timestamp
+	146, // 82: crm.v1.GetFunnelConversionRequest.date_to:type_name -> google.protobuf.Timestamp
 	113, // 83: crm.v1.GetFunnelConversionResponse.stages:type_name -> crm.v1.FunnelStageProto
-	141, // 84: crm.v1.GetManagerStatsRequest.date_from:type_name -> google.protobuf.Timestamp
-	141, // 85: crm.v1.GetManagerStatsRequest.date_to:type_name -> google.protobuf.Timestamp
+	146, // 84: crm.v1.GetManagerStatsRequest.date_from:type_name -> google.protobuf.Timestamp
+	146, // 85: crm.v1.GetManagerStatsRequest.date_to:type_name -> google.protobuf.Timestamp
 	116, // 86: crm.v1.GetManagerStatsResponse.managers:type_name -> crm.v1.ManagerStatProto
-	141, // 87: crm.v1.GetDealVolumeRequest.date_from:type_name -> google.protobuf.Timestamp
-	141, // 88: crm.v1.GetDealVolumeRequest.date_to:type_name -> google.protobuf.Timestamp
+	146, // 87: crm.v1.GetDealVolumeRequest.date_from:type_name -> google.protobuf.Timestamp
+	146, // 88: crm.v1.GetDealVolumeRequest.date_to:type_name -> google.protobuf.Timestamp
 	121, // 89: crm.v1.GetStageStatsResponse.stats:type_name -> crm.v1.StageStatProto
-	141, // 90: crm.v1.NoteProto.created_at:type_name -> google.protobuf.Timestamp
-	141, // 91: crm.v1.NoteProto.updated_at:type_name -> google.protobuf.Timestamp
+	146, // 90: crm.v1.NoteProto.created_at:type_name -> google.protobuf.Timestamp
+	146, // 91: crm.v1.NoteProto.updated_at:type_name -> google.protobuf.Timestamp
 	123, // 92: crm.v1.CreateNoteResponse.note:type_name -> crm.v1.NoteProto
 	123, // 93: crm.v1.UpdateNoteResponse.note:type_name -> crm.v1.NoteProto
-	141, // 94: crm.v1.WAMessageProto.created_at:type_name -> google.protobuf.Timestamp
+	146, // 94: crm.v1.WAMessageProto.created_at:type_name -> google.protobuf.Timestamp
 	128, // 95: crm.v1.SendWhatsAppMessageResponse.message:type_name -> crm.v1.WAMessageProto
 	128, // 96: crm.v1.ListWhatsAppMessagesResponse.messages:type_name -> crm.v1.WAMessageProto
 	128, // 97: crm.v1.SendWhatsAppTemplateResponse.message:type_name -> crm.v1.WAMessageProto
 	139, // 98: crm.v1.ListWhatsAppTemplatesResponse.templates:type_name -> crm.v1.WhatsAppTemplate
 	140, // 99: crm.v1.WhatsAppTemplate.params:type_name -> crm.v1.WhatsAppTemplateParam
-	2,   // 100: crm.v1.CRMService.CreatePipeline:input_type -> crm.v1.CreatePipelineRequest
-	4,   // 101: crm.v1.CRMService.GetPipeline:input_type -> crm.v1.GetPipelineRequest
-	6,   // 102: crm.v1.CRMService.ListPipelines:input_type -> crm.v1.ListPipelinesRequest
-	8,   // 103: crm.v1.CRMService.UpdatePipeline:input_type -> crm.v1.UpdatePipelineRequest
-	10,  // 104: crm.v1.CRMService.ArchivePipeline:input_type -> crm.v1.ArchivePipelineRequest
-	12,  // 105: crm.v1.CRMService.CreateStage:input_type -> crm.v1.CreateStageRequest
-	14,  // 106: crm.v1.CRMService.UpdateStage:input_type -> crm.v1.UpdateStageRequest
-	16,  // 107: crm.v1.CRMService.DeleteStage:input_type -> crm.v1.DeleteStageRequest
-	18,  // 108: crm.v1.CRMService.ReorderStages:input_type -> crm.v1.ReorderStagesRequest
-	21,  // 109: crm.v1.CRMService.CreateContact:input_type -> crm.v1.CreateContactRequest
-	23,  // 110: crm.v1.CRMService.GetContact:input_type -> crm.v1.GetContactRequest
-	25,  // 111: crm.v1.CRMService.ListContacts:input_type -> crm.v1.ListContactsRequest
-	27,  // 112: crm.v1.CRMService.SearchContacts:input_type -> crm.v1.SearchContactsRequest
-	29,  // 113: crm.v1.CRMService.UpdateContact:input_type -> crm.v1.UpdateContactRequest
-	31,  // 114: crm.v1.CRMService.DeleteContact:input_type -> crm.v1.DeleteContactRequest
-	34,  // 115: crm.v1.CRMService.AddVehicle:input_type -> crm.v1.AddVehicleRequest
-	36,  // 116: crm.v1.CRMService.GetVehicle:input_type -> crm.v1.GetVehicleRequest
-	38,  // 117: crm.v1.CRMService.ListVehiclesByContact:input_type -> crm.v1.ListVehiclesByContactRequest
-	41,  // 118: crm.v1.CRMService.GetServiceHistory:input_type -> crm.v1.GetServiceHistoryRequest
-	44,  // 119: crm.v1.CRMService.GetGarageByPhone:input_type -> crm.v1.GetGarageByPhoneRequest
-	46,  // 120: crm.v1.CRMService.LookupVehicle:input_type -> crm.v1.LookupVehicleRequest
-	51,  // 121: crm.v1.CRMService.CreateDeal:input_type -> crm.v1.CreateDealRequest
-	53,  // 122: crm.v1.CRMService.GetDeal:input_type -> crm.v1.GetDealRequest
-	55,  // 123: crm.v1.CRMService.ListDeals:input_type -> crm.v1.ListDealsRequest
-	57,  // 124: crm.v1.CRMService.UpdateDeal:input_type -> crm.v1.UpdateDealRequest
-	59,  // 125: crm.v1.CRMService.MoveDealStage:input_type -> crm.v1.MoveDealStageRequest
-	61,  // 126: crm.v1.CRMService.CloseDeal:input_type -> crm.v1.CloseDealRequest
-	63,  // 127: crm.v1.CRMService.ReOpenDeal:input_type -> crm.v1.ReOpenDealRequest
-	65,  // 128: crm.v1.CRMService.GetDealActivities:input_type -> crm.v1.GetDealActivitiesRequest
-	67,  // 129: crm.v1.CRMService.GetContactActivities:input_type -> crm.v1.GetContactActivitiesRequest
-	70,  // 130: crm.v1.CRMService.CreateLead:input_type -> crm.v1.CreateLeadRequest
-	72,  // 131: crm.v1.CRMService.GetLead:input_type -> crm.v1.GetLeadRequest
-	74,  // 132: crm.v1.CRMService.ListLeads:input_type -> crm.v1.ListLeadsRequest
-	76,  // 133: crm.v1.CRMService.ChangeLeadStatus:input_type -> crm.v1.ChangeLeadStatusRequest
-	78,  // 134: crm.v1.CRMService.ConvertLead:input_type -> crm.v1.ConvertLeadRequest
-	81,  // 135: crm.v1.CRMService.CreateTask:input_type -> crm.v1.CreateTaskRequest
-	83,  // 136: crm.v1.CRMService.GetTask:input_type -> crm.v1.GetTaskRequest
-	85,  // 137: crm.v1.CRMService.ListTasks:input_type -> crm.v1.ListTasksRequest
-	87,  // 138: crm.v1.CRMService.UpdateTaskStatus:input_type -> crm.v1.UpdateTaskStatusRequest
-	89,  // 139: crm.v1.CRMService.UpdateTask:input_type -> crm.v1.UpdateTaskRequest
-	93,  // 140: crm.v1.CRMService.CreateCustomFieldDefinition:input_type -> crm.v1.CreateCustomFieldDefinitionRequest
-	95,  // 141: crm.v1.CRMService.GetCustomFieldDefinition:input_type -> crm.v1.GetCustomFieldDefinitionRequest
-	97,  // 142: crm.v1.CRMService.ListCustomFieldDefinitions:input_type -> crm.v1.ListCustomFieldDefinitionsRequest
-	99,  // 143: crm.v1.CRMService.UpdateCustomFieldDefinition:input_type -> crm.v1.UpdateCustomFieldDefinitionRequest
-	101, // 144: crm.v1.CRMService.DeleteCustomFieldDefinition:input_type -> crm.v1.DeleteCustomFieldDefinitionRequest
-	104, // 145: crm.v1.CRMService.CreateWebhookSubscription:input_type -> crm.v1.CreateWebhookSubscriptionRequest
-	106, // 146: crm.v1.CRMService.ListWebhookSubscriptions:input_type -> crm.v1.ListWebhookSubscriptionsRequest
-	108, // 147: crm.v1.CRMService.UpdateWebhookSubscription:input_type -> crm.v1.UpdateWebhookSubscriptionRequest
-	110, // 148: crm.v1.CRMService.DeleteWebhookSubscription:input_type -> crm.v1.DeleteWebhookSubscriptionRequest
-	112, // 149: crm.v1.CRMService.GetFunnelConversion:input_type -> crm.v1.GetFunnelConversionRequest
-	115, // 150: crm.v1.CRMService.GetManagerStats:input_type -> crm.v1.GetManagerStatsRequest
-	118, // 151: crm.v1.CRMService.GetDealVolume:input_type -> crm.v1.GetDealVolumeRequest
-	120, // 152: crm.v1.CRMService.GetStageStats:input_type -> crm.v1.GetStageStatsRequest
-	124, // 153: crm.v1.CRMService.CreateNote:input_type -> crm.v1.CreateNoteRequest
-	126, // 154: crm.v1.CRMService.UpdateNote:input_type -> crm.v1.UpdateNoteRequest
-	129, // 155: crm.v1.CRMService.SendWhatsAppMessage:input_type -> crm.v1.SendWhatsAppMessageRequest
-	133, // 156: crm.v1.CRMService.SendWhatsAppTemplate:input_type -> crm.v1.SendWhatsAppTemplateRequest
-	131, // 157: crm.v1.CRMService.ListWhatsAppMessages:input_type -> crm.v1.ListWhatsAppMessagesRequest
-	137, // 158: crm.v1.CRMService.ListWhatsAppTemplates:input_type -> crm.v1.ListWhatsAppTemplatesRequest
-	135, // 159: crm.v1.CRMService.HandleWhatsAppWebhook:input_type -> crm.v1.WhatsAppWebhookRequest
-	3,   // 160: crm.v1.CRMService.CreatePipeline:output_type -> crm.v1.CreatePipelineResponse
-	5,   // 161: crm.v1.CRMService.GetPipeline:output_type -> crm.v1.GetPipelineResponse
-	7,   // 162: crm.v1.CRMService.ListPipelines:output_type -> crm.v1.ListPipelinesResponse
-	9,   // 163: crm.v1.CRMService.UpdatePipeline:output_type -> crm.v1.UpdatePipelineResponse
-	11,  // 164: crm.v1.CRMService.ArchivePipeline:output_type -> crm.v1.ArchivePipelineResponse
-	13,  // 165: crm.v1.CRMService.CreateStage:output_type -> crm.v1.CreateStageResponse
-	15,  // 166: crm.v1.CRMService.UpdateStage:output_type -> crm.v1.UpdateStageResponse
-	17,  // 167: crm.v1.CRMService.DeleteStage:output_type -> crm.v1.DeleteStageResponse
-	19,  // 168: crm.v1.CRMService.ReorderStages:output_type -> crm.v1.ReorderStagesResponse
-	22,  // 169: crm.v1.CRMService.CreateContact:output_type -> crm.v1.CreateContactResponse
-	24,  // 170: crm.v1.CRMService.GetContact:output_type -> crm.v1.GetContactResponse
-	26,  // 171: crm.v1.CRMService.ListContacts:output_type -> crm.v1.ListContactsResponse
-	28,  // 172: crm.v1.CRMService.SearchContacts:output_type -> crm.v1.SearchContactsResponse
-	30,  // 173: crm.v1.CRMService.UpdateContact:output_type -> crm.v1.UpdateContactResponse
-	32,  // 174: crm.v1.CRMService.DeleteContact:output_type -> crm.v1.DeleteContactResponse
-	35,  // 175: crm.v1.CRMService.AddVehicle:output_type -> crm.v1.AddVehicleResponse
-	37,  // 176: crm.v1.CRMService.GetVehicle:output_type -> crm.v1.GetVehicleResponse
-	39,  // 177: crm.v1.CRMService.ListVehiclesByContact:output_type -> crm.v1.ListVehiclesByContactResponse
-	42,  // 178: crm.v1.CRMService.GetServiceHistory:output_type -> crm.v1.GetServiceHistoryResponse
-	45,  // 179: crm.v1.CRMService.GetGarageByPhone:output_type -> crm.v1.GetGarageByPhoneResponse
-	47,  // 180: crm.v1.CRMService.LookupVehicle:output_type -> crm.v1.LookupVehicleResponse
-	52,  // 181: crm.v1.CRMService.CreateDeal:output_type -> crm.v1.CreateDealResponse
-	54,  // 182: crm.v1.CRMService.GetDeal:output_type -> crm.v1.GetDealResponse
-	56,  // 183: crm.v1.CRMService.ListDeals:output_type -> crm.v1.ListDealsResponse
-	58,  // 184: crm.v1.CRMService.UpdateDeal:output_type -> crm.v1.UpdateDealResponse
-	60,  // 185: crm.v1.CRMService.MoveDealStage:output_type -> crm.v1.MoveDealStageResponse
-	62,  // 186: crm.v1.CRMService.CloseDeal:output_type -> crm.v1.CloseDealResponse
-	64,  // 187: crm.v1.CRMService.ReOpenDeal:output_type -> crm.v1.ReOpenDealResponse
-	66,  // 188: crm.v1.CRMService.GetDealActivities:output_type -> crm.v1.GetDealActivitiesResponse
-	68,  // 189: crm.v1.CRMService.GetContactActivities:output_type -> crm.v1.GetContactActivitiesResponse
-	71,  // 190: crm.v1.CRMService.CreateLead:output_type -> crm.v1.CreateLeadResponse
-	73,  // 191: crm.v1.CRMService.GetLead:output_type -> crm.v1.GetLeadResponse
-	75,  // 192: crm.v1.CRMService.ListLeads:output_type -> crm.v1.ListLeadsResponse
-	77,  // 193: crm.v1.CRMService.ChangeLeadStatus:output_type -> crm.v1.ChangeLeadStatusResponse
-	79,  // 194: crm.v1.CRMService.ConvertLead:output_type -> crm.v1.ConvertLeadResponse
-	82,  // 195: crm.v1.CRMService.CreateTask:output_type -> crm.v1.CreateTaskResponse
-	84,  // 196: crm.v1.CRMService.GetTask:output_type -> crm.v1.GetTaskResponse
-	86,  // 197: crm.v1.CRMService.ListTasks:output_type -> crm.v1.ListTasksResponse
-	88,  // 198: crm.v1.CRMService.UpdateTaskStatus:output_type -> crm.v1.UpdateTaskStatusResponse
-	90,  // 199: crm.v1.CRMService.UpdateTask:output_type -> crm.v1.UpdateTaskResponse
-	94,  // 200: crm.v1.CRMService.CreateCustomFieldDefinition:output_type -> crm.v1.CreateCustomFieldDefinitionResponse
-	96,  // 201: crm.v1.CRMService.GetCustomFieldDefinition:output_type -> crm.v1.GetCustomFieldDefinitionResponse
-	98,  // 202: crm.v1.CRMService.ListCustomFieldDefinitions:output_type -> crm.v1.ListCustomFieldDefinitionsResponse
-	100, // 203: crm.v1.CRMService.UpdateCustomFieldDefinition:output_type -> crm.v1.UpdateCustomFieldDefinitionResponse
-	102, // 204: crm.v1.CRMService.DeleteCustomFieldDefinition:output_type -> crm.v1.DeleteCustomFieldDefinitionResponse
-	105, // 205: crm.v1.CRMService.CreateWebhookSubscription:output_type -> crm.v1.CreateWebhookSubscriptionResponse
-	107, // 206: crm.v1.CRMService.ListWebhookSubscriptions:output_type -> crm.v1.ListWebhookSubscriptionsResponse
-	109, // 207: crm.v1.CRMService.UpdateWebhookSubscription:output_type -> crm.v1.UpdateWebhookSubscriptionResponse
-	111, // 208: crm.v1.CRMService.DeleteWebhookSubscription:output_type -> crm.v1.DeleteWebhookSubscriptionResponse
-	114, // 209: crm.v1.CRMService.GetFunnelConversion:output_type -> crm.v1.GetFunnelConversionResponse
-	117, // 210: crm.v1.CRMService.GetManagerStats:output_type -> crm.v1.GetManagerStatsResponse
-	119, // 211: crm.v1.CRMService.GetDealVolume:output_type -> crm.v1.GetDealVolumeResponse
-	122, // 212: crm.v1.CRMService.GetStageStats:output_type -> crm.v1.GetStageStatsResponse
-	125, // 213: crm.v1.CRMService.CreateNote:output_type -> crm.v1.CreateNoteResponse
-	127, // 214: crm.v1.CRMService.UpdateNote:output_type -> crm.v1.UpdateNoteResponse
-	130, // 215: crm.v1.CRMService.SendWhatsAppMessage:output_type -> crm.v1.SendWhatsAppMessageResponse
-	134, // 216: crm.v1.CRMService.SendWhatsAppTemplate:output_type -> crm.v1.SendWhatsAppTemplateResponse
-	132, // 217: crm.v1.CRMService.ListWhatsAppMessages:output_type -> crm.v1.ListWhatsAppMessagesResponse
-	138, // 218: crm.v1.CRMService.ListWhatsAppTemplates:output_type -> crm.v1.ListWhatsAppTemplatesResponse
-	136, // 219: crm.v1.CRMService.HandleWhatsAppWebhook:output_type -> crm.v1.WhatsAppWebhookResponse
-	160, // [160:220] is the sub-list for method output_type
-	100, // [100:160] is the sub-list for method input_type
-	100, // [100:100] is the sub-list for extension type_name
-	100, // [100:100] is the sub-list for extension extendee
-	0,   // [0:100] is the sub-list for field type_name
+	146, // 100: crm.v1.CallProto.answered_at:type_name -> google.protobuf.Timestamp
+	146, // 101: crm.v1.CallProto.ended_at:type_name -> google.protobuf.Timestamp
+	146, // 102: crm.v1.CallProto.created_at:type_name -> google.protobuf.Timestamp
+	143, // 103: crm.v1.ListCallsResponse.calls:type_name -> crm.v1.CallProto
+	2,   // 104: crm.v1.CRMService.CreatePipeline:input_type -> crm.v1.CreatePipelineRequest
+	4,   // 105: crm.v1.CRMService.GetPipeline:input_type -> crm.v1.GetPipelineRequest
+	6,   // 106: crm.v1.CRMService.ListPipelines:input_type -> crm.v1.ListPipelinesRequest
+	8,   // 107: crm.v1.CRMService.UpdatePipeline:input_type -> crm.v1.UpdatePipelineRequest
+	10,  // 108: crm.v1.CRMService.ArchivePipeline:input_type -> crm.v1.ArchivePipelineRequest
+	12,  // 109: crm.v1.CRMService.CreateStage:input_type -> crm.v1.CreateStageRequest
+	14,  // 110: crm.v1.CRMService.UpdateStage:input_type -> crm.v1.UpdateStageRequest
+	16,  // 111: crm.v1.CRMService.DeleteStage:input_type -> crm.v1.DeleteStageRequest
+	18,  // 112: crm.v1.CRMService.ReorderStages:input_type -> crm.v1.ReorderStagesRequest
+	21,  // 113: crm.v1.CRMService.CreateContact:input_type -> crm.v1.CreateContactRequest
+	23,  // 114: crm.v1.CRMService.GetContact:input_type -> crm.v1.GetContactRequest
+	25,  // 115: crm.v1.CRMService.ListContacts:input_type -> crm.v1.ListContactsRequest
+	27,  // 116: crm.v1.CRMService.SearchContacts:input_type -> crm.v1.SearchContactsRequest
+	29,  // 117: crm.v1.CRMService.UpdateContact:input_type -> crm.v1.UpdateContactRequest
+	31,  // 118: crm.v1.CRMService.DeleteContact:input_type -> crm.v1.DeleteContactRequest
+	34,  // 119: crm.v1.CRMService.AddVehicle:input_type -> crm.v1.AddVehicleRequest
+	36,  // 120: crm.v1.CRMService.GetVehicle:input_type -> crm.v1.GetVehicleRequest
+	38,  // 121: crm.v1.CRMService.ListVehiclesByContact:input_type -> crm.v1.ListVehiclesByContactRequest
+	41,  // 122: crm.v1.CRMService.GetServiceHistory:input_type -> crm.v1.GetServiceHistoryRequest
+	44,  // 123: crm.v1.CRMService.GetGarageByPhone:input_type -> crm.v1.GetGarageByPhoneRequest
+	46,  // 124: crm.v1.CRMService.LookupVehicle:input_type -> crm.v1.LookupVehicleRequest
+	51,  // 125: crm.v1.CRMService.CreateDeal:input_type -> crm.v1.CreateDealRequest
+	53,  // 126: crm.v1.CRMService.GetDeal:input_type -> crm.v1.GetDealRequest
+	55,  // 127: crm.v1.CRMService.ListDeals:input_type -> crm.v1.ListDealsRequest
+	57,  // 128: crm.v1.CRMService.UpdateDeal:input_type -> crm.v1.UpdateDealRequest
+	59,  // 129: crm.v1.CRMService.MoveDealStage:input_type -> crm.v1.MoveDealStageRequest
+	61,  // 130: crm.v1.CRMService.CloseDeal:input_type -> crm.v1.CloseDealRequest
+	63,  // 131: crm.v1.CRMService.ReOpenDeal:input_type -> crm.v1.ReOpenDealRequest
+	65,  // 132: crm.v1.CRMService.GetDealActivities:input_type -> crm.v1.GetDealActivitiesRequest
+	67,  // 133: crm.v1.CRMService.GetContactActivities:input_type -> crm.v1.GetContactActivitiesRequest
+	70,  // 134: crm.v1.CRMService.CreateLead:input_type -> crm.v1.CreateLeadRequest
+	72,  // 135: crm.v1.CRMService.GetLead:input_type -> crm.v1.GetLeadRequest
+	74,  // 136: crm.v1.CRMService.ListLeads:input_type -> crm.v1.ListLeadsRequest
+	76,  // 137: crm.v1.CRMService.ChangeLeadStatus:input_type -> crm.v1.ChangeLeadStatusRequest
+	78,  // 138: crm.v1.CRMService.ConvertLead:input_type -> crm.v1.ConvertLeadRequest
+	81,  // 139: crm.v1.CRMService.CreateTask:input_type -> crm.v1.CreateTaskRequest
+	83,  // 140: crm.v1.CRMService.GetTask:input_type -> crm.v1.GetTaskRequest
+	85,  // 141: crm.v1.CRMService.ListTasks:input_type -> crm.v1.ListTasksRequest
+	87,  // 142: crm.v1.CRMService.UpdateTaskStatus:input_type -> crm.v1.UpdateTaskStatusRequest
+	89,  // 143: crm.v1.CRMService.UpdateTask:input_type -> crm.v1.UpdateTaskRequest
+	93,  // 144: crm.v1.CRMService.CreateCustomFieldDefinition:input_type -> crm.v1.CreateCustomFieldDefinitionRequest
+	95,  // 145: crm.v1.CRMService.GetCustomFieldDefinition:input_type -> crm.v1.GetCustomFieldDefinitionRequest
+	97,  // 146: crm.v1.CRMService.ListCustomFieldDefinitions:input_type -> crm.v1.ListCustomFieldDefinitionsRequest
+	99,  // 147: crm.v1.CRMService.UpdateCustomFieldDefinition:input_type -> crm.v1.UpdateCustomFieldDefinitionRequest
+	101, // 148: crm.v1.CRMService.DeleteCustomFieldDefinition:input_type -> crm.v1.DeleteCustomFieldDefinitionRequest
+	104, // 149: crm.v1.CRMService.CreateWebhookSubscription:input_type -> crm.v1.CreateWebhookSubscriptionRequest
+	106, // 150: crm.v1.CRMService.ListWebhookSubscriptions:input_type -> crm.v1.ListWebhookSubscriptionsRequest
+	108, // 151: crm.v1.CRMService.UpdateWebhookSubscription:input_type -> crm.v1.UpdateWebhookSubscriptionRequest
+	110, // 152: crm.v1.CRMService.DeleteWebhookSubscription:input_type -> crm.v1.DeleteWebhookSubscriptionRequest
+	112, // 153: crm.v1.CRMService.GetFunnelConversion:input_type -> crm.v1.GetFunnelConversionRequest
+	115, // 154: crm.v1.CRMService.GetManagerStats:input_type -> crm.v1.GetManagerStatsRequest
+	118, // 155: crm.v1.CRMService.GetDealVolume:input_type -> crm.v1.GetDealVolumeRequest
+	120, // 156: crm.v1.CRMService.GetStageStats:input_type -> crm.v1.GetStageStatsRequest
+	124, // 157: crm.v1.CRMService.CreateNote:input_type -> crm.v1.CreateNoteRequest
+	126, // 158: crm.v1.CRMService.UpdateNote:input_type -> crm.v1.UpdateNoteRequest
+	129, // 159: crm.v1.CRMService.SendWhatsAppMessage:input_type -> crm.v1.SendWhatsAppMessageRequest
+	133, // 160: crm.v1.CRMService.SendWhatsAppTemplate:input_type -> crm.v1.SendWhatsAppTemplateRequest
+	131, // 161: crm.v1.CRMService.ListWhatsAppMessages:input_type -> crm.v1.ListWhatsAppMessagesRequest
+	137, // 162: crm.v1.CRMService.ListWhatsAppTemplates:input_type -> crm.v1.ListWhatsAppTemplatesRequest
+	135, // 163: crm.v1.CRMService.HandleWhatsAppWebhook:input_type -> crm.v1.WhatsAppWebhookRequest
+	141, // 164: crm.v1.CRMService.HandleSipuniEvent:input_type -> crm.v1.SipuniEventRequest
+	144, // 165: crm.v1.CRMService.ListCalls:input_type -> crm.v1.ListCallsRequest
+	3,   // 166: crm.v1.CRMService.CreatePipeline:output_type -> crm.v1.CreatePipelineResponse
+	5,   // 167: crm.v1.CRMService.GetPipeline:output_type -> crm.v1.GetPipelineResponse
+	7,   // 168: crm.v1.CRMService.ListPipelines:output_type -> crm.v1.ListPipelinesResponse
+	9,   // 169: crm.v1.CRMService.UpdatePipeline:output_type -> crm.v1.UpdatePipelineResponse
+	11,  // 170: crm.v1.CRMService.ArchivePipeline:output_type -> crm.v1.ArchivePipelineResponse
+	13,  // 171: crm.v1.CRMService.CreateStage:output_type -> crm.v1.CreateStageResponse
+	15,  // 172: crm.v1.CRMService.UpdateStage:output_type -> crm.v1.UpdateStageResponse
+	17,  // 173: crm.v1.CRMService.DeleteStage:output_type -> crm.v1.DeleteStageResponse
+	19,  // 174: crm.v1.CRMService.ReorderStages:output_type -> crm.v1.ReorderStagesResponse
+	22,  // 175: crm.v1.CRMService.CreateContact:output_type -> crm.v1.CreateContactResponse
+	24,  // 176: crm.v1.CRMService.GetContact:output_type -> crm.v1.GetContactResponse
+	26,  // 177: crm.v1.CRMService.ListContacts:output_type -> crm.v1.ListContactsResponse
+	28,  // 178: crm.v1.CRMService.SearchContacts:output_type -> crm.v1.SearchContactsResponse
+	30,  // 179: crm.v1.CRMService.UpdateContact:output_type -> crm.v1.UpdateContactResponse
+	32,  // 180: crm.v1.CRMService.DeleteContact:output_type -> crm.v1.DeleteContactResponse
+	35,  // 181: crm.v1.CRMService.AddVehicle:output_type -> crm.v1.AddVehicleResponse
+	37,  // 182: crm.v1.CRMService.GetVehicle:output_type -> crm.v1.GetVehicleResponse
+	39,  // 183: crm.v1.CRMService.ListVehiclesByContact:output_type -> crm.v1.ListVehiclesByContactResponse
+	42,  // 184: crm.v1.CRMService.GetServiceHistory:output_type -> crm.v1.GetServiceHistoryResponse
+	45,  // 185: crm.v1.CRMService.GetGarageByPhone:output_type -> crm.v1.GetGarageByPhoneResponse
+	47,  // 186: crm.v1.CRMService.LookupVehicle:output_type -> crm.v1.LookupVehicleResponse
+	52,  // 187: crm.v1.CRMService.CreateDeal:output_type -> crm.v1.CreateDealResponse
+	54,  // 188: crm.v1.CRMService.GetDeal:output_type -> crm.v1.GetDealResponse
+	56,  // 189: crm.v1.CRMService.ListDeals:output_type -> crm.v1.ListDealsResponse
+	58,  // 190: crm.v1.CRMService.UpdateDeal:output_type -> crm.v1.UpdateDealResponse
+	60,  // 191: crm.v1.CRMService.MoveDealStage:output_type -> crm.v1.MoveDealStageResponse
+	62,  // 192: crm.v1.CRMService.CloseDeal:output_type -> crm.v1.CloseDealResponse
+	64,  // 193: crm.v1.CRMService.ReOpenDeal:output_type -> crm.v1.ReOpenDealResponse
+	66,  // 194: crm.v1.CRMService.GetDealActivities:output_type -> crm.v1.GetDealActivitiesResponse
+	68,  // 195: crm.v1.CRMService.GetContactActivities:output_type -> crm.v1.GetContactActivitiesResponse
+	71,  // 196: crm.v1.CRMService.CreateLead:output_type -> crm.v1.CreateLeadResponse
+	73,  // 197: crm.v1.CRMService.GetLead:output_type -> crm.v1.GetLeadResponse
+	75,  // 198: crm.v1.CRMService.ListLeads:output_type -> crm.v1.ListLeadsResponse
+	77,  // 199: crm.v1.CRMService.ChangeLeadStatus:output_type -> crm.v1.ChangeLeadStatusResponse
+	79,  // 200: crm.v1.CRMService.ConvertLead:output_type -> crm.v1.ConvertLeadResponse
+	82,  // 201: crm.v1.CRMService.CreateTask:output_type -> crm.v1.CreateTaskResponse
+	84,  // 202: crm.v1.CRMService.GetTask:output_type -> crm.v1.GetTaskResponse
+	86,  // 203: crm.v1.CRMService.ListTasks:output_type -> crm.v1.ListTasksResponse
+	88,  // 204: crm.v1.CRMService.UpdateTaskStatus:output_type -> crm.v1.UpdateTaskStatusResponse
+	90,  // 205: crm.v1.CRMService.UpdateTask:output_type -> crm.v1.UpdateTaskResponse
+	94,  // 206: crm.v1.CRMService.CreateCustomFieldDefinition:output_type -> crm.v1.CreateCustomFieldDefinitionResponse
+	96,  // 207: crm.v1.CRMService.GetCustomFieldDefinition:output_type -> crm.v1.GetCustomFieldDefinitionResponse
+	98,  // 208: crm.v1.CRMService.ListCustomFieldDefinitions:output_type -> crm.v1.ListCustomFieldDefinitionsResponse
+	100, // 209: crm.v1.CRMService.UpdateCustomFieldDefinition:output_type -> crm.v1.UpdateCustomFieldDefinitionResponse
+	102, // 210: crm.v1.CRMService.DeleteCustomFieldDefinition:output_type -> crm.v1.DeleteCustomFieldDefinitionResponse
+	105, // 211: crm.v1.CRMService.CreateWebhookSubscription:output_type -> crm.v1.CreateWebhookSubscriptionResponse
+	107, // 212: crm.v1.CRMService.ListWebhookSubscriptions:output_type -> crm.v1.ListWebhookSubscriptionsResponse
+	109, // 213: crm.v1.CRMService.UpdateWebhookSubscription:output_type -> crm.v1.UpdateWebhookSubscriptionResponse
+	111, // 214: crm.v1.CRMService.DeleteWebhookSubscription:output_type -> crm.v1.DeleteWebhookSubscriptionResponse
+	114, // 215: crm.v1.CRMService.GetFunnelConversion:output_type -> crm.v1.GetFunnelConversionResponse
+	117, // 216: crm.v1.CRMService.GetManagerStats:output_type -> crm.v1.GetManagerStatsResponse
+	119, // 217: crm.v1.CRMService.GetDealVolume:output_type -> crm.v1.GetDealVolumeResponse
+	122, // 218: crm.v1.CRMService.GetStageStats:output_type -> crm.v1.GetStageStatsResponse
+	125, // 219: crm.v1.CRMService.CreateNote:output_type -> crm.v1.CreateNoteResponse
+	127, // 220: crm.v1.CRMService.UpdateNote:output_type -> crm.v1.UpdateNoteResponse
+	130, // 221: crm.v1.CRMService.SendWhatsAppMessage:output_type -> crm.v1.SendWhatsAppMessageResponse
+	134, // 222: crm.v1.CRMService.SendWhatsAppTemplate:output_type -> crm.v1.SendWhatsAppTemplateResponse
+	132, // 223: crm.v1.CRMService.ListWhatsAppMessages:output_type -> crm.v1.ListWhatsAppMessagesResponse
+	138, // 224: crm.v1.CRMService.ListWhatsAppTemplates:output_type -> crm.v1.ListWhatsAppTemplatesResponse
+	136, // 225: crm.v1.CRMService.HandleWhatsAppWebhook:output_type -> crm.v1.WhatsAppWebhookResponse
+	142, // 226: crm.v1.CRMService.HandleSipuniEvent:output_type -> crm.v1.SipuniEventResponse
+	145, // 227: crm.v1.CRMService.ListCalls:output_type -> crm.v1.ListCallsResponse
+	166, // [166:228] is the sub-list for method output_type
+	104, // [104:166] is the sub-list for method input_type
+	104, // [104:104] is the sub-list for extension type_name
+	104, // [104:104] is the sub-list for extension extendee
+	0,   // [0:104] is the sub-list for field type_name
 }
 
 func init() { file_crm_crm_proto_init() }
@@ -10299,7 +10783,7 @@ func file_crm_crm_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_crm_crm_proto_rawDesc), len(file_crm_crm_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   141,
+			NumMessages:   146,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
