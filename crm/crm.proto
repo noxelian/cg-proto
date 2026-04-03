@@ -1113,7 +1113,7 @@ message ListCallsResponse {
 message InitiateCallRequest {
   string organization_id = 1;
   string phone           = 2;  // client phone number to call
-  string tree            = 3;  // Sipuni tree/scheme ID (e.g. "000-3138618")
+  string pipeline_id     = 3;  // CRM pipeline — resolved to Sipuni tree on backend
 }
 
 message InitiateCallResponse {

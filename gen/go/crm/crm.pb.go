@@ -9521,8 +9521,8 @@ func (x *ListCallsResponse) GetCalls() []*CallProto {
 type InitiateCallRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	Phone          string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"` // client phone number to call
-	Tree           string                 `protobuf:"bytes,3,opt,name=tree,proto3" json:"tree,omitempty"`   // Sipuni tree/scheme ID (e.g. "000-3138618")
+	Phone          string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`                             // client phone number to call
+	PipelineId     string                 `protobuf:"bytes,3,opt,name=pipeline_id,json=pipelineId,proto3" json:"pipeline_id,omitempty"` // CRM pipeline — resolved to Sipuni tree on backend
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -9571,9 +9571,9 @@ func (x *InitiateCallRequest) GetPhone() string {
 	return ""
 }
 
-func (x *InitiateCallRequest) GetTree() string {
+func (x *InitiateCallRequest) GetPipelineId() string {
 	if x != nil {
-		return x.Tree
+		return x.PipelineId
 	}
 	return ""
 }
@@ -10429,11 +10429,12 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x05limit\x18\x04 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x05 \x01(\x05R\x06offset\"<\n" +
 	"\x11ListCallsResponse\x12'\n" +
-	"\x05calls\x18\x01 \x03(\v2\x11.crm.v1.CallProtoR\x05calls\"h\n" +
+	"\x05calls\x18\x01 \x03(\v2\x11.crm.v1.CallProtoR\x05calls\"u\n" +
 	"\x13InitiateCallRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
-	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x12\n" +
-	"\x04tree\x18\x03 \x01(\tR\x04tree\"Q\n" +
+	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x1f\n" +
+	"\vpipeline_id\x18\x03 \x01(\tR\n" +
+	"pipelineId\"Q\n" +
 	"\x14InitiateCallResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x1f\n" +
 	"\vcallback_id\x18\x02 \x01(\tR\n" +
