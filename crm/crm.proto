@@ -98,6 +98,13 @@ service CRMService {
   rpc HandleSipuniEvent(SipuniEventRequest)   returns (SipuniEventResponse);
   rpc ListCalls(ListCallsRequest)             returns (ListCallsResponse);
   rpc InitiateCall(InitiateCallRequest)       returns (InitiateCallResponse);
+
+  // Telephony settings RPCs
+  rpc UpsertTelephonyPipelineSettings(UpsertTelephonyPipelineSettingsRequest) returns (UpsertTelephonyPipelineSettingsResponse);
+  rpc GetTelephonyPipelineSettings(GetTelephonyPipelineSettingsRequest)       returns (GetTelephonyPipelineSettingsResponse);
+  rpc ListTelephonyPipelineSettings(ListTelephonyPipelineSettingsRequest)     returns (ListTelephonyPipelineSettingsResponse);
+  rpc UpsertUserSipExtension(UpsertUserSipExtensionRequest)                  returns (UpsertUserSipExtensionResponse);
+  rpc GetUserSipExtension(GetUserSipExtensionRequest)                        returns (GetUserSipExtensionResponse);
 }
 
 message Pipeline {
@@ -1119,4 +1126,65 @@ message InitiateCallRequest {
 message InitiateCallResponse {
   bool   success     = 1;
   string callback_id = 2;  // Sipuni callback ID for tracking/cancellation
+}
+
+// ==================== Telephony Settings ====================
+
+message TelephonyPipelineSettingsProto {
+  string id              = 1;
+  string pipeline_id     = 2;
+  string phone_number    = 3;  // Sipuni phone number (e.g. 77076503506)
+  string tree_id         = 4;  // Sipuni scheme ID (e.g. 000-3138618)
+  string pipeline_name   = 5;  // for display purposes
+}
+
+message UpsertTelephonyPipelineSettingsRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+  string phone_number    = 3;
+  string tree_id         = 4;
+}
+
+message UpsertTelephonyPipelineSettingsResponse {
+  TelephonyPipelineSettingsProto settings = 1;
+}
+
+message GetTelephonyPipelineSettingsRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+}
+
+message GetTelephonyPipelineSettingsResponse {
+  TelephonyPipelineSettingsProto settings = 1;
+}
+
+message ListTelephonyPipelineSettingsRequest {
+  string organization_id = 1;
+}
+
+message ListTelephonyPipelineSettingsResponse {
+  repeated TelephonyPipelineSettingsProto settings = 1;
+}
+
+message UserSipExtensionProto {
+  int64  user_id   = 1;
+  string sipnumber = 2;
+  string user_name = 3;  // for display purposes
+}
+
+message UpsertUserSipExtensionRequest {
+  string organization_id = 1;
+  string sipnumber       = 2;
+}
+
+message UpsertUserSipExtensionResponse {
+  UserSipExtensionProto extension = 1;
+}
+
+message GetUserSipExtensionRequest {
+  string organization_id = 1;
+}
+
+message GetUserSipExtensionResponse {
+  UserSipExtensionProto extension = 1;
 }
