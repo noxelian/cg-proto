@@ -82,6 +82,11 @@ service CRMService {
   rpc GetManagerStats(GetManagerStatsRequest)         returns (GetManagerStatsResponse);
   rpc GetDealVolume(GetDealVolumeRequest)             returns (GetDealVolumeResponse);
   rpc GetStageStats(GetStageStatsRequest)             returns (GetStageStatsResponse);
+  // Dashboard-focused aggregates — per-user activity counts and
+  // deal-source breakdown. Both support an optional user_id filter so
+  // admins can request their own stats instead of org-wide totals.
+  rpc GetActivityStats(GetActivityStatsRequest)       returns (GetActivityStatsResponse);
+  rpc GetDealSourcesBreakdown(GetDealSourcesBreakdownRequest) returns (GetDealSourcesBreakdownResponse);
 
   // Notes RPCs
   rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse);
@@ -445,6 +450,12 @@ message DealProto {
   // Unread inbound WhatsApp message count for this deal.
   // Incremented on each inbound webhook message; reset to 0 when a manager calls GetDeal.
   int32 unread_wa_count   = 24;
+
+  // Where the deal came from. Populated at creation time; values include
+  // "manual" (created by a user in the CRM UI), "lead" (converted from a lead
+  // — inherits the lead's own source when present), "whatsapp", "landing",
+  // "phone", "referral", etc. Empty on legacy rows that predate this field.
+  string source           = 25;
 }
 
 message DealStageHistoryProto {
@@ -480,6 +491,10 @@ message CreateDealRequest {
   double amount          = 8;
   string currency        = 9;
   google.protobuf.Timestamp expected_close = 10;
+  // Origin of the deal. If empty, the server defaults to "manual". When a
+  // deal is created via ConvertLead, the lead's source is propagated here
+  // automatically — callers should not pass a value in that flow.
+  string source          = 11;
 }
 
 message CreateDealResponse {
@@ -954,6 +969,48 @@ message StageStatProto {
 
 message GetStageStatsResponse {
   repeated StageStatProto stats = 1;
+}
+
+// GetActivityStats — dashboard aggregates for per-user activity within a
+// date range. Calls are resolved to the user via the sipuni_user_extensions
+// mapping (sipnumber ↔ user_id); notes and tasks are filtered directly by
+// created_by / assigned_to.
+message GetActivityStatsRequest {
+  string organization_id = 1;
+  google.protobuf.Timestamp date_from = 2;
+  google.protobuf.Timestamp date_to   = 3;
+  int64  user_id         = 4; // when >0, filter to this user; otherwise org-wide
+}
+
+message GetActivityStatsResponse {
+  int64 calls_inbound    = 1;
+  int64 calls_outbound   = 2;
+  int64 calls_answered   = 3;
+  int64 calls_missed     = 4;
+  int64 notes_count      = 5;
+  int64 tasks_created    = 6;
+  int64 tasks_completed  = 7;
+  int64 tasks_overdue    = 8; // pending && due_at < now — NOT bounded by date range
+}
+
+// GetDealSourcesBreakdown — distribution of deals by their source field
+// (manual, lead, whatsapp, landing, etc.) within a date range, scoped to
+// the caller or an explicit user_id.
+message GetDealSourcesBreakdownRequest {
+  string organization_id = 1;
+  google.protobuf.Timestamp date_from = 2;
+  google.protobuf.Timestamp date_to   = 3;
+  int64  user_id         = 4;
+}
+
+message DealSourceBreakdownItem {
+  string source = 1;
+  int64  count  = 2;
+  double value  = 3;
+}
+
+message GetDealSourcesBreakdownResponse {
+  repeated DealSourceBreakdownItem items = 1;
 }
 
 // ==================== Notes ====================

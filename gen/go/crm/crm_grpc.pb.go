@@ -72,6 +72,8 @@ const (
 	CRMService_GetManagerStats_FullMethodName                 = "/crm.v1.CRMService/GetManagerStats"
 	CRMService_GetDealVolume_FullMethodName                   = "/crm.v1.CRMService/GetDealVolume"
 	CRMService_GetStageStats_FullMethodName                   = "/crm.v1.CRMService/GetStageStats"
+	CRMService_GetActivityStats_FullMethodName                = "/crm.v1.CRMService/GetActivityStats"
+	CRMService_GetDealSourcesBreakdown_FullMethodName         = "/crm.v1.CRMService/GetDealSourcesBreakdown"
 	CRMService_CreateNote_FullMethodName                      = "/crm.v1.CRMService/CreateNote"
 	CRMService_UpdateNote_FullMethodName                      = "/crm.v1.CRMService/UpdateNote"
 	CRMService_SendWhatsAppMessage_FullMethodName             = "/crm.v1.CRMService/SendWhatsAppMessage"
@@ -168,6 +170,11 @@ type CRMServiceClient interface {
 	GetManagerStats(ctx context.Context, in *GetManagerStatsRequest, opts ...grpc.CallOption) (*GetManagerStatsResponse, error)
 	GetDealVolume(ctx context.Context, in *GetDealVolumeRequest, opts ...grpc.CallOption) (*GetDealVolumeResponse, error)
 	GetStageStats(ctx context.Context, in *GetStageStatsRequest, opts ...grpc.CallOption) (*GetStageStatsResponse, error)
+	// Dashboard-focused aggregates — per-user activity counts and
+	// deal-source breakdown. Both support an optional user_id filter so
+	// admins can request their own stats instead of org-wide totals.
+	GetActivityStats(ctx context.Context, in *GetActivityStatsRequest, opts ...grpc.CallOption) (*GetActivityStatsResponse, error)
+	GetDealSourcesBreakdown(ctx context.Context, in *GetDealSourcesBreakdownRequest, opts ...grpc.CallOption) (*GetDealSourcesBreakdownResponse, error)
 	// Notes RPCs
 	CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error)
 	UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error)
@@ -739,6 +746,26 @@ func (c *cRMServiceClient) GetStageStats(ctx context.Context, in *GetStageStatsR
 	return out, nil
 }
 
+func (c *cRMServiceClient) GetActivityStats(ctx context.Context, in *GetActivityStatsRequest, opts ...grpc.CallOption) (*GetActivityStatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetActivityStatsResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetActivityStats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetDealSourcesBreakdown(ctx context.Context, in *GetDealSourcesBreakdownRequest, opts ...grpc.CallOption) (*GetDealSourcesBreakdownResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDealSourcesBreakdownResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetDealSourcesBreakdown_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateNoteResponse)
@@ -968,6 +995,11 @@ type CRMServiceServer interface {
 	GetManagerStats(context.Context, *GetManagerStatsRequest) (*GetManagerStatsResponse, error)
 	GetDealVolume(context.Context, *GetDealVolumeRequest) (*GetDealVolumeResponse, error)
 	GetStageStats(context.Context, *GetStageStatsRequest) (*GetStageStatsResponse, error)
+	// Dashboard-focused aggregates — per-user activity counts and
+	// deal-source breakdown. Both support an optional user_id filter so
+	// admins can request their own stats instead of org-wide totals.
+	GetActivityStats(context.Context, *GetActivityStatsRequest) (*GetActivityStatsResponse, error)
+	GetDealSourcesBreakdown(context.Context, *GetDealSourcesBreakdownRequest) (*GetDealSourcesBreakdownResponse, error)
 	// Notes RPCs
 	CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error)
 	UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error)
@@ -1155,6 +1187,12 @@ func (UnimplementedCRMServiceServer) GetDealVolume(context.Context, *GetDealVolu
 }
 func (UnimplementedCRMServiceServer) GetStageStats(context.Context, *GetStageStatsRequest) (*GetStageStatsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetStageStats not implemented")
+}
+func (UnimplementedCRMServiceServer) GetActivityStats(context.Context, *GetActivityStatsRequest) (*GetActivityStatsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetActivityStats not implemented")
+}
+func (UnimplementedCRMServiceServer) GetDealSourcesBreakdown(context.Context, *GetDealSourcesBreakdownRequest) (*GetDealSourcesBreakdownResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetDealSourcesBreakdown not implemented")
 }
 func (UnimplementedCRMServiceServer) CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateNote not implemented")
@@ -2176,6 +2214,42 @@ func _CRMService_GetStageStats_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_GetActivityStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetActivityStatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetActivityStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetActivityStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetActivityStats(ctx, req.(*GetActivityStatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetDealSourcesBreakdown_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDealSourcesBreakdownRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetDealSourcesBreakdown(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetDealSourcesBreakdown_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetDealSourcesBreakdown(ctx, req.(*GetDealSourcesBreakdownRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_CreateNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateNoteRequest)
 	if err := dec(in); err != nil {
@@ -2664,6 +2738,14 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetStageStats",
 			Handler:    _CRMService_GetStageStats_Handler,
+		},
+		{
+			MethodName: "GetActivityStats",
+			Handler:    _CRMService_GetActivityStats_Handler,
+		},
+		{
+			MethodName: "GetDealSourcesBreakdown",
+			Handler:    _CRMService_GetDealSourcesBreakdown_Handler,
 		},
 		{
 			MethodName: "CreateNote",
