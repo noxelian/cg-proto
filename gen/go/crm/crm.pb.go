@@ -877,6 +877,8 @@ type UpdateStageRequest struct {
 	Id             string                 `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 	Name           string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Color          string                 `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
+	IsTerminal     bool                   `protobuf:"varint,5,opt,name=is_terminal,json=isTerminal,proto3" json:"is_terminal,omitempty"`
+	TerminalType   string                 `protobuf:"bytes,6,opt,name=terminal_type,json=terminalType,proto3" json:"terminal_type,omitempty"` // "won" or "lost" when is_terminal=true, "" otherwise
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -935,6 +937,20 @@ func (x *UpdateStageRequest) GetName() string {
 func (x *UpdateStageRequest) GetColor() string {
 	if x != nil {
 		return x.Color
+	}
+	return ""
+}
+
+func (x *UpdateStageRequest) GetIsTerminal() bool {
+	if x != nil {
+		return x.IsTerminal
+	}
+	return false
+}
+
+func (x *UpdateStageRequest) GetTerminalType() string {
+	if x != nil {
+		return x.TerminalType
 	}
 	return ""
 }
@@ -4040,13 +4056,14 @@ func (x *MoveDealStageResponse) GetDeal() *DealProto {
 }
 
 type CloseDealRequest struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	DealId         string                 `protobuf:"bytes,2,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
-	Status         string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"` // "won" or "lost"
-	Reason         string                 `protobuf:"bytes,4,opt,name=reason,proto3" json:"reason,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId  string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	DealId          string                 `protobuf:"bytes,2,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
+	Status          string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"` // "won" or "lost" — backward compat for clients that don't send terminal_stage_id
+	Reason          string                 `protobuf:"bytes,4,opt,name=reason,proto3" json:"reason,omitempty"`
+	TerminalStageId string                 `protobuf:"bytes,5,opt,name=terminal_stage_id,json=terminalStageId,proto3" json:"terminal_stage_id,omitempty"` // explicit terminal stage id; when set, server validates it belongs to deal pipeline and is terminal, and derives status from stage.terminal_type
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *CloseDealRequest) Reset() {
@@ -4103,6 +4120,13 @@ func (x *CloseDealRequest) GetStatus() string {
 func (x *CloseDealRequest) GetReason() string {
 	if x != nil {
 		return x.Reason
+	}
+	return ""
+}
+
+func (x *CloseDealRequest) GetTerminalStageId() string {
+	if x != nil {
+		return x.TerminalStageId
 	}
 	return ""
 }
@@ -10319,12 +10343,15 @@ const file_crm_crm_proto_rawDesc = "" +
 	"isTerminal\x12#\n" +
 	"\rterminal_type\x18\x06 \x01(\tR\fterminalType\":\n" +
 	"\x13CreateStageResponse\x12#\n" +
-	"\x05stage\x18\x01 \x01(\v2\r.crm.v1.StageR\x05stage\"w\n" +
+	"\x05stage\x18\x01 \x01(\v2\r.crm.v1.StageR\x05stage\"\xbd\x01\n" +
 	"\x12UpdateStageRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x14\n" +
-	"\x05color\x18\x04 \x01(\tR\x05color\":\n" +
+	"\x05color\x18\x04 \x01(\tR\x05color\x12\x1f\n" +
+	"\vis_terminal\x18\x05 \x01(\bR\n" +
+	"isTerminal\x12#\n" +
+	"\rterminal_type\x18\x06 \x01(\tR\fterminalType\":\n" +
 	"\x13UpdateStageResponse\x12#\n" +
 	"\x05stage\x18\x01 \x01(\v2\r.crm.v1.StageR\x05stage\"n\n" +
 	"\x12DeleteStageRequest\x12'\n" +
@@ -10586,12 +10613,13 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\x19\n" +
 	"\bstage_id\x18\x03 \x01(\tR\astageId\">\n" +
 	"\x15MoveDealStageResponse\x12%\n" +
-	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\x84\x01\n" +
+	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xb0\x01\n" +
 	"\x10CloseDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\x16\n" +
 	"\x06status\x18\x03 \x01(\tR\x06status\x12\x16\n" +
-	"\x06reason\x18\x04 \x01(\tR\x06reason\":\n" +
+	"\x06reason\x18\x04 \x01(\tR\x06reason\x12*\n" +
+	"\x11terminal_stage_id\x18\x05 \x01(\tR\x0fterminalStageId\":\n" +
 	"\x11CloseDealResponse\x12%\n" +
 	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"U\n" +
 	"\x11ReOpenDealRequest\x12'\n" +

@@ -196,6 +196,8 @@ message UpdateStageRequest {
   string id              = 2;
   string name            = 3;
   string color           = 4;
+  bool   is_terminal     = 5;
+  string terminal_type   = 6; // "won" or "lost" when is_terminal=true, "" otherwise
 }
 
 message UpdateStageResponse {
@@ -537,10 +539,11 @@ message MoveDealStageResponse {
 }
 
 message CloseDealRequest {
-  string organization_id = 1;
-  string deal_id         = 2;
-  string status          = 3; // "won" or "lost"
-  string reason          = 4;
+  string organization_id  = 1;
+  string deal_id          = 2;
+  string status           = 3; // "won" or "lost" — backward compat for clients that don't send terminal_stage_id
+  string reason           = 4;
+  string terminal_stage_id = 5; // explicit terminal stage id; when set, server validates it belongs to deal pipeline and is terminal, and derives status from stage.terminal_type
 }
 
 message CloseDealResponse {
