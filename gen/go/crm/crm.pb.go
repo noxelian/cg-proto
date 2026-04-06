@@ -7678,8 +7678,14 @@ type GetDealVolumeRequest struct {
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	DateFrom       *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=date_from,json=dateFrom,proto3" json:"date_from,omitempty"`
 	DateTo         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=date_to,json=dateTo,proto3" json:"date_to,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// When set (>0), restricts the aggregation to deals assigned to this user,
+	// overriding the default scope-based filter. Required when an admin/owner
+	// wants to see their own personal stats (the dashboard use case), since
+	// scope=all would otherwise return org-wide numbers. Managers may only
+	// request their own id; any other value returns PermissionDenied.
+	UserId        int64 `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetDealVolumeRequest) Reset() {
@@ -7731,6 +7737,13 @@ func (x *GetDealVolumeRequest) GetDateTo() *timestamppb.Timestamp {
 		return x.DateTo
 	}
 	return nil
+}
+
+func (x *GetDealVolumeRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
 }
 
 type GetDealVolumeResponse struct {
@@ -10919,11 +10932,12 @@ const file_crm_crm_proto_rawDesc = "" +
 	"lost_count\x18\x05 \x01(\x03R\tlostCount\x12\x19\n" +
 	"\bwin_rate\x18\x06 \x01(\x01R\awinRate\"O\n" +
 	"\x17GetManagerStatsResponse\x124\n" +
-	"\bmanagers\x18\x01 \x03(\v2\x18.crm.v1.ManagerStatProtoR\bmanagers\"\xad\x01\n" +
+	"\bmanagers\x18\x01 \x03(\v2\x18.crm.v1.ManagerStatProtoR\bmanagers\"\xc6\x01\n" +
 	"\x14GetDealVolumeRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x127\n" +
 	"\tdate_from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\bdateFrom\x123\n" +
-	"\adate_to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x06dateTo\"\x8f\x02\n" +
+	"\adate_to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x06dateTo\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\"\x8f\x02\n" +
 	"\x15GetDealVolumeResponse\x12\x1d\n" +
 	"\n" +
 	"open_count\x18\x01 \x01(\x03R\topenCount\x12\x1d\n" +

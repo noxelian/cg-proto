@@ -922,6 +922,12 @@ message GetDealVolumeRequest {
   string organization_id           = 1;
   google.protobuf.Timestamp date_from = 2;
   google.protobuf.Timestamp date_to   = 3;
+  // When set (>0), restricts the aggregation to deals assigned to this user,
+  // overriding the default scope-based filter. Required when an admin/owner
+  // wants to see their own personal stats (the dashboard use case), since
+  // scope=all would otherwise return org-wide numbers. Managers may only
+  // request their own id; any other value returns PermissionDenied.
+  int64  user_id                   = 4;
 }
 
 message GetDealVolumeResponse {
