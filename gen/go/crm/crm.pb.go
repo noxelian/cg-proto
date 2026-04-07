@@ -7706,7 +7706,12 @@ type GetDealVolumeRequest struct {
 	// wants to see their own personal stats (the dashboard use case), since
 	// scope=all would otherwise return org-wide numbers. Managers may only
 	// request their own id; any other value returns PermissionDenied.
-	UserId        int64 `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId int64 `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// When non-empty, restricts aggregation to deals belonging to a single
+	// pipeline. Empty = aggregate across all pipelines in the organisation
+	// (legacy behaviour). Used by the dashboard pipeline picker so the
+	// metrics match the kanban view of the same pipeline.
+	PipelineId    string `protobuf:"bytes,5,opt,name=pipeline_id,json=pipelineId,proto3" json:"pipeline_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7767,6 +7772,13 @@ func (x *GetDealVolumeRequest) GetUserId() int64 {
 		return x.UserId
 	}
 	return 0
+}
+
+func (x *GetDealVolumeRequest) GetPipelineId() string {
+	if x != nil {
+		return x.PipelineId
+	}
+	return ""
 }
 
 type GetDealVolumeResponse struct {
@@ -8206,8 +8218,12 @@ type GetDealSourcesBreakdownRequest struct {
 	DateFrom       *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=date_from,json=dateFrom,proto3" json:"date_from,omitempty"`
 	DateTo         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=date_to,json=dateTo,proto3" json:"date_to,omitempty"`
 	UserId         int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// When non-empty, restricts the source breakdown to a single pipeline.
+	// Mirrors GetDealVolumeRequest.pipeline_id — used by the dashboard
+	// pipeline picker.
+	PipelineId    string `protobuf:"bytes,5,opt,name=pipeline_id,json=pipelineId,proto3" json:"pipeline_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetDealSourcesBreakdownRequest) Reset() {
@@ -8266,6 +8282,13 @@ func (x *GetDealSourcesBreakdownRequest) GetUserId() int64 {
 		return x.UserId
 	}
 	return 0
+}
+
+func (x *GetDealSourcesBreakdownRequest) GetPipelineId() string {
+	if x != nil {
+		return x.PipelineId
+	}
+	return ""
 }
 
 type DealSourceBreakdownItem struct {
@@ -11304,12 +11327,14 @@ const file_crm_crm_proto_rawDesc = "" +
 	"lost_count\x18\x05 \x01(\x03R\tlostCount\x12\x19\n" +
 	"\bwin_rate\x18\x06 \x01(\x01R\awinRate\"O\n" +
 	"\x17GetManagerStatsResponse\x124\n" +
-	"\bmanagers\x18\x01 \x03(\v2\x18.crm.v1.ManagerStatProtoR\bmanagers\"\xc6\x01\n" +
+	"\bmanagers\x18\x01 \x03(\v2\x18.crm.v1.ManagerStatProtoR\bmanagers\"\xe7\x01\n" +
 	"\x14GetDealVolumeRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x127\n" +
 	"\tdate_from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\bdateFrom\x123\n" +
 	"\adate_to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x06dateTo\x12\x17\n" +
-	"\auser_id\x18\x04 \x01(\x03R\x06userId\"\x8f\x02\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1f\n" +
+	"\vpipeline_id\x18\x05 \x01(\tR\n" +
+	"pipelineId\"\x8f\x02\n" +
 	"\x15GetDealVolumeResponse\x12\x1d\n" +
 	"\n" +
 	"open_count\x18\x01 \x01(\x03R\topenCount\x12\x1d\n" +
@@ -11350,12 +11375,14 @@ const file_crm_crm_proto_rawDesc = "" +
 	"notesCount\x12#\n" +
 	"\rtasks_created\x18\x06 \x01(\x03R\ftasksCreated\x12'\n" +
 	"\x0ftasks_completed\x18\a \x01(\x03R\x0etasksCompleted\x12#\n" +
-	"\rtasks_overdue\x18\b \x01(\x03R\ftasksOverdue\"\xd0\x01\n" +
+	"\rtasks_overdue\x18\b \x01(\x03R\ftasksOverdue\"\xf1\x01\n" +
 	"\x1eGetDealSourcesBreakdownRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x127\n" +
 	"\tdate_from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\bdateFrom\x123\n" +
 	"\adate_to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x06dateTo\x12\x17\n" +
-	"\auser_id\x18\x04 \x01(\x03R\x06userId\"]\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1f\n" +
+	"\vpipeline_id\x18\x05 \x01(\tR\n" +
+	"pipelineId\"]\n" +
 	"\x17DealSourceBreakdownItem\x12\x16\n" +
 	"\x06source\x18\x01 \x01(\tR\x06source\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x03R\x05count\x12\x14\n" +

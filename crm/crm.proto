@@ -943,6 +943,11 @@ message GetDealVolumeRequest {
   // scope=all would otherwise return org-wide numbers. Managers may only
   // request their own id; any other value returns PermissionDenied.
   int64  user_id                   = 4;
+  // When non-empty, restricts aggregation to deals belonging to a single
+  // pipeline. Empty = aggregate across all pipelines in the organisation
+  // (legacy behaviour). Used by the dashboard pipeline picker so the
+  // metrics match the kanban view of the same pipeline.
+  string pipeline_id               = 5;
 }
 
 message GetDealVolumeResponse {
@@ -1001,6 +1006,10 @@ message GetDealSourcesBreakdownRequest {
   google.protobuf.Timestamp date_from = 2;
   google.protobuf.Timestamp date_to   = 3;
   int64  user_id         = 4;
+  // When non-empty, restricts the source breakdown to a single pipeline.
+  // Mirrors GetDealVolumeRequest.pipeline_id — used by the dashboard
+  // pipeline picker.
+  string pipeline_id     = 5;
 }
 
 message DealSourceBreakdownItem {
