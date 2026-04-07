@@ -49,6 +49,7 @@ const (
 	CRMService_ReOpenDeal_FullMethodName                      = "/crm.v1.CRMService/ReOpenDeal"
 	CRMService_GetDealActivities_FullMethodName               = "/crm.v1.CRMService/GetDealActivities"
 	CRMService_GetContactActivities_FullMethodName            = "/crm.v1.CRMService/GetContactActivities"
+	CRMService_ImportDeal_FullMethodName                      = "/crm.v1.CRMService/ImportDeal"
 	CRMService_CreateLead_FullMethodName                      = "/crm.v1.CRMService/CreateLead"
 	CRMService_GetLead_FullMethodName                         = "/crm.v1.CRMService/GetLead"
 	CRMService_ListLeads_FullMethodName                       = "/crm.v1.CRMService/ListLeads"
@@ -142,6 +143,21 @@ type CRMServiceClient interface {
 	ReOpenDeal(ctx context.Context, in *ReOpenDealRequest, opts ...grpc.CallOption) (*ReOpenDealResponse, error)
 	GetDealActivities(ctx context.Context, in *GetDealActivitiesRequest, opts ...grpc.CallOption) (*GetDealActivitiesResponse, error)
 	GetContactActivities(ctx context.Context, in *GetContactActivitiesRequest, opts ...grpc.CallOption) (*GetContactActivitiesResponse, error)
+	// ImportDeal upserts a deal identified by external_id stored in custom_fields.
+	// Used for migrating data from external CRMs (AmoCRM, Bitrix, etc.) without
+	// creating duplicates on re-imports.
+	//
+	// Behavior:
+	//   - Searches for an existing deal where custom_fields->>'external_id' = request.external_id
+	//     within (organization_id, pipeline_id).
+	//   - If found: updates stage, title, amount, user_id, assigned_to, status, custom_fields.
+	//   - If not found: creates a new deal with the provided created_at preserved.
+	//   - Returns the deal and a `created` flag.
+	//
+	// Bypasses the standard CreateDeal validations that don't apply to imports
+	// (e.g. allows direct creation in terminal stages with status=won|lost).
+	// Authorization: requires platform admin role.
+	ImportDeal(ctx context.Context, in *ImportDealRequest, opts ...grpc.CallOption) (*ImportDealResponse, error)
 	// Lead RPCs (Phase 5 -- lead capture and conversion)
 	CreateLead(ctx context.Context, in *CreateLeadRequest, opts ...grpc.CallOption) (*CreateLeadResponse, error)
 	GetLead(ctx context.Context, in *GetLeadRequest, opts ...grpc.CallOption) (*GetLeadResponse, error)
@@ -510,6 +526,16 @@ func (c *cRMServiceClient) GetContactActivities(ctx context.Context, in *GetCont
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetContactActivitiesResponse)
 	err := c.cc.Invoke(ctx, CRMService_GetContactActivities_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ImportDeal(ctx context.Context, in *ImportDealRequest, opts ...grpc.CallOption) (*ImportDealResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ImportDealResponse)
+	err := c.cc.Invoke(ctx, CRMService_ImportDeal_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -967,6 +993,21 @@ type CRMServiceServer interface {
 	ReOpenDeal(context.Context, *ReOpenDealRequest) (*ReOpenDealResponse, error)
 	GetDealActivities(context.Context, *GetDealActivitiesRequest) (*GetDealActivitiesResponse, error)
 	GetContactActivities(context.Context, *GetContactActivitiesRequest) (*GetContactActivitiesResponse, error)
+	// ImportDeal upserts a deal identified by external_id stored in custom_fields.
+	// Used for migrating data from external CRMs (AmoCRM, Bitrix, etc.) without
+	// creating duplicates on re-imports.
+	//
+	// Behavior:
+	//   - Searches for an existing deal where custom_fields->>'external_id' = request.external_id
+	//     within (organization_id, pipeline_id).
+	//   - If found: updates stage, title, amount, user_id, assigned_to, status, custom_fields.
+	//   - If not found: creates a new deal with the provided created_at preserved.
+	//   - Returns the deal and a `created` flag.
+	//
+	// Bypasses the standard CreateDeal validations that don't apply to imports
+	// (e.g. allows direct creation in terminal stages with status=won|lost).
+	// Authorization: requires platform admin role.
+	ImportDeal(context.Context, *ImportDealRequest) (*ImportDealResponse, error)
 	// Lead RPCs (Phase 5 -- lead capture and conversion)
 	CreateLead(context.Context, *CreateLeadRequest) (*CreateLeadResponse, error)
 	GetLead(context.Context, *GetLeadRequest) (*GetLeadResponse, error)
@@ -1118,6 +1159,9 @@ func (UnimplementedCRMServiceServer) GetDealActivities(context.Context, *GetDeal
 }
 func (UnimplementedCRMServiceServer) GetContactActivities(context.Context, *GetContactActivitiesRequest) (*GetContactActivitiesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetContactActivities not implemented")
+}
+func (UnimplementedCRMServiceServer) ImportDeal(context.Context, *ImportDealRequest) (*ImportDealResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ImportDeal not implemented")
 }
 func (UnimplementedCRMServiceServer) CreateLead(context.Context, *CreateLeadRequest) (*CreateLeadResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateLead not implemented")
@@ -1796,6 +1840,24 @@ func _CRMService_GetContactActivities_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRMServiceServer).GetContactActivities(ctx, req.(*GetContactActivitiesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ImportDeal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImportDealRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ImportDeal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ImportDeal_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ImportDeal(ctx, req.(*ImportDealRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2646,6 +2708,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetContactActivities",
 			Handler:    _CRMService_GetContactActivities_Handler,
+		},
+		{
+			MethodName: "ImportDeal",
+			Handler:    _CRMService_ImportDeal_Handler,
 		},
 		{
 			MethodName: "CreateLead",

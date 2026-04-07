@@ -50,6 +50,22 @@ service CRMService {
   rpc GetDealActivities(GetDealActivitiesRequest)           returns (GetDealActivitiesResponse);
   rpc GetContactActivities(GetContactActivitiesRequest)     returns (GetContactActivitiesResponse);
 
+  // ImportDeal upserts a deal identified by external_id stored in custom_fields.
+  // Used for migrating data from external CRMs (AmoCRM, Bitrix, etc.) without
+  // creating duplicates on re-imports.
+  //
+  // Behavior:
+  //   - Searches for an existing deal where custom_fields->>'external_id' = request.external_id
+  //     within (organization_id, pipeline_id).
+  //   - If found: updates stage, title, amount, user_id, assigned_to, status, custom_fields.
+  //   - If not found: creates a new deal with the provided created_at preserved.
+  //   - Returns the deal and a `created` flag.
+  //
+  // Bypasses the standard CreateDeal validations that don't apply to imports
+  // (e.g. allows direct creation in terminal stages with status=won|lost).
+  // Authorization: requires platform admin role.
+  rpc ImportDeal(ImportDealRequest)                         returns (ImportDealResponse);
+
   // Lead RPCs (Phase 5 -- lead capture and conversion)
   rpc CreateLead(CreateLeadRequest)                         returns (CreateLeadResponse);
   rpc GetLead(GetLeadRequest)                               returns (GetLeadResponse);
@@ -541,6 +557,44 @@ message UpdateDealRequest {
 
 message UpdateDealResponse {
   DealProto deal = 1;
+}
+
+// ImportDealRequest carries everything needed to migrate a single deal from
+// an external CRM. The dedup key is (organization_id, pipeline_id, external_id).
+message ImportDealRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+  string stage_id        = 3;
+  // external_id is the unique identifier of this deal in the source system
+  // (e.g. "amocrm:31051709"). Used for upsert dedup within the pipeline.
+  string external_id     = 4;
+  string title           = 5;
+  int64  user_id         = 6;  // optional — cg-users user linked to this deal
+  int64  assigned_to     = 7;  // optional
+  int64  created_by      = 8;  // optional, defaults to assigned_to
+  double amount          = 9;
+  string currency        = 10;
+  // status: "open" | "won" | "lost". Allowed to be terminal even when the
+  // stage_id refers to a non-terminal stage — the import RPC trusts the caller.
+  string status          = 11;
+  // close_reason is stored verbatim when status is "won" or "lost".
+  string close_reason    = 12;
+  // custom_fields are merged into existing custom_fields on update (JSONB ||).
+  // The "external_id" key is automatically set by the server, callers should
+  // NOT include it in this map.
+  google.protobuf.Struct custom_fields = 13;
+  // created_at preserves the original creation timestamp from the source CRM.
+  // If unset, the server uses NOW().
+  google.protobuf.Timestamp created_at = 14;
+  // updated_at preserves the original last-edit timestamp. If unset, NOW().
+  google.protobuf.Timestamp updated_at = 15;
+}
+
+message ImportDealResponse {
+  DealProto deal = 1;
+  // created is true when a new deal was inserted, false when an existing
+  // deal was updated.
+  bool created = 2;
 }
 
 message MoveDealStageRequest {
