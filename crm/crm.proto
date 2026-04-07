@@ -595,6 +595,10 @@ message ImportDealResponse {
   // created is true when a new deal was inserted, false when an existing
   // deal was updated.
   bool created = 2;
+  // previous_custom_fields is the deal's custom_fields BEFORE the import
+  // merge — empty when the deal was newly created. Lets the caller
+  // dedup imported tasks/notes against previously-imported fingerprints.
+  google.protobuf.Struct previous_custom_fields = 3;
 }
 
 message MoveDealStageRequest {
