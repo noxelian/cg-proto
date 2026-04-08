@@ -358,7 +358,9 @@ type UpdateProfileRequest struct {
 	Email     *string                `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	CityId    *int64                 `protobuf:"varint,4,opt,name=city_id,json=cityId,proto3,oneof" json:"city_id,omitempty"`
 	// When set, update this user instead of the JWT caller (admin use).
-	UserId        *int64 `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	UserId *int64 `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	// Phone number change (admin-only). Returns ALREADY_EXISTS if phone is taken.
+	Phone         *string `protobuf:"bytes,6,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -426,6 +428,13 @@ func (x *UpdateProfileRequest) GetUserId() int64 {
 		return *x.UserId
 	}
 	return 0
+}
+
+func (x *UpdateProfileRequest) GetPhone() string {
+	if x != nil && x.Phone != nil {
+		return *x.Phone
+	}
+	return ""
 }
 
 type UpdateProfileResponse struct {
@@ -2408,21 +2417,23 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x11GetProfileRequest\"v\n" +
 	"\x12GetProfileResponse\x12'\n" +
 	"\x04user\x18\x01 \x01(\v2\x13.users.user.v1.UserR\x04user\x127\n" +
-	"\bcounters\x18\x02 \x01(\v2\x1b.users.user.v1.UserCountersR\bcounters\"\xe4\x01\n" +
+	"\bcounters\x18\x02 \x01(\v2\x1b.users.user.v1.UserCountersR\bcounters\"\x89\x02\n" +
 	"\x14UpdateProfileRequest\x12\x17\n" +
 	"\x04name\x18\x01 \x01(\tH\x00R\x04name\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"avatar_url\x18\x02 \x01(\tH\x01R\tavatarUrl\x88\x01\x01\x12\x19\n" +
 	"\x05email\x18\x03 \x01(\tH\x02R\x05email\x88\x01\x01\x12\x1c\n" +
 	"\acity_id\x18\x04 \x01(\x03H\x03R\x06cityId\x88\x01\x01\x12\x1c\n" +
-	"\auser_id\x18\x05 \x01(\x03H\x04R\x06userId\x88\x01\x01B\a\n" +
+	"\auser_id\x18\x05 \x01(\x03H\x04R\x06userId\x88\x01\x01\x12\x19\n" +
+	"\x05phone\x18\x06 \x01(\tH\x05R\x05phone\x88\x01\x01B\a\n" +
 	"\x05_nameB\r\n" +
 	"\v_avatar_urlB\b\n" +
 	"\x06_emailB\n" +
 	"\n" +
 	"\b_city_idB\n" +
 	"\n" +
-	"\b_user_id\"@\n" +
+	"\b_user_idB\b\n" +
+	"\x06_phone\"@\n" +
 	"\x15UpdateProfileResponse\x12'\n" +
 	"\x04user\x18\x01 \x01(\v2\x13.users.user.v1.UserR\x04user\"-\n" +
 	"\x12GetUserByIDRequest\x12\x17\n" +

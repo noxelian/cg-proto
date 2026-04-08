@@ -106,6 +106,8 @@ message UpdateProfileRequest {
   optional int64 city_id = 4;
   // When set, update this user instead of the JWT caller (admin use).
   optional int64 user_id = 5;
+  // Phone number change (admin-only). Returns ALREADY_EXISTS if phone is taken.
+  optional string phone = 6;
 }
 
 message UpdateProfileResponse {
