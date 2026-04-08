@@ -538,6 +538,20 @@ message ListDealsRequest {
   int32  page            = 9;
   int32  page_size       = 10;
   string search          = 11; // optional — search by title (ILIKE)
+
+  // Task-based filters (kanban "due today / overdue / has done" etc.).
+  // All four fields cooperate as a single EXISTS (or NOT EXISTS) subquery:
+  //   EXISTS (SELECT 1 FROM tasks t
+  //           WHERE t.deal_id = d.id
+  //             AND (task_due_from IS NULL OR t.due_at >= task_due_from)
+  //             AND (task_due_to   IS NULL OR t.due_at <= task_due_to)
+  //             AND (task_status   IS EMPTY OR t.status = ANY(task_status)))
+  // When task_filter_mode="none", the EXISTS becomes NOT EXISTS
+  // ("show deals with NO matching tasks"). Default mode is "any".
+  google.protobuf.Timestamp task_due_from = 12;
+  google.protobuf.Timestamp task_due_to   = 13;
+  repeated string task_status             = 14; // pending|in_progress|done|cancelled
+  string task_filter_mode                 = 15; // "any" (default) | "none"
 }
 
 message ListDealsResponse {
