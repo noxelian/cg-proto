@@ -115,17 +115,21 @@ service CRMService {
   rpc ListWhatsAppTemplates(ListWhatsAppTemplatesRequest) returns (ListWhatsAppTemplatesResponse);
   rpc HandleWhatsAppWebhook(WhatsAppWebhookRequest)       returns (WhatsAppWebhookResponse);
 
-  // Telephony RPCs
-  rpc HandleSipuniEvent(SipuniEventRequest)   returns (SipuniEventResponse);
-  rpc ListCalls(ListCallsRequest)             returns (ListCallsResponse);
-  rpc InitiateCall(InitiateCallRequest)       returns (InitiateCallResponse);
+  // Telephony RPCs (Phase 8 — provider-agnostic; replaces Sipuni-specific methods)
+  rpc TelephonyOriginate(TelephonyOriginateRequest)         returns (TelephonyOriginateResponse);
+  rpc TelephonyGetCall(TelephonyGetCallRequest)             returns (TelephonyGetCallResponse);
+  rpc TelephonyListCalls(TelephonyListCallsRequest)         returns (TelephonyListCallsResponse);
+  rpc TelephonyGetCredentials(TelephonyGetCredentialsRequest) returns (TelephonyGetCredentialsResponse);
 
-  // Telephony settings RPCs
-  rpc UpsertTelephonyPipelineSettings(UpsertTelephonyPipelineSettingsRequest) returns (UpsertTelephonyPipelineSettingsResponse);
-  rpc GetTelephonyPipelineSettings(GetTelephonyPipelineSettingsRequest)       returns (GetTelephonyPipelineSettingsResponse);
-  rpc ListTelephonyPipelineSettings(ListTelephonyPipelineSettingsRequest)     returns (ListTelephonyPipelineSettingsResponse);
-  rpc UpsertUserSipExtension(UpsertUserSipExtensionRequest)                  returns (UpsertUserSipExtensionResponse);
-  rpc GetUserSipExtension(GetUserSipExtensionRequest)                        returns (GetUserSipExtensionResponse);
+  rpc UpsertTelephonyPipelineDID(UpsertTelephonyPipelineDIDRequest) returns (UpsertTelephonyPipelineDIDResponse);
+  rpc ListTelephonyPipelineDIDs(ListTelephonyPipelineDIDsRequest)   returns (ListTelephonyPipelineDIDsResponse);
+  rpc DeleteTelephonyPipelineDID(DeleteTelephonyPipelineDIDRequest) returns (DeleteTelephonyPipelineDIDResponse);
+
+  rpc UpsertTelephonyUserExtension(UpsertTelephonyUserExtensionRequest) returns (UpsertTelephonyUserExtensionResponse);
+  rpc GetTelephonyUserExtension(GetTelephonyUserExtensionRequest)       returns (GetTelephonyUserExtensionResponse);
+
+  rpc GetTelephonyProviderConfig(GetTelephonyProviderConfigRequest)       returns (GetTelephonyProviderConfigResponse);
+  rpc UpdateTelephonyProviderConfig(UpdateTelephonyProviderConfigRequest) returns (UpdateTelephonyProviderConfigResponse);
 }
 
 message Pipeline {
@@ -1213,125 +1217,181 @@ message WhatsAppTemplateParam {
   string example = 2;  // example value from Meta
 }
 
-// ==================== Telephony (Sipuni) ====================
+// ==================== Telephony (Phase 8 — provider-agnostic) ====================
+//
+// Provider-agnostic telephony contract. Sipuni-specific messages were removed
+// in Phase 8 (CTOgram v2.0 self-hosted telephony milestone). Backing providers:
+//   TELEPHONY_PROVIDER_ASTERISK — Asterisk 22 on pbx.ctogram.net (active)
+//   TELEPHONY_PROVIDER_SIPUNI   — reserved enum value, not used in Go code (D-12)
 
-message SipuniEventRequest {
-  string organization_id      = 1;
-  int32  event                = 2;  // 1=call, 2=hangup, 3=answer, 4=transfer
-  string call_id              = 3;
-  string src_num              = 4;
-  int32  src_type             = 5;  // 1=external, 2=internal
-  string dst_num              = 6;
-  int32  dst_type             = 7;
-  string status               = 8;  // ANSWER, BUSY, NOANSWER, CANCEL
-  int64  timestamp            = 9;
-  int64  call_start_timestamp = 10;
-  int64  call_answer_timestamp = 11;
-  string call_record_link     = 12;
-  string pipeline_id          = 13; // which pipeline this number is routed to
+enum TelephonyProvider {
+  TELEPHONY_PROVIDER_UNSPECIFIED = 0;
+  TELEPHONY_PROVIDER_SIPUNI      = 1;  // reserved, not used (D-12)
+  TELEPHONY_PROVIDER_ASTERISK    = 2;
 }
 
-message SipuniEventResponse {
-  bool success = 1;
+enum TelephonyDirection {
+  TELEPHONY_DIRECTION_UNSPECIFIED = 0;
+  TELEPHONY_DIRECTION_INBOUND     = 1;
+  TELEPHONY_DIRECTION_OUTBOUND    = 2;
 }
 
-message CallProto {
+enum TelephonyStatus {
+  TELEPHONY_STATUS_UNSPECIFIED = 0;
+  TELEPHONY_STATUS_RINGING     = 1;
+  TELEPHONY_STATUS_ANSWERED    = 2;
+  TELEPHONY_STATUS_MISSED      = 3;
+  TELEPHONY_STATUS_BUSY        = 4;
+  TELEPHONY_STATUS_CANCELLED   = 5;
+  TELEPHONY_STATUS_ENDED       = 6;
+}
+
+message TelephonyCall {
+  string                      id                 = 1;
+  TelephonyProvider           provider           = 2;
+  string                      external_id        = 3;
+  string                      organization_id    = 4;
+  optional string             pipeline_id        = 5;
+  optional string             deal_id            = 6;
+  string                      src_num            = 7;
+  string                      dst_num            = 8;
+  TelephonyDirection          direction          = 9;
+  TelephonyStatus             status             = 10;
+  int32                       duration           = 11;
+  optional string             record_url         = 12;
+  google.protobuf.Timestamp   answered_at        = 13;
+  google.protobuf.Timestamp   ended_at           = 14;
+  google.protobuf.Timestamp   created_at         = 15;
+  google.protobuf.Struct      provider_metadata  = 16;
+}
+
+message TelephonyOriginateRequest {
+  string          organization_id = 1;
+  string          pipeline_id     = 2;
+  string          user_id         = 3;  // initiator
+  string          to_number       = 4;
+  optional string contact_id      = 5;
+  optional string deal_id         = 6;
+  optional string lead_id         = 7;
+}
+
+message TelephonyOriginateResponse {
+  TelephonyCall call = 1;
+}
+
+message TelephonyGetCallRequest {
+  string call_id = 1;
+}
+
+message TelephonyGetCallResponse {
+  TelephonyCall call = 1;
+}
+
+message TelephonyListCallsRequest {
+  string          organization_id = 1;
+  optional string deal_id         = 2;
+  optional string phone           = 3;
+  int32           limit           = 4;
+  string          cursor          = 5;
+}
+
+message TelephonyListCallsResponse {
+  repeated TelephonyCall calls       = 1;
+  string                 next_cursor = 2;
+}
+
+// SIP + WebRTC ephemeral credentials for softphone clients
+message IceServer {
+  repeated string urls       = 1;
+  string          username   = 2;
+  string          credential = 3;
+}
+
+message SipCredentials {
+  string                      extension   = 1;
+  string                      password    = 2;  // ephemeral
+  string                      wss_url     = 3;  // wss://pbx.ctogram.net:8089/ws
+  repeated IceServer          ice_servers = 4;  // STUN/TURN (HMAC ephemeral for TURN)
+  google.protobuf.Timestamp   expires_at  = 5;
+}
+
+message TelephonyGetCredentialsRequest {
+  string user_id = 1;
+}
+
+message TelephonyGetCredentialsResponse {
+  SipCredentials credentials = 1;
+}
+
+// ---------- telephony_pipeline_dids ----------
+message TelephonyPipelineDID {
+  string                      id              = 1;
+  string                      organization_id = 2;
+  string                      pipeline_id     = 3;
+  TelephonyProvider           provider        = 4;
+  string                      did             = 5;
+  google.protobuf.Timestamp   created_at      = 6;
+}
+
+message UpsertTelephonyPipelineDIDRequest  { TelephonyPipelineDID did = 1; }
+message UpsertTelephonyPipelineDIDResponse { TelephonyPipelineDID did = 1; }
+
+message ListTelephonyPipelineDIDsRequest {
+  string          organization_id = 1;
+  optional string pipeline_id     = 2;
+}
+message ListTelephonyPipelineDIDsResponse {
+  repeated TelephonyPipelineDID dids = 1;
+}
+
+message DeleteTelephonyPipelineDIDRequest {
   string id              = 1;
-  string pipeline_id     = 13;
-  string deal_id         = 2;
-  string call_id         = 3;
-  string src_num         = 4;
-  string dst_num         = 5;
-  string direction       = 6;
-  string status          = 7;
-  int32  duration        = 8;
-  string record_url      = 9;
-  google.protobuf.Timestamp answered_at = 10;
-  google.protobuf.Timestamp ended_at    = 11;
-  google.protobuf.Timestamp created_at  = 12;
+  string organization_id = 2;
+}
+message DeleteTelephonyPipelineDIDResponse {}
+
+// ---------- telephony_user_extensions ----------
+message TelephonyUserExtension {
+  string                      id              = 1;
+  string                      organization_id = 2;
+  string                      user_id         = 3;
+  TelephonyProvider           provider        = 4;
+  string                      extension       = 5;
+  google.protobuf.Timestamp   created_at      = 6;
 }
 
-message ListCallsRequest {
-  string organization_id = 1;
-  string deal_id         = 2;  // filter by deal
-  string phone           = 3;  // or filter by phone
-  int32  limit           = 4;
-  int32  offset          = 5;
+message UpsertTelephonyUserExtensionRequest  { TelephonyUserExtension extension = 1; }
+message UpsertTelephonyUserExtensionResponse { TelephonyUserExtension extension = 1; }
+
+message GetTelephonyUserExtensionRequest {
+  string            organization_id = 1;
+  string            user_id         = 2;
+  TelephonyProvider provider        = 3;
+}
+message GetTelephonyUserExtensionResponse {
+  TelephonyUserExtension extension = 1;
 }
 
-message ListCallsResponse {
-  repeated CallProto calls = 1;
+// ---------- telephony_provider_config ----------
+message TelephonyProviderConfig {
+  string                      id              = 1;
+  string                      organization_id = 2;
+  TelephonyProvider           active_provider = 3;
+  google.protobuf.Struct      config          = 4;
+  google.protobuf.Timestamp   last_updated    = 5;
+  optional string             updated_by      = 6;
 }
 
-// InitiateCall — click-to-call via Sipuni callback API
-message InitiateCallRequest {
-  string organization_id = 1;
-  string phone           = 2;  // client phone number to call
-  string pipeline_id     = 3;  // CRM pipeline — resolved to Sipuni tree on backend
-}
-
-message InitiateCallResponse {
-  bool   success     = 1;
-  string callback_id = 2;  // Sipuni callback ID for tracking/cancellation
-}
-
-// ==================== Telephony Settings ====================
-
-message TelephonyPipelineSettingsProto {
-  string id              = 1;
-  string pipeline_id     = 2;
-  string phone_number    = 3;  // Sipuni phone number (e.g. 77076503506)
-  string tree_id         = 4;  // Sipuni scheme ID (e.g. 000-3138618)
-  string pipeline_name   = 5;  // for display purposes
-}
-
-message UpsertTelephonyPipelineSettingsRequest {
-  string organization_id = 1;
-  string pipeline_id     = 2;
-  string phone_number    = 3;
-  string tree_id         = 4;
-}
-
-message UpsertTelephonyPipelineSettingsResponse {
-  TelephonyPipelineSettingsProto settings = 1;
-}
-
-message GetTelephonyPipelineSettingsRequest {
-  string organization_id = 1;
-  string pipeline_id     = 2;
-}
-
-message GetTelephonyPipelineSettingsResponse {
-  TelephonyPipelineSettingsProto settings = 1;
-}
-
-message ListTelephonyPipelineSettingsRequest {
+message GetTelephonyProviderConfigRequest {
   string organization_id = 1;
 }
-
-message ListTelephonyPipelineSettingsResponse {
-  repeated TelephonyPipelineSettingsProto settings = 1;
+message GetTelephonyProviderConfigResponse {
+  TelephonyProviderConfig config = 1;
 }
 
-message UserSipExtensionProto {
-  int64  user_id   = 1;
-  string sipnumber = 2;
-  string user_name = 3;  // for display purposes
+message UpdateTelephonyProviderConfigRequest {
+  TelephonyProviderConfig config = 1;
 }
-
-message UpsertUserSipExtensionRequest {
-  string organization_id = 1;
-  string sipnumber       = 2;
-}
-
-message UpsertUserSipExtensionResponse {
-  UserSipExtensionProto extension = 1;
-}
-
-message GetUserSipExtensionRequest {
-  string organization_id = 1;
-}
-
-message GetUserSipExtensionResponse {
-  UserSipExtensionProto extension = 1;
+message UpdateTelephonyProviderConfigResponse {
+  TelephonyProviderConfig config = 1;
 }

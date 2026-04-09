@@ -19,77 +19,80 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CRMService_CreatePipeline_FullMethodName                  = "/crm.v1.CRMService/CreatePipeline"
-	CRMService_GetPipeline_FullMethodName                     = "/crm.v1.CRMService/GetPipeline"
-	CRMService_ListPipelines_FullMethodName                   = "/crm.v1.CRMService/ListPipelines"
-	CRMService_UpdatePipeline_FullMethodName                  = "/crm.v1.CRMService/UpdatePipeline"
-	CRMService_ArchivePipeline_FullMethodName                 = "/crm.v1.CRMService/ArchivePipeline"
-	CRMService_CreateStage_FullMethodName                     = "/crm.v1.CRMService/CreateStage"
-	CRMService_UpdateStage_FullMethodName                     = "/crm.v1.CRMService/UpdateStage"
-	CRMService_DeleteStage_FullMethodName                     = "/crm.v1.CRMService/DeleteStage"
-	CRMService_ReorderStages_FullMethodName                   = "/crm.v1.CRMService/ReorderStages"
-	CRMService_CreateContact_FullMethodName                   = "/crm.v1.CRMService/CreateContact"
-	CRMService_GetContact_FullMethodName                      = "/crm.v1.CRMService/GetContact"
-	CRMService_ListContacts_FullMethodName                    = "/crm.v1.CRMService/ListContacts"
-	CRMService_SearchContacts_FullMethodName                  = "/crm.v1.CRMService/SearchContacts"
-	CRMService_UpdateContact_FullMethodName                   = "/crm.v1.CRMService/UpdateContact"
-	CRMService_DeleteContact_FullMethodName                   = "/crm.v1.CRMService/DeleteContact"
-	CRMService_AddVehicle_FullMethodName                      = "/crm.v1.CRMService/AddVehicle"
-	CRMService_GetVehicle_FullMethodName                      = "/crm.v1.CRMService/GetVehicle"
-	CRMService_ListVehiclesByContact_FullMethodName           = "/crm.v1.CRMService/ListVehiclesByContact"
-	CRMService_GetServiceHistory_FullMethodName               = "/crm.v1.CRMService/GetServiceHistory"
-	CRMService_GetGarageByPhone_FullMethodName                = "/crm.v1.CRMService/GetGarageByPhone"
-	CRMService_LookupVehicle_FullMethodName                   = "/crm.v1.CRMService/LookupVehicle"
-	CRMService_CreateDeal_FullMethodName                      = "/crm.v1.CRMService/CreateDeal"
-	CRMService_GetDeal_FullMethodName                         = "/crm.v1.CRMService/GetDeal"
-	CRMService_ListDeals_FullMethodName                       = "/crm.v1.CRMService/ListDeals"
-	CRMService_UpdateDeal_FullMethodName                      = "/crm.v1.CRMService/UpdateDeal"
-	CRMService_MoveDealStage_FullMethodName                   = "/crm.v1.CRMService/MoveDealStage"
-	CRMService_CloseDeal_FullMethodName                       = "/crm.v1.CRMService/CloseDeal"
-	CRMService_ReOpenDeal_FullMethodName                      = "/crm.v1.CRMService/ReOpenDeal"
-	CRMService_GetDealActivities_FullMethodName               = "/crm.v1.CRMService/GetDealActivities"
-	CRMService_GetContactActivities_FullMethodName            = "/crm.v1.CRMService/GetContactActivities"
-	CRMService_ImportDeal_FullMethodName                      = "/crm.v1.CRMService/ImportDeal"
-	CRMService_CreateLead_FullMethodName                      = "/crm.v1.CRMService/CreateLead"
-	CRMService_GetLead_FullMethodName                         = "/crm.v1.CRMService/GetLead"
-	CRMService_ListLeads_FullMethodName                       = "/crm.v1.CRMService/ListLeads"
-	CRMService_ChangeLeadStatus_FullMethodName                = "/crm.v1.CRMService/ChangeLeadStatus"
-	CRMService_ConvertLead_FullMethodName                     = "/crm.v1.CRMService/ConvertLead"
-	CRMService_CreateTask_FullMethodName                      = "/crm.v1.CRMService/CreateTask"
-	CRMService_GetTask_FullMethodName                         = "/crm.v1.CRMService/GetTask"
-	CRMService_ListTasks_FullMethodName                       = "/crm.v1.CRMService/ListTasks"
-	CRMService_UpdateTaskStatus_FullMethodName                = "/crm.v1.CRMService/UpdateTaskStatus"
-	CRMService_UpdateTask_FullMethodName                      = "/crm.v1.CRMService/UpdateTask"
-	CRMService_CreateCustomFieldDefinition_FullMethodName     = "/crm.v1.CRMService/CreateCustomFieldDefinition"
-	CRMService_GetCustomFieldDefinition_FullMethodName        = "/crm.v1.CRMService/GetCustomFieldDefinition"
-	CRMService_ListCustomFieldDefinitions_FullMethodName      = "/crm.v1.CRMService/ListCustomFieldDefinitions"
-	CRMService_UpdateCustomFieldDefinition_FullMethodName     = "/crm.v1.CRMService/UpdateCustomFieldDefinition"
-	CRMService_DeleteCustomFieldDefinition_FullMethodName     = "/crm.v1.CRMService/DeleteCustomFieldDefinition"
-	CRMService_CreateWebhookSubscription_FullMethodName       = "/crm.v1.CRMService/CreateWebhookSubscription"
-	CRMService_ListWebhookSubscriptions_FullMethodName        = "/crm.v1.CRMService/ListWebhookSubscriptions"
-	CRMService_UpdateWebhookSubscription_FullMethodName       = "/crm.v1.CRMService/UpdateWebhookSubscription"
-	CRMService_DeleteWebhookSubscription_FullMethodName       = "/crm.v1.CRMService/DeleteWebhookSubscription"
-	CRMService_GetFunnelConversion_FullMethodName             = "/crm.v1.CRMService/GetFunnelConversion"
-	CRMService_GetManagerStats_FullMethodName                 = "/crm.v1.CRMService/GetManagerStats"
-	CRMService_GetDealVolume_FullMethodName                   = "/crm.v1.CRMService/GetDealVolume"
-	CRMService_GetStageStats_FullMethodName                   = "/crm.v1.CRMService/GetStageStats"
-	CRMService_GetActivityStats_FullMethodName                = "/crm.v1.CRMService/GetActivityStats"
-	CRMService_GetDealSourcesBreakdown_FullMethodName         = "/crm.v1.CRMService/GetDealSourcesBreakdown"
-	CRMService_CreateNote_FullMethodName                      = "/crm.v1.CRMService/CreateNote"
-	CRMService_UpdateNote_FullMethodName                      = "/crm.v1.CRMService/UpdateNote"
-	CRMService_SendWhatsAppMessage_FullMethodName             = "/crm.v1.CRMService/SendWhatsAppMessage"
-	CRMService_SendWhatsAppTemplate_FullMethodName            = "/crm.v1.CRMService/SendWhatsAppTemplate"
-	CRMService_ListWhatsAppMessages_FullMethodName            = "/crm.v1.CRMService/ListWhatsAppMessages"
-	CRMService_ListWhatsAppTemplates_FullMethodName           = "/crm.v1.CRMService/ListWhatsAppTemplates"
-	CRMService_HandleWhatsAppWebhook_FullMethodName           = "/crm.v1.CRMService/HandleWhatsAppWebhook"
-	CRMService_HandleSipuniEvent_FullMethodName               = "/crm.v1.CRMService/HandleSipuniEvent"
-	CRMService_ListCalls_FullMethodName                       = "/crm.v1.CRMService/ListCalls"
-	CRMService_InitiateCall_FullMethodName                    = "/crm.v1.CRMService/InitiateCall"
-	CRMService_UpsertTelephonyPipelineSettings_FullMethodName = "/crm.v1.CRMService/UpsertTelephonyPipelineSettings"
-	CRMService_GetTelephonyPipelineSettings_FullMethodName    = "/crm.v1.CRMService/GetTelephonyPipelineSettings"
-	CRMService_ListTelephonyPipelineSettings_FullMethodName   = "/crm.v1.CRMService/ListTelephonyPipelineSettings"
-	CRMService_UpsertUserSipExtension_FullMethodName          = "/crm.v1.CRMService/UpsertUserSipExtension"
-	CRMService_GetUserSipExtension_FullMethodName             = "/crm.v1.CRMService/GetUserSipExtension"
+	CRMService_CreatePipeline_FullMethodName                = "/crm.v1.CRMService/CreatePipeline"
+	CRMService_GetPipeline_FullMethodName                   = "/crm.v1.CRMService/GetPipeline"
+	CRMService_ListPipelines_FullMethodName                 = "/crm.v1.CRMService/ListPipelines"
+	CRMService_UpdatePipeline_FullMethodName                = "/crm.v1.CRMService/UpdatePipeline"
+	CRMService_ArchivePipeline_FullMethodName               = "/crm.v1.CRMService/ArchivePipeline"
+	CRMService_CreateStage_FullMethodName                   = "/crm.v1.CRMService/CreateStage"
+	CRMService_UpdateStage_FullMethodName                   = "/crm.v1.CRMService/UpdateStage"
+	CRMService_DeleteStage_FullMethodName                   = "/crm.v1.CRMService/DeleteStage"
+	CRMService_ReorderStages_FullMethodName                 = "/crm.v1.CRMService/ReorderStages"
+	CRMService_CreateContact_FullMethodName                 = "/crm.v1.CRMService/CreateContact"
+	CRMService_GetContact_FullMethodName                    = "/crm.v1.CRMService/GetContact"
+	CRMService_ListContacts_FullMethodName                  = "/crm.v1.CRMService/ListContacts"
+	CRMService_SearchContacts_FullMethodName                = "/crm.v1.CRMService/SearchContacts"
+	CRMService_UpdateContact_FullMethodName                 = "/crm.v1.CRMService/UpdateContact"
+	CRMService_DeleteContact_FullMethodName                 = "/crm.v1.CRMService/DeleteContact"
+	CRMService_AddVehicle_FullMethodName                    = "/crm.v1.CRMService/AddVehicle"
+	CRMService_GetVehicle_FullMethodName                    = "/crm.v1.CRMService/GetVehicle"
+	CRMService_ListVehiclesByContact_FullMethodName         = "/crm.v1.CRMService/ListVehiclesByContact"
+	CRMService_GetServiceHistory_FullMethodName             = "/crm.v1.CRMService/GetServiceHistory"
+	CRMService_GetGarageByPhone_FullMethodName              = "/crm.v1.CRMService/GetGarageByPhone"
+	CRMService_LookupVehicle_FullMethodName                 = "/crm.v1.CRMService/LookupVehicle"
+	CRMService_CreateDeal_FullMethodName                    = "/crm.v1.CRMService/CreateDeal"
+	CRMService_GetDeal_FullMethodName                       = "/crm.v1.CRMService/GetDeal"
+	CRMService_ListDeals_FullMethodName                     = "/crm.v1.CRMService/ListDeals"
+	CRMService_UpdateDeal_FullMethodName                    = "/crm.v1.CRMService/UpdateDeal"
+	CRMService_MoveDealStage_FullMethodName                 = "/crm.v1.CRMService/MoveDealStage"
+	CRMService_CloseDeal_FullMethodName                     = "/crm.v1.CRMService/CloseDeal"
+	CRMService_ReOpenDeal_FullMethodName                    = "/crm.v1.CRMService/ReOpenDeal"
+	CRMService_GetDealActivities_FullMethodName             = "/crm.v1.CRMService/GetDealActivities"
+	CRMService_GetContactActivities_FullMethodName          = "/crm.v1.CRMService/GetContactActivities"
+	CRMService_ImportDeal_FullMethodName                    = "/crm.v1.CRMService/ImportDeal"
+	CRMService_CreateLead_FullMethodName                    = "/crm.v1.CRMService/CreateLead"
+	CRMService_GetLead_FullMethodName                       = "/crm.v1.CRMService/GetLead"
+	CRMService_ListLeads_FullMethodName                     = "/crm.v1.CRMService/ListLeads"
+	CRMService_ChangeLeadStatus_FullMethodName              = "/crm.v1.CRMService/ChangeLeadStatus"
+	CRMService_ConvertLead_FullMethodName                   = "/crm.v1.CRMService/ConvertLead"
+	CRMService_CreateTask_FullMethodName                    = "/crm.v1.CRMService/CreateTask"
+	CRMService_GetTask_FullMethodName                       = "/crm.v1.CRMService/GetTask"
+	CRMService_ListTasks_FullMethodName                     = "/crm.v1.CRMService/ListTasks"
+	CRMService_UpdateTaskStatus_FullMethodName              = "/crm.v1.CRMService/UpdateTaskStatus"
+	CRMService_UpdateTask_FullMethodName                    = "/crm.v1.CRMService/UpdateTask"
+	CRMService_CreateCustomFieldDefinition_FullMethodName   = "/crm.v1.CRMService/CreateCustomFieldDefinition"
+	CRMService_GetCustomFieldDefinition_FullMethodName      = "/crm.v1.CRMService/GetCustomFieldDefinition"
+	CRMService_ListCustomFieldDefinitions_FullMethodName    = "/crm.v1.CRMService/ListCustomFieldDefinitions"
+	CRMService_UpdateCustomFieldDefinition_FullMethodName   = "/crm.v1.CRMService/UpdateCustomFieldDefinition"
+	CRMService_DeleteCustomFieldDefinition_FullMethodName   = "/crm.v1.CRMService/DeleteCustomFieldDefinition"
+	CRMService_CreateWebhookSubscription_FullMethodName     = "/crm.v1.CRMService/CreateWebhookSubscription"
+	CRMService_ListWebhookSubscriptions_FullMethodName      = "/crm.v1.CRMService/ListWebhookSubscriptions"
+	CRMService_UpdateWebhookSubscription_FullMethodName     = "/crm.v1.CRMService/UpdateWebhookSubscription"
+	CRMService_DeleteWebhookSubscription_FullMethodName     = "/crm.v1.CRMService/DeleteWebhookSubscription"
+	CRMService_GetFunnelConversion_FullMethodName           = "/crm.v1.CRMService/GetFunnelConversion"
+	CRMService_GetManagerStats_FullMethodName               = "/crm.v1.CRMService/GetManagerStats"
+	CRMService_GetDealVolume_FullMethodName                 = "/crm.v1.CRMService/GetDealVolume"
+	CRMService_GetStageStats_FullMethodName                 = "/crm.v1.CRMService/GetStageStats"
+	CRMService_GetActivityStats_FullMethodName              = "/crm.v1.CRMService/GetActivityStats"
+	CRMService_GetDealSourcesBreakdown_FullMethodName       = "/crm.v1.CRMService/GetDealSourcesBreakdown"
+	CRMService_CreateNote_FullMethodName                    = "/crm.v1.CRMService/CreateNote"
+	CRMService_UpdateNote_FullMethodName                    = "/crm.v1.CRMService/UpdateNote"
+	CRMService_SendWhatsAppMessage_FullMethodName           = "/crm.v1.CRMService/SendWhatsAppMessage"
+	CRMService_SendWhatsAppTemplate_FullMethodName          = "/crm.v1.CRMService/SendWhatsAppTemplate"
+	CRMService_ListWhatsAppMessages_FullMethodName          = "/crm.v1.CRMService/ListWhatsAppMessages"
+	CRMService_ListWhatsAppTemplates_FullMethodName         = "/crm.v1.CRMService/ListWhatsAppTemplates"
+	CRMService_HandleWhatsAppWebhook_FullMethodName         = "/crm.v1.CRMService/HandleWhatsAppWebhook"
+	CRMService_TelephonyOriginate_FullMethodName            = "/crm.v1.CRMService/TelephonyOriginate"
+	CRMService_TelephonyGetCall_FullMethodName              = "/crm.v1.CRMService/TelephonyGetCall"
+	CRMService_TelephonyListCalls_FullMethodName            = "/crm.v1.CRMService/TelephonyListCalls"
+	CRMService_TelephonyGetCredentials_FullMethodName       = "/crm.v1.CRMService/TelephonyGetCredentials"
+	CRMService_UpsertTelephonyPipelineDID_FullMethodName    = "/crm.v1.CRMService/UpsertTelephonyPipelineDID"
+	CRMService_ListTelephonyPipelineDIDs_FullMethodName     = "/crm.v1.CRMService/ListTelephonyPipelineDIDs"
+	CRMService_DeleteTelephonyPipelineDID_FullMethodName    = "/crm.v1.CRMService/DeleteTelephonyPipelineDID"
+	CRMService_UpsertTelephonyUserExtension_FullMethodName  = "/crm.v1.CRMService/UpsertTelephonyUserExtension"
+	CRMService_GetTelephonyUserExtension_FullMethodName     = "/crm.v1.CRMService/GetTelephonyUserExtension"
+	CRMService_GetTelephonyProviderConfig_FullMethodName    = "/crm.v1.CRMService/GetTelephonyProviderConfig"
+	CRMService_UpdateTelephonyProviderConfig_FullMethodName = "/crm.v1.CRMService/UpdateTelephonyProviderConfig"
 )
 
 // CRMServiceClient is the client API for CRMService service.
@@ -200,16 +203,18 @@ type CRMServiceClient interface {
 	ListWhatsAppMessages(ctx context.Context, in *ListWhatsAppMessagesRequest, opts ...grpc.CallOption) (*ListWhatsAppMessagesResponse, error)
 	ListWhatsAppTemplates(ctx context.Context, in *ListWhatsAppTemplatesRequest, opts ...grpc.CallOption) (*ListWhatsAppTemplatesResponse, error)
 	HandleWhatsAppWebhook(ctx context.Context, in *WhatsAppWebhookRequest, opts ...grpc.CallOption) (*WhatsAppWebhookResponse, error)
-	// Telephony RPCs
-	HandleSipuniEvent(ctx context.Context, in *SipuniEventRequest, opts ...grpc.CallOption) (*SipuniEventResponse, error)
-	ListCalls(ctx context.Context, in *ListCallsRequest, opts ...grpc.CallOption) (*ListCallsResponse, error)
-	InitiateCall(ctx context.Context, in *InitiateCallRequest, opts ...grpc.CallOption) (*InitiateCallResponse, error)
-	// Telephony settings RPCs
-	UpsertTelephonyPipelineSettings(ctx context.Context, in *UpsertTelephonyPipelineSettingsRequest, opts ...grpc.CallOption) (*UpsertTelephonyPipelineSettingsResponse, error)
-	GetTelephonyPipelineSettings(ctx context.Context, in *GetTelephonyPipelineSettingsRequest, opts ...grpc.CallOption) (*GetTelephonyPipelineSettingsResponse, error)
-	ListTelephonyPipelineSettings(ctx context.Context, in *ListTelephonyPipelineSettingsRequest, opts ...grpc.CallOption) (*ListTelephonyPipelineSettingsResponse, error)
-	UpsertUserSipExtension(ctx context.Context, in *UpsertUserSipExtensionRequest, opts ...grpc.CallOption) (*UpsertUserSipExtensionResponse, error)
-	GetUserSipExtension(ctx context.Context, in *GetUserSipExtensionRequest, opts ...grpc.CallOption) (*GetUserSipExtensionResponse, error)
+	// Telephony RPCs (Phase 8 — provider-agnostic; replaces Sipuni-specific methods)
+	TelephonyOriginate(ctx context.Context, in *TelephonyOriginateRequest, opts ...grpc.CallOption) (*TelephonyOriginateResponse, error)
+	TelephonyGetCall(ctx context.Context, in *TelephonyGetCallRequest, opts ...grpc.CallOption) (*TelephonyGetCallResponse, error)
+	TelephonyListCalls(ctx context.Context, in *TelephonyListCallsRequest, opts ...grpc.CallOption) (*TelephonyListCallsResponse, error)
+	TelephonyGetCredentials(ctx context.Context, in *TelephonyGetCredentialsRequest, opts ...grpc.CallOption) (*TelephonyGetCredentialsResponse, error)
+	UpsertTelephonyPipelineDID(ctx context.Context, in *UpsertTelephonyPipelineDIDRequest, opts ...grpc.CallOption) (*UpsertTelephonyPipelineDIDResponse, error)
+	ListTelephonyPipelineDIDs(ctx context.Context, in *ListTelephonyPipelineDIDsRequest, opts ...grpc.CallOption) (*ListTelephonyPipelineDIDsResponse, error)
+	DeleteTelephonyPipelineDID(ctx context.Context, in *DeleteTelephonyPipelineDIDRequest, opts ...grpc.CallOption) (*DeleteTelephonyPipelineDIDResponse, error)
+	UpsertTelephonyUserExtension(ctx context.Context, in *UpsertTelephonyUserExtensionRequest, opts ...grpc.CallOption) (*UpsertTelephonyUserExtensionResponse, error)
+	GetTelephonyUserExtension(ctx context.Context, in *GetTelephonyUserExtensionRequest, opts ...grpc.CallOption) (*GetTelephonyUserExtensionResponse, error)
+	GetTelephonyProviderConfig(ctx context.Context, in *GetTelephonyProviderConfigRequest, opts ...grpc.CallOption) (*GetTelephonyProviderConfigResponse, error)
+	UpdateTelephonyProviderConfig(ctx context.Context, in *UpdateTelephonyProviderConfigRequest, opts ...grpc.CallOption) (*UpdateTelephonyProviderConfigResponse, error)
 }
 
 type cRMServiceClient struct {
@@ -862,80 +867,110 @@ func (c *cRMServiceClient) HandleWhatsAppWebhook(ctx context.Context, in *WhatsA
 	return out, nil
 }
 
-func (c *cRMServiceClient) HandleSipuniEvent(ctx context.Context, in *SipuniEventRequest, opts ...grpc.CallOption) (*SipuniEventResponse, error) {
+func (c *cRMServiceClient) TelephonyOriginate(ctx context.Context, in *TelephonyOriginateRequest, opts ...grpc.CallOption) (*TelephonyOriginateResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SipuniEventResponse)
-	err := c.cc.Invoke(ctx, CRMService_HandleSipuniEvent_FullMethodName, in, out, cOpts...)
+	out := new(TelephonyOriginateResponse)
+	err := c.cc.Invoke(ctx, CRMService_TelephonyOriginate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *cRMServiceClient) ListCalls(ctx context.Context, in *ListCallsRequest, opts ...grpc.CallOption) (*ListCallsResponse, error) {
+func (c *cRMServiceClient) TelephonyGetCall(ctx context.Context, in *TelephonyGetCallRequest, opts ...grpc.CallOption) (*TelephonyGetCallResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListCallsResponse)
-	err := c.cc.Invoke(ctx, CRMService_ListCalls_FullMethodName, in, out, cOpts...)
+	out := new(TelephonyGetCallResponse)
+	err := c.cc.Invoke(ctx, CRMService_TelephonyGetCall_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *cRMServiceClient) InitiateCall(ctx context.Context, in *InitiateCallRequest, opts ...grpc.CallOption) (*InitiateCallResponse, error) {
+func (c *cRMServiceClient) TelephonyListCalls(ctx context.Context, in *TelephonyListCallsRequest, opts ...grpc.CallOption) (*TelephonyListCallsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(InitiateCallResponse)
-	err := c.cc.Invoke(ctx, CRMService_InitiateCall_FullMethodName, in, out, cOpts...)
+	out := new(TelephonyListCallsResponse)
+	err := c.cc.Invoke(ctx, CRMService_TelephonyListCalls_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *cRMServiceClient) UpsertTelephonyPipelineSettings(ctx context.Context, in *UpsertTelephonyPipelineSettingsRequest, opts ...grpc.CallOption) (*UpsertTelephonyPipelineSettingsResponse, error) {
+func (c *cRMServiceClient) TelephonyGetCredentials(ctx context.Context, in *TelephonyGetCredentialsRequest, opts ...grpc.CallOption) (*TelephonyGetCredentialsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpsertTelephonyPipelineSettingsResponse)
-	err := c.cc.Invoke(ctx, CRMService_UpsertTelephonyPipelineSettings_FullMethodName, in, out, cOpts...)
+	out := new(TelephonyGetCredentialsResponse)
+	err := c.cc.Invoke(ctx, CRMService_TelephonyGetCredentials_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *cRMServiceClient) GetTelephonyPipelineSettings(ctx context.Context, in *GetTelephonyPipelineSettingsRequest, opts ...grpc.CallOption) (*GetTelephonyPipelineSettingsResponse, error) {
+func (c *cRMServiceClient) UpsertTelephonyPipelineDID(ctx context.Context, in *UpsertTelephonyPipelineDIDRequest, opts ...grpc.CallOption) (*UpsertTelephonyPipelineDIDResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetTelephonyPipelineSettingsResponse)
-	err := c.cc.Invoke(ctx, CRMService_GetTelephonyPipelineSettings_FullMethodName, in, out, cOpts...)
+	out := new(UpsertTelephonyPipelineDIDResponse)
+	err := c.cc.Invoke(ctx, CRMService_UpsertTelephonyPipelineDID_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *cRMServiceClient) ListTelephonyPipelineSettings(ctx context.Context, in *ListTelephonyPipelineSettingsRequest, opts ...grpc.CallOption) (*ListTelephonyPipelineSettingsResponse, error) {
+func (c *cRMServiceClient) ListTelephonyPipelineDIDs(ctx context.Context, in *ListTelephonyPipelineDIDsRequest, opts ...grpc.CallOption) (*ListTelephonyPipelineDIDsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListTelephonyPipelineSettingsResponse)
-	err := c.cc.Invoke(ctx, CRMService_ListTelephonyPipelineSettings_FullMethodName, in, out, cOpts...)
+	out := new(ListTelephonyPipelineDIDsResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListTelephonyPipelineDIDs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *cRMServiceClient) UpsertUserSipExtension(ctx context.Context, in *UpsertUserSipExtensionRequest, opts ...grpc.CallOption) (*UpsertUserSipExtensionResponse, error) {
+func (c *cRMServiceClient) DeleteTelephonyPipelineDID(ctx context.Context, in *DeleteTelephonyPipelineDIDRequest, opts ...grpc.CallOption) (*DeleteTelephonyPipelineDIDResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpsertUserSipExtensionResponse)
-	err := c.cc.Invoke(ctx, CRMService_UpsertUserSipExtension_FullMethodName, in, out, cOpts...)
+	out := new(DeleteTelephonyPipelineDIDResponse)
+	err := c.cc.Invoke(ctx, CRMService_DeleteTelephonyPipelineDID_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *cRMServiceClient) GetUserSipExtension(ctx context.Context, in *GetUserSipExtensionRequest, opts ...grpc.CallOption) (*GetUserSipExtensionResponse, error) {
+func (c *cRMServiceClient) UpsertTelephonyUserExtension(ctx context.Context, in *UpsertTelephonyUserExtensionRequest, opts ...grpc.CallOption) (*UpsertTelephonyUserExtensionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetUserSipExtensionResponse)
-	err := c.cc.Invoke(ctx, CRMService_GetUserSipExtension_FullMethodName, in, out, cOpts...)
+	out := new(UpsertTelephonyUserExtensionResponse)
+	err := c.cc.Invoke(ctx, CRMService_UpsertTelephonyUserExtension_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetTelephonyUserExtension(ctx context.Context, in *GetTelephonyUserExtensionRequest, opts ...grpc.CallOption) (*GetTelephonyUserExtensionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTelephonyUserExtensionResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetTelephonyUserExtension_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetTelephonyProviderConfig(ctx context.Context, in *GetTelephonyProviderConfigRequest, opts ...grpc.CallOption) (*GetTelephonyProviderConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTelephonyProviderConfigResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetTelephonyProviderConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) UpdateTelephonyProviderConfig(ctx context.Context, in *UpdateTelephonyProviderConfigRequest, opts ...grpc.CallOption) (*UpdateTelephonyProviderConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateTelephonyProviderConfigResponse)
+	err := c.cc.Invoke(ctx, CRMService_UpdateTelephonyProviderConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1050,16 +1085,18 @@ type CRMServiceServer interface {
 	ListWhatsAppMessages(context.Context, *ListWhatsAppMessagesRequest) (*ListWhatsAppMessagesResponse, error)
 	ListWhatsAppTemplates(context.Context, *ListWhatsAppTemplatesRequest) (*ListWhatsAppTemplatesResponse, error)
 	HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error)
-	// Telephony RPCs
-	HandleSipuniEvent(context.Context, *SipuniEventRequest) (*SipuniEventResponse, error)
-	ListCalls(context.Context, *ListCallsRequest) (*ListCallsResponse, error)
-	InitiateCall(context.Context, *InitiateCallRequest) (*InitiateCallResponse, error)
-	// Telephony settings RPCs
-	UpsertTelephonyPipelineSettings(context.Context, *UpsertTelephonyPipelineSettingsRequest) (*UpsertTelephonyPipelineSettingsResponse, error)
-	GetTelephonyPipelineSettings(context.Context, *GetTelephonyPipelineSettingsRequest) (*GetTelephonyPipelineSettingsResponse, error)
-	ListTelephonyPipelineSettings(context.Context, *ListTelephonyPipelineSettingsRequest) (*ListTelephonyPipelineSettingsResponse, error)
-	UpsertUserSipExtension(context.Context, *UpsertUserSipExtensionRequest) (*UpsertUserSipExtensionResponse, error)
-	GetUserSipExtension(context.Context, *GetUserSipExtensionRequest) (*GetUserSipExtensionResponse, error)
+	// Telephony RPCs (Phase 8 — provider-agnostic; replaces Sipuni-specific methods)
+	TelephonyOriginate(context.Context, *TelephonyOriginateRequest) (*TelephonyOriginateResponse, error)
+	TelephonyGetCall(context.Context, *TelephonyGetCallRequest) (*TelephonyGetCallResponse, error)
+	TelephonyListCalls(context.Context, *TelephonyListCallsRequest) (*TelephonyListCallsResponse, error)
+	TelephonyGetCredentials(context.Context, *TelephonyGetCredentialsRequest) (*TelephonyGetCredentialsResponse, error)
+	UpsertTelephonyPipelineDID(context.Context, *UpsertTelephonyPipelineDIDRequest) (*UpsertTelephonyPipelineDIDResponse, error)
+	ListTelephonyPipelineDIDs(context.Context, *ListTelephonyPipelineDIDsRequest) (*ListTelephonyPipelineDIDsResponse, error)
+	DeleteTelephonyPipelineDID(context.Context, *DeleteTelephonyPipelineDIDRequest) (*DeleteTelephonyPipelineDIDResponse, error)
+	UpsertTelephonyUserExtension(context.Context, *UpsertTelephonyUserExtensionRequest) (*UpsertTelephonyUserExtensionResponse, error)
+	GetTelephonyUserExtension(context.Context, *GetTelephonyUserExtensionRequest) (*GetTelephonyUserExtensionResponse, error)
+	GetTelephonyProviderConfig(context.Context, *GetTelephonyProviderConfigRequest) (*GetTelephonyProviderConfigResponse, error)
+	UpdateTelephonyProviderConfig(context.Context, *UpdateTelephonyProviderConfigRequest) (*UpdateTelephonyProviderConfigResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
 
@@ -1259,29 +1296,38 @@ func (UnimplementedCRMServiceServer) ListWhatsAppTemplates(context.Context, *Lis
 func (UnimplementedCRMServiceServer) HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HandleWhatsAppWebhook not implemented")
 }
-func (UnimplementedCRMServiceServer) HandleSipuniEvent(context.Context, *SipuniEventRequest) (*SipuniEventResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method HandleSipuniEvent not implemented")
+func (UnimplementedCRMServiceServer) TelephonyOriginate(context.Context, *TelephonyOriginateRequest) (*TelephonyOriginateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method TelephonyOriginate not implemented")
 }
-func (UnimplementedCRMServiceServer) ListCalls(context.Context, *ListCallsRequest) (*ListCallsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListCalls not implemented")
+func (UnimplementedCRMServiceServer) TelephonyGetCall(context.Context, *TelephonyGetCallRequest) (*TelephonyGetCallResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method TelephonyGetCall not implemented")
 }
-func (UnimplementedCRMServiceServer) InitiateCall(context.Context, *InitiateCallRequest) (*InitiateCallResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method InitiateCall not implemented")
+func (UnimplementedCRMServiceServer) TelephonyListCalls(context.Context, *TelephonyListCallsRequest) (*TelephonyListCallsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method TelephonyListCalls not implemented")
 }
-func (UnimplementedCRMServiceServer) UpsertTelephonyPipelineSettings(context.Context, *UpsertTelephonyPipelineSettingsRequest) (*UpsertTelephonyPipelineSettingsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpsertTelephonyPipelineSettings not implemented")
+func (UnimplementedCRMServiceServer) TelephonyGetCredentials(context.Context, *TelephonyGetCredentialsRequest) (*TelephonyGetCredentialsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method TelephonyGetCredentials not implemented")
 }
-func (UnimplementedCRMServiceServer) GetTelephonyPipelineSettings(context.Context, *GetTelephonyPipelineSettingsRequest) (*GetTelephonyPipelineSettingsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetTelephonyPipelineSettings not implemented")
+func (UnimplementedCRMServiceServer) UpsertTelephonyPipelineDID(context.Context, *UpsertTelephonyPipelineDIDRequest) (*UpsertTelephonyPipelineDIDResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpsertTelephonyPipelineDID not implemented")
 }
-func (UnimplementedCRMServiceServer) ListTelephonyPipelineSettings(context.Context, *ListTelephonyPipelineSettingsRequest) (*ListTelephonyPipelineSettingsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListTelephonyPipelineSettings not implemented")
+func (UnimplementedCRMServiceServer) ListTelephonyPipelineDIDs(context.Context, *ListTelephonyPipelineDIDsRequest) (*ListTelephonyPipelineDIDsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTelephonyPipelineDIDs not implemented")
 }
-func (UnimplementedCRMServiceServer) UpsertUserSipExtension(context.Context, *UpsertUserSipExtensionRequest) (*UpsertUserSipExtensionResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpsertUserSipExtension not implemented")
+func (UnimplementedCRMServiceServer) DeleteTelephonyPipelineDID(context.Context, *DeleteTelephonyPipelineDIDRequest) (*DeleteTelephonyPipelineDIDResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteTelephonyPipelineDID not implemented")
 }
-func (UnimplementedCRMServiceServer) GetUserSipExtension(context.Context, *GetUserSipExtensionRequest) (*GetUserSipExtensionResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetUserSipExtension not implemented")
+func (UnimplementedCRMServiceServer) UpsertTelephonyUserExtension(context.Context, *UpsertTelephonyUserExtensionRequest) (*UpsertTelephonyUserExtensionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpsertTelephonyUserExtension not implemented")
+}
+func (UnimplementedCRMServiceServer) GetTelephonyUserExtension(context.Context, *GetTelephonyUserExtensionRequest) (*GetTelephonyUserExtensionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTelephonyUserExtension not implemented")
+}
+func (UnimplementedCRMServiceServer) GetTelephonyProviderConfig(context.Context, *GetTelephonyProviderConfigRequest) (*GetTelephonyProviderConfigResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTelephonyProviderConfig not implemented")
+}
+func (UnimplementedCRMServiceServer) UpdateTelephonyProviderConfig(context.Context, *UpdateTelephonyProviderConfigRequest) (*UpdateTelephonyProviderConfigResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateTelephonyProviderConfig not implemented")
 }
 func (UnimplementedCRMServiceServer) mustEmbedUnimplementedCRMServiceServer() {}
 func (UnimplementedCRMServiceServer) testEmbeddedByValue()                    {}
@@ -2438,146 +2484,200 @@ func _CRMService_HandleWhatsAppWebhook_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CRMService_HandleSipuniEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SipuniEventRequest)
+func _CRMService_TelephonyOriginate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TelephonyOriginateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CRMServiceServer).HandleSipuniEvent(ctx, in)
+		return srv.(CRMServiceServer).TelephonyOriginate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CRMService_HandleSipuniEvent_FullMethodName,
+		FullMethod: CRMService_TelephonyOriginate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CRMServiceServer).HandleSipuniEvent(ctx, req.(*SipuniEventRequest))
+		return srv.(CRMServiceServer).TelephonyOriginate(ctx, req.(*TelephonyOriginateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CRMService_ListCalls_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListCallsRequest)
+func _CRMService_TelephonyGetCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TelephonyGetCallRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CRMServiceServer).ListCalls(ctx, in)
+		return srv.(CRMServiceServer).TelephonyGetCall(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CRMService_ListCalls_FullMethodName,
+		FullMethod: CRMService_TelephonyGetCall_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CRMServiceServer).ListCalls(ctx, req.(*ListCallsRequest))
+		return srv.(CRMServiceServer).TelephonyGetCall(ctx, req.(*TelephonyGetCallRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CRMService_InitiateCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InitiateCallRequest)
+func _CRMService_TelephonyListCalls_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TelephonyListCallsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CRMServiceServer).InitiateCall(ctx, in)
+		return srv.(CRMServiceServer).TelephonyListCalls(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CRMService_InitiateCall_FullMethodName,
+		FullMethod: CRMService_TelephonyListCalls_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CRMServiceServer).InitiateCall(ctx, req.(*InitiateCallRequest))
+		return srv.(CRMServiceServer).TelephonyListCalls(ctx, req.(*TelephonyListCallsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CRMService_UpsertTelephonyPipelineSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpsertTelephonyPipelineSettingsRequest)
+func _CRMService_TelephonyGetCredentials_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TelephonyGetCredentialsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CRMServiceServer).UpsertTelephonyPipelineSettings(ctx, in)
+		return srv.(CRMServiceServer).TelephonyGetCredentials(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CRMService_UpsertTelephonyPipelineSettings_FullMethodName,
+		FullMethod: CRMService_TelephonyGetCredentials_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CRMServiceServer).UpsertTelephonyPipelineSettings(ctx, req.(*UpsertTelephonyPipelineSettingsRequest))
+		return srv.(CRMServiceServer).TelephonyGetCredentials(ctx, req.(*TelephonyGetCredentialsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CRMService_GetTelephonyPipelineSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTelephonyPipelineSettingsRequest)
+func _CRMService_UpsertTelephonyPipelineDID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertTelephonyPipelineDIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CRMServiceServer).GetTelephonyPipelineSettings(ctx, in)
+		return srv.(CRMServiceServer).UpsertTelephonyPipelineDID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CRMService_GetTelephonyPipelineSettings_FullMethodName,
+		FullMethod: CRMService_UpsertTelephonyPipelineDID_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CRMServiceServer).GetTelephonyPipelineSettings(ctx, req.(*GetTelephonyPipelineSettingsRequest))
+		return srv.(CRMServiceServer).UpsertTelephonyPipelineDID(ctx, req.(*UpsertTelephonyPipelineDIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CRMService_ListTelephonyPipelineSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListTelephonyPipelineSettingsRequest)
+func _CRMService_ListTelephonyPipelineDIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTelephonyPipelineDIDsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CRMServiceServer).ListTelephonyPipelineSettings(ctx, in)
+		return srv.(CRMServiceServer).ListTelephonyPipelineDIDs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CRMService_ListTelephonyPipelineSettings_FullMethodName,
+		FullMethod: CRMService_ListTelephonyPipelineDIDs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CRMServiceServer).ListTelephonyPipelineSettings(ctx, req.(*ListTelephonyPipelineSettingsRequest))
+		return srv.(CRMServiceServer).ListTelephonyPipelineDIDs(ctx, req.(*ListTelephonyPipelineDIDsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CRMService_UpsertUserSipExtension_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpsertUserSipExtensionRequest)
+func _CRMService_DeleteTelephonyPipelineDID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTelephonyPipelineDIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CRMServiceServer).UpsertUserSipExtension(ctx, in)
+		return srv.(CRMServiceServer).DeleteTelephonyPipelineDID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CRMService_UpsertUserSipExtension_FullMethodName,
+		FullMethod: CRMService_DeleteTelephonyPipelineDID_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CRMServiceServer).UpsertUserSipExtension(ctx, req.(*UpsertUserSipExtensionRequest))
+		return srv.(CRMServiceServer).DeleteTelephonyPipelineDID(ctx, req.(*DeleteTelephonyPipelineDIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CRMService_GetUserSipExtension_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserSipExtensionRequest)
+func _CRMService_UpsertTelephonyUserExtension_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertTelephonyUserExtensionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CRMServiceServer).GetUserSipExtension(ctx, in)
+		return srv.(CRMServiceServer).UpsertTelephonyUserExtension(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CRMService_GetUserSipExtension_FullMethodName,
+		FullMethod: CRMService_UpsertTelephonyUserExtension_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CRMServiceServer).GetUserSipExtension(ctx, req.(*GetUserSipExtensionRequest))
+		return srv.(CRMServiceServer).UpsertTelephonyUserExtension(ctx, req.(*UpsertTelephonyUserExtensionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetTelephonyUserExtension_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTelephonyUserExtensionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetTelephonyUserExtension(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetTelephonyUserExtension_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetTelephonyUserExtension(ctx, req.(*GetTelephonyUserExtensionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetTelephonyProviderConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTelephonyProviderConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetTelephonyProviderConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetTelephonyProviderConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetTelephonyProviderConfig(ctx, req.(*GetTelephonyProviderConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_UpdateTelephonyProviderConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTelephonyProviderConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).UpdateTelephonyProviderConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_UpdateTelephonyProviderConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).UpdateTelephonyProviderConfig(ctx, req.(*UpdateTelephonyProviderConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2842,36 +2942,48 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CRMService_HandleWhatsAppWebhook_Handler,
 		},
 		{
-			MethodName: "HandleSipuniEvent",
-			Handler:    _CRMService_HandleSipuniEvent_Handler,
+			MethodName: "TelephonyOriginate",
+			Handler:    _CRMService_TelephonyOriginate_Handler,
 		},
 		{
-			MethodName: "ListCalls",
-			Handler:    _CRMService_ListCalls_Handler,
+			MethodName: "TelephonyGetCall",
+			Handler:    _CRMService_TelephonyGetCall_Handler,
 		},
 		{
-			MethodName: "InitiateCall",
-			Handler:    _CRMService_InitiateCall_Handler,
+			MethodName: "TelephonyListCalls",
+			Handler:    _CRMService_TelephonyListCalls_Handler,
 		},
 		{
-			MethodName: "UpsertTelephonyPipelineSettings",
-			Handler:    _CRMService_UpsertTelephonyPipelineSettings_Handler,
+			MethodName: "TelephonyGetCredentials",
+			Handler:    _CRMService_TelephonyGetCredentials_Handler,
 		},
 		{
-			MethodName: "GetTelephonyPipelineSettings",
-			Handler:    _CRMService_GetTelephonyPipelineSettings_Handler,
+			MethodName: "UpsertTelephonyPipelineDID",
+			Handler:    _CRMService_UpsertTelephonyPipelineDID_Handler,
 		},
 		{
-			MethodName: "ListTelephonyPipelineSettings",
-			Handler:    _CRMService_ListTelephonyPipelineSettings_Handler,
+			MethodName: "ListTelephonyPipelineDIDs",
+			Handler:    _CRMService_ListTelephonyPipelineDIDs_Handler,
 		},
 		{
-			MethodName: "UpsertUserSipExtension",
-			Handler:    _CRMService_UpsertUserSipExtension_Handler,
+			MethodName: "DeleteTelephonyPipelineDID",
+			Handler:    _CRMService_DeleteTelephonyPipelineDID_Handler,
 		},
 		{
-			MethodName: "GetUserSipExtension",
-			Handler:    _CRMService_GetUserSipExtension_Handler,
+			MethodName: "UpsertTelephonyUserExtension",
+			Handler:    _CRMService_UpsertTelephonyUserExtension_Handler,
+		},
+		{
+			MethodName: "GetTelephonyUserExtension",
+			Handler:    _CRMService_GetTelephonyUserExtension_Handler,
+		},
+		{
+			MethodName: "GetTelephonyProviderConfig",
+			Handler:    _CRMService_GetTelephonyProviderConfig_Handler,
+		},
+		{
+			MethodName: "UpdateTelephonyProviderConfig",
+			Handler:    _CRMService_UpdateTelephonyProviderConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
