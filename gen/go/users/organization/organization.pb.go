@@ -706,6 +706,9 @@ type Role struct {
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Permissions   []string               `protobuf:"bytes,4,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	IsSystem      bool                   `protobuf:"varint,5,opt,name=is_system,json=isSystem,proto3" json:"is_system,omitempty"`
+	OrgType       string                 `protobuf:"bytes,6,opt,name=org_type,json=orgType,proto3" json:"org_type,omitempty"`
+	Id            int64                  `protobuf:"varint,7,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -766,6 +769,27 @@ func (x *Role) GetPermissions() []string {
 		return x.Permissions
 	}
 	return nil
+}
+
+func (x *Role) GetIsSystem() bool {
+	if x != nil {
+		return x.IsSystem
+	}
+	return false
+}
+
+func (x *Role) GetOrgType() string {
+	if x != nil {
+		return x.OrgType
+	}
+	return ""
+}
+
+func (x *Role) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
 }
 
 type InviteCode struct {
@@ -4216,6 +4240,770 @@ func (x *CheckPlatformRoleResponse) GetAccessibleOrgIds() []string {
 	return nil
 }
 
+type CreateRoleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrgType       string                 `protobuf:"bytes,1,opt,name=org_type,json=orgType,proto3" json:"org_type,omitempty"`
+	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	Permissions   []string               `protobuf:"bytes,5,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateRoleRequest) Reset() {
+	*x = CreateRoleRequest{}
+	mi := &file_users_organization_organization_proto_msgTypes[64]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoleRequest) ProtoMessage() {}
+
+func (x *CreateRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[64]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoleRequest.ProtoReflect.Descriptor instead.
+func (*CreateRoleRequest) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{64}
+}
+
+func (x *CreateRoleRequest) GetOrgType() string {
+	if x != nil {
+		return x.OrgType
+	}
+	return ""
+}
+
+func (x *CreateRoleRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *CreateRoleRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateRoleRequest) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *CreateRoleRequest) GetPermissions() []string {
+	if x != nil {
+		return x.Permissions
+	}
+	return nil
+}
+
+type CreateRoleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateRoleResponse) Reset() {
+	*x = CreateRoleResponse{}
+	mi := &file_users_organization_organization_proto_msgTypes[65]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoleResponse) ProtoMessage() {}
+
+func (x *CreateRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[65]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoleResponse.ProtoReflect.Descriptor instead.
+func (*CreateRoleResponse) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{65}
+}
+
+func (x *CreateRoleResponse) GetRole() *Role {
+	if x != nil {
+		return x.Role
+	}
+	return nil
+}
+
+type UpdateRoleInfoRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrgType       string                 `protobuf:"bytes,1,opt,name=org_type,json=orgType,proto3" json:"org_type,omitempty"`
+	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	Name          *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`
+	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateRoleInfoRequest) Reset() {
+	*x = UpdateRoleInfoRequest{}
+	mi := &file_users_organization_organization_proto_msgTypes[66]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateRoleInfoRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateRoleInfoRequest) ProtoMessage() {}
+
+func (x *UpdateRoleInfoRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[66]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateRoleInfoRequest.ProtoReflect.Descriptor instead.
+func (*UpdateRoleInfoRequest) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{66}
+}
+
+func (x *UpdateRoleInfoRequest) GetOrgType() string {
+	if x != nil {
+		return x.OrgType
+	}
+	return ""
+}
+
+func (x *UpdateRoleInfoRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *UpdateRoleInfoRequest) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
+	}
+	return ""
+}
+
+func (x *UpdateRoleInfoRequest) GetDescription() string {
+	if x != nil && x.Description != nil {
+		return *x.Description
+	}
+	return ""
+}
+
+type UpdateRoleInfoResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateRoleInfoResponse) Reset() {
+	*x = UpdateRoleInfoResponse{}
+	mi := &file_users_organization_organization_proto_msgTypes[67]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateRoleInfoResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateRoleInfoResponse) ProtoMessage() {}
+
+func (x *UpdateRoleInfoResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[67]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateRoleInfoResponse.ProtoReflect.Descriptor instead.
+func (*UpdateRoleInfoResponse) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{67}
+}
+
+func (x *UpdateRoleInfoResponse) GetRole() *Role {
+	if x != nil {
+		return x.Role
+	}
+	return nil
+}
+
+type DeleteRoleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrgType       string                 `protobuf:"bytes,1,opt,name=org_type,json=orgType,proto3" json:"org_type,omitempty"`
+	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteRoleRequest) Reset() {
+	*x = DeleteRoleRequest{}
+	mi := &file_users_organization_organization_proto_msgTypes[68]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteRoleRequest) ProtoMessage() {}
+
+func (x *DeleteRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[68]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteRoleRequest.ProtoReflect.Descriptor instead.
+func (*DeleteRoleRequest) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{68}
+}
+
+func (x *DeleteRoleRequest) GetOrgType() string {
+	if x != nil {
+		return x.OrgType
+	}
+	return ""
+}
+
+func (x *DeleteRoleRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+type DeleteRoleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteRoleResponse) Reset() {
+	*x = DeleteRoleResponse{}
+	mi := &file_users_organization_organization_proto_msgTypes[69]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteRoleResponse) ProtoMessage() {}
+
+func (x *DeleteRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[69]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteRoleResponse.ProtoReflect.Descriptor instead.
+func (*DeleteRoleResponse) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{69}
+}
+
+type SetRolePermissionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrgType       string                 `protobuf:"bytes,1,opt,name=org_type,json=orgType,proto3" json:"org_type,omitempty"`
+	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	Permissions   []string               `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetRolePermissionsRequest) Reset() {
+	*x = SetRolePermissionsRequest{}
+	mi := &file_users_organization_organization_proto_msgTypes[70]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetRolePermissionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetRolePermissionsRequest) ProtoMessage() {}
+
+func (x *SetRolePermissionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[70]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetRolePermissionsRequest.ProtoReflect.Descriptor instead.
+func (*SetRolePermissionsRequest) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{70}
+}
+
+func (x *SetRolePermissionsRequest) GetOrgType() string {
+	if x != nil {
+		return x.OrgType
+	}
+	return ""
+}
+
+func (x *SetRolePermissionsRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *SetRolePermissionsRequest) GetPermissions() []string {
+	if x != nil {
+		return x.Permissions
+	}
+	return nil
+}
+
+type SetRolePermissionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetRolePermissionsResponse) Reset() {
+	*x = SetRolePermissionsResponse{}
+	mi := &file_users_organization_organization_proto_msgTypes[71]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetRolePermissionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetRolePermissionsResponse) ProtoMessage() {}
+
+func (x *SetRolePermissionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[71]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetRolePermissionsResponse.ProtoReflect.Descriptor instead.
+func (*SetRolePermissionsResponse) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{71}
+}
+
+type PermissionOverride struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MemberId      string                 `protobuf:"bytes,1,opt,name=member_id,json=memberId,proto3" json:"member_id,omitempty"`
+	Permission    string                 `protobuf:"bytes,2,opt,name=permission,proto3" json:"permission,omitempty"`
+	GrantType     string                 `protobuf:"bytes,3,opt,name=grant_type,json=grantType,proto3" json:"grant_type,omitempty"` // "grant" or "revoke"
+	GrantedBy     int64                  `protobuf:"varint,4,opt,name=granted_by,json=grantedBy,proto3" json:"granted_by,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PermissionOverride) Reset() {
+	*x = PermissionOverride{}
+	mi := &file_users_organization_organization_proto_msgTypes[72]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PermissionOverride) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PermissionOverride) ProtoMessage() {}
+
+func (x *PermissionOverride) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[72]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PermissionOverride.ProtoReflect.Descriptor instead.
+func (*PermissionOverride) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{72}
+}
+
+func (x *PermissionOverride) GetMemberId() string {
+	if x != nil {
+		return x.MemberId
+	}
+	return ""
+}
+
+func (x *PermissionOverride) GetPermission() string {
+	if x != nil {
+		return x.Permission
+	}
+	return ""
+}
+
+func (x *PermissionOverride) GetGrantType() string {
+	if x != nil {
+		return x.GrantType
+	}
+	return ""
+}
+
+func (x *PermissionOverride) GetGrantedBy() int64 {
+	if x != nil {
+		return x.GrantedBy
+	}
+	return 0
+}
+
+func (x *PermissionOverride) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type SetMemberPermissionOverrideRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MemberId      string                 `protobuf:"bytes,1,opt,name=member_id,json=memberId,proto3" json:"member_id,omitempty"`
+	Permission    string                 `protobuf:"bytes,2,opt,name=permission,proto3" json:"permission,omitempty"`
+	GrantType     string                 `protobuf:"bytes,3,opt,name=grant_type,json=grantType,proto3" json:"grant_type,omitempty"` // "grant" or "revoke"
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetMemberPermissionOverrideRequest) Reset() {
+	*x = SetMemberPermissionOverrideRequest{}
+	mi := &file_users_organization_organization_proto_msgTypes[73]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetMemberPermissionOverrideRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetMemberPermissionOverrideRequest) ProtoMessage() {}
+
+func (x *SetMemberPermissionOverrideRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[73]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetMemberPermissionOverrideRequest.ProtoReflect.Descriptor instead.
+func (*SetMemberPermissionOverrideRequest) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{73}
+}
+
+func (x *SetMemberPermissionOverrideRequest) GetMemberId() string {
+	if x != nil {
+		return x.MemberId
+	}
+	return ""
+}
+
+func (x *SetMemberPermissionOverrideRequest) GetPermission() string {
+	if x != nil {
+		return x.Permission
+	}
+	return ""
+}
+
+func (x *SetMemberPermissionOverrideRequest) GetGrantType() string {
+	if x != nil {
+		return x.GrantType
+	}
+	return ""
+}
+
+type SetMemberPermissionOverrideResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetMemberPermissionOverrideResponse) Reset() {
+	*x = SetMemberPermissionOverrideResponse{}
+	mi := &file_users_organization_organization_proto_msgTypes[74]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetMemberPermissionOverrideResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetMemberPermissionOverrideResponse) ProtoMessage() {}
+
+func (x *SetMemberPermissionOverrideResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[74]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetMemberPermissionOverrideResponse.ProtoReflect.Descriptor instead.
+func (*SetMemberPermissionOverrideResponse) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{74}
+}
+
+type RemoveMemberPermissionOverrideRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MemberId      string                 `protobuf:"bytes,1,opt,name=member_id,json=memberId,proto3" json:"member_id,omitempty"`
+	Permission    string                 `protobuf:"bytes,2,opt,name=permission,proto3" json:"permission,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveMemberPermissionOverrideRequest) Reset() {
+	*x = RemoveMemberPermissionOverrideRequest{}
+	mi := &file_users_organization_organization_proto_msgTypes[75]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveMemberPermissionOverrideRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveMemberPermissionOverrideRequest) ProtoMessage() {}
+
+func (x *RemoveMemberPermissionOverrideRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[75]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveMemberPermissionOverrideRequest.ProtoReflect.Descriptor instead.
+func (*RemoveMemberPermissionOverrideRequest) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{75}
+}
+
+func (x *RemoveMemberPermissionOverrideRequest) GetMemberId() string {
+	if x != nil {
+		return x.MemberId
+	}
+	return ""
+}
+
+func (x *RemoveMemberPermissionOverrideRequest) GetPermission() string {
+	if x != nil {
+		return x.Permission
+	}
+	return ""
+}
+
+type RemoveMemberPermissionOverrideResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveMemberPermissionOverrideResponse) Reset() {
+	*x = RemoveMemberPermissionOverrideResponse{}
+	mi := &file_users_organization_organization_proto_msgTypes[76]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveMemberPermissionOverrideResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveMemberPermissionOverrideResponse) ProtoMessage() {}
+
+func (x *RemoveMemberPermissionOverrideResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[76]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveMemberPermissionOverrideResponse.ProtoReflect.Descriptor instead.
+func (*RemoveMemberPermissionOverrideResponse) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{76}
+}
+
+type GetMemberPermissionOverridesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MemberId      string                 `protobuf:"bytes,1,opt,name=member_id,json=memberId,proto3" json:"member_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMemberPermissionOverridesRequest) Reset() {
+	*x = GetMemberPermissionOverridesRequest{}
+	mi := &file_users_organization_organization_proto_msgTypes[77]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMemberPermissionOverridesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMemberPermissionOverridesRequest) ProtoMessage() {}
+
+func (x *GetMemberPermissionOverridesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[77]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMemberPermissionOverridesRequest.ProtoReflect.Descriptor instead.
+func (*GetMemberPermissionOverridesRequest) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{77}
+}
+
+func (x *GetMemberPermissionOverridesRequest) GetMemberId() string {
+	if x != nil {
+		return x.MemberId
+	}
+	return ""
+}
+
+type GetMemberPermissionOverridesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Overrides     []*PermissionOverride  `protobuf:"bytes,1,rep,name=overrides,proto3" json:"overrides,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMemberPermissionOverridesResponse) Reset() {
+	*x = GetMemberPermissionOverridesResponse{}
+	mi := &file_users_organization_organization_proto_msgTypes[78]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMemberPermissionOverridesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMemberPermissionOverridesResponse) ProtoMessage() {}
+
+func (x *GetMemberPermissionOverridesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_organization_organization_proto_msgTypes[78]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMemberPermissionOverridesResponse.ProtoReflect.Descriptor instead.
+func (*GetMemberPermissionOverridesResponse) Descriptor() ([]byte, []int) {
+	return file_users_organization_organization_proto_rawDescGZIP(), []int{78}
+}
+
+func (x *GetMemberPermissionOverridesResponse) GetOverrides() []*PermissionOverride {
+	if x != nil {
+		return x.Overrides
+	}
+	return nil
+}
+
 var File_users_organization_organization_proto protoreflect.FileDescriptor
 
 const file_users_organization_organization_proto_rawDesc = "" +
@@ -4284,12 +5072,15 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\vpermissions\x18\x05 \x03(\tR\vpermissions\x12;\n" +
 	"\x06status\x18\x06 \x01(\x0e2#.users.organization.v1.MemberStatusR\x06status\x125\n" +
 	"\bhired_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\ahiredAt\x125\n" +
-	"\bfired_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\afiredAt\"r\n" +
+	"\bfired_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\afiredAt\"\xba\x01\n" +
 	"\x04Role\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12 \n" +
-	"\vpermissions\x18\x04 \x03(\tR\vpermissions\"\xd6\x02\n" +
+	"\vpermissions\x18\x04 \x03(\tR\vpermissions\x12\x1b\n" +
+	"\tis_system\x18\x05 \x01(\bR\bisSystem\x12\x19\n" +
+	"\borg_type\x18\x06 \x01(\tR\aorgType\x12\x0e\n" +
+	"\x02id\x18\a \x01(\x03R\x02id\"\xd6\x02\n" +
 	"\n" +
 	"InviteCode\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12'\n" +
@@ -4578,7 +5369,62 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\x82\x01\n" +
 	"\x19CheckPlatformRoleResponse\x127\n" +
 	"\x04role\x18\x01 \x01(\x0e2#.users.organization.v1.PlatformRoleR\x04role\x12,\n" +
-	"\x12accessible_org_ids\x18\x02 \x03(\tR\x10accessibleOrgIds*\xe0\x02\n" +
+	"\x12accessible_org_ids\x18\x02 \x03(\tR\x10accessibleOrgIds\"\x9a\x01\n" +
+	"\x11CreateRoleRequest\x12\x19\n" +
+	"\borg_type\x18\x01 \x01(\tR\aorgType\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\x12 \n" +
+	"\vpermissions\x18\x05 \x03(\tR\vpermissions\"E\n" +
+	"\x12CreateRoleResponse\x12/\n" +
+	"\x04role\x18\x01 \x01(\v2\x1b.users.organization.v1.RoleR\x04role\"\x9f\x01\n" +
+	"\x15UpdateRoleInfoRequest\x12\x19\n" +
+	"\borg_type\x18\x01 \x01(\tR\aorgType\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\x12\x17\n" +
+	"\x04name\x18\x03 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\x04 \x01(\tH\x01R\vdescription\x88\x01\x01B\a\n" +
+	"\x05_nameB\x0e\n" +
+	"\f_description\"I\n" +
+	"\x16UpdateRoleInfoResponse\x12/\n" +
+	"\x04role\x18\x01 \x01(\v2\x1b.users.organization.v1.RoleR\x04role\"B\n" +
+	"\x11DeleteRoleRequest\x12\x19\n" +
+	"\borg_type\x18\x01 \x01(\tR\aorgType\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\"\x14\n" +
+	"\x12DeleteRoleResponse\"l\n" +
+	"\x19SetRolePermissionsRequest\x12\x19\n" +
+	"\borg_type\x18\x01 \x01(\tR\aorgType\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\x12 \n" +
+	"\vpermissions\x18\x03 \x03(\tR\vpermissions\"\x1c\n" +
+	"\x1aSetRolePermissionsResponse\"\xca\x01\n" +
+	"\x12PermissionOverride\x12\x1b\n" +
+	"\tmember_id\x18\x01 \x01(\tR\bmemberId\x12\x1e\n" +
+	"\n" +
+	"permission\x18\x02 \x01(\tR\n" +
+	"permission\x12\x1d\n" +
+	"\n" +
+	"grant_type\x18\x03 \x01(\tR\tgrantType\x12\x1d\n" +
+	"\n" +
+	"granted_by\x18\x04 \x01(\x03R\tgrantedBy\x129\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x80\x01\n" +
+	"\"SetMemberPermissionOverrideRequest\x12\x1b\n" +
+	"\tmember_id\x18\x01 \x01(\tR\bmemberId\x12\x1e\n" +
+	"\n" +
+	"permission\x18\x02 \x01(\tR\n" +
+	"permission\x12\x1d\n" +
+	"\n" +
+	"grant_type\x18\x03 \x01(\tR\tgrantType\"%\n" +
+	"#SetMemberPermissionOverrideResponse\"d\n" +
+	"%RemoveMemberPermissionOverrideRequest\x12\x1b\n" +
+	"\tmember_id\x18\x01 \x01(\tR\bmemberId\x12\x1e\n" +
+	"\n" +
+	"permission\x18\x02 \x01(\tR\n" +
+	"permission\"(\n" +
+	"&RemoveMemberPermissionOverrideResponse\"B\n" +
+	"#GetMemberPermissionOverridesRequest\x12\x1b\n" +
+	"\tmember_id\x18\x01 \x01(\tR\bmemberId\"o\n" +
+	"$GetMemberPermissionOverridesResponse\x12G\n" +
+	"\toverrides\x18\x01 \x03(\v2).users.organization.v1.PermissionOverrideR\toverrides*\xe0\x02\n" +
 	"\x10OrganizationType\x12!\n" +
 	"\x1dORGANIZATION_TYPE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15ORGANIZATION_TYPE_STO\x10\x01\x12\x1f\n" +
@@ -4599,7 +5445,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x16PLATFORM_ROLE_MECHANIC\x10\x01\x12\x1e\n" +
 	"\x1aPLATFORM_ROLE_RECEPTIONIST\x10\x02\x12\x1f\n" +
 	"\x1bPLATFORM_ROLE_PARTS_MANAGER\x10\x03\x12\x17\n" +
-	"\x13PLATFORM_ROLE_ADMIN\x10\x042\xc6\x18\n" +
+	"\x13PLATFORM_ROLE_ADMIN\x10\x042\xc7\x1f\n" +
 	"\x13OrganizationService\x12y\n" +
 	"\x12CreateOrganization\x120.users.organization.v1.CreateOrganizationRequest\x1a1.users.organization.v1.CreateOrganizationResponse\x12p\n" +
 	"\x0fGetOrganization\x12-.users.organization.v1.GetOrganizationRequest\x1a..users.organization.v1.GetOrganizationResponse\x12y\n" +
@@ -4621,7 +5467,16 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x0eGetInviteCodes\x12,.users.organization.v1.GetInviteCodesRequest\x1a-.users.organization.v1.GetInviteCodesResponse\x12\x7f\n" +
 	"\x14DeactivateInviteCode\x122.users.organization.v1.DeactivateInviteCodeRequest\x1a3.users.organization.v1.DeactivateInviteCodeResponse\x12p\n" +
 	"\x0fCheckPermission\x12-.users.organization.v1.CheckPermissionRequest\x1a..users.organization.v1.CheckPermissionResponse\x12[\n" +
-	"\bGetRoles\x12&.users.organization.v1.GetRolesRequest\x1a'.users.organization.v1.GetRolesResponse\x12j\n" +
+	"\bGetRoles\x12&.users.organization.v1.GetRolesRequest\x1a'.users.organization.v1.GetRolesResponse\x12a\n" +
+	"\n" +
+	"CreateRole\x12(.users.organization.v1.CreateRoleRequest\x1a).users.organization.v1.CreateRoleResponse\x12m\n" +
+	"\x0eUpdateRoleInfo\x12,.users.organization.v1.UpdateRoleInfoRequest\x1a-.users.organization.v1.UpdateRoleInfoResponse\x12a\n" +
+	"\n" +
+	"DeleteRole\x12(.users.organization.v1.DeleteRoleRequest\x1a).users.organization.v1.DeleteRoleResponse\x12y\n" +
+	"\x12SetRolePermissions\x120.users.organization.v1.SetRolePermissionsRequest\x1a1.users.organization.v1.SetRolePermissionsResponse\x12\x94\x01\n" +
+	"\x1bSetMemberPermissionOverride\x129.users.organization.v1.SetMemberPermissionOverrideRequest\x1a:.users.organization.v1.SetMemberPermissionOverrideResponse\x12\x9d\x01\n" +
+	"\x1eRemoveMemberPermissionOverride\x12<.users.organization.v1.RemoveMemberPermissionOverrideRequest\x1a=.users.organization.v1.RemoveMemberPermissionOverrideResponse\x12\x97\x01\n" +
+	"\x1cGetMemberPermissionOverrides\x12:.users.organization.v1.GetMemberPermissionOverridesRequest\x1a;.users.organization.v1.GetMemberPermissionOverridesResponse\x12j\n" +
 	"\rGetOrgProfile\x12+.users.organization.v1.GetOrgProfileRequest\x1a,.users.organization.v1.GetOrgProfileResponse\x12s\n" +
 	"\x10UpdateOrgProfile\x12..users.organization.v1.UpdateOrgProfileRequest\x1a/.users.organization.v1.UpdateOrgProfileResponse\x12\x8e\x01\n" +
 	"\x1fGetOrganizationSubscriptionInfo\x124.users.organization.v1.GetOrgSubscriptionInfoRequest\x1a5.users.organization.v1.GetOrgSubscriptionInfoResponse\x12u\n" +
@@ -4644,88 +5499,103 @@ func file_users_organization_organization_proto_rawDescGZIP() []byte {
 }
 
 var file_users_organization_organization_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_users_organization_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 64)
+var file_users_organization_organization_proto_msgTypes = make([]protoimpl.MessageInfo, 79)
 var file_users_organization_organization_proto_goTypes = []any{
-	(OrganizationType)(0),                  // 0: users.organization.v1.OrganizationType
-	(MemberStatus)(0),                      // 1: users.organization.v1.MemberStatus
-	(PlatformRole)(0),                      // 2: users.organization.v1.PlatformRole
-	(*Organization)(nil),                   // 3: users.organization.v1.Organization
-	(*OrganizationSettings)(nil),           // 4: users.organization.v1.OrganizationSettings
-	(*WorkingHours)(nil),                   // 5: users.organization.v1.WorkingHours
-	(*Member)(nil),                         // 6: users.organization.v1.Member
-	(*Role)(nil),                           // 7: users.organization.v1.Role
-	(*InviteCode)(nil),                     // 8: users.organization.v1.InviteCode
-	(*CreateOrganizationRequest)(nil),      // 9: users.organization.v1.CreateOrganizationRequest
-	(*CreateOrganizationResponse)(nil),     // 10: users.organization.v1.CreateOrganizationResponse
-	(*GetOrganizationRequest)(nil),         // 11: users.organization.v1.GetOrganizationRequest
-	(*GetOrganizationResponse)(nil),        // 12: users.organization.v1.GetOrganizationResponse
-	(*UpdateOrganizationRequest)(nil),      // 13: users.organization.v1.UpdateOrganizationRequest
-	(*UpdateOrganizationResponse)(nil),     // 14: users.organization.v1.UpdateOrganizationResponse
-	(*DeleteOrganizationRequest)(nil),      // 15: users.organization.v1.DeleteOrganizationRequest
-	(*DeleteOrganizationResponse)(nil),     // 16: users.organization.v1.DeleteOrganizationResponse
-	(*GetMyOrganizationsRequest)(nil),      // 17: users.organization.v1.GetMyOrganizationsRequest
-	(*GetMyOrganizationsResponse)(nil),     // 18: users.organization.v1.GetMyOrganizationsResponse
-	(*OrganizationMembership)(nil),         // 19: users.organization.v1.OrganizationMembership
-	(*AddMemberRequest)(nil),               // 20: users.organization.v1.AddMemberRequest
-	(*AddMemberResponse)(nil),              // 21: users.organization.v1.AddMemberResponse
-	(*FireMemberRequest)(nil),              // 22: users.organization.v1.FireMemberRequest
-	(*FireMemberResponse)(nil),             // 23: users.organization.v1.FireMemberResponse
-	(*UpdateMemberRoleRequest)(nil),        // 24: users.organization.v1.UpdateMemberRoleRequest
-	(*UpdateMemberRoleResponse)(nil),       // 25: users.organization.v1.UpdateMemberRoleResponse
-	(*GetMembersRequest)(nil),              // 26: users.organization.v1.GetMembersRequest
-	(*GetMembersResponse)(nil),             // 27: users.organization.v1.GetMembersResponse
-	(*GetMemberRequest)(nil),               // 28: users.organization.v1.GetMemberRequest
-	(*GetMemberResponse)(nil),              // 29: users.organization.v1.GetMemberResponse
-	(*CreateInviteCodeRequest)(nil),        // 30: users.organization.v1.CreateInviteCodeRequest
-	(*CreateInviteCodeResponse)(nil),       // 31: users.organization.v1.CreateInviteCodeResponse
-	(*UseInviteCodeRequest)(nil),           // 32: users.organization.v1.UseInviteCodeRequest
-	(*UseInviteCodeResponse)(nil),          // 33: users.organization.v1.UseInviteCodeResponse
-	(*GetInviteCodesRequest)(nil),          // 34: users.organization.v1.GetInviteCodesRequest
-	(*GetInviteCodesResponse)(nil),         // 35: users.organization.v1.GetInviteCodesResponse
-	(*DeactivateInviteCodeRequest)(nil),    // 36: users.organization.v1.DeactivateInviteCodeRequest
-	(*DeactivateInviteCodeResponse)(nil),   // 37: users.organization.v1.DeactivateInviteCodeResponse
-	(*CheckPermissionRequest)(nil),         // 38: users.organization.v1.CheckPermissionRequest
-	(*CheckPermissionResponse)(nil),        // 39: users.organization.v1.CheckPermissionResponse
-	(*GetRolesRequest)(nil),                // 40: users.organization.v1.GetRolesRequest
-	(*GetRolesResponse)(nil),               // 41: users.organization.v1.GetRolesResponse
-	(*UpsertByLegacyIDRequest)(nil),        // 42: users.organization.v1.UpsertByLegacyIDRequest
-	(*UpsertByLegacyIDResponse)(nil),       // 43: users.organization.v1.UpsertByLegacyIDResponse
-	(*SetCategoriesRequest)(nil),           // 44: users.organization.v1.SetCategoriesRequest
-	(*SetCategoriesResponse)(nil),          // 45: users.organization.v1.SetCategoriesResponse
-	(*GetCategoriesRequest)(nil),           // 46: users.organization.v1.GetCategoriesRequest
-	(*GetCategoriesResponse)(nil),          // 47: users.organization.v1.GetCategoriesResponse
-	(*STOProfile)(nil),                     // 48: users.organization.v1.STOProfile
-	(*CarWashProfile)(nil),                 // 49: users.organization.v1.CarWashProfile
-	(*PartsProfile)(nil),                   // 50: users.organization.v1.PartsProfile
-	(*GetOrgProfileRequest)(nil),           // 51: users.organization.v1.GetOrgProfileRequest
-	(*GetOrgProfileResponse)(nil),          // 52: users.organization.v1.GetOrgProfileResponse
-	(*UpdateOrgProfileRequest)(nil),        // 53: users.organization.v1.UpdateOrgProfileRequest
-	(*UpdateOrgProfileResponse)(nil),       // 54: users.organization.v1.UpdateOrgProfileResponse
-	(*GetOrgSubscriptionInfoRequest)(nil),  // 55: users.organization.v1.GetOrgSubscriptionInfoRequest
-	(*GetOrgSubscriptionInfoResponse)(nil), // 56: users.organization.v1.GetOrgSubscriptionInfoResponse
-	(*SetPlatformRoleRequest)(nil),         // 57: users.organization.v1.SetPlatformRoleRequest
-	(*SetPlatformRoleResponse)(nil),        // 58: users.organization.v1.SetPlatformRoleResponse
-	(*GetPlatformRoleRequest)(nil),         // 59: users.organization.v1.GetPlatformRoleRequest
-	(*GetPlatformRoleResponse)(nil),        // 60: users.organization.v1.GetPlatformRoleResponse
-	(*SetPlatformOrgAccessRequest)(nil),    // 61: users.organization.v1.SetPlatformOrgAccessRequest
-	(*SetPlatformOrgAccessResponse)(nil),   // 62: users.organization.v1.SetPlatformOrgAccessResponse
-	(*GetPlatformOrgAccessRequest)(nil),    // 63: users.organization.v1.GetPlatformOrgAccessRequest
-	(*GetPlatformOrgAccessResponse)(nil),   // 64: users.organization.v1.GetPlatformOrgAccessResponse
-	(*CheckPlatformRoleRequest)(nil),       // 65: users.organization.v1.CheckPlatformRoleRequest
-	(*CheckPlatformRoleResponse)(nil),      // 66: users.organization.v1.CheckPlatformRoleResponse
-	(*timestamppb.Timestamp)(nil),          // 67: google.protobuf.Timestamp
+	(OrganizationType)(0),                          // 0: users.organization.v1.OrganizationType
+	(MemberStatus)(0),                              // 1: users.organization.v1.MemberStatus
+	(PlatformRole)(0),                              // 2: users.organization.v1.PlatformRole
+	(*Organization)(nil),                           // 3: users.organization.v1.Organization
+	(*OrganizationSettings)(nil),                   // 4: users.organization.v1.OrganizationSettings
+	(*WorkingHours)(nil),                           // 5: users.organization.v1.WorkingHours
+	(*Member)(nil),                                 // 6: users.organization.v1.Member
+	(*Role)(nil),                                   // 7: users.organization.v1.Role
+	(*InviteCode)(nil),                             // 8: users.organization.v1.InviteCode
+	(*CreateOrganizationRequest)(nil),              // 9: users.organization.v1.CreateOrganizationRequest
+	(*CreateOrganizationResponse)(nil),             // 10: users.organization.v1.CreateOrganizationResponse
+	(*GetOrganizationRequest)(nil),                 // 11: users.organization.v1.GetOrganizationRequest
+	(*GetOrganizationResponse)(nil),                // 12: users.organization.v1.GetOrganizationResponse
+	(*UpdateOrganizationRequest)(nil),              // 13: users.organization.v1.UpdateOrganizationRequest
+	(*UpdateOrganizationResponse)(nil),             // 14: users.organization.v1.UpdateOrganizationResponse
+	(*DeleteOrganizationRequest)(nil),              // 15: users.organization.v1.DeleteOrganizationRequest
+	(*DeleteOrganizationResponse)(nil),             // 16: users.organization.v1.DeleteOrganizationResponse
+	(*GetMyOrganizationsRequest)(nil),              // 17: users.organization.v1.GetMyOrganizationsRequest
+	(*GetMyOrganizationsResponse)(nil),             // 18: users.organization.v1.GetMyOrganizationsResponse
+	(*OrganizationMembership)(nil),                 // 19: users.organization.v1.OrganizationMembership
+	(*AddMemberRequest)(nil),                       // 20: users.organization.v1.AddMemberRequest
+	(*AddMemberResponse)(nil),                      // 21: users.organization.v1.AddMemberResponse
+	(*FireMemberRequest)(nil),                      // 22: users.organization.v1.FireMemberRequest
+	(*FireMemberResponse)(nil),                     // 23: users.organization.v1.FireMemberResponse
+	(*UpdateMemberRoleRequest)(nil),                // 24: users.organization.v1.UpdateMemberRoleRequest
+	(*UpdateMemberRoleResponse)(nil),               // 25: users.organization.v1.UpdateMemberRoleResponse
+	(*GetMembersRequest)(nil),                      // 26: users.organization.v1.GetMembersRequest
+	(*GetMembersResponse)(nil),                     // 27: users.organization.v1.GetMembersResponse
+	(*GetMemberRequest)(nil),                       // 28: users.organization.v1.GetMemberRequest
+	(*GetMemberResponse)(nil),                      // 29: users.organization.v1.GetMemberResponse
+	(*CreateInviteCodeRequest)(nil),                // 30: users.organization.v1.CreateInviteCodeRequest
+	(*CreateInviteCodeResponse)(nil),               // 31: users.organization.v1.CreateInviteCodeResponse
+	(*UseInviteCodeRequest)(nil),                   // 32: users.organization.v1.UseInviteCodeRequest
+	(*UseInviteCodeResponse)(nil),                  // 33: users.organization.v1.UseInviteCodeResponse
+	(*GetInviteCodesRequest)(nil),                  // 34: users.organization.v1.GetInviteCodesRequest
+	(*GetInviteCodesResponse)(nil),                 // 35: users.organization.v1.GetInviteCodesResponse
+	(*DeactivateInviteCodeRequest)(nil),            // 36: users.organization.v1.DeactivateInviteCodeRequest
+	(*DeactivateInviteCodeResponse)(nil),           // 37: users.organization.v1.DeactivateInviteCodeResponse
+	(*CheckPermissionRequest)(nil),                 // 38: users.organization.v1.CheckPermissionRequest
+	(*CheckPermissionResponse)(nil),                // 39: users.organization.v1.CheckPermissionResponse
+	(*GetRolesRequest)(nil),                        // 40: users.organization.v1.GetRolesRequest
+	(*GetRolesResponse)(nil),                       // 41: users.organization.v1.GetRolesResponse
+	(*UpsertByLegacyIDRequest)(nil),                // 42: users.organization.v1.UpsertByLegacyIDRequest
+	(*UpsertByLegacyIDResponse)(nil),               // 43: users.organization.v1.UpsertByLegacyIDResponse
+	(*SetCategoriesRequest)(nil),                   // 44: users.organization.v1.SetCategoriesRequest
+	(*SetCategoriesResponse)(nil),                  // 45: users.organization.v1.SetCategoriesResponse
+	(*GetCategoriesRequest)(nil),                   // 46: users.organization.v1.GetCategoriesRequest
+	(*GetCategoriesResponse)(nil),                  // 47: users.organization.v1.GetCategoriesResponse
+	(*STOProfile)(nil),                             // 48: users.organization.v1.STOProfile
+	(*CarWashProfile)(nil),                         // 49: users.organization.v1.CarWashProfile
+	(*PartsProfile)(nil),                           // 50: users.organization.v1.PartsProfile
+	(*GetOrgProfileRequest)(nil),                   // 51: users.organization.v1.GetOrgProfileRequest
+	(*GetOrgProfileResponse)(nil),                  // 52: users.organization.v1.GetOrgProfileResponse
+	(*UpdateOrgProfileRequest)(nil),                // 53: users.organization.v1.UpdateOrgProfileRequest
+	(*UpdateOrgProfileResponse)(nil),               // 54: users.organization.v1.UpdateOrgProfileResponse
+	(*GetOrgSubscriptionInfoRequest)(nil),          // 55: users.organization.v1.GetOrgSubscriptionInfoRequest
+	(*GetOrgSubscriptionInfoResponse)(nil),         // 56: users.organization.v1.GetOrgSubscriptionInfoResponse
+	(*SetPlatformRoleRequest)(nil),                 // 57: users.organization.v1.SetPlatformRoleRequest
+	(*SetPlatformRoleResponse)(nil),                // 58: users.organization.v1.SetPlatformRoleResponse
+	(*GetPlatformRoleRequest)(nil),                 // 59: users.organization.v1.GetPlatformRoleRequest
+	(*GetPlatformRoleResponse)(nil),                // 60: users.organization.v1.GetPlatformRoleResponse
+	(*SetPlatformOrgAccessRequest)(nil),            // 61: users.organization.v1.SetPlatformOrgAccessRequest
+	(*SetPlatformOrgAccessResponse)(nil),           // 62: users.organization.v1.SetPlatformOrgAccessResponse
+	(*GetPlatformOrgAccessRequest)(nil),            // 63: users.organization.v1.GetPlatformOrgAccessRequest
+	(*GetPlatformOrgAccessResponse)(nil),           // 64: users.organization.v1.GetPlatformOrgAccessResponse
+	(*CheckPlatformRoleRequest)(nil),               // 65: users.organization.v1.CheckPlatformRoleRequest
+	(*CheckPlatformRoleResponse)(nil),              // 66: users.organization.v1.CheckPlatformRoleResponse
+	(*CreateRoleRequest)(nil),                      // 67: users.organization.v1.CreateRoleRequest
+	(*CreateRoleResponse)(nil),                     // 68: users.organization.v1.CreateRoleResponse
+	(*UpdateRoleInfoRequest)(nil),                  // 69: users.organization.v1.UpdateRoleInfoRequest
+	(*UpdateRoleInfoResponse)(nil),                 // 70: users.organization.v1.UpdateRoleInfoResponse
+	(*DeleteRoleRequest)(nil),                      // 71: users.organization.v1.DeleteRoleRequest
+	(*DeleteRoleResponse)(nil),                     // 72: users.organization.v1.DeleteRoleResponse
+	(*SetRolePermissionsRequest)(nil),              // 73: users.organization.v1.SetRolePermissionsRequest
+	(*SetRolePermissionsResponse)(nil),             // 74: users.organization.v1.SetRolePermissionsResponse
+	(*PermissionOverride)(nil),                     // 75: users.organization.v1.PermissionOverride
+	(*SetMemberPermissionOverrideRequest)(nil),     // 76: users.organization.v1.SetMemberPermissionOverrideRequest
+	(*SetMemberPermissionOverrideResponse)(nil),    // 77: users.organization.v1.SetMemberPermissionOverrideResponse
+	(*RemoveMemberPermissionOverrideRequest)(nil),  // 78: users.organization.v1.RemoveMemberPermissionOverrideRequest
+	(*RemoveMemberPermissionOverrideResponse)(nil), // 79: users.organization.v1.RemoveMemberPermissionOverrideResponse
+	(*GetMemberPermissionOverridesRequest)(nil),    // 80: users.organization.v1.GetMemberPermissionOverridesRequest
+	(*GetMemberPermissionOverridesResponse)(nil),   // 81: users.organization.v1.GetMemberPermissionOverridesResponse
+	(*timestamppb.Timestamp)(nil),                  // 82: google.protobuf.Timestamp
 }
 var file_users_organization_organization_proto_depIdxs = []int32{
 	0,  // 0: users.organization.v1.Organization.type:type_name -> users.organization.v1.OrganizationType
 	4,  // 1: users.organization.v1.Organization.settings:type_name -> users.organization.v1.OrganizationSettings
-	67, // 2: users.organization.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
-	67, // 3: users.organization.v1.Organization.updated_at:type_name -> google.protobuf.Timestamp
+	82, // 2: users.organization.v1.Organization.created_at:type_name -> google.protobuf.Timestamp
+	82, // 3: users.organization.v1.Organization.updated_at:type_name -> google.protobuf.Timestamp
 	5,  // 4: users.organization.v1.OrganizationSettings.working_hours:type_name -> users.organization.v1.WorkingHours
 	1,  // 5: users.organization.v1.Member.status:type_name -> users.organization.v1.MemberStatus
-	67, // 6: users.organization.v1.Member.hired_at:type_name -> google.protobuf.Timestamp
-	67, // 7: users.organization.v1.Member.fired_at:type_name -> google.protobuf.Timestamp
-	67, // 8: users.organization.v1.InviteCode.created_at:type_name -> google.protobuf.Timestamp
-	67, // 9: users.organization.v1.InviteCode.expires_at:type_name -> google.protobuf.Timestamp
+	82, // 6: users.organization.v1.Member.hired_at:type_name -> google.protobuf.Timestamp
+	82, // 7: users.organization.v1.Member.fired_at:type_name -> google.protobuf.Timestamp
+	82, // 8: users.organization.v1.InviteCode.created_at:type_name -> google.protobuf.Timestamp
+	82, // 9: users.organization.v1.InviteCode.expires_at:type_name -> google.protobuf.Timestamp
 	0,  // 10: users.organization.v1.CreateOrganizationRequest.type:type_name -> users.organization.v1.OrganizationType
 	3,  // 11: users.organization.v1.CreateOrganizationResponse.organization:type_name -> users.organization.v1.Organization
 	3,  // 12: users.organization.v1.GetOrganizationResponse.organization:type_name -> users.organization.v1.Organization
@@ -4746,12 +5616,12 @@ var file_users_organization_organization_proto_depIdxs = []int32{
 	7,  // 27: users.organization.v1.GetRolesResponse.roles:type_name -> users.organization.v1.Role
 	0,  // 28: users.organization.v1.UpsertByLegacyIDRequest.type:type_name -> users.organization.v1.OrganizationType
 	3,  // 29: users.organization.v1.UpsertByLegacyIDResponse.organization:type_name -> users.organization.v1.Organization
-	67, // 30: users.organization.v1.STOProfile.created_at:type_name -> google.protobuf.Timestamp
-	67, // 31: users.organization.v1.STOProfile.updated_at:type_name -> google.protobuf.Timestamp
-	67, // 32: users.organization.v1.CarWashProfile.created_at:type_name -> google.protobuf.Timestamp
-	67, // 33: users.organization.v1.CarWashProfile.updated_at:type_name -> google.protobuf.Timestamp
-	67, // 34: users.organization.v1.PartsProfile.created_at:type_name -> google.protobuf.Timestamp
-	67, // 35: users.organization.v1.PartsProfile.updated_at:type_name -> google.protobuf.Timestamp
+	82, // 30: users.organization.v1.STOProfile.created_at:type_name -> google.protobuf.Timestamp
+	82, // 31: users.organization.v1.STOProfile.updated_at:type_name -> google.protobuf.Timestamp
+	82, // 32: users.organization.v1.CarWashProfile.created_at:type_name -> google.protobuf.Timestamp
+	82, // 33: users.organization.v1.CarWashProfile.updated_at:type_name -> google.protobuf.Timestamp
+	82, // 34: users.organization.v1.PartsProfile.created_at:type_name -> google.protobuf.Timestamp
+	82, // 35: users.organization.v1.PartsProfile.updated_at:type_name -> google.protobuf.Timestamp
 	48, // 36: users.organization.v1.GetOrgProfileResponse.sto_profile:type_name -> users.organization.v1.STOProfile
 	49, // 37: users.organization.v1.GetOrgProfileResponse.carwash_profile:type_name -> users.organization.v1.CarWashProfile
 	50, // 38: users.organization.v1.GetOrgProfileResponse.parts_profile:type_name -> users.organization.v1.PartsProfile
@@ -4765,65 +5635,83 @@ var file_users_organization_organization_proto_depIdxs = []int32{
 	2,  // 46: users.organization.v1.SetPlatformRoleRequest.role:type_name -> users.organization.v1.PlatformRole
 	2,  // 47: users.organization.v1.GetPlatformRoleResponse.role:type_name -> users.organization.v1.PlatformRole
 	2,  // 48: users.organization.v1.CheckPlatformRoleResponse.role:type_name -> users.organization.v1.PlatformRole
-	9,  // 49: users.organization.v1.OrganizationService.CreateOrganization:input_type -> users.organization.v1.CreateOrganizationRequest
-	11, // 50: users.organization.v1.OrganizationService.GetOrganization:input_type -> users.organization.v1.GetOrganizationRequest
-	13, // 51: users.organization.v1.OrganizationService.UpdateOrganization:input_type -> users.organization.v1.UpdateOrganizationRequest
-	15, // 52: users.organization.v1.OrganizationService.DeleteOrganization:input_type -> users.organization.v1.DeleteOrganizationRequest
-	17, // 53: users.organization.v1.OrganizationService.GetMyOrganizations:input_type -> users.organization.v1.GetMyOrganizationsRequest
-	42, // 54: users.organization.v1.OrganizationService.UpsertByLegacyID:input_type -> users.organization.v1.UpsertByLegacyIDRequest
-	44, // 55: users.organization.v1.OrganizationService.SetCategories:input_type -> users.organization.v1.SetCategoriesRequest
-	46, // 56: users.organization.v1.OrganizationService.GetCategories:input_type -> users.organization.v1.GetCategoriesRequest
-	20, // 57: users.organization.v1.OrganizationService.AddMember:input_type -> users.organization.v1.AddMemberRequest
-	22, // 58: users.organization.v1.OrganizationService.FireMember:input_type -> users.organization.v1.FireMemberRequest
-	24, // 59: users.organization.v1.OrganizationService.UpdateMemberRole:input_type -> users.organization.v1.UpdateMemberRoleRequest
-	26, // 60: users.organization.v1.OrganizationService.GetMembers:input_type -> users.organization.v1.GetMembersRequest
-	28, // 61: users.organization.v1.OrganizationService.GetMember:input_type -> users.organization.v1.GetMemberRequest
-	30, // 62: users.organization.v1.OrganizationService.CreateInviteCode:input_type -> users.organization.v1.CreateInviteCodeRequest
-	32, // 63: users.organization.v1.OrganizationService.UseInviteCode:input_type -> users.organization.v1.UseInviteCodeRequest
-	34, // 64: users.organization.v1.OrganizationService.GetInviteCodes:input_type -> users.organization.v1.GetInviteCodesRequest
-	36, // 65: users.organization.v1.OrganizationService.DeactivateInviteCode:input_type -> users.organization.v1.DeactivateInviteCodeRequest
-	38, // 66: users.organization.v1.OrganizationService.CheckPermission:input_type -> users.organization.v1.CheckPermissionRequest
-	40, // 67: users.organization.v1.OrganizationService.GetRoles:input_type -> users.organization.v1.GetRolesRequest
-	51, // 68: users.organization.v1.OrganizationService.GetOrgProfile:input_type -> users.organization.v1.GetOrgProfileRequest
-	53, // 69: users.organization.v1.OrganizationService.UpdateOrgProfile:input_type -> users.organization.v1.UpdateOrgProfileRequest
-	55, // 70: users.organization.v1.OrganizationService.GetOrganizationSubscriptionInfo:input_type -> users.organization.v1.GetOrgSubscriptionInfoRequest
-	57, // 71: users.organization.v1.OrganizationService.SetPlatformRole:input_type -> users.organization.v1.SetPlatformRoleRequest
-	59, // 72: users.organization.v1.OrganizationService.GetPlatformRole:input_type -> users.organization.v1.GetPlatformRoleRequest
-	61, // 73: users.organization.v1.OrganizationService.SetPlatformOrgAccess:input_type -> users.organization.v1.SetPlatformOrgAccessRequest
-	63, // 74: users.organization.v1.OrganizationService.GetPlatformOrgAccess:input_type -> users.organization.v1.GetPlatformOrgAccessRequest
-	65, // 75: users.organization.v1.OrganizationService.CheckPlatformRole:input_type -> users.organization.v1.CheckPlatformRoleRequest
-	10, // 76: users.organization.v1.OrganizationService.CreateOrganization:output_type -> users.organization.v1.CreateOrganizationResponse
-	12, // 77: users.organization.v1.OrganizationService.GetOrganization:output_type -> users.organization.v1.GetOrganizationResponse
-	14, // 78: users.organization.v1.OrganizationService.UpdateOrganization:output_type -> users.organization.v1.UpdateOrganizationResponse
-	16, // 79: users.organization.v1.OrganizationService.DeleteOrganization:output_type -> users.organization.v1.DeleteOrganizationResponse
-	18, // 80: users.organization.v1.OrganizationService.GetMyOrganizations:output_type -> users.organization.v1.GetMyOrganizationsResponse
-	43, // 81: users.organization.v1.OrganizationService.UpsertByLegacyID:output_type -> users.organization.v1.UpsertByLegacyIDResponse
-	45, // 82: users.organization.v1.OrganizationService.SetCategories:output_type -> users.organization.v1.SetCategoriesResponse
-	47, // 83: users.organization.v1.OrganizationService.GetCategories:output_type -> users.organization.v1.GetCategoriesResponse
-	21, // 84: users.organization.v1.OrganizationService.AddMember:output_type -> users.organization.v1.AddMemberResponse
-	23, // 85: users.organization.v1.OrganizationService.FireMember:output_type -> users.organization.v1.FireMemberResponse
-	25, // 86: users.organization.v1.OrganizationService.UpdateMemberRole:output_type -> users.organization.v1.UpdateMemberRoleResponse
-	27, // 87: users.organization.v1.OrganizationService.GetMembers:output_type -> users.organization.v1.GetMembersResponse
-	29, // 88: users.organization.v1.OrganizationService.GetMember:output_type -> users.organization.v1.GetMemberResponse
-	31, // 89: users.organization.v1.OrganizationService.CreateInviteCode:output_type -> users.organization.v1.CreateInviteCodeResponse
-	33, // 90: users.organization.v1.OrganizationService.UseInviteCode:output_type -> users.organization.v1.UseInviteCodeResponse
-	35, // 91: users.organization.v1.OrganizationService.GetInviteCodes:output_type -> users.organization.v1.GetInviteCodesResponse
-	37, // 92: users.organization.v1.OrganizationService.DeactivateInviteCode:output_type -> users.organization.v1.DeactivateInviteCodeResponse
-	39, // 93: users.organization.v1.OrganizationService.CheckPermission:output_type -> users.organization.v1.CheckPermissionResponse
-	41, // 94: users.organization.v1.OrganizationService.GetRoles:output_type -> users.organization.v1.GetRolesResponse
-	52, // 95: users.organization.v1.OrganizationService.GetOrgProfile:output_type -> users.organization.v1.GetOrgProfileResponse
-	54, // 96: users.organization.v1.OrganizationService.UpdateOrgProfile:output_type -> users.organization.v1.UpdateOrgProfileResponse
-	56, // 97: users.organization.v1.OrganizationService.GetOrganizationSubscriptionInfo:output_type -> users.organization.v1.GetOrgSubscriptionInfoResponse
-	58, // 98: users.organization.v1.OrganizationService.SetPlatformRole:output_type -> users.organization.v1.SetPlatformRoleResponse
-	60, // 99: users.organization.v1.OrganizationService.GetPlatformRole:output_type -> users.organization.v1.GetPlatformRoleResponse
-	62, // 100: users.organization.v1.OrganizationService.SetPlatformOrgAccess:output_type -> users.organization.v1.SetPlatformOrgAccessResponse
-	64, // 101: users.organization.v1.OrganizationService.GetPlatformOrgAccess:output_type -> users.organization.v1.GetPlatformOrgAccessResponse
-	66, // 102: users.organization.v1.OrganizationService.CheckPlatformRole:output_type -> users.organization.v1.CheckPlatformRoleResponse
-	76, // [76:103] is the sub-list for method output_type
-	49, // [49:76] is the sub-list for method input_type
-	49, // [49:49] is the sub-list for extension type_name
-	49, // [49:49] is the sub-list for extension extendee
-	0,  // [0:49] is the sub-list for field type_name
+	7,  // 49: users.organization.v1.CreateRoleResponse.role:type_name -> users.organization.v1.Role
+	7,  // 50: users.organization.v1.UpdateRoleInfoResponse.role:type_name -> users.organization.v1.Role
+	82, // 51: users.organization.v1.PermissionOverride.created_at:type_name -> google.protobuf.Timestamp
+	75, // 52: users.organization.v1.GetMemberPermissionOverridesResponse.overrides:type_name -> users.organization.v1.PermissionOverride
+	9,  // 53: users.organization.v1.OrganizationService.CreateOrganization:input_type -> users.organization.v1.CreateOrganizationRequest
+	11, // 54: users.organization.v1.OrganizationService.GetOrganization:input_type -> users.organization.v1.GetOrganizationRequest
+	13, // 55: users.organization.v1.OrganizationService.UpdateOrganization:input_type -> users.organization.v1.UpdateOrganizationRequest
+	15, // 56: users.organization.v1.OrganizationService.DeleteOrganization:input_type -> users.organization.v1.DeleteOrganizationRequest
+	17, // 57: users.organization.v1.OrganizationService.GetMyOrganizations:input_type -> users.organization.v1.GetMyOrganizationsRequest
+	42, // 58: users.organization.v1.OrganizationService.UpsertByLegacyID:input_type -> users.organization.v1.UpsertByLegacyIDRequest
+	44, // 59: users.organization.v1.OrganizationService.SetCategories:input_type -> users.organization.v1.SetCategoriesRequest
+	46, // 60: users.organization.v1.OrganizationService.GetCategories:input_type -> users.organization.v1.GetCategoriesRequest
+	20, // 61: users.organization.v1.OrganizationService.AddMember:input_type -> users.organization.v1.AddMemberRequest
+	22, // 62: users.organization.v1.OrganizationService.FireMember:input_type -> users.organization.v1.FireMemberRequest
+	24, // 63: users.organization.v1.OrganizationService.UpdateMemberRole:input_type -> users.organization.v1.UpdateMemberRoleRequest
+	26, // 64: users.organization.v1.OrganizationService.GetMembers:input_type -> users.organization.v1.GetMembersRequest
+	28, // 65: users.organization.v1.OrganizationService.GetMember:input_type -> users.organization.v1.GetMemberRequest
+	30, // 66: users.organization.v1.OrganizationService.CreateInviteCode:input_type -> users.organization.v1.CreateInviteCodeRequest
+	32, // 67: users.organization.v1.OrganizationService.UseInviteCode:input_type -> users.organization.v1.UseInviteCodeRequest
+	34, // 68: users.organization.v1.OrganizationService.GetInviteCodes:input_type -> users.organization.v1.GetInviteCodesRequest
+	36, // 69: users.organization.v1.OrganizationService.DeactivateInviteCode:input_type -> users.organization.v1.DeactivateInviteCodeRequest
+	38, // 70: users.organization.v1.OrganizationService.CheckPermission:input_type -> users.organization.v1.CheckPermissionRequest
+	40, // 71: users.organization.v1.OrganizationService.GetRoles:input_type -> users.organization.v1.GetRolesRequest
+	67, // 72: users.organization.v1.OrganizationService.CreateRole:input_type -> users.organization.v1.CreateRoleRequest
+	69, // 73: users.organization.v1.OrganizationService.UpdateRoleInfo:input_type -> users.organization.v1.UpdateRoleInfoRequest
+	71, // 74: users.organization.v1.OrganizationService.DeleteRole:input_type -> users.organization.v1.DeleteRoleRequest
+	73, // 75: users.organization.v1.OrganizationService.SetRolePermissions:input_type -> users.organization.v1.SetRolePermissionsRequest
+	76, // 76: users.organization.v1.OrganizationService.SetMemberPermissionOverride:input_type -> users.organization.v1.SetMemberPermissionOverrideRequest
+	78, // 77: users.organization.v1.OrganizationService.RemoveMemberPermissionOverride:input_type -> users.organization.v1.RemoveMemberPermissionOverrideRequest
+	80, // 78: users.organization.v1.OrganizationService.GetMemberPermissionOverrides:input_type -> users.organization.v1.GetMemberPermissionOverridesRequest
+	51, // 79: users.organization.v1.OrganizationService.GetOrgProfile:input_type -> users.organization.v1.GetOrgProfileRequest
+	53, // 80: users.organization.v1.OrganizationService.UpdateOrgProfile:input_type -> users.organization.v1.UpdateOrgProfileRequest
+	55, // 81: users.organization.v1.OrganizationService.GetOrganizationSubscriptionInfo:input_type -> users.organization.v1.GetOrgSubscriptionInfoRequest
+	57, // 82: users.organization.v1.OrganizationService.SetPlatformRole:input_type -> users.organization.v1.SetPlatformRoleRequest
+	59, // 83: users.organization.v1.OrganizationService.GetPlatformRole:input_type -> users.organization.v1.GetPlatformRoleRequest
+	61, // 84: users.organization.v1.OrganizationService.SetPlatformOrgAccess:input_type -> users.organization.v1.SetPlatformOrgAccessRequest
+	63, // 85: users.organization.v1.OrganizationService.GetPlatformOrgAccess:input_type -> users.organization.v1.GetPlatformOrgAccessRequest
+	65, // 86: users.organization.v1.OrganizationService.CheckPlatformRole:input_type -> users.organization.v1.CheckPlatformRoleRequest
+	10, // 87: users.organization.v1.OrganizationService.CreateOrganization:output_type -> users.organization.v1.CreateOrganizationResponse
+	12, // 88: users.organization.v1.OrganizationService.GetOrganization:output_type -> users.organization.v1.GetOrganizationResponse
+	14, // 89: users.organization.v1.OrganizationService.UpdateOrganization:output_type -> users.organization.v1.UpdateOrganizationResponse
+	16, // 90: users.organization.v1.OrganizationService.DeleteOrganization:output_type -> users.organization.v1.DeleteOrganizationResponse
+	18, // 91: users.organization.v1.OrganizationService.GetMyOrganizations:output_type -> users.organization.v1.GetMyOrganizationsResponse
+	43, // 92: users.organization.v1.OrganizationService.UpsertByLegacyID:output_type -> users.organization.v1.UpsertByLegacyIDResponse
+	45, // 93: users.organization.v1.OrganizationService.SetCategories:output_type -> users.organization.v1.SetCategoriesResponse
+	47, // 94: users.organization.v1.OrganizationService.GetCategories:output_type -> users.organization.v1.GetCategoriesResponse
+	21, // 95: users.organization.v1.OrganizationService.AddMember:output_type -> users.organization.v1.AddMemberResponse
+	23, // 96: users.organization.v1.OrganizationService.FireMember:output_type -> users.organization.v1.FireMemberResponse
+	25, // 97: users.organization.v1.OrganizationService.UpdateMemberRole:output_type -> users.organization.v1.UpdateMemberRoleResponse
+	27, // 98: users.organization.v1.OrganizationService.GetMembers:output_type -> users.organization.v1.GetMembersResponse
+	29, // 99: users.organization.v1.OrganizationService.GetMember:output_type -> users.organization.v1.GetMemberResponse
+	31, // 100: users.organization.v1.OrganizationService.CreateInviteCode:output_type -> users.organization.v1.CreateInviteCodeResponse
+	33, // 101: users.organization.v1.OrganizationService.UseInviteCode:output_type -> users.organization.v1.UseInviteCodeResponse
+	35, // 102: users.organization.v1.OrganizationService.GetInviteCodes:output_type -> users.organization.v1.GetInviteCodesResponse
+	37, // 103: users.organization.v1.OrganizationService.DeactivateInviteCode:output_type -> users.organization.v1.DeactivateInviteCodeResponse
+	39, // 104: users.organization.v1.OrganizationService.CheckPermission:output_type -> users.organization.v1.CheckPermissionResponse
+	41, // 105: users.organization.v1.OrganizationService.GetRoles:output_type -> users.organization.v1.GetRolesResponse
+	68, // 106: users.organization.v1.OrganizationService.CreateRole:output_type -> users.organization.v1.CreateRoleResponse
+	70, // 107: users.organization.v1.OrganizationService.UpdateRoleInfo:output_type -> users.organization.v1.UpdateRoleInfoResponse
+	72, // 108: users.organization.v1.OrganizationService.DeleteRole:output_type -> users.organization.v1.DeleteRoleResponse
+	74, // 109: users.organization.v1.OrganizationService.SetRolePermissions:output_type -> users.organization.v1.SetRolePermissionsResponse
+	77, // 110: users.organization.v1.OrganizationService.SetMemberPermissionOverride:output_type -> users.organization.v1.SetMemberPermissionOverrideResponse
+	79, // 111: users.organization.v1.OrganizationService.RemoveMemberPermissionOverride:output_type -> users.organization.v1.RemoveMemberPermissionOverrideResponse
+	81, // 112: users.organization.v1.OrganizationService.GetMemberPermissionOverrides:output_type -> users.organization.v1.GetMemberPermissionOverridesResponse
+	52, // 113: users.organization.v1.OrganizationService.GetOrgProfile:output_type -> users.organization.v1.GetOrgProfileResponse
+	54, // 114: users.organization.v1.OrganizationService.UpdateOrgProfile:output_type -> users.organization.v1.UpdateOrgProfileResponse
+	56, // 115: users.organization.v1.OrganizationService.GetOrganizationSubscriptionInfo:output_type -> users.organization.v1.GetOrgSubscriptionInfoResponse
+	58, // 116: users.organization.v1.OrganizationService.SetPlatformRole:output_type -> users.organization.v1.SetPlatformRoleResponse
+	60, // 117: users.organization.v1.OrganizationService.GetPlatformRole:output_type -> users.organization.v1.GetPlatformRoleResponse
+	62, // 118: users.organization.v1.OrganizationService.SetPlatformOrgAccess:output_type -> users.organization.v1.SetPlatformOrgAccessResponse
+	64, // 119: users.organization.v1.OrganizationService.GetPlatformOrgAccess:output_type -> users.organization.v1.GetPlatformOrgAccessResponse
+	66, // 120: users.organization.v1.OrganizationService.CheckPlatformRole:output_type -> users.organization.v1.CheckPlatformRoleResponse
+	87, // [87:121] is the sub-list for method output_type
+	53, // [53:87] is the sub-list for method input_type
+	53, // [53:53] is the sub-list for extension type_name
+	53, // [53:53] is the sub-list for extension extendee
+	0,  // [0:53] is the sub-list for field type_name
 }
 
 func init() { file_users_organization_organization_proto_init() }
@@ -4838,13 +5726,14 @@ func file_users_organization_organization_proto_init() {
 	file_users_organization_organization_proto_msgTypes[49].OneofWrappers = []any{}
 	file_users_organization_organization_proto_msgTypes[50].OneofWrappers = []any{}
 	file_users_organization_organization_proto_msgTypes[51].OneofWrappers = []any{}
+	file_users_organization_organization_proto_msgTypes[66].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_users_organization_organization_proto_rawDesc), len(file_users_organization_organization_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   64,
+			NumMessages:   79,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

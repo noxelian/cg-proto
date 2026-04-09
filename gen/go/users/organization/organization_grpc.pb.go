@@ -38,6 +38,13 @@ const (
 	OrganizationService_DeactivateInviteCode_FullMethodName            = "/users.organization.v1.OrganizationService/DeactivateInviteCode"
 	OrganizationService_CheckPermission_FullMethodName                 = "/users.organization.v1.OrganizationService/CheckPermission"
 	OrganizationService_GetRoles_FullMethodName                        = "/users.organization.v1.OrganizationService/GetRoles"
+	OrganizationService_CreateRole_FullMethodName                      = "/users.organization.v1.OrganizationService/CreateRole"
+	OrganizationService_UpdateRoleInfo_FullMethodName                  = "/users.organization.v1.OrganizationService/UpdateRoleInfo"
+	OrganizationService_DeleteRole_FullMethodName                      = "/users.organization.v1.OrganizationService/DeleteRole"
+	OrganizationService_SetRolePermissions_FullMethodName              = "/users.organization.v1.OrganizationService/SetRolePermissions"
+	OrganizationService_SetMemberPermissionOverride_FullMethodName     = "/users.organization.v1.OrganizationService/SetMemberPermissionOverride"
+	OrganizationService_RemoveMemberPermissionOverride_FullMethodName  = "/users.organization.v1.OrganizationService/RemoveMemberPermissionOverride"
+	OrganizationService_GetMemberPermissionOverrides_FullMethodName    = "/users.organization.v1.OrganizationService/GetMemberPermissionOverrides"
 	OrganizationService_GetOrgProfile_FullMethodName                   = "/users.organization.v1.OrganizationService/GetOrgProfile"
 	OrganizationService_UpdateOrgProfile_FullMethodName                = "/users.organization.v1.OrganizationService/UpdateOrgProfile"
 	OrganizationService_GetOrganizationSubscriptionInfo_FullMethodName = "/users.organization.v1.OrganizationService/GetOrganizationSubscriptionInfo"
@@ -81,6 +88,15 @@ type OrganizationServiceClient interface {
 	// Permissions
 	CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*CheckPermissionResponse, error)
 	GetRoles(ctx context.Context, in *GetRolesRequest, opts ...grpc.CallOption) (*GetRolesResponse, error)
+	// RBAC role management (DB-driven)
+	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error)
+	UpdateRoleInfo(ctx context.Context, in *UpdateRoleInfoRequest, opts ...grpc.CallOption) (*UpdateRoleInfoResponse, error)
+	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
+	SetRolePermissions(ctx context.Context, in *SetRolePermissionsRequest, opts ...grpc.CallOption) (*SetRolePermissionsResponse, error)
+	// Per-member permission overrides
+	SetMemberPermissionOverride(ctx context.Context, in *SetMemberPermissionOverrideRequest, opts ...grpc.CallOption) (*SetMemberPermissionOverrideResponse, error)
+	RemoveMemberPermissionOverride(ctx context.Context, in *RemoveMemberPermissionOverrideRequest, opts ...grpc.CallOption) (*RemoveMemberPermissionOverrideResponse, error)
+	GetMemberPermissionOverrides(ctx context.Context, in *GetMemberPermissionOverridesRequest, opts ...grpc.CallOption) (*GetMemberPermissionOverridesResponse, error)
 	// Organization profiles (type-specific settings)
 	GetOrgProfile(ctx context.Context, in *GetOrgProfileRequest, opts ...grpc.CallOption) (*GetOrgProfileResponse, error)
 	UpdateOrgProfile(ctx context.Context, in *UpdateOrgProfileRequest, opts ...grpc.CallOption) (*UpdateOrgProfileResponse, error)
@@ -302,6 +318,76 @@ func (c *organizationServiceClient) GetRoles(ctx context.Context, in *GetRolesRe
 	return out, nil
 }
 
+func (c *organizationServiceClient) CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateRoleResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_CreateRole_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) UpdateRoleInfo(ctx context.Context, in *UpdateRoleInfoRequest, opts ...grpc.CallOption) (*UpdateRoleInfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateRoleInfoResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_UpdateRoleInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteRoleResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_DeleteRole_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) SetRolePermissions(ctx context.Context, in *SetRolePermissionsRequest, opts ...grpc.CallOption) (*SetRolePermissionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetRolePermissionsResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_SetRolePermissions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) SetMemberPermissionOverride(ctx context.Context, in *SetMemberPermissionOverrideRequest, opts ...grpc.CallOption) (*SetMemberPermissionOverrideResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetMemberPermissionOverrideResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_SetMemberPermissionOverride_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) RemoveMemberPermissionOverride(ctx context.Context, in *RemoveMemberPermissionOverrideRequest, opts ...grpc.CallOption) (*RemoveMemberPermissionOverrideResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RemoveMemberPermissionOverrideResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_RemoveMemberPermissionOverride_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) GetMemberPermissionOverrides(ctx context.Context, in *GetMemberPermissionOverridesRequest, opts ...grpc.CallOption) (*GetMemberPermissionOverridesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMemberPermissionOverridesResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_GetMemberPermissionOverrides_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *organizationServiceClient) GetOrgProfile(ctx context.Context, in *GetOrgProfileRequest, opts ...grpc.CallOption) (*GetOrgProfileResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetOrgProfileResponse)
@@ -420,6 +506,15 @@ type OrganizationServiceServer interface {
 	// Permissions
 	CheckPermission(context.Context, *CheckPermissionRequest) (*CheckPermissionResponse, error)
 	GetRoles(context.Context, *GetRolesRequest) (*GetRolesResponse, error)
+	// RBAC role management (DB-driven)
+	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error)
+	UpdateRoleInfo(context.Context, *UpdateRoleInfoRequest) (*UpdateRoleInfoResponse, error)
+	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
+	SetRolePermissions(context.Context, *SetRolePermissionsRequest) (*SetRolePermissionsResponse, error)
+	// Per-member permission overrides
+	SetMemberPermissionOverride(context.Context, *SetMemberPermissionOverrideRequest) (*SetMemberPermissionOverrideResponse, error)
+	RemoveMemberPermissionOverride(context.Context, *RemoveMemberPermissionOverrideRequest) (*RemoveMemberPermissionOverrideResponse, error)
+	GetMemberPermissionOverrides(context.Context, *GetMemberPermissionOverridesRequest) (*GetMemberPermissionOverridesResponse, error)
 	// Organization profiles (type-specific settings)
 	GetOrgProfile(context.Context, *GetOrgProfileRequest) (*GetOrgProfileResponse, error)
 	UpdateOrgProfile(context.Context, *UpdateOrgProfileRequest) (*UpdateOrgProfileResponse, error)
@@ -507,6 +602,27 @@ func (UnimplementedOrganizationServiceServer) CheckPermission(context.Context, *
 }
 func (UnimplementedOrganizationServiceServer) GetRoles(context.Context, *GetRolesRequest) (*GetRolesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRoles not implemented")
+}
+func (UnimplementedOrganizationServiceServer) CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateRole not implemented")
+}
+func (UnimplementedOrganizationServiceServer) UpdateRoleInfo(context.Context, *UpdateRoleInfoRequest) (*UpdateRoleInfoResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateRoleInfo not implemented")
+}
+func (UnimplementedOrganizationServiceServer) DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteRole not implemented")
+}
+func (UnimplementedOrganizationServiceServer) SetRolePermissions(context.Context, *SetRolePermissionsRequest) (*SetRolePermissionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetRolePermissions not implemented")
+}
+func (UnimplementedOrganizationServiceServer) SetMemberPermissionOverride(context.Context, *SetMemberPermissionOverrideRequest) (*SetMemberPermissionOverrideResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetMemberPermissionOverride not implemented")
+}
+func (UnimplementedOrganizationServiceServer) RemoveMemberPermissionOverride(context.Context, *RemoveMemberPermissionOverrideRequest) (*RemoveMemberPermissionOverrideResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RemoveMemberPermissionOverride not implemented")
+}
+func (UnimplementedOrganizationServiceServer) GetMemberPermissionOverrides(context.Context, *GetMemberPermissionOverridesRequest) (*GetMemberPermissionOverridesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMemberPermissionOverrides not implemented")
 }
 func (UnimplementedOrganizationServiceServer) GetOrgProfile(context.Context, *GetOrgProfileRequest) (*GetOrgProfileResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrgProfile not implemented")
@@ -895,6 +1011,132 @@ func _OrganizationService_GetRoles_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationService_CreateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).CreateRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_CreateRole_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).CreateRole(ctx, req.(*CreateRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_UpdateRoleInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRoleInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).UpdateRoleInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_UpdateRoleInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).UpdateRoleInfo(ctx, req.(*UpdateRoleInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_DeleteRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).DeleteRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_DeleteRole_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).DeleteRole(ctx, req.(*DeleteRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_SetRolePermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetRolePermissionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).SetRolePermissions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_SetRolePermissions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).SetRolePermissions(ctx, req.(*SetRolePermissionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_SetMemberPermissionOverride_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetMemberPermissionOverrideRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).SetMemberPermissionOverride(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_SetMemberPermissionOverride_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).SetMemberPermissionOverride(ctx, req.(*SetMemberPermissionOverrideRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_RemoveMemberPermissionOverride_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveMemberPermissionOverrideRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).RemoveMemberPermissionOverride(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_RemoveMemberPermissionOverride_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).RemoveMemberPermissionOverride(ctx, req.(*RemoveMemberPermissionOverrideRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_GetMemberPermissionOverrides_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMemberPermissionOverridesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).GetMemberPermissionOverrides(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_GetMemberPermissionOverrides_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).GetMemberPermissionOverrides(ctx, req.(*GetMemberPermissionOverridesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrganizationService_GetOrgProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetOrgProfileRequest)
 	if err := dec(in); err != nil {
@@ -1121,6 +1363,34 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRoles",
 			Handler:    _OrganizationService_GetRoles_Handler,
+		},
+		{
+			MethodName: "CreateRole",
+			Handler:    _OrganizationService_CreateRole_Handler,
+		},
+		{
+			MethodName: "UpdateRoleInfo",
+			Handler:    _OrganizationService_UpdateRoleInfo_Handler,
+		},
+		{
+			MethodName: "DeleteRole",
+			Handler:    _OrganizationService_DeleteRole_Handler,
+		},
+		{
+			MethodName: "SetRolePermissions",
+			Handler:    _OrganizationService_SetRolePermissions_Handler,
+		},
+		{
+			MethodName: "SetMemberPermissionOverride",
+			Handler:    _OrganizationService_SetMemberPermissionOverride_Handler,
+		},
+		{
+			MethodName: "RemoveMemberPermissionOverride",
+			Handler:    _OrganizationService_RemoveMemberPermissionOverride_Handler,
+		},
+		{
+			MethodName: "GetMemberPermissionOverrides",
+			Handler:    _OrganizationService_GetMemberPermissionOverrides_Handler,
 		},
 		{
 			MethodName: "GetOrgProfile",

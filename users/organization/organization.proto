@@ -46,6 +46,17 @@ service OrganizationService {
   rpc CheckPermission(CheckPermissionRequest) returns (CheckPermissionResponse);
   rpc GetRoles(GetRolesRequest) returns (GetRolesResponse);
 
+  // RBAC role management (DB-driven)
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
+  rpc UpdateRoleInfo(UpdateRoleInfoRequest) returns (UpdateRoleInfoResponse);
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
+  rpc SetRolePermissions(SetRolePermissionsRequest) returns (SetRolePermissionsResponse);
+
+  // Per-member permission overrides
+  rpc SetMemberPermissionOverride(SetMemberPermissionOverrideRequest) returns (SetMemberPermissionOverrideResponse);
+  rpc RemoveMemberPermissionOverride(RemoveMemberPermissionOverrideRequest) returns (RemoveMemberPermissionOverrideResponse);
+  rpc GetMemberPermissionOverrides(GetMemberPermissionOverridesRequest) returns (GetMemberPermissionOverridesResponse);
+
   // Organization profiles (type-specific settings)
   rpc GetOrgProfile(GetOrgProfileRequest) returns (GetOrgProfileResponse);
   rpc UpdateOrgProfile(UpdateOrgProfileRequest) returns (UpdateOrgProfileResponse);
@@ -165,6 +176,9 @@ message Role {
   string name = 2;
   string description = 3;
   repeated string permissions = 4;
+  bool is_system = 5;
+  string org_type = 6;
+  int64 id = 7;
 }
 
 message InviteCode {
@@ -530,4 +544,79 @@ message CheckPlatformRoleRequest {
 message CheckPlatformRoleResponse {
   PlatformRole role = 1;
   repeated string accessible_org_ids = 2; // populated only for MECHANIC
+}
+
+// =============================================
+// RBAC Role Management (DB-driven)
+// =============================================
+
+message CreateRoleRequest {
+  string org_type = 1;
+  string code = 2;
+  string name = 3;
+  string description = 4;
+  repeated string permissions = 5;
+}
+
+message CreateRoleResponse {
+  Role role = 1;
+}
+
+message UpdateRoleInfoRequest {
+  string org_type = 1;
+  string code = 2;
+  optional string name = 3;
+  optional string description = 4;
+}
+
+message UpdateRoleInfoResponse {
+  Role role = 1;
+}
+
+message DeleteRoleRequest {
+  string org_type = 1;
+  string code = 2;
+}
+
+message DeleteRoleResponse {}
+
+message SetRolePermissionsRequest {
+  string org_type = 1;
+  string code = 2;
+  repeated string permissions = 3;
+}
+
+message SetRolePermissionsResponse {}
+
+// Per-member permission overrides
+
+message PermissionOverride {
+  string member_id = 1;
+  string permission = 2;
+  string grant_type = 3; // "grant" or "revoke"
+  int64 granted_by = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
+message SetMemberPermissionOverrideRequest {
+  string member_id = 1;
+  string permission = 2;
+  string grant_type = 3; // "grant" or "revoke"
+}
+
+message SetMemberPermissionOverrideResponse {}
+
+message RemoveMemberPermissionOverrideRequest {
+  string member_id = 1;
+  string permission = 2;
+}
+
+message RemoveMemberPermissionOverrideResponse {}
+
+message GetMemberPermissionOverridesRequest {
+  string member_id = 1;
+}
+
+message GetMemberPermissionOverridesResponse {
+  repeated PermissionOverride overrides = 1;
 }
