@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+package parts.provider.v1;
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/parts/provider;providerv1";
+
+import "google/protobuf/timestamp.proto";
+
+// PartsProviderService aggregates auto parts search across multiple external suppliers.
+service PartsProviderService {
+  // SearchParts performs a fan-out search across all enabled providers.
+  rpc SearchParts(SearchPartsRequest) returns (SearchPartsResponse);
+
+  // ListSearchHistory returns paginated search history for the authenticated user.
+  rpc ListSearchHistory(ListSearchHistoryRequest) returns (ListSearchHistoryResponse);
+
+  // GetSearchResult returns raw provider results for a given search.
+  rpc GetSearchResult(GetSearchResultRequest) returns (GetSearchResultResponse);
+}
+
+// SearchPartsRequest is the input for searching parts across providers.
+message SearchPartsRequest {
+  repeated string part_nums = 1;
+  string search_cross = 2;   // "all", "original", "replica"
+  string city = 3;
+  int32 currency = 4;
+  string detail_name = 5;
+  string vin = 6;
+}
+
+// SearchPartsResponse contains aggregated results from all providers.
+message SearchPartsResponse {
+  int64 search_id = 1;
+  repeated ProviderResult results = 2;
+}
+
+// ProviderResult holds the result from a single provider.
+message ProviderResult {
+  string provider = 1;
+  int32 service_id = 2;
+  repeated Part parts = 3;
+  string error = 4;
+  int32 status_code = 5;
+  int64 duration_ms = 6;
+}
+
+// Part represents a single auto part from a provider.
+message Part {
+  string id = 1;
+  string oem = 2;
+  string part_num = 3;
+  string brand = 4;
+  string name = 5;
+  int32 price = 6;
+  int32 extra_price = 7;
+  int32 quantity = 8;
+  string delivery_date = 9;
+  int32 delivery_cost = 10;
+  int32 service_id = 11;
+  string service_name = 12;
+  string stock = 13;
+  bool is_new = 14;
+  bool is_original = 15;
+  bool is_chosen = 16;
+  repeated string photo = 17;
+  string manufacturer = 18;
+  bool available = 19;
+  string note = 20;
+  bool top = 21;
+  int32 kind_id = 22;
+  CurrencyInfo currency_info = 23;
+  string close_notify_at = 24;
+  int32 user_city_id = 25;
+}
+
+// CurrencyInfo holds currency conversion details.
+message CurrencyInfo {
+  int32 from_currency = 1;
+  int32 to_currency = 2;
+  int32 currency = 3;
+  double value = 4;
+}
+
+// ListSearchHistoryRequest is the input for listing search history.
+message ListSearchHistoryRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+// ListSearchHistoryResponse contains paginated search history items.
+message ListSearchHistoryResponse {
+  repeated SearchHistoryItem items = 1;
+  int32 total = 2;
+}
+
+// SearchHistoryItem represents a single search in the history.
+message SearchHistoryItem {
+  int64 id = 1;
+  int64 user_id = 2;
+  repeated string part_nums = 3;
+  string detail_name = 4;
+  string vin = 5;
+  string city = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+// GetSearchResultRequest is the input for retrieving stored search results.
+message GetSearchResultRequest {
+  int64 search_id = 1;
+}
+
+// GetSearchResultResponse contains raw provider results for a search.
+message GetSearchResultResponse {
+  repeated SearchResultRecord results = 1;
+}
+
+// SearchResultRecord stores the raw result from a single provider for a search.
+message SearchResultRecord {
+  int64 id = 1;
+  int64 search_id = 2;
+  string provider_name = 3;
+  int32 provider_id = 4;
+  bytes payload = 5;
+  int32 status_code = 6;
+  string error_msg = 7;
+  int32 duration_ms = 8;
+  google.protobuf.Timestamp created_at = 9;
+}
