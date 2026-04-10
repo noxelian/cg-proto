@@ -101,6 +101,13 @@ const (
 	CRMService_UpdateTelephonyUserExtensionDND_FullMethodName = "/crm.v1.CRMService/UpdateTelephonyUserExtensionDND"
 	CRMService_GetTelephonyProviderConfig_FullMethodName      = "/crm.v1.CRMService/GetTelephonyProviderConfig"
 	CRMService_UpdateTelephonyProviderConfig_FullMethodName   = "/crm.v1.CRMService/UpdateTelephonyProviderConfig"
+	CRMService_ListTelephonyIVRConfig_FullMethodName          = "/crm.v1.CRMService/ListTelephonyIVRConfig"
+	CRMService_SaveTelephonyIVRConfig_FullMethodName          = "/crm.v1.CRMService/SaveTelephonyIVRConfig"
+	CRMService_GetTelephonyBusinessHours_FullMethodName       = "/crm.v1.CRMService/GetTelephonyBusinessHours"
+	CRMService_SaveTelephonyBusinessHours_FullMethodName      = "/crm.v1.CRMService/SaveTelephonyBusinessHours"
+	CRMService_GetTelephonyIVRGreeting_FullMethodName         = "/crm.v1.CRMService/GetTelephonyIVRGreeting"
+	CRMService_UpsertTelephonyIVRGreeting_FullMethodName      = "/crm.v1.CRMService/UpsertTelephonyIVRGreeting"
+	CRMService_GetTelephonyDialplanData_FullMethodName        = "/crm.v1.CRMService/GetTelephonyDialplanData"
 )
 
 // CRMServiceClient is the client API for CRMService service.
@@ -233,6 +240,14 @@ type CRMServiceClient interface {
 	UpdateTelephonyUserExtensionDND(ctx context.Context, in *UpdateTelephonyUserExtensionDNDRequest, opts ...grpc.CallOption) (*UpdateTelephonyUserExtensionDNDResponse, error)
 	GetTelephonyProviderConfig(ctx context.Context, in *GetTelephonyProviderConfigRequest, opts ...grpc.CallOption) (*GetTelephonyProviderConfigResponse, error)
 	UpdateTelephonyProviderConfig(ctx context.Context, in *UpdateTelephonyProviderConfigRequest, opts ...grpc.CallOption) (*UpdateTelephonyProviderConfigResponse, error)
+	// Phase 14: IVR Config + Business Hours + Greeting + Dialplan
+	ListTelephonyIVRConfig(ctx context.Context, in *ListTelephonyIVRConfigRequest, opts ...grpc.CallOption) (*ListTelephonyIVRConfigResponse, error)
+	SaveTelephonyIVRConfig(ctx context.Context, in *SaveTelephonyIVRConfigRequest, opts ...grpc.CallOption) (*SaveTelephonyIVRConfigResponse, error)
+	GetTelephonyBusinessHours(ctx context.Context, in *GetTelephonyBusinessHoursRequest, opts ...grpc.CallOption) (*GetTelephonyBusinessHoursResponse, error)
+	SaveTelephonyBusinessHours(ctx context.Context, in *SaveTelephonyBusinessHoursRequest, opts ...grpc.CallOption) (*SaveTelephonyBusinessHoursResponse, error)
+	GetTelephonyIVRGreeting(ctx context.Context, in *GetTelephonyIVRGreetingRequest, opts ...grpc.CallOption) (*GetTelephonyIVRGreetingResponse, error)
+	UpsertTelephonyIVRGreeting(ctx context.Context, in *UpsertTelephonyIVRGreetingRequest, opts ...grpc.CallOption) (*UpsertTelephonyIVRGreetingResponse, error)
+	GetTelephonyDialplanData(ctx context.Context, in *GetTelephonyDialplanDataRequest, opts ...grpc.CallOption) (*GetTelephonyDialplanDataResponse, error)
 }
 
 type cRMServiceClient struct {
@@ -1075,6 +1090,76 @@ func (c *cRMServiceClient) UpdateTelephonyProviderConfig(ctx context.Context, in
 	return out, nil
 }
 
+func (c *cRMServiceClient) ListTelephonyIVRConfig(ctx context.Context, in *ListTelephonyIVRConfigRequest, opts ...grpc.CallOption) (*ListTelephonyIVRConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTelephonyIVRConfigResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListTelephonyIVRConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) SaveTelephonyIVRConfig(ctx context.Context, in *SaveTelephonyIVRConfigRequest, opts ...grpc.CallOption) (*SaveTelephonyIVRConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SaveTelephonyIVRConfigResponse)
+	err := c.cc.Invoke(ctx, CRMService_SaveTelephonyIVRConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetTelephonyBusinessHours(ctx context.Context, in *GetTelephonyBusinessHoursRequest, opts ...grpc.CallOption) (*GetTelephonyBusinessHoursResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTelephonyBusinessHoursResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetTelephonyBusinessHours_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) SaveTelephonyBusinessHours(ctx context.Context, in *SaveTelephonyBusinessHoursRequest, opts ...grpc.CallOption) (*SaveTelephonyBusinessHoursResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SaveTelephonyBusinessHoursResponse)
+	err := c.cc.Invoke(ctx, CRMService_SaveTelephonyBusinessHours_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetTelephonyIVRGreeting(ctx context.Context, in *GetTelephonyIVRGreetingRequest, opts ...grpc.CallOption) (*GetTelephonyIVRGreetingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTelephonyIVRGreetingResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetTelephonyIVRGreeting_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) UpsertTelephonyIVRGreeting(ctx context.Context, in *UpsertTelephonyIVRGreetingRequest, opts ...grpc.CallOption) (*UpsertTelephonyIVRGreetingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpsertTelephonyIVRGreetingResponse)
+	err := c.cc.Invoke(ctx, CRMService_UpsertTelephonyIVRGreeting_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetTelephonyDialplanData(ctx context.Context, in *GetTelephonyDialplanDataRequest, opts ...grpc.CallOption) (*GetTelephonyDialplanDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTelephonyDialplanDataResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetTelephonyDialplanData_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CRMServiceServer is the server API for CRMService service.
 // All implementations must embed UnimplementedCRMServiceServer
 // for forward compatibility.
@@ -1205,6 +1290,14 @@ type CRMServiceServer interface {
 	UpdateTelephonyUserExtensionDND(context.Context, *UpdateTelephonyUserExtensionDNDRequest) (*UpdateTelephonyUserExtensionDNDResponse, error)
 	GetTelephonyProviderConfig(context.Context, *GetTelephonyProviderConfigRequest) (*GetTelephonyProviderConfigResponse, error)
 	UpdateTelephonyProviderConfig(context.Context, *UpdateTelephonyProviderConfigRequest) (*UpdateTelephonyProviderConfigResponse, error)
+	// Phase 14: IVR Config + Business Hours + Greeting + Dialplan
+	ListTelephonyIVRConfig(context.Context, *ListTelephonyIVRConfigRequest) (*ListTelephonyIVRConfigResponse, error)
+	SaveTelephonyIVRConfig(context.Context, *SaveTelephonyIVRConfigRequest) (*SaveTelephonyIVRConfigResponse, error)
+	GetTelephonyBusinessHours(context.Context, *GetTelephonyBusinessHoursRequest) (*GetTelephonyBusinessHoursResponse, error)
+	SaveTelephonyBusinessHours(context.Context, *SaveTelephonyBusinessHoursRequest) (*SaveTelephonyBusinessHoursResponse, error)
+	GetTelephonyIVRGreeting(context.Context, *GetTelephonyIVRGreetingRequest) (*GetTelephonyIVRGreetingResponse, error)
+	UpsertTelephonyIVRGreeting(context.Context, *UpsertTelephonyIVRGreetingRequest) (*UpsertTelephonyIVRGreetingResponse, error)
+	GetTelephonyDialplanData(context.Context, *GetTelephonyDialplanDataRequest) (*GetTelephonyDialplanDataResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
 
@@ -1460,6 +1553,27 @@ func (UnimplementedCRMServiceServer) GetTelephonyProviderConfig(context.Context,
 }
 func (UnimplementedCRMServiceServer) UpdateTelephonyProviderConfig(context.Context, *UpdateTelephonyProviderConfigRequest) (*UpdateTelephonyProviderConfigResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTelephonyProviderConfig not implemented")
+}
+func (UnimplementedCRMServiceServer) ListTelephonyIVRConfig(context.Context, *ListTelephonyIVRConfigRequest) (*ListTelephonyIVRConfigResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTelephonyIVRConfig not implemented")
+}
+func (UnimplementedCRMServiceServer) SaveTelephonyIVRConfig(context.Context, *SaveTelephonyIVRConfigRequest) (*SaveTelephonyIVRConfigResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SaveTelephonyIVRConfig not implemented")
+}
+func (UnimplementedCRMServiceServer) GetTelephonyBusinessHours(context.Context, *GetTelephonyBusinessHoursRequest) (*GetTelephonyBusinessHoursResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTelephonyBusinessHours not implemented")
+}
+func (UnimplementedCRMServiceServer) SaveTelephonyBusinessHours(context.Context, *SaveTelephonyBusinessHoursRequest) (*SaveTelephonyBusinessHoursResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SaveTelephonyBusinessHours not implemented")
+}
+func (UnimplementedCRMServiceServer) GetTelephonyIVRGreeting(context.Context, *GetTelephonyIVRGreetingRequest) (*GetTelephonyIVRGreetingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTelephonyIVRGreeting not implemented")
+}
+func (UnimplementedCRMServiceServer) UpsertTelephonyIVRGreeting(context.Context, *UpsertTelephonyIVRGreetingRequest) (*UpsertTelephonyIVRGreetingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpsertTelephonyIVRGreeting not implemented")
+}
+func (UnimplementedCRMServiceServer) GetTelephonyDialplanData(context.Context, *GetTelephonyDialplanDataRequest) (*GetTelephonyDialplanDataResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTelephonyDialplanData not implemented")
 }
 func (UnimplementedCRMServiceServer) mustEmbedUnimplementedCRMServiceServer() {}
 func (UnimplementedCRMServiceServer) testEmbeddedByValue()                    {}
@@ -2958,6 +3072,132 @@ func _CRMService_UpdateTelephonyProviderConfig_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_ListTelephonyIVRConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTelephonyIVRConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListTelephonyIVRConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListTelephonyIVRConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListTelephonyIVRConfig(ctx, req.(*ListTelephonyIVRConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_SaveTelephonyIVRConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveTelephonyIVRConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).SaveTelephonyIVRConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_SaveTelephonyIVRConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).SaveTelephonyIVRConfig(ctx, req.(*SaveTelephonyIVRConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetTelephonyBusinessHours_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTelephonyBusinessHoursRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetTelephonyBusinessHours(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetTelephonyBusinessHours_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetTelephonyBusinessHours(ctx, req.(*GetTelephonyBusinessHoursRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_SaveTelephonyBusinessHours_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveTelephonyBusinessHoursRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).SaveTelephonyBusinessHours(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_SaveTelephonyBusinessHours_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).SaveTelephonyBusinessHours(ctx, req.(*SaveTelephonyBusinessHoursRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetTelephonyIVRGreeting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTelephonyIVRGreetingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetTelephonyIVRGreeting(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetTelephonyIVRGreeting_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetTelephonyIVRGreeting(ctx, req.(*GetTelephonyIVRGreetingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_UpsertTelephonyIVRGreeting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertTelephonyIVRGreetingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).UpsertTelephonyIVRGreeting(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_UpsertTelephonyIVRGreeting_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).UpsertTelephonyIVRGreeting(ctx, req.(*UpsertTelephonyIVRGreetingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetTelephonyDialplanData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTelephonyDialplanDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetTelephonyDialplanData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetTelephonyDialplanData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetTelephonyDialplanData(ctx, req.(*GetTelephonyDialplanDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CRMService_ServiceDesc is the grpc.ServiceDesc for CRMService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3292,6 +3532,34 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateTelephonyProviderConfig",
 			Handler:    _CRMService_UpdateTelephonyProviderConfig_Handler,
+		},
+		{
+			MethodName: "ListTelephonyIVRConfig",
+			Handler:    _CRMService_ListTelephonyIVRConfig_Handler,
+		},
+		{
+			MethodName: "SaveTelephonyIVRConfig",
+			Handler:    _CRMService_SaveTelephonyIVRConfig_Handler,
+		},
+		{
+			MethodName: "GetTelephonyBusinessHours",
+			Handler:    _CRMService_GetTelephonyBusinessHours_Handler,
+		},
+		{
+			MethodName: "SaveTelephonyBusinessHours",
+			Handler:    _CRMService_SaveTelephonyBusinessHours_Handler,
+		},
+		{
+			MethodName: "GetTelephonyIVRGreeting",
+			Handler:    _CRMService_GetTelephonyIVRGreeting_Handler,
+		},
+		{
+			MethodName: "UpsertTelephonyIVRGreeting",
+			Handler:    _CRMService_UpsertTelephonyIVRGreeting_Handler,
+		},
+		{
+			MethodName: "GetTelephonyDialplanData",
+			Handler:    _CRMService_GetTelephonyDialplanData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

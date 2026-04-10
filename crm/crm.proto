@@ -142,6 +142,15 @@ service CRMService {
 
   rpc GetTelephonyProviderConfig(GetTelephonyProviderConfigRequest)       returns (GetTelephonyProviderConfigResponse);
   rpc UpdateTelephonyProviderConfig(UpdateTelephonyProviderConfigRequest) returns (UpdateTelephonyProviderConfigResponse);
+
+  // Phase 14: IVR Config + Business Hours + Greeting + Dialplan
+  rpc ListTelephonyIVRConfig(ListTelephonyIVRConfigRequest)               returns (ListTelephonyIVRConfigResponse);
+  rpc SaveTelephonyIVRConfig(SaveTelephonyIVRConfigRequest)               returns (SaveTelephonyIVRConfigResponse);
+  rpc GetTelephonyBusinessHours(GetTelephonyBusinessHoursRequest)         returns (GetTelephonyBusinessHoursResponse);
+  rpc SaveTelephonyBusinessHours(SaveTelephonyBusinessHoursRequest)       returns (SaveTelephonyBusinessHoursResponse);
+  rpc GetTelephonyIVRGreeting(GetTelephonyIVRGreetingRequest)             returns (GetTelephonyIVRGreetingResponse);
+  rpc UpsertTelephonyIVRGreeting(UpsertTelephonyIVRGreetingRequest)       returns (UpsertTelephonyIVRGreetingResponse);
+  rpc GetTelephonyDialplanData(GetTelephonyDialplanDataRequest)           returns (GetTelephonyDialplanDataResponse);
 }
 
 message Pipeline {
@@ -1505,4 +1514,104 @@ message LookupEntityByPhoneRequest {
 }
 message LookupEntityByPhoneResponse {
   MatchedEntity matched_entity = 1;  // entity_type='none' on miss (never nil)
+}
+
+// ==================== Phase 14 — IVR Config + Business Hours ====================
+
+message TelephonyIVRConfigEntry {
+  string                      id                 = 1;
+  string                      organization_id    = 2;
+  string                      pipeline_id        = 3;
+  string                      dtmf_key           = 4;  // '0'-'9', 't' (timeout), 'i' (invalid)
+  string                      target_pipeline_id = 5;
+  int32                       sort_order         = 6;
+  google.protobuf.Timestamp   created_at         = 7;
+  google.protobuf.Timestamp   updated_at         = 8;
+}
+
+message ListTelephonyIVRConfigRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+}
+message ListTelephonyIVRConfigResponse {
+  repeated TelephonyIVRConfigEntry configs = 1;
+}
+
+// SaveTelephonyIVRConfig: bulk-replace pattern — receives full list of DTMF keys
+// for a pipeline, deletes old rows, inserts new (atomic replace in a transaction).
+message SaveTelephonyIVRConfigRequest {
+  string                              organization_id = 1;
+  string                              pipeline_id     = 2;
+  repeated TelephonyIVRConfigEntry    configs         = 3;
+}
+message SaveTelephonyIVRConfigResponse {
+  repeated TelephonyIVRConfigEntry configs = 1;
+}
+
+message TelephonyBusinessHoursEntry {
+  string                      id              = 1;
+  string                      organization_id = 2;
+  string                      pipeline_id     = 3;
+  int32                       day_of_week     = 4;  // 0=mon, 6=sun
+  bool                        enabled         = 5;
+  string                      start_time      = 6;  // "HH:MM"
+  string                      end_time        = 7;  // "HH:MM"
+  google.protobuf.Timestamp   created_at      = 8;
+  google.protobuf.Timestamp   updated_at      = 9;
+}
+
+message GetTelephonyBusinessHoursRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+}
+message GetTelephonyBusinessHoursResponse {
+  repeated TelephonyBusinessHoursEntry entries = 1;
+}
+
+// SaveTelephonyBusinessHours: receives 7 weekday entries, upserts all.
+message SaveTelephonyBusinessHoursRequest {
+  string                                   organization_id = 1;
+  string                                   pipeline_id     = 2;
+  repeated TelephonyBusinessHoursEntry     entries         = 3;
+}
+message SaveTelephonyBusinessHoursResponse {
+  repeated TelephonyBusinessHoursEntry entries = 1;
+}
+
+message TelephonyIVRGreeting {
+  string                      id              = 1;
+  string                      organization_id = 2;
+  string                      pipeline_id     = 3;
+  string                      filename        = 4;
+  bool                        deployed        = 5;
+  google.protobuf.Timestamp   created_at      = 6;
+  google.protobuf.Timestamp   updated_at      = 7;
+}
+
+message GetTelephonyIVRGreetingRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+}
+message GetTelephonyIVRGreetingResponse {
+  TelephonyIVRGreeting greeting = 1;  // nil if no greeting uploaded
+}
+
+message UpsertTelephonyIVRGreetingRequest {
+  TelephonyIVRGreeting greeting = 1;
+}
+message UpsertTelephonyIVRGreetingResponse {
+  TelephonyIVRGreeting greeting = 1;
+}
+
+// GetTelephonyDialplanData aggregates all IVR+BH config for an org.
+// Used by cg-bff dialplan renderer for bulk fetch.
+message GetTelephonyDialplanDataRequest {
+  string organization_id = 1;
+}
+message GetTelephonyDialplanDataResponse {
+  repeated TelephonyPipelineDID         pipeline_dids    = 1;
+  repeated TelephonyIVRConfigEntry      ivr_configs      = 2;
+  repeated TelephonyBusinessHoursEntry  business_hours   = 3;
+  repeated TelephonyIVRGreeting         ivr_greetings    = 4;
+  repeated TelephonyUserExtension       user_extensions  = 5;
 }
