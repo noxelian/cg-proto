@@ -135,6 +135,11 @@ service CRMService {
   rpc UpsertTelephonyUserExtension(UpsertTelephonyUserExtensionRequest) returns (UpsertTelephonyUserExtensionResponse);
   rpc GetTelephonyUserExtension(GetTelephonyUserExtensionRequest)       returns (GetTelephonyUserExtensionResponse);
 
+  // Phase 11: Admin CRUD for user extensions
+  rpc ListTelephonyUserExtensions(ListTelephonyUserExtensionsRequest)     returns (ListTelephonyUserExtensionsResponse);
+  rpc DeleteTelephonyUserExtension(DeleteTelephonyUserExtensionRequest)   returns (DeleteTelephonyUserExtensionResponse);
+  rpc UpdateTelephonyUserExtensionDND(UpdateTelephonyUserExtensionDNDRequest) returns (UpdateTelephonyUserExtensionDNDResponse);
+
   rpc GetTelephonyProviderConfig(GetTelephonyProviderConfigRequest)       returns (GetTelephonyProviderConfigResponse);
   rpc UpdateTelephonyProviderConfig(UpdateTelephonyProviderConfigRequest) returns (UpdateTelephonyProviderConfigResponse);
 }
@@ -1386,6 +1391,7 @@ message TelephonyUserExtension {
   TelephonyProvider           provider        = 4;
   string                      extension       = 5;
   google.protobuf.Timestamp   created_at      = 6;
+  bool                        dnd             = 7;
 }
 
 message UpsertTelephonyUserExtensionRequest  { TelephonyUserExtension extension = 1; }
@@ -1397,6 +1403,29 @@ message GetTelephonyUserExtensionRequest {
   TelephonyProvider provider        = 3;
 }
 message GetTelephonyUserExtensionResponse {
+  TelephonyUserExtension extension = 1;
+}
+
+// Phase 11: Admin CRUD for user extensions
+message ListTelephonyUserExtensionsRequest {
+  string organization_id = 1;
+}
+message ListTelephonyUserExtensionsResponse {
+  repeated TelephonyUserExtension extensions = 1;
+}
+
+message DeleteTelephonyUserExtensionRequest {
+  string id              = 1;
+  string organization_id = 2;
+}
+message DeleteTelephonyUserExtensionResponse {}
+
+message UpdateTelephonyUserExtensionDNDRequest {
+  string organization_id = 1;
+  string user_id         = 2;
+  bool   dnd             = 3;
+}
+message UpdateTelephonyUserExtensionDNDResponse {
   TelephonyUserExtension extension = 1;
 }
 
