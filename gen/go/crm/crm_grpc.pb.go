@@ -108,6 +108,8 @@ const (
 	CRMService_GetTelephonyIVRGreeting_FullMethodName         = "/crm.v1.CRMService/GetTelephonyIVRGreeting"
 	CRMService_UpsertTelephonyIVRGreeting_FullMethodName      = "/crm.v1.CRMService/UpsertTelephonyIVRGreeting"
 	CRMService_GetTelephonyDialplanData_FullMethodName        = "/crm.v1.CRMService/GetTelephonyDialplanData"
+	CRMService_CreateTelephonyRecording_FullMethodName        = "/crm.v1.CRMService/CreateTelephonyRecording"
+	CRMService_GetTelephonyCallRecording_FullMethodName       = "/crm.v1.CRMService/GetTelephonyCallRecording"
 )
 
 // CRMServiceClient is the client API for CRMService service.
@@ -248,6 +250,9 @@ type CRMServiceClient interface {
 	GetTelephonyIVRGreeting(ctx context.Context, in *GetTelephonyIVRGreetingRequest, opts ...grpc.CallOption) (*GetTelephonyIVRGreetingResponse, error)
 	UpsertTelephonyIVRGreeting(ctx context.Context, in *UpsertTelephonyIVRGreetingRequest, opts ...grpc.CallOption) (*UpsertTelephonyIVRGreetingResponse, error)
 	GetTelephonyDialplanData(ctx context.Context, in *GetTelephonyDialplanDataRequest, opts ...grpc.CallOption) (*GetTelephonyDialplanDataResponse, error)
+	// Phase 16: Recording pipeline — persist and query call recordings
+	CreateTelephonyRecording(ctx context.Context, in *CreateTelephonyRecordingRequest, opts ...grpc.CallOption) (*CreateTelephonyRecordingResponse, error)
+	GetTelephonyCallRecording(ctx context.Context, in *GetTelephonyCallRecordingRequest, opts ...grpc.CallOption) (*GetTelephonyCallRecordingResponse, error)
 }
 
 type cRMServiceClient struct {
@@ -1160,6 +1165,26 @@ func (c *cRMServiceClient) GetTelephonyDialplanData(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *cRMServiceClient) CreateTelephonyRecording(ctx context.Context, in *CreateTelephonyRecordingRequest, opts ...grpc.CallOption) (*CreateTelephonyRecordingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateTelephonyRecordingResponse)
+	err := c.cc.Invoke(ctx, CRMService_CreateTelephonyRecording_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetTelephonyCallRecording(ctx context.Context, in *GetTelephonyCallRecordingRequest, opts ...grpc.CallOption) (*GetTelephonyCallRecordingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTelephonyCallRecordingResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetTelephonyCallRecording_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CRMServiceServer is the server API for CRMService service.
 // All implementations must embed UnimplementedCRMServiceServer
 // for forward compatibility.
@@ -1298,6 +1323,9 @@ type CRMServiceServer interface {
 	GetTelephonyIVRGreeting(context.Context, *GetTelephonyIVRGreetingRequest) (*GetTelephonyIVRGreetingResponse, error)
 	UpsertTelephonyIVRGreeting(context.Context, *UpsertTelephonyIVRGreetingRequest) (*UpsertTelephonyIVRGreetingResponse, error)
 	GetTelephonyDialplanData(context.Context, *GetTelephonyDialplanDataRequest) (*GetTelephonyDialplanDataResponse, error)
+	// Phase 16: Recording pipeline — persist and query call recordings
+	CreateTelephonyRecording(context.Context, *CreateTelephonyRecordingRequest) (*CreateTelephonyRecordingResponse, error)
+	GetTelephonyCallRecording(context.Context, *GetTelephonyCallRecordingRequest) (*GetTelephonyCallRecordingResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
 
@@ -1574,6 +1602,12 @@ func (UnimplementedCRMServiceServer) UpsertTelephonyIVRGreeting(context.Context,
 }
 func (UnimplementedCRMServiceServer) GetTelephonyDialplanData(context.Context, *GetTelephonyDialplanDataRequest) (*GetTelephonyDialplanDataResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTelephonyDialplanData not implemented")
+}
+func (UnimplementedCRMServiceServer) CreateTelephonyRecording(context.Context, *CreateTelephonyRecordingRequest) (*CreateTelephonyRecordingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateTelephonyRecording not implemented")
+}
+func (UnimplementedCRMServiceServer) GetTelephonyCallRecording(context.Context, *GetTelephonyCallRecordingRequest) (*GetTelephonyCallRecordingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTelephonyCallRecording not implemented")
 }
 func (UnimplementedCRMServiceServer) mustEmbedUnimplementedCRMServiceServer() {}
 func (UnimplementedCRMServiceServer) testEmbeddedByValue()                    {}
@@ -3198,6 +3232,42 @@ func _CRMService_GetTelephonyDialplanData_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_CreateTelephonyRecording_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTelephonyRecordingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).CreateTelephonyRecording(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_CreateTelephonyRecording_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).CreateTelephonyRecording(ctx, req.(*CreateTelephonyRecordingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetTelephonyCallRecording_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTelephonyCallRecordingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetTelephonyCallRecording(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetTelephonyCallRecording_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetTelephonyCallRecording(ctx, req.(*GetTelephonyCallRecordingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CRMService_ServiceDesc is the grpc.ServiceDesc for CRMService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3560,6 +3630,14 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTelephonyDialplanData",
 			Handler:    _CRMService_GetTelephonyDialplanData_Handler,
+		},
+		{
+			MethodName: "CreateTelephonyRecording",
+			Handler:    _CRMService_CreateTelephonyRecording_Handler,
+		},
+		{
+			MethodName: "GetTelephonyCallRecording",
+			Handler:    _CRMService_GetTelephonyCallRecording_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

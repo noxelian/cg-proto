@@ -151,6 +151,10 @@ service CRMService {
   rpc GetTelephonyIVRGreeting(GetTelephonyIVRGreetingRequest)             returns (GetTelephonyIVRGreetingResponse);
   rpc UpsertTelephonyIVRGreeting(UpsertTelephonyIVRGreetingRequest)       returns (UpsertTelephonyIVRGreetingResponse);
   rpc GetTelephonyDialplanData(GetTelephonyDialplanDataRequest)           returns (GetTelephonyDialplanDataResponse);
+
+  // Phase 16: Recording pipeline — persist and query call recordings
+  rpc CreateTelephonyRecording(CreateTelephonyRecordingRequest)           returns (CreateTelephonyRecordingResponse);
+  rpc GetTelephonyCallRecording(GetTelephonyCallRecordingRequest)         returns (GetTelephonyCallRecordingResponse);
 }
 
 message Pipeline {
@@ -1614,4 +1618,37 @@ message GetTelephonyDialplanDataResponse {
   repeated TelephonyBusinessHoursEntry  business_hours   = 3;
   repeated TelephonyIVRGreeting         ivr_greetings    = 4;
   repeated TelephonyUserExtension       user_extensions  = 5;
+}
+
+// ── Phase 16: Recording pipeline ────────────────────────────────────
+
+message TelephonyRecording {
+  string id              = 1;
+  string organization_id = 2;
+  string call_id         = 3;
+  string storage_path    = 4;
+  int32  duration_sec    = 5;
+  int64  size_bytes      = 6;
+  string created_at      = 7;
+}
+
+message CreateTelephonyRecordingRequest {
+  string organization_id = 1;
+  string call_id         = 2;
+  string storage_path    = 3;
+  int32  duration_sec    = 4;
+  int64  size_bytes      = 5;
+}
+
+message CreateTelephonyRecordingResponse {
+  TelephonyRecording recording = 1;
+}
+
+message GetTelephonyCallRecordingRequest {
+  string organization_id = 1;
+  string call_id         = 2;
+}
+
+message GetTelephonyCallRecordingResponse {
+  TelephonyRecording recording = 1;
 }
