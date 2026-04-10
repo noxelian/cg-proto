@@ -121,6 +121,13 @@ service CRMService {
   rpc TelephonyListCalls(TelephonyListCallsRequest)         returns (TelephonyListCallsResponse);
   rpc TelephonyGetCredentials(TelephonyGetCredentialsRequest) returns (TelephonyGetCredentialsResponse);
 
+  // Phase 9 — Stasis event persistence, CallerID lookup, reconciliation (D-06, D-14, D-24)
+  rpc CreateTelephonyCall(CreateTelephonyCallRequest)               returns (CreateTelephonyCallResponse);
+  rpc UpdateTelephonyCallState(UpdateTelephonyCallStateRequest)     returns (UpdateTelephonyCallStateResponse);
+  rpc ListTelephonyCallsByOrg(ListTelephonyCallsByOrgRequest)       returns (ListTelephonyCallsByOrgResponse);
+  rpc ListOrphanedTelephonyCalls(ListOrphanedTelephonyCallsRequest) returns (ListOrphanedTelephonyCallsResponse);
+  rpc LookupEntityByPhone(LookupEntityByPhoneRequest)               returns (LookupEntityByPhoneResponse);
+
   rpc UpsertTelephonyPipelineDID(UpsertTelephonyPipelineDIDRequest) returns (UpsertTelephonyPipelineDIDResponse);
   rpc ListTelephonyPipelineDIDs(ListTelephonyPipelineDIDsRequest)   returns (ListTelephonyPipelineDIDsResponse);
   rpc DeleteTelephonyPipelineDID(DeleteTelephonyPipelineDIDRequest) returns (DeleteTelephonyPipelineDIDResponse);
@@ -1246,6 +1253,21 @@ enum TelephonyStatus {
   TELEPHONY_STATUS_ENDED       = 6;
 }
 
+// MatchedEntity represents a contact or lead matched by caller phone lookup.
+// Phase 9 D-10, D-14. All fields optional — empty when no match.
+message MatchedEntity {
+  // entity_type: "contact" | "lead" | "none"
+  string entity_type  = 1;
+  // entity_id: UUID of the matched contact or lead (empty if none)
+  string entity_id    = 2;
+  // entity_name: trim(concat_ws(' ', first_name, last_name)) — built server-side
+  string entity_name  = 3;
+  // pipeline_id: UUID of pipeline owning the matched entity's active deal (contact) or the lead's pipeline
+  string pipeline_id  = 4;
+  // deal_id: UUID of the active deal associated with the contact (empty for leads or no-match)
+  string deal_id      = 5;
+}
+
 message TelephonyCall {
   string                      id                 = 1;
   TelephonyProvider           provider           = 2;
@@ -1263,6 +1285,12 @@ message TelephonyCall {
   google.protobuf.Timestamp   ended_at           = 14;
   google.protobuf.Timestamp   created_at         = 15;
   google.protobuf.Struct      provider_metadata  = 16;
+
+  // --- Phase 9 additions (D-10, D-13) ---
+  MatchedEntity               matched_entity           = 17;  // populated at StasisStart via LookupEntityByPhone
+  string                      state                    = 18;  // 'ringing'|'answered'|'ended'|'failed' (lifecycle, distinct from deprecated `status`)
+  string                      hangup_cause             = 19;  // ARI hangup cause code OR 'reconciled'
+  google.protobuf.Timestamp   janitor_reconciled_at    = 20;  // D-24 SC#3 — set when janitor sweep marks call as reconciled
 }
 
 message TelephonyOriginateRequest {
@@ -1394,4 +1422,58 @@ message UpdateTelephonyProviderConfigRequest {
 }
 message UpdateTelephonyProviderConfigResponse {
   TelephonyProviderConfig config = 1;
+}
+
+// ==================== Phase 9 — Stasis event persistence + CallerID lookup ====================
+
+message CreateTelephonyCallRequest {
+  TelephonyCall  call           = 1;  // caller fills provider, external_id, org_id, pipeline_id, src_num, dst_num, direction, status, provider_metadata, state
+  MatchedEntity  matched_entity = 2;  // optional — cg-bff pre-computes via LookupEntityByPhone
+}
+message CreateTelephonyCallResponse {
+  TelephonyCall call    = 1;
+  bool          created = 2;  // false if ON CONFLICT DO NOTHING hit (idempotent retry, D-08)
+}
+
+message UpdateTelephonyCallStateRequest {
+  string                      organization_id       = 1;  // T-09-03 tenancy enforcement
+  string                      call_id               = 2;  // server-side UUID (not external_id)
+  string                      expected_state        = 3;  // optimistic lock (D-08) — empty string skips check
+  string                      new_state             = 4;  // 'ringing'|'answered'|'ended'|'failed'
+  string                      hangup_cause          = 5;  // optional
+  google.protobuf.Timestamp   answered_at           = 6;  // optional
+  google.protobuf.Timestamp   ended_at              = 7;  // optional
+  google.protobuf.Timestamp   janitor_reconciled_at = 8;  // optional, set by janitor sweep
+}
+message UpdateTelephonyCallStateResponse {
+  TelephonyCall call    = 1;
+  bool          updated = 2;  // false if WHERE state=expected_state matched 0 rows (Pitfall 3 — not an error)
+}
+
+message ListTelephonyCallsByOrgRequest {
+  string          organization_id = 1;
+  int32           limit           = 2;
+  int32           offset          = 3;
+  repeated string state_filter    = 4;  // optional: e.g. ['ringing','answered']
+}
+message ListTelephonyCallsByOrgResponse {
+  repeated TelephonyCall calls = 1;
+  int32                  total = 2;
+}
+
+message ListOrphanedTelephonyCallsRequest {
+  // No org filter — janitor scans cross-org.
+  google.protobuf.Timestamp older_than = 1;  // e.g. now - 2h (D-24)
+  int32                     limit      = 2;  // safety cap, e.g. 1000
+}
+message ListOrphanedTelephonyCallsResponse {
+  repeated TelephonyCall calls = 1;
+}
+
+message LookupEntityByPhoneRequest {
+  string organization_id = 1;  // T-09-03 tenancy enforcement
+  string phone           = 2;  // caller normalizes to E.164 before this call (D-16)
+}
+message LookupEntityByPhoneResponse {
+  MatchedEntity matched_entity = 1;  // entity_type='none' on miss (never nil)
 }

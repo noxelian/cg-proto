@@ -86,6 +86,11 @@ const (
 	CRMService_TelephonyGetCall_FullMethodName              = "/crm.v1.CRMService/TelephonyGetCall"
 	CRMService_TelephonyListCalls_FullMethodName            = "/crm.v1.CRMService/TelephonyListCalls"
 	CRMService_TelephonyGetCredentials_FullMethodName       = "/crm.v1.CRMService/TelephonyGetCredentials"
+	CRMService_CreateTelephonyCall_FullMethodName           = "/crm.v1.CRMService/CreateTelephonyCall"
+	CRMService_UpdateTelephonyCallState_FullMethodName      = "/crm.v1.CRMService/UpdateTelephonyCallState"
+	CRMService_ListTelephonyCallsByOrg_FullMethodName       = "/crm.v1.CRMService/ListTelephonyCallsByOrg"
+	CRMService_ListOrphanedTelephonyCalls_FullMethodName    = "/crm.v1.CRMService/ListOrphanedTelephonyCalls"
+	CRMService_LookupEntityByPhone_FullMethodName           = "/crm.v1.CRMService/LookupEntityByPhone"
 	CRMService_UpsertTelephonyPipelineDID_FullMethodName    = "/crm.v1.CRMService/UpsertTelephonyPipelineDID"
 	CRMService_ListTelephonyPipelineDIDs_FullMethodName     = "/crm.v1.CRMService/ListTelephonyPipelineDIDs"
 	CRMService_DeleteTelephonyPipelineDID_FullMethodName    = "/crm.v1.CRMService/DeleteTelephonyPipelineDID"
@@ -208,6 +213,12 @@ type CRMServiceClient interface {
 	TelephonyGetCall(ctx context.Context, in *TelephonyGetCallRequest, opts ...grpc.CallOption) (*TelephonyGetCallResponse, error)
 	TelephonyListCalls(ctx context.Context, in *TelephonyListCallsRequest, opts ...grpc.CallOption) (*TelephonyListCallsResponse, error)
 	TelephonyGetCredentials(ctx context.Context, in *TelephonyGetCredentialsRequest, opts ...grpc.CallOption) (*TelephonyGetCredentialsResponse, error)
+	// Phase 9 — Stasis event persistence, CallerID lookup, reconciliation (D-06, D-14, D-24)
+	CreateTelephonyCall(ctx context.Context, in *CreateTelephonyCallRequest, opts ...grpc.CallOption) (*CreateTelephonyCallResponse, error)
+	UpdateTelephonyCallState(ctx context.Context, in *UpdateTelephonyCallStateRequest, opts ...grpc.CallOption) (*UpdateTelephonyCallStateResponse, error)
+	ListTelephonyCallsByOrg(ctx context.Context, in *ListTelephonyCallsByOrgRequest, opts ...grpc.CallOption) (*ListTelephonyCallsByOrgResponse, error)
+	ListOrphanedTelephonyCalls(ctx context.Context, in *ListOrphanedTelephonyCallsRequest, opts ...grpc.CallOption) (*ListOrphanedTelephonyCallsResponse, error)
+	LookupEntityByPhone(ctx context.Context, in *LookupEntityByPhoneRequest, opts ...grpc.CallOption) (*LookupEntityByPhoneResponse, error)
 	UpsertTelephonyPipelineDID(ctx context.Context, in *UpsertTelephonyPipelineDIDRequest, opts ...grpc.CallOption) (*UpsertTelephonyPipelineDIDResponse, error)
 	ListTelephonyPipelineDIDs(ctx context.Context, in *ListTelephonyPipelineDIDsRequest, opts ...grpc.CallOption) (*ListTelephonyPipelineDIDsResponse, error)
 	DeleteTelephonyPipelineDID(ctx context.Context, in *DeleteTelephonyPipelineDIDRequest, opts ...grpc.CallOption) (*DeleteTelephonyPipelineDIDResponse, error)
@@ -907,6 +918,56 @@ func (c *cRMServiceClient) TelephonyGetCredentials(ctx context.Context, in *Tele
 	return out, nil
 }
 
+func (c *cRMServiceClient) CreateTelephonyCall(ctx context.Context, in *CreateTelephonyCallRequest, opts ...grpc.CallOption) (*CreateTelephonyCallResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateTelephonyCallResponse)
+	err := c.cc.Invoke(ctx, CRMService_CreateTelephonyCall_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) UpdateTelephonyCallState(ctx context.Context, in *UpdateTelephonyCallStateRequest, opts ...grpc.CallOption) (*UpdateTelephonyCallStateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateTelephonyCallStateResponse)
+	err := c.cc.Invoke(ctx, CRMService_UpdateTelephonyCallState_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ListTelephonyCallsByOrg(ctx context.Context, in *ListTelephonyCallsByOrgRequest, opts ...grpc.CallOption) (*ListTelephonyCallsByOrgResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTelephonyCallsByOrgResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListTelephonyCallsByOrg_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ListOrphanedTelephonyCalls(ctx context.Context, in *ListOrphanedTelephonyCallsRequest, opts ...grpc.CallOption) (*ListOrphanedTelephonyCallsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListOrphanedTelephonyCallsResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListOrphanedTelephonyCalls_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) LookupEntityByPhone(ctx context.Context, in *LookupEntityByPhoneRequest, opts ...grpc.CallOption) (*LookupEntityByPhoneResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LookupEntityByPhoneResponse)
+	err := c.cc.Invoke(ctx, CRMService_LookupEntityByPhone_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) UpsertTelephonyPipelineDID(ctx context.Context, in *UpsertTelephonyPipelineDIDRequest, opts ...grpc.CallOption) (*UpsertTelephonyPipelineDIDResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpsertTelephonyPipelineDIDResponse)
@@ -1090,6 +1151,12 @@ type CRMServiceServer interface {
 	TelephonyGetCall(context.Context, *TelephonyGetCallRequest) (*TelephonyGetCallResponse, error)
 	TelephonyListCalls(context.Context, *TelephonyListCallsRequest) (*TelephonyListCallsResponse, error)
 	TelephonyGetCredentials(context.Context, *TelephonyGetCredentialsRequest) (*TelephonyGetCredentialsResponse, error)
+	// Phase 9 — Stasis event persistence, CallerID lookup, reconciliation (D-06, D-14, D-24)
+	CreateTelephonyCall(context.Context, *CreateTelephonyCallRequest) (*CreateTelephonyCallResponse, error)
+	UpdateTelephonyCallState(context.Context, *UpdateTelephonyCallStateRequest) (*UpdateTelephonyCallStateResponse, error)
+	ListTelephonyCallsByOrg(context.Context, *ListTelephonyCallsByOrgRequest) (*ListTelephonyCallsByOrgResponse, error)
+	ListOrphanedTelephonyCalls(context.Context, *ListOrphanedTelephonyCallsRequest) (*ListOrphanedTelephonyCallsResponse, error)
+	LookupEntityByPhone(context.Context, *LookupEntityByPhoneRequest) (*LookupEntityByPhoneResponse, error)
 	UpsertTelephonyPipelineDID(context.Context, *UpsertTelephonyPipelineDIDRequest) (*UpsertTelephonyPipelineDIDResponse, error)
 	ListTelephonyPipelineDIDs(context.Context, *ListTelephonyPipelineDIDsRequest) (*ListTelephonyPipelineDIDsResponse, error)
 	DeleteTelephonyPipelineDID(context.Context, *DeleteTelephonyPipelineDIDRequest) (*DeleteTelephonyPipelineDIDResponse, error)
@@ -1307,6 +1374,21 @@ func (UnimplementedCRMServiceServer) TelephonyListCalls(context.Context, *Teleph
 }
 func (UnimplementedCRMServiceServer) TelephonyGetCredentials(context.Context, *TelephonyGetCredentialsRequest) (*TelephonyGetCredentialsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method TelephonyGetCredentials not implemented")
+}
+func (UnimplementedCRMServiceServer) CreateTelephonyCall(context.Context, *CreateTelephonyCallRequest) (*CreateTelephonyCallResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateTelephonyCall not implemented")
+}
+func (UnimplementedCRMServiceServer) UpdateTelephonyCallState(context.Context, *UpdateTelephonyCallStateRequest) (*UpdateTelephonyCallStateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateTelephonyCallState not implemented")
+}
+func (UnimplementedCRMServiceServer) ListTelephonyCallsByOrg(context.Context, *ListTelephonyCallsByOrgRequest) (*ListTelephonyCallsByOrgResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTelephonyCallsByOrg not implemented")
+}
+func (UnimplementedCRMServiceServer) ListOrphanedTelephonyCalls(context.Context, *ListOrphanedTelephonyCallsRequest) (*ListOrphanedTelephonyCallsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListOrphanedTelephonyCalls not implemented")
+}
+func (UnimplementedCRMServiceServer) LookupEntityByPhone(context.Context, *LookupEntityByPhoneRequest) (*LookupEntityByPhoneResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method LookupEntityByPhone not implemented")
 }
 func (UnimplementedCRMServiceServer) UpsertTelephonyPipelineDID(context.Context, *UpsertTelephonyPipelineDIDRequest) (*UpsertTelephonyPipelineDIDResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpsertTelephonyPipelineDID not implemented")
@@ -2556,6 +2638,96 @@ func _CRMService_TelephonyGetCredentials_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_CreateTelephonyCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTelephonyCallRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).CreateTelephonyCall(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_CreateTelephonyCall_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).CreateTelephonyCall(ctx, req.(*CreateTelephonyCallRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_UpdateTelephonyCallState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTelephonyCallStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).UpdateTelephonyCallState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_UpdateTelephonyCallState_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).UpdateTelephonyCallState(ctx, req.(*UpdateTelephonyCallStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ListTelephonyCallsByOrg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTelephonyCallsByOrgRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListTelephonyCallsByOrg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListTelephonyCallsByOrg_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListTelephonyCallsByOrg(ctx, req.(*ListTelephonyCallsByOrgRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ListOrphanedTelephonyCalls_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOrphanedTelephonyCallsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListOrphanedTelephonyCalls(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListOrphanedTelephonyCalls_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListOrphanedTelephonyCalls(ctx, req.(*ListOrphanedTelephonyCallsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_LookupEntityByPhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LookupEntityByPhoneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).LookupEntityByPhone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_LookupEntityByPhone_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).LookupEntityByPhone(ctx, req.(*LookupEntityByPhoneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_UpsertTelephonyPipelineDID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpsertTelephonyPipelineDIDRequest)
 	if err := dec(in); err != nil {
@@ -2956,6 +3128,26 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TelephonyGetCredentials",
 			Handler:    _CRMService_TelephonyGetCredentials_Handler,
+		},
+		{
+			MethodName: "CreateTelephonyCall",
+			Handler:    _CRMService_CreateTelephonyCall_Handler,
+		},
+		{
+			MethodName: "UpdateTelephonyCallState",
+			Handler:    _CRMService_UpdateTelephonyCallState_Handler,
+		},
+		{
+			MethodName: "ListTelephonyCallsByOrg",
+			Handler:    _CRMService_ListTelephonyCallsByOrg_Handler,
+		},
+		{
+			MethodName: "ListOrphanedTelephonyCalls",
+			Handler:    _CRMService_ListOrphanedTelephonyCalls_Handler,
+		},
+		{
+			MethodName: "LookupEntityByPhone",
+			Handler:    _CRMService_LookupEntityByPhone_Handler,
 		},
 		{
 			MethodName: "UpsertTelephonyPipelineDID",
