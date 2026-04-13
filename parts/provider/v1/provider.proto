@@ -71,6 +71,15 @@ message Part {
   CurrencyInfo currency_info = 23;
   string close_notify_at = 24;
   int32 user_city_id = 25;
+  int32 delivery_probability = 26;
+  Installment installment = 27;
+}
+
+// Installment holds installment payment details.
+message Installment {
+  string text = 1;
+  int32 price = 2;
+  int32 months = 3;
 }
 
 // CurrencyInfo holds currency conversion details.

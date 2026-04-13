@@ -247,34 +247,36 @@ func (x *ProviderResult) GetDurationMs() int64 {
 
 // Part represents a single auto part from a provider.
 type Part struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Oem           string                 `protobuf:"bytes,2,opt,name=oem,proto3" json:"oem,omitempty"`
-	PartNum       string                 `protobuf:"bytes,3,opt,name=part_num,json=partNum,proto3" json:"part_num,omitempty"`
-	Brand         string                 `protobuf:"bytes,4,opt,name=brand,proto3" json:"brand,omitempty"`
-	Name          string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
-	Price         int32                  `protobuf:"varint,6,opt,name=price,proto3" json:"price,omitempty"`
-	ExtraPrice    int32                  `protobuf:"varint,7,opt,name=extra_price,json=extraPrice,proto3" json:"extra_price,omitempty"`
-	Quantity      int32                  `protobuf:"varint,8,opt,name=quantity,proto3" json:"quantity,omitempty"`
-	DeliveryDate  string                 `protobuf:"bytes,9,opt,name=delivery_date,json=deliveryDate,proto3" json:"delivery_date,omitempty"`
-	DeliveryCost  int32                  `protobuf:"varint,10,opt,name=delivery_cost,json=deliveryCost,proto3" json:"delivery_cost,omitempty"`
-	ServiceId     int32                  `protobuf:"varint,11,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
-	ServiceName   string                 `protobuf:"bytes,12,opt,name=service_name,json=serviceName,proto3" json:"service_name,omitempty"`
-	Stock         string                 `protobuf:"bytes,13,opt,name=stock,proto3" json:"stock,omitempty"`
-	IsNew         bool                   `protobuf:"varint,14,opt,name=is_new,json=isNew,proto3" json:"is_new,omitempty"`
-	IsOriginal    bool                   `protobuf:"varint,15,opt,name=is_original,json=isOriginal,proto3" json:"is_original,omitempty"`
-	IsChosen      bool                   `protobuf:"varint,16,opt,name=is_chosen,json=isChosen,proto3" json:"is_chosen,omitempty"`
-	Photo         []string               `protobuf:"bytes,17,rep,name=photo,proto3" json:"photo,omitempty"`
-	Manufacturer  string                 `protobuf:"bytes,18,opt,name=manufacturer,proto3" json:"manufacturer,omitempty"`
-	Available     bool                   `protobuf:"varint,19,opt,name=available,proto3" json:"available,omitempty"`
-	Note          string                 `protobuf:"bytes,20,opt,name=note,proto3" json:"note,omitempty"`
-	Top           bool                   `protobuf:"varint,21,opt,name=top,proto3" json:"top,omitempty"`
-	KindId        int32                  `protobuf:"varint,22,opt,name=kind_id,json=kindId,proto3" json:"kind_id,omitempty"`
-	CurrencyInfo  *CurrencyInfo          `protobuf:"bytes,23,opt,name=currency_info,json=currencyInfo,proto3" json:"currency_info,omitempty"`
-	CloseNotifyAt string                 `protobuf:"bytes,24,opt,name=close_notify_at,json=closeNotifyAt,proto3" json:"close_notify_at,omitempty"`
-	UserCityId    int32                  `protobuf:"varint,25,opt,name=user_city_id,json=userCityId,proto3" json:"user_city_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	Id                  string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Oem                 string                 `protobuf:"bytes,2,opt,name=oem,proto3" json:"oem,omitempty"`
+	PartNum             string                 `protobuf:"bytes,3,opt,name=part_num,json=partNum,proto3" json:"part_num,omitempty"`
+	Brand               string                 `protobuf:"bytes,4,opt,name=brand,proto3" json:"brand,omitempty"`
+	Name                string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Price               int32                  `protobuf:"varint,6,opt,name=price,proto3" json:"price,omitempty"`
+	ExtraPrice          int32                  `protobuf:"varint,7,opt,name=extra_price,json=extraPrice,proto3" json:"extra_price,omitempty"`
+	Quantity            int32                  `protobuf:"varint,8,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	DeliveryDate        string                 `protobuf:"bytes,9,opt,name=delivery_date,json=deliveryDate,proto3" json:"delivery_date,omitempty"`
+	DeliveryCost        int32                  `protobuf:"varint,10,opt,name=delivery_cost,json=deliveryCost,proto3" json:"delivery_cost,omitempty"`
+	ServiceId           int32                  `protobuf:"varint,11,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	ServiceName         string                 `protobuf:"bytes,12,opt,name=service_name,json=serviceName,proto3" json:"service_name,omitempty"`
+	Stock               string                 `protobuf:"bytes,13,opt,name=stock,proto3" json:"stock,omitempty"`
+	IsNew               bool                   `protobuf:"varint,14,opt,name=is_new,json=isNew,proto3" json:"is_new,omitempty"`
+	IsOriginal          bool                   `protobuf:"varint,15,opt,name=is_original,json=isOriginal,proto3" json:"is_original,omitempty"`
+	IsChosen            bool                   `protobuf:"varint,16,opt,name=is_chosen,json=isChosen,proto3" json:"is_chosen,omitempty"`
+	Photo               []string               `protobuf:"bytes,17,rep,name=photo,proto3" json:"photo,omitempty"`
+	Manufacturer        string                 `protobuf:"bytes,18,opt,name=manufacturer,proto3" json:"manufacturer,omitempty"`
+	Available           bool                   `protobuf:"varint,19,opt,name=available,proto3" json:"available,omitempty"`
+	Note                string                 `protobuf:"bytes,20,opt,name=note,proto3" json:"note,omitempty"`
+	Top                 bool                   `protobuf:"varint,21,opt,name=top,proto3" json:"top,omitempty"`
+	KindId              int32                  `protobuf:"varint,22,opt,name=kind_id,json=kindId,proto3" json:"kind_id,omitempty"`
+	CurrencyInfo        *CurrencyInfo          `protobuf:"bytes,23,opt,name=currency_info,json=currencyInfo,proto3" json:"currency_info,omitempty"`
+	CloseNotifyAt       string                 `protobuf:"bytes,24,opt,name=close_notify_at,json=closeNotifyAt,proto3" json:"close_notify_at,omitempty"`
+	UserCityId          int32                  `protobuf:"varint,25,opt,name=user_city_id,json=userCityId,proto3" json:"user_city_id,omitempty"`
+	DeliveryProbability int32                  `protobuf:"varint,26,opt,name=delivery_probability,json=deliveryProbability,proto3" json:"delivery_probability,omitempty"`
+	Installment         *Installment           `protobuf:"bytes,27,opt,name=installment,proto3" json:"installment,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *Part) Reset() {
@@ -482,6 +484,81 @@ func (x *Part) GetUserCityId() int32 {
 	return 0
 }
 
+func (x *Part) GetDeliveryProbability() int32 {
+	if x != nil {
+		return x.DeliveryProbability
+	}
+	return 0
+}
+
+func (x *Part) GetInstallment() *Installment {
+	if x != nil {
+		return x.Installment
+	}
+	return nil
+}
+
+// Installment holds installment payment details.
+type Installment struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
+	Price         int32                  `protobuf:"varint,2,opt,name=price,proto3" json:"price,omitempty"`
+	Months        int32                  `protobuf:"varint,3,opt,name=months,proto3" json:"months,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Installment) Reset() {
+	*x = Installment{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Installment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Installment) ProtoMessage() {}
+
+func (x *Installment) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Installment.ProtoReflect.Descriptor instead.
+func (*Installment) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Installment) GetText() string {
+	if x != nil {
+		return x.Text
+	}
+	return ""
+}
+
+func (x *Installment) GetPrice() int32 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
+func (x *Installment) GetMonths() int32 {
+	if x != nil {
+		return x.Months
+	}
+	return 0
+}
+
 // CurrencyInfo holds currency conversion details.
 type CurrencyInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -495,7 +572,7 @@ type CurrencyInfo struct {
 
 func (x *CurrencyInfo) Reset() {
 	*x = CurrencyInfo{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[4]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -507,7 +584,7 @@ func (x *CurrencyInfo) String() string {
 func (*CurrencyInfo) ProtoMessage() {}
 
 func (x *CurrencyInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[4]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -520,7 +597,7 @@ func (x *CurrencyInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CurrencyInfo.ProtoReflect.Descriptor instead.
 func (*CurrencyInfo) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{4}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CurrencyInfo) GetFromCurrency() int32 {
@@ -562,7 +639,7 @@ type ListSearchHistoryRequest struct {
 
 func (x *ListSearchHistoryRequest) Reset() {
 	*x = ListSearchHistoryRequest{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[5]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -574,7 +651,7 @@ func (x *ListSearchHistoryRequest) String() string {
 func (*ListSearchHistoryRequest) ProtoMessage() {}
 
 func (x *ListSearchHistoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[5]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -587,7 +664,7 @@ func (x *ListSearchHistoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSearchHistoryRequest.ProtoReflect.Descriptor instead.
 func (*ListSearchHistoryRequest) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{5}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListSearchHistoryRequest) GetPage() int32 {
@@ -615,7 +692,7 @@ type ListSearchHistoryResponse struct {
 
 func (x *ListSearchHistoryResponse) Reset() {
 	*x = ListSearchHistoryResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[6]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -627,7 +704,7 @@ func (x *ListSearchHistoryResponse) String() string {
 func (*ListSearchHistoryResponse) ProtoMessage() {}
 
 func (x *ListSearchHistoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[6]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -640,7 +717,7 @@ func (x *ListSearchHistoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSearchHistoryResponse.ProtoReflect.Descriptor instead.
 func (*ListSearchHistoryResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{6}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ListSearchHistoryResponse) GetItems() []*SearchHistoryItem {
@@ -673,7 +750,7 @@ type SearchHistoryItem struct {
 
 func (x *SearchHistoryItem) Reset() {
 	*x = SearchHistoryItem{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[7]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -685,7 +762,7 @@ func (x *SearchHistoryItem) String() string {
 func (*SearchHistoryItem) ProtoMessage() {}
 
 func (x *SearchHistoryItem) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[7]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -698,7 +775,7 @@ func (x *SearchHistoryItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchHistoryItem.ProtoReflect.Descriptor instead.
 func (*SearchHistoryItem) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{7}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *SearchHistoryItem) GetId() int64 {
@@ -760,7 +837,7 @@ type GetSearchResultRequest struct {
 
 func (x *GetSearchResultRequest) Reset() {
 	*x = GetSearchResultRequest{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[8]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -772,7 +849,7 @@ func (x *GetSearchResultRequest) String() string {
 func (*GetSearchResultRequest) ProtoMessage() {}
 
 func (x *GetSearchResultRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[8]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -785,7 +862,7 @@ func (x *GetSearchResultRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSearchResultRequest.ProtoReflect.Descriptor instead.
 func (*GetSearchResultRequest) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{8}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetSearchResultRequest) GetSearchId() int64 {
@@ -805,7 +882,7 @@ type GetSearchResultResponse struct {
 
 func (x *GetSearchResultResponse) Reset() {
 	*x = GetSearchResultResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[9]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -817,7 +894,7 @@ func (x *GetSearchResultResponse) String() string {
 func (*GetSearchResultResponse) ProtoMessage() {}
 
 func (x *GetSearchResultResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[9]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -830,7 +907,7 @@ func (x *GetSearchResultResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSearchResultResponse.ProtoReflect.Descriptor instead.
 func (*GetSearchResultResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{9}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetSearchResultResponse) GetResults() []*SearchResultRecord {
@@ -858,7 +935,7 @@ type SearchResultRecord struct {
 
 func (x *SearchResultRecord) Reset() {
 	*x = SearchResultRecord{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[10]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -870,7 +947,7 @@ func (x *SearchResultRecord) String() string {
 func (*SearchResultRecord) ProtoMessage() {}
 
 func (x *SearchResultRecord) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[10]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -883,7 +960,7 @@ func (x *SearchResultRecord) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchResultRecord.ProtoReflect.Descriptor instead.
 func (*SearchResultRecord) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{10}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *SearchResultRecord) GetId() int64 {
@@ -974,7 +1051,7 @@ const file_parts_provider_v1_provider_proto_rawDesc = "" +
 	"\vstatus_code\x18\x05 \x01(\x05R\n" +
 	"statusCode\x12\x1f\n" +
 	"\vduration_ms\x18\x06 \x01(\x03R\n" +
-	"durationMs\"\xde\x05\n" +
+	"durationMs\"\xd3\x06\n" +
 	"\x04Part\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
 	"\x03oem\x18\x02 \x01(\tR\x03oem\x12\x19\n" +
@@ -1005,7 +1082,13 @@ const file_parts_provider_v1_provider_proto_rawDesc = "" +
 	"\rcurrency_info\x18\x17 \x01(\v2\x1f.parts.provider.v1.CurrencyInfoR\fcurrencyInfo\x12&\n" +
 	"\x0fclose_notify_at\x18\x18 \x01(\tR\rcloseNotifyAt\x12 \n" +
 	"\fuser_city_id\x18\x19 \x01(\x05R\n" +
-	"userCityId\"\x86\x01\n" +
+	"userCityId\x121\n" +
+	"\x14delivery_probability\x18\x1a \x01(\x05R\x13deliveryProbability\x12@\n" +
+	"\vinstallment\x18\x1b \x01(\v2\x1e.parts.provider.v1.InstallmentR\vinstallment\"O\n" +
+	"\vInstallment\x12\x12\n" +
+	"\x04text\x18\x01 \x01(\tR\x04text\x12\x14\n" +
+	"\x05price\x18\x02 \x01(\x05R\x05price\x12\x16\n" +
+	"\x06months\x18\x03 \x01(\x05R\x06months\"\x86\x01\n" +
 	"\fCurrencyInfo\x12#\n" +
 	"\rfrom_currency\x18\x01 \x01(\x05R\ffromCurrency\x12\x1f\n" +
 	"\vto_currency\x18\x02 \x01(\x05R\n" +
@@ -1063,40 +1146,42 @@ func file_parts_provider_v1_provider_proto_rawDescGZIP() []byte {
 	return file_parts_provider_v1_provider_proto_rawDescData
 }
 
-var file_parts_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_parts_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_parts_provider_v1_provider_proto_goTypes = []any{
 	(*SearchPartsRequest)(nil),        // 0: parts.provider.v1.SearchPartsRequest
 	(*SearchPartsResponse)(nil),       // 1: parts.provider.v1.SearchPartsResponse
 	(*ProviderResult)(nil),            // 2: parts.provider.v1.ProviderResult
 	(*Part)(nil),                      // 3: parts.provider.v1.Part
-	(*CurrencyInfo)(nil),              // 4: parts.provider.v1.CurrencyInfo
-	(*ListSearchHistoryRequest)(nil),  // 5: parts.provider.v1.ListSearchHistoryRequest
-	(*ListSearchHistoryResponse)(nil), // 6: parts.provider.v1.ListSearchHistoryResponse
-	(*SearchHistoryItem)(nil),         // 7: parts.provider.v1.SearchHistoryItem
-	(*GetSearchResultRequest)(nil),    // 8: parts.provider.v1.GetSearchResultRequest
-	(*GetSearchResultResponse)(nil),   // 9: parts.provider.v1.GetSearchResultResponse
-	(*SearchResultRecord)(nil),        // 10: parts.provider.v1.SearchResultRecord
-	(*timestamppb.Timestamp)(nil),     // 11: google.protobuf.Timestamp
+	(*Installment)(nil),               // 4: parts.provider.v1.Installment
+	(*CurrencyInfo)(nil),              // 5: parts.provider.v1.CurrencyInfo
+	(*ListSearchHistoryRequest)(nil),  // 6: parts.provider.v1.ListSearchHistoryRequest
+	(*ListSearchHistoryResponse)(nil), // 7: parts.provider.v1.ListSearchHistoryResponse
+	(*SearchHistoryItem)(nil),         // 8: parts.provider.v1.SearchHistoryItem
+	(*GetSearchResultRequest)(nil),    // 9: parts.provider.v1.GetSearchResultRequest
+	(*GetSearchResultResponse)(nil),   // 10: parts.provider.v1.GetSearchResultResponse
+	(*SearchResultRecord)(nil),        // 11: parts.provider.v1.SearchResultRecord
+	(*timestamppb.Timestamp)(nil),     // 12: google.protobuf.Timestamp
 }
 var file_parts_provider_v1_provider_proto_depIdxs = []int32{
 	2,  // 0: parts.provider.v1.SearchPartsResponse.results:type_name -> parts.provider.v1.ProviderResult
 	3,  // 1: parts.provider.v1.ProviderResult.parts:type_name -> parts.provider.v1.Part
-	4,  // 2: parts.provider.v1.Part.currency_info:type_name -> parts.provider.v1.CurrencyInfo
-	7,  // 3: parts.provider.v1.ListSearchHistoryResponse.items:type_name -> parts.provider.v1.SearchHistoryItem
-	11, // 4: parts.provider.v1.SearchHistoryItem.created_at:type_name -> google.protobuf.Timestamp
-	10, // 5: parts.provider.v1.GetSearchResultResponse.results:type_name -> parts.provider.v1.SearchResultRecord
-	11, // 6: parts.provider.v1.SearchResultRecord.created_at:type_name -> google.protobuf.Timestamp
-	0,  // 7: parts.provider.v1.PartsProviderService.SearchParts:input_type -> parts.provider.v1.SearchPartsRequest
-	5,  // 8: parts.provider.v1.PartsProviderService.ListSearchHistory:input_type -> parts.provider.v1.ListSearchHistoryRequest
-	8,  // 9: parts.provider.v1.PartsProviderService.GetSearchResult:input_type -> parts.provider.v1.GetSearchResultRequest
-	1,  // 10: parts.provider.v1.PartsProviderService.SearchParts:output_type -> parts.provider.v1.SearchPartsResponse
-	6,  // 11: parts.provider.v1.PartsProviderService.ListSearchHistory:output_type -> parts.provider.v1.ListSearchHistoryResponse
-	9,  // 12: parts.provider.v1.PartsProviderService.GetSearchResult:output_type -> parts.provider.v1.GetSearchResultResponse
-	10, // [10:13] is the sub-list for method output_type
-	7,  // [7:10] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	5,  // 2: parts.provider.v1.Part.currency_info:type_name -> parts.provider.v1.CurrencyInfo
+	4,  // 3: parts.provider.v1.Part.installment:type_name -> parts.provider.v1.Installment
+	8,  // 4: parts.provider.v1.ListSearchHistoryResponse.items:type_name -> parts.provider.v1.SearchHistoryItem
+	12, // 5: parts.provider.v1.SearchHistoryItem.created_at:type_name -> google.protobuf.Timestamp
+	11, // 6: parts.provider.v1.GetSearchResultResponse.results:type_name -> parts.provider.v1.SearchResultRecord
+	12, // 7: parts.provider.v1.SearchResultRecord.created_at:type_name -> google.protobuf.Timestamp
+	0,  // 8: parts.provider.v1.PartsProviderService.SearchParts:input_type -> parts.provider.v1.SearchPartsRequest
+	6,  // 9: parts.provider.v1.PartsProviderService.ListSearchHistory:input_type -> parts.provider.v1.ListSearchHistoryRequest
+	9,  // 10: parts.provider.v1.PartsProviderService.GetSearchResult:input_type -> parts.provider.v1.GetSearchResultRequest
+	1,  // 11: parts.provider.v1.PartsProviderService.SearchParts:output_type -> parts.provider.v1.SearchPartsResponse
+	7,  // 12: parts.provider.v1.PartsProviderService.ListSearchHistory:output_type -> parts.provider.v1.ListSearchHistoryResponse
+	10, // 13: parts.provider.v1.PartsProviderService.GetSearchResult:output_type -> parts.provider.v1.GetSearchResultResponse
+	11, // [11:14] is the sub-list for method output_type
+	8,  // [8:11] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_parts_provider_v1_provider_proto_init() }
@@ -1110,7 +1195,7 @@ func file_parts_provider_v1_provider_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_parts_provider_v1_provider_proto_rawDesc), len(file_parts_provider_v1_provider_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
