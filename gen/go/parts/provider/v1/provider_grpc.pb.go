@@ -22,6 +22,7 @@ const (
 	PartsProviderService_SearchParts_FullMethodName       = "/parts.provider.v1.PartsProviderService/SearchParts"
 	PartsProviderService_ListSearchHistory_FullMethodName = "/parts.provider.v1.PartsProviderService/ListSearchHistory"
 	PartsProviderService_GetSearchResult_FullMethodName   = "/parts.provider.v1.PartsProviderService/GetSearchResult"
+	PartsProviderService_SearchByProvider_FullMethodName  = "/parts.provider.v1.PartsProviderService/SearchByProvider"
 )
 
 // PartsProviderServiceClient is the client API for PartsProviderService service.
@@ -36,6 +37,8 @@ type PartsProviderServiceClient interface {
 	ListSearchHistory(ctx context.Context, in *ListSearchHistoryRequest, opts ...grpc.CallOption) (*ListSearchHistoryResponse, error)
 	// GetSearchResult returns raw provider results for a given search.
 	GetSearchResult(ctx context.Context, in *GetSearchResultRequest, opts ...grpc.CallOption) (*GetSearchResultResponse, error)
+	// SearchByProvider performs a search via a single named provider.
+	SearchByProvider(ctx context.Context, in *SearchByProviderRequest, opts ...grpc.CallOption) (*SearchByProviderResponse, error)
 }
 
 type partsProviderServiceClient struct {
@@ -76,6 +79,16 @@ func (c *partsProviderServiceClient) GetSearchResult(ctx context.Context, in *Ge
 	return out, nil
 }
 
+func (c *partsProviderServiceClient) SearchByProvider(ctx context.Context, in *SearchByProviderRequest, opts ...grpc.CallOption) (*SearchByProviderResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchByProviderResponse)
+	err := c.cc.Invoke(ctx, PartsProviderService_SearchByProvider_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PartsProviderServiceServer is the server API for PartsProviderService service.
 // All implementations must embed UnimplementedPartsProviderServiceServer
 // for forward compatibility.
@@ -88,6 +101,8 @@ type PartsProviderServiceServer interface {
 	ListSearchHistory(context.Context, *ListSearchHistoryRequest) (*ListSearchHistoryResponse, error)
 	// GetSearchResult returns raw provider results for a given search.
 	GetSearchResult(context.Context, *GetSearchResultRequest) (*GetSearchResultResponse, error)
+	// SearchByProvider performs a search via a single named provider.
+	SearchByProvider(context.Context, *SearchByProviderRequest) (*SearchByProviderResponse, error)
 	mustEmbedUnimplementedPartsProviderServiceServer()
 }
 
@@ -106,6 +121,9 @@ func (UnimplementedPartsProviderServiceServer) ListSearchHistory(context.Context
 }
 func (UnimplementedPartsProviderServiceServer) GetSearchResult(context.Context, *GetSearchResultRequest) (*GetSearchResultResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSearchResult not implemented")
+}
+func (UnimplementedPartsProviderServiceServer) SearchByProvider(context.Context, *SearchByProviderRequest) (*SearchByProviderResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SearchByProvider not implemented")
 }
 func (UnimplementedPartsProviderServiceServer) mustEmbedUnimplementedPartsProviderServiceServer() {}
 func (UnimplementedPartsProviderServiceServer) testEmbeddedByValue()                              {}
@@ -182,6 +200,24 @@ func _PartsProviderService_GetSearchResult_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PartsProviderService_SearchByProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchByProviderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PartsProviderServiceServer).SearchByProvider(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PartsProviderService_SearchByProvider_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PartsProviderServiceServer).SearchByProvider(ctx, req.(*SearchByProviderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PartsProviderService_ServiceDesc is the grpc.ServiceDesc for PartsProviderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -200,6 +236,10 @@ var PartsProviderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSearchResult",
 			Handler:    _PartsProviderService_GetSearchResult_Handler,
+		},
+		{
+			MethodName: "SearchByProvider",
+			Handler:    _PartsProviderService_SearchByProvider_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

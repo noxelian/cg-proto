@@ -107,6 +107,144 @@ func (x *SearchPartsRequest) GetVin() string {
 	return ""
 }
 
+// SearchByProviderRequest is the input for searching via a single provider.
+type SearchByProviderRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Provider      string                 `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"` // e.g. "autotrade", "emex", "rossko"
+	PartNums      []string               `protobuf:"bytes,2,rep,name=part_nums,json=partNums,proto3" json:"part_nums,omitempty"`
+	SearchCross   string                 `protobuf:"bytes,3,opt,name=search_cross,json=searchCross,proto3" json:"search_cross,omitempty"`
+	City          string                 `protobuf:"bytes,4,opt,name=city,proto3" json:"city,omitempty"`
+	Currency      int32                  `protobuf:"varint,5,opt,name=currency,proto3" json:"currency,omitempty"`
+	DetailName    string                 `protobuf:"bytes,6,opt,name=detail_name,json=detailName,proto3" json:"detail_name,omitempty"`
+	Vin           string                 `protobuf:"bytes,7,opt,name=vin,proto3" json:"vin,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchByProviderRequest) Reset() {
+	*x = SearchByProviderRequest{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchByProviderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchByProviderRequest) ProtoMessage() {}
+
+func (x *SearchByProviderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchByProviderRequest.ProtoReflect.Descriptor instead.
+func (*SearchByProviderRequest) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *SearchByProviderRequest) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *SearchByProviderRequest) GetPartNums() []string {
+	if x != nil {
+		return x.PartNums
+	}
+	return nil
+}
+
+func (x *SearchByProviderRequest) GetSearchCross() string {
+	if x != nil {
+		return x.SearchCross
+	}
+	return ""
+}
+
+func (x *SearchByProviderRequest) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *SearchByProviderRequest) GetCurrency() int32 {
+	if x != nil {
+		return x.Currency
+	}
+	return 0
+}
+
+func (x *SearchByProviderRequest) GetDetailName() string {
+	if x != nil {
+		return x.DetailName
+	}
+	return ""
+}
+
+func (x *SearchByProviderRequest) GetVin() string {
+	if x != nil {
+		return x.Vin
+	}
+	return ""
+}
+
+// SearchByProviderResponse contains result from a single provider.
+type SearchByProviderResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Result        *ProviderResult        `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchByProviderResponse) Reset() {
+	*x = SearchByProviderResponse{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchByProviderResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchByProviderResponse) ProtoMessage() {}
+
+func (x *SearchByProviderResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchByProviderResponse.ProtoReflect.Descriptor instead.
+func (*SearchByProviderResponse) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SearchByProviderResponse) GetResult() *ProviderResult {
+	if x != nil {
+		return x.Result
+	}
+	return nil
+}
+
 // SearchPartsResponse contains aggregated results from all providers.
 type SearchPartsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -118,7 +256,7 @@ type SearchPartsResponse struct {
 
 func (x *SearchPartsResponse) Reset() {
 	*x = SearchPartsResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[1]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -130,7 +268,7 @@ func (x *SearchPartsResponse) String() string {
 func (*SearchPartsResponse) ProtoMessage() {}
 
 func (x *SearchPartsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[1]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -143,7 +281,7 @@ func (x *SearchPartsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchPartsResponse.ProtoReflect.Descriptor instead.
 func (*SearchPartsResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{1}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SearchPartsResponse) GetSearchId() int64 {
@@ -175,7 +313,7 @@ type ProviderResult struct {
 
 func (x *ProviderResult) Reset() {
 	*x = ProviderResult{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[2]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -187,7 +325,7 @@ func (x *ProviderResult) String() string {
 func (*ProviderResult) ProtoMessage() {}
 
 func (x *ProviderResult) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[2]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -200,7 +338,7 @@ func (x *ProviderResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProviderResult.ProtoReflect.Descriptor instead.
 func (*ProviderResult) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{2}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ProviderResult) GetProvider() string {
@@ -281,7 +419,7 @@ type Part struct {
 
 func (x *Part) Reset() {
 	*x = Part{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[3]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -293,7 +431,7 @@ func (x *Part) String() string {
 func (*Part) ProtoMessage() {}
 
 func (x *Part) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[3]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -306,7 +444,7 @@ func (x *Part) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Part.ProtoReflect.Descriptor instead.
 func (*Part) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{3}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Part) GetId() string {
@@ -510,7 +648,7 @@ type Installment struct {
 
 func (x *Installment) Reset() {
 	*x = Installment{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[4]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -522,7 +660,7 @@ func (x *Installment) String() string {
 func (*Installment) ProtoMessage() {}
 
 func (x *Installment) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[4]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -535,7 +673,7 @@ func (x *Installment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Installment.ProtoReflect.Descriptor instead.
 func (*Installment) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{4}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *Installment) GetText() string {
@@ -572,7 +710,7 @@ type CurrencyInfo struct {
 
 func (x *CurrencyInfo) Reset() {
 	*x = CurrencyInfo{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[5]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -584,7 +722,7 @@ func (x *CurrencyInfo) String() string {
 func (*CurrencyInfo) ProtoMessage() {}
 
 func (x *CurrencyInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[5]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -597,7 +735,7 @@ func (x *CurrencyInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CurrencyInfo.ProtoReflect.Descriptor instead.
 func (*CurrencyInfo) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{5}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CurrencyInfo) GetFromCurrency() int32 {
@@ -639,7 +777,7 @@ type ListSearchHistoryRequest struct {
 
 func (x *ListSearchHistoryRequest) Reset() {
 	*x = ListSearchHistoryRequest{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[6]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -651,7 +789,7 @@ func (x *ListSearchHistoryRequest) String() string {
 func (*ListSearchHistoryRequest) ProtoMessage() {}
 
 func (x *ListSearchHistoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[6]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -664,7 +802,7 @@ func (x *ListSearchHistoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSearchHistoryRequest.ProtoReflect.Descriptor instead.
 func (*ListSearchHistoryRequest) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{6}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListSearchHistoryRequest) GetPage() int32 {
@@ -692,7 +830,7 @@ type ListSearchHistoryResponse struct {
 
 func (x *ListSearchHistoryResponse) Reset() {
 	*x = ListSearchHistoryResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[7]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -704,7 +842,7 @@ func (x *ListSearchHistoryResponse) String() string {
 func (*ListSearchHistoryResponse) ProtoMessage() {}
 
 func (x *ListSearchHistoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[7]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -717,7 +855,7 @@ func (x *ListSearchHistoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSearchHistoryResponse.ProtoReflect.Descriptor instead.
 func (*ListSearchHistoryResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{7}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ListSearchHistoryResponse) GetItems() []*SearchHistoryItem {
@@ -750,7 +888,7 @@ type SearchHistoryItem struct {
 
 func (x *SearchHistoryItem) Reset() {
 	*x = SearchHistoryItem{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[8]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -762,7 +900,7 @@ func (x *SearchHistoryItem) String() string {
 func (*SearchHistoryItem) ProtoMessage() {}
 
 func (x *SearchHistoryItem) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[8]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -775,7 +913,7 @@ func (x *SearchHistoryItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchHistoryItem.ProtoReflect.Descriptor instead.
 func (*SearchHistoryItem) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{8}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *SearchHistoryItem) GetId() int64 {
@@ -837,7 +975,7 @@ type GetSearchResultRequest struct {
 
 func (x *GetSearchResultRequest) Reset() {
 	*x = GetSearchResultRequest{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[9]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -849,7 +987,7 @@ func (x *GetSearchResultRequest) String() string {
 func (*GetSearchResultRequest) ProtoMessage() {}
 
 func (x *GetSearchResultRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[9]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -862,7 +1000,7 @@ func (x *GetSearchResultRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSearchResultRequest.ProtoReflect.Descriptor instead.
 func (*GetSearchResultRequest) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{9}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetSearchResultRequest) GetSearchId() int64 {
@@ -882,7 +1020,7 @@ type GetSearchResultResponse struct {
 
 func (x *GetSearchResultResponse) Reset() {
 	*x = GetSearchResultResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[10]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -894,7 +1032,7 @@ func (x *GetSearchResultResponse) String() string {
 func (*GetSearchResultResponse) ProtoMessage() {}
 
 func (x *GetSearchResultResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[10]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -907,7 +1045,7 @@ func (x *GetSearchResultResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSearchResultResponse.ProtoReflect.Descriptor instead.
 func (*GetSearchResultResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{10}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetSearchResultResponse) GetResults() []*SearchResultRecord {
@@ -935,7 +1073,7 @@ type SearchResultRecord struct {
 
 func (x *SearchResultRecord) Reset() {
 	*x = SearchResultRecord{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[11]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -947,7 +1085,7 @@ func (x *SearchResultRecord) String() string {
 func (*SearchResultRecord) ProtoMessage() {}
 
 func (x *SearchResultRecord) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[11]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -960,7 +1098,7 @@ func (x *SearchResultRecord) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchResultRecord.ProtoReflect.Descriptor instead.
 func (*SearchResultRecord) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{11}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *SearchResultRecord) GetId() int64 {
@@ -1038,7 +1176,18 @@ const file_parts_provider_v1_provider_proto_rawDesc = "" +
 	"\bcurrency\x18\x04 \x01(\x05R\bcurrency\x12\x1f\n" +
 	"\vdetail_name\x18\x05 \x01(\tR\n" +
 	"detailName\x12\x10\n" +
-	"\x03vin\x18\x06 \x01(\tR\x03vin\"o\n" +
+	"\x03vin\x18\x06 \x01(\tR\x03vin\"\xd8\x01\n" +
+	"\x17SearchByProviderRequest\x12\x1a\n" +
+	"\bprovider\x18\x01 \x01(\tR\bprovider\x12\x1b\n" +
+	"\tpart_nums\x18\x02 \x03(\tR\bpartNums\x12!\n" +
+	"\fsearch_cross\x18\x03 \x01(\tR\vsearchCross\x12\x12\n" +
+	"\x04city\x18\x04 \x01(\tR\x04city\x12\x1a\n" +
+	"\bcurrency\x18\x05 \x01(\x05R\bcurrency\x12\x1f\n" +
+	"\vdetail_name\x18\x06 \x01(\tR\n" +
+	"detailName\x12\x10\n" +
+	"\x03vin\x18\a \x01(\tR\x03vin\"U\n" +
+	"\x18SearchByProviderResponse\x129\n" +
+	"\x06result\x18\x01 \x01(\v2!.parts.provider.v1.ProviderResultR\x06result\"o\n" +
 	"\x13SearchPartsResponse\x12\x1b\n" +
 	"\tsearch_id\x18\x01 \x01(\x03R\bsearchId\x12;\n" +
 	"\aresults\x18\x02 \x03(\v2!.parts.provider.v1.ProviderResultR\aresults\"\xd2\x01\n" +
@@ -1128,11 +1277,12 @@ const file_parts_provider_v1_provider_proto_rawDesc = "" +
 	"\vduration_ms\x18\b \x01(\x05R\n" +
 	"durationMs\x129\n" +
 	"\n" +
-	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt2\xce\x02\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt2\xbb\x03\n" +
 	"\x14PartsProviderService\x12\\\n" +
 	"\vSearchParts\x12%.parts.provider.v1.SearchPartsRequest\x1a&.parts.provider.v1.SearchPartsResponse\x12n\n" +
 	"\x11ListSearchHistory\x12+.parts.provider.v1.ListSearchHistoryRequest\x1a,.parts.provider.v1.ListSearchHistoryResponse\x12h\n" +
-	"\x0fGetSearchResult\x12).parts.provider.v1.GetSearchResultRequest\x1a*.parts.provider.v1.GetSearchResultResponseB<Z:github.com/4ubak/cg-proto/gen/go/parts/provider;providerv1b\x06proto3"
+	"\x0fGetSearchResult\x12).parts.provider.v1.GetSearchResultRequest\x1a*.parts.provider.v1.GetSearchResultResponse\x12k\n" +
+	"\x10SearchByProvider\x12*.parts.provider.v1.SearchByProviderRequest\x1a+.parts.provider.v1.SearchByProviderResponseB<Z:github.com/4ubak/cg-proto/gen/go/parts/provider;providerv1b\x06proto3"
 
 var (
 	file_parts_provider_v1_provider_proto_rawDescOnce sync.Once
@@ -1146,42 +1296,47 @@ func file_parts_provider_v1_provider_proto_rawDescGZIP() []byte {
 	return file_parts_provider_v1_provider_proto_rawDescData
 }
 
-var file_parts_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_parts_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_parts_provider_v1_provider_proto_goTypes = []any{
 	(*SearchPartsRequest)(nil),        // 0: parts.provider.v1.SearchPartsRequest
-	(*SearchPartsResponse)(nil),       // 1: parts.provider.v1.SearchPartsResponse
-	(*ProviderResult)(nil),            // 2: parts.provider.v1.ProviderResult
-	(*Part)(nil),                      // 3: parts.provider.v1.Part
-	(*Installment)(nil),               // 4: parts.provider.v1.Installment
-	(*CurrencyInfo)(nil),              // 5: parts.provider.v1.CurrencyInfo
-	(*ListSearchHistoryRequest)(nil),  // 6: parts.provider.v1.ListSearchHistoryRequest
-	(*ListSearchHistoryResponse)(nil), // 7: parts.provider.v1.ListSearchHistoryResponse
-	(*SearchHistoryItem)(nil),         // 8: parts.provider.v1.SearchHistoryItem
-	(*GetSearchResultRequest)(nil),    // 9: parts.provider.v1.GetSearchResultRequest
-	(*GetSearchResultResponse)(nil),   // 10: parts.provider.v1.GetSearchResultResponse
-	(*SearchResultRecord)(nil),        // 11: parts.provider.v1.SearchResultRecord
-	(*timestamppb.Timestamp)(nil),     // 12: google.protobuf.Timestamp
+	(*SearchByProviderRequest)(nil),   // 1: parts.provider.v1.SearchByProviderRequest
+	(*SearchByProviderResponse)(nil),  // 2: parts.provider.v1.SearchByProviderResponse
+	(*SearchPartsResponse)(nil),       // 3: parts.provider.v1.SearchPartsResponse
+	(*ProviderResult)(nil),            // 4: parts.provider.v1.ProviderResult
+	(*Part)(nil),                      // 5: parts.provider.v1.Part
+	(*Installment)(nil),               // 6: parts.provider.v1.Installment
+	(*CurrencyInfo)(nil),              // 7: parts.provider.v1.CurrencyInfo
+	(*ListSearchHistoryRequest)(nil),  // 8: parts.provider.v1.ListSearchHistoryRequest
+	(*ListSearchHistoryResponse)(nil), // 9: parts.provider.v1.ListSearchHistoryResponse
+	(*SearchHistoryItem)(nil),         // 10: parts.provider.v1.SearchHistoryItem
+	(*GetSearchResultRequest)(nil),    // 11: parts.provider.v1.GetSearchResultRequest
+	(*GetSearchResultResponse)(nil),   // 12: parts.provider.v1.GetSearchResultResponse
+	(*SearchResultRecord)(nil),        // 13: parts.provider.v1.SearchResultRecord
+	(*timestamppb.Timestamp)(nil),     // 14: google.protobuf.Timestamp
 }
 var file_parts_provider_v1_provider_proto_depIdxs = []int32{
-	2,  // 0: parts.provider.v1.SearchPartsResponse.results:type_name -> parts.provider.v1.ProviderResult
-	3,  // 1: parts.provider.v1.ProviderResult.parts:type_name -> parts.provider.v1.Part
-	5,  // 2: parts.provider.v1.Part.currency_info:type_name -> parts.provider.v1.CurrencyInfo
-	4,  // 3: parts.provider.v1.Part.installment:type_name -> parts.provider.v1.Installment
-	8,  // 4: parts.provider.v1.ListSearchHistoryResponse.items:type_name -> parts.provider.v1.SearchHistoryItem
-	12, // 5: parts.provider.v1.SearchHistoryItem.created_at:type_name -> google.protobuf.Timestamp
-	11, // 6: parts.provider.v1.GetSearchResultResponse.results:type_name -> parts.provider.v1.SearchResultRecord
-	12, // 7: parts.provider.v1.SearchResultRecord.created_at:type_name -> google.protobuf.Timestamp
-	0,  // 8: parts.provider.v1.PartsProviderService.SearchParts:input_type -> parts.provider.v1.SearchPartsRequest
-	6,  // 9: parts.provider.v1.PartsProviderService.ListSearchHistory:input_type -> parts.provider.v1.ListSearchHistoryRequest
-	9,  // 10: parts.provider.v1.PartsProviderService.GetSearchResult:input_type -> parts.provider.v1.GetSearchResultRequest
-	1,  // 11: parts.provider.v1.PartsProviderService.SearchParts:output_type -> parts.provider.v1.SearchPartsResponse
-	7,  // 12: parts.provider.v1.PartsProviderService.ListSearchHistory:output_type -> parts.provider.v1.ListSearchHistoryResponse
-	10, // 13: parts.provider.v1.PartsProviderService.GetSearchResult:output_type -> parts.provider.v1.GetSearchResultResponse
-	11, // [11:14] is the sub-list for method output_type
-	8,  // [8:11] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	4,  // 0: parts.provider.v1.SearchByProviderResponse.result:type_name -> parts.provider.v1.ProviderResult
+	4,  // 1: parts.provider.v1.SearchPartsResponse.results:type_name -> parts.provider.v1.ProviderResult
+	5,  // 2: parts.provider.v1.ProviderResult.parts:type_name -> parts.provider.v1.Part
+	7,  // 3: parts.provider.v1.Part.currency_info:type_name -> parts.provider.v1.CurrencyInfo
+	6,  // 4: parts.provider.v1.Part.installment:type_name -> parts.provider.v1.Installment
+	10, // 5: parts.provider.v1.ListSearchHistoryResponse.items:type_name -> parts.provider.v1.SearchHistoryItem
+	14, // 6: parts.provider.v1.SearchHistoryItem.created_at:type_name -> google.protobuf.Timestamp
+	13, // 7: parts.provider.v1.GetSearchResultResponse.results:type_name -> parts.provider.v1.SearchResultRecord
+	14, // 8: parts.provider.v1.SearchResultRecord.created_at:type_name -> google.protobuf.Timestamp
+	0,  // 9: parts.provider.v1.PartsProviderService.SearchParts:input_type -> parts.provider.v1.SearchPartsRequest
+	8,  // 10: parts.provider.v1.PartsProviderService.ListSearchHistory:input_type -> parts.provider.v1.ListSearchHistoryRequest
+	11, // 11: parts.provider.v1.PartsProviderService.GetSearchResult:input_type -> parts.provider.v1.GetSearchResultRequest
+	1,  // 12: parts.provider.v1.PartsProviderService.SearchByProvider:input_type -> parts.provider.v1.SearchByProviderRequest
+	3,  // 13: parts.provider.v1.PartsProviderService.SearchParts:output_type -> parts.provider.v1.SearchPartsResponse
+	9,  // 14: parts.provider.v1.PartsProviderService.ListSearchHistory:output_type -> parts.provider.v1.ListSearchHistoryResponse
+	12, // 15: parts.provider.v1.PartsProviderService.GetSearchResult:output_type -> parts.provider.v1.GetSearchResultResponse
+	2,  // 16: parts.provider.v1.PartsProviderService.SearchByProvider:output_type -> parts.provider.v1.SearchByProviderResponse
+	13, // [13:17] is the sub-list for method output_type
+	9,  // [9:13] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_parts_provider_v1_provider_proto_init() }
@@ -1195,7 +1350,7 @@ func file_parts_provider_v1_provider_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_parts_provider_v1_provider_proto_rawDesc), len(file_parts_provider_v1_provider_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

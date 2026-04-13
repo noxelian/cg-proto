@@ -16,6 +16,9 @@ service PartsProviderService {
 
   // GetSearchResult returns raw provider results for a given search.
   rpc GetSearchResult(GetSearchResultRequest) returns (GetSearchResultResponse);
+
+  // SearchByProvider performs a search via a single named provider.
+  rpc SearchByProvider(SearchByProviderRequest) returns (SearchByProviderResponse);
 }
 
 // SearchPartsRequest is the input for searching parts across providers.
@@ -26,6 +29,22 @@ message SearchPartsRequest {
   int32 currency = 4;
   string detail_name = 5;
   string vin = 6;
+}
+
+// SearchByProviderRequest is the input for searching via a single provider.
+message SearchByProviderRequest {
+  string provider = 1;        // e.g. "autotrade", "emex", "rossko"
+  repeated string part_nums = 2;
+  string search_cross = 3;
+  string city = 4;
+  int32 currency = 5;
+  string detail_name = 6;
+  string vin = 7;
+}
+
+// SearchByProviderResponse contains result from a single provider.
+message SearchByProviderResponse {
+  ProviderResult result = 1;
 }
 
 // SearchPartsResponse contains aggregated results from all providers.
