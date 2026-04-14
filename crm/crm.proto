@@ -140,6 +140,9 @@ service CRMService {
   rpc DeleteTelephonyUserExtension(DeleteTelephonyUserExtensionRequest)   returns (DeleteTelephonyUserExtensionResponse);
   rpc UpdateTelephonyUserExtensionDND(UpdateTelephonyUserExtensionDNDRequest) returns (UpdateTelephonyUserExtensionDNDResponse);
 
+  // Phase 20 D-06: resolve PJSIP extension → owning org+user for Stasis outbound dispatch.
+  rpc LookupExtensionByNumber(LookupExtensionByNumberRequest) returns (LookupExtensionByNumberResponse);
+
   rpc GetTelephonyProviderConfig(GetTelephonyProviderConfigRequest)       returns (GetTelephonyProviderConfigResponse);
   rpc UpdateTelephonyProviderConfig(UpdateTelephonyProviderConfigRequest) returns (UpdateTelephonyProviderConfigResponse);
 
@@ -1425,6 +1428,22 @@ message ListTelephonyUserExtensionsRequest {
 }
 message ListTelephonyUserExtensionsResponse {
   repeated TelephonyUserExtension extensions = 1;
+}
+
+// Phase 20 D-06: LookupExtensionByNumber resolves an extension string to its
+// owning organization_id+user_id. Used by cg-bff handleStasisStart when the
+// manager leg enters Stasis with args[0]=="outbound" and we need to identify
+// which org/user owns PJSIP/{extension}. Internal RPC — never exposed to
+// end-user HTTP (see threat model T-20-01-04).
+message LookupExtensionByNumberRequest {
+  string            extension = 1;  // e.g. "1002"
+  TelephonyProvider provider  = 2;  // PROVIDER_ASTERISK
+}
+message LookupExtensionByNumberResponse {
+  string organization_id = 1;
+  string user_id         = 2;
+  string extension       = 3;
+  bool   found           = 4;  // false => no row; org/user/ext will be empty
 }
 
 message DeleteTelephonyUserExtensionRequest {

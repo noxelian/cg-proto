@@ -99,6 +99,7 @@ const (
 	CRMService_ListTelephonyUserExtensions_FullMethodName     = "/crm.v1.CRMService/ListTelephonyUserExtensions"
 	CRMService_DeleteTelephonyUserExtension_FullMethodName    = "/crm.v1.CRMService/DeleteTelephonyUserExtension"
 	CRMService_UpdateTelephonyUserExtensionDND_FullMethodName = "/crm.v1.CRMService/UpdateTelephonyUserExtensionDND"
+	CRMService_LookupExtensionByNumber_FullMethodName         = "/crm.v1.CRMService/LookupExtensionByNumber"
 	CRMService_GetTelephonyProviderConfig_FullMethodName      = "/crm.v1.CRMService/GetTelephonyProviderConfig"
 	CRMService_UpdateTelephonyProviderConfig_FullMethodName   = "/crm.v1.CRMService/UpdateTelephonyProviderConfig"
 	CRMService_ListTelephonyIVRConfig_FullMethodName          = "/crm.v1.CRMService/ListTelephonyIVRConfig"
@@ -240,6 +241,8 @@ type CRMServiceClient interface {
 	ListTelephonyUserExtensions(ctx context.Context, in *ListTelephonyUserExtensionsRequest, opts ...grpc.CallOption) (*ListTelephonyUserExtensionsResponse, error)
 	DeleteTelephonyUserExtension(ctx context.Context, in *DeleteTelephonyUserExtensionRequest, opts ...grpc.CallOption) (*DeleteTelephonyUserExtensionResponse, error)
 	UpdateTelephonyUserExtensionDND(ctx context.Context, in *UpdateTelephonyUserExtensionDNDRequest, opts ...grpc.CallOption) (*UpdateTelephonyUserExtensionDNDResponse, error)
+	// Phase 20 D-06: resolve PJSIP extension → owning org+user for Stasis outbound dispatch.
+	LookupExtensionByNumber(ctx context.Context, in *LookupExtensionByNumberRequest, opts ...grpc.CallOption) (*LookupExtensionByNumberResponse, error)
 	GetTelephonyProviderConfig(ctx context.Context, in *GetTelephonyProviderConfigRequest, opts ...grpc.CallOption) (*GetTelephonyProviderConfigResponse, error)
 	UpdateTelephonyProviderConfig(ctx context.Context, in *UpdateTelephonyProviderConfigRequest, opts ...grpc.CallOption) (*UpdateTelephonyProviderConfigResponse, error)
 	// Phase 14: IVR Config + Business Hours + Greeting + Dialplan
@@ -1075,6 +1078,16 @@ func (c *cRMServiceClient) UpdateTelephonyUserExtensionDND(ctx context.Context, 
 	return out, nil
 }
 
+func (c *cRMServiceClient) LookupExtensionByNumber(ctx context.Context, in *LookupExtensionByNumberRequest, opts ...grpc.CallOption) (*LookupExtensionByNumberResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LookupExtensionByNumberResponse)
+	err := c.cc.Invoke(ctx, CRMService_LookupExtensionByNumber_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) GetTelephonyProviderConfig(ctx context.Context, in *GetTelephonyProviderConfigRequest, opts ...grpc.CallOption) (*GetTelephonyProviderConfigResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTelephonyProviderConfigResponse)
@@ -1313,6 +1326,8 @@ type CRMServiceServer interface {
 	ListTelephonyUserExtensions(context.Context, *ListTelephonyUserExtensionsRequest) (*ListTelephonyUserExtensionsResponse, error)
 	DeleteTelephonyUserExtension(context.Context, *DeleteTelephonyUserExtensionRequest) (*DeleteTelephonyUserExtensionResponse, error)
 	UpdateTelephonyUserExtensionDND(context.Context, *UpdateTelephonyUserExtensionDNDRequest) (*UpdateTelephonyUserExtensionDNDResponse, error)
+	// Phase 20 D-06: resolve PJSIP extension → owning org+user for Stasis outbound dispatch.
+	LookupExtensionByNumber(context.Context, *LookupExtensionByNumberRequest) (*LookupExtensionByNumberResponse, error)
 	GetTelephonyProviderConfig(context.Context, *GetTelephonyProviderConfigRequest) (*GetTelephonyProviderConfigResponse, error)
 	UpdateTelephonyProviderConfig(context.Context, *UpdateTelephonyProviderConfigRequest) (*UpdateTelephonyProviderConfigResponse, error)
 	// Phase 14: IVR Config + Business Hours + Greeting + Dialplan
@@ -1575,6 +1590,9 @@ func (UnimplementedCRMServiceServer) DeleteTelephonyUserExtension(context.Contex
 }
 func (UnimplementedCRMServiceServer) UpdateTelephonyUserExtensionDND(context.Context, *UpdateTelephonyUserExtensionDNDRequest) (*UpdateTelephonyUserExtensionDNDResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTelephonyUserExtensionDND not implemented")
+}
+func (UnimplementedCRMServiceServer) LookupExtensionByNumber(context.Context, *LookupExtensionByNumberRequest) (*LookupExtensionByNumberResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method LookupExtensionByNumber not implemented")
 }
 func (UnimplementedCRMServiceServer) GetTelephonyProviderConfig(context.Context, *GetTelephonyProviderConfigRequest) (*GetTelephonyProviderConfigResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTelephonyProviderConfig not implemented")
@@ -3070,6 +3088,24 @@ func _CRMService_UpdateTelephonyUserExtensionDND_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_LookupExtensionByNumber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LookupExtensionByNumberRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).LookupExtensionByNumber(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_LookupExtensionByNumber_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).LookupExtensionByNumber(ctx, req.(*LookupExtensionByNumberRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_GetTelephonyProviderConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTelephonyProviderConfigRequest)
 	if err := dec(in); err != nil {
@@ -3594,6 +3630,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateTelephonyUserExtensionDND",
 			Handler:    _CRMService_UpdateTelephonyUserExtensionDND_Handler,
+		},
+		{
+			MethodName: "LookupExtensionByNumber",
+			Handler:    _CRMService_LookupExtensionByNumber_Handler,
 		},
 		{
 			MethodName: "GetTelephonyProviderConfig",
