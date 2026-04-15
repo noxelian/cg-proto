@@ -3991,6 +3991,7 @@ func (x *ListDealsRequest) GetTaskFilterMode() string {
 type ListDealsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Deals         []*DealProto           `protobuf:"bytes,1,rep,name=deals,proto3" json:"deals,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"` // total rows matching filter (for pagination UI)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4030,6 +4031,13 @@ func (x *ListDealsResponse) GetDeals() []*DealProto {
 		return x.Deals
 	}
 	return nil
+}
+
+func (x *ListDealsResponse) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
 }
 
 type UpdateDealRequest struct {
@@ -14446,9 +14454,10 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\vtask_due_to\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\ttaskDueTo\x12\x1f\n" +
 	"\vtask_status\x18\x0e \x03(\tR\n" +
 	"taskStatus\x12(\n" +
-	"\x10task_filter_mode\x18\x0f \x01(\tR\x0etaskFilterMode\"<\n" +
+	"\x10task_filter_mode\x18\x0f \x01(\tR\x0etaskFilterMode\"R\n" +
 	"\x11ListDealsResponse\x12'\n" +
-	"\x05deals\x18\x01 \x03(\v2\x11.crm.v1.DealProtoR\x05deals\"\x99\x02\n" +
+	"\x05deals\x18\x01 \x03(\v2\x11.crm.v1.DealProtoR\x05deals\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\x99\x02\n" +
 	"\x11UpdateDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x14\n" +

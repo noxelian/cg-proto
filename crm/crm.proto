@@ -595,6 +595,7 @@ message ListDealsRequest {
 
 message ListDealsResponse {
   repeated DealProto deals = 1;
+  int64 total              = 2; // total rows matching filter (for pagination UI)
 }
 
 message UpdateDealRequest {
