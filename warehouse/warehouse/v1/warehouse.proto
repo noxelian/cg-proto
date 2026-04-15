@@ -1,0 +1,598 @@
+syntax = "proto3";
+
+package warehouse.warehouse.v1;
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/warehouse/warehouse/v1;warehousev1";
+
+import "google/protobuf/timestamp.proto";
+
+service WarehouseService {
+  // --- Warehouse CRUD ---
+  rpc CreateWarehouse(CreateWarehouseRequest) returns (CreateWarehouseResponse);
+  rpc GetWarehouse(GetWarehouseRequest) returns (GetWarehouseResponse);
+  rpc UpdateWarehouse(UpdateWarehouseRequest) returns (UpdateWarehouseResponse);
+  rpc ListWarehouses(ListWarehousesRequest) returns (ListWarehousesResponse);
+
+  // --- Storage Location CRUD ---
+  rpc CreateStorageLocation(CreateStorageLocationRequest) returns (CreateStorageLocationResponse);
+  rpc UpdateStorageLocation(UpdateStorageLocationRequest) returns (UpdateStorageLocationResponse);
+  rpc ListStorageLocations(ListStorageLocationsRequest) returns (ListStorageLocationsResponse);
+  rpc DeleteStorageLocation(DeleteStorageLocationRequest) returns (DeleteStorageLocationResponse);
+
+  // --- Item Management ---
+  rpc CreateItem(CreateItemRequest) returns (CreateItemResponse);
+  rpc GetItem(GetItemRequest) returns (GetItemResponse);
+  rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse);
+  rpc ListItems(ListItemsRequest) returns (ListItemsResponse);
+  rpc SearchItems(SearchItemsRequest) returns (SearchItemsResponse);
+
+  // --- Stock Movements ---
+  rpc ReceiveStock(ReceiveStockRequest) returns (ReceiveStockResponse);
+  rpc WriteOffStock(WriteOffStockRequest) returns (WriteOffStockResponse);
+  rpc TransferStock(TransferStockRequest) returns (TransferStockResponse);
+  rpc ReturnToSupplier(ReturnToSupplierRequest) returns (ReturnToSupplierResponse);
+  rpc ListStockMovements(ListStockMovementsRequest) returns (ListStockMovementsResponse);
+
+  // --- Barcode ---
+  rpc GenerateBarcode(GenerateBarcodeRequest) returns (GenerateBarcodeResponse);
+  rpc GenerateQR(GenerateQRRequest) returns (GenerateQRResponse);
+  rpc GenerateLabel(GenerateLabelRequest) returns (GenerateLabelResponse);
+
+  // --- Inventory Check ---
+  rpc StartInventoryCheck(StartInventoryCheckRequest) returns (StartInventoryCheckResponse);
+  rpc RecordActualQuantity(RecordActualQuantityRequest) returns (RecordActualQuantityResponse);
+  rpc CompleteInventoryCheck(CompleteInventoryCheckRequest) returns (CompleteInventoryCheckResponse);
+  rpc GetInventoryCheck(GetInventoryCheckRequest) returns (GetInventoryCheckResponse);
+  rpc GetDiscrepancies(GetDiscrepanciesRequest) returns (GetDiscrepanciesResponse);
+
+  // --- Reservations ---
+  rpc ReserveForRepairOrder(ReserveForRepairOrderRequest) returns (ReserveForRepairOrderResponse);
+  rpc ReleaseReservation(ReleaseReservationRequest) returns (ReleaseReservationResponse);
+  rpc ConfirmWriteOff(ConfirmWriteOffRequest) returns (ConfirmWriteOffResponse);
+  rpc ListReservations(ListReservationsRequest) returns (ListReservationsResponse);
+
+  // --- Search for cg-parts-provider integration ---
+  rpc SearchAvailableParts(SearchAvailablePartsRequest) returns (SearchAvailablePartsResponse);
+}
+
+// ============================================================
+// Enums
+// ============================================================
+
+enum WarehouseType {
+  WAREHOUSE_TYPE_UNSPECIFIED = 0;
+  WAREHOUSE_TYPE_CENTRAL = 1;
+  WAREHOUSE_TYPE_WORKSHOP = 2;
+}
+
+enum ItemCondition {
+  ITEM_CONDITION_UNSPECIFIED = 0;
+  ITEM_CONDITION_NEW = 1;
+  ITEM_CONDITION_USED = 2;
+  ITEM_CONDITION_REFURBISHED = 3;
+}
+
+enum ItemUnit {
+  ITEM_UNIT_UNSPECIFIED = 0;
+  ITEM_UNIT_PCS = 1;
+  ITEM_UNIT_SET = 2;
+}
+
+enum MovementType {
+  MOVEMENT_TYPE_UNSPECIFIED = 0;
+  MOVEMENT_TYPE_INCOME = 1;
+  MOVEMENT_TYPE_EXPENSE = 2;
+  MOVEMENT_TYPE_TRANSFER = 3;
+  MOVEMENT_TYPE_RETURN = 4;
+  MOVEMENT_TYPE_ADJUSTMENT = 5;
+}
+
+enum ReservationStatus {
+  RESERVATION_STATUS_UNSPECIFIED = 0;
+  RESERVATION_STATUS_RESERVED = 1;
+  RESERVATION_STATUS_RELEASED = 2;
+  RESERVATION_STATUS_WRITTEN_OFF = 3;
+}
+
+enum InventoryCheckStatus {
+  INVENTORY_CHECK_STATUS_UNSPECIFIED = 0;
+  INVENTORY_CHECK_STATUS_IN_PROGRESS = 1;
+  INVENTORY_CHECK_STATUS_COMPLETED = 2;
+  INVENTORY_CHECK_STATUS_CANCELLED = 3;
+}
+
+// ============================================================
+// Core Messages
+// ============================================================
+
+message Warehouse {
+  int64 id = 1;
+  string org_id = 2;
+  int64 workshop_id = 3;
+  string name = 4;
+  string address = 5;
+  WarehouseType type = 6;
+  bool is_active = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message StorageLocation {
+  int64 id = 1;
+  int64 warehouse_id = 2;
+  string code = 3;
+  string name = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
+message WarehouseItem {
+  int64 id = 1;
+  int64 warehouse_id = 2;
+  string oem_number = 3;
+  string brand = 4;
+  string name = 5;
+  string description = 6;
+  string category = 7;
+  ItemUnit unit = 8;
+  ItemCondition condition = 9;
+  int32 quantity = 10;
+  int32 min_quantity = 11;
+  int64 cost_price = 12;
+  int64 sell_price = 13;
+  int64 storage_location_id = 14;
+  string barcode = 15;
+  string qr_data = 16;
+  google.protobuf.Timestamp created_at = 17;
+  google.protobuf.Timestamp updated_at = 18;
+}
+
+message StockMovement {
+  int64 id = 1;
+  int64 warehouse_item_id = 2;
+  MovementType type = 3;
+  int32 quantity = 4;
+  int64 from_warehouse_id = 5;
+  int64 to_warehouse_id = 6;
+  int64 repair_order_id = 7;
+  string invoice_number = 8;
+  string supplier_info = 9;
+  string reason = 10;
+  int64 performed_by = 11;
+  google.protobuf.Timestamp created_at = 12;
+}
+
+message InventoryCheck {
+  int64 id = 1;
+  int64 warehouse_id = 2;
+  InventoryCheckStatus status = 3;
+  google.protobuf.Timestamp started_at = 4;
+  google.protobuf.Timestamp completed_at = 5;
+  int64 performed_by = 6;
+}
+
+message InventoryCheckItem {
+  int64 id = 1;
+  int64 check_id = 2;
+  int64 warehouse_item_id = 3;
+  int32 system_quantity = 4;
+  int32 actual_quantity = 5;
+  int32 discrepancy = 6;
+  string item_name = 7;
+  string oem_number = 8;
+}
+
+message Reservation {
+  int64 id = 1;
+  int64 warehouse_item_id = 2;
+  int64 repair_order_id = 3;
+  int32 quantity = 4;
+  ReservationStatus status = 5;
+  int64 reserved_by = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+// ============================================================
+// Warehouse CRUD
+// ============================================================
+
+message CreateWarehouseRequest {
+  string org_id = 1;
+  int64 workshop_id = 2;
+  string name = 3;
+  string address = 4;
+  WarehouseType type = 5;
+}
+
+message CreateWarehouseResponse {
+  Warehouse warehouse = 1;
+}
+
+message GetWarehouseRequest {
+  int64 id = 1;
+}
+
+message GetWarehouseResponse {
+  Warehouse warehouse = 1;
+}
+
+message UpdateWarehouseRequest {
+  int64 id = 1;
+  string name = 2;
+  string address = 3;
+  bool is_active = 4;
+}
+
+message UpdateWarehouseResponse {
+  Warehouse warehouse = 1;
+}
+
+message ListWarehousesRequest {
+  string org_id = 1;
+  int64 workshop_id = 2;
+  WarehouseType type = 3;
+  int32 page = 4;
+  int32 page_size = 5;
+}
+
+message ListWarehousesResponse {
+  repeated Warehouse warehouses = 1;
+  int32 total = 2;
+}
+
+// ============================================================
+// Storage Location CRUD
+// ============================================================
+
+message CreateStorageLocationRequest {
+  int64 warehouse_id = 1;
+  string code = 2;
+  string name = 3;
+}
+
+message CreateStorageLocationResponse {
+  StorageLocation location = 1;
+}
+
+message UpdateStorageLocationRequest {
+  int64 id = 1;
+  string code = 2;
+  string name = 3;
+}
+
+message UpdateStorageLocationResponse {
+  StorageLocation location = 1;
+}
+
+message ListStorageLocationsRequest {
+  int64 warehouse_id = 1;
+}
+
+message ListStorageLocationsResponse {
+  repeated StorageLocation locations = 1;
+}
+
+message DeleteStorageLocationRequest {
+  int64 id = 1;
+}
+
+message DeleteStorageLocationResponse {}
+
+// ============================================================
+// Item Management
+// ============================================================
+
+message CreateItemRequest {
+  int64 warehouse_id = 1;
+  string oem_number = 2;
+  string brand = 3;
+  string name = 4;
+  string description = 5;
+  string category = 6;
+  ItemUnit unit = 7;
+  ItemCondition condition = 8;
+  int32 min_quantity = 9;
+  int64 cost_price = 10;
+  int64 sell_price = 11;
+  int64 storage_location_id = 12;
+}
+
+message CreateItemResponse {
+  WarehouseItem item = 1;
+}
+
+message GetItemRequest {
+  int64 id = 1;
+}
+
+message GetItemResponse {
+  WarehouseItem item = 1;
+}
+
+message UpdateItemRequest {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string category = 4;
+  int32 min_quantity = 5;
+  int64 cost_price = 6;
+  int64 sell_price = 7;
+  int64 storage_location_id = 8;
+  ItemCondition condition = 9;
+}
+
+message UpdateItemResponse {
+  WarehouseItem item = 1;
+}
+
+message ListItemsRequest {
+  int64 warehouse_id = 1;
+  string category = 2;
+  ItemCondition condition = 3;
+  bool low_stock_only = 4;
+  int32 page = 5;
+  int32 page_size = 6;
+}
+
+message ListItemsResponse {
+  repeated WarehouseItem items = 1;
+  int32 total = 2;
+}
+
+message SearchItemsRequest {
+  string org_id = 1;
+  int64 warehouse_id = 2;
+  string query = 3;
+  string brand = 4;
+  int32 page = 5;
+  int32 page_size = 6;
+}
+
+message SearchItemsResponse {
+  repeated WarehouseItem items = 1;
+  int32 total = 2;
+}
+
+// ============================================================
+// Stock Movements
+// ============================================================
+
+message ReceiveStockItem {
+  int64 warehouse_item_id = 1;
+  int32 quantity = 2;
+  int64 cost_price = 3;
+  int64 sell_price = 4;
+}
+
+message ReceiveStockRequest {
+  int64 warehouse_id = 1;
+  string invoice_number = 2;
+  string supplier_info = 3;
+  repeated ReceiveStockItem items = 4;
+}
+
+message ReceiveStockResponse {
+  repeated StockMovement movements = 1;
+}
+
+message WriteOffStockItem {
+  int64 warehouse_item_id = 1;
+  int32 quantity = 2;
+}
+
+message WriteOffStockRequest {
+  int64 warehouse_id = 1;
+  int64 repair_order_id = 2;
+  string reason = 3;
+  repeated WriteOffStockItem items = 4;
+}
+
+message WriteOffStockResponse {
+  repeated StockMovement movements = 1;
+}
+
+message TransferStockItem {
+  int64 warehouse_item_id = 1;
+  int32 quantity = 2;
+}
+
+message TransferStockRequest {
+  int64 from_warehouse_id = 1;
+  int64 to_warehouse_id = 2;
+  string reason = 3;
+  repeated TransferStockItem items = 4;
+}
+
+message TransferStockResponse {
+  repeated StockMovement movements = 1;
+}
+
+message ReturnToSupplierItem {
+  int64 warehouse_item_id = 1;
+  int32 quantity = 2;
+}
+
+message ReturnToSupplierRequest {
+  int64 warehouse_id = 1;
+  string supplier_info = 2;
+  string reason = 3;
+  repeated ReturnToSupplierItem items = 4;
+}
+
+message ReturnToSupplierResponse {
+  repeated StockMovement movements = 1;
+}
+
+message ListStockMovementsRequest {
+  int64 warehouse_id = 1;
+  int64 warehouse_item_id = 2;
+  MovementType type = 3;
+  int32 page = 4;
+  int32 page_size = 5;
+}
+
+message ListStockMovementsResponse {
+  repeated StockMovement movements = 1;
+  int32 total = 2;
+}
+
+// ============================================================
+// Barcode
+// ============================================================
+
+message GenerateBarcodeRequest {
+  int64 item_id = 1;
+  string content = 2;
+  int32 width = 3;
+  int32 height = 4;
+}
+
+message GenerateBarcodeResponse {
+  bytes image_data = 1;
+  string content_type = 2;
+  string encoded_content = 3;
+}
+
+message GenerateQRRequest {
+  int64 item_id = 1;
+  string content = 2;
+  int32 size = 3;
+}
+
+message GenerateQRResponse {
+  bytes image_data = 1;
+  string content_type = 2;
+  string encoded_content = 3;
+}
+
+message GenerateLabelRequest {
+  int64 item_id = 1;
+  int32 width = 2;
+  int32 height = 3;
+}
+
+message GenerateLabelResponse {
+  bytes image_data = 1;
+  string content_type = 2;
+}
+
+// ============================================================
+// Inventory Check
+// ============================================================
+
+message StartInventoryCheckRequest {
+  int64 warehouse_id = 1;
+}
+
+message StartInventoryCheckResponse {
+  InventoryCheck check = 1;
+  repeated InventoryCheckItem items = 2;
+}
+
+message RecordActualQuantityRequest {
+  int64 check_id = 1;
+  int64 warehouse_item_id = 2;
+  int32 actual_quantity = 3;
+}
+
+message RecordActualQuantityResponse {
+  InventoryCheckItem item = 1;
+}
+
+message CompleteInventoryCheckRequest {
+  int64 check_id = 1;
+  bool apply_adjustments = 2;
+}
+
+message CompleteInventoryCheckResponse {
+  InventoryCheck check = 1;
+  int32 total_discrepancies = 2;
+}
+
+message GetInventoryCheckRequest {
+  int64 check_id = 1;
+}
+
+message GetInventoryCheckResponse {
+  InventoryCheck check = 1;
+  repeated InventoryCheckItem items = 2;
+}
+
+message GetDiscrepanciesRequest {
+  int64 check_id = 1;
+}
+
+message GetDiscrepanciesResponse {
+  repeated InventoryCheckItem items = 1;
+}
+
+// ============================================================
+// Reservations
+// ============================================================
+
+message ReserveForRepairOrderRequest {
+  int64 warehouse_item_id = 1;
+  int64 repair_order_id = 2;
+  int32 quantity = 3;
+}
+
+message ReserveForRepairOrderResponse {
+  Reservation reservation = 1;
+}
+
+message ReleaseReservationRequest {
+  int64 reservation_id = 1;
+}
+
+message ReleaseReservationResponse {
+  Reservation reservation = 1;
+}
+
+message ConfirmWriteOffRequest {
+  int64 reservation_id = 1;
+}
+
+message ConfirmWriteOffResponse {
+  Reservation reservation = 1;
+}
+
+message ListReservationsRequest {
+  int64 repair_order_id = 1;
+  int64 warehouse_item_id = 2;
+  ReservationStatus status = 3;
+  int32 page = 4;
+  int32 page_size = 5;
+}
+
+message ListReservationsResponse {
+  repeated Reservation reservations = 1;
+  int32 total = 2;
+}
+
+// ============================================================
+// Search for cg-parts-provider
+// ============================================================
+
+message SearchAvailablePartsRequest {
+  string org_id = 1;
+  string part_number = 2;
+  string brand = 3;
+}
+
+message SearchAvailablePartsResponse {
+  repeated AvailablePart parts = 1;
+}
+
+message AvailablePart {
+  int64 item_id = 1;
+  string oem_number = 2;
+  string brand = 3;
+  string name = 4;
+  int32 quantity = 5;
+  int64 sell_price = 6;
+  int64 cost_price = 7;
+  ItemCondition condition = 8;
+  string warehouse_name = 9;
+  int64 warehouse_id = 10;
+  string storage_location = 11;
+}
