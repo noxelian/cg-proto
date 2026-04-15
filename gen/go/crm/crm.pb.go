@@ -9629,6 +9629,218 @@ func (x *ListWhatsAppMessagesResponse) GetMessages() []*WAMessageProto {
 	return nil
 }
 
+type WAConversationProto struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Phone           string                 `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
+	ContactName     string                 `protobuf:"bytes,2,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"` // resolved via matched deal/contact; empty when unknown
+	LastBody        string                 `protobuf:"bytes,3,opt,name=last_body,json=lastBody,proto3" json:"last_body,omitempty"`
+	LastContentType string                 `protobuf:"bytes,4,opt,name=last_content_type,json=lastContentType,proto3" json:"last_content_type,omitempty"` // text / image / document / …
+	LastDirection   string                 `protobuf:"bytes,5,opt,name=last_direction,json=lastDirection,proto3" json:"last_direction,omitempty"`         // inbound / outbound
+	LastCreatedAt   *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=last_created_at,json=lastCreatedAt,proto3" json:"last_created_at,omitempty"`
+	LastDealId      string                 `protobuf:"bytes,7,opt,name=last_deal_id,json=lastDealId,proto3" json:"last_deal_id,omitempty"`   // deal linked to the most recent message (optional)
+	UnreadCount     int64                  `protobuf:"varint,8,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"` // sum of deal.unread_wa_count across deals linked to this phone
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *WAConversationProto) Reset() {
+	*x = WAConversationProto{}
+	mi := &file_crm_crm_proto_msgTypes[142]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WAConversationProto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WAConversationProto) ProtoMessage() {}
+
+func (x *WAConversationProto) ProtoReflect() protoreflect.Message {
+	mi := &file_crm_crm_proto_msgTypes[142]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WAConversationProto.ProtoReflect.Descriptor instead.
+func (*WAConversationProto) Descriptor() ([]byte, []int) {
+	return file_crm_crm_proto_rawDescGZIP(), []int{142}
+}
+
+func (x *WAConversationProto) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *WAConversationProto) GetContactName() string {
+	if x != nil {
+		return x.ContactName
+	}
+	return ""
+}
+
+func (x *WAConversationProto) GetLastBody() string {
+	if x != nil {
+		return x.LastBody
+	}
+	return ""
+}
+
+func (x *WAConversationProto) GetLastContentType() string {
+	if x != nil {
+		return x.LastContentType
+	}
+	return ""
+}
+
+func (x *WAConversationProto) GetLastDirection() string {
+	if x != nil {
+		return x.LastDirection
+	}
+	return ""
+}
+
+func (x *WAConversationProto) GetLastCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastCreatedAt
+	}
+	return nil
+}
+
+func (x *WAConversationProto) GetLastDealId() string {
+	if x != nil {
+		return x.LastDealId
+	}
+	return ""
+}
+
+func (x *WAConversationProto) GetUnreadCount() int64 {
+	if x != nil {
+		return x.UnreadCount
+	}
+	return 0
+}
+
+type ListWhatsAppConversationsRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	Limit          int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset         int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ListWhatsAppConversationsRequest) Reset() {
+	*x = ListWhatsAppConversationsRequest{}
+	mi := &file_crm_crm_proto_msgTypes[143]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWhatsAppConversationsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWhatsAppConversationsRequest) ProtoMessage() {}
+
+func (x *ListWhatsAppConversationsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_crm_crm_proto_msgTypes[143]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWhatsAppConversationsRequest.ProtoReflect.Descriptor instead.
+func (*ListWhatsAppConversationsRequest) Descriptor() ([]byte, []int) {
+	return file_crm_crm_proto_rawDescGZIP(), []int{143}
+}
+
+func (x *ListWhatsAppConversationsRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *ListWhatsAppConversationsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListWhatsAppConversationsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type ListWhatsAppConversationsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Conversations []*WAConversationProto `protobuf:"bytes,1,rep,name=conversations,proto3" json:"conversations,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"` // total distinct phones, for pagination
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWhatsAppConversationsResponse) Reset() {
+	*x = ListWhatsAppConversationsResponse{}
+	mi := &file_crm_crm_proto_msgTypes[144]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWhatsAppConversationsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWhatsAppConversationsResponse) ProtoMessage() {}
+
+func (x *ListWhatsAppConversationsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_crm_crm_proto_msgTypes[144]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWhatsAppConversationsResponse.ProtoReflect.Descriptor instead.
+func (*ListWhatsAppConversationsResponse) Descriptor() ([]byte, []int) {
+	return file_crm_crm_proto_rawDescGZIP(), []int{144}
+}
+
+func (x *ListWhatsAppConversationsResponse) GetConversations() []*WAConversationProto {
+	if x != nil {
+		return x.Conversations
+	}
+	return nil
+}
+
+func (x *ListWhatsAppConversationsResponse) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
 // SendWhatsAppTemplate — send a pre-approved template message.
 type SendWhatsAppTemplateRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
@@ -9644,7 +9856,7 @@ type SendWhatsAppTemplateRequest struct {
 
 func (x *SendWhatsAppTemplateRequest) Reset() {
 	*x = SendWhatsAppTemplateRequest{}
-	mi := &file_crm_crm_proto_msgTypes[142]
+	mi := &file_crm_crm_proto_msgTypes[145]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9656,7 +9868,7 @@ func (x *SendWhatsAppTemplateRequest) String() string {
 func (*SendWhatsAppTemplateRequest) ProtoMessage() {}
 
 func (x *SendWhatsAppTemplateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[142]
+	mi := &file_crm_crm_proto_msgTypes[145]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9669,7 +9881,7 @@ func (x *SendWhatsAppTemplateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendWhatsAppTemplateRequest.ProtoReflect.Descriptor instead.
 func (*SendWhatsAppTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{142}
+	return file_crm_crm_proto_rawDescGZIP(), []int{145}
 }
 
 func (x *SendWhatsAppTemplateRequest) GetOrganizationId() string {
@@ -9723,7 +9935,7 @@ type SendWhatsAppTemplateResponse struct {
 
 func (x *SendWhatsAppTemplateResponse) Reset() {
 	*x = SendWhatsAppTemplateResponse{}
-	mi := &file_crm_crm_proto_msgTypes[143]
+	mi := &file_crm_crm_proto_msgTypes[146]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9735,7 +9947,7 @@ func (x *SendWhatsAppTemplateResponse) String() string {
 func (*SendWhatsAppTemplateResponse) ProtoMessage() {}
 
 func (x *SendWhatsAppTemplateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[143]
+	mi := &file_crm_crm_proto_msgTypes[146]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9748,7 +9960,7 @@ func (x *SendWhatsAppTemplateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendWhatsAppTemplateResponse.ProtoReflect.Descriptor instead.
 func (*SendWhatsAppTemplateResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{143}
+	return file_crm_crm_proto_rawDescGZIP(), []int{146}
 }
 
 func (x *SendWhatsAppTemplateResponse) GetMessage() *WAMessageProto {
@@ -9769,7 +9981,7 @@ type WhatsAppWebhookRequest struct {
 
 func (x *WhatsAppWebhookRequest) Reset() {
 	*x = WhatsAppWebhookRequest{}
-	mi := &file_crm_crm_proto_msgTypes[144]
+	mi := &file_crm_crm_proto_msgTypes[147]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9781,7 +9993,7 @@ func (x *WhatsAppWebhookRequest) String() string {
 func (*WhatsAppWebhookRequest) ProtoMessage() {}
 
 func (x *WhatsAppWebhookRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[144]
+	mi := &file_crm_crm_proto_msgTypes[147]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9794,7 +10006,7 @@ func (x *WhatsAppWebhookRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WhatsAppWebhookRequest.ProtoReflect.Descriptor instead.
 func (*WhatsAppWebhookRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{144}
+	return file_crm_crm_proto_rawDescGZIP(), []int{147}
 }
 
 func (x *WhatsAppWebhookRequest) GetRawBody() []byte {
@@ -9813,7 +10025,7 @@ type WhatsAppWebhookResponse struct {
 
 func (x *WhatsAppWebhookResponse) Reset() {
 	*x = WhatsAppWebhookResponse{}
-	mi := &file_crm_crm_proto_msgTypes[145]
+	mi := &file_crm_crm_proto_msgTypes[148]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9825,7 +10037,7 @@ func (x *WhatsAppWebhookResponse) String() string {
 func (*WhatsAppWebhookResponse) ProtoMessage() {}
 
 func (x *WhatsAppWebhookResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[145]
+	mi := &file_crm_crm_proto_msgTypes[148]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9838,7 +10050,7 @@ func (x *WhatsAppWebhookResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WhatsAppWebhookResponse.ProtoReflect.Descriptor instead.
 func (*WhatsAppWebhookResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{145}
+	return file_crm_crm_proto_rawDescGZIP(), []int{148}
 }
 
 func (x *WhatsAppWebhookResponse) GetOk() bool {
@@ -9858,7 +10070,7 @@ type ListWhatsAppTemplatesRequest struct {
 
 func (x *ListWhatsAppTemplatesRequest) Reset() {
 	*x = ListWhatsAppTemplatesRequest{}
-	mi := &file_crm_crm_proto_msgTypes[146]
+	mi := &file_crm_crm_proto_msgTypes[149]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9870,7 +10082,7 @@ func (x *ListWhatsAppTemplatesRequest) String() string {
 func (*ListWhatsAppTemplatesRequest) ProtoMessage() {}
 
 func (x *ListWhatsAppTemplatesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[146]
+	mi := &file_crm_crm_proto_msgTypes[149]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9883,7 +10095,7 @@ func (x *ListWhatsAppTemplatesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWhatsAppTemplatesRequest.ProtoReflect.Descriptor instead.
 func (*ListWhatsAppTemplatesRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{146}
+	return file_crm_crm_proto_rawDescGZIP(), []int{149}
 }
 
 func (x *ListWhatsAppTemplatesRequest) GetOrganizationId() string {
@@ -9902,7 +10114,7 @@ type ListWhatsAppTemplatesResponse struct {
 
 func (x *ListWhatsAppTemplatesResponse) Reset() {
 	*x = ListWhatsAppTemplatesResponse{}
-	mi := &file_crm_crm_proto_msgTypes[147]
+	mi := &file_crm_crm_proto_msgTypes[150]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9914,7 +10126,7 @@ func (x *ListWhatsAppTemplatesResponse) String() string {
 func (*ListWhatsAppTemplatesResponse) ProtoMessage() {}
 
 func (x *ListWhatsAppTemplatesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[147]
+	mi := &file_crm_crm_proto_msgTypes[150]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9927,7 +10139,7 @@ func (x *ListWhatsAppTemplatesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWhatsAppTemplatesResponse.ProtoReflect.Descriptor instead.
 func (*ListWhatsAppTemplatesResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{147}
+	return file_crm_crm_proto_rawDescGZIP(), []int{150}
 }
 
 func (x *ListWhatsAppTemplatesResponse) GetTemplates() []*WhatsAppTemplate {
@@ -9951,7 +10163,7 @@ type WhatsAppTemplate struct {
 
 func (x *WhatsAppTemplate) Reset() {
 	*x = WhatsAppTemplate{}
-	mi := &file_crm_crm_proto_msgTypes[148]
+	mi := &file_crm_crm_proto_msgTypes[151]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9963,7 +10175,7 @@ func (x *WhatsAppTemplate) String() string {
 func (*WhatsAppTemplate) ProtoMessage() {}
 
 func (x *WhatsAppTemplate) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[148]
+	mi := &file_crm_crm_proto_msgTypes[151]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9976,7 +10188,7 @@ func (x *WhatsAppTemplate) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WhatsAppTemplate.ProtoReflect.Descriptor instead.
 func (*WhatsAppTemplate) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{148}
+	return file_crm_crm_proto_rawDescGZIP(), []int{151}
 }
 
 func (x *WhatsAppTemplate) GetName() string {
@@ -10031,7 +10243,7 @@ type WhatsAppTemplateParam struct {
 
 func (x *WhatsAppTemplateParam) Reset() {
 	*x = WhatsAppTemplateParam{}
-	mi := &file_crm_crm_proto_msgTypes[149]
+	mi := &file_crm_crm_proto_msgTypes[152]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10043,7 +10255,7 @@ func (x *WhatsAppTemplateParam) String() string {
 func (*WhatsAppTemplateParam) ProtoMessage() {}
 
 func (x *WhatsAppTemplateParam) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[149]
+	mi := &file_crm_crm_proto_msgTypes[152]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10056,7 +10268,7 @@ func (x *WhatsAppTemplateParam) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WhatsAppTemplateParam.ProtoReflect.Descriptor instead.
 func (*WhatsAppTemplateParam) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{149}
+	return file_crm_crm_proto_rawDescGZIP(), []int{152}
 }
 
 func (x *WhatsAppTemplateParam) GetIndex() int32 {
@@ -10093,7 +10305,7 @@ type MatchedEntity struct {
 
 func (x *MatchedEntity) Reset() {
 	*x = MatchedEntity{}
-	mi := &file_crm_crm_proto_msgTypes[150]
+	mi := &file_crm_crm_proto_msgTypes[153]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10105,7 +10317,7 @@ func (x *MatchedEntity) String() string {
 func (*MatchedEntity) ProtoMessage() {}
 
 func (x *MatchedEntity) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[150]
+	mi := &file_crm_crm_proto_msgTypes[153]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10118,7 +10330,7 @@ func (x *MatchedEntity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MatchedEntity.ProtoReflect.Descriptor instead.
 func (*MatchedEntity) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{150}
+	return file_crm_crm_proto_rawDescGZIP(), []int{153}
 }
 
 func (x *MatchedEntity) GetEntityType() string {
@@ -10185,7 +10397,7 @@ type TelephonyCall struct {
 
 func (x *TelephonyCall) Reset() {
 	*x = TelephonyCall{}
-	mi := &file_crm_crm_proto_msgTypes[151]
+	mi := &file_crm_crm_proto_msgTypes[154]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10197,7 +10409,7 @@ func (x *TelephonyCall) String() string {
 func (*TelephonyCall) ProtoMessage() {}
 
 func (x *TelephonyCall) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[151]
+	mi := &file_crm_crm_proto_msgTypes[154]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10210,7 +10422,7 @@ func (x *TelephonyCall) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyCall.ProtoReflect.Descriptor instead.
 func (*TelephonyCall) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{151}
+	return file_crm_crm_proto_rawDescGZIP(), []int{154}
 }
 
 func (x *TelephonyCall) GetId() string {
@@ -10368,7 +10580,7 @@ type TelephonyOriginateRequest struct {
 
 func (x *TelephonyOriginateRequest) Reset() {
 	*x = TelephonyOriginateRequest{}
-	mi := &file_crm_crm_proto_msgTypes[152]
+	mi := &file_crm_crm_proto_msgTypes[155]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10380,7 +10592,7 @@ func (x *TelephonyOriginateRequest) String() string {
 func (*TelephonyOriginateRequest) ProtoMessage() {}
 
 func (x *TelephonyOriginateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[152]
+	mi := &file_crm_crm_proto_msgTypes[155]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10393,7 +10605,7 @@ func (x *TelephonyOriginateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyOriginateRequest.ProtoReflect.Descriptor instead.
 func (*TelephonyOriginateRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{152}
+	return file_crm_crm_proto_rawDescGZIP(), []int{155}
 }
 
 func (x *TelephonyOriginateRequest) GetOrganizationId() string {
@@ -10454,7 +10666,7 @@ type TelephonyOriginateResponse struct {
 
 func (x *TelephonyOriginateResponse) Reset() {
 	*x = TelephonyOriginateResponse{}
-	mi := &file_crm_crm_proto_msgTypes[153]
+	mi := &file_crm_crm_proto_msgTypes[156]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10466,7 +10678,7 @@ func (x *TelephonyOriginateResponse) String() string {
 func (*TelephonyOriginateResponse) ProtoMessage() {}
 
 func (x *TelephonyOriginateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[153]
+	mi := &file_crm_crm_proto_msgTypes[156]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10479,7 +10691,7 @@ func (x *TelephonyOriginateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyOriginateResponse.ProtoReflect.Descriptor instead.
 func (*TelephonyOriginateResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{153}
+	return file_crm_crm_proto_rawDescGZIP(), []int{156}
 }
 
 func (x *TelephonyOriginateResponse) GetCall() *TelephonyCall {
@@ -10498,7 +10710,7 @@ type TelephonyGetCallRequest struct {
 
 func (x *TelephonyGetCallRequest) Reset() {
 	*x = TelephonyGetCallRequest{}
-	mi := &file_crm_crm_proto_msgTypes[154]
+	mi := &file_crm_crm_proto_msgTypes[157]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10510,7 +10722,7 @@ func (x *TelephonyGetCallRequest) String() string {
 func (*TelephonyGetCallRequest) ProtoMessage() {}
 
 func (x *TelephonyGetCallRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[154]
+	mi := &file_crm_crm_proto_msgTypes[157]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10523,7 +10735,7 @@ func (x *TelephonyGetCallRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyGetCallRequest.ProtoReflect.Descriptor instead.
 func (*TelephonyGetCallRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{154}
+	return file_crm_crm_proto_rawDescGZIP(), []int{157}
 }
 
 func (x *TelephonyGetCallRequest) GetCallId() string {
@@ -10542,7 +10754,7 @@ type TelephonyGetCallResponse struct {
 
 func (x *TelephonyGetCallResponse) Reset() {
 	*x = TelephonyGetCallResponse{}
-	mi := &file_crm_crm_proto_msgTypes[155]
+	mi := &file_crm_crm_proto_msgTypes[158]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10554,7 +10766,7 @@ func (x *TelephonyGetCallResponse) String() string {
 func (*TelephonyGetCallResponse) ProtoMessage() {}
 
 func (x *TelephonyGetCallResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[155]
+	mi := &file_crm_crm_proto_msgTypes[158]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10567,7 +10779,7 @@ func (x *TelephonyGetCallResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyGetCallResponse.ProtoReflect.Descriptor instead.
 func (*TelephonyGetCallResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{155}
+	return file_crm_crm_proto_rawDescGZIP(), []int{158}
 }
 
 func (x *TelephonyGetCallResponse) GetCall() *TelephonyCall {
@@ -10590,7 +10802,7 @@ type TelephonyListCallsRequest struct {
 
 func (x *TelephonyListCallsRequest) Reset() {
 	*x = TelephonyListCallsRequest{}
-	mi := &file_crm_crm_proto_msgTypes[156]
+	mi := &file_crm_crm_proto_msgTypes[159]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10602,7 +10814,7 @@ func (x *TelephonyListCallsRequest) String() string {
 func (*TelephonyListCallsRequest) ProtoMessage() {}
 
 func (x *TelephonyListCallsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[156]
+	mi := &file_crm_crm_proto_msgTypes[159]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10615,7 +10827,7 @@ func (x *TelephonyListCallsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyListCallsRequest.ProtoReflect.Descriptor instead.
 func (*TelephonyListCallsRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{156}
+	return file_crm_crm_proto_rawDescGZIP(), []int{159}
 }
 
 func (x *TelephonyListCallsRequest) GetOrganizationId() string {
@@ -10663,7 +10875,7 @@ type TelephonyListCallsResponse struct {
 
 func (x *TelephonyListCallsResponse) Reset() {
 	*x = TelephonyListCallsResponse{}
-	mi := &file_crm_crm_proto_msgTypes[157]
+	mi := &file_crm_crm_proto_msgTypes[160]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10675,7 +10887,7 @@ func (x *TelephonyListCallsResponse) String() string {
 func (*TelephonyListCallsResponse) ProtoMessage() {}
 
 func (x *TelephonyListCallsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[157]
+	mi := &file_crm_crm_proto_msgTypes[160]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10688,7 +10900,7 @@ func (x *TelephonyListCallsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyListCallsResponse.ProtoReflect.Descriptor instead.
 func (*TelephonyListCallsResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{157}
+	return file_crm_crm_proto_rawDescGZIP(), []int{160}
 }
 
 func (x *TelephonyListCallsResponse) GetCalls() []*TelephonyCall {
@@ -10717,7 +10929,7 @@ type IceServer struct {
 
 func (x *IceServer) Reset() {
 	*x = IceServer{}
-	mi := &file_crm_crm_proto_msgTypes[158]
+	mi := &file_crm_crm_proto_msgTypes[161]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10729,7 +10941,7 @@ func (x *IceServer) String() string {
 func (*IceServer) ProtoMessage() {}
 
 func (x *IceServer) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[158]
+	mi := &file_crm_crm_proto_msgTypes[161]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10742,7 +10954,7 @@ func (x *IceServer) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IceServer.ProtoReflect.Descriptor instead.
 func (*IceServer) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{158}
+	return file_crm_crm_proto_rawDescGZIP(), []int{161}
 }
 
 func (x *IceServer) GetUrls() []string {
@@ -10779,7 +10991,7 @@ type SipCredentials struct {
 
 func (x *SipCredentials) Reset() {
 	*x = SipCredentials{}
-	mi := &file_crm_crm_proto_msgTypes[159]
+	mi := &file_crm_crm_proto_msgTypes[162]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10791,7 +11003,7 @@ func (x *SipCredentials) String() string {
 func (*SipCredentials) ProtoMessage() {}
 
 func (x *SipCredentials) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[159]
+	mi := &file_crm_crm_proto_msgTypes[162]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10804,7 +11016,7 @@ func (x *SipCredentials) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SipCredentials.ProtoReflect.Descriptor instead.
 func (*SipCredentials) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{159}
+	return file_crm_crm_proto_rawDescGZIP(), []int{162}
 }
 
 func (x *SipCredentials) GetExtension() string {
@@ -10851,7 +11063,7 @@ type TelephonyGetCredentialsRequest struct {
 
 func (x *TelephonyGetCredentialsRequest) Reset() {
 	*x = TelephonyGetCredentialsRequest{}
-	mi := &file_crm_crm_proto_msgTypes[160]
+	mi := &file_crm_crm_proto_msgTypes[163]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10863,7 +11075,7 @@ func (x *TelephonyGetCredentialsRequest) String() string {
 func (*TelephonyGetCredentialsRequest) ProtoMessage() {}
 
 func (x *TelephonyGetCredentialsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[160]
+	mi := &file_crm_crm_proto_msgTypes[163]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10876,7 +11088,7 @@ func (x *TelephonyGetCredentialsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyGetCredentialsRequest.ProtoReflect.Descriptor instead.
 func (*TelephonyGetCredentialsRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{160}
+	return file_crm_crm_proto_rawDescGZIP(), []int{163}
 }
 
 func (x *TelephonyGetCredentialsRequest) GetUserId() string {
@@ -10895,7 +11107,7 @@ type TelephonyGetCredentialsResponse struct {
 
 func (x *TelephonyGetCredentialsResponse) Reset() {
 	*x = TelephonyGetCredentialsResponse{}
-	mi := &file_crm_crm_proto_msgTypes[161]
+	mi := &file_crm_crm_proto_msgTypes[164]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10907,7 +11119,7 @@ func (x *TelephonyGetCredentialsResponse) String() string {
 func (*TelephonyGetCredentialsResponse) ProtoMessage() {}
 
 func (x *TelephonyGetCredentialsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[161]
+	mi := &file_crm_crm_proto_msgTypes[164]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10920,7 +11132,7 @@ func (x *TelephonyGetCredentialsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyGetCredentialsResponse.ProtoReflect.Descriptor instead.
 func (*TelephonyGetCredentialsResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{161}
+	return file_crm_crm_proto_rawDescGZIP(), []int{164}
 }
 
 func (x *TelephonyGetCredentialsResponse) GetCredentials() *SipCredentials {
@@ -10945,7 +11157,7 @@ type TelephonyPipelineDID struct {
 
 func (x *TelephonyPipelineDID) Reset() {
 	*x = TelephonyPipelineDID{}
-	mi := &file_crm_crm_proto_msgTypes[162]
+	mi := &file_crm_crm_proto_msgTypes[165]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10957,7 +11169,7 @@ func (x *TelephonyPipelineDID) String() string {
 func (*TelephonyPipelineDID) ProtoMessage() {}
 
 func (x *TelephonyPipelineDID) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[162]
+	mi := &file_crm_crm_proto_msgTypes[165]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10970,7 +11182,7 @@ func (x *TelephonyPipelineDID) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyPipelineDID.ProtoReflect.Descriptor instead.
 func (*TelephonyPipelineDID) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{162}
+	return file_crm_crm_proto_rawDescGZIP(), []int{165}
 }
 
 func (x *TelephonyPipelineDID) GetId() string {
@@ -11024,7 +11236,7 @@ type UpsertTelephonyPipelineDIDRequest struct {
 
 func (x *UpsertTelephonyPipelineDIDRequest) Reset() {
 	*x = UpsertTelephonyPipelineDIDRequest{}
-	mi := &file_crm_crm_proto_msgTypes[163]
+	mi := &file_crm_crm_proto_msgTypes[166]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11036,7 +11248,7 @@ func (x *UpsertTelephonyPipelineDIDRequest) String() string {
 func (*UpsertTelephonyPipelineDIDRequest) ProtoMessage() {}
 
 func (x *UpsertTelephonyPipelineDIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[163]
+	mi := &file_crm_crm_proto_msgTypes[166]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11049,7 +11261,7 @@ func (x *UpsertTelephonyPipelineDIDRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use UpsertTelephonyPipelineDIDRequest.ProtoReflect.Descriptor instead.
 func (*UpsertTelephonyPipelineDIDRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{163}
+	return file_crm_crm_proto_rawDescGZIP(), []int{166}
 }
 
 func (x *UpsertTelephonyPipelineDIDRequest) GetDid() *TelephonyPipelineDID {
@@ -11068,7 +11280,7 @@ type UpsertTelephonyPipelineDIDResponse struct {
 
 func (x *UpsertTelephonyPipelineDIDResponse) Reset() {
 	*x = UpsertTelephonyPipelineDIDResponse{}
-	mi := &file_crm_crm_proto_msgTypes[164]
+	mi := &file_crm_crm_proto_msgTypes[167]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11080,7 +11292,7 @@ func (x *UpsertTelephonyPipelineDIDResponse) String() string {
 func (*UpsertTelephonyPipelineDIDResponse) ProtoMessage() {}
 
 func (x *UpsertTelephonyPipelineDIDResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[164]
+	mi := &file_crm_crm_proto_msgTypes[167]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11093,7 +11305,7 @@ func (x *UpsertTelephonyPipelineDIDResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use UpsertTelephonyPipelineDIDResponse.ProtoReflect.Descriptor instead.
 func (*UpsertTelephonyPipelineDIDResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{164}
+	return file_crm_crm_proto_rawDescGZIP(), []int{167}
 }
 
 func (x *UpsertTelephonyPipelineDIDResponse) GetDid() *TelephonyPipelineDID {
@@ -11113,7 +11325,7 @@ type ListTelephonyPipelineDIDsRequest struct {
 
 func (x *ListTelephonyPipelineDIDsRequest) Reset() {
 	*x = ListTelephonyPipelineDIDsRequest{}
-	mi := &file_crm_crm_proto_msgTypes[165]
+	mi := &file_crm_crm_proto_msgTypes[168]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11125,7 +11337,7 @@ func (x *ListTelephonyPipelineDIDsRequest) String() string {
 func (*ListTelephonyPipelineDIDsRequest) ProtoMessage() {}
 
 func (x *ListTelephonyPipelineDIDsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[165]
+	mi := &file_crm_crm_proto_msgTypes[168]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11138,7 +11350,7 @@ func (x *ListTelephonyPipelineDIDsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTelephonyPipelineDIDsRequest.ProtoReflect.Descriptor instead.
 func (*ListTelephonyPipelineDIDsRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{165}
+	return file_crm_crm_proto_rawDescGZIP(), []int{168}
 }
 
 func (x *ListTelephonyPipelineDIDsRequest) GetOrganizationId() string {
@@ -11164,7 +11376,7 @@ type ListTelephonyPipelineDIDsResponse struct {
 
 func (x *ListTelephonyPipelineDIDsResponse) Reset() {
 	*x = ListTelephonyPipelineDIDsResponse{}
-	mi := &file_crm_crm_proto_msgTypes[166]
+	mi := &file_crm_crm_proto_msgTypes[169]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11176,7 +11388,7 @@ func (x *ListTelephonyPipelineDIDsResponse) String() string {
 func (*ListTelephonyPipelineDIDsResponse) ProtoMessage() {}
 
 func (x *ListTelephonyPipelineDIDsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[166]
+	mi := &file_crm_crm_proto_msgTypes[169]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11189,7 +11401,7 @@ func (x *ListTelephonyPipelineDIDsResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ListTelephonyPipelineDIDsResponse.ProtoReflect.Descriptor instead.
 func (*ListTelephonyPipelineDIDsResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{166}
+	return file_crm_crm_proto_rawDescGZIP(), []int{169}
 }
 
 func (x *ListTelephonyPipelineDIDsResponse) GetDids() []*TelephonyPipelineDID {
@@ -11209,7 +11421,7 @@ type DeleteTelephonyPipelineDIDRequest struct {
 
 func (x *DeleteTelephonyPipelineDIDRequest) Reset() {
 	*x = DeleteTelephonyPipelineDIDRequest{}
-	mi := &file_crm_crm_proto_msgTypes[167]
+	mi := &file_crm_crm_proto_msgTypes[170]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11221,7 +11433,7 @@ func (x *DeleteTelephonyPipelineDIDRequest) String() string {
 func (*DeleteTelephonyPipelineDIDRequest) ProtoMessage() {}
 
 func (x *DeleteTelephonyPipelineDIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[167]
+	mi := &file_crm_crm_proto_msgTypes[170]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11234,7 +11446,7 @@ func (x *DeleteTelephonyPipelineDIDRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use DeleteTelephonyPipelineDIDRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTelephonyPipelineDIDRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{167}
+	return file_crm_crm_proto_rawDescGZIP(), []int{170}
 }
 
 func (x *DeleteTelephonyPipelineDIDRequest) GetId() string {
@@ -11259,7 +11471,7 @@ type DeleteTelephonyPipelineDIDResponse struct {
 
 func (x *DeleteTelephonyPipelineDIDResponse) Reset() {
 	*x = DeleteTelephonyPipelineDIDResponse{}
-	mi := &file_crm_crm_proto_msgTypes[168]
+	mi := &file_crm_crm_proto_msgTypes[171]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11271,7 +11483,7 @@ func (x *DeleteTelephonyPipelineDIDResponse) String() string {
 func (*DeleteTelephonyPipelineDIDResponse) ProtoMessage() {}
 
 func (x *DeleteTelephonyPipelineDIDResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[168]
+	mi := &file_crm_crm_proto_msgTypes[171]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11284,7 +11496,7 @@ func (x *DeleteTelephonyPipelineDIDResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use DeleteTelephonyPipelineDIDResponse.ProtoReflect.Descriptor instead.
 func (*DeleteTelephonyPipelineDIDResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{168}
+	return file_crm_crm_proto_rawDescGZIP(), []int{171}
 }
 
 // ---------- telephony_user_extensions ----------
@@ -11303,7 +11515,7 @@ type TelephonyUserExtension struct {
 
 func (x *TelephonyUserExtension) Reset() {
 	*x = TelephonyUserExtension{}
-	mi := &file_crm_crm_proto_msgTypes[169]
+	mi := &file_crm_crm_proto_msgTypes[172]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11315,7 +11527,7 @@ func (x *TelephonyUserExtension) String() string {
 func (*TelephonyUserExtension) ProtoMessage() {}
 
 func (x *TelephonyUserExtension) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[169]
+	mi := &file_crm_crm_proto_msgTypes[172]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11328,7 +11540,7 @@ func (x *TelephonyUserExtension) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyUserExtension.ProtoReflect.Descriptor instead.
 func (*TelephonyUserExtension) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{169}
+	return file_crm_crm_proto_rawDescGZIP(), []int{172}
 }
 
 func (x *TelephonyUserExtension) GetId() string {
@@ -11389,7 +11601,7 @@ type UpsertTelephonyUserExtensionRequest struct {
 
 func (x *UpsertTelephonyUserExtensionRequest) Reset() {
 	*x = UpsertTelephonyUserExtensionRequest{}
-	mi := &file_crm_crm_proto_msgTypes[170]
+	mi := &file_crm_crm_proto_msgTypes[173]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11401,7 +11613,7 @@ func (x *UpsertTelephonyUserExtensionRequest) String() string {
 func (*UpsertTelephonyUserExtensionRequest) ProtoMessage() {}
 
 func (x *UpsertTelephonyUserExtensionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[170]
+	mi := &file_crm_crm_proto_msgTypes[173]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11414,7 +11626,7 @@ func (x *UpsertTelephonyUserExtensionRequest) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use UpsertTelephonyUserExtensionRequest.ProtoReflect.Descriptor instead.
 func (*UpsertTelephonyUserExtensionRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{170}
+	return file_crm_crm_proto_rawDescGZIP(), []int{173}
 }
 
 func (x *UpsertTelephonyUserExtensionRequest) GetExtension() *TelephonyUserExtension {
@@ -11433,7 +11645,7 @@ type UpsertTelephonyUserExtensionResponse struct {
 
 func (x *UpsertTelephonyUserExtensionResponse) Reset() {
 	*x = UpsertTelephonyUserExtensionResponse{}
-	mi := &file_crm_crm_proto_msgTypes[171]
+	mi := &file_crm_crm_proto_msgTypes[174]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11445,7 +11657,7 @@ func (x *UpsertTelephonyUserExtensionResponse) String() string {
 func (*UpsertTelephonyUserExtensionResponse) ProtoMessage() {}
 
 func (x *UpsertTelephonyUserExtensionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[171]
+	mi := &file_crm_crm_proto_msgTypes[174]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11458,7 +11670,7 @@ func (x *UpsertTelephonyUserExtensionResponse) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use UpsertTelephonyUserExtensionResponse.ProtoReflect.Descriptor instead.
 func (*UpsertTelephonyUserExtensionResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{171}
+	return file_crm_crm_proto_rawDescGZIP(), []int{174}
 }
 
 func (x *UpsertTelephonyUserExtensionResponse) GetExtension() *TelephonyUserExtension {
@@ -11479,7 +11691,7 @@ type GetTelephonyUserExtensionRequest struct {
 
 func (x *GetTelephonyUserExtensionRequest) Reset() {
 	*x = GetTelephonyUserExtensionRequest{}
-	mi := &file_crm_crm_proto_msgTypes[172]
+	mi := &file_crm_crm_proto_msgTypes[175]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11491,7 +11703,7 @@ func (x *GetTelephonyUserExtensionRequest) String() string {
 func (*GetTelephonyUserExtensionRequest) ProtoMessage() {}
 
 func (x *GetTelephonyUserExtensionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[172]
+	mi := &file_crm_crm_proto_msgTypes[175]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11504,7 +11716,7 @@ func (x *GetTelephonyUserExtensionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTelephonyUserExtensionRequest.ProtoReflect.Descriptor instead.
 func (*GetTelephonyUserExtensionRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{172}
+	return file_crm_crm_proto_rawDescGZIP(), []int{175}
 }
 
 func (x *GetTelephonyUserExtensionRequest) GetOrganizationId() string {
@@ -11537,7 +11749,7 @@ type GetTelephonyUserExtensionResponse struct {
 
 func (x *GetTelephonyUserExtensionResponse) Reset() {
 	*x = GetTelephonyUserExtensionResponse{}
-	mi := &file_crm_crm_proto_msgTypes[173]
+	mi := &file_crm_crm_proto_msgTypes[176]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11549,7 +11761,7 @@ func (x *GetTelephonyUserExtensionResponse) String() string {
 func (*GetTelephonyUserExtensionResponse) ProtoMessage() {}
 
 func (x *GetTelephonyUserExtensionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[173]
+	mi := &file_crm_crm_proto_msgTypes[176]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11562,7 +11774,7 @@ func (x *GetTelephonyUserExtensionResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use GetTelephonyUserExtensionResponse.ProtoReflect.Descriptor instead.
 func (*GetTelephonyUserExtensionResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{173}
+	return file_crm_crm_proto_rawDescGZIP(), []int{176}
 }
 
 func (x *GetTelephonyUserExtensionResponse) GetExtension() *TelephonyUserExtension {
@@ -11582,7 +11794,7 @@ type ListTelephonyUserExtensionsRequest struct {
 
 func (x *ListTelephonyUserExtensionsRequest) Reset() {
 	*x = ListTelephonyUserExtensionsRequest{}
-	mi := &file_crm_crm_proto_msgTypes[174]
+	mi := &file_crm_crm_proto_msgTypes[177]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11594,7 +11806,7 @@ func (x *ListTelephonyUserExtensionsRequest) String() string {
 func (*ListTelephonyUserExtensionsRequest) ProtoMessage() {}
 
 func (x *ListTelephonyUserExtensionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[174]
+	mi := &file_crm_crm_proto_msgTypes[177]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11607,7 +11819,7 @@ func (x *ListTelephonyUserExtensionsRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ListTelephonyUserExtensionsRequest.ProtoReflect.Descriptor instead.
 func (*ListTelephonyUserExtensionsRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{174}
+	return file_crm_crm_proto_rawDescGZIP(), []int{177}
 }
 
 func (x *ListTelephonyUserExtensionsRequest) GetOrganizationId() string {
@@ -11626,7 +11838,7 @@ type ListTelephonyUserExtensionsResponse struct {
 
 func (x *ListTelephonyUserExtensionsResponse) Reset() {
 	*x = ListTelephonyUserExtensionsResponse{}
-	mi := &file_crm_crm_proto_msgTypes[175]
+	mi := &file_crm_crm_proto_msgTypes[178]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11638,7 +11850,7 @@ func (x *ListTelephonyUserExtensionsResponse) String() string {
 func (*ListTelephonyUserExtensionsResponse) ProtoMessage() {}
 
 func (x *ListTelephonyUserExtensionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[175]
+	mi := &file_crm_crm_proto_msgTypes[178]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11651,7 +11863,7 @@ func (x *ListTelephonyUserExtensionsResponse) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use ListTelephonyUserExtensionsResponse.ProtoReflect.Descriptor instead.
 func (*ListTelephonyUserExtensionsResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{175}
+	return file_crm_crm_proto_rawDescGZIP(), []int{178}
 }
 
 func (x *ListTelephonyUserExtensionsResponse) GetExtensions() []*TelephonyUserExtension {
@@ -11676,7 +11888,7 @@ type LookupExtensionByNumberRequest struct {
 
 func (x *LookupExtensionByNumberRequest) Reset() {
 	*x = LookupExtensionByNumberRequest{}
-	mi := &file_crm_crm_proto_msgTypes[176]
+	mi := &file_crm_crm_proto_msgTypes[179]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11688,7 +11900,7 @@ func (x *LookupExtensionByNumberRequest) String() string {
 func (*LookupExtensionByNumberRequest) ProtoMessage() {}
 
 func (x *LookupExtensionByNumberRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[176]
+	mi := &file_crm_crm_proto_msgTypes[179]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11701,7 +11913,7 @@ func (x *LookupExtensionByNumberRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LookupExtensionByNumberRequest.ProtoReflect.Descriptor instead.
 func (*LookupExtensionByNumberRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{176}
+	return file_crm_crm_proto_rawDescGZIP(), []int{179}
 }
 
 func (x *LookupExtensionByNumberRequest) GetExtension() string {
@@ -11730,7 +11942,7 @@ type LookupExtensionByNumberResponse struct {
 
 func (x *LookupExtensionByNumberResponse) Reset() {
 	*x = LookupExtensionByNumberResponse{}
-	mi := &file_crm_crm_proto_msgTypes[177]
+	mi := &file_crm_crm_proto_msgTypes[180]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11742,7 +11954,7 @@ func (x *LookupExtensionByNumberResponse) String() string {
 func (*LookupExtensionByNumberResponse) ProtoMessage() {}
 
 func (x *LookupExtensionByNumberResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[177]
+	mi := &file_crm_crm_proto_msgTypes[180]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11755,7 +11967,7 @@ func (x *LookupExtensionByNumberResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LookupExtensionByNumberResponse.ProtoReflect.Descriptor instead.
 func (*LookupExtensionByNumberResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{177}
+	return file_crm_crm_proto_rawDescGZIP(), []int{180}
 }
 
 func (x *LookupExtensionByNumberResponse) GetOrganizationId() string {
@@ -11796,7 +12008,7 @@ type DeleteTelephonyUserExtensionRequest struct {
 
 func (x *DeleteTelephonyUserExtensionRequest) Reset() {
 	*x = DeleteTelephonyUserExtensionRequest{}
-	mi := &file_crm_crm_proto_msgTypes[178]
+	mi := &file_crm_crm_proto_msgTypes[181]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11808,7 +12020,7 @@ func (x *DeleteTelephonyUserExtensionRequest) String() string {
 func (*DeleteTelephonyUserExtensionRequest) ProtoMessage() {}
 
 func (x *DeleteTelephonyUserExtensionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[178]
+	mi := &file_crm_crm_proto_msgTypes[181]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11821,7 +12033,7 @@ func (x *DeleteTelephonyUserExtensionRequest) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use DeleteTelephonyUserExtensionRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTelephonyUserExtensionRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{178}
+	return file_crm_crm_proto_rawDescGZIP(), []int{181}
 }
 
 func (x *DeleteTelephonyUserExtensionRequest) GetId() string {
@@ -11846,7 +12058,7 @@ type DeleteTelephonyUserExtensionResponse struct {
 
 func (x *DeleteTelephonyUserExtensionResponse) Reset() {
 	*x = DeleteTelephonyUserExtensionResponse{}
-	mi := &file_crm_crm_proto_msgTypes[179]
+	mi := &file_crm_crm_proto_msgTypes[182]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11858,7 +12070,7 @@ func (x *DeleteTelephonyUserExtensionResponse) String() string {
 func (*DeleteTelephonyUserExtensionResponse) ProtoMessage() {}
 
 func (x *DeleteTelephonyUserExtensionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[179]
+	mi := &file_crm_crm_proto_msgTypes[182]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11871,7 +12083,7 @@ func (x *DeleteTelephonyUserExtensionResponse) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use DeleteTelephonyUserExtensionResponse.ProtoReflect.Descriptor instead.
 func (*DeleteTelephonyUserExtensionResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{179}
+	return file_crm_crm_proto_rawDescGZIP(), []int{182}
 }
 
 type UpdateTelephonyUserExtensionDNDRequest struct {
@@ -11885,7 +12097,7 @@ type UpdateTelephonyUserExtensionDNDRequest struct {
 
 func (x *UpdateTelephonyUserExtensionDNDRequest) Reset() {
 	*x = UpdateTelephonyUserExtensionDNDRequest{}
-	mi := &file_crm_crm_proto_msgTypes[180]
+	mi := &file_crm_crm_proto_msgTypes[183]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11897,7 +12109,7 @@ func (x *UpdateTelephonyUserExtensionDNDRequest) String() string {
 func (*UpdateTelephonyUserExtensionDNDRequest) ProtoMessage() {}
 
 func (x *UpdateTelephonyUserExtensionDNDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[180]
+	mi := &file_crm_crm_proto_msgTypes[183]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11910,7 +12122,7 @@ func (x *UpdateTelephonyUserExtensionDNDRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use UpdateTelephonyUserExtensionDNDRequest.ProtoReflect.Descriptor instead.
 func (*UpdateTelephonyUserExtensionDNDRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{180}
+	return file_crm_crm_proto_rawDescGZIP(), []int{183}
 }
 
 func (x *UpdateTelephonyUserExtensionDNDRequest) GetOrganizationId() string {
@@ -11943,7 +12155,7 @@ type UpdateTelephonyUserExtensionDNDResponse struct {
 
 func (x *UpdateTelephonyUserExtensionDNDResponse) Reset() {
 	*x = UpdateTelephonyUserExtensionDNDResponse{}
-	mi := &file_crm_crm_proto_msgTypes[181]
+	mi := &file_crm_crm_proto_msgTypes[184]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11955,7 +12167,7 @@ func (x *UpdateTelephonyUserExtensionDNDResponse) String() string {
 func (*UpdateTelephonyUserExtensionDNDResponse) ProtoMessage() {}
 
 func (x *UpdateTelephonyUserExtensionDNDResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[181]
+	mi := &file_crm_crm_proto_msgTypes[184]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11968,7 +12180,7 @@ func (x *UpdateTelephonyUserExtensionDNDResponse) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use UpdateTelephonyUserExtensionDNDResponse.ProtoReflect.Descriptor instead.
 func (*UpdateTelephonyUserExtensionDNDResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{181}
+	return file_crm_crm_proto_rawDescGZIP(), []int{184}
 }
 
 func (x *UpdateTelephonyUserExtensionDNDResponse) GetExtension() *TelephonyUserExtension {
@@ -11993,7 +12205,7 @@ type TelephonyProviderConfig struct {
 
 func (x *TelephonyProviderConfig) Reset() {
 	*x = TelephonyProviderConfig{}
-	mi := &file_crm_crm_proto_msgTypes[182]
+	mi := &file_crm_crm_proto_msgTypes[185]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12005,7 +12217,7 @@ func (x *TelephonyProviderConfig) String() string {
 func (*TelephonyProviderConfig) ProtoMessage() {}
 
 func (x *TelephonyProviderConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[182]
+	mi := &file_crm_crm_proto_msgTypes[185]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12018,7 +12230,7 @@ func (x *TelephonyProviderConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyProviderConfig.ProtoReflect.Descriptor instead.
 func (*TelephonyProviderConfig) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{182}
+	return file_crm_crm_proto_rawDescGZIP(), []int{185}
 }
 
 func (x *TelephonyProviderConfig) GetId() string {
@@ -12072,7 +12284,7 @@ type GetTelephonyProviderConfigRequest struct {
 
 func (x *GetTelephonyProviderConfigRequest) Reset() {
 	*x = GetTelephonyProviderConfigRequest{}
-	mi := &file_crm_crm_proto_msgTypes[183]
+	mi := &file_crm_crm_proto_msgTypes[186]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12084,7 +12296,7 @@ func (x *GetTelephonyProviderConfigRequest) String() string {
 func (*GetTelephonyProviderConfigRequest) ProtoMessage() {}
 
 func (x *GetTelephonyProviderConfigRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[183]
+	mi := &file_crm_crm_proto_msgTypes[186]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12097,7 +12309,7 @@ func (x *GetTelephonyProviderConfigRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use GetTelephonyProviderConfigRequest.ProtoReflect.Descriptor instead.
 func (*GetTelephonyProviderConfigRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{183}
+	return file_crm_crm_proto_rawDescGZIP(), []int{186}
 }
 
 func (x *GetTelephonyProviderConfigRequest) GetOrganizationId() string {
@@ -12116,7 +12328,7 @@ type GetTelephonyProviderConfigResponse struct {
 
 func (x *GetTelephonyProviderConfigResponse) Reset() {
 	*x = GetTelephonyProviderConfigResponse{}
-	mi := &file_crm_crm_proto_msgTypes[184]
+	mi := &file_crm_crm_proto_msgTypes[187]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12128,7 +12340,7 @@ func (x *GetTelephonyProviderConfigResponse) String() string {
 func (*GetTelephonyProviderConfigResponse) ProtoMessage() {}
 
 func (x *GetTelephonyProviderConfigResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[184]
+	mi := &file_crm_crm_proto_msgTypes[187]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12141,7 +12353,7 @@ func (x *GetTelephonyProviderConfigResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use GetTelephonyProviderConfigResponse.ProtoReflect.Descriptor instead.
 func (*GetTelephonyProviderConfigResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{184}
+	return file_crm_crm_proto_rawDescGZIP(), []int{187}
 }
 
 func (x *GetTelephonyProviderConfigResponse) GetConfig() *TelephonyProviderConfig {
@@ -12160,7 +12372,7 @@ type UpdateTelephonyProviderConfigRequest struct {
 
 func (x *UpdateTelephonyProviderConfigRequest) Reset() {
 	*x = UpdateTelephonyProviderConfigRequest{}
-	mi := &file_crm_crm_proto_msgTypes[185]
+	mi := &file_crm_crm_proto_msgTypes[188]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12172,7 +12384,7 @@ func (x *UpdateTelephonyProviderConfigRequest) String() string {
 func (*UpdateTelephonyProviderConfigRequest) ProtoMessage() {}
 
 func (x *UpdateTelephonyProviderConfigRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[185]
+	mi := &file_crm_crm_proto_msgTypes[188]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12185,7 +12397,7 @@ func (x *UpdateTelephonyProviderConfigRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use UpdateTelephonyProviderConfigRequest.ProtoReflect.Descriptor instead.
 func (*UpdateTelephonyProviderConfigRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{185}
+	return file_crm_crm_proto_rawDescGZIP(), []int{188}
 }
 
 func (x *UpdateTelephonyProviderConfigRequest) GetConfig() *TelephonyProviderConfig {
@@ -12204,7 +12416,7 @@ type UpdateTelephonyProviderConfigResponse struct {
 
 func (x *UpdateTelephonyProviderConfigResponse) Reset() {
 	*x = UpdateTelephonyProviderConfigResponse{}
-	mi := &file_crm_crm_proto_msgTypes[186]
+	mi := &file_crm_crm_proto_msgTypes[189]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12216,7 +12428,7 @@ func (x *UpdateTelephonyProviderConfigResponse) String() string {
 func (*UpdateTelephonyProviderConfigResponse) ProtoMessage() {}
 
 func (x *UpdateTelephonyProviderConfigResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[186]
+	mi := &file_crm_crm_proto_msgTypes[189]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12229,7 +12441,7 @@ func (x *UpdateTelephonyProviderConfigResponse) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use UpdateTelephonyProviderConfigResponse.ProtoReflect.Descriptor instead.
 func (*UpdateTelephonyProviderConfigResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{186}
+	return file_crm_crm_proto_rawDescGZIP(), []int{189}
 }
 
 func (x *UpdateTelephonyProviderConfigResponse) GetConfig() *TelephonyProviderConfig {
@@ -12249,7 +12461,7 @@ type CreateTelephonyCallRequest struct {
 
 func (x *CreateTelephonyCallRequest) Reset() {
 	*x = CreateTelephonyCallRequest{}
-	mi := &file_crm_crm_proto_msgTypes[187]
+	mi := &file_crm_crm_proto_msgTypes[190]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12261,7 +12473,7 @@ func (x *CreateTelephonyCallRequest) String() string {
 func (*CreateTelephonyCallRequest) ProtoMessage() {}
 
 func (x *CreateTelephonyCallRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[187]
+	mi := &file_crm_crm_proto_msgTypes[190]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12274,7 +12486,7 @@ func (x *CreateTelephonyCallRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTelephonyCallRequest.ProtoReflect.Descriptor instead.
 func (*CreateTelephonyCallRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{187}
+	return file_crm_crm_proto_rawDescGZIP(), []int{190}
 }
 
 func (x *CreateTelephonyCallRequest) GetCall() *TelephonyCall {
@@ -12301,7 +12513,7 @@ type CreateTelephonyCallResponse struct {
 
 func (x *CreateTelephonyCallResponse) Reset() {
 	*x = CreateTelephonyCallResponse{}
-	mi := &file_crm_crm_proto_msgTypes[188]
+	mi := &file_crm_crm_proto_msgTypes[191]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12313,7 +12525,7 @@ func (x *CreateTelephonyCallResponse) String() string {
 func (*CreateTelephonyCallResponse) ProtoMessage() {}
 
 func (x *CreateTelephonyCallResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[188]
+	mi := &file_crm_crm_proto_msgTypes[191]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12326,7 +12538,7 @@ func (x *CreateTelephonyCallResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTelephonyCallResponse.ProtoReflect.Descriptor instead.
 func (*CreateTelephonyCallResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{188}
+	return file_crm_crm_proto_rawDescGZIP(), []int{191}
 }
 
 func (x *CreateTelephonyCallResponse) GetCall() *TelephonyCall {
@@ -12359,7 +12571,7 @@ type UpdateTelephonyCallStateRequest struct {
 
 func (x *UpdateTelephonyCallStateRequest) Reset() {
 	*x = UpdateTelephonyCallStateRequest{}
-	mi := &file_crm_crm_proto_msgTypes[189]
+	mi := &file_crm_crm_proto_msgTypes[192]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12371,7 +12583,7 @@ func (x *UpdateTelephonyCallStateRequest) String() string {
 func (*UpdateTelephonyCallStateRequest) ProtoMessage() {}
 
 func (x *UpdateTelephonyCallStateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[189]
+	mi := &file_crm_crm_proto_msgTypes[192]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12384,7 +12596,7 @@ func (x *UpdateTelephonyCallStateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTelephonyCallStateRequest.ProtoReflect.Descriptor instead.
 func (*UpdateTelephonyCallStateRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{189}
+	return file_crm_crm_proto_rawDescGZIP(), []int{192}
 }
 
 func (x *UpdateTelephonyCallStateRequest) GetOrganizationId() string {
@@ -12453,7 +12665,7 @@ type UpdateTelephonyCallStateResponse struct {
 
 func (x *UpdateTelephonyCallStateResponse) Reset() {
 	*x = UpdateTelephonyCallStateResponse{}
-	mi := &file_crm_crm_proto_msgTypes[190]
+	mi := &file_crm_crm_proto_msgTypes[193]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12465,7 +12677,7 @@ func (x *UpdateTelephonyCallStateResponse) String() string {
 func (*UpdateTelephonyCallStateResponse) ProtoMessage() {}
 
 func (x *UpdateTelephonyCallStateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[190]
+	mi := &file_crm_crm_proto_msgTypes[193]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12478,7 +12690,7 @@ func (x *UpdateTelephonyCallStateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTelephonyCallStateResponse.ProtoReflect.Descriptor instead.
 func (*UpdateTelephonyCallStateResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{190}
+	return file_crm_crm_proto_rawDescGZIP(), []int{193}
 }
 
 func (x *UpdateTelephonyCallStateResponse) GetCall() *TelephonyCall {
@@ -12507,7 +12719,7 @@ type ListTelephonyCallsByOrgRequest struct {
 
 func (x *ListTelephonyCallsByOrgRequest) Reset() {
 	*x = ListTelephonyCallsByOrgRequest{}
-	mi := &file_crm_crm_proto_msgTypes[191]
+	mi := &file_crm_crm_proto_msgTypes[194]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12519,7 +12731,7 @@ func (x *ListTelephonyCallsByOrgRequest) String() string {
 func (*ListTelephonyCallsByOrgRequest) ProtoMessage() {}
 
 func (x *ListTelephonyCallsByOrgRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[191]
+	mi := &file_crm_crm_proto_msgTypes[194]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12532,7 +12744,7 @@ func (x *ListTelephonyCallsByOrgRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTelephonyCallsByOrgRequest.ProtoReflect.Descriptor instead.
 func (*ListTelephonyCallsByOrgRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{191}
+	return file_crm_crm_proto_rawDescGZIP(), []int{194}
 }
 
 func (x *ListTelephonyCallsByOrgRequest) GetOrganizationId() string {
@@ -12573,7 +12785,7 @@ type ListTelephonyCallsByOrgResponse struct {
 
 func (x *ListTelephonyCallsByOrgResponse) Reset() {
 	*x = ListTelephonyCallsByOrgResponse{}
-	mi := &file_crm_crm_proto_msgTypes[192]
+	mi := &file_crm_crm_proto_msgTypes[195]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12585,7 +12797,7 @@ func (x *ListTelephonyCallsByOrgResponse) String() string {
 func (*ListTelephonyCallsByOrgResponse) ProtoMessage() {}
 
 func (x *ListTelephonyCallsByOrgResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[192]
+	mi := &file_crm_crm_proto_msgTypes[195]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12598,7 +12810,7 @@ func (x *ListTelephonyCallsByOrgResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTelephonyCallsByOrgResponse.ProtoReflect.Descriptor instead.
 func (*ListTelephonyCallsByOrgResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{192}
+	return file_crm_crm_proto_rawDescGZIP(), []int{195}
 }
 
 func (x *ListTelephonyCallsByOrgResponse) GetCalls() []*TelephonyCall {
@@ -12626,7 +12838,7 @@ type ListOrphanedTelephonyCallsRequest struct {
 
 func (x *ListOrphanedTelephonyCallsRequest) Reset() {
 	*x = ListOrphanedTelephonyCallsRequest{}
-	mi := &file_crm_crm_proto_msgTypes[193]
+	mi := &file_crm_crm_proto_msgTypes[196]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12638,7 +12850,7 @@ func (x *ListOrphanedTelephonyCallsRequest) String() string {
 func (*ListOrphanedTelephonyCallsRequest) ProtoMessage() {}
 
 func (x *ListOrphanedTelephonyCallsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[193]
+	mi := &file_crm_crm_proto_msgTypes[196]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12651,7 +12863,7 @@ func (x *ListOrphanedTelephonyCallsRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ListOrphanedTelephonyCallsRequest.ProtoReflect.Descriptor instead.
 func (*ListOrphanedTelephonyCallsRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{193}
+	return file_crm_crm_proto_rawDescGZIP(), []int{196}
 }
 
 func (x *ListOrphanedTelephonyCallsRequest) GetOlderThan() *timestamppb.Timestamp {
@@ -12677,7 +12889,7 @@ type ListOrphanedTelephonyCallsResponse struct {
 
 func (x *ListOrphanedTelephonyCallsResponse) Reset() {
 	*x = ListOrphanedTelephonyCallsResponse{}
-	mi := &file_crm_crm_proto_msgTypes[194]
+	mi := &file_crm_crm_proto_msgTypes[197]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12689,7 +12901,7 @@ func (x *ListOrphanedTelephonyCallsResponse) String() string {
 func (*ListOrphanedTelephonyCallsResponse) ProtoMessage() {}
 
 func (x *ListOrphanedTelephonyCallsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[194]
+	mi := &file_crm_crm_proto_msgTypes[197]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12702,7 +12914,7 @@ func (x *ListOrphanedTelephonyCallsResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ListOrphanedTelephonyCallsResponse.ProtoReflect.Descriptor instead.
 func (*ListOrphanedTelephonyCallsResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{194}
+	return file_crm_crm_proto_rawDescGZIP(), []int{197}
 }
 
 func (x *ListOrphanedTelephonyCallsResponse) GetCalls() []*TelephonyCall {
@@ -12722,7 +12934,7 @@ type LookupEntityByPhoneRequest struct {
 
 func (x *LookupEntityByPhoneRequest) Reset() {
 	*x = LookupEntityByPhoneRequest{}
-	mi := &file_crm_crm_proto_msgTypes[195]
+	mi := &file_crm_crm_proto_msgTypes[198]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12734,7 +12946,7 @@ func (x *LookupEntityByPhoneRequest) String() string {
 func (*LookupEntityByPhoneRequest) ProtoMessage() {}
 
 func (x *LookupEntityByPhoneRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[195]
+	mi := &file_crm_crm_proto_msgTypes[198]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12747,7 +12959,7 @@ func (x *LookupEntityByPhoneRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LookupEntityByPhoneRequest.ProtoReflect.Descriptor instead.
 func (*LookupEntityByPhoneRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{195}
+	return file_crm_crm_proto_rawDescGZIP(), []int{198}
 }
 
 func (x *LookupEntityByPhoneRequest) GetOrganizationId() string {
@@ -12773,7 +12985,7 @@ type LookupEntityByPhoneResponse struct {
 
 func (x *LookupEntityByPhoneResponse) Reset() {
 	*x = LookupEntityByPhoneResponse{}
-	mi := &file_crm_crm_proto_msgTypes[196]
+	mi := &file_crm_crm_proto_msgTypes[199]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12785,7 +12997,7 @@ func (x *LookupEntityByPhoneResponse) String() string {
 func (*LookupEntityByPhoneResponse) ProtoMessage() {}
 
 func (x *LookupEntityByPhoneResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[196]
+	mi := &file_crm_crm_proto_msgTypes[199]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12798,7 +13010,7 @@ func (x *LookupEntityByPhoneResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LookupEntityByPhoneResponse.ProtoReflect.Descriptor instead.
 func (*LookupEntityByPhoneResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{196}
+	return file_crm_crm_proto_rawDescGZIP(), []int{199}
 }
 
 func (x *LookupEntityByPhoneResponse) GetMatchedEntity() *MatchedEntity {
@@ -12824,7 +13036,7 @@ type TelephonyIVRConfigEntry struct {
 
 func (x *TelephonyIVRConfigEntry) Reset() {
 	*x = TelephonyIVRConfigEntry{}
-	mi := &file_crm_crm_proto_msgTypes[197]
+	mi := &file_crm_crm_proto_msgTypes[200]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12836,7 +13048,7 @@ func (x *TelephonyIVRConfigEntry) String() string {
 func (*TelephonyIVRConfigEntry) ProtoMessage() {}
 
 func (x *TelephonyIVRConfigEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[197]
+	mi := &file_crm_crm_proto_msgTypes[200]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12849,7 +13061,7 @@ func (x *TelephonyIVRConfigEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyIVRConfigEntry.ProtoReflect.Descriptor instead.
 func (*TelephonyIVRConfigEntry) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{197}
+	return file_crm_crm_proto_rawDescGZIP(), []int{200}
 }
 
 func (x *TelephonyIVRConfigEntry) GetId() string {
@@ -12918,7 +13130,7 @@ type ListTelephonyIVRConfigRequest struct {
 
 func (x *ListTelephonyIVRConfigRequest) Reset() {
 	*x = ListTelephonyIVRConfigRequest{}
-	mi := &file_crm_crm_proto_msgTypes[198]
+	mi := &file_crm_crm_proto_msgTypes[201]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12930,7 +13142,7 @@ func (x *ListTelephonyIVRConfigRequest) String() string {
 func (*ListTelephonyIVRConfigRequest) ProtoMessage() {}
 
 func (x *ListTelephonyIVRConfigRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[198]
+	mi := &file_crm_crm_proto_msgTypes[201]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12943,7 +13155,7 @@ func (x *ListTelephonyIVRConfigRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTelephonyIVRConfigRequest.ProtoReflect.Descriptor instead.
 func (*ListTelephonyIVRConfigRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{198}
+	return file_crm_crm_proto_rawDescGZIP(), []int{201}
 }
 
 func (x *ListTelephonyIVRConfigRequest) GetOrganizationId() string {
@@ -12969,7 +13181,7 @@ type ListTelephonyIVRConfigResponse struct {
 
 func (x *ListTelephonyIVRConfigResponse) Reset() {
 	*x = ListTelephonyIVRConfigResponse{}
-	mi := &file_crm_crm_proto_msgTypes[199]
+	mi := &file_crm_crm_proto_msgTypes[202]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12981,7 +13193,7 @@ func (x *ListTelephonyIVRConfigResponse) String() string {
 func (*ListTelephonyIVRConfigResponse) ProtoMessage() {}
 
 func (x *ListTelephonyIVRConfigResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[199]
+	mi := &file_crm_crm_proto_msgTypes[202]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12994,7 +13206,7 @@ func (x *ListTelephonyIVRConfigResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTelephonyIVRConfigResponse.ProtoReflect.Descriptor instead.
 func (*ListTelephonyIVRConfigResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{199}
+	return file_crm_crm_proto_rawDescGZIP(), []int{202}
 }
 
 func (x *ListTelephonyIVRConfigResponse) GetConfigs() []*TelephonyIVRConfigEntry {
@@ -13017,7 +13229,7 @@ type SaveTelephonyIVRConfigRequest struct {
 
 func (x *SaveTelephonyIVRConfigRequest) Reset() {
 	*x = SaveTelephonyIVRConfigRequest{}
-	mi := &file_crm_crm_proto_msgTypes[200]
+	mi := &file_crm_crm_proto_msgTypes[203]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13029,7 +13241,7 @@ func (x *SaveTelephonyIVRConfigRequest) String() string {
 func (*SaveTelephonyIVRConfigRequest) ProtoMessage() {}
 
 func (x *SaveTelephonyIVRConfigRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[200]
+	mi := &file_crm_crm_proto_msgTypes[203]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13042,7 +13254,7 @@ func (x *SaveTelephonyIVRConfigRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SaveTelephonyIVRConfigRequest.ProtoReflect.Descriptor instead.
 func (*SaveTelephonyIVRConfigRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{200}
+	return file_crm_crm_proto_rawDescGZIP(), []int{203}
 }
 
 func (x *SaveTelephonyIVRConfigRequest) GetOrganizationId() string {
@@ -13075,7 +13287,7 @@ type SaveTelephonyIVRConfigResponse struct {
 
 func (x *SaveTelephonyIVRConfigResponse) Reset() {
 	*x = SaveTelephonyIVRConfigResponse{}
-	mi := &file_crm_crm_proto_msgTypes[201]
+	mi := &file_crm_crm_proto_msgTypes[204]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13087,7 +13299,7 @@ func (x *SaveTelephonyIVRConfigResponse) String() string {
 func (*SaveTelephonyIVRConfigResponse) ProtoMessage() {}
 
 func (x *SaveTelephonyIVRConfigResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[201]
+	mi := &file_crm_crm_proto_msgTypes[204]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13100,7 +13312,7 @@ func (x *SaveTelephonyIVRConfigResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SaveTelephonyIVRConfigResponse.ProtoReflect.Descriptor instead.
 func (*SaveTelephonyIVRConfigResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{201}
+	return file_crm_crm_proto_rawDescGZIP(), []int{204}
 }
 
 func (x *SaveTelephonyIVRConfigResponse) GetConfigs() []*TelephonyIVRConfigEntry {
@@ -13127,7 +13339,7 @@ type TelephonyBusinessHoursEntry struct {
 
 func (x *TelephonyBusinessHoursEntry) Reset() {
 	*x = TelephonyBusinessHoursEntry{}
-	mi := &file_crm_crm_proto_msgTypes[202]
+	mi := &file_crm_crm_proto_msgTypes[205]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13139,7 +13351,7 @@ func (x *TelephonyBusinessHoursEntry) String() string {
 func (*TelephonyBusinessHoursEntry) ProtoMessage() {}
 
 func (x *TelephonyBusinessHoursEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[202]
+	mi := &file_crm_crm_proto_msgTypes[205]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13152,7 +13364,7 @@ func (x *TelephonyBusinessHoursEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyBusinessHoursEntry.ProtoReflect.Descriptor instead.
 func (*TelephonyBusinessHoursEntry) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{202}
+	return file_crm_crm_proto_rawDescGZIP(), []int{205}
 }
 
 func (x *TelephonyBusinessHoursEntry) GetId() string {
@@ -13228,7 +13440,7 @@ type GetTelephonyBusinessHoursRequest struct {
 
 func (x *GetTelephonyBusinessHoursRequest) Reset() {
 	*x = GetTelephonyBusinessHoursRequest{}
-	mi := &file_crm_crm_proto_msgTypes[203]
+	mi := &file_crm_crm_proto_msgTypes[206]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13240,7 +13452,7 @@ func (x *GetTelephonyBusinessHoursRequest) String() string {
 func (*GetTelephonyBusinessHoursRequest) ProtoMessage() {}
 
 func (x *GetTelephonyBusinessHoursRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[203]
+	mi := &file_crm_crm_proto_msgTypes[206]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13253,7 +13465,7 @@ func (x *GetTelephonyBusinessHoursRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTelephonyBusinessHoursRequest.ProtoReflect.Descriptor instead.
 func (*GetTelephonyBusinessHoursRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{203}
+	return file_crm_crm_proto_rawDescGZIP(), []int{206}
 }
 
 func (x *GetTelephonyBusinessHoursRequest) GetOrganizationId() string {
@@ -13279,7 +13491,7 @@ type GetTelephonyBusinessHoursResponse struct {
 
 func (x *GetTelephonyBusinessHoursResponse) Reset() {
 	*x = GetTelephonyBusinessHoursResponse{}
-	mi := &file_crm_crm_proto_msgTypes[204]
+	mi := &file_crm_crm_proto_msgTypes[207]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13291,7 +13503,7 @@ func (x *GetTelephonyBusinessHoursResponse) String() string {
 func (*GetTelephonyBusinessHoursResponse) ProtoMessage() {}
 
 func (x *GetTelephonyBusinessHoursResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[204]
+	mi := &file_crm_crm_proto_msgTypes[207]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13304,7 +13516,7 @@ func (x *GetTelephonyBusinessHoursResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use GetTelephonyBusinessHoursResponse.ProtoReflect.Descriptor instead.
 func (*GetTelephonyBusinessHoursResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{204}
+	return file_crm_crm_proto_rawDescGZIP(), []int{207}
 }
 
 func (x *GetTelephonyBusinessHoursResponse) GetEntries() []*TelephonyBusinessHoursEntry {
@@ -13326,7 +13538,7 @@ type SaveTelephonyBusinessHoursRequest struct {
 
 func (x *SaveTelephonyBusinessHoursRequest) Reset() {
 	*x = SaveTelephonyBusinessHoursRequest{}
-	mi := &file_crm_crm_proto_msgTypes[205]
+	mi := &file_crm_crm_proto_msgTypes[208]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13338,7 +13550,7 @@ func (x *SaveTelephonyBusinessHoursRequest) String() string {
 func (*SaveTelephonyBusinessHoursRequest) ProtoMessage() {}
 
 func (x *SaveTelephonyBusinessHoursRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[205]
+	mi := &file_crm_crm_proto_msgTypes[208]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13351,7 +13563,7 @@ func (x *SaveTelephonyBusinessHoursRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use SaveTelephonyBusinessHoursRequest.ProtoReflect.Descriptor instead.
 func (*SaveTelephonyBusinessHoursRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{205}
+	return file_crm_crm_proto_rawDescGZIP(), []int{208}
 }
 
 func (x *SaveTelephonyBusinessHoursRequest) GetOrganizationId() string {
@@ -13384,7 +13596,7 @@ type SaveTelephonyBusinessHoursResponse struct {
 
 func (x *SaveTelephonyBusinessHoursResponse) Reset() {
 	*x = SaveTelephonyBusinessHoursResponse{}
-	mi := &file_crm_crm_proto_msgTypes[206]
+	mi := &file_crm_crm_proto_msgTypes[209]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13396,7 +13608,7 @@ func (x *SaveTelephonyBusinessHoursResponse) String() string {
 func (*SaveTelephonyBusinessHoursResponse) ProtoMessage() {}
 
 func (x *SaveTelephonyBusinessHoursResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[206]
+	mi := &file_crm_crm_proto_msgTypes[209]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13409,7 +13621,7 @@ func (x *SaveTelephonyBusinessHoursResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use SaveTelephonyBusinessHoursResponse.ProtoReflect.Descriptor instead.
 func (*SaveTelephonyBusinessHoursResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{206}
+	return file_crm_crm_proto_rawDescGZIP(), []int{209}
 }
 
 func (x *SaveTelephonyBusinessHoursResponse) GetEntries() []*TelephonyBusinessHoursEntry {
@@ -13434,7 +13646,7 @@ type TelephonyIVRGreeting struct {
 
 func (x *TelephonyIVRGreeting) Reset() {
 	*x = TelephonyIVRGreeting{}
-	mi := &file_crm_crm_proto_msgTypes[207]
+	mi := &file_crm_crm_proto_msgTypes[210]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13446,7 +13658,7 @@ func (x *TelephonyIVRGreeting) String() string {
 func (*TelephonyIVRGreeting) ProtoMessage() {}
 
 func (x *TelephonyIVRGreeting) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[207]
+	mi := &file_crm_crm_proto_msgTypes[210]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13459,7 +13671,7 @@ func (x *TelephonyIVRGreeting) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyIVRGreeting.ProtoReflect.Descriptor instead.
 func (*TelephonyIVRGreeting) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{207}
+	return file_crm_crm_proto_rawDescGZIP(), []int{210}
 }
 
 func (x *TelephonyIVRGreeting) GetId() string {
@@ -13521,7 +13733,7 @@ type GetTelephonyIVRGreetingRequest struct {
 
 func (x *GetTelephonyIVRGreetingRequest) Reset() {
 	*x = GetTelephonyIVRGreetingRequest{}
-	mi := &file_crm_crm_proto_msgTypes[208]
+	mi := &file_crm_crm_proto_msgTypes[211]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13533,7 +13745,7 @@ func (x *GetTelephonyIVRGreetingRequest) String() string {
 func (*GetTelephonyIVRGreetingRequest) ProtoMessage() {}
 
 func (x *GetTelephonyIVRGreetingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[208]
+	mi := &file_crm_crm_proto_msgTypes[211]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13546,7 +13758,7 @@ func (x *GetTelephonyIVRGreetingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTelephonyIVRGreetingRequest.ProtoReflect.Descriptor instead.
 func (*GetTelephonyIVRGreetingRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{208}
+	return file_crm_crm_proto_rawDescGZIP(), []int{211}
 }
 
 func (x *GetTelephonyIVRGreetingRequest) GetOrganizationId() string {
@@ -13572,7 +13784,7 @@ type GetTelephonyIVRGreetingResponse struct {
 
 func (x *GetTelephonyIVRGreetingResponse) Reset() {
 	*x = GetTelephonyIVRGreetingResponse{}
-	mi := &file_crm_crm_proto_msgTypes[209]
+	mi := &file_crm_crm_proto_msgTypes[212]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13584,7 +13796,7 @@ func (x *GetTelephonyIVRGreetingResponse) String() string {
 func (*GetTelephonyIVRGreetingResponse) ProtoMessage() {}
 
 func (x *GetTelephonyIVRGreetingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[209]
+	mi := &file_crm_crm_proto_msgTypes[212]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13597,7 +13809,7 @@ func (x *GetTelephonyIVRGreetingResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTelephonyIVRGreetingResponse.ProtoReflect.Descriptor instead.
 func (*GetTelephonyIVRGreetingResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{209}
+	return file_crm_crm_proto_rawDescGZIP(), []int{212}
 }
 
 func (x *GetTelephonyIVRGreetingResponse) GetGreeting() *TelephonyIVRGreeting {
@@ -13616,7 +13828,7 @@ type UpsertTelephonyIVRGreetingRequest struct {
 
 func (x *UpsertTelephonyIVRGreetingRequest) Reset() {
 	*x = UpsertTelephonyIVRGreetingRequest{}
-	mi := &file_crm_crm_proto_msgTypes[210]
+	mi := &file_crm_crm_proto_msgTypes[213]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13628,7 +13840,7 @@ func (x *UpsertTelephonyIVRGreetingRequest) String() string {
 func (*UpsertTelephonyIVRGreetingRequest) ProtoMessage() {}
 
 func (x *UpsertTelephonyIVRGreetingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[210]
+	mi := &file_crm_crm_proto_msgTypes[213]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13641,7 +13853,7 @@ func (x *UpsertTelephonyIVRGreetingRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use UpsertTelephonyIVRGreetingRequest.ProtoReflect.Descriptor instead.
 func (*UpsertTelephonyIVRGreetingRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{210}
+	return file_crm_crm_proto_rawDescGZIP(), []int{213}
 }
 
 func (x *UpsertTelephonyIVRGreetingRequest) GetGreeting() *TelephonyIVRGreeting {
@@ -13660,7 +13872,7 @@ type UpsertTelephonyIVRGreetingResponse struct {
 
 func (x *UpsertTelephonyIVRGreetingResponse) Reset() {
 	*x = UpsertTelephonyIVRGreetingResponse{}
-	mi := &file_crm_crm_proto_msgTypes[211]
+	mi := &file_crm_crm_proto_msgTypes[214]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13672,7 +13884,7 @@ func (x *UpsertTelephonyIVRGreetingResponse) String() string {
 func (*UpsertTelephonyIVRGreetingResponse) ProtoMessage() {}
 
 func (x *UpsertTelephonyIVRGreetingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[211]
+	mi := &file_crm_crm_proto_msgTypes[214]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13685,7 +13897,7 @@ func (x *UpsertTelephonyIVRGreetingResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use UpsertTelephonyIVRGreetingResponse.ProtoReflect.Descriptor instead.
 func (*UpsertTelephonyIVRGreetingResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{211}
+	return file_crm_crm_proto_rawDescGZIP(), []int{214}
 }
 
 func (x *UpsertTelephonyIVRGreetingResponse) GetGreeting() *TelephonyIVRGreeting {
@@ -13706,7 +13918,7 @@ type GetTelephonyDialplanDataRequest struct {
 
 func (x *GetTelephonyDialplanDataRequest) Reset() {
 	*x = GetTelephonyDialplanDataRequest{}
-	mi := &file_crm_crm_proto_msgTypes[212]
+	mi := &file_crm_crm_proto_msgTypes[215]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13718,7 +13930,7 @@ func (x *GetTelephonyDialplanDataRequest) String() string {
 func (*GetTelephonyDialplanDataRequest) ProtoMessage() {}
 
 func (x *GetTelephonyDialplanDataRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[212]
+	mi := &file_crm_crm_proto_msgTypes[215]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13731,7 +13943,7 @@ func (x *GetTelephonyDialplanDataRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTelephonyDialplanDataRequest.ProtoReflect.Descriptor instead.
 func (*GetTelephonyDialplanDataRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{212}
+	return file_crm_crm_proto_rawDescGZIP(), []int{215}
 }
 
 func (x *GetTelephonyDialplanDataRequest) GetOrganizationId() string {
@@ -13754,7 +13966,7 @@ type GetTelephonyDialplanDataResponse struct {
 
 func (x *GetTelephonyDialplanDataResponse) Reset() {
 	*x = GetTelephonyDialplanDataResponse{}
-	mi := &file_crm_crm_proto_msgTypes[213]
+	mi := &file_crm_crm_proto_msgTypes[216]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13766,7 +13978,7 @@ func (x *GetTelephonyDialplanDataResponse) String() string {
 func (*GetTelephonyDialplanDataResponse) ProtoMessage() {}
 
 func (x *GetTelephonyDialplanDataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[213]
+	mi := &file_crm_crm_proto_msgTypes[216]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13779,7 +13991,7 @@ func (x *GetTelephonyDialplanDataResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTelephonyDialplanDataResponse.ProtoReflect.Descriptor instead.
 func (*GetTelephonyDialplanDataResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{213}
+	return file_crm_crm_proto_rawDescGZIP(), []int{216}
 }
 
 func (x *GetTelephonyDialplanDataResponse) GetPipelineDids() []*TelephonyPipelineDID {
@@ -13832,7 +14044,7 @@ type TelephonyRecording struct {
 
 func (x *TelephonyRecording) Reset() {
 	*x = TelephonyRecording{}
-	mi := &file_crm_crm_proto_msgTypes[214]
+	mi := &file_crm_crm_proto_msgTypes[217]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13844,7 +14056,7 @@ func (x *TelephonyRecording) String() string {
 func (*TelephonyRecording) ProtoMessage() {}
 
 func (x *TelephonyRecording) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[214]
+	mi := &file_crm_crm_proto_msgTypes[217]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13857,7 +14069,7 @@ func (x *TelephonyRecording) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TelephonyRecording.ProtoReflect.Descriptor instead.
 func (*TelephonyRecording) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{214}
+	return file_crm_crm_proto_rawDescGZIP(), []int{217}
 }
 
 func (x *TelephonyRecording) GetId() string {
@@ -13922,7 +14134,7 @@ type CreateTelephonyRecordingRequest struct {
 
 func (x *CreateTelephonyRecordingRequest) Reset() {
 	*x = CreateTelephonyRecordingRequest{}
-	mi := &file_crm_crm_proto_msgTypes[215]
+	mi := &file_crm_crm_proto_msgTypes[218]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13934,7 +14146,7 @@ func (x *CreateTelephonyRecordingRequest) String() string {
 func (*CreateTelephonyRecordingRequest) ProtoMessage() {}
 
 func (x *CreateTelephonyRecordingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[215]
+	mi := &file_crm_crm_proto_msgTypes[218]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13947,7 +14159,7 @@ func (x *CreateTelephonyRecordingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTelephonyRecordingRequest.ProtoReflect.Descriptor instead.
 func (*CreateTelephonyRecordingRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{215}
+	return file_crm_crm_proto_rawDescGZIP(), []int{218}
 }
 
 func (x *CreateTelephonyRecordingRequest) GetOrganizationId() string {
@@ -13994,7 +14206,7 @@ type CreateTelephonyRecordingResponse struct {
 
 func (x *CreateTelephonyRecordingResponse) Reset() {
 	*x = CreateTelephonyRecordingResponse{}
-	mi := &file_crm_crm_proto_msgTypes[216]
+	mi := &file_crm_crm_proto_msgTypes[219]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14006,7 +14218,7 @@ func (x *CreateTelephonyRecordingResponse) String() string {
 func (*CreateTelephonyRecordingResponse) ProtoMessage() {}
 
 func (x *CreateTelephonyRecordingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[216]
+	mi := &file_crm_crm_proto_msgTypes[219]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14019,7 +14231,7 @@ func (x *CreateTelephonyRecordingResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTelephonyRecordingResponse.ProtoReflect.Descriptor instead.
 func (*CreateTelephonyRecordingResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{216}
+	return file_crm_crm_proto_rawDescGZIP(), []int{219}
 }
 
 func (x *CreateTelephonyRecordingResponse) GetRecording() *TelephonyRecording {
@@ -14039,7 +14251,7 @@ type GetTelephonyCallRecordingRequest struct {
 
 func (x *GetTelephonyCallRecordingRequest) Reset() {
 	*x = GetTelephonyCallRecordingRequest{}
-	mi := &file_crm_crm_proto_msgTypes[217]
+	mi := &file_crm_crm_proto_msgTypes[220]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14051,7 +14263,7 @@ func (x *GetTelephonyCallRecordingRequest) String() string {
 func (*GetTelephonyCallRecordingRequest) ProtoMessage() {}
 
 func (x *GetTelephonyCallRecordingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[217]
+	mi := &file_crm_crm_proto_msgTypes[220]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14064,7 +14276,7 @@ func (x *GetTelephonyCallRecordingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTelephonyCallRecordingRequest.ProtoReflect.Descriptor instead.
 func (*GetTelephonyCallRecordingRequest) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{217}
+	return file_crm_crm_proto_rawDescGZIP(), []int{220}
 }
 
 func (x *GetTelephonyCallRecordingRequest) GetOrganizationId() string {
@@ -14090,7 +14302,7 @@ type GetTelephonyCallRecordingResponse struct {
 
 func (x *GetTelephonyCallRecordingResponse) Reset() {
 	*x = GetTelephonyCallRecordingResponse{}
-	mi := &file_crm_crm_proto_msgTypes[218]
+	mi := &file_crm_crm_proto_msgTypes[221]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14102,7 +14314,7 @@ func (x *GetTelephonyCallRecordingResponse) String() string {
 func (*GetTelephonyCallRecordingResponse) ProtoMessage() {}
 
 func (x *GetTelephonyCallRecordingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_crm_crm_proto_msgTypes[218]
+	mi := &file_crm_crm_proto_msgTypes[221]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14115,7 +14327,7 @@ func (x *GetTelephonyCallRecordingResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use GetTelephonyCallRecordingResponse.ProtoReflect.Descriptor instead.
 func (*GetTelephonyCallRecordingResponse) Descriptor() ([]byte, []int) {
-	return file_crm_crm_proto_rawDescGZIP(), []int{218}
+	return file_crm_crm_proto_rawDescGZIP(), []int{221}
 }
 
 func (x *GetTelephonyCallRecordingResponse) GetRecording() *TelephonyRecording {
@@ -14930,7 +15142,24 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x05limit\x18\x04 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x05 \x01(\x05R\x06offset\"R\n" +
 	"\x1cListWhatsAppMessagesResponse\x122\n" +
-	"\bmessages\x18\x01 \x03(\v2\x16.crm.v1.WAMessageProtoR\bmessages\"\xcf\x01\n" +
+	"\bmessages\x18\x01 \x03(\v2\x16.crm.v1.WAMessageProtoR\bmessages\"\xc7\x02\n" +
+	"\x13WAConversationProto\x12\x14\n" +
+	"\x05phone\x18\x01 \x01(\tR\x05phone\x12!\n" +
+	"\fcontact_name\x18\x02 \x01(\tR\vcontactName\x12\x1b\n" +
+	"\tlast_body\x18\x03 \x01(\tR\blastBody\x12*\n" +
+	"\x11last_content_type\x18\x04 \x01(\tR\x0flastContentType\x12%\n" +
+	"\x0elast_direction\x18\x05 \x01(\tR\rlastDirection\x12B\n" +
+	"\x0flast_created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\rlastCreatedAt\x12 \n" +
+	"\flast_deal_id\x18\a \x01(\tR\n" +
+	"lastDealId\x12!\n" +
+	"\funread_count\x18\b \x01(\x03R\vunreadCount\"y\n" +
+	" ListWhatsAppConversationsRequest\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"|\n" +
+	"!ListWhatsAppConversationsResponse\x12A\n" +
+	"\rconversations\x18\x01 \x03(\v2\x1b.crm.v1.WAConversationProtoR\rconversations\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\xcf\x01\n" +
 	"\x1bSendWhatsAppTemplateRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\x14\n" +
@@ -15294,7 +15523,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x17TELEPHONY_STATUS_MISSED\x10\x03\x12\x19\n" +
 	"\x15TELEPHONY_STATUS_BUSY\x10\x04\x12\x1e\n" +
 	"\x1aTELEPHONY_STATUS_CANCELLED\x10\x05\x12\x1a\n" +
-	"\x16TELEPHONY_STATUS_ENDED\x10\x062\xe5C\n" +
+	"\x16TELEPHONY_STATUS_ENDED\x10\x062\xd7D\n" +
 	"\n" +
 	"CRMService\x12O\n" +
 	"\x0eCreatePipeline\x12\x1d.crm.v1.CreatePipelineRequest\x1a\x1e.crm.v1.CreatePipelineResponse\x12F\n" +
@@ -15370,7 +15599,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"UpdateNote\x12\x19.crm.v1.UpdateNoteRequest\x1a\x1a.crm.v1.UpdateNoteResponse\x12^\n" +
 	"\x13SendWhatsAppMessage\x12\".crm.v1.SendWhatsAppMessageRequest\x1a#.crm.v1.SendWhatsAppMessageResponse\x12a\n" +
 	"\x14SendWhatsAppTemplate\x12#.crm.v1.SendWhatsAppTemplateRequest\x1a$.crm.v1.SendWhatsAppTemplateResponse\x12a\n" +
-	"\x14ListWhatsAppMessages\x12#.crm.v1.ListWhatsAppMessagesRequest\x1a$.crm.v1.ListWhatsAppMessagesResponse\x12d\n" +
+	"\x14ListWhatsAppMessages\x12#.crm.v1.ListWhatsAppMessagesRequest\x1a$.crm.v1.ListWhatsAppMessagesResponse\x12p\n" +
+	"\x19ListWhatsAppConversations\x12(.crm.v1.ListWhatsAppConversationsRequest\x1a).crm.v1.ListWhatsAppConversationsResponse\x12d\n" +
 	"\x15ListWhatsAppTemplates\x12$.crm.v1.ListWhatsAppTemplatesRequest\x1a%.crm.v1.ListWhatsAppTemplatesResponse\x12X\n" +
 	"\x15HandleWhatsAppWebhook\x12\x1e.crm.v1.WhatsAppWebhookRequest\x1a\x1f.crm.v1.WhatsAppWebhookResponse\x12[\n" +
 	"\x12TelephonyOriginate\x12!.crm.v1.TelephonyOriginateRequest\x1a\".crm.v1.TelephonyOriginateResponse\x12U\n" +
@@ -15416,7 +15646,7 @@ func file_crm_crm_proto_rawDescGZIP() []byte {
 }
 
 var file_crm_crm_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_crm_crm_proto_msgTypes = make([]protoimpl.MessageInfo, 219)
+var file_crm_crm_proto_msgTypes = make([]protoimpl.MessageInfo, 222)
 var file_crm_crm_proto_goTypes = []any{
 	(TelephonyProvider)(0),                          // 0: crm.v1.TelephonyProvider
 	(TelephonyDirection)(0),                         // 1: crm.v1.TelephonyDirection
@@ -15563,149 +15793,152 @@ var file_crm_crm_proto_goTypes = []any{
 	(*SendWhatsAppMessageResponse)(nil),             // 142: crm.v1.SendWhatsAppMessageResponse
 	(*ListWhatsAppMessagesRequest)(nil),             // 143: crm.v1.ListWhatsAppMessagesRequest
 	(*ListWhatsAppMessagesResponse)(nil),            // 144: crm.v1.ListWhatsAppMessagesResponse
-	(*SendWhatsAppTemplateRequest)(nil),             // 145: crm.v1.SendWhatsAppTemplateRequest
-	(*SendWhatsAppTemplateResponse)(nil),            // 146: crm.v1.SendWhatsAppTemplateResponse
-	(*WhatsAppWebhookRequest)(nil),                  // 147: crm.v1.WhatsAppWebhookRequest
-	(*WhatsAppWebhookResponse)(nil),                 // 148: crm.v1.WhatsAppWebhookResponse
-	(*ListWhatsAppTemplatesRequest)(nil),            // 149: crm.v1.ListWhatsAppTemplatesRequest
-	(*ListWhatsAppTemplatesResponse)(nil),           // 150: crm.v1.ListWhatsAppTemplatesResponse
-	(*WhatsAppTemplate)(nil),                        // 151: crm.v1.WhatsAppTemplate
-	(*WhatsAppTemplateParam)(nil),                   // 152: crm.v1.WhatsAppTemplateParam
-	(*MatchedEntity)(nil),                           // 153: crm.v1.MatchedEntity
-	(*TelephonyCall)(nil),                           // 154: crm.v1.TelephonyCall
-	(*TelephonyOriginateRequest)(nil),               // 155: crm.v1.TelephonyOriginateRequest
-	(*TelephonyOriginateResponse)(nil),              // 156: crm.v1.TelephonyOriginateResponse
-	(*TelephonyGetCallRequest)(nil),                 // 157: crm.v1.TelephonyGetCallRequest
-	(*TelephonyGetCallResponse)(nil),                // 158: crm.v1.TelephonyGetCallResponse
-	(*TelephonyListCallsRequest)(nil),               // 159: crm.v1.TelephonyListCallsRequest
-	(*TelephonyListCallsResponse)(nil),              // 160: crm.v1.TelephonyListCallsResponse
-	(*IceServer)(nil),                               // 161: crm.v1.IceServer
-	(*SipCredentials)(nil),                          // 162: crm.v1.SipCredentials
-	(*TelephonyGetCredentialsRequest)(nil),          // 163: crm.v1.TelephonyGetCredentialsRequest
-	(*TelephonyGetCredentialsResponse)(nil),         // 164: crm.v1.TelephonyGetCredentialsResponse
-	(*TelephonyPipelineDID)(nil),                    // 165: crm.v1.TelephonyPipelineDID
-	(*UpsertTelephonyPipelineDIDRequest)(nil),       // 166: crm.v1.UpsertTelephonyPipelineDIDRequest
-	(*UpsertTelephonyPipelineDIDResponse)(nil),      // 167: crm.v1.UpsertTelephonyPipelineDIDResponse
-	(*ListTelephonyPipelineDIDsRequest)(nil),        // 168: crm.v1.ListTelephonyPipelineDIDsRequest
-	(*ListTelephonyPipelineDIDsResponse)(nil),       // 169: crm.v1.ListTelephonyPipelineDIDsResponse
-	(*DeleteTelephonyPipelineDIDRequest)(nil),       // 170: crm.v1.DeleteTelephonyPipelineDIDRequest
-	(*DeleteTelephonyPipelineDIDResponse)(nil),      // 171: crm.v1.DeleteTelephonyPipelineDIDResponse
-	(*TelephonyUserExtension)(nil),                  // 172: crm.v1.TelephonyUserExtension
-	(*UpsertTelephonyUserExtensionRequest)(nil),     // 173: crm.v1.UpsertTelephonyUserExtensionRequest
-	(*UpsertTelephonyUserExtensionResponse)(nil),    // 174: crm.v1.UpsertTelephonyUserExtensionResponse
-	(*GetTelephonyUserExtensionRequest)(nil),        // 175: crm.v1.GetTelephonyUserExtensionRequest
-	(*GetTelephonyUserExtensionResponse)(nil),       // 176: crm.v1.GetTelephonyUserExtensionResponse
-	(*ListTelephonyUserExtensionsRequest)(nil),      // 177: crm.v1.ListTelephonyUserExtensionsRequest
-	(*ListTelephonyUserExtensionsResponse)(nil),     // 178: crm.v1.ListTelephonyUserExtensionsResponse
-	(*LookupExtensionByNumberRequest)(nil),          // 179: crm.v1.LookupExtensionByNumberRequest
-	(*LookupExtensionByNumberResponse)(nil),         // 180: crm.v1.LookupExtensionByNumberResponse
-	(*DeleteTelephonyUserExtensionRequest)(nil),     // 181: crm.v1.DeleteTelephonyUserExtensionRequest
-	(*DeleteTelephonyUserExtensionResponse)(nil),    // 182: crm.v1.DeleteTelephonyUserExtensionResponse
-	(*UpdateTelephonyUserExtensionDNDRequest)(nil),  // 183: crm.v1.UpdateTelephonyUserExtensionDNDRequest
-	(*UpdateTelephonyUserExtensionDNDResponse)(nil), // 184: crm.v1.UpdateTelephonyUserExtensionDNDResponse
-	(*TelephonyProviderConfig)(nil),                 // 185: crm.v1.TelephonyProviderConfig
-	(*GetTelephonyProviderConfigRequest)(nil),       // 186: crm.v1.GetTelephonyProviderConfigRequest
-	(*GetTelephonyProviderConfigResponse)(nil),      // 187: crm.v1.GetTelephonyProviderConfigResponse
-	(*UpdateTelephonyProviderConfigRequest)(nil),    // 188: crm.v1.UpdateTelephonyProviderConfigRequest
-	(*UpdateTelephonyProviderConfigResponse)(nil),   // 189: crm.v1.UpdateTelephonyProviderConfigResponse
-	(*CreateTelephonyCallRequest)(nil),              // 190: crm.v1.CreateTelephonyCallRequest
-	(*CreateTelephonyCallResponse)(nil),             // 191: crm.v1.CreateTelephonyCallResponse
-	(*UpdateTelephonyCallStateRequest)(nil),         // 192: crm.v1.UpdateTelephonyCallStateRequest
-	(*UpdateTelephonyCallStateResponse)(nil),        // 193: crm.v1.UpdateTelephonyCallStateResponse
-	(*ListTelephonyCallsByOrgRequest)(nil),          // 194: crm.v1.ListTelephonyCallsByOrgRequest
-	(*ListTelephonyCallsByOrgResponse)(nil),         // 195: crm.v1.ListTelephonyCallsByOrgResponse
-	(*ListOrphanedTelephonyCallsRequest)(nil),       // 196: crm.v1.ListOrphanedTelephonyCallsRequest
-	(*ListOrphanedTelephonyCallsResponse)(nil),      // 197: crm.v1.ListOrphanedTelephonyCallsResponse
-	(*LookupEntityByPhoneRequest)(nil),              // 198: crm.v1.LookupEntityByPhoneRequest
-	(*LookupEntityByPhoneResponse)(nil),             // 199: crm.v1.LookupEntityByPhoneResponse
-	(*TelephonyIVRConfigEntry)(nil),                 // 200: crm.v1.TelephonyIVRConfigEntry
-	(*ListTelephonyIVRConfigRequest)(nil),           // 201: crm.v1.ListTelephonyIVRConfigRequest
-	(*ListTelephonyIVRConfigResponse)(nil),          // 202: crm.v1.ListTelephonyIVRConfigResponse
-	(*SaveTelephonyIVRConfigRequest)(nil),           // 203: crm.v1.SaveTelephonyIVRConfigRequest
-	(*SaveTelephonyIVRConfigResponse)(nil),          // 204: crm.v1.SaveTelephonyIVRConfigResponse
-	(*TelephonyBusinessHoursEntry)(nil),             // 205: crm.v1.TelephonyBusinessHoursEntry
-	(*GetTelephonyBusinessHoursRequest)(nil),        // 206: crm.v1.GetTelephonyBusinessHoursRequest
-	(*GetTelephonyBusinessHoursResponse)(nil),       // 207: crm.v1.GetTelephonyBusinessHoursResponse
-	(*SaveTelephonyBusinessHoursRequest)(nil),       // 208: crm.v1.SaveTelephonyBusinessHoursRequest
-	(*SaveTelephonyBusinessHoursResponse)(nil),      // 209: crm.v1.SaveTelephonyBusinessHoursResponse
-	(*TelephonyIVRGreeting)(nil),                    // 210: crm.v1.TelephonyIVRGreeting
-	(*GetTelephonyIVRGreetingRequest)(nil),          // 211: crm.v1.GetTelephonyIVRGreetingRequest
-	(*GetTelephonyIVRGreetingResponse)(nil),         // 212: crm.v1.GetTelephonyIVRGreetingResponse
-	(*UpsertTelephonyIVRGreetingRequest)(nil),       // 213: crm.v1.UpsertTelephonyIVRGreetingRequest
-	(*UpsertTelephonyIVRGreetingResponse)(nil),      // 214: crm.v1.UpsertTelephonyIVRGreetingResponse
-	(*GetTelephonyDialplanDataRequest)(nil),         // 215: crm.v1.GetTelephonyDialplanDataRequest
-	(*GetTelephonyDialplanDataResponse)(nil),        // 216: crm.v1.GetTelephonyDialplanDataResponse
-	(*TelephonyRecording)(nil),                      // 217: crm.v1.TelephonyRecording
-	(*CreateTelephonyRecordingRequest)(nil),         // 218: crm.v1.CreateTelephonyRecordingRequest
-	(*CreateTelephonyRecordingResponse)(nil),        // 219: crm.v1.CreateTelephonyRecordingResponse
-	(*GetTelephonyCallRecordingRequest)(nil),        // 220: crm.v1.GetTelephonyCallRecordingRequest
-	(*GetTelephonyCallRecordingResponse)(nil),       // 221: crm.v1.GetTelephonyCallRecordingResponse
-	(*timestamppb.Timestamp)(nil),                   // 222: google.protobuf.Timestamp
-	(*structpb.Struct)(nil),                         // 223: google.protobuf.Struct
+	(*WAConversationProto)(nil),                     // 145: crm.v1.WAConversationProto
+	(*ListWhatsAppConversationsRequest)(nil),        // 146: crm.v1.ListWhatsAppConversationsRequest
+	(*ListWhatsAppConversationsResponse)(nil),       // 147: crm.v1.ListWhatsAppConversationsResponse
+	(*SendWhatsAppTemplateRequest)(nil),             // 148: crm.v1.SendWhatsAppTemplateRequest
+	(*SendWhatsAppTemplateResponse)(nil),            // 149: crm.v1.SendWhatsAppTemplateResponse
+	(*WhatsAppWebhookRequest)(nil),                  // 150: crm.v1.WhatsAppWebhookRequest
+	(*WhatsAppWebhookResponse)(nil),                 // 151: crm.v1.WhatsAppWebhookResponse
+	(*ListWhatsAppTemplatesRequest)(nil),            // 152: crm.v1.ListWhatsAppTemplatesRequest
+	(*ListWhatsAppTemplatesResponse)(nil),           // 153: crm.v1.ListWhatsAppTemplatesResponse
+	(*WhatsAppTemplate)(nil),                        // 154: crm.v1.WhatsAppTemplate
+	(*WhatsAppTemplateParam)(nil),                   // 155: crm.v1.WhatsAppTemplateParam
+	(*MatchedEntity)(nil),                           // 156: crm.v1.MatchedEntity
+	(*TelephonyCall)(nil),                           // 157: crm.v1.TelephonyCall
+	(*TelephonyOriginateRequest)(nil),               // 158: crm.v1.TelephonyOriginateRequest
+	(*TelephonyOriginateResponse)(nil),              // 159: crm.v1.TelephonyOriginateResponse
+	(*TelephonyGetCallRequest)(nil),                 // 160: crm.v1.TelephonyGetCallRequest
+	(*TelephonyGetCallResponse)(nil),                // 161: crm.v1.TelephonyGetCallResponse
+	(*TelephonyListCallsRequest)(nil),               // 162: crm.v1.TelephonyListCallsRequest
+	(*TelephonyListCallsResponse)(nil),              // 163: crm.v1.TelephonyListCallsResponse
+	(*IceServer)(nil),                               // 164: crm.v1.IceServer
+	(*SipCredentials)(nil),                          // 165: crm.v1.SipCredentials
+	(*TelephonyGetCredentialsRequest)(nil),          // 166: crm.v1.TelephonyGetCredentialsRequest
+	(*TelephonyGetCredentialsResponse)(nil),         // 167: crm.v1.TelephonyGetCredentialsResponse
+	(*TelephonyPipelineDID)(nil),                    // 168: crm.v1.TelephonyPipelineDID
+	(*UpsertTelephonyPipelineDIDRequest)(nil),       // 169: crm.v1.UpsertTelephonyPipelineDIDRequest
+	(*UpsertTelephonyPipelineDIDResponse)(nil),      // 170: crm.v1.UpsertTelephonyPipelineDIDResponse
+	(*ListTelephonyPipelineDIDsRequest)(nil),        // 171: crm.v1.ListTelephonyPipelineDIDsRequest
+	(*ListTelephonyPipelineDIDsResponse)(nil),       // 172: crm.v1.ListTelephonyPipelineDIDsResponse
+	(*DeleteTelephonyPipelineDIDRequest)(nil),       // 173: crm.v1.DeleteTelephonyPipelineDIDRequest
+	(*DeleteTelephonyPipelineDIDResponse)(nil),      // 174: crm.v1.DeleteTelephonyPipelineDIDResponse
+	(*TelephonyUserExtension)(nil),                  // 175: crm.v1.TelephonyUserExtension
+	(*UpsertTelephonyUserExtensionRequest)(nil),     // 176: crm.v1.UpsertTelephonyUserExtensionRequest
+	(*UpsertTelephonyUserExtensionResponse)(nil),    // 177: crm.v1.UpsertTelephonyUserExtensionResponse
+	(*GetTelephonyUserExtensionRequest)(nil),        // 178: crm.v1.GetTelephonyUserExtensionRequest
+	(*GetTelephonyUserExtensionResponse)(nil),       // 179: crm.v1.GetTelephonyUserExtensionResponse
+	(*ListTelephonyUserExtensionsRequest)(nil),      // 180: crm.v1.ListTelephonyUserExtensionsRequest
+	(*ListTelephonyUserExtensionsResponse)(nil),     // 181: crm.v1.ListTelephonyUserExtensionsResponse
+	(*LookupExtensionByNumberRequest)(nil),          // 182: crm.v1.LookupExtensionByNumberRequest
+	(*LookupExtensionByNumberResponse)(nil),         // 183: crm.v1.LookupExtensionByNumberResponse
+	(*DeleteTelephonyUserExtensionRequest)(nil),     // 184: crm.v1.DeleteTelephonyUserExtensionRequest
+	(*DeleteTelephonyUserExtensionResponse)(nil),    // 185: crm.v1.DeleteTelephonyUserExtensionResponse
+	(*UpdateTelephonyUserExtensionDNDRequest)(nil),  // 186: crm.v1.UpdateTelephonyUserExtensionDNDRequest
+	(*UpdateTelephonyUserExtensionDNDResponse)(nil), // 187: crm.v1.UpdateTelephonyUserExtensionDNDResponse
+	(*TelephonyProviderConfig)(nil),                 // 188: crm.v1.TelephonyProviderConfig
+	(*GetTelephonyProviderConfigRequest)(nil),       // 189: crm.v1.GetTelephonyProviderConfigRequest
+	(*GetTelephonyProviderConfigResponse)(nil),      // 190: crm.v1.GetTelephonyProviderConfigResponse
+	(*UpdateTelephonyProviderConfigRequest)(nil),    // 191: crm.v1.UpdateTelephonyProviderConfigRequest
+	(*UpdateTelephonyProviderConfigResponse)(nil),   // 192: crm.v1.UpdateTelephonyProviderConfigResponse
+	(*CreateTelephonyCallRequest)(nil),              // 193: crm.v1.CreateTelephonyCallRequest
+	(*CreateTelephonyCallResponse)(nil),             // 194: crm.v1.CreateTelephonyCallResponse
+	(*UpdateTelephonyCallStateRequest)(nil),         // 195: crm.v1.UpdateTelephonyCallStateRequest
+	(*UpdateTelephonyCallStateResponse)(nil),        // 196: crm.v1.UpdateTelephonyCallStateResponse
+	(*ListTelephonyCallsByOrgRequest)(nil),          // 197: crm.v1.ListTelephonyCallsByOrgRequest
+	(*ListTelephonyCallsByOrgResponse)(nil),         // 198: crm.v1.ListTelephonyCallsByOrgResponse
+	(*ListOrphanedTelephonyCallsRequest)(nil),       // 199: crm.v1.ListOrphanedTelephonyCallsRequest
+	(*ListOrphanedTelephonyCallsResponse)(nil),      // 200: crm.v1.ListOrphanedTelephonyCallsResponse
+	(*LookupEntityByPhoneRequest)(nil),              // 201: crm.v1.LookupEntityByPhoneRequest
+	(*LookupEntityByPhoneResponse)(nil),             // 202: crm.v1.LookupEntityByPhoneResponse
+	(*TelephonyIVRConfigEntry)(nil),                 // 203: crm.v1.TelephonyIVRConfigEntry
+	(*ListTelephonyIVRConfigRequest)(nil),           // 204: crm.v1.ListTelephonyIVRConfigRequest
+	(*ListTelephonyIVRConfigResponse)(nil),          // 205: crm.v1.ListTelephonyIVRConfigResponse
+	(*SaveTelephonyIVRConfigRequest)(nil),           // 206: crm.v1.SaveTelephonyIVRConfigRequest
+	(*SaveTelephonyIVRConfigResponse)(nil),          // 207: crm.v1.SaveTelephonyIVRConfigResponse
+	(*TelephonyBusinessHoursEntry)(nil),             // 208: crm.v1.TelephonyBusinessHoursEntry
+	(*GetTelephonyBusinessHoursRequest)(nil),        // 209: crm.v1.GetTelephonyBusinessHoursRequest
+	(*GetTelephonyBusinessHoursResponse)(nil),       // 210: crm.v1.GetTelephonyBusinessHoursResponse
+	(*SaveTelephonyBusinessHoursRequest)(nil),       // 211: crm.v1.SaveTelephonyBusinessHoursRequest
+	(*SaveTelephonyBusinessHoursResponse)(nil),      // 212: crm.v1.SaveTelephonyBusinessHoursResponse
+	(*TelephonyIVRGreeting)(nil),                    // 213: crm.v1.TelephonyIVRGreeting
+	(*GetTelephonyIVRGreetingRequest)(nil),          // 214: crm.v1.GetTelephonyIVRGreetingRequest
+	(*GetTelephonyIVRGreetingResponse)(nil),         // 215: crm.v1.GetTelephonyIVRGreetingResponse
+	(*UpsertTelephonyIVRGreetingRequest)(nil),       // 216: crm.v1.UpsertTelephonyIVRGreetingRequest
+	(*UpsertTelephonyIVRGreetingResponse)(nil),      // 217: crm.v1.UpsertTelephonyIVRGreetingResponse
+	(*GetTelephonyDialplanDataRequest)(nil),         // 218: crm.v1.GetTelephonyDialplanDataRequest
+	(*GetTelephonyDialplanDataResponse)(nil),        // 219: crm.v1.GetTelephonyDialplanDataResponse
+	(*TelephonyRecording)(nil),                      // 220: crm.v1.TelephonyRecording
+	(*CreateTelephonyRecordingRequest)(nil),         // 221: crm.v1.CreateTelephonyRecordingRequest
+	(*CreateTelephonyRecordingResponse)(nil),        // 222: crm.v1.CreateTelephonyRecordingResponse
+	(*GetTelephonyCallRecordingRequest)(nil),        // 223: crm.v1.GetTelephonyCallRecordingRequest
+	(*GetTelephonyCallRecordingResponse)(nil),       // 224: crm.v1.GetTelephonyCallRecordingResponse
+	(*timestamppb.Timestamp)(nil),                   // 225: google.protobuf.Timestamp
+	(*structpb.Struct)(nil),                         // 226: google.protobuf.Struct
 }
 var file_crm_crm_proto_depIdxs = []int32{
-	222, // 0: crm.v1.Pipeline.created_at:type_name -> google.protobuf.Timestamp
-	222, // 1: crm.v1.Pipeline.updated_at:type_name -> google.protobuf.Timestamp
+	225, // 0: crm.v1.Pipeline.created_at:type_name -> google.protobuf.Timestamp
+	225, // 1: crm.v1.Pipeline.updated_at:type_name -> google.protobuf.Timestamp
 	4,   // 2: crm.v1.Pipeline.stages:type_name -> crm.v1.Stage
-	222, // 3: crm.v1.Stage.created_at:type_name -> google.protobuf.Timestamp
-	222, // 4: crm.v1.Stage.updated_at:type_name -> google.protobuf.Timestamp
+	225, // 3: crm.v1.Stage.created_at:type_name -> google.protobuf.Timestamp
+	225, // 4: crm.v1.Stage.updated_at:type_name -> google.protobuf.Timestamp
 	3,   // 5: crm.v1.CreatePipelineResponse.pipeline:type_name -> crm.v1.Pipeline
 	3,   // 6: crm.v1.GetPipelineResponse.pipeline:type_name -> crm.v1.Pipeline
 	3,   // 7: crm.v1.ListPipelinesResponse.pipelines:type_name -> crm.v1.Pipeline
 	3,   // 8: crm.v1.UpdatePipelineResponse.pipeline:type_name -> crm.v1.Pipeline
 	4,   // 9: crm.v1.CreateStageResponse.stage:type_name -> crm.v1.Stage
 	4,   // 10: crm.v1.UpdateStageResponse.stage:type_name -> crm.v1.Stage
-	223, // 11: crm.v1.ContactProto.custom_fields:type_name -> google.protobuf.Struct
-	222, // 12: crm.v1.ContactProto.created_at:type_name -> google.protobuf.Timestamp
-	222, // 13: crm.v1.ContactProto.updated_at:type_name -> google.protobuf.Timestamp
+	226, // 11: crm.v1.ContactProto.custom_fields:type_name -> google.protobuf.Struct
+	225, // 12: crm.v1.ContactProto.created_at:type_name -> google.protobuf.Timestamp
+	225, // 13: crm.v1.ContactProto.updated_at:type_name -> google.protobuf.Timestamp
 	23,  // 14: crm.v1.CreateContactResponse.contact:type_name -> crm.v1.ContactProto
 	23,  // 15: crm.v1.GetContactResponse.contact:type_name -> crm.v1.ContactProto
 	23,  // 16: crm.v1.ListContactsResponse.contacts:type_name -> crm.v1.ContactProto
 	23,  // 17: crm.v1.SearchContactsResponse.contacts:type_name -> crm.v1.ContactProto
 	23,  // 18: crm.v1.UpdateContactResponse.contact:type_name -> crm.v1.ContactProto
-	222, // 19: crm.v1.VehicleProto.created_at:type_name -> google.protobuf.Timestamp
-	222, // 20: crm.v1.VehicleProto.updated_at:type_name -> google.protobuf.Timestamp
+	225, // 19: crm.v1.VehicleProto.created_at:type_name -> google.protobuf.Timestamp
+	225, // 20: crm.v1.VehicleProto.updated_at:type_name -> google.protobuf.Timestamp
 	36,  // 21: crm.v1.AddVehicleResponse.vehicle:type_name -> crm.v1.VehicleProto
 	36,  // 22: crm.v1.GetVehicleResponse.vehicle:type_name -> crm.v1.VehicleProto
 	36,  // 23: crm.v1.ListVehiclesByContactResponse.vehicles:type_name -> crm.v1.VehicleProto
-	222, // 24: crm.v1.ServiceRecordProto.date:type_name -> google.protobuf.Timestamp
+	225, // 24: crm.v1.ServiceRecordProto.date:type_name -> google.protobuf.Timestamp
 	43,  // 25: crm.v1.GetServiceHistoryResponse.records:type_name -> crm.v1.ServiceRecordProto
 	46,  // 26: crm.v1.GetGarageByPhoneResponse.cars:type_name -> crm.v1.CarInfoProto
 	46,  // 27: crm.v1.LookupVehicleResponse.car:type_name -> crm.v1.CarInfoProto
-	222, // 28: crm.v1.DealProto.expected_close:type_name -> google.protobuf.Timestamp
-	223, // 29: crm.v1.DealProto.custom_fields:type_name -> google.protobuf.Struct
-	222, // 30: crm.v1.DealProto.created_at:type_name -> google.protobuf.Timestamp
-	222, // 31: crm.v1.DealProto.updated_at:type_name -> google.protobuf.Timestamp
+	225, // 28: crm.v1.DealProto.expected_close:type_name -> google.protobuf.Timestamp
+	226, // 29: crm.v1.DealProto.custom_fields:type_name -> google.protobuf.Struct
+	225, // 30: crm.v1.DealProto.created_at:type_name -> google.protobuf.Timestamp
+	225, // 31: crm.v1.DealProto.updated_at:type_name -> google.protobuf.Timestamp
 	87,  // 32: crm.v1.DealProto.last_task:type_name -> crm.v1.TaskProto
-	222, // 33: crm.v1.DealStageHistoryProto.changed_at:type_name -> google.protobuf.Timestamp
-	223, // 34: crm.v1.ActivityProto.payload:type_name -> google.protobuf.Struct
-	222, // 35: crm.v1.ActivityProto.created_at:type_name -> google.protobuf.Timestamp
-	222, // 36: crm.v1.CreateDealRequest.expected_close:type_name -> google.protobuf.Timestamp
+	225, // 33: crm.v1.DealStageHistoryProto.changed_at:type_name -> google.protobuf.Timestamp
+	226, // 34: crm.v1.ActivityProto.payload:type_name -> google.protobuf.Struct
+	225, // 35: crm.v1.ActivityProto.created_at:type_name -> google.protobuf.Timestamp
+	225, // 36: crm.v1.CreateDealRequest.expected_close:type_name -> google.protobuf.Timestamp
 	51,  // 37: crm.v1.CreateDealResponse.deal:type_name -> crm.v1.DealProto
 	51,  // 38: crm.v1.GetDealResponse.deal:type_name -> crm.v1.DealProto
-	222, // 39: crm.v1.ListDealsRequest.date_from:type_name -> google.protobuf.Timestamp
-	222, // 40: crm.v1.ListDealsRequest.date_to:type_name -> google.protobuf.Timestamp
-	222, // 41: crm.v1.ListDealsRequest.task_due_from:type_name -> google.protobuf.Timestamp
-	222, // 42: crm.v1.ListDealsRequest.task_due_to:type_name -> google.protobuf.Timestamp
+	225, // 39: crm.v1.ListDealsRequest.date_from:type_name -> google.protobuf.Timestamp
+	225, // 40: crm.v1.ListDealsRequest.date_to:type_name -> google.protobuf.Timestamp
+	225, // 41: crm.v1.ListDealsRequest.task_due_from:type_name -> google.protobuf.Timestamp
+	225, // 42: crm.v1.ListDealsRequest.task_due_to:type_name -> google.protobuf.Timestamp
 	51,  // 43: crm.v1.ListDealsResponse.deals:type_name -> crm.v1.DealProto
-	222, // 44: crm.v1.UpdateDealRequest.expected_close:type_name -> google.protobuf.Timestamp
+	225, // 44: crm.v1.UpdateDealRequest.expected_close:type_name -> google.protobuf.Timestamp
 	51,  // 45: crm.v1.UpdateDealResponse.deal:type_name -> crm.v1.DealProto
-	223, // 46: crm.v1.ImportDealRequest.custom_fields:type_name -> google.protobuf.Struct
-	222, // 47: crm.v1.ImportDealRequest.created_at:type_name -> google.protobuf.Timestamp
-	222, // 48: crm.v1.ImportDealRequest.updated_at:type_name -> google.protobuf.Timestamp
+	226, // 46: crm.v1.ImportDealRequest.custom_fields:type_name -> google.protobuf.Struct
+	225, // 47: crm.v1.ImportDealRequest.created_at:type_name -> google.protobuf.Timestamp
+	225, // 48: crm.v1.ImportDealRequest.updated_at:type_name -> google.protobuf.Timestamp
 	51,  // 49: crm.v1.ImportDealResponse.deal:type_name -> crm.v1.DealProto
-	223, // 50: crm.v1.ImportDealResponse.previous_custom_fields:type_name -> google.protobuf.Struct
-	223, // 51: crm.v1.PatchDealCustomFieldsRequest.patch:type_name -> google.protobuf.Struct
+	226, // 50: crm.v1.ImportDealResponse.previous_custom_fields:type_name -> google.protobuf.Struct
+	226, // 51: crm.v1.PatchDealCustomFieldsRequest.patch:type_name -> google.protobuf.Struct
 	51,  // 52: crm.v1.PatchDealCustomFieldsResponse.deal:type_name -> crm.v1.DealProto
-	223, // 53: crm.v1.PatchDealCustomFieldsResponse.previous_custom_fields:type_name -> google.protobuf.Struct
+	226, // 53: crm.v1.PatchDealCustomFieldsResponse.previous_custom_fields:type_name -> google.protobuf.Struct
 	51,  // 54: crm.v1.MoveDealStageResponse.deal:type_name -> crm.v1.DealProto
 	51,  // 55: crm.v1.CloseDealResponse.deal:type_name -> crm.v1.DealProto
 	51,  // 56: crm.v1.ReOpenDealResponse.deal:type_name -> crm.v1.DealProto
 	53,  // 57: crm.v1.GetDealActivitiesResponse.activities:type_name -> crm.v1.ActivityProto
 	53,  // 58: crm.v1.GetContactActivitiesResponse.activities:type_name -> crm.v1.ActivityProto
-	222, // 59: crm.v1.LeadProto.converted_at:type_name -> google.protobuf.Timestamp
-	222, // 60: crm.v1.LeadProto.created_at:type_name -> google.protobuf.Timestamp
-	222, // 61: crm.v1.LeadProto.updated_at:type_name -> google.protobuf.Timestamp
+	225, // 59: crm.v1.LeadProto.converted_at:type_name -> google.protobuf.Timestamp
+	225, // 60: crm.v1.LeadProto.created_at:type_name -> google.protobuf.Timestamp
+	225, // 61: crm.v1.LeadProto.updated_at:type_name -> google.protobuf.Timestamp
 	76,  // 62: crm.v1.CreateLeadResponse.lead:type_name -> crm.v1.LeadProto
 	76,  // 63: crm.v1.GetLeadResponse.lead:type_name -> crm.v1.LeadProto
 	76,  // 64: crm.v1.ListLeadsResponse.leads:type_name -> crm.v1.LeadProto
@@ -15713,17 +15946,17 @@ var file_crm_crm_proto_depIdxs = []int32{
 	76,  // 66: crm.v1.ConvertLeadResponse.lead:type_name -> crm.v1.LeadProto
 	51,  // 67: crm.v1.ConvertLeadResponse.deal:type_name -> crm.v1.DealProto
 	23,  // 68: crm.v1.ConvertLeadResponse.contact:type_name -> crm.v1.ContactProto
-	222, // 69: crm.v1.TaskProto.due_at:type_name -> google.protobuf.Timestamp
-	222, // 70: crm.v1.TaskProto.completed_at:type_name -> google.protobuf.Timestamp
-	222, // 71: crm.v1.TaskProto.created_at:type_name -> google.protobuf.Timestamp
-	222, // 72: crm.v1.TaskProto.updated_at:type_name -> google.protobuf.Timestamp
-	222, // 73: crm.v1.CreateTaskRequest.due_at:type_name -> google.protobuf.Timestamp
+	225, // 69: crm.v1.TaskProto.due_at:type_name -> google.protobuf.Timestamp
+	225, // 70: crm.v1.TaskProto.completed_at:type_name -> google.protobuf.Timestamp
+	225, // 71: crm.v1.TaskProto.created_at:type_name -> google.protobuf.Timestamp
+	225, // 72: crm.v1.TaskProto.updated_at:type_name -> google.protobuf.Timestamp
+	225, // 73: crm.v1.CreateTaskRequest.due_at:type_name -> google.protobuf.Timestamp
 	87,  // 74: crm.v1.CreateTaskResponse.task:type_name -> crm.v1.TaskProto
 	87,  // 75: crm.v1.GetTaskResponse.task:type_name -> crm.v1.TaskProto
-	222, // 76: crm.v1.ListTasksRequest.due_before:type_name -> google.protobuf.Timestamp
+	225, // 76: crm.v1.ListTasksRequest.due_before:type_name -> google.protobuf.Timestamp
 	87,  // 77: crm.v1.ListTasksResponse.tasks:type_name -> crm.v1.TaskProto
 	87,  // 78: crm.v1.UpdateTaskStatusResponse.task:type_name -> crm.v1.TaskProto
-	222, // 79: crm.v1.UpdateTaskRequest.due_at:type_name -> google.protobuf.Timestamp
+	225, // 79: crm.v1.UpdateTaskRequest.due_at:type_name -> google.protobuf.Timestamp
 	87,  // 80: crm.v1.UpdateTaskResponse.task:type_name -> crm.v1.TaskProto
 	98,  // 81: crm.v1.CustomFieldDefinitionProto.options:type_name -> crm.v1.FieldOptionProto
 	98,  // 82: crm.v1.CreateCustomFieldDefinitionRequest.options:type_name -> crm.v1.FieldOptionProto
@@ -15735,289 +15968,293 @@ var file_crm_crm_proto_depIdxs = []int32{
 	110, // 88: crm.v1.CreateWebhookSubscriptionResponse.subscription:type_name -> crm.v1.WebhookSubscriptionProto
 	110, // 89: crm.v1.ListWebhookSubscriptionsResponse.subscriptions:type_name -> crm.v1.WebhookSubscriptionProto
 	110, // 90: crm.v1.UpdateWebhookSubscriptionResponse.subscription:type_name -> crm.v1.WebhookSubscriptionProto
-	222, // 91: crm.v1.GetFunnelConversionRequest.date_from:type_name -> google.protobuf.Timestamp
-	222, // 92: crm.v1.GetFunnelConversionRequest.date_to:type_name -> google.protobuf.Timestamp
+	225, // 91: crm.v1.GetFunnelConversionRequest.date_from:type_name -> google.protobuf.Timestamp
+	225, // 92: crm.v1.GetFunnelConversionRequest.date_to:type_name -> google.protobuf.Timestamp
 	120, // 93: crm.v1.GetFunnelConversionResponse.stages:type_name -> crm.v1.FunnelStageProto
-	222, // 94: crm.v1.GetManagerStatsRequest.date_from:type_name -> google.protobuf.Timestamp
-	222, // 95: crm.v1.GetManagerStatsRequest.date_to:type_name -> google.protobuf.Timestamp
+	225, // 94: crm.v1.GetManagerStatsRequest.date_from:type_name -> google.protobuf.Timestamp
+	225, // 95: crm.v1.GetManagerStatsRequest.date_to:type_name -> google.protobuf.Timestamp
 	123, // 96: crm.v1.GetManagerStatsResponse.managers:type_name -> crm.v1.ManagerStatProto
-	222, // 97: crm.v1.GetDealVolumeRequest.date_from:type_name -> google.protobuf.Timestamp
-	222, // 98: crm.v1.GetDealVolumeRequest.date_to:type_name -> google.protobuf.Timestamp
+	225, // 97: crm.v1.GetDealVolumeRequest.date_from:type_name -> google.protobuf.Timestamp
+	225, // 98: crm.v1.GetDealVolumeRequest.date_to:type_name -> google.protobuf.Timestamp
 	128, // 99: crm.v1.GetStageStatsResponse.stats:type_name -> crm.v1.StageStatProto
-	222, // 100: crm.v1.GetActivityStatsRequest.date_from:type_name -> google.protobuf.Timestamp
-	222, // 101: crm.v1.GetActivityStatsRequest.date_to:type_name -> google.protobuf.Timestamp
-	222, // 102: crm.v1.GetDealSourcesBreakdownRequest.date_from:type_name -> google.protobuf.Timestamp
-	222, // 103: crm.v1.GetDealSourcesBreakdownRequest.date_to:type_name -> google.protobuf.Timestamp
+	225, // 100: crm.v1.GetActivityStatsRequest.date_from:type_name -> google.protobuf.Timestamp
+	225, // 101: crm.v1.GetActivityStatsRequest.date_to:type_name -> google.protobuf.Timestamp
+	225, // 102: crm.v1.GetDealSourcesBreakdownRequest.date_from:type_name -> google.protobuf.Timestamp
+	225, // 103: crm.v1.GetDealSourcesBreakdownRequest.date_to:type_name -> google.protobuf.Timestamp
 	133, // 104: crm.v1.GetDealSourcesBreakdownResponse.items:type_name -> crm.v1.DealSourceBreakdownItem
-	222, // 105: crm.v1.NoteProto.created_at:type_name -> google.protobuf.Timestamp
-	222, // 106: crm.v1.NoteProto.updated_at:type_name -> google.protobuf.Timestamp
+	225, // 105: crm.v1.NoteProto.created_at:type_name -> google.protobuf.Timestamp
+	225, // 106: crm.v1.NoteProto.updated_at:type_name -> google.protobuf.Timestamp
 	135, // 107: crm.v1.CreateNoteResponse.note:type_name -> crm.v1.NoteProto
 	135, // 108: crm.v1.UpdateNoteResponse.note:type_name -> crm.v1.NoteProto
-	222, // 109: crm.v1.WAMessageProto.created_at:type_name -> google.protobuf.Timestamp
+	225, // 109: crm.v1.WAMessageProto.created_at:type_name -> google.protobuf.Timestamp
 	140, // 110: crm.v1.SendWhatsAppMessageResponse.message:type_name -> crm.v1.WAMessageProto
 	140, // 111: crm.v1.ListWhatsAppMessagesResponse.messages:type_name -> crm.v1.WAMessageProto
-	140, // 112: crm.v1.SendWhatsAppTemplateResponse.message:type_name -> crm.v1.WAMessageProto
-	151, // 113: crm.v1.ListWhatsAppTemplatesResponse.templates:type_name -> crm.v1.WhatsAppTemplate
-	152, // 114: crm.v1.WhatsAppTemplate.params:type_name -> crm.v1.WhatsAppTemplateParam
-	0,   // 115: crm.v1.TelephonyCall.provider:type_name -> crm.v1.TelephonyProvider
-	1,   // 116: crm.v1.TelephonyCall.direction:type_name -> crm.v1.TelephonyDirection
-	2,   // 117: crm.v1.TelephonyCall.status:type_name -> crm.v1.TelephonyStatus
-	222, // 118: crm.v1.TelephonyCall.answered_at:type_name -> google.protobuf.Timestamp
-	222, // 119: crm.v1.TelephonyCall.ended_at:type_name -> google.protobuf.Timestamp
-	222, // 120: crm.v1.TelephonyCall.created_at:type_name -> google.protobuf.Timestamp
-	223, // 121: crm.v1.TelephonyCall.provider_metadata:type_name -> google.protobuf.Struct
-	153, // 122: crm.v1.TelephonyCall.matched_entity:type_name -> crm.v1.MatchedEntity
-	222, // 123: crm.v1.TelephonyCall.janitor_reconciled_at:type_name -> google.protobuf.Timestamp
-	154, // 124: crm.v1.TelephonyOriginateResponse.call:type_name -> crm.v1.TelephonyCall
-	154, // 125: crm.v1.TelephonyGetCallResponse.call:type_name -> crm.v1.TelephonyCall
-	154, // 126: crm.v1.TelephonyListCallsResponse.calls:type_name -> crm.v1.TelephonyCall
-	161, // 127: crm.v1.SipCredentials.ice_servers:type_name -> crm.v1.IceServer
-	222, // 128: crm.v1.SipCredentials.expires_at:type_name -> google.protobuf.Timestamp
-	162, // 129: crm.v1.TelephonyGetCredentialsResponse.credentials:type_name -> crm.v1.SipCredentials
-	0,   // 130: crm.v1.TelephonyPipelineDID.provider:type_name -> crm.v1.TelephonyProvider
-	222, // 131: crm.v1.TelephonyPipelineDID.created_at:type_name -> google.protobuf.Timestamp
-	165, // 132: crm.v1.UpsertTelephonyPipelineDIDRequest.did:type_name -> crm.v1.TelephonyPipelineDID
-	165, // 133: crm.v1.UpsertTelephonyPipelineDIDResponse.did:type_name -> crm.v1.TelephonyPipelineDID
-	165, // 134: crm.v1.ListTelephonyPipelineDIDsResponse.dids:type_name -> crm.v1.TelephonyPipelineDID
-	0,   // 135: crm.v1.TelephonyUserExtension.provider:type_name -> crm.v1.TelephonyProvider
-	222, // 136: crm.v1.TelephonyUserExtension.created_at:type_name -> google.protobuf.Timestamp
-	172, // 137: crm.v1.UpsertTelephonyUserExtensionRequest.extension:type_name -> crm.v1.TelephonyUserExtension
-	172, // 138: crm.v1.UpsertTelephonyUserExtensionResponse.extension:type_name -> crm.v1.TelephonyUserExtension
-	0,   // 139: crm.v1.GetTelephonyUserExtensionRequest.provider:type_name -> crm.v1.TelephonyProvider
-	172, // 140: crm.v1.GetTelephonyUserExtensionResponse.extension:type_name -> crm.v1.TelephonyUserExtension
-	172, // 141: crm.v1.ListTelephonyUserExtensionsResponse.extensions:type_name -> crm.v1.TelephonyUserExtension
-	0,   // 142: crm.v1.LookupExtensionByNumberRequest.provider:type_name -> crm.v1.TelephonyProvider
-	172, // 143: crm.v1.UpdateTelephonyUserExtensionDNDResponse.extension:type_name -> crm.v1.TelephonyUserExtension
-	0,   // 144: crm.v1.TelephonyProviderConfig.active_provider:type_name -> crm.v1.TelephonyProvider
-	223, // 145: crm.v1.TelephonyProviderConfig.config:type_name -> google.protobuf.Struct
-	222, // 146: crm.v1.TelephonyProviderConfig.last_updated:type_name -> google.protobuf.Timestamp
-	185, // 147: crm.v1.GetTelephonyProviderConfigResponse.config:type_name -> crm.v1.TelephonyProviderConfig
-	185, // 148: crm.v1.UpdateTelephonyProviderConfigRequest.config:type_name -> crm.v1.TelephonyProviderConfig
-	185, // 149: crm.v1.UpdateTelephonyProviderConfigResponse.config:type_name -> crm.v1.TelephonyProviderConfig
-	154, // 150: crm.v1.CreateTelephonyCallRequest.call:type_name -> crm.v1.TelephonyCall
-	153, // 151: crm.v1.CreateTelephonyCallRequest.matched_entity:type_name -> crm.v1.MatchedEntity
-	154, // 152: crm.v1.CreateTelephonyCallResponse.call:type_name -> crm.v1.TelephonyCall
-	222, // 153: crm.v1.UpdateTelephonyCallStateRequest.answered_at:type_name -> google.protobuf.Timestamp
-	222, // 154: crm.v1.UpdateTelephonyCallStateRequest.ended_at:type_name -> google.protobuf.Timestamp
-	222, // 155: crm.v1.UpdateTelephonyCallStateRequest.janitor_reconciled_at:type_name -> google.protobuf.Timestamp
-	154, // 156: crm.v1.UpdateTelephonyCallStateResponse.call:type_name -> crm.v1.TelephonyCall
-	154, // 157: crm.v1.ListTelephonyCallsByOrgResponse.calls:type_name -> crm.v1.TelephonyCall
-	222, // 158: crm.v1.ListOrphanedTelephonyCallsRequest.older_than:type_name -> google.protobuf.Timestamp
-	154, // 159: crm.v1.ListOrphanedTelephonyCallsResponse.calls:type_name -> crm.v1.TelephonyCall
-	153, // 160: crm.v1.LookupEntityByPhoneResponse.matched_entity:type_name -> crm.v1.MatchedEntity
-	222, // 161: crm.v1.TelephonyIVRConfigEntry.created_at:type_name -> google.protobuf.Timestamp
-	222, // 162: crm.v1.TelephonyIVRConfigEntry.updated_at:type_name -> google.protobuf.Timestamp
-	200, // 163: crm.v1.ListTelephonyIVRConfigResponse.configs:type_name -> crm.v1.TelephonyIVRConfigEntry
-	200, // 164: crm.v1.SaveTelephonyIVRConfigRequest.configs:type_name -> crm.v1.TelephonyIVRConfigEntry
-	200, // 165: crm.v1.SaveTelephonyIVRConfigResponse.configs:type_name -> crm.v1.TelephonyIVRConfigEntry
-	222, // 166: crm.v1.TelephonyBusinessHoursEntry.created_at:type_name -> google.protobuf.Timestamp
-	222, // 167: crm.v1.TelephonyBusinessHoursEntry.updated_at:type_name -> google.protobuf.Timestamp
-	205, // 168: crm.v1.GetTelephonyBusinessHoursResponse.entries:type_name -> crm.v1.TelephonyBusinessHoursEntry
-	205, // 169: crm.v1.SaveTelephonyBusinessHoursRequest.entries:type_name -> crm.v1.TelephonyBusinessHoursEntry
-	205, // 170: crm.v1.SaveTelephonyBusinessHoursResponse.entries:type_name -> crm.v1.TelephonyBusinessHoursEntry
-	222, // 171: crm.v1.TelephonyIVRGreeting.created_at:type_name -> google.protobuf.Timestamp
-	222, // 172: crm.v1.TelephonyIVRGreeting.updated_at:type_name -> google.protobuf.Timestamp
-	210, // 173: crm.v1.GetTelephonyIVRGreetingResponse.greeting:type_name -> crm.v1.TelephonyIVRGreeting
-	210, // 174: crm.v1.UpsertTelephonyIVRGreetingRequest.greeting:type_name -> crm.v1.TelephonyIVRGreeting
-	210, // 175: crm.v1.UpsertTelephonyIVRGreetingResponse.greeting:type_name -> crm.v1.TelephonyIVRGreeting
-	165, // 176: crm.v1.GetTelephonyDialplanDataResponse.pipeline_dids:type_name -> crm.v1.TelephonyPipelineDID
-	200, // 177: crm.v1.GetTelephonyDialplanDataResponse.ivr_configs:type_name -> crm.v1.TelephonyIVRConfigEntry
-	205, // 178: crm.v1.GetTelephonyDialplanDataResponse.business_hours:type_name -> crm.v1.TelephonyBusinessHoursEntry
-	210, // 179: crm.v1.GetTelephonyDialplanDataResponse.ivr_greetings:type_name -> crm.v1.TelephonyIVRGreeting
-	172, // 180: crm.v1.GetTelephonyDialplanDataResponse.user_extensions:type_name -> crm.v1.TelephonyUserExtension
-	217, // 181: crm.v1.CreateTelephonyRecordingResponse.recording:type_name -> crm.v1.TelephonyRecording
-	217, // 182: crm.v1.GetTelephonyCallRecordingResponse.recording:type_name -> crm.v1.TelephonyRecording
-	5,   // 183: crm.v1.CRMService.CreatePipeline:input_type -> crm.v1.CreatePipelineRequest
-	7,   // 184: crm.v1.CRMService.GetPipeline:input_type -> crm.v1.GetPipelineRequest
-	9,   // 185: crm.v1.CRMService.ListPipelines:input_type -> crm.v1.ListPipelinesRequest
-	11,  // 186: crm.v1.CRMService.UpdatePipeline:input_type -> crm.v1.UpdatePipelineRequest
-	13,  // 187: crm.v1.CRMService.ArchivePipeline:input_type -> crm.v1.ArchivePipelineRequest
-	15,  // 188: crm.v1.CRMService.CreateStage:input_type -> crm.v1.CreateStageRequest
-	17,  // 189: crm.v1.CRMService.UpdateStage:input_type -> crm.v1.UpdateStageRequest
-	19,  // 190: crm.v1.CRMService.DeleteStage:input_type -> crm.v1.DeleteStageRequest
-	21,  // 191: crm.v1.CRMService.ReorderStages:input_type -> crm.v1.ReorderStagesRequest
-	24,  // 192: crm.v1.CRMService.CreateContact:input_type -> crm.v1.CreateContactRequest
-	26,  // 193: crm.v1.CRMService.GetContact:input_type -> crm.v1.GetContactRequest
-	28,  // 194: crm.v1.CRMService.ListContacts:input_type -> crm.v1.ListContactsRequest
-	30,  // 195: crm.v1.CRMService.SearchContacts:input_type -> crm.v1.SearchContactsRequest
-	32,  // 196: crm.v1.CRMService.UpdateContact:input_type -> crm.v1.UpdateContactRequest
-	34,  // 197: crm.v1.CRMService.DeleteContact:input_type -> crm.v1.DeleteContactRequest
-	37,  // 198: crm.v1.CRMService.AddVehicle:input_type -> crm.v1.AddVehicleRequest
-	39,  // 199: crm.v1.CRMService.GetVehicle:input_type -> crm.v1.GetVehicleRequest
-	41,  // 200: crm.v1.CRMService.ListVehiclesByContact:input_type -> crm.v1.ListVehiclesByContactRequest
-	44,  // 201: crm.v1.CRMService.GetServiceHistory:input_type -> crm.v1.GetServiceHistoryRequest
-	47,  // 202: crm.v1.CRMService.GetGarageByPhone:input_type -> crm.v1.GetGarageByPhoneRequest
-	49,  // 203: crm.v1.CRMService.LookupVehicle:input_type -> crm.v1.LookupVehicleRequest
-	54,  // 204: crm.v1.CRMService.CreateDeal:input_type -> crm.v1.CreateDealRequest
-	56,  // 205: crm.v1.CRMService.GetDeal:input_type -> crm.v1.GetDealRequest
-	58,  // 206: crm.v1.CRMService.ListDeals:input_type -> crm.v1.ListDealsRequest
-	60,  // 207: crm.v1.CRMService.UpdateDeal:input_type -> crm.v1.UpdateDealRequest
-	66,  // 208: crm.v1.CRMService.MoveDealStage:input_type -> crm.v1.MoveDealStageRequest
-	68,  // 209: crm.v1.CRMService.CloseDeal:input_type -> crm.v1.CloseDealRequest
-	70,  // 210: crm.v1.CRMService.ReOpenDeal:input_type -> crm.v1.ReOpenDealRequest
-	72,  // 211: crm.v1.CRMService.GetDealActivities:input_type -> crm.v1.GetDealActivitiesRequest
-	74,  // 212: crm.v1.CRMService.GetContactActivities:input_type -> crm.v1.GetContactActivitiesRequest
-	62,  // 213: crm.v1.CRMService.ImportDeal:input_type -> crm.v1.ImportDealRequest
-	64,  // 214: crm.v1.CRMService.PatchDealCustomFields:input_type -> crm.v1.PatchDealCustomFieldsRequest
-	77,  // 215: crm.v1.CRMService.CreateLead:input_type -> crm.v1.CreateLeadRequest
-	79,  // 216: crm.v1.CRMService.GetLead:input_type -> crm.v1.GetLeadRequest
-	81,  // 217: crm.v1.CRMService.ListLeads:input_type -> crm.v1.ListLeadsRequest
-	83,  // 218: crm.v1.CRMService.ChangeLeadStatus:input_type -> crm.v1.ChangeLeadStatusRequest
-	85,  // 219: crm.v1.CRMService.ConvertLead:input_type -> crm.v1.ConvertLeadRequest
-	88,  // 220: crm.v1.CRMService.CreateTask:input_type -> crm.v1.CreateTaskRequest
-	90,  // 221: crm.v1.CRMService.GetTask:input_type -> crm.v1.GetTaskRequest
-	92,  // 222: crm.v1.CRMService.ListTasks:input_type -> crm.v1.ListTasksRequest
-	94,  // 223: crm.v1.CRMService.UpdateTaskStatus:input_type -> crm.v1.UpdateTaskStatusRequest
-	96,  // 224: crm.v1.CRMService.UpdateTask:input_type -> crm.v1.UpdateTaskRequest
-	100, // 225: crm.v1.CRMService.CreateCustomFieldDefinition:input_type -> crm.v1.CreateCustomFieldDefinitionRequest
-	102, // 226: crm.v1.CRMService.GetCustomFieldDefinition:input_type -> crm.v1.GetCustomFieldDefinitionRequest
-	104, // 227: crm.v1.CRMService.ListCustomFieldDefinitions:input_type -> crm.v1.ListCustomFieldDefinitionsRequest
-	106, // 228: crm.v1.CRMService.UpdateCustomFieldDefinition:input_type -> crm.v1.UpdateCustomFieldDefinitionRequest
-	108, // 229: crm.v1.CRMService.DeleteCustomFieldDefinition:input_type -> crm.v1.DeleteCustomFieldDefinitionRequest
-	111, // 230: crm.v1.CRMService.CreateWebhookSubscription:input_type -> crm.v1.CreateWebhookSubscriptionRequest
-	113, // 231: crm.v1.CRMService.ListWebhookSubscriptions:input_type -> crm.v1.ListWebhookSubscriptionsRequest
-	115, // 232: crm.v1.CRMService.UpdateWebhookSubscription:input_type -> crm.v1.UpdateWebhookSubscriptionRequest
-	117, // 233: crm.v1.CRMService.DeleteWebhookSubscription:input_type -> crm.v1.DeleteWebhookSubscriptionRequest
-	119, // 234: crm.v1.CRMService.GetFunnelConversion:input_type -> crm.v1.GetFunnelConversionRequest
-	122, // 235: crm.v1.CRMService.GetManagerStats:input_type -> crm.v1.GetManagerStatsRequest
-	125, // 236: crm.v1.CRMService.GetDealVolume:input_type -> crm.v1.GetDealVolumeRequest
-	127, // 237: crm.v1.CRMService.GetStageStats:input_type -> crm.v1.GetStageStatsRequest
-	130, // 238: crm.v1.CRMService.GetActivityStats:input_type -> crm.v1.GetActivityStatsRequest
-	132, // 239: crm.v1.CRMService.GetDealSourcesBreakdown:input_type -> crm.v1.GetDealSourcesBreakdownRequest
-	136, // 240: crm.v1.CRMService.CreateNote:input_type -> crm.v1.CreateNoteRequest
-	138, // 241: crm.v1.CRMService.UpdateNote:input_type -> crm.v1.UpdateNoteRequest
-	141, // 242: crm.v1.CRMService.SendWhatsAppMessage:input_type -> crm.v1.SendWhatsAppMessageRequest
-	145, // 243: crm.v1.CRMService.SendWhatsAppTemplate:input_type -> crm.v1.SendWhatsAppTemplateRequest
-	143, // 244: crm.v1.CRMService.ListWhatsAppMessages:input_type -> crm.v1.ListWhatsAppMessagesRequest
-	149, // 245: crm.v1.CRMService.ListWhatsAppTemplates:input_type -> crm.v1.ListWhatsAppTemplatesRequest
-	147, // 246: crm.v1.CRMService.HandleWhatsAppWebhook:input_type -> crm.v1.WhatsAppWebhookRequest
-	155, // 247: crm.v1.CRMService.TelephonyOriginate:input_type -> crm.v1.TelephonyOriginateRequest
-	157, // 248: crm.v1.CRMService.TelephonyGetCall:input_type -> crm.v1.TelephonyGetCallRequest
-	159, // 249: crm.v1.CRMService.TelephonyListCalls:input_type -> crm.v1.TelephonyListCallsRequest
-	163, // 250: crm.v1.CRMService.TelephonyGetCredentials:input_type -> crm.v1.TelephonyGetCredentialsRequest
-	190, // 251: crm.v1.CRMService.CreateTelephonyCall:input_type -> crm.v1.CreateTelephonyCallRequest
-	192, // 252: crm.v1.CRMService.UpdateTelephonyCallState:input_type -> crm.v1.UpdateTelephonyCallStateRequest
-	194, // 253: crm.v1.CRMService.ListTelephonyCallsByOrg:input_type -> crm.v1.ListTelephonyCallsByOrgRequest
-	196, // 254: crm.v1.CRMService.ListOrphanedTelephonyCalls:input_type -> crm.v1.ListOrphanedTelephonyCallsRequest
-	198, // 255: crm.v1.CRMService.LookupEntityByPhone:input_type -> crm.v1.LookupEntityByPhoneRequest
-	166, // 256: crm.v1.CRMService.UpsertTelephonyPipelineDID:input_type -> crm.v1.UpsertTelephonyPipelineDIDRequest
-	168, // 257: crm.v1.CRMService.ListTelephonyPipelineDIDs:input_type -> crm.v1.ListTelephonyPipelineDIDsRequest
-	170, // 258: crm.v1.CRMService.DeleteTelephonyPipelineDID:input_type -> crm.v1.DeleteTelephonyPipelineDIDRequest
-	173, // 259: crm.v1.CRMService.UpsertTelephonyUserExtension:input_type -> crm.v1.UpsertTelephonyUserExtensionRequest
-	175, // 260: crm.v1.CRMService.GetTelephonyUserExtension:input_type -> crm.v1.GetTelephonyUserExtensionRequest
-	177, // 261: crm.v1.CRMService.ListTelephonyUserExtensions:input_type -> crm.v1.ListTelephonyUserExtensionsRequest
-	181, // 262: crm.v1.CRMService.DeleteTelephonyUserExtension:input_type -> crm.v1.DeleteTelephonyUserExtensionRequest
-	183, // 263: crm.v1.CRMService.UpdateTelephonyUserExtensionDND:input_type -> crm.v1.UpdateTelephonyUserExtensionDNDRequest
-	179, // 264: crm.v1.CRMService.LookupExtensionByNumber:input_type -> crm.v1.LookupExtensionByNumberRequest
-	186, // 265: crm.v1.CRMService.GetTelephonyProviderConfig:input_type -> crm.v1.GetTelephonyProviderConfigRequest
-	188, // 266: crm.v1.CRMService.UpdateTelephonyProviderConfig:input_type -> crm.v1.UpdateTelephonyProviderConfigRequest
-	201, // 267: crm.v1.CRMService.ListTelephonyIVRConfig:input_type -> crm.v1.ListTelephonyIVRConfigRequest
-	203, // 268: crm.v1.CRMService.SaveTelephonyIVRConfig:input_type -> crm.v1.SaveTelephonyIVRConfigRequest
-	206, // 269: crm.v1.CRMService.GetTelephonyBusinessHours:input_type -> crm.v1.GetTelephonyBusinessHoursRequest
-	208, // 270: crm.v1.CRMService.SaveTelephonyBusinessHours:input_type -> crm.v1.SaveTelephonyBusinessHoursRequest
-	211, // 271: crm.v1.CRMService.GetTelephonyIVRGreeting:input_type -> crm.v1.GetTelephonyIVRGreetingRequest
-	213, // 272: crm.v1.CRMService.UpsertTelephonyIVRGreeting:input_type -> crm.v1.UpsertTelephonyIVRGreetingRequest
-	215, // 273: crm.v1.CRMService.GetTelephonyDialplanData:input_type -> crm.v1.GetTelephonyDialplanDataRequest
-	218, // 274: crm.v1.CRMService.CreateTelephonyRecording:input_type -> crm.v1.CreateTelephonyRecordingRequest
-	220, // 275: crm.v1.CRMService.GetTelephonyCallRecording:input_type -> crm.v1.GetTelephonyCallRecordingRequest
-	6,   // 276: crm.v1.CRMService.CreatePipeline:output_type -> crm.v1.CreatePipelineResponse
-	8,   // 277: crm.v1.CRMService.GetPipeline:output_type -> crm.v1.GetPipelineResponse
-	10,  // 278: crm.v1.CRMService.ListPipelines:output_type -> crm.v1.ListPipelinesResponse
-	12,  // 279: crm.v1.CRMService.UpdatePipeline:output_type -> crm.v1.UpdatePipelineResponse
-	14,  // 280: crm.v1.CRMService.ArchivePipeline:output_type -> crm.v1.ArchivePipelineResponse
-	16,  // 281: crm.v1.CRMService.CreateStage:output_type -> crm.v1.CreateStageResponse
-	18,  // 282: crm.v1.CRMService.UpdateStage:output_type -> crm.v1.UpdateStageResponse
-	20,  // 283: crm.v1.CRMService.DeleteStage:output_type -> crm.v1.DeleteStageResponse
-	22,  // 284: crm.v1.CRMService.ReorderStages:output_type -> crm.v1.ReorderStagesResponse
-	25,  // 285: crm.v1.CRMService.CreateContact:output_type -> crm.v1.CreateContactResponse
-	27,  // 286: crm.v1.CRMService.GetContact:output_type -> crm.v1.GetContactResponse
-	29,  // 287: crm.v1.CRMService.ListContacts:output_type -> crm.v1.ListContactsResponse
-	31,  // 288: crm.v1.CRMService.SearchContacts:output_type -> crm.v1.SearchContactsResponse
-	33,  // 289: crm.v1.CRMService.UpdateContact:output_type -> crm.v1.UpdateContactResponse
-	35,  // 290: crm.v1.CRMService.DeleteContact:output_type -> crm.v1.DeleteContactResponse
-	38,  // 291: crm.v1.CRMService.AddVehicle:output_type -> crm.v1.AddVehicleResponse
-	40,  // 292: crm.v1.CRMService.GetVehicle:output_type -> crm.v1.GetVehicleResponse
-	42,  // 293: crm.v1.CRMService.ListVehiclesByContact:output_type -> crm.v1.ListVehiclesByContactResponse
-	45,  // 294: crm.v1.CRMService.GetServiceHistory:output_type -> crm.v1.GetServiceHistoryResponse
-	48,  // 295: crm.v1.CRMService.GetGarageByPhone:output_type -> crm.v1.GetGarageByPhoneResponse
-	50,  // 296: crm.v1.CRMService.LookupVehicle:output_type -> crm.v1.LookupVehicleResponse
-	55,  // 297: crm.v1.CRMService.CreateDeal:output_type -> crm.v1.CreateDealResponse
-	57,  // 298: crm.v1.CRMService.GetDeal:output_type -> crm.v1.GetDealResponse
-	59,  // 299: crm.v1.CRMService.ListDeals:output_type -> crm.v1.ListDealsResponse
-	61,  // 300: crm.v1.CRMService.UpdateDeal:output_type -> crm.v1.UpdateDealResponse
-	67,  // 301: crm.v1.CRMService.MoveDealStage:output_type -> crm.v1.MoveDealStageResponse
-	69,  // 302: crm.v1.CRMService.CloseDeal:output_type -> crm.v1.CloseDealResponse
-	71,  // 303: crm.v1.CRMService.ReOpenDeal:output_type -> crm.v1.ReOpenDealResponse
-	73,  // 304: crm.v1.CRMService.GetDealActivities:output_type -> crm.v1.GetDealActivitiesResponse
-	75,  // 305: crm.v1.CRMService.GetContactActivities:output_type -> crm.v1.GetContactActivitiesResponse
-	63,  // 306: crm.v1.CRMService.ImportDeal:output_type -> crm.v1.ImportDealResponse
-	65,  // 307: crm.v1.CRMService.PatchDealCustomFields:output_type -> crm.v1.PatchDealCustomFieldsResponse
-	78,  // 308: crm.v1.CRMService.CreateLead:output_type -> crm.v1.CreateLeadResponse
-	80,  // 309: crm.v1.CRMService.GetLead:output_type -> crm.v1.GetLeadResponse
-	82,  // 310: crm.v1.CRMService.ListLeads:output_type -> crm.v1.ListLeadsResponse
-	84,  // 311: crm.v1.CRMService.ChangeLeadStatus:output_type -> crm.v1.ChangeLeadStatusResponse
-	86,  // 312: crm.v1.CRMService.ConvertLead:output_type -> crm.v1.ConvertLeadResponse
-	89,  // 313: crm.v1.CRMService.CreateTask:output_type -> crm.v1.CreateTaskResponse
-	91,  // 314: crm.v1.CRMService.GetTask:output_type -> crm.v1.GetTaskResponse
-	93,  // 315: crm.v1.CRMService.ListTasks:output_type -> crm.v1.ListTasksResponse
-	95,  // 316: crm.v1.CRMService.UpdateTaskStatus:output_type -> crm.v1.UpdateTaskStatusResponse
-	97,  // 317: crm.v1.CRMService.UpdateTask:output_type -> crm.v1.UpdateTaskResponse
-	101, // 318: crm.v1.CRMService.CreateCustomFieldDefinition:output_type -> crm.v1.CreateCustomFieldDefinitionResponse
-	103, // 319: crm.v1.CRMService.GetCustomFieldDefinition:output_type -> crm.v1.GetCustomFieldDefinitionResponse
-	105, // 320: crm.v1.CRMService.ListCustomFieldDefinitions:output_type -> crm.v1.ListCustomFieldDefinitionsResponse
-	107, // 321: crm.v1.CRMService.UpdateCustomFieldDefinition:output_type -> crm.v1.UpdateCustomFieldDefinitionResponse
-	109, // 322: crm.v1.CRMService.DeleteCustomFieldDefinition:output_type -> crm.v1.DeleteCustomFieldDefinitionResponse
-	112, // 323: crm.v1.CRMService.CreateWebhookSubscription:output_type -> crm.v1.CreateWebhookSubscriptionResponse
-	114, // 324: crm.v1.CRMService.ListWebhookSubscriptions:output_type -> crm.v1.ListWebhookSubscriptionsResponse
-	116, // 325: crm.v1.CRMService.UpdateWebhookSubscription:output_type -> crm.v1.UpdateWebhookSubscriptionResponse
-	118, // 326: crm.v1.CRMService.DeleteWebhookSubscription:output_type -> crm.v1.DeleteWebhookSubscriptionResponse
-	121, // 327: crm.v1.CRMService.GetFunnelConversion:output_type -> crm.v1.GetFunnelConversionResponse
-	124, // 328: crm.v1.CRMService.GetManagerStats:output_type -> crm.v1.GetManagerStatsResponse
-	126, // 329: crm.v1.CRMService.GetDealVolume:output_type -> crm.v1.GetDealVolumeResponse
-	129, // 330: crm.v1.CRMService.GetStageStats:output_type -> crm.v1.GetStageStatsResponse
-	131, // 331: crm.v1.CRMService.GetActivityStats:output_type -> crm.v1.GetActivityStatsResponse
-	134, // 332: crm.v1.CRMService.GetDealSourcesBreakdown:output_type -> crm.v1.GetDealSourcesBreakdownResponse
-	137, // 333: crm.v1.CRMService.CreateNote:output_type -> crm.v1.CreateNoteResponse
-	139, // 334: crm.v1.CRMService.UpdateNote:output_type -> crm.v1.UpdateNoteResponse
-	142, // 335: crm.v1.CRMService.SendWhatsAppMessage:output_type -> crm.v1.SendWhatsAppMessageResponse
-	146, // 336: crm.v1.CRMService.SendWhatsAppTemplate:output_type -> crm.v1.SendWhatsAppTemplateResponse
-	144, // 337: crm.v1.CRMService.ListWhatsAppMessages:output_type -> crm.v1.ListWhatsAppMessagesResponse
-	150, // 338: crm.v1.CRMService.ListWhatsAppTemplates:output_type -> crm.v1.ListWhatsAppTemplatesResponse
-	148, // 339: crm.v1.CRMService.HandleWhatsAppWebhook:output_type -> crm.v1.WhatsAppWebhookResponse
-	156, // 340: crm.v1.CRMService.TelephonyOriginate:output_type -> crm.v1.TelephonyOriginateResponse
-	158, // 341: crm.v1.CRMService.TelephonyGetCall:output_type -> crm.v1.TelephonyGetCallResponse
-	160, // 342: crm.v1.CRMService.TelephonyListCalls:output_type -> crm.v1.TelephonyListCallsResponse
-	164, // 343: crm.v1.CRMService.TelephonyGetCredentials:output_type -> crm.v1.TelephonyGetCredentialsResponse
-	191, // 344: crm.v1.CRMService.CreateTelephonyCall:output_type -> crm.v1.CreateTelephonyCallResponse
-	193, // 345: crm.v1.CRMService.UpdateTelephonyCallState:output_type -> crm.v1.UpdateTelephonyCallStateResponse
-	195, // 346: crm.v1.CRMService.ListTelephonyCallsByOrg:output_type -> crm.v1.ListTelephonyCallsByOrgResponse
-	197, // 347: crm.v1.CRMService.ListOrphanedTelephonyCalls:output_type -> crm.v1.ListOrphanedTelephonyCallsResponse
-	199, // 348: crm.v1.CRMService.LookupEntityByPhone:output_type -> crm.v1.LookupEntityByPhoneResponse
-	167, // 349: crm.v1.CRMService.UpsertTelephonyPipelineDID:output_type -> crm.v1.UpsertTelephonyPipelineDIDResponse
-	169, // 350: crm.v1.CRMService.ListTelephonyPipelineDIDs:output_type -> crm.v1.ListTelephonyPipelineDIDsResponse
-	171, // 351: crm.v1.CRMService.DeleteTelephonyPipelineDID:output_type -> crm.v1.DeleteTelephonyPipelineDIDResponse
-	174, // 352: crm.v1.CRMService.UpsertTelephonyUserExtension:output_type -> crm.v1.UpsertTelephonyUserExtensionResponse
-	176, // 353: crm.v1.CRMService.GetTelephonyUserExtension:output_type -> crm.v1.GetTelephonyUserExtensionResponse
-	178, // 354: crm.v1.CRMService.ListTelephonyUserExtensions:output_type -> crm.v1.ListTelephonyUserExtensionsResponse
-	182, // 355: crm.v1.CRMService.DeleteTelephonyUserExtension:output_type -> crm.v1.DeleteTelephonyUserExtensionResponse
-	184, // 356: crm.v1.CRMService.UpdateTelephonyUserExtensionDND:output_type -> crm.v1.UpdateTelephonyUserExtensionDNDResponse
-	180, // 357: crm.v1.CRMService.LookupExtensionByNumber:output_type -> crm.v1.LookupExtensionByNumberResponse
-	187, // 358: crm.v1.CRMService.GetTelephonyProviderConfig:output_type -> crm.v1.GetTelephonyProviderConfigResponse
-	189, // 359: crm.v1.CRMService.UpdateTelephonyProviderConfig:output_type -> crm.v1.UpdateTelephonyProviderConfigResponse
-	202, // 360: crm.v1.CRMService.ListTelephonyIVRConfig:output_type -> crm.v1.ListTelephonyIVRConfigResponse
-	204, // 361: crm.v1.CRMService.SaveTelephonyIVRConfig:output_type -> crm.v1.SaveTelephonyIVRConfigResponse
-	207, // 362: crm.v1.CRMService.GetTelephonyBusinessHours:output_type -> crm.v1.GetTelephonyBusinessHoursResponse
-	209, // 363: crm.v1.CRMService.SaveTelephonyBusinessHours:output_type -> crm.v1.SaveTelephonyBusinessHoursResponse
-	212, // 364: crm.v1.CRMService.GetTelephonyIVRGreeting:output_type -> crm.v1.GetTelephonyIVRGreetingResponse
-	214, // 365: crm.v1.CRMService.UpsertTelephonyIVRGreeting:output_type -> crm.v1.UpsertTelephonyIVRGreetingResponse
-	216, // 366: crm.v1.CRMService.GetTelephonyDialplanData:output_type -> crm.v1.GetTelephonyDialplanDataResponse
-	219, // 367: crm.v1.CRMService.CreateTelephonyRecording:output_type -> crm.v1.CreateTelephonyRecordingResponse
-	221, // 368: crm.v1.CRMService.GetTelephonyCallRecording:output_type -> crm.v1.GetTelephonyCallRecordingResponse
-	276, // [276:369] is the sub-list for method output_type
-	183, // [183:276] is the sub-list for method input_type
-	183, // [183:183] is the sub-list for extension type_name
-	183, // [183:183] is the sub-list for extension extendee
-	0,   // [0:183] is the sub-list for field type_name
+	225, // 112: crm.v1.WAConversationProto.last_created_at:type_name -> google.protobuf.Timestamp
+	145, // 113: crm.v1.ListWhatsAppConversationsResponse.conversations:type_name -> crm.v1.WAConversationProto
+	140, // 114: crm.v1.SendWhatsAppTemplateResponse.message:type_name -> crm.v1.WAMessageProto
+	154, // 115: crm.v1.ListWhatsAppTemplatesResponse.templates:type_name -> crm.v1.WhatsAppTemplate
+	155, // 116: crm.v1.WhatsAppTemplate.params:type_name -> crm.v1.WhatsAppTemplateParam
+	0,   // 117: crm.v1.TelephonyCall.provider:type_name -> crm.v1.TelephonyProvider
+	1,   // 118: crm.v1.TelephonyCall.direction:type_name -> crm.v1.TelephonyDirection
+	2,   // 119: crm.v1.TelephonyCall.status:type_name -> crm.v1.TelephonyStatus
+	225, // 120: crm.v1.TelephonyCall.answered_at:type_name -> google.protobuf.Timestamp
+	225, // 121: crm.v1.TelephonyCall.ended_at:type_name -> google.protobuf.Timestamp
+	225, // 122: crm.v1.TelephonyCall.created_at:type_name -> google.protobuf.Timestamp
+	226, // 123: crm.v1.TelephonyCall.provider_metadata:type_name -> google.protobuf.Struct
+	156, // 124: crm.v1.TelephonyCall.matched_entity:type_name -> crm.v1.MatchedEntity
+	225, // 125: crm.v1.TelephonyCall.janitor_reconciled_at:type_name -> google.protobuf.Timestamp
+	157, // 126: crm.v1.TelephonyOriginateResponse.call:type_name -> crm.v1.TelephonyCall
+	157, // 127: crm.v1.TelephonyGetCallResponse.call:type_name -> crm.v1.TelephonyCall
+	157, // 128: crm.v1.TelephonyListCallsResponse.calls:type_name -> crm.v1.TelephonyCall
+	164, // 129: crm.v1.SipCredentials.ice_servers:type_name -> crm.v1.IceServer
+	225, // 130: crm.v1.SipCredentials.expires_at:type_name -> google.protobuf.Timestamp
+	165, // 131: crm.v1.TelephonyGetCredentialsResponse.credentials:type_name -> crm.v1.SipCredentials
+	0,   // 132: crm.v1.TelephonyPipelineDID.provider:type_name -> crm.v1.TelephonyProvider
+	225, // 133: crm.v1.TelephonyPipelineDID.created_at:type_name -> google.protobuf.Timestamp
+	168, // 134: crm.v1.UpsertTelephonyPipelineDIDRequest.did:type_name -> crm.v1.TelephonyPipelineDID
+	168, // 135: crm.v1.UpsertTelephonyPipelineDIDResponse.did:type_name -> crm.v1.TelephonyPipelineDID
+	168, // 136: crm.v1.ListTelephonyPipelineDIDsResponse.dids:type_name -> crm.v1.TelephonyPipelineDID
+	0,   // 137: crm.v1.TelephonyUserExtension.provider:type_name -> crm.v1.TelephonyProvider
+	225, // 138: crm.v1.TelephonyUserExtension.created_at:type_name -> google.protobuf.Timestamp
+	175, // 139: crm.v1.UpsertTelephonyUserExtensionRequest.extension:type_name -> crm.v1.TelephonyUserExtension
+	175, // 140: crm.v1.UpsertTelephonyUserExtensionResponse.extension:type_name -> crm.v1.TelephonyUserExtension
+	0,   // 141: crm.v1.GetTelephonyUserExtensionRequest.provider:type_name -> crm.v1.TelephonyProvider
+	175, // 142: crm.v1.GetTelephonyUserExtensionResponse.extension:type_name -> crm.v1.TelephonyUserExtension
+	175, // 143: crm.v1.ListTelephonyUserExtensionsResponse.extensions:type_name -> crm.v1.TelephonyUserExtension
+	0,   // 144: crm.v1.LookupExtensionByNumberRequest.provider:type_name -> crm.v1.TelephonyProvider
+	175, // 145: crm.v1.UpdateTelephonyUserExtensionDNDResponse.extension:type_name -> crm.v1.TelephonyUserExtension
+	0,   // 146: crm.v1.TelephonyProviderConfig.active_provider:type_name -> crm.v1.TelephonyProvider
+	226, // 147: crm.v1.TelephonyProviderConfig.config:type_name -> google.protobuf.Struct
+	225, // 148: crm.v1.TelephonyProviderConfig.last_updated:type_name -> google.protobuf.Timestamp
+	188, // 149: crm.v1.GetTelephonyProviderConfigResponse.config:type_name -> crm.v1.TelephonyProviderConfig
+	188, // 150: crm.v1.UpdateTelephonyProviderConfigRequest.config:type_name -> crm.v1.TelephonyProviderConfig
+	188, // 151: crm.v1.UpdateTelephonyProviderConfigResponse.config:type_name -> crm.v1.TelephonyProviderConfig
+	157, // 152: crm.v1.CreateTelephonyCallRequest.call:type_name -> crm.v1.TelephonyCall
+	156, // 153: crm.v1.CreateTelephonyCallRequest.matched_entity:type_name -> crm.v1.MatchedEntity
+	157, // 154: crm.v1.CreateTelephonyCallResponse.call:type_name -> crm.v1.TelephonyCall
+	225, // 155: crm.v1.UpdateTelephonyCallStateRequest.answered_at:type_name -> google.protobuf.Timestamp
+	225, // 156: crm.v1.UpdateTelephonyCallStateRequest.ended_at:type_name -> google.protobuf.Timestamp
+	225, // 157: crm.v1.UpdateTelephonyCallStateRequest.janitor_reconciled_at:type_name -> google.protobuf.Timestamp
+	157, // 158: crm.v1.UpdateTelephonyCallStateResponse.call:type_name -> crm.v1.TelephonyCall
+	157, // 159: crm.v1.ListTelephonyCallsByOrgResponse.calls:type_name -> crm.v1.TelephonyCall
+	225, // 160: crm.v1.ListOrphanedTelephonyCallsRequest.older_than:type_name -> google.protobuf.Timestamp
+	157, // 161: crm.v1.ListOrphanedTelephonyCallsResponse.calls:type_name -> crm.v1.TelephonyCall
+	156, // 162: crm.v1.LookupEntityByPhoneResponse.matched_entity:type_name -> crm.v1.MatchedEntity
+	225, // 163: crm.v1.TelephonyIVRConfigEntry.created_at:type_name -> google.protobuf.Timestamp
+	225, // 164: crm.v1.TelephonyIVRConfigEntry.updated_at:type_name -> google.protobuf.Timestamp
+	203, // 165: crm.v1.ListTelephonyIVRConfigResponse.configs:type_name -> crm.v1.TelephonyIVRConfigEntry
+	203, // 166: crm.v1.SaveTelephonyIVRConfigRequest.configs:type_name -> crm.v1.TelephonyIVRConfigEntry
+	203, // 167: crm.v1.SaveTelephonyIVRConfigResponse.configs:type_name -> crm.v1.TelephonyIVRConfigEntry
+	225, // 168: crm.v1.TelephonyBusinessHoursEntry.created_at:type_name -> google.protobuf.Timestamp
+	225, // 169: crm.v1.TelephonyBusinessHoursEntry.updated_at:type_name -> google.protobuf.Timestamp
+	208, // 170: crm.v1.GetTelephonyBusinessHoursResponse.entries:type_name -> crm.v1.TelephonyBusinessHoursEntry
+	208, // 171: crm.v1.SaveTelephonyBusinessHoursRequest.entries:type_name -> crm.v1.TelephonyBusinessHoursEntry
+	208, // 172: crm.v1.SaveTelephonyBusinessHoursResponse.entries:type_name -> crm.v1.TelephonyBusinessHoursEntry
+	225, // 173: crm.v1.TelephonyIVRGreeting.created_at:type_name -> google.protobuf.Timestamp
+	225, // 174: crm.v1.TelephonyIVRGreeting.updated_at:type_name -> google.protobuf.Timestamp
+	213, // 175: crm.v1.GetTelephonyIVRGreetingResponse.greeting:type_name -> crm.v1.TelephonyIVRGreeting
+	213, // 176: crm.v1.UpsertTelephonyIVRGreetingRequest.greeting:type_name -> crm.v1.TelephonyIVRGreeting
+	213, // 177: crm.v1.UpsertTelephonyIVRGreetingResponse.greeting:type_name -> crm.v1.TelephonyIVRGreeting
+	168, // 178: crm.v1.GetTelephonyDialplanDataResponse.pipeline_dids:type_name -> crm.v1.TelephonyPipelineDID
+	203, // 179: crm.v1.GetTelephonyDialplanDataResponse.ivr_configs:type_name -> crm.v1.TelephonyIVRConfigEntry
+	208, // 180: crm.v1.GetTelephonyDialplanDataResponse.business_hours:type_name -> crm.v1.TelephonyBusinessHoursEntry
+	213, // 181: crm.v1.GetTelephonyDialplanDataResponse.ivr_greetings:type_name -> crm.v1.TelephonyIVRGreeting
+	175, // 182: crm.v1.GetTelephonyDialplanDataResponse.user_extensions:type_name -> crm.v1.TelephonyUserExtension
+	220, // 183: crm.v1.CreateTelephonyRecordingResponse.recording:type_name -> crm.v1.TelephonyRecording
+	220, // 184: crm.v1.GetTelephonyCallRecordingResponse.recording:type_name -> crm.v1.TelephonyRecording
+	5,   // 185: crm.v1.CRMService.CreatePipeline:input_type -> crm.v1.CreatePipelineRequest
+	7,   // 186: crm.v1.CRMService.GetPipeline:input_type -> crm.v1.GetPipelineRequest
+	9,   // 187: crm.v1.CRMService.ListPipelines:input_type -> crm.v1.ListPipelinesRequest
+	11,  // 188: crm.v1.CRMService.UpdatePipeline:input_type -> crm.v1.UpdatePipelineRequest
+	13,  // 189: crm.v1.CRMService.ArchivePipeline:input_type -> crm.v1.ArchivePipelineRequest
+	15,  // 190: crm.v1.CRMService.CreateStage:input_type -> crm.v1.CreateStageRequest
+	17,  // 191: crm.v1.CRMService.UpdateStage:input_type -> crm.v1.UpdateStageRequest
+	19,  // 192: crm.v1.CRMService.DeleteStage:input_type -> crm.v1.DeleteStageRequest
+	21,  // 193: crm.v1.CRMService.ReorderStages:input_type -> crm.v1.ReorderStagesRequest
+	24,  // 194: crm.v1.CRMService.CreateContact:input_type -> crm.v1.CreateContactRequest
+	26,  // 195: crm.v1.CRMService.GetContact:input_type -> crm.v1.GetContactRequest
+	28,  // 196: crm.v1.CRMService.ListContacts:input_type -> crm.v1.ListContactsRequest
+	30,  // 197: crm.v1.CRMService.SearchContacts:input_type -> crm.v1.SearchContactsRequest
+	32,  // 198: crm.v1.CRMService.UpdateContact:input_type -> crm.v1.UpdateContactRequest
+	34,  // 199: crm.v1.CRMService.DeleteContact:input_type -> crm.v1.DeleteContactRequest
+	37,  // 200: crm.v1.CRMService.AddVehicle:input_type -> crm.v1.AddVehicleRequest
+	39,  // 201: crm.v1.CRMService.GetVehicle:input_type -> crm.v1.GetVehicleRequest
+	41,  // 202: crm.v1.CRMService.ListVehiclesByContact:input_type -> crm.v1.ListVehiclesByContactRequest
+	44,  // 203: crm.v1.CRMService.GetServiceHistory:input_type -> crm.v1.GetServiceHistoryRequest
+	47,  // 204: crm.v1.CRMService.GetGarageByPhone:input_type -> crm.v1.GetGarageByPhoneRequest
+	49,  // 205: crm.v1.CRMService.LookupVehicle:input_type -> crm.v1.LookupVehicleRequest
+	54,  // 206: crm.v1.CRMService.CreateDeal:input_type -> crm.v1.CreateDealRequest
+	56,  // 207: crm.v1.CRMService.GetDeal:input_type -> crm.v1.GetDealRequest
+	58,  // 208: crm.v1.CRMService.ListDeals:input_type -> crm.v1.ListDealsRequest
+	60,  // 209: crm.v1.CRMService.UpdateDeal:input_type -> crm.v1.UpdateDealRequest
+	66,  // 210: crm.v1.CRMService.MoveDealStage:input_type -> crm.v1.MoveDealStageRequest
+	68,  // 211: crm.v1.CRMService.CloseDeal:input_type -> crm.v1.CloseDealRequest
+	70,  // 212: crm.v1.CRMService.ReOpenDeal:input_type -> crm.v1.ReOpenDealRequest
+	72,  // 213: crm.v1.CRMService.GetDealActivities:input_type -> crm.v1.GetDealActivitiesRequest
+	74,  // 214: crm.v1.CRMService.GetContactActivities:input_type -> crm.v1.GetContactActivitiesRequest
+	62,  // 215: crm.v1.CRMService.ImportDeal:input_type -> crm.v1.ImportDealRequest
+	64,  // 216: crm.v1.CRMService.PatchDealCustomFields:input_type -> crm.v1.PatchDealCustomFieldsRequest
+	77,  // 217: crm.v1.CRMService.CreateLead:input_type -> crm.v1.CreateLeadRequest
+	79,  // 218: crm.v1.CRMService.GetLead:input_type -> crm.v1.GetLeadRequest
+	81,  // 219: crm.v1.CRMService.ListLeads:input_type -> crm.v1.ListLeadsRequest
+	83,  // 220: crm.v1.CRMService.ChangeLeadStatus:input_type -> crm.v1.ChangeLeadStatusRequest
+	85,  // 221: crm.v1.CRMService.ConvertLead:input_type -> crm.v1.ConvertLeadRequest
+	88,  // 222: crm.v1.CRMService.CreateTask:input_type -> crm.v1.CreateTaskRequest
+	90,  // 223: crm.v1.CRMService.GetTask:input_type -> crm.v1.GetTaskRequest
+	92,  // 224: crm.v1.CRMService.ListTasks:input_type -> crm.v1.ListTasksRequest
+	94,  // 225: crm.v1.CRMService.UpdateTaskStatus:input_type -> crm.v1.UpdateTaskStatusRequest
+	96,  // 226: crm.v1.CRMService.UpdateTask:input_type -> crm.v1.UpdateTaskRequest
+	100, // 227: crm.v1.CRMService.CreateCustomFieldDefinition:input_type -> crm.v1.CreateCustomFieldDefinitionRequest
+	102, // 228: crm.v1.CRMService.GetCustomFieldDefinition:input_type -> crm.v1.GetCustomFieldDefinitionRequest
+	104, // 229: crm.v1.CRMService.ListCustomFieldDefinitions:input_type -> crm.v1.ListCustomFieldDefinitionsRequest
+	106, // 230: crm.v1.CRMService.UpdateCustomFieldDefinition:input_type -> crm.v1.UpdateCustomFieldDefinitionRequest
+	108, // 231: crm.v1.CRMService.DeleteCustomFieldDefinition:input_type -> crm.v1.DeleteCustomFieldDefinitionRequest
+	111, // 232: crm.v1.CRMService.CreateWebhookSubscription:input_type -> crm.v1.CreateWebhookSubscriptionRequest
+	113, // 233: crm.v1.CRMService.ListWebhookSubscriptions:input_type -> crm.v1.ListWebhookSubscriptionsRequest
+	115, // 234: crm.v1.CRMService.UpdateWebhookSubscription:input_type -> crm.v1.UpdateWebhookSubscriptionRequest
+	117, // 235: crm.v1.CRMService.DeleteWebhookSubscription:input_type -> crm.v1.DeleteWebhookSubscriptionRequest
+	119, // 236: crm.v1.CRMService.GetFunnelConversion:input_type -> crm.v1.GetFunnelConversionRequest
+	122, // 237: crm.v1.CRMService.GetManagerStats:input_type -> crm.v1.GetManagerStatsRequest
+	125, // 238: crm.v1.CRMService.GetDealVolume:input_type -> crm.v1.GetDealVolumeRequest
+	127, // 239: crm.v1.CRMService.GetStageStats:input_type -> crm.v1.GetStageStatsRequest
+	130, // 240: crm.v1.CRMService.GetActivityStats:input_type -> crm.v1.GetActivityStatsRequest
+	132, // 241: crm.v1.CRMService.GetDealSourcesBreakdown:input_type -> crm.v1.GetDealSourcesBreakdownRequest
+	136, // 242: crm.v1.CRMService.CreateNote:input_type -> crm.v1.CreateNoteRequest
+	138, // 243: crm.v1.CRMService.UpdateNote:input_type -> crm.v1.UpdateNoteRequest
+	141, // 244: crm.v1.CRMService.SendWhatsAppMessage:input_type -> crm.v1.SendWhatsAppMessageRequest
+	148, // 245: crm.v1.CRMService.SendWhatsAppTemplate:input_type -> crm.v1.SendWhatsAppTemplateRequest
+	143, // 246: crm.v1.CRMService.ListWhatsAppMessages:input_type -> crm.v1.ListWhatsAppMessagesRequest
+	146, // 247: crm.v1.CRMService.ListWhatsAppConversations:input_type -> crm.v1.ListWhatsAppConversationsRequest
+	152, // 248: crm.v1.CRMService.ListWhatsAppTemplates:input_type -> crm.v1.ListWhatsAppTemplatesRequest
+	150, // 249: crm.v1.CRMService.HandleWhatsAppWebhook:input_type -> crm.v1.WhatsAppWebhookRequest
+	158, // 250: crm.v1.CRMService.TelephonyOriginate:input_type -> crm.v1.TelephonyOriginateRequest
+	160, // 251: crm.v1.CRMService.TelephonyGetCall:input_type -> crm.v1.TelephonyGetCallRequest
+	162, // 252: crm.v1.CRMService.TelephonyListCalls:input_type -> crm.v1.TelephonyListCallsRequest
+	166, // 253: crm.v1.CRMService.TelephonyGetCredentials:input_type -> crm.v1.TelephonyGetCredentialsRequest
+	193, // 254: crm.v1.CRMService.CreateTelephonyCall:input_type -> crm.v1.CreateTelephonyCallRequest
+	195, // 255: crm.v1.CRMService.UpdateTelephonyCallState:input_type -> crm.v1.UpdateTelephonyCallStateRequest
+	197, // 256: crm.v1.CRMService.ListTelephonyCallsByOrg:input_type -> crm.v1.ListTelephonyCallsByOrgRequest
+	199, // 257: crm.v1.CRMService.ListOrphanedTelephonyCalls:input_type -> crm.v1.ListOrphanedTelephonyCallsRequest
+	201, // 258: crm.v1.CRMService.LookupEntityByPhone:input_type -> crm.v1.LookupEntityByPhoneRequest
+	169, // 259: crm.v1.CRMService.UpsertTelephonyPipelineDID:input_type -> crm.v1.UpsertTelephonyPipelineDIDRequest
+	171, // 260: crm.v1.CRMService.ListTelephonyPipelineDIDs:input_type -> crm.v1.ListTelephonyPipelineDIDsRequest
+	173, // 261: crm.v1.CRMService.DeleteTelephonyPipelineDID:input_type -> crm.v1.DeleteTelephonyPipelineDIDRequest
+	176, // 262: crm.v1.CRMService.UpsertTelephonyUserExtension:input_type -> crm.v1.UpsertTelephonyUserExtensionRequest
+	178, // 263: crm.v1.CRMService.GetTelephonyUserExtension:input_type -> crm.v1.GetTelephonyUserExtensionRequest
+	180, // 264: crm.v1.CRMService.ListTelephonyUserExtensions:input_type -> crm.v1.ListTelephonyUserExtensionsRequest
+	184, // 265: crm.v1.CRMService.DeleteTelephonyUserExtension:input_type -> crm.v1.DeleteTelephonyUserExtensionRequest
+	186, // 266: crm.v1.CRMService.UpdateTelephonyUserExtensionDND:input_type -> crm.v1.UpdateTelephonyUserExtensionDNDRequest
+	182, // 267: crm.v1.CRMService.LookupExtensionByNumber:input_type -> crm.v1.LookupExtensionByNumberRequest
+	189, // 268: crm.v1.CRMService.GetTelephonyProviderConfig:input_type -> crm.v1.GetTelephonyProviderConfigRequest
+	191, // 269: crm.v1.CRMService.UpdateTelephonyProviderConfig:input_type -> crm.v1.UpdateTelephonyProviderConfigRequest
+	204, // 270: crm.v1.CRMService.ListTelephonyIVRConfig:input_type -> crm.v1.ListTelephonyIVRConfigRequest
+	206, // 271: crm.v1.CRMService.SaveTelephonyIVRConfig:input_type -> crm.v1.SaveTelephonyIVRConfigRequest
+	209, // 272: crm.v1.CRMService.GetTelephonyBusinessHours:input_type -> crm.v1.GetTelephonyBusinessHoursRequest
+	211, // 273: crm.v1.CRMService.SaveTelephonyBusinessHours:input_type -> crm.v1.SaveTelephonyBusinessHoursRequest
+	214, // 274: crm.v1.CRMService.GetTelephonyIVRGreeting:input_type -> crm.v1.GetTelephonyIVRGreetingRequest
+	216, // 275: crm.v1.CRMService.UpsertTelephonyIVRGreeting:input_type -> crm.v1.UpsertTelephonyIVRGreetingRequest
+	218, // 276: crm.v1.CRMService.GetTelephonyDialplanData:input_type -> crm.v1.GetTelephonyDialplanDataRequest
+	221, // 277: crm.v1.CRMService.CreateTelephonyRecording:input_type -> crm.v1.CreateTelephonyRecordingRequest
+	223, // 278: crm.v1.CRMService.GetTelephonyCallRecording:input_type -> crm.v1.GetTelephonyCallRecordingRequest
+	6,   // 279: crm.v1.CRMService.CreatePipeline:output_type -> crm.v1.CreatePipelineResponse
+	8,   // 280: crm.v1.CRMService.GetPipeline:output_type -> crm.v1.GetPipelineResponse
+	10,  // 281: crm.v1.CRMService.ListPipelines:output_type -> crm.v1.ListPipelinesResponse
+	12,  // 282: crm.v1.CRMService.UpdatePipeline:output_type -> crm.v1.UpdatePipelineResponse
+	14,  // 283: crm.v1.CRMService.ArchivePipeline:output_type -> crm.v1.ArchivePipelineResponse
+	16,  // 284: crm.v1.CRMService.CreateStage:output_type -> crm.v1.CreateStageResponse
+	18,  // 285: crm.v1.CRMService.UpdateStage:output_type -> crm.v1.UpdateStageResponse
+	20,  // 286: crm.v1.CRMService.DeleteStage:output_type -> crm.v1.DeleteStageResponse
+	22,  // 287: crm.v1.CRMService.ReorderStages:output_type -> crm.v1.ReorderStagesResponse
+	25,  // 288: crm.v1.CRMService.CreateContact:output_type -> crm.v1.CreateContactResponse
+	27,  // 289: crm.v1.CRMService.GetContact:output_type -> crm.v1.GetContactResponse
+	29,  // 290: crm.v1.CRMService.ListContacts:output_type -> crm.v1.ListContactsResponse
+	31,  // 291: crm.v1.CRMService.SearchContacts:output_type -> crm.v1.SearchContactsResponse
+	33,  // 292: crm.v1.CRMService.UpdateContact:output_type -> crm.v1.UpdateContactResponse
+	35,  // 293: crm.v1.CRMService.DeleteContact:output_type -> crm.v1.DeleteContactResponse
+	38,  // 294: crm.v1.CRMService.AddVehicle:output_type -> crm.v1.AddVehicleResponse
+	40,  // 295: crm.v1.CRMService.GetVehicle:output_type -> crm.v1.GetVehicleResponse
+	42,  // 296: crm.v1.CRMService.ListVehiclesByContact:output_type -> crm.v1.ListVehiclesByContactResponse
+	45,  // 297: crm.v1.CRMService.GetServiceHistory:output_type -> crm.v1.GetServiceHistoryResponse
+	48,  // 298: crm.v1.CRMService.GetGarageByPhone:output_type -> crm.v1.GetGarageByPhoneResponse
+	50,  // 299: crm.v1.CRMService.LookupVehicle:output_type -> crm.v1.LookupVehicleResponse
+	55,  // 300: crm.v1.CRMService.CreateDeal:output_type -> crm.v1.CreateDealResponse
+	57,  // 301: crm.v1.CRMService.GetDeal:output_type -> crm.v1.GetDealResponse
+	59,  // 302: crm.v1.CRMService.ListDeals:output_type -> crm.v1.ListDealsResponse
+	61,  // 303: crm.v1.CRMService.UpdateDeal:output_type -> crm.v1.UpdateDealResponse
+	67,  // 304: crm.v1.CRMService.MoveDealStage:output_type -> crm.v1.MoveDealStageResponse
+	69,  // 305: crm.v1.CRMService.CloseDeal:output_type -> crm.v1.CloseDealResponse
+	71,  // 306: crm.v1.CRMService.ReOpenDeal:output_type -> crm.v1.ReOpenDealResponse
+	73,  // 307: crm.v1.CRMService.GetDealActivities:output_type -> crm.v1.GetDealActivitiesResponse
+	75,  // 308: crm.v1.CRMService.GetContactActivities:output_type -> crm.v1.GetContactActivitiesResponse
+	63,  // 309: crm.v1.CRMService.ImportDeal:output_type -> crm.v1.ImportDealResponse
+	65,  // 310: crm.v1.CRMService.PatchDealCustomFields:output_type -> crm.v1.PatchDealCustomFieldsResponse
+	78,  // 311: crm.v1.CRMService.CreateLead:output_type -> crm.v1.CreateLeadResponse
+	80,  // 312: crm.v1.CRMService.GetLead:output_type -> crm.v1.GetLeadResponse
+	82,  // 313: crm.v1.CRMService.ListLeads:output_type -> crm.v1.ListLeadsResponse
+	84,  // 314: crm.v1.CRMService.ChangeLeadStatus:output_type -> crm.v1.ChangeLeadStatusResponse
+	86,  // 315: crm.v1.CRMService.ConvertLead:output_type -> crm.v1.ConvertLeadResponse
+	89,  // 316: crm.v1.CRMService.CreateTask:output_type -> crm.v1.CreateTaskResponse
+	91,  // 317: crm.v1.CRMService.GetTask:output_type -> crm.v1.GetTaskResponse
+	93,  // 318: crm.v1.CRMService.ListTasks:output_type -> crm.v1.ListTasksResponse
+	95,  // 319: crm.v1.CRMService.UpdateTaskStatus:output_type -> crm.v1.UpdateTaskStatusResponse
+	97,  // 320: crm.v1.CRMService.UpdateTask:output_type -> crm.v1.UpdateTaskResponse
+	101, // 321: crm.v1.CRMService.CreateCustomFieldDefinition:output_type -> crm.v1.CreateCustomFieldDefinitionResponse
+	103, // 322: crm.v1.CRMService.GetCustomFieldDefinition:output_type -> crm.v1.GetCustomFieldDefinitionResponse
+	105, // 323: crm.v1.CRMService.ListCustomFieldDefinitions:output_type -> crm.v1.ListCustomFieldDefinitionsResponse
+	107, // 324: crm.v1.CRMService.UpdateCustomFieldDefinition:output_type -> crm.v1.UpdateCustomFieldDefinitionResponse
+	109, // 325: crm.v1.CRMService.DeleteCustomFieldDefinition:output_type -> crm.v1.DeleteCustomFieldDefinitionResponse
+	112, // 326: crm.v1.CRMService.CreateWebhookSubscription:output_type -> crm.v1.CreateWebhookSubscriptionResponse
+	114, // 327: crm.v1.CRMService.ListWebhookSubscriptions:output_type -> crm.v1.ListWebhookSubscriptionsResponse
+	116, // 328: crm.v1.CRMService.UpdateWebhookSubscription:output_type -> crm.v1.UpdateWebhookSubscriptionResponse
+	118, // 329: crm.v1.CRMService.DeleteWebhookSubscription:output_type -> crm.v1.DeleteWebhookSubscriptionResponse
+	121, // 330: crm.v1.CRMService.GetFunnelConversion:output_type -> crm.v1.GetFunnelConversionResponse
+	124, // 331: crm.v1.CRMService.GetManagerStats:output_type -> crm.v1.GetManagerStatsResponse
+	126, // 332: crm.v1.CRMService.GetDealVolume:output_type -> crm.v1.GetDealVolumeResponse
+	129, // 333: crm.v1.CRMService.GetStageStats:output_type -> crm.v1.GetStageStatsResponse
+	131, // 334: crm.v1.CRMService.GetActivityStats:output_type -> crm.v1.GetActivityStatsResponse
+	134, // 335: crm.v1.CRMService.GetDealSourcesBreakdown:output_type -> crm.v1.GetDealSourcesBreakdownResponse
+	137, // 336: crm.v1.CRMService.CreateNote:output_type -> crm.v1.CreateNoteResponse
+	139, // 337: crm.v1.CRMService.UpdateNote:output_type -> crm.v1.UpdateNoteResponse
+	142, // 338: crm.v1.CRMService.SendWhatsAppMessage:output_type -> crm.v1.SendWhatsAppMessageResponse
+	149, // 339: crm.v1.CRMService.SendWhatsAppTemplate:output_type -> crm.v1.SendWhatsAppTemplateResponse
+	144, // 340: crm.v1.CRMService.ListWhatsAppMessages:output_type -> crm.v1.ListWhatsAppMessagesResponse
+	147, // 341: crm.v1.CRMService.ListWhatsAppConversations:output_type -> crm.v1.ListWhatsAppConversationsResponse
+	153, // 342: crm.v1.CRMService.ListWhatsAppTemplates:output_type -> crm.v1.ListWhatsAppTemplatesResponse
+	151, // 343: crm.v1.CRMService.HandleWhatsAppWebhook:output_type -> crm.v1.WhatsAppWebhookResponse
+	159, // 344: crm.v1.CRMService.TelephonyOriginate:output_type -> crm.v1.TelephonyOriginateResponse
+	161, // 345: crm.v1.CRMService.TelephonyGetCall:output_type -> crm.v1.TelephonyGetCallResponse
+	163, // 346: crm.v1.CRMService.TelephonyListCalls:output_type -> crm.v1.TelephonyListCallsResponse
+	167, // 347: crm.v1.CRMService.TelephonyGetCredentials:output_type -> crm.v1.TelephonyGetCredentialsResponse
+	194, // 348: crm.v1.CRMService.CreateTelephonyCall:output_type -> crm.v1.CreateTelephonyCallResponse
+	196, // 349: crm.v1.CRMService.UpdateTelephonyCallState:output_type -> crm.v1.UpdateTelephonyCallStateResponse
+	198, // 350: crm.v1.CRMService.ListTelephonyCallsByOrg:output_type -> crm.v1.ListTelephonyCallsByOrgResponse
+	200, // 351: crm.v1.CRMService.ListOrphanedTelephonyCalls:output_type -> crm.v1.ListOrphanedTelephonyCallsResponse
+	202, // 352: crm.v1.CRMService.LookupEntityByPhone:output_type -> crm.v1.LookupEntityByPhoneResponse
+	170, // 353: crm.v1.CRMService.UpsertTelephonyPipelineDID:output_type -> crm.v1.UpsertTelephonyPipelineDIDResponse
+	172, // 354: crm.v1.CRMService.ListTelephonyPipelineDIDs:output_type -> crm.v1.ListTelephonyPipelineDIDsResponse
+	174, // 355: crm.v1.CRMService.DeleteTelephonyPipelineDID:output_type -> crm.v1.DeleteTelephonyPipelineDIDResponse
+	177, // 356: crm.v1.CRMService.UpsertTelephonyUserExtension:output_type -> crm.v1.UpsertTelephonyUserExtensionResponse
+	179, // 357: crm.v1.CRMService.GetTelephonyUserExtension:output_type -> crm.v1.GetTelephonyUserExtensionResponse
+	181, // 358: crm.v1.CRMService.ListTelephonyUserExtensions:output_type -> crm.v1.ListTelephonyUserExtensionsResponse
+	185, // 359: crm.v1.CRMService.DeleteTelephonyUserExtension:output_type -> crm.v1.DeleteTelephonyUserExtensionResponse
+	187, // 360: crm.v1.CRMService.UpdateTelephonyUserExtensionDND:output_type -> crm.v1.UpdateTelephonyUserExtensionDNDResponse
+	183, // 361: crm.v1.CRMService.LookupExtensionByNumber:output_type -> crm.v1.LookupExtensionByNumberResponse
+	190, // 362: crm.v1.CRMService.GetTelephonyProviderConfig:output_type -> crm.v1.GetTelephonyProviderConfigResponse
+	192, // 363: crm.v1.CRMService.UpdateTelephonyProviderConfig:output_type -> crm.v1.UpdateTelephonyProviderConfigResponse
+	205, // 364: crm.v1.CRMService.ListTelephonyIVRConfig:output_type -> crm.v1.ListTelephonyIVRConfigResponse
+	207, // 365: crm.v1.CRMService.SaveTelephonyIVRConfig:output_type -> crm.v1.SaveTelephonyIVRConfigResponse
+	210, // 366: crm.v1.CRMService.GetTelephonyBusinessHours:output_type -> crm.v1.GetTelephonyBusinessHoursResponse
+	212, // 367: crm.v1.CRMService.SaveTelephonyBusinessHours:output_type -> crm.v1.SaveTelephonyBusinessHoursResponse
+	215, // 368: crm.v1.CRMService.GetTelephonyIVRGreeting:output_type -> crm.v1.GetTelephonyIVRGreetingResponse
+	217, // 369: crm.v1.CRMService.UpsertTelephonyIVRGreeting:output_type -> crm.v1.UpsertTelephonyIVRGreetingResponse
+	219, // 370: crm.v1.CRMService.GetTelephonyDialplanData:output_type -> crm.v1.GetTelephonyDialplanDataResponse
+	222, // 371: crm.v1.CRMService.CreateTelephonyRecording:output_type -> crm.v1.CreateTelephonyRecordingResponse
+	224, // 372: crm.v1.CRMService.GetTelephonyCallRecording:output_type -> crm.v1.GetTelephonyCallRecordingResponse
+	279, // [279:373] is the sub-list for method output_type
+	185, // [185:279] is the sub-list for method input_type
+	185, // [185:185] is the sub-list for extension type_name
+	185, // [185:185] is the sub-list for extension extendee
+	0,   // [0:185] is the sub-list for field type_name
 }
 
 func init() { file_crm_crm_proto_init() }
@@ -16025,18 +16262,18 @@ func file_crm_crm_proto_init() {
 	if File_crm_crm_proto != nil {
 		return
 	}
-	file_crm_crm_proto_msgTypes[151].OneofWrappers = []any{}
-	file_crm_crm_proto_msgTypes[152].OneofWrappers = []any{}
-	file_crm_crm_proto_msgTypes[156].OneofWrappers = []any{}
-	file_crm_crm_proto_msgTypes[165].OneofWrappers = []any{}
-	file_crm_crm_proto_msgTypes[182].OneofWrappers = []any{}
+	file_crm_crm_proto_msgTypes[154].OneofWrappers = []any{}
+	file_crm_crm_proto_msgTypes[155].OneofWrappers = []any{}
+	file_crm_crm_proto_msgTypes[159].OneofWrappers = []any{}
+	file_crm_crm_proto_msgTypes[168].OneofWrappers = []any{}
+	file_crm_crm_proto_msgTypes[185].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_crm_crm_proto_rawDesc), len(file_crm_crm_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   219,
+			NumMessages:   222,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

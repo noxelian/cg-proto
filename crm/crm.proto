@@ -119,6 +119,10 @@ service CRMService {
   rpc SendWhatsAppMessage(SendWhatsAppMessageRequest)     returns (SendWhatsAppMessageResponse);
   rpc SendWhatsAppTemplate(SendWhatsAppTemplateRequest)   returns (SendWhatsAppTemplateResponse);
   rpc ListWhatsAppMessages(ListWhatsAppMessagesRequest)   returns (ListWhatsAppMessagesResponse);
+  // ListWhatsAppConversations returns a phone-grouped view over wa_messages:
+  // one row per counterpart phone with its most recent message + unread count.
+  // Powers the standalone WhatsApp inbox page on the CRM web app.
+  rpc ListWhatsAppConversations(ListWhatsAppConversationsRequest) returns (ListWhatsAppConversationsResponse);
   rpc ListWhatsAppTemplates(ListWhatsAppTemplatesRequest) returns (ListWhatsAppTemplatesResponse);
   rpc HandleWhatsAppWebhook(WhatsAppWebhookRequest)       returns (WhatsAppWebhookResponse);
 
@@ -1222,6 +1226,28 @@ message ListWhatsAppMessagesRequest {
 
 message ListWhatsAppMessagesResponse {
   repeated WAMessageProto messages = 1;
+}
+
+message WAConversationProto {
+  string phone                = 1;
+  string contact_name         = 2;  // resolved via matched deal/contact; empty when unknown
+  string last_body            = 3;
+  string last_content_type    = 4;  // text / image / document / …
+  string last_direction       = 5;  // inbound / outbound
+  google.protobuf.Timestamp last_created_at = 6;
+  string last_deal_id         = 7;  // deal linked to the most recent message (optional)
+  int64  unread_count         = 8;  // sum of deal.unread_wa_count across deals linked to this phone
+}
+
+message ListWhatsAppConversationsRequest {
+  string organization_id = 1;
+  int32  limit           = 2;
+  int32  offset          = 3;
+}
+
+message ListWhatsAppConversationsResponse {
+  repeated WAConversationProto conversations = 1;
+  int64 total = 2; // total distinct phones, for pagination
 }
 
 // SendWhatsAppTemplate — send a pre-approved template message.
