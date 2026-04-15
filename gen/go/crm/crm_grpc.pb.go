@@ -50,6 +50,7 @@ const (
 	CRMService_GetDealActivities_FullMethodName               = "/crm.v1.CRMService/GetDealActivities"
 	CRMService_GetContactActivities_FullMethodName            = "/crm.v1.CRMService/GetContactActivities"
 	CRMService_ImportDeal_FullMethodName                      = "/crm.v1.CRMService/ImportDeal"
+	CRMService_PatchDealCustomFields_FullMethodName           = "/crm.v1.CRMService/PatchDealCustomFields"
 	CRMService_CreateLead_FullMethodName                      = "/crm.v1.CRMService/CreateLead"
 	CRMService_GetLead_FullMethodName                         = "/crm.v1.CRMService/GetLead"
 	CRMService_ListLeads_FullMethodName                       = "/crm.v1.CRMService/ListLeads"
@@ -179,6 +180,12 @@ type CRMServiceClient interface {
 	// (e.g. allows direct creation in terminal stages with status=won|lost).
 	// Authorization: requires platform admin role.
 	ImportDeal(ctx context.Context, in *ImportDealRequest, opts ...grpc.CallOption) (*ImportDealResponse, error)
+	// PatchDealCustomFields merges (or replaces) the deal's custom_fields
+	// JSONB blob. Used by external-integration backfills (hh.ru migration,
+	// partner data sync) that need to enrich an existing deal without going
+	// through ImportDeal's external_id dedup (useful when the old deal
+	// predates the external_id scheme).
+	PatchDealCustomFields(ctx context.Context, in *PatchDealCustomFieldsRequest, opts ...grpc.CallOption) (*PatchDealCustomFieldsResponse, error)
 	// Lead RPCs (Phase 5 -- lead capture and conversion)
 	CreateLead(ctx context.Context, in *CreateLeadRequest, opts ...grpc.CallOption) (*CreateLeadResponse, error)
 	GetLead(ctx context.Context, in *GetLeadRequest, opts ...grpc.CallOption) (*GetLeadResponse, error)
@@ -582,6 +589,16 @@ func (c *cRMServiceClient) ImportDeal(ctx context.Context, in *ImportDealRequest
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ImportDealResponse)
 	err := c.cc.Invoke(ctx, CRMService_ImportDeal_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) PatchDealCustomFields(ctx context.Context, in *PatchDealCustomFieldsRequest, opts ...grpc.CallOption) (*PatchDealCustomFieldsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PatchDealCustomFieldsResponse)
+	err := c.cc.Invoke(ctx, CRMService_PatchDealCustomFields_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1264,6 +1281,12 @@ type CRMServiceServer interface {
 	// (e.g. allows direct creation in terminal stages with status=won|lost).
 	// Authorization: requires platform admin role.
 	ImportDeal(context.Context, *ImportDealRequest) (*ImportDealResponse, error)
+	// PatchDealCustomFields merges (or replaces) the deal's custom_fields
+	// JSONB blob. Used by external-integration backfills (hh.ru migration,
+	// partner data sync) that need to enrich an existing deal without going
+	// through ImportDeal's external_id dedup (useful when the old deal
+	// predates the external_id scheme).
+	PatchDealCustomFields(context.Context, *PatchDealCustomFieldsRequest) (*PatchDealCustomFieldsResponse, error)
 	// Lead RPCs (Phase 5 -- lead capture and conversion)
 	CreateLead(context.Context, *CreateLeadRequest) (*CreateLeadResponse, error)
 	GetLead(context.Context, *GetLeadRequest) (*GetLeadResponse, error)
@@ -1443,6 +1466,9 @@ func (UnimplementedCRMServiceServer) GetContactActivities(context.Context, *GetC
 }
 func (UnimplementedCRMServiceServer) ImportDeal(context.Context, *ImportDealRequest) (*ImportDealResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ImportDeal not implemented")
+}
+func (UnimplementedCRMServiceServer) PatchDealCustomFields(context.Context, *PatchDealCustomFieldsRequest) (*PatchDealCustomFieldsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PatchDealCustomFields not implemented")
 }
 func (UnimplementedCRMServiceServer) CreateLead(context.Context, *CreateLeadRequest) (*CreateLeadResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateLead not implemented")
@@ -2202,6 +2228,24 @@ func _CRMService_ImportDeal_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRMServiceServer).ImportDeal(ctx, req.(*ImportDealRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_PatchDealCustomFields_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PatchDealCustomFieldsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).PatchDealCustomFields(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_PatchDealCustomFields_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).PatchDealCustomFields(ctx, req.(*PatchDealCustomFieldsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3434,6 +3478,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ImportDeal",
 			Handler:    _CRMService_ImportDeal_Handler,
+		},
+		{
+			MethodName: "PatchDealCustomFields",
+			Handler:    _CRMService_PatchDealCustomFields_Handler,
 		},
 		{
 			MethodName: "CreateLead",

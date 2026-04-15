@@ -66,6 +66,13 @@ service CRMService {
   // Authorization: requires platform admin role.
   rpc ImportDeal(ImportDealRequest)                         returns (ImportDealResponse);
 
+  // PatchDealCustomFields merges (or replaces) the deal's custom_fields
+  // JSONB blob. Used by external-integration backfills (hh.ru migration,
+  // partner data sync) that need to enrich an existing deal without going
+  // through ImportDeal's external_id dedup (useful when the old deal
+  // predates the external_id scheme).
+  rpc PatchDealCustomFields(PatchDealCustomFieldsRequest) returns (PatchDealCustomFieldsResponse);
+
   // Lead RPCs (Phase 5 -- lead capture and conversion)
   rpc CreateLead(CreateLeadRequest)                         returns (CreateLeadResponse);
   rpc GetLead(GetLeadRequest)                               returns (GetLeadResponse);
@@ -645,6 +652,24 @@ message ImportDealResponse {
   // merge — empty when the deal was newly created. Lets the caller
   // dedup imported tasks/notes against previously-imported fingerprints.
   google.protobuf.Struct previous_custom_fields = 3;
+}
+
+message PatchDealCustomFieldsRequest {
+  string organization_id = 1;
+  string deal_id         = 2;
+  // patch is the set of keys to write. When merge=true (default) the keys
+  // are layered onto the existing custom_fields via JSONB || (shallow
+  // merge — top-level key replace). When merge=false the whole blob is
+  // overwritten.
+  google.protobuf.Struct patch = 3;
+  // merge=true → JSONB ||; merge=false → full replace.
+  bool merge = 4;
+}
+
+message PatchDealCustomFieldsResponse {
+  DealProto deal = 1;
+  // previous_custom_fields is the value BEFORE the patch was applied.
+  google.protobuf.Struct previous_custom_fields = 2;
 }
 
 message MoveDealStageRequest {
