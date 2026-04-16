@@ -538,13 +538,10 @@ type WarehouseItem struct {
 	QrData            string                 `protobuf:"bytes,16,opt,name=qr_data,json=qrData,proto3" json:"qr_data,omitempty"`
 	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,18,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	// Car compatibility
-	MarkId   int32 `protobuf:"varint,19,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
-	ModelId  int32 `protobuf:"varint,20,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
-	YearFrom int32 `protobuf:"varint,21,opt,name=year_from,json=yearFrom,proto3" json:"year_from,omitempty"`
-	YearTo   int32 `protobuf:"varint,22,opt,name=year_to,json=yearTo,proto3" json:"year_to,omitempty"`
-	// Photos
-	Photos        []string `protobuf:"bytes,23,rep,name=photos,proto3" json:"photos,omitempty"`
+	// Car compatibility (many-to-many)
+	CarCompatibility []*CarCompatibility `protobuf:"bytes,19,rep,name=car_compatibility,json=carCompatibility,proto3" json:"car_compatibility,omitempty"`
+	// Photos (URLs from file service)
+	Photos        []string `protobuf:"bytes,20,rep,name=photos,proto3" json:"photos,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -705,32 +702,11 @@ func (x *WarehouseItem) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *WarehouseItem) GetMarkId() int32 {
+func (x *WarehouseItem) GetCarCompatibility() []*CarCompatibility {
 	if x != nil {
-		return x.MarkId
+		return x.CarCompatibility
 	}
-	return 0
-}
-
-func (x *WarehouseItem) GetModelId() int32 {
-	if x != nil {
-		return x.ModelId
-	}
-	return 0
-}
-
-func (x *WarehouseItem) GetYearFrom() int32 {
-	if x != nil {
-		return x.YearFrom
-	}
-	return 0
-}
-
-func (x *WarehouseItem) GetYearTo() int32 {
-	if x != nil {
-		return x.YearTo
-	}
-	return 0
+	return nil
 }
 
 func (x *WarehouseItem) GetPhotos() []string {
@@ -738,6 +714,98 @@ func (x *WarehouseItem) GetPhotos() []string {
 		return x.Photos
 	}
 	return nil
+}
+
+type CarCompatibility struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	MarkId        int32                  `protobuf:"varint,2,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	ModelId       int32                  `protobuf:"varint,3,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	YearFrom      int32                  `protobuf:"varint,4,opt,name=year_from,json=yearFrom,proto3" json:"year_from,omitempty"`
+	YearTo        int32                  `protobuf:"varint,5,opt,name=year_to,json=yearTo,proto3" json:"year_to,omitempty"`
+	MarkName      string                 `protobuf:"bytes,6,opt,name=mark_name,json=markName,proto3" json:"mark_name,omitempty"`
+	ModelName     string                 `protobuf:"bytes,7,opt,name=model_name,json=modelName,proto3" json:"model_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CarCompatibility) Reset() {
+	*x = CarCompatibility{}
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CarCompatibility) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CarCompatibility) ProtoMessage() {}
+
+func (x *CarCompatibility) ProtoReflect() protoreflect.Message {
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CarCompatibility.ProtoReflect.Descriptor instead.
+func (*CarCompatibility) Descriptor() ([]byte, []int) {
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CarCompatibility) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *CarCompatibility) GetMarkId() int32 {
+	if x != nil {
+		return x.MarkId
+	}
+	return 0
+}
+
+func (x *CarCompatibility) GetModelId() int32 {
+	if x != nil {
+		return x.ModelId
+	}
+	return 0
+}
+
+func (x *CarCompatibility) GetYearFrom() int32 {
+	if x != nil {
+		return x.YearFrom
+	}
+	return 0
+}
+
+func (x *CarCompatibility) GetYearTo() int32 {
+	if x != nil {
+		return x.YearTo
+	}
+	return 0
+}
+
+func (x *CarCompatibility) GetMarkName() string {
+	if x != nil {
+		return x.MarkName
+	}
+	return ""
+}
+
+func (x *CarCompatibility) GetModelName() string {
+	if x != nil {
+		return x.ModelName
+	}
+	return ""
 }
 
 type StockMovement struct {
@@ -760,7 +828,7 @@ type StockMovement struct {
 
 func (x *StockMovement) Reset() {
 	*x = StockMovement{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[3]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -772,7 +840,7 @@ func (x *StockMovement) String() string {
 func (*StockMovement) ProtoMessage() {}
 
 func (x *StockMovement) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[3]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -785,7 +853,7 @@ func (x *StockMovement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StockMovement.ProtoReflect.Descriptor instead.
 func (*StockMovement) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{3}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *StockMovement) GetId() int64 {
@@ -886,7 +954,7 @@ type InventoryCheck struct {
 
 func (x *InventoryCheck) Reset() {
 	*x = InventoryCheck{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[4]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -898,7 +966,7 @@ func (x *InventoryCheck) String() string {
 func (*InventoryCheck) ProtoMessage() {}
 
 func (x *InventoryCheck) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[4]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -911,7 +979,7 @@ func (x *InventoryCheck) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InventoryCheck.ProtoReflect.Descriptor instead.
 func (*InventoryCheck) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{4}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *InventoryCheck) GetId() int64 {
@@ -972,7 +1040,7 @@ type InventoryCheckItem struct {
 
 func (x *InventoryCheckItem) Reset() {
 	*x = InventoryCheckItem{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[5]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -984,7 +1052,7 @@ func (x *InventoryCheckItem) String() string {
 func (*InventoryCheckItem) ProtoMessage() {}
 
 func (x *InventoryCheckItem) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[5]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -997,7 +1065,7 @@ func (x *InventoryCheckItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InventoryCheckItem.ProtoReflect.Descriptor instead.
 func (*InventoryCheckItem) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{5}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *InventoryCheckItem) GetId() int64 {
@@ -1072,7 +1140,7 @@ type Reservation struct {
 
 func (x *Reservation) Reset() {
 	*x = Reservation{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[6]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1084,7 +1152,7 @@ func (x *Reservation) String() string {
 func (*Reservation) ProtoMessage() {}
 
 func (x *Reservation) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[6]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1097,7 +1165,7 @@ func (x *Reservation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Reservation.ProtoReflect.Descriptor instead.
 func (*Reservation) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{6}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *Reservation) GetId() int64 {
@@ -1169,7 +1237,7 @@ type CreateWarehouseRequest struct {
 
 func (x *CreateWarehouseRequest) Reset() {
 	*x = CreateWarehouseRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[7]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1181,7 +1249,7 @@ func (x *CreateWarehouseRequest) String() string {
 func (*CreateWarehouseRequest) ProtoMessage() {}
 
 func (x *CreateWarehouseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[7]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1194,7 +1262,7 @@ func (x *CreateWarehouseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateWarehouseRequest.ProtoReflect.Descriptor instead.
 func (*CreateWarehouseRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{7}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CreateWarehouseRequest) GetOrgId() string {
@@ -1241,7 +1309,7 @@ type CreateWarehouseResponse struct {
 
 func (x *CreateWarehouseResponse) Reset() {
 	*x = CreateWarehouseResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[8]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1253,7 +1321,7 @@ func (x *CreateWarehouseResponse) String() string {
 func (*CreateWarehouseResponse) ProtoMessage() {}
 
 func (x *CreateWarehouseResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[8]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1266,7 +1334,7 @@ func (x *CreateWarehouseResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateWarehouseResponse.ProtoReflect.Descriptor instead.
 func (*CreateWarehouseResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{8}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CreateWarehouseResponse) GetWarehouse() *Warehouse {
@@ -1285,7 +1353,7 @@ type GetWarehouseRequest struct {
 
 func (x *GetWarehouseRequest) Reset() {
 	*x = GetWarehouseRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[9]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1297,7 +1365,7 @@ func (x *GetWarehouseRequest) String() string {
 func (*GetWarehouseRequest) ProtoMessage() {}
 
 func (x *GetWarehouseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[9]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1310,7 +1378,7 @@ func (x *GetWarehouseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWarehouseRequest.ProtoReflect.Descriptor instead.
 func (*GetWarehouseRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{9}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetWarehouseRequest) GetId() int64 {
@@ -1329,7 +1397,7 @@ type GetWarehouseResponse struct {
 
 func (x *GetWarehouseResponse) Reset() {
 	*x = GetWarehouseResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[10]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1341,7 +1409,7 @@ func (x *GetWarehouseResponse) String() string {
 func (*GetWarehouseResponse) ProtoMessage() {}
 
 func (x *GetWarehouseResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[10]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1354,7 +1422,7 @@ func (x *GetWarehouseResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWarehouseResponse.ProtoReflect.Descriptor instead.
 func (*GetWarehouseResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{10}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetWarehouseResponse) GetWarehouse() *Warehouse {
@@ -1376,7 +1444,7 @@ type UpdateWarehouseRequest struct {
 
 func (x *UpdateWarehouseRequest) Reset() {
 	*x = UpdateWarehouseRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[11]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1388,7 +1456,7 @@ func (x *UpdateWarehouseRequest) String() string {
 func (*UpdateWarehouseRequest) ProtoMessage() {}
 
 func (x *UpdateWarehouseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[11]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1401,7 +1469,7 @@ func (x *UpdateWarehouseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateWarehouseRequest.ProtoReflect.Descriptor instead.
 func (*UpdateWarehouseRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{11}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *UpdateWarehouseRequest) GetId() int64 {
@@ -1441,7 +1509,7 @@ type UpdateWarehouseResponse struct {
 
 func (x *UpdateWarehouseResponse) Reset() {
 	*x = UpdateWarehouseResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[12]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1453,7 +1521,7 @@ func (x *UpdateWarehouseResponse) String() string {
 func (*UpdateWarehouseResponse) ProtoMessage() {}
 
 func (x *UpdateWarehouseResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[12]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1466,7 +1534,7 @@ func (x *UpdateWarehouseResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateWarehouseResponse.ProtoReflect.Descriptor instead.
 func (*UpdateWarehouseResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{12}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *UpdateWarehouseResponse) GetWarehouse() *Warehouse {
@@ -1489,7 +1557,7 @@ type ListWarehousesRequest struct {
 
 func (x *ListWarehousesRequest) Reset() {
 	*x = ListWarehousesRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[13]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1501,7 +1569,7 @@ func (x *ListWarehousesRequest) String() string {
 func (*ListWarehousesRequest) ProtoMessage() {}
 
 func (x *ListWarehousesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[13]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1514,7 +1582,7 @@ func (x *ListWarehousesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWarehousesRequest.ProtoReflect.Descriptor instead.
 func (*ListWarehousesRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{13}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ListWarehousesRequest) GetOrgId() string {
@@ -1562,7 +1630,7 @@ type ListWarehousesResponse struct {
 
 func (x *ListWarehousesResponse) Reset() {
 	*x = ListWarehousesResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[14]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1574,7 +1642,7 @@ func (x *ListWarehousesResponse) String() string {
 func (*ListWarehousesResponse) ProtoMessage() {}
 
 func (x *ListWarehousesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[14]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1587,7 +1655,7 @@ func (x *ListWarehousesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWarehousesResponse.ProtoReflect.Descriptor instead.
 func (*ListWarehousesResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{14}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ListWarehousesResponse) GetWarehouses() []*Warehouse {
@@ -1615,7 +1683,7 @@ type CreateStorageLocationRequest struct {
 
 func (x *CreateStorageLocationRequest) Reset() {
 	*x = CreateStorageLocationRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[15]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1627,7 +1695,7 @@ func (x *CreateStorageLocationRequest) String() string {
 func (*CreateStorageLocationRequest) ProtoMessage() {}
 
 func (x *CreateStorageLocationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[15]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1640,7 +1708,7 @@ func (x *CreateStorageLocationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateStorageLocationRequest.ProtoReflect.Descriptor instead.
 func (*CreateStorageLocationRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{15}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *CreateStorageLocationRequest) GetWarehouseId() int64 {
@@ -1673,7 +1741,7 @@ type CreateStorageLocationResponse struct {
 
 func (x *CreateStorageLocationResponse) Reset() {
 	*x = CreateStorageLocationResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[16]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1685,7 +1753,7 @@ func (x *CreateStorageLocationResponse) String() string {
 func (*CreateStorageLocationResponse) ProtoMessage() {}
 
 func (x *CreateStorageLocationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[16]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1698,7 +1766,7 @@ func (x *CreateStorageLocationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateStorageLocationResponse.ProtoReflect.Descriptor instead.
 func (*CreateStorageLocationResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{16}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *CreateStorageLocationResponse) GetLocation() *StorageLocation {
@@ -1719,7 +1787,7 @@ type UpdateStorageLocationRequest struct {
 
 func (x *UpdateStorageLocationRequest) Reset() {
 	*x = UpdateStorageLocationRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[17]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1731,7 +1799,7 @@ func (x *UpdateStorageLocationRequest) String() string {
 func (*UpdateStorageLocationRequest) ProtoMessage() {}
 
 func (x *UpdateStorageLocationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[17]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1744,7 +1812,7 @@ func (x *UpdateStorageLocationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateStorageLocationRequest.ProtoReflect.Descriptor instead.
 func (*UpdateStorageLocationRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{17}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *UpdateStorageLocationRequest) GetId() int64 {
@@ -1777,7 +1845,7 @@ type UpdateStorageLocationResponse struct {
 
 func (x *UpdateStorageLocationResponse) Reset() {
 	*x = UpdateStorageLocationResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[18]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1789,7 +1857,7 @@ func (x *UpdateStorageLocationResponse) String() string {
 func (*UpdateStorageLocationResponse) ProtoMessage() {}
 
 func (x *UpdateStorageLocationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[18]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1802,7 +1870,7 @@ func (x *UpdateStorageLocationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateStorageLocationResponse.ProtoReflect.Descriptor instead.
 func (*UpdateStorageLocationResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{18}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *UpdateStorageLocationResponse) GetLocation() *StorageLocation {
@@ -1821,7 +1889,7 @@ type ListStorageLocationsRequest struct {
 
 func (x *ListStorageLocationsRequest) Reset() {
 	*x = ListStorageLocationsRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[19]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1833,7 +1901,7 @@ func (x *ListStorageLocationsRequest) String() string {
 func (*ListStorageLocationsRequest) ProtoMessage() {}
 
 func (x *ListStorageLocationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[19]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1846,7 +1914,7 @@ func (x *ListStorageLocationsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListStorageLocationsRequest.ProtoReflect.Descriptor instead.
 func (*ListStorageLocationsRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{19}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ListStorageLocationsRequest) GetWarehouseId() int64 {
@@ -1865,7 +1933,7 @@ type ListStorageLocationsResponse struct {
 
 func (x *ListStorageLocationsResponse) Reset() {
 	*x = ListStorageLocationsResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[20]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1877,7 +1945,7 @@ func (x *ListStorageLocationsResponse) String() string {
 func (*ListStorageLocationsResponse) ProtoMessage() {}
 
 func (x *ListStorageLocationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[20]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1890,7 +1958,7 @@ func (x *ListStorageLocationsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListStorageLocationsResponse.ProtoReflect.Descriptor instead.
 func (*ListStorageLocationsResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{20}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ListStorageLocationsResponse) GetLocations() []*StorageLocation {
@@ -1909,7 +1977,7 @@ type DeleteStorageLocationRequest struct {
 
 func (x *DeleteStorageLocationRequest) Reset() {
 	*x = DeleteStorageLocationRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[21]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1921,7 +1989,7 @@ func (x *DeleteStorageLocationRequest) String() string {
 func (*DeleteStorageLocationRequest) ProtoMessage() {}
 
 func (x *DeleteStorageLocationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[21]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1934,7 +2002,7 @@ func (x *DeleteStorageLocationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteStorageLocationRequest.ProtoReflect.Descriptor instead.
 func (*DeleteStorageLocationRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{21}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *DeleteStorageLocationRequest) GetId() int64 {
@@ -1952,7 +2020,7 @@ type DeleteStorageLocationResponse struct {
 
 func (x *DeleteStorageLocationResponse) Reset() {
 	*x = DeleteStorageLocationResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[22]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1964,7 +2032,7 @@ func (x *DeleteStorageLocationResponse) String() string {
 func (*DeleteStorageLocationResponse) ProtoMessage() {}
 
 func (x *DeleteStorageLocationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[22]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1977,7 +2045,7 @@ func (x *DeleteStorageLocationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteStorageLocationResponse.ProtoReflect.Descriptor instead.
 func (*DeleteStorageLocationResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{22}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{23}
 }
 
 type CreateItemRequest struct {
@@ -1996,20 +2064,17 @@ type CreateItemRequest struct {
 	StorageLocationId int64                  `protobuf:"varint,12,opt,name=storage_location_id,json=storageLocationId,proto3" json:"storage_location_id,omitempty"`
 	// Initial stock quantity (auto-creates income movement)
 	InitialQuantity int32 `protobuf:"varint,13,opt,name=initial_quantity,json=initialQuantity,proto3" json:"initial_quantity,omitempty"`
-	// Car compatibility
-	MarkId   int32 `protobuf:"varint,14,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
-	ModelId  int32 `protobuf:"varint,15,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
-	YearFrom int32 `protobuf:"varint,16,opt,name=year_from,json=yearFrom,proto3" json:"year_from,omitempty"`
-	YearTo   int32 `protobuf:"varint,17,opt,name=year_to,json=yearTo,proto3" json:"year_to,omitempty"`
-	// Photos
-	Photos        []string `protobuf:"bytes,18,rep,name=photos,proto3" json:"photos,omitempty"`
+	// Car compatibility (multiple cars per part)
+	CarCompatibility []*CarCompatibilityInput `protobuf:"bytes,14,rep,name=car_compatibility,json=carCompatibility,proto3" json:"car_compatibility,omitempty"`
+	// Photos (URLs from file service)
+	Photos        []string `protobuf:"bytes,15,rep,name=photos,proto3" json:"photos,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateItemRequest) Reset() {
 	*x = CreateItemRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[23]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2021,7 +2086,7 @@ func (x *CreateItemRequest) String() string {
 func (*CreateItemRequest) ProtoMessage() {}
 
 func (x *CreateItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[23]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2034,7 +2099,7 @@ func (x *CreateItemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateItemRequest.ProtoReflect.Descriptor instead.
 func (*CreateItemRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{23}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *CreateItemRequest) GetWarehouseId() int64 {
@@ -2128,32 +2193,11 @@ func (x *CreateItemRequest) GetInitialQuantity() int32 {
 	return 0
 }
 
-func (x *CreateItemRequest) GetMarkId() int32 {
+func (x *CreateItemRequest) GetCarCompatibility() []*CarCompatibilityInput {
 	if x != nil {
-		return x.MarkId
+		return x.CarCompatibility
 	}
-	return 0
-}
-
-func (x *CreateItemRequest) GetModelId() int32 {
-	if x != nil {
-		return x.ModelId
-	}
-	return 0
-}
-
-func (x *CreateItemRequest) GetYearFrom() int32 {
-	if x != nil {
-		return x.YearFrom
-	}
-	return 0
-}
-
-func (x *CreateItemRequest) GetYearTo() int32 {
-	if x != nil {
-		return x.YearTo
-	}
-	return 0
+	return nil
 }
 
 func (x *CreateItemRequest) GetPhotos() []string {
@@ -2161,6 +2205,74 @@ func (x *CreateItemRequest) GetPhotos() []string {
 		return x.Photos
 	}
 	return nil
+}
+
+type CarCompatibilityInput struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MarkId        int32                  `protobuf:"varint,1,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	ModelId       int32                  `protobuf:"varint,2,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	YearFrom      int32                  `protobuf:"varint,3,opt,name=year_from,json=yearFrom,proto3" json:"year_from,omitempty"`
+	YearTo        int32                  `protobuf:"varint,4,opt,name=year_to,json=yearTo,proto3" json:"year_to,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CarCompatibilityInput) Reset() {
+	*x = CarCompatibilityInput{}
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CarCompatibilityInput) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CarCompatibilityInput) ProtoMessage() {}
+
+func (x *CarCompatibilityInput) ProtoReflect() protoreflect.Message {
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CarCompatibilityInput.ProtoReflect.Descriptor instead.
+func (*CarCompatibilityInput) Descriptor() ([]byte, []int) {
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *CarCompatibilityInput) GetMarkId() int32 {
+	if x != nil {
+		return x.MarkId
+	}
+	return 0
+}
+
+func (x *CarCompatibilityInput) GetModelId() int32 {
+	if x != nil {
+		return x.ModelId
+	}
+	return 0
+}
+
+func (x *CarCompatibilityInput) GetYearFrom() int32 {
+	if x != nil {
+		return x.YearFrom
+	}
+	return 0
+}
+
+func (x *CarCompatibilityInput) GetYearTo() int32 {
+	if x != nil {
+		return x.YearTo
+	}
+	return 0
 }
 
 type CreateItemResponse struct {
@@ -2172,7 +2284,7 @@ type CreateItemResponse struct {
 
 func (x *CreateItemResponse) Reset() {
 	*x = CreateItemResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[24]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2184,7 +2296,7 @@ func (x *CreateItemResponse) String() string {
 func (*CreateItemResponse) ProtoMessage() {}
 
 func (x *CreateItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[24]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2197,7 +2309,7 @@ func (x *CreateItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateItemResponse.ProtoReflect.Descriptor instead.
 func (*CreateItemResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{24}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *CreateItemResponse) GetItem() *WarehouseItem {
@@ -2216,7 +2328,7 @@ type GetItemRequest struct {
 
 func (x *GetItemRequest) Reset() {
 	*x = GetItemRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[25]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2228,7 +2340,7 @@ func (x *GetItemRequest) String() string {
 func (*GetItemRequest) ProtoMessage() {}
 
 func (x *GetItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[25]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2241,7 +2353,7 @@ func (x *GetItemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetItemRequest.ProtoReflect.Descriptor instead.
 func (*GetItemRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{25}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *GetItemRequest) GetId() int64 {
@@ -2260,7 +2372,7 @@ type GetItemResponse struct {
 
 func (x *GetItemResponse) Reset() {
 	*x = GetItemResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[26]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2272,7 +2384,7 @@ func (x *GetItemResponse) String() string {
 func (*GetItemResponse) ProtoMessage() {}
 
 func (x *GetItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[26]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2285,7 +2397,7 @@ func (x *GetItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetItemResponse.ProtoReflect.Descriptor instead.
 func (*GetItemResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{26}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *GetItemResponse) GetItem() *WarehouseItem {
@@ -2312,7 +2424,7 @@ type UpdateItemRequest struct {
 
 func (x *UpdateItemRequest) Reset() {
 	*x = UpdateItemRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[27]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2324,7 +2436,7 @@ func (x *UpdateItemRequest) String() string {
 func (*UpdateItemRequest) ProtoMessage() {}
 
 func (x *UpdateItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[27]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2337,7 +2449,7 @@ func (x *UpdateItemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateItemRequest.ProtoReflect.Descriptor instead.
 func (*UpdateItemRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{27}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *UpdateItemRequest) GetId() int64 {
@@ -2412,7 +2524,7 @@ type UpdateItemResponse struct {
 
 func (x *UpdateItemResponse) Reset() {
 	*x = UpdateItemResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[28]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2424,7 +2536,7 @@ func (x *UpdateItemResponse) String() string {
 func (*UpdateItemResponse) ProtoMessage() {}
 
 func (x *UpdateItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[28]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2437,7 +2549,7 @@ func (x *UpdateItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateItemResponse.ProtoReflect.Descriptor instead.
 func (*UpdateItemResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{28}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *UpdateItemResponse) GetItem() *WarehouseItem {
@@ -2461,7 +2573,7 @@ type ListItemsRequest struct {
 
 func (x *ListItemsRequest) Reset() {
 	*x = ListItemsRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[29]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2473,7 +2585,7 @@ func (x *ListItemsRequest) String() string {
 func (*ListItemsRequest) ProtoMessage() {}
 
 func (x *ListItemsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[29]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2486,7 +2598,7 @@ func (x *ListItemsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListItemsRequest.ProtoReflect.Descriptor instead.
 func (*ListItemsRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{29}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *ListItemsRequest) GetWarehouseId() int64 {
@@ -2541,7 +2653,7 @@ type ListItemsResponse struct {
 
 func (x *ListItemsResponse) Reset() {
 	*x = ListItemsResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[30]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2553,7 +2665,7 @@ func (x *ListItemsResponse) String() string {
 func (*ListItemsResponse) ProtoMessage() {}
 
 func (x *ListItemsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[30]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2566,7 +2678,7 @@ func (x *ListItemsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListItemsResponse.ProtoReflect.Descriptor instead.
 func (*ListItemsResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{30}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ListItemsResponse) GetItems() []*WarehouseItem {
@@ -2597,7 +2709,7 @@ type SearchItemsRequest struct {
 
 func (x *SearchItemsRequest) Reset() {
 	*x = SearchItemsRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[31]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2609,7 +2721,7 @@ func (x *SearchItemsRequest) String() string {
 func (*SearchItemsRequest) ProtoMessage() {}
 
 func (x *SearchItemsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[31]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2622,7 +2734,7 @@ func (x *SearchItemsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchItemsRequest.ProtoReflect.Descriptor instead.
 func (*SearchItemsRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{31}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *SearchItemsRequest) GetOrgId() string {
@@ -2677,7 +2789,7 @@ type SearchItemsResponse struct {
 
 func (x *SearchItemsResponse) Reset() {
 	*x = SearchItemsResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[32]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2689,7 +2801,7 @@ func (x *SearchItemsResponse) String() string {
 func (*SearchItemsResponse) ProtoMessage() {}
 
 func (x *SearchItemsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[32]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2702,7 +2814,7 @@ func (x *SearchItemsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchItemsResponse.ProtoReflect.Descriptor instead.
 func (*SearchItemsResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{32}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *SearchItemsResponse) GetItems() []*WarehouseItem {
@@ -2731,7 +2843,7 @@ type ReceiveStockItem struct {
 
 func (x *ReceiveStockItem) Reset() {
 	*x = ReceiveStockItem{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[33]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2743,7 +2855,7 @@ func (x *ReceiveStockItem) String() string {
 func (*ReceiveStockItem) ProtoMessage() {}
 
 func (x *ReceiveStockItem) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[33]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2756,7 +2868,7 @@ func (x *ReceiveStockItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReceiveStockItem.ProtoReflect.Descriptor instead.
 func (*ReceiveStockItem) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{33}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *ReceiveStockItem) GetWarehouseItemId() int64 {
@@ -2799,7 +2911,7 @@ type ReceiveStockRequest struct {
 
 func (x *ReceiveStockRequest) Reset() {
 	*x = ReceiveStockRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[34]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2811,7 +2923,7 @@ func (x *ReceiveStockRequest) String() string {
 func (*ReceiveStockRequest) ProtoMessage() {}
 
 func (x *ReceiveStockRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[34]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2824,7 +2936,7 @@ func (x *ReceiveStockRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReceiveStockRequest.ProtoReflect.Descriptor instead.
 func (*ReceiveStockRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{34}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *ReceiveStockRequest) GetWarehouseId() int64 {
@@ -2864,7 +2976,7 @@ type ReceiveStockResponse struct {
 
 func (x *ReceiveStockResponse) Reset() {
 	*x = ReceiveStockResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[35]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2876,7 +2988,7 @@ func (x *ReceiveStockResponse) String() string {
 func (*ReceiveStockResponse) ProtoMessage() {}
 
 func (x *ReceiveStockResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[35]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2889,7 +3001,7 @@ func (x *ReceiveStockResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReceiveStockResponse.ProtoReflect.Descriptor instead.
 func (*ReceiveStockResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{35}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *ReceiveStockResponse) GetMovements() []*StockMovement {
@@ -2909,7 +3021,7 @@ type WriteOffStockItem struct {
 
 func (x *WriteOffStockItem) Reset() {
 	*x = WriteOffStockItem{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[36]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2921,7 +3033,7 @@ func (x *WriteOffStockItem) String() string {
 func (*WriteOffStockItem) ProtoMessage() {}
 
 func (x *WriteOffStockItem) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[36]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2934,7 +3046,7 @@ func (x *WriteOffStockItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WriteOffStockItem.ProtoReflect.Descriptor instead.
 func (*WriteOffStockItem) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{36}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *WriteOffStockItem) GetWarehouseItemId() int64 {
@@ -2963,7 +3075,7 @@ type WriteOffStockRequest struct {
 
 func (x *WriteOffStockRequest) Reset() {
 	*x = WriteOffStockRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[37]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2975,7 +3087,7 @@ func (x *WriteOffStockRequest) String() string {
 func (*WriteOffStockRequest) ProtoMessage() {}
 
 func (x *WriteOffStockRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[37]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2988,7 +3100,7 @@ func (x *WriteOffStockRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WriteOffStockRequest.ProtoReflect.Descriptor instead.
 func (*WriteOffStockRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{37}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *WriteOffStockRequest) GetWarehouseId() int64 {
@@ -3028,7 +3140,7 @@ type WriteOffStockResponse struct {
 
 func (x *WriteOffStockResponse) Reset() {
 	*x = WriteOffStockResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[38]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3040,7 +3152,7 @@ func (x *WriteOffStockResponse) String() string {
 func (*WriteOffStockResponse) ProtoMessage() {}
 
 func (x *WriteOffStockResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[38]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3053,7 +3165,7 @@ func (x *WriteOffStockResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WriteOffStockResponse.ProtoReflect.Descriptor instead.
 func (*WriteOffStockResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{38}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *WriteOffStockResponse) GetMovements() []*StockMovement {
@@ -3073,7 +3185,7 @@ type TransferStockItem struct {
 
 func (x *TransferStockItem) Reset() {
 	*x = TransferStockItem{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[39]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3085,7 +3197,7 @@ func (x *TransferStockItem) String() string {
 func (*TransferStockItem) ProtoMessage() {}
 
 func (x *TransferStockItem) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[39]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3098,7 +3210,7 @@ func (x *TransferStockItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TransferStockItem.ProtoReflect.Descriptor instead.
 func (*TransferStockItem) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{39}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *TransferStockItem) GetWarehouseItemId() int64 {
@@ -3127,7 +3239,7 @@ type TransferStockRequest struct {
 
 func (x *TransferStockRequest) Reset() {
 	*x = TransferStockRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[40]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3139,7 +3251,7 @@ func (x *TransferStockRequest) String() string {
 func (*TransferStockRequest) ProtoMessage() {}
 
 func (x *TransferStockRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[40]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3152,7 +3264,7 @@ func (x *TransferStockRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TransferStockRequest.ProtoReflect.Descriptor instead.
 func (*TransferStockRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{40}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *TransferStockRequest) GetFromWarehouseId() int64 {
@@ -3192,7 +3304,7 @@ type TransferStockResponse struct {
 
 func (x *TransferStockResponse) Reset() {
 	*x = TransferStockResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[41]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3204,7 +3316,7 @@ func (x *TransferStockResponse) String() string {
 func (*TransferStockResponse) ProtoMessage() {}
 
 func (x *TransferStockResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[41]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3217,7 +3329,7 @@ func (x *TransferStockResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TransferStockResponse.ProtoReflect.Descriptor instead.
 func (*TransferStockResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{41}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *TransferStockResponse) GetMovements() []*StockMovement {
@@ -3237,7 +3349,7 @@ type ReturnToSupplierItem struct {
 
 func (x *ReturnToSupplierItem) Reset() {
 	*x = ReturnToSupplierItem{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[42]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3249,7 +3361,7 @@ func (x *ReturnToSupplierItem) String() string {
 func (*ReturnToSupplierItem) ProtoMessage() {}
 
 func (x *ReturnToSupplierItem) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[42]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3262,7 +3374,7 @@ func (x *ReturnToSupplierItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReturnToSupplierItem.ProtoReflect.Descriptor instead.
 func (*ReturnToSupplierItem) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{42}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *ReturnToSupplierItem) GetWarehouseItemId() int64 {
@@ -3291,7 +3403,7 @@ type ReturnToSupplierRequest struct {
 
 func (x *ReturnToSupplierRequest) Reset() {
 	*x = ReturnToSupplierRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[43]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3303,7 +3415,7 @@ func (x *ReturnToSupplierRequest) String() string {
 func (*ReturnToSupplierRequest) ProtoMessage() {}
 
 func (x *ReturnToSupplierRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[43]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3316,7 +3428,7 @@ func (x *ReturnToSupplierRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReturnToSupplierRequest.ProtoReflect.Descriptor instead.
 func (*ReturnToSupplierRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{43}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *ReturnToSupplierRequest) GetWarehouseId() int64 {
@@ -3356,7 +3468,7 @@ type ReturnToSupplierResponse struct {
 
 func (x *ReturnToSupplierResponse) Reset() {
 	*x = ReturnToSupplierResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[44]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3368,7 +3480,7 @@ func (x *ReturnToSupplierResponse) String() string {
 func (*ReturnToSupplierResponse) ProtoMessage() {}
 
 func (x *ReturnToSupplierResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[44]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3381,7 +3493,7 @@ func (x *ReturnToSupplierResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReturnToSupplierResponse.ProtoReflect.Descriptor instead.
 func (*ReturnToSupplierResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{44}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *ReturnToSupplierResponse) GetMovements() []*StockMovement {
@@ -3404,7 +3516,7 @@ type ListStockMovementsRequest struct {
 
 func (x *ListStockMovementsRequest) Reset() {
 	*x = ListStockMovementsRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[45]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3416,7 +3528,7 @@ func (x *ListStockMovementsRequest) String() string {
 func (*ListStockMovementsRequest) ProtoMessage() {}
 
 func (x *ListStockMovementsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[45]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3429,7 +3541,7 @@ func (x *ListStockMovementsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListStockMovementsRequest.ProtoReflect.Descriptor instead.
 func (*ListStockMovementsRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{45}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *ListStockMovementsRequest) GetWarehouseId() int64 {
@@ -3477,7 +3589,7 @@ type ListStockMovementsResponse struct {
 
 func (x *ListStockMovementsResponse) Reset() {
 	*x = ListStockMovementsResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[46]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3489,7 +3601,7 @@ func (x *ListStockMovementsResponse) String() string {
 func (*ListStockMovementsResponse) ProtoMessage() {}
 
 func (x *ListStockMovementsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[46]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3502,7 +3614,7 @@ func (x *ListStockMovementsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListStockMovementsResponse.ProtoReflect.Descriptor instead.
 func (*ListStockMovementsResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{46}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *ListStockMovementsResponse) GetMovements() []*StockMovement {
@@ -3531,7 +3643,7 @@ type GenerateBarcodeRequest struct {
 
 func (x *GenerateBarcodeRequest) Reset() {
 	*x = GenerateBarcodeRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[47]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3543,7 +3655,7 @@ func (x *GenerateBarcodeRequest) String() string {
 func (*GenerateBarcodeRequest) ProtoMessage() {}
 
 func (x *GenerateBarcodeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[47]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3556,7 +3668,7 @@ func (x *GenerateBarcodeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateBarcodeRequest.ProtoReflect.Descriptor instead.
 func (*GenerateBarcodeRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{47}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *GenerateBarcodeRequest) GetItemId() int64 {
@@ -3598,7 +3710,7 @@ type GenerateBarcodeResponse struct {
 
 func (x *GenerateBarcodeResponse) Reset() {
 	*x = GenerateBarcodeResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[48]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3610,7 +3722,7 @@ func (x *GenerateBarcodeResponse) String() string {
 func (*GenerateBarcodeResponse) ProtoMessage() {}
 
 func (x *GenerateBarcodeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[48]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3623,7 +3735,7 @@ func (x *GenerateBarcodeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateBarcodeResponse.ProtoReflect.Descriptor instead.
 func (*GenerateBarcodeResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{48}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *GenerateBarcodeResponse) GetImageData() []byte {
@@ -3658,7 +3770,7 @@ type GenerateQRRequest struct {
 
 func (x *GenerateQRRequest) Reset() {
 	*x = GenerateQRRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[49]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3670,7 +3782,7 @@ func (x *GenerateQRRequest) String() string {
 func (*GenerateQRRequest) ProtoMessage() {}
 
 func (x *GenerateQRRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[49]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3683,7 +3795,7 @@ func (x *GenerateQRRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateQRRequest.ProtoReflect.Descriptor instead.
 func (*GenerateQRRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{49}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *GenerateQRRequest) GetItemId() int64 {
@@ -3718,7 +3830,7 @@ type GenerateQRResponse struct {
 
 func (x *GenerateQRResponse) Reset() {
 	*x = GenerateQRResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[50]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3730,7 +3842,7 @@ func (x *GenerateQRResponse) String() string {
 func (*GenerateQRResponse) ProtoMessage() {}
 
 func (x *GenerateQRResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[50]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3743,7 +3855,7 @@ func (x *GenerateQRResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateQRResponse.ProtoReflect.Descriptor instead.
 func (*GenerateQRResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{50}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *GenerateQRResponse) GetImageData() []byte {
@@ -3778,7 +3890,7 @@ type GenerateLabelRequest struct {
 
 func (x *GenerateLabelRequest) Reset() {
 	*x = GenerateLabelRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[51]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3790,7 +3902,7 @@ func (x *GenerateLabelRequest) String() string {
 func (*GenerateLabelRequest) ProtoMessage() {}
 
 func (x *GenerateLabelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[51]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3803,7 +3915,7 @@ func (x *GenerateLabelRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateLabelRequest.ProtoReflect.Descriptor instead.
 func (*GenerateLabelRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{51}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *GenerateLabelRequest) GetItemId() int64 {
@@ -3837,7 +3949,7 @@ type GenerateLabelResponse struct {
 
 func (x *GenerateLabelResponse) Reset() {
 	*x = GenerateLabelResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[52]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3849,7 +3961,7 @@ func (x *GenerateLabelResponse) String() string {
 func (*GenerateLabelResponse) ProtoMessage() {}
 
 func (x *GenerateLabelResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[52]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3862,7 +3974,7 @@ func (x *GenerateLabelResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateLabelResponse.ProtoReflect.Descriptor instead.
 func (*GenerateLabelResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{52}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *GenerateLabelResponse) GetImageData() []byte {
@@ -3888,7 +4000,7 @@ type StartInventoryCheckRequest struct {
 
 func (x *StartInventoryCheckRequest) Reset() {
 	*x = StartInventoryCheckRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[53]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3900,7 +4012,7 @@ func (x *StartInventoryCheckRequest) String() string {
 func (*StartInventoryCheckRequest) ProtoMessage() {}
 
 func (x *StartInventoryCheckRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[53]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3913,7 +4025,7 @@ func (x *StartInventoryCheckRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartInventoryCheckRequest.ProtoReflect.Descriptor instead.
 func (*StartInventoryCheckRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{53}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *StartInventoryCheckRequest) GetWarehouseId() int64 {
@@ -3933,7 +4045,7 @@ type StartInventoryCheckResponse struct {
 
 func (x *StartInventoryCheckResponse) Reset() {
 	*x = StartInventoryCheckResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[54]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3945,7 +4057,7 @@ func (x *StartInventoryCheckResponse) String() string {
 func (*StartInventoryCheckResponse) ProtoMessage() {}
 
 func (x *StartInventoryCheckResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[54]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3958,7 +4070,7 @@ func (x *StartInventoryCheckResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartInventoryCheckResponse.ProtoReflect.Descriptor instead.
 func (*StartInventoryCheckResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{54}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *StartInventoryCheckResponse) GetCheck() *InventoryCheck {
@@ -3986,7 +4098,7 @@ type RecordActualQuantityRequest struct {
 
 func (x *RecordActualQuantityRequest) Reset() {
 	*x = RecordActualQuantityRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[55]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3998,7 +4110,7 @@ func (x *RecordActualQuantityRequest) String() string {
 func (*RecordActualQuantityRequest) ProtoMessage() {}
 
 func (x *RecordActualQuantityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[55]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4011,7 +4123,7 @@ func (x *RecordActualQuantityRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecordActualQuantityRequest.ProtoReflect.Descriptor instead.
 func (*RecordActualQuantityRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{55}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *RecordActualQuantityRequest) GetCheckId() int64 {
@@ -4044,7 +4156,7 @@ type RecordActualQuantityResponse struct {
 
 func (x *RecordActualQuantityResponse) Reset() {
 	*x = RecordActualQuantityResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[56]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4056,7 +4168,7 @@ func (x *RecordActualQuantityResponse) String() string {
 func (*RecordActualQuantityResponse) ProtoMessage() {}
 
 func (x *RecordActualQuantityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[56]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4069,7 +4181,7 @@ func (x *RecordActualQuantityResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecordActualQuantityResponse.ProtoReflect.Descriptor instead.
 func (*RecordActualQuantityResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{56}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *RecordActualQuantityResponse) GetItem() *InventoryCheckItem {
@@ -4089,7 +4201,7 @@ type CompleteInventoryCheckRequest struct {
 
 func (x *CompleteInventoryCheckRequest) Reset() {
 	*x = CompleteInventoryCheckRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[57]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4101,7 +4213,7 @@ func (x *CompleteInventoryCheckRequest) String() string {
 func (*CompleteInventoryCheckRequest) ProtoMessage() {}
 
 func (x *CompleteInventoryCheckRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[57]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4114,7 +4226,7 @@ func (x *CompleteInventoryCheckRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CompleteInventoryCheckRequest.ProtoReflect.Descriptor instead.
 func (*CompleteInventoryCheckRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{57}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *CompleteInventoryCheckRequest) GetCheckId() int64 {
@@ -4141,7 +4253,7 @@ type CompleteInventoryCheckResponse struct {
 
 func (x *CompleteInventoryCheckResponse) Reset() {
 	*x = CompleteInventoryCheckResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[58]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4153,7 +4265,7 @@ func (x *CompleteInventoryCheckResponse) String() string {
 func (*CompleteInventoryCheckResponse) ProtoMessage() {}
 
 func (x *CompleteInventoryCheckResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[58]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4166,7 +4278,7 @@ func (x *CompleteInventoryCheckResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CompleteInventoryCheckResponse.ProtoReflect.Descriptor instead.
 func (*CompleteInventoryCheckResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{58}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *CompleteInventoryCheckResponse) GetCheck() *InventoryCheck {
@@ -4192,7 +4304,7 @@ type GetInventoryCheckRequest struct {
 
 func (x *GetInventoryCheckRequest) Reset() {
 	*x = GetInventoryCheckRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[59]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4204,7 +4316,7 @@ func (x *GetInventoryCheckRequest) String() string {
 func (*GetInventoryCheckRequest) ProtoMessage() {}
 
 func (x *GetInventoryCheckRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[59]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4217,7 +4329,7 @@ func (x *GetInventoryCheckRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInventoryCheckRequest.ProtoReflect.Descriptor instead.
 func (*GetInventoryCheckRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{59}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *GetInventoryCheckRequest) GetCheckId() int64 {
@@ -4237,7 +4349,7 @@ type GetInventoryCheckResponse struct {
 
 func (x *GetInventoryCheckResponse) Reset() {
 	*x = GetInventoryCheckResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[60]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4249,7 +4361,7 @@ func (x *GetInventoryCheckResponse) String() string {
 func (*GetInventoryCheckResponse) ProtoMessage() {}
 
 func (x *GetInventoryCheckResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[60]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4262,7 +4374,7 @@ func (x *GetInventoryCheckResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInventoryCheckResponse.ProtoReflect.Descriptor instead.
 func (*GetInventoryCheckResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{60}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *GetInventoryCheckResponse) GetCheck() *InventoryCheck {
@@ -4288,7 +4400,7 @@ type GetDiscrepanciesRequest struct {
 
 func (x *GetDiscrepanciesRequest) Reset() {
 	*x = GetDiscrepanciesRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[61]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4300,7 +4412,7 @@ func (x *GetDiscrepanciesRequest) String() string {
 func (*GetDiscrepanciesRequest) ProtoMessage() {}
 
 func (x *GetDiscrepanciesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[61]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4313,7 +4425,7 @@ func (x *GetDiscrepanciesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDiscrepanciesRequest.ProtoReflect.Descriptor instead.
 func (*GetDiscrepanciesRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{61}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *GetDiscrepanciesRequest) GetCheckId() int64 {
@@ -4332,7 +4444,7 @@ type GetDiscrepanciesResponse struct {
 
 func (x *GetDiscrepanciesResponse) Reset() {
 	*x = GetDiscrepanciesResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[62]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4344,7 +4456,7 @@ func (x *GetDiscrepanciesResponse) String() string {
 func (*GetDiscrepanciesResponse) ProtoMessage() {}
 
 func (x *GetDiscrepanciesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[62]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4357,7 +4469,7 @@ func (x *GetDiscrepanciesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDiscrepanciesResponse.ProtoReflect.Descriptor instead.
 func (*GetDiscrepanciesResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{62}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *GetDiscrepanciesResponse) GetItems() []*InventoryCheckItem {
@@ -4378,7 +4490,7 @@ type ReserveForRepairOrderRequest struct {
 
 func (x *ReserveForRepairOrderRequest) Reset() {
 	*x = ReserveForRepairOrderRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[63]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4390,7 +4502,7 @@ func (x *ReserveForRepairOrderRequest) String() string {
 func (*ReserveForRepairOrderRequest) ProtoMessage() {}
 
 func (x *ReserveForRepairOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[63]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4403,7 +4515,7 @@ func (x *ReserveForRepairOrderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReserveForRepairOrderRequest.ProtoReflect.Descriptor instead.
 func (*ReserveForRepairOrderRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{63}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *ReserveForRepairOrderRequest) GetWarehouseItemId() int64 {
@@ -4436,7 +4548,7 @@ type ReserveForRepairOrderResponse struct {
 
 func (x *ReserveForRepairOrderResponse) Reset() {
 	*x = ReserveForRepairOrderResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[64]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4448,7 +4560,7 @@ func (x *ReserveForRepairOrderResponse) String() string {
 func (*ReserveForRepairOrderResponse) ProtoMessage() {}
 
 func (x *ReserveForRepairOrderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[64]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4461,7 +4573,7 @@ func (x *ReserveForRepairOrderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReserveForRepairOrderResponse.ProtoReflect.Descriptor instead.
 func (*ReserveForRepairOrderResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{64}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *ReserveForRepairOrderResponse) GetReservation() *Reservation {
@@ -4480,7 +4592,7 @@ type ReleaseReservationRequest struct {
 
 func (x *ReleaseReservationRequest) Reset() {
 	*x = ReleaseReservationRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[65]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4492,7 +4604,7 @@ func (x *ReleaseReservationRequest) String() string {
 func (*ReleaseReservationRequest) ProtoMessage() {}
 
 func (x *ReleaseReservationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[65]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4505,7 +4617,7 @@ func (x *ReleaseReservationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReleaseReservationRequest.ProtoReflect.Descriptor instead.
 func (*ReleaseReservationRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{65}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *ReleaseReservationRequest) GetReservationId() int64 {
@@ -4524,7 +4636,7 @@ type ReleaseReservationResponse struct {
 
 func (x *ReleaseReservationResponse) Reset() {
 	*x = ReleaseReservationResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[66]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4536,7 +4648,7 @@ func (x *ReleaseReservationResponse) String() string {
 func (*ReleaseReservationResponse) ProtoMessage() {}
 
 func (x *ReleaseReservationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[66]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4549,7 +4661,7 @@ func (x *ReleaseReservationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReleaseReservationResponse.ProtoReflect.Descriptor instead.
 func (*ReleaseReservationResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{66}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *ReleaseReservationResponse) GetReservation() *Reservation {
@@ -4568,7 +4680,7 @@ type ConfirmWriteOffRequest struct {
 
 func (x *ConfirmWriteOffRequest) Reset() {
 	*x = ConfirmWriteOffRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[67]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4580,7 +4692,7 @@ func (x *ConfirmWriteOffRequest) String() string {
 func (*ConfirmWriteOffRequest) ProtoMessage() {}
 
 func (x *ConfirmWriteOffRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[67]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4593,7 +4705,7 @@ func (x *ConfirmWriteOffRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConfirmWriteOffRequest.ProtoReflect.Descriptor instead.
 func (*ConfirmWriteOffRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{67}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *ConfirmWriteOffRequest) GetReservationId() int64 {
@@ -4612,7 +4724,7 @@ type ConfirmWriteOffResponse struct {
 
 func (x *ConfirmWriteOffResponse) Reset() {
 	*x = ConfirmWriteOffResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[68]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4624,7 +4736,7 @@ func (x *ConfirmWriteOffResponse) String() string {
 func (*ConfirmWriteOffResponse) ProtoMessage() {}
 
 func (x *ConfirmWriteOffResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[68]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4637,7 +4749,7 @@ func (x *ConfirmWriteOffResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConfirmWriteOffResponse.ProtoReflect.Descriptor instead.
 func (*ConfirmWriteOffResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{68}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *ConfirmWriteOffResponse) GetReservation() *Reservation {
@@ -4660,7 +4772,7 @@ type ListReservationsRequest struct {
 
 func (x *ListReservationsRequest) Reset() {
 	*x = ListReservationsRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[69]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4672,7 +4784,7 @@ func (x *ListReservationsRequest) String() string {
 func (*ListReservationsRequest) ProtoMessage() {}
 
 func (x *ListReservationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[69]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4685,7 +4797,7 @@ func (x *ListReservationsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListReservationsRequest.ProtoReflect.Descriptor instead.
 func (*ListReservationsRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{69}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *ListReservationsRequest) GetRepairOrderId() int64 {
@@ -4733,7 +4845,7 @@ type ListReservationsResponse struct {
 
 func (x *ListReservationsResponse) Reset() {
 	*x = ListReservationsResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[70]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4745,7 +4857,7 @@ func (x *ListReservationsResponse) String() string {
 func (*ListReservationsResponse) ProtoMessage() {}
 
 func (x *ListReservationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[70]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4758,7 +4870,7 @@ func (x *ListReservationsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListReservationsResponse.ProtoReflect.Descriptor instead.
 func (*ListReservationsResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{70}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *ListReservationsResponse) GetReservations() []*Reservation {
@@ -4786,7 +4898,7 @@ type SearchAvailablePartsRequest struct {
 
 func (x *SearchAvailablePartsRequest) Reset() {
 	*x = SearchAvailablePartsRequest{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[71]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4798,7 +4910,7 @@ func (x *SearchAvailablePartsRequest) String() string {
 func (*SearchAvailablePartsRequest) ProtoMessage() {}
 
 func (x *SearchAvailablePartsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[71]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4811,7 +4923,7 @@ func (x *SearchAvailablePartsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchAvailablePartsRequest.ProtoReflect.Descriptor instead.
 func (*SearchAvailablePartsRequest) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{71}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *SearchAvailablePartsRequest) GetOrgId() string {
@@ -4844,7 +4956,7 @@ type SearchAvailablePartsResponse struct {
 
 func (x *SearchAvailablePartsResponse) Reset() {
 	*x = SearchAvailablePartsResponse{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[72]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4856,7 +4968,7 @@ func (x *SearchAvailablePartsResponse) String() string {
 func (*SearchAvailablePartsResponse) ProtoMessage() {}
 
 func (x *SearchAvailablePartsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[72]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4869,7 +4981,7 @@ func (x *SearchAvailablePartsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchAvailablePartsResponse.ProtoReflect.Descriptor instead.
 func (*SearchAvailablePartsResponse) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{72}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *SearchAvailablePartsResponse) GetParts() []*AvailablePart {
@@ -4898,7 +5010,7 @@ type AvailablePart struct {
 
 func (x *AvailablePart) Reset() {
 	*x = AvailablePart{}
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[73]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4910,7 +5022,7 @@ func (x *AvailablePart) String() string {
 func (*AvailablePart) ProtoMessage() {}
 
 func (x *AvailablePart) ProtoReflect() protoreflect.Message {
-	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[73]
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4923,7 +5035,7 @@ func (x *AvailablePart) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AvailablePart.ProtoReflect.Descriptor instead.
 func (*AvailablePart) Descriptor() ([]byte, []int) {
-	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{73}
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *AvailablePart) GetItemId() int64 {
@@ -5027,7 +5139,7 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	"\x04code\x18\x03 \x01(\tR\x04code\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x129\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9c\x06\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x89\x06\n" +
 	"\rWarehouseItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
 	"\fwarehouse_id\x18\x02 \x01(\x03R\vwarehouseId\x12\x1d\n" +
@@ -5052,12 +5164,18 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x17\n" +
-	"\amark_id\x18\x13 \x01(\x05R\x06markId\x12\x19\n" +
-	"\bmodel_id\x18\x14 \x01(\x05R\amodelId\x12\x1b\n" +
-	"\tyear_from\x18\x15 \x01(\x05R\byearFrom\x12\x17\n" +
-	"\ayear_to\x18\x16 \x01(\x05R\x06yearTo\x12\x16\n" +
-	"\x06photos\x18\x17 \x03(\tR\x06photos\"\xdf\x03\n" +
+	"updated_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12U\n" +
+	"\x11car_compatibility\x18\x13 \x03(\v2(.warehouse.warehouse.v1.CarCompatibilityR\x10carCompatibility\x12\x16\n" +
+	"\x06photos\x18\x14 \x03(\tR\x06photos\"\xc8\x01\n" +
+	"\x10CarCompatibility\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
+	"\amark_id\x18\x02 \x01(\x05R\x06markId\x12\x19\n" +
+	"\bmodel_id\x18\x03 \x01(\x05R\amodelId\x12\x1b\n" +
+	"\tyear_from\x18\x04 \x01(\x05R\byearFrom\x12\x17\n" +
+	"\ayear_to\x18\x05 \x01(\x05R\x06yearTo\x12\x1b\n" +
+	"\tmark_name\x18\x06 \x01(\tR\bmarkName\x12\x1d\n" +
+	"\n" +
+	"model_name\x18\a \x01(\tR\tmodelName\"\xdf\x03\n" +
 	"\rStockMovement\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12*\n" +
 	"\x11warehouse_item_id\x18\x02 \x01(\x03R\x0fwarehouseItemId\x128\n" +
@@ -5153,7 +5271,7 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	"\tlocations\x18\x01 \x03(\v2'.warehouse.warehouse.v1.StorageLocationR\tlocations\".\n" +
 	"\x1cDeleteStorageLocationRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1f\n" +
-	"\x1dDeleteStorageLocationResponse\"\xf6\x04\n" +
+	"\x1dDeleteStorageLocationResponse\"\xe8\x04\n" +
 	"\x11CreateItemRequest\x12!\n" +
 	"\fwarehouse_id\x18\x01 \x01(\x03R\vwarehouseId\x12\x1d\n" +
 	"\n" +
@@ -5171,12 +5289,14 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	"\n" +
 	"sell_price\x18\v \x01(\x03R\tsellPrice\x12.\n" +
 	"\x13storage_location_id\x18\f \x01(\x03R\x11storageLocationId\x12)\n" +
-	"\x10initial_quantity\x18\r \x01(\x05R\x0finitialQuantity\x12\x17\n" +
-	"\amark_id\x18\x0e \x01(\x05R\x06markId\x12\x19\n" +
-	"\bmodel_id\x18\x0f \x01(\x05R\amodelId\x12\x1b\n" +
-	"\tyear_from\x18\x10 \x01(\x05R\byearFrom\x12\x17\n" +
-	"\ayear_to\x18\x11 \x01(\x05R\x06yearTo\x12\x16\n" +
-	"\x06photos\x18\x12 \x03(\tR\x06photos\"O\n" +
+	"\x10initial_quantity\x18\r \x01(\x05R\x0finitialQuantity\x12Z\n" +
+	"\x11car_compatibility\x18\x0e \x03(\v2-.warehouse.warehouse.v1.CarCompatibilityInputR\x10carCompatibility\x12\x16\n" +
+	"\x06photos\x18\x0f \x03(\tR\x06photos\"\x81\x01\n" +
+	"\x15CarCompatibilityInput\x12\x17\n" +
+	"\amark_id\x18\x01 \x01(\x05R\x06markId\x12\x19\n" +
+	"\bmodel_id\x18\x02 \x01(\x05R\amodelId\x12\x1b\n" +
+	"\tyear_from\x18\x03 \x01(\x05R\byearFrom\x12\x17\n" +
+	"\ayear_to\x18\x04 \x01(\x05R\x06yearTo\"O\n" +
 	"\x12CreateItemResponse\x129\n" +
 	"\x04item\x18\x01 \x01(\v2%.warehouse.warehouse.v1.WarehouseItemR\x04item\" \n" +
 	"\x0eGetItemRequest\x12\x0e\n" +
@@ -5448,7 +5568,7 @@ func file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP() []byte {
 }
 
 var file_warehouse_warehouse_v1_warehouse_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_warehouse_warehouse_v1_warehouse_proto_msgTypes = make([]protoimpl.MessageInfo, 74)
+var file_warehouse_warehouse_v1_warehouse_proto_msgTypes = make([]protoimpl.MessageInfo, 76)
 var file_warehouse_warehouse_v1_warehouse_proto_goTypes = []any{
 	(WarehouseType)(0),                     // 0: warehouse.warehouse.v1.WarehouseType
 	(ItemCondition)(0),                     // 1: warehouse.warehouse.v1.ItemCondition
@@ -5459,205 +5579,209 @@ var file_warehouse_warehouse_v1_warehouse_proto_goTypes = []any{
 	(*Warehouse)(nil),                      // 6: warehouse.warehouse.v1.Warehouse
 	(*StorageLocation)(nil),                // 7: warehouse.warehouse.v1.StorageLocation
 	(*WarehouseItem)(nil),                  // 8: warehouse.warehouse.v1.WarehouseItem
-	(*StockMovement)(nil),                  // 9: warehouse.warehouse.v1.StockMovement
-	(*InventoryCheck)(nil),                 // 10: warehouse.warehouse.v1.InventoryCheck
-	(*InventoryCheckItem)(nil),             // 11: warehouse.warehouse.v1.InventoryCheckItem
-	(*Reservation)(nil),                    // 12: warehouse.warehouse.v1.Reservation
-	(*CreateWarehouseRequest)(nil),         // 13: warehouse.warehouse.v1.CreateWarehouseRequest
-	(*CreateWarehouseResponse)(nil),        // 14: warehouse.warehouse.v1.CreateWarehouseResponse
-	(*GetWarehouseRequest)(nil),            // 15: warehouse.warehouse.v1.GetWarehouseRequest
-	(*GetWarehouseResponse)(nil),           // 16: warehouse.warehouse.v1.GetWarehouseResponse
-	(*UpdateWarehouseRequest)(nil),         // 17: warehouse.warehouse.v1.UpdateWarehouseRequest
-	(*UpdateWarehouseResponse)(nil),        // 18: warehouse.warehouse.v1.UpdateWarehouseResponse
-	(*ListWarehousesRequest)(nil),          // 19: warehouse.warehouse.v1.ListWarehousesRequest
-	(*ListWarehousesResponse)(nil),         // 20: warehouse.warehouse.v1.ListWarehousesResponse
-	(*CreateStorageLocationRequest)(nil),   // 21: warehouse.warehouse.v1.CreateStorageLocationRequest
-	(*CreateStorageLocationResponse)(nil),  // 22: warehouse.warehouse.v1.CreateStorageLocationResponse
-	(*UpdateStorageLocationRequest)(nil),   // 23: warehouse.warehouse.v1.UpdateStorageLocationRequest
-	(*UpdateStorageLocationResponse)(nil),  // 24: warehouse.warehouse.v1.UpdateStorageLocationResponse
-	(*ListStorageLocationsRequest)(nil),    // 25: warehouse.warehouse.v1.ListStorageLocationsRequest
-	(*ListStorageLocationsResponse)(nil),   // 26: warehouse.warehouse.v1.ListStorageLocationsResponse
-	(*DeleteStorageLocationRequest)(nil),   // 27: warehouse.warehouse.v1.DeleteStorageLocationRequest
-	(*DeleteStorageLocationResponse)(nil),  // 28: warehouse.warehouse.v1.DeleteStorageLocationResponse
-	(*CreateItemRequest)(nil),              // 29: warehouse.warehouse.v1.CreateItemRequest
-	(*CreateItemResponse)(nil),             // 30: warehouse.warehouse.v1.CreateItemResponse
-	(*GetItemRequest)(nil),                 // 31: warehouse.warehouse.v1.GetItemRequest
-	(*GetItemResponse)(nil),                // 32: warehouse.warehouse.v1.GetItemResponse
-	(*UpdateItemRequest)(nil),              // 33: warehouse.warehouse.v1.UpdateItemRequest
-	(*UpdateItemResponse)(nil),             // 34: warehouse.warehouse.v1.UpdateItemResponse
-	(*ListItemsRequest)(nil),               // 35: warehouse.warehouse.v1.ListItemsRequest
-	(*ListItemsResponse)(nil),              // 36: warehouse.warehouse.v1.ListItemsResponse
-	(*SearchItemsRequest)(nil),             // 37: warehouse.warehouse.v1.SearchItemsRequest
-	(*SearchItemsResponse)(nil),            // 38: warehouse.warehouse.v1.SearchItemsResponse
-	(*ReceiveStockItem)(nil),               // 39: warehouse.warehouse.v1.ReceiveStockItem
-	(*ReceiveStockRequest)(nil),            // 40: warehouse.warehouse.v1.ReceiveStockRequest
-	(*ReceiveStockResponse)(nil),           // 41: warehouse.warehouse.v1.ReceiveStockResponse
-	(*WriteOffStockItem)(nil),              // 42: warehouse.warehouse.v1.WriteOffStockItem
-	(*WriteOffStockRequest)(nil),           // 43: warehouse.warehouse.v1.WriteOffStockRequest
-	(*WriteOffStockResponse)(nil),          // 44: warehouse.warehouse.v1.WriteOffStockResponse
-	(*TransferStockItem)(nil),              // 45: warehouse.warehouse.v1.TransferStockItem
-	(*TransferStockRequest)(nil),           // 46: warehouse.warehouse.v1.TransferStockRequest
-	(*TransferStockResponse)(nil),          // 47: warehouse.warehouse.v1.TransferStockResponse
-	(*ReturnToSupplierItem)(nil),           // 48: warehouse.warehouse.v1.ReturnToSupplierItem
-	(*ReturnToSupplierRequest)(nil),        // 49: warehouse.warehouse.v1.ReturnToSupplierRequest
-	(*ReturnToSupplierResponse)(nil),       // 50: warehouse.warehouse.v1.ReturnToSupplierResponse
-	(*ListStockMovementsRequest)(nil),      // 51: warehouse.warehouse.v1.ListStockMovementsRequest
-	(*ListStockMovementsResponse)(nil),     // 52: warehouse.warehouse.v1.ListStockMovementsResponse
-	(*GenerateBarcodeRequest)(nil),         // 53: warehouse.warehouse.v1.GenerateBarcodeRequest
-	(*GenerateBarcodeResponse)(nil),        // 54: warehouse.warehouse.v1.GenerateBarcodeResponse
-	(*GenerateQRRequest)(nil),              // 55: warehouse.warehouse.v1.GenerateQRRequest
-	(*GenerateQRResponse)(nil),             // 56: warehouse.warehouse.v1.GenerateQRResponse
-	(*GenerateLabelRequest)(nil),           // 57: warehouse.warehouse.v1.GenerateLabelRequest
-	(*GenerateLabelResponse)(nil),          // 58: warehouse.warehouse.v1.GenerateLabelResponse
-	(*StartInventoryCheckRequest)(nil),     // 59: warehouse.warehouse.v1.StartInventoryCheckRequest
-	(*StartInventoryCheckResponse)(nil),    // 60: warehouse.warehouse.v1.StartInventoryCheckResponse
-	(*RecordActualQuantityRequest)(nil),    // 61: warehouse.warehouse.v1.RecordActualQuantityRequest
-	(*RecordActualQuantityResponse)(nil),   // 62: warehouse.warehouse.v1.RecordActualQuantityResponse
-	(*CompleteInventoryCheckRequest)(nil),  // 63: warehouse.warehouse.v1.CompleteInventoryCheckRequest
-	(*CompleteInventoryCheckResponse)(nil), // 64: warehouse.warehouse.v1.CompleteInventoryCheckResponse
-	(*GetInventoryCheckRequest)(nil),       // 65: warehouse.warehouse.v1.GetInventoryCheckRequest
-	(*GetInventoryCheckResponse)(nil),      // 66: warehouse.warehouse.v1.GetInventoryCheckResponse
-	(*GetDiscrepanciesRequest)(nil),        // 67: warehouse.warehouse.v1.GetDiscrepanciesRequest
-	(*GetDiscrepanciesResponse)(nil),       // 68: warehouse.warehouse.v1.GetDiscrepanciesResponse
-	(*ReserveForRepairOrderRequest)(nil),   // 69: warehouse.warehouse.v1.ReserveForRepairOrderRequest
-	(*ReserveForRepairOrderResponse)(nil),  // 70: warehouse.warehouse.v1.ReserveForRepairOrderResponse
-	(*ReleaseReservationRequest)(nil),      // 71: warehouse.warehouse.v1.ReleaseReservationRequest
-	(*ReleaseReservationResponse)(nil),     // 72: warehouse.warehouse.v1.ReleaseReservationResponse
-	(*ConfirmWriteOffRequest)(nil),         // 73: warehouse.warehouse.v1.ConfirmWriteOffRequest
-	(*ConfirmWriteOffResponse)(nil),        // 74: warehouse.warehouse.v1.ConfirmWriteOffResponse
-	(*ListReservationsRequest)(nil),        // 75: warehouse.warehouse.v1.ListReservationsRequest
-	(*ListReservationsResponse)(nil),       // 76: warehouse.warehouse.v1.ListReservationsResponse
-	(*SearchAvailablePartsRequest)(nil),    // 77: warehouse.warehouse.v1.SearchAvailablePartsRequest
-	(*SearchAvailablePartsResponse)(nil),   // 78: warehouse.warehouse.v1.SearchAvailablePartsResponse
-	(*AvailablePart)(nil),                  // 79: warehouse.warehouse.v1.AvailablePart
-	(*timestamppb.Timestamp)(nil),          // 80: google.protobuf.Timestamp
+	(*CarCompatibility)(nil),               // 9: warehouse.warehouse.v1.CarCompatibility
+	(*StockMovement)(nil),                  // 10: warehouse.warehouse.v1.StockMovement
+	(*InventoryCheck)(nil),                 // 11: warehouse.warehouse.v1.InventoryCheck
+	(*InventoryCheckItem)(nil),             // 12: warehouse.warehouse.v1.InventoryCheckItem
+	(*Reservation)(nil),                    // 13: warehouse.warehouse.v1.Reservation
+	(*CreateWarehouseRequest)(nil),         // 14: warehouse.warehouse.v1.CreateWarehouseRequest
+	(*CreateWarehouseResponse)(nil),        // 15: warehouse.warehouse.v1.CreateWarehouseResponse
+	(*GetWarehouseRequest)(nil),            // 16: warehouse.warehouse.v1.GetWarehouseRequest
+	(*GetWarehouseResponse)(nil),           // 17: warehouse.warehouse.v1.GetWarehouseResponse
+	(*UpdateWarehouseRequest)(nil),         // 18: warehouse.warehouse.v1.UpdateWarehouseRequest
+	(*UpdateWarehouseResponse)(nil),        // 19: warehouse.warehouse.v1.UpdateWarehouseResponse
+	(*ListWarehousesRequest)(nil),          // 20: warehouse.warehouse.v1.ListWarehousesRequest
+	(*ListWarehousesResponse)(nil),         // 21: warehouse.warehouse.v1.ListWarehousesResponse
+	(*CreateStorageLocationRequest)(nil),   // 22: warehouse.warehouse.v1.CreateStorageLocationRequest
+	(*CreateStorageLocationResponse)(nil),  // 23: warehouse.warehouse.v1.CreateStorageLocationResponse
+	(*UpdateStorageLocationRequest)(nil),   // 24: warehouse.warehouse.v1.UpdateStorageLocationRequest
+	(*UpdateStorageLocationResponse)(nil),  // 25: warehouse.warehouse.v1.UpdateStorageLocationResponse
+	(*ListStorageLocationsRequest)(nil),    // 26: warehouse.warehouse.v1.ListStorageLocationsRequest
+	(*ListStorageLocationsResponse)(nil),   // 27: warehouse.warehouse.v1.ListStorageLocationsResponse
+	(*DeleteStorageLocationRequest)(nil),   // 28: warehouse.warehouse.v1.DeleteStorageLocationRequest
+	(*DeleteStorageLocationResponse)(nil),  // 29: warehouse.warehouse.v1.DeleteStorageLocationResponse
+	(*CreateItemRequest)(nil),              // 30: warehouse.warehouse.v1.CreateItemRequest
+	(*CarCompatibilityInput)(nil),          // 31: warehouse.warehouse.v1.CarCompatibilityInput
+	(*CreateItemResponse)(nil),             // 32: warehouse.warehouse.v1.CreateItemResponse
+	(*GetItemRequest)(nil),                 // 33: warehouse.warehouse.v1.GetItemRequest
+	(*GetItemResponse)(nil),                // 34: warehouse.warehouse.v1.GetItemResponse
+	(*UpdateItemRequest)(nil),              // 35: warehouse.warehouse.v1.UpdateItemRequest
+	(*UpdateItemResponse)(nil),             // 36: warehouse.warehouse.v1.UpdateItemResponse
+	(*ListItemsRequest)(nil),               // 37: warehouse.warehouse.v1.ListItemsRequest
+	(*ListItemsResponse)(nil),              // 38: warehouse.warehouse.v1.ListItemsResponse
+	(*SearchItemsRequest)(nil),             // 39: warehouse.warehouse.v1.SearchItemsRequest
+	(*SearchItemsResponse)(nil),            // 40: warehouse.warehouse.v1.SearchItemsResponse
+	(*ReceiveStockItem)(nil),               // 41: warehouse.warehouse.v1.ReceiveStockItem
+	(*ReceiveStockRequest)(nil),            // 42: warehouse.warehouse.v1.ReceiveStockRequest
+	(*ReceiveStockResponse)(nil),           // 43: warehouse.warehouse.v1.ReceiveStockResponse
+	(*WriteOffStockItem)(nil),              // 44: warehouse.warehouse.v1.WriteOffStockItem
+	(*WriteOffStockRequest)(nil),           // 45: warehouse.warehouse.v1.WriteOffStockRequest
+	(*WriteOffStockResponse)(nil),          // 46: warehouse.warehouse.v1.WriteOffStockResponse
+	(*TransferStockItem)(nil),              // 47: warehouse.warehouse.v1.TransferStockItem
+	(*TransferStockRequest)(nil),           // 48: warehouse.warehouse.v1.TransferStockRequest
+	(*TransferStockResponse)(nil),          // 49: warehouse.warehouse.v1.TransferStockResponse
+	(*ReturnToSupplierItem)(nil),           // 50: warehouse.warehouse.v1.ReturnToSupplierItem
+	(*ReturnToSupplierRequest)(nil),        // 51: warehouse.warehouse.v1.ReturnToSupplierRequest
+	(*ReturnToSupplierResponse)(nil),       // 52: warehouse.warehouse.v1.ReturnToSupplierResponse
+	(*ListStockMovementsRequest)(nil),      // 53: warehouse.warehouse.v1.ListStockMovementsRequest
+	(*ListStockMovementsResponse)(nil),     // 54: warehouse.warehouse.v1.ListStockMovementsResponse
+	(*GenerateBarcodeRequest)(nil),         // 55: warehouse.warehouse.v1.GenerateBarcodeRequest
+	(*GenerateBarcodeResponse)(nil),        // 56: warehouse.warehouse.v1.GenerateBarcodeResponse
+	(*GenerateQRRequest)(nil),              // 57: warehouse.warehouse.v1.GenerateQRRequest
+	(*GenerateQRResponse)(nil),             // 58: warehouse.warehouse.v1.GenerateQRResponse
+	(*GenerateLabelRequest)(nil),           // 59: warehouse.warehouse.v1.GenerateLabelRequest
+	(*GenerateLabelResponse)(nil),          // 60: warehouse.warehouse.v1.GenerateLabelResponse
+	(*StartInventoryCheckRequest)(nil),     // 61: warehouse.warehouse.v1.StartInventoryCheckRequest
+	(*StartInventoryCheckResponse)(nil),    // 62: warehouse.warehouse.v1.StartInventoryCheckResponse
+	(*RecordActualQuantityRequest)(nil),    // 63: warehouse.warehouse.v1.RecordActualQuantityRequest
+	(*RecordActualQuantityResponse)(nil),   // 64: warehouse.warehouse.v1.RecordActualQuantityResponse
+	(*CompleteInventoryCheckRequest)(nil),  // 65: warehouse.warehouse.v1.CompleteInventoryCheckRequest
+	(*CompleteInventoryCheckResponse)(nil), // 66: warehouse.warehouse.v1.CompleteInventoryCheckResponse
+	(*GetInventoryCheckRequest)(nil),       // 67: warehouse.warehouse.v1.GetInventoryCheckRequest
+	(*GetInventoryCheckResponse)(nil),      // 68: warehouse.warehouse.v1.GetInventoryCheckResponse
+	(*GetDiscrepanciesRequest)(nil),        // 69: warehouse.warehouse.v1.GetDiscrepanciesRequest
+	(*GetDiscrepanciesResponse)(nil),       // 70: warehouse.warehouse.v1.GetDiscrepanciesResponse
+	(*ReserveForRepairOrderRequest)(nil),   // 71: warehouse.warehouse.v1.ReserveForRepairOrderRequest
+	(*ReserveForRepairOrderResponse)(nil),  // 72: warehouse.warehouse.v1.ReserveForRepairOrderResponse
+	(*ReleaseReservationRequest)(nil),      // 73: warehouse.warehouse.v1.ReleaseReservationRequest
+	(*ReleaseReservationResponse)(nil),     // 74: warehouse.warehouse.v1.ReleaseReservationResponse
+	(*ConfirmWriteOffRequest)(nil),         // 75: warehouse.warehouse.v1.ConfirmWriteOffRequest
+	(*ConfirmWriteOffResponse)(nil),        // 76: warehouse.warehouse.v1.ConfirmWriteOffResponse
+	(*ListReservationsRequest)(nil),        // 77: warehouse.warehouse.v1.ListReservationsRequest
+	(*ListReservationsResponse)(nil),       // 78: warehouse.warehouse.v1.ListReservationsResponse
+	(*SearchAvailablePartsRequest)(nil),    // 79: warehouse.warehouse.v1.SearchAvailablePartsRequest
+	(*SearchAvailablePartsResponse)(nil),   // 80: warehouse.warehouse.v1.SearchAvailablePartsResponse
+	(*AvailablePart)(nil),                  // 81: warehouse.warehouse.v1.AvailablePart
+	(*timestamppb.Timestamp)(nil),          // 82: google.protobuf.Timestamp
 }
 var file_warehouse_warehouse_v1_warehouse_proto_depIdxs = []int32{
 	0,  // 0: warehouse.warehouse.v1.Warehouse.type:type_name -> warehouse.warehouse.v1.WarehouseType
-	80, // 1: warehouse.warehouse.v1.Warehouse.created_at:type_name -> google.protobuf.Timestamp
-	80, // 2: warehouse.warehouse.v1.Warehouse.updated_at:type_name -> google.protobuf.Timestamp
-	80, // 3: warehouse.warehouse.v1.StorageLocation.created_at:type_name -> google.protobuf.Timestamp
+	82, // 1: warehouse.warehouse.v1.Warehouse.created_at:type_name -> google.protobuf.Timestamp
+	82, // 2: warehouse.warehouse.v1.Warehouse.updated_at:type_name -> google.protobuf.Timestamp
+	82, // 3: warehouse.warehouse.v1.StorageLocation.created_at:type_name -> google.protobuf.Timestamp
 	2,  // 4: warehouse.warehouse.v1.WarehouseItem.unit:type_name -> warehouse.warehouse.v1.ItemUnit
 	1,  // 5: warehouse.warehouse.v1.WarehouseItem.condition:type_name -> warehouse.warehouse.v1.ItemCondition
-	80, // 6: warehouse.warehouse.v1.WarehouseItem.created_at:type_name -> google.protobuf.Timestamp
-	80, // 7: warehouse.warehouse.v1.WarehouseItem.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 8: warehouse.warehouse.v1.StockMovement.type:type_name -> warehouse.warehouse.v1.MovementType
-	80, // 9: warehouse.warehouse.v1.StockMovement.created_at:type_name -> google.protobuf.Timestamp
-	5,  // 10: warehouse.warehouse.v1.InventoryCheck.status:type_name -> warehouse.warehouse.v1.InventoryCheckStatus
-	80, // 11: warehouse.warehouse.v1.InventoryCheck.started_at:type_name -> google.protobuf.Timestamp
-	80, // 12: warehouse.warehouse.v1.InventoryCheck.completed_at:type_name -> google.protobuf.Timestamp
-	4,  // 13: warehouse.warehouse.v1.Reservation.status:type_name -> warehouse.warehouse.v1.ReservationStatus
-	80, // 14: warehouse.warehouse.v1.Reservation.created_at:type_name -> google.protobuf.Timestamp
-	80, // 15: warehouse.warehouse.v1.Reservation.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 16: warehouse.warehouse.v1.CreateWarehouseRequest.type:type_name -> warehouse.warehouse.v1.WarehouseType
-	6,  // 17: warehouse.warehouse.v1.CreateWarehouseResponse.warehouse:type_name -> warehouse.warehouse.v1.Warehouse
-	6,  // 18: warehouse.warehouse.v1.GetWarehouseResponse.warehouse:type_name -> warehouse.warehouse.v1.Warehouse
-	6,  // 19: warehouse.warehouse.v1.UpdateWarehouseResponse.warehouse:type_name -> warehouse.warehouse.v1.Warehouse
-	0,  // 20: warehouse.warehouse.v1.ListWarehousesRequest.type:type_name -> warehouse.warehouse.v1.WarehouseType
-	6,  // 21: warehouse.warehouse.v1.ListWarehousesResponse.warehouses:type_name -> warehouse.warehouse.v1.Warehouse
-	7,  // 22: warehouse.warehouse.v1.CreateStorageLocationResponse.location:type_name -> warehouse.warehouse.v1.StorageLocation
-	7,  // 23: warehouse.warehouse.v1.UpdateStorageLocationResponse.location:type_name -> warehouse.warehouse.v1.StorageLocation
-	7,  // 24: warehouse.warehouse.v1.ListStorageLocationsResponse.locations:type_name -> warehouse.warehouse.v1.StorageLocation
-	2,  // 25: warehouse.warehouse.v1.CreateItemRequest.unit:type_name -> warehouse.warehouse.v1.ItemUnit
-	1,  // 26: warehouse.warehouse.v1.CreateItemRequest.condition:type_name -> warehouse.warehouse.v1.ItemCondition
-	8,  // 27: warehouse.warehouse.v1.CreateItemResponse.item:type_name -> warehouse.warehouse.v1.WarehouseItem
-	8,  // 28: warehouse.warehouse.v1.GetItemResponse.item:type_name -> warehouse.warehouse.v1.WarehouseItem
-	1,  // 29: warehouse.warehouse.v1.UpdateItemRequest.condition:type_name -> warehouse.warehouse.v1.ItemCondition
-	8,  // 30: warehouse.warehouse.v1.UpdateItemResponse.item:type_name -> warehouse.warehouse.v1.WarehouseItem
-	1,  // 31: warehouse.warehouse.v1.ListItemsRequest.condition:type_name -> warehouse.warehouse.v1.ItemCondition
-	8,  // 32: warehouse.warehouse.v1.ListItemsResponse.items:type_name -> warehouse.warehouse.v1.WarehouseItem
-	8,  // 33: warehouse.warehouse.v1.SearchItemsResponse.items:type_name -> warehouse.warehouse.v1.WarehouseItem
-	39, // 34: warehouse.warehouse.v1.ReceiveStockRequest.items:type_name -> warehouse.warehouse.v1.ReceiveStockItem
-	9,  // 35: warehouse.warehouse.v1.ReceiveStockResponse.movements:type_name -> warehouse.warehouse.v1.StockMovement
-	42, // 36: warehouse.warehouse.v1.WriteOffStockRequest.items:type_name -> warehouse.warehouse.v1.WriteOffStockItem
-	9,  // 37: warehouse.warehouse.v1.WriteOffStockResponse.movements:type_name -> warehouse.warehouse.v1.StockMovement
-	45, // 38: warehouse.warehouse.v1.TransferStockRequest.items:type_name -> warehouse.warehouse.v1.TransferStockItem
-	9,  // 39: warehouse.warehouse.v1.TransferStockResponse.movements:type_name -> warehouse.warehouse.v1.StockMovement
-	48, // 40: warehouse.warehouse.v1.ReturnToSupplierRequest.items:type_name -> warehouse.warehouse.v1.ReturnToSupplierItem
-	9,  // 41: warehouse.warehouse.v1.ReturnToSupplierResponse.movements:type_name -> warehouse.warehouse.v1.StockMovement
-	3,  // 42: warehouse.warehouse.v1.ListStockMovementsRequest.type:type_name -> warehouse.warehouse.v1.MovementType
-	9,  // 43: warehouse.warehouse.v1.ListStockMovementsResponse.movements:type_name -> warehouse.warehouse.v1.StockMovement
-	10, // 44: warehouse.warehouse.v1.StartInventoryCheckResponse.check:type_name -> warehouse.warehouse.v1.InventoryCheck
-	11, // 45: warehouse.warehouse.v1.StartInventoryCheckResponse.items:type_name -> warehouse.warehouse.v1.InventoryCheckItem
-	11, // 46: warehouse.warehouse.v1.RecordActualQuantityResponse.item:type_name -> warehouse.warehouse.v1.InventoryCheckItem
-	10, // 47: warehouse.warehouse.v1.CompleteInventoryCheckResponse.check:type_name -> warehouse.warehouse.v1.InventoryCheck
-	10, // 48: warehouse.warehouse.v1.GetInventoryCheckResponse.check:type_name -> warehouse.warehouse.v1.InventoryCheck
-	11, // 49: warehouse.warehouse.v1.GetInventoryCheckResponse.items:type_name -> warehouse.warehouse.v1.InventoryCheckItem
-	11, // 50: warehouse.warehouse.v1.GetDiscrepanciesResponse.items:type_name -> warehouse.warehouse.v1.InventoryCheckItem
-	12, // 51: warehouse.warehouse.v1.ReserveForRepairOrderResponse.reservation:type_name -> warehouse.warehouse.v1.Reservation
-	12, // 52: warehouse.warehouse.v1.ReleaseReservationResponse.reservation:type_name -> warehouse.warehouse.v1.Reservation
-	12, // 53: warehouse.warehouse.v1.ConfirmWriteOffResponse.reservation:type_name -> warehouse.warehouse.v1.Reservation
-	4,  // 54: warehouse.warehouse.v1.ListReservationsRequest.status:type_name -> warehouse.warehouse.v1.ReservationStatus
-	12, // 55: warehouse.warehouse.v1.ListReservationsResponse.reservations:type_name -> warehouse.warehouse.v1.Reservation
-	79, // 56: warehouse.warehouse.v1.SearchAvailablePartsResponse.parts:type_name -> warehouse.warehouse.v1.AvailablePart
-	1,  // 57: warehouse.warehouse.v1.AvailablePart.condition:type_name -> warehouse.warehouse.v1.ItemCondition
-	13, // 58: warehouse.warehouse.v1.WarehouseService.CreateWarehouse:input_type -> warehouse.warehouse.v1.CreateWarehouseRequest
-	15, // 59: warehouse.warehouse.v1.WarehouseService.GetWarehouse:input_type -> warehouse.warehouse.v1.GetWarehouseRequest
-	17, // 60: warehouse.warehouse.v1.WarehouseService.UpdateWarehouse:input_type -> warehouse.warehouse.v1.UpdateWarehouseRequest
-	19, // 61: warehouse.warehouse.v1.WarehouseService.ListWarehouses:input_type -> warehouse.warehouse.v1.ListWarehousesRequest
-	21, // 62: warehouse.warehouse.v1.WarehouseService.CreateStorageLocation:input_type -> warehouse.warehouse.v1.CreateStorageLocationRequest
-	23, // 63: warehouse.warehouse.v1.WarehouseService.UpdateStorageLocation:input_type -> warehouse.warehouse.v1.UpdateStorageLocationRequest
-	25, // 64: warehouse.warehouse.v1.WarehouseService.ListStorageLocations:input_type -> warehouse.warehouse.v1.ListStorageLocationsRequest
-	27, // 65: warehouse.warehouse.v1.WarehouseService.DeleteStorageLocation:input_type -> warehouse.warehouse.v1.DeleteStorageLocationRequest
-	29, // 66: warehouse.warehouse.v1.WarehouseService.CreateItem:input_type -> warehouse.warehouse.v1.CreateItemRequest
-	31, // 67: warehouse.warehouse.v1.WarehouseService.GetItem:input_type -> warehouse.warehouse.v1.GetItemRequest
-	33, // 68: warehouse.warehouse.v1.WarehouseService.UpdateItem:input_type -> warehouse.warehouse.v1.UpdateItemRequest
-	35, // 69: warehouse.warehouse.v1.WarehouseService.ListItems:input_type -> warehouse.warehouse.v1.ListItemsRequest
-	37, // 70: warehouse.warehouse.v1.WarehouseService.SearchItems:input_type -> warehouse.warehouse.v1.SearchItemsRequest
-	40, // 71: warehouse.warehouse.v1.WarehouseService.ReceiveStock:input_type -> warehouse.warehouse.v1.ReceiveStockRequest
-	43, // 72: warehouse.warehouse.v1.WarehouseService.WriteOffStock:input_type -> warehouse.warehouse.v1.WriteOffStockRequest
-	46, // 73: warehouse.warehouse.v1.WarehouseService.TransferStock:input_type -> warehouse.warehouse.v1.TransferStockRequest
-	49, // 74: warehouse.warehouse.v1.WarehouseService.ReturnToSupplier:input_type -> warehouse.warehouse.v1.ReturnToSupplierRequest
-	51, // 75: warehouse.warehouse.v1.WarehouseService.ListStockMovements:input_type -> warehouse.warehouse.v1.ListStockMovementsRequest
-	53, // 76: warehouse.warehouse.v1.WarehouseService.GenerateBarcode:input_type -> warehouse.warehouse.v1.GenerateBarcodeRequest
-	55, // 77: warehouse.warehouse.v1.WarehouseService.GenerateQR:input_type -> warehouse.warehouse.v1.GenerateQRRequest
-	57, // 78: warehouse.warehouse.v1.WarehouseService.GenerateLabel:input_type -> warehouse.warehouse.v1.GenerateLabelRequest
-	59, // 79: warehouse.warehouse.v1.WarehouseService.StartInventoryCheck:input_type -> warehouse.warehouse.v1.StartInventoryCheckRequest
-	61, // 80: warehouse.warehouse.v1.WarehouseService.RecordActualQuantity:input_type -> warehouse.warehouse.v1.RecordActualQuantityRequest
-	63, // 81: warehouse.warehouse.v1.WarehouseService.CompleteInventoryCheck:input_type -> warehouse.warehouse.v1.CompleteInventoryCheckRequest
-	65, // 82: warehouse.warehouse.v1.WarehouseService.GetInventoryCheck:input_type -> warehouse.warehouse.v1.GetInventoryCheckRequest
-	67, // 83: warehouse.warehouse.v1.WarehouseService.GetDiscrepancies:input_type -> warehouse.warehouse.v1.GetDiscrepanciesRequest
-	69, // 84: warehouse.warehouse.v1.WarehouseService.ReserveForRepairOrder:input_type -> warehouse.warehouse.v1.ReserveForRepairOrderRequest
-	71, // 85: warehouse.warehouse.v1.WarehouseService.ReleaseReservation:input_type -> warehouse.warehouse.v1.ReleaseReservationRequest
-	73, // 86: warehouse.warehouse.v1.WarehouseService.ConfirmWriteOff:input_type -> warehouse.warehouse.v1.ConfirmWriteOffRequest
-	75, // 87: warehouse.warehouse.v1.WarehouseService.ListReservations:input_type -> warehouse.warehouse.v1.ListReservationsRequest
-	77, // 88: warehouse.warehouse.v1.WarehouseService.SearchAvailableParts:input_type -> warehouse.warehouse.v1.SearchAvailablePartsRequest
-	14, // 89: warehouse.warehouse.v1.WarehouseService.CreateWarehouse:output_type -> warehouse.warehouse.v1.CreateWarehouseResponse
-	16, // 90: warehouse.warehouse.v1.WarehouseService.GetWarehouse:output_type -> warehouse.warehouse.v1.GetWarehouseResponse
-	18, // 91: warehouse.warehouse.v1.WarehouseService.UpdateWarehouse:output_type -> warehouse.warehouse.v1.UpdateWarehouseResponse
-	20, // 92: warehouse.warehouse.v1.WarehouseService.ListWarehouses:output_type -> warehouse.warehouse.v1.ListWarehousesResponse
-	22, // 93: warehouse.warehouse.v1.WarehouseService.CreateStorageLocation:output_type -> warehouse.warehouse.v1.CreateStorageLocationResponse
-	24, // 94: warehouse.warehouse.v1.WarehouseService.UpdateStorageLocation:output_type -> warehouse.warehouse.v1.UpdateStorageLocationResponse
-	26, // 95: warehouse.warehouse.v1.WarehouseService.ListStorageLocations:output_type -> warehouse.warehouse.v1.ListStorageLocationsResponse
-	28, // 96: warehouse.warehouse.v1.WarehouseService.DeleteStorageLocation:output_type -> warehouse.warehouse.v1.DeleteStorageLocationResponse
-	30, // 97: warehouse.warehouse.v1.WarehouseService.CreateItem:output_type -> warehouse.warehouse.v1.CreateItemResponse
-	32, // 98: warehouse.warehouse.v1.WarehouseService.GetItem:output_type -> warehouse.warehouse.v1.GetItemResponse
-	34, // 99: warehouse.warehouse.v1.WarehouseService.UpdateItem:output_type -> warehouse.warehouse.v1.UpdateItemResponse
-	36, // 100: warehouse.warehouse.v1.WarehouseService.ListItems:output_type -> warehouse.warehouse.v1.ListItemsResponse
-	38, // 101: warehouse.warehouse.v1.WarehouseService.SearchItems:output_type -> warehouse.warehouse.v1.SearchItemsResponse
-	41, // 102: warehouse.warehouse.v1.WarehouseService.ReceiveStock:output_type -> warehouse.warehouse.v1.ReceiveStockResponse
-	44, // 103: warehouse.warehouse.v1.WarehouseService.WriteOffStock:output_type -> warehouse.warehouse.v1.WriteOffStockResponse
-	47, // 104: warehouse.warehouse.v1.WarehouseService.TransferStock:output_type -> warehouse.warehouse.v1.TransferStockResponse
-	50, // 105: warehouse.warehouse.v1.WarehouseService.ReturnToSupplier:output_type -> warehouse.warehouse.v1.ReturnToSupplierResponse
-	52, // 106: warehouse.warehouse.v1.WarehouseService.ListStockMovements:output_type -> warehouse.warehouse.v1.ListStockMovementsResponse
-	54, // 107: warehouse.warehouse.v1.WarehouseService.GenerateBarcode:output_type -> warehouse.warehouse.v1.GenerateBarcodeResponse
-	56, // 108: warehouse.warehouse.v1.WarehouseService.GenerateQR:output_type -> warehouse.warehouse.v1.GenerateQRResponse
-	58, // 109: warehouse.warehouse.v1.WarehouseService.GenerateLabel:output_type -> warehouse.warehouse.v1.GenerateLabelResponse
-	60, // 110: warehouse.warehouse.v1.WarehouseService.StartInventoryCheck:output_type -> warehouse.warehouse.v1.StartInventoryCheckResponse
-	62, // 111: warehouse.warehouse.v1.WarehouseService.RecordActualQuantity:output_type -> warehouse.warehouse.v1.RecordActualQuantityResponse
-	64, // 112: warehouse.warehouse.v1.WarehouseService.CompleteInventoryCheck:output_type -> warehouse.warehouse.v1.CompleteInventoryCheckResponse
-	66, // 113: warehouse.warehouse.v1.WarehouseService.GetInventoryCheck:output_type -> warehouse.warehouse.v1.GetInventoryCheckResponse
-	68, // 114: warehouse.warehouse.v1.WarehouseService.GetDiscrepancies:output_type -> warehouse.warehouse.v1.GetDiscrepanciesResponse
-	70, // 115: warehouse.warehouse.v1.WarehouseService.ReserveForRepairOrder:output_type -> warehouse.warehouse.v1.ReserveForRepairOrderResponse
-	72, // 116: warehouse.warehouse.v1.WarehouseService.ReleaseReservation:output_type -> warehouse.warehouse.v1.ReleaseReservationResponse
-	74, // 117: warehouse.warehouse.v1.WarehouseService.ConfirmWriteOff:output_type -> warehouse.warehouse.v1.ConfirmWriteOffResponse
-	76, // 118: warehouse.warehouse.v1.WarehouseService.ListReservations:output_type -> warehouse.warehouse.v1.ListReservationsResponse
-	78, // 119: warehouse.warehouse.v1.WarehouseService.SearchAvailableParts:output_type -> warehouse.warehouse.v1.SearchAvailablePartsResponse
-	89, // [89:120] is the sub-list for method output_type
-	58, // [58:89] is the sub-list for method input_type
-	58, // [58:58] is the sub-list for extension type_name
-	58, // [58:58] is the sub-list for extension extendee
-	0,  // [0:58] is the sub-list for field type_name
+	82, // 6: warehouse.warehouse.v1.WarehouseItem.created_at:type_name -> google.protobuf.Timestamp
+	82, // 7: warehouse.warehouse.v1.WarehouseItem.updated_at:type_name -> google.protobuf.Timestamp
+	9,  // 8: warehouse.warehouse.v1.WarehouseItem.car_compatibility:type_name -> warehouse.warehouse.v1.CarCompatibility
+	3,  // 9: warehouse.warehouse.v1.StockMovement.type:type_name -> warehouse.warehouse.v1.MovementType
+	82, // 10: warehouse.warehouse.v1.StockMovement.created_at:type_name -> google.protobuf.Timestamp
+	5,  // 11: warehouse.warehouse.v1.InventoryCheck.status:type_name -> warehouse.warehouse.v1.InventoryCheckStatus
+	82, // 12: warehouse.warehouse.v1.InventoryCheck.started_at:type_name -> google.protobuf.Timestamp
+	82, // 13: warehouse.warehouse.v1.InventoryCheck.completed_at:type_name -> google.protobuf.Timestamp
+	4,  // 14: warehouse.warehouse.v1.Reservation.status:type_name -> warehouse.warehouse.v1.ReservationStatus
+	82, // 15: warehouse.warehouse.v1.Reservation.created_at:type_name -> google.protobuf.Timestamp
+	82, // 16: warehouse.warehouse.v1.Reservation.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 17: warehouse.warehouse.v1.CreateWarehouseRequest.type:type_name -> warehouse.warehouse.v1.WarehouseType
+	6,  // 18: warehouse.warehouse.v1.CreateWarehouseResponse.warehouse:type_name -> warehouse.warehouse.v1.Warehouse
+	6,  // 19: warehouse.warehouse.v1.GetWarehouseResponse.warehouse:type_name -> warehouse.warehouse.v1.Warehouse
+	6,  // 20: warehouse.warehouse.v1.UpdateWarehouseResponse.warehouse:type_name -> warehouse.warehouse.v1.Warehouse
+	0,  // 21: warehouse.warehouse.v1.ListWarehousesRequest.type:type_name -> warehouse.warehouse.v1.WarehouseType
+	6,  // 22: warehouse.warehouse.v1.ListWarehousesResponse.warehouses:type_name -> warehouse.warehouse.v1.Warehouse
+	7,  // 23: warehouse.warehouse.v1.CreateStorageLocationResponse.location:type_name -> warehouse.warehouse.v1.StorageLocation
+	7,  // 24: warehouse.warehouse.v1.UpdateStorageLocationResponse.location:type_name -> warehouse.warehouse.v1.StorageLocation
+	7,  // 25: warehouse.warehouse.v1.ListStorageLocationsResponse.locations:type_name -> warehouse.warehouse.v1.StorageLocation
+	2,  // 26: warehouse.warehouse.v1.CreateItemRequest.unit:type_name -> warehouse.warehouse.v1.ItemUnit
+	1,  // 27: warehouse.warehouse.v1.CreateItemRequest.condition:type_name -> warehouse.warehouse.v1.ItemCondition
+	31, // 28: warehouse.warehouse.v1.CreateItemRequest.car_compatibility:type_name -> warehouse.warehouse.v1.CarCompatibilityInput
+	8,  // 29: warehouse.warehouse.v1.CreateItemResponse.item:type_name -> warehouse.warehouse.v1.WarehouseItem
+	8,  // 30: warehouse.warehouse.v1.GetItemResponse.item:type_name -> warehouse.warehouse.v1.WarehouseItem
+	1,  // 31: warehouse.warehouse.v1.UpdateItemRequest.condition:type_name -> warehouse.warehouse.v1.ItemCondition
+	8,  // 32: warehouse.warehouse.v1.UpdateItemResponse.item:type_name -> warehouse.warehouse.v1.WarehouseItem
+	1,  // 33: warehouse.warehouse.v1.ListItemsRequest.condition:type_name -> warehouse.warehouse.v1.ItemCondition
+	8,  // 34: warehouse.warehouse.v1.ListItemsResponse.items:type_name -> warehouse.warehouse.v1.WarehouseItem
+	8,  // 35: warehouse.warehouse.v1.SearchItemsResponse.items:type_name -> warehouse.warehouse.v1.WarehouseItem
+	41, // 36: warehouse.warehouse.v1.ReceiveStockRequest.items:type_name -> warehouse.warehouse.v1.ReceiveStockItem
+	10, // 37: warehouse.warehouse.v1.ReceiveStockResponse.movements:type_name -> warehouse.warehouse.v1.StockMovement
+	44, // 38: warehouse.warehouse.v1.WriteOffStockRequest.items:type_name -> warehouse.warehouse.v1.WriteOffStockItem
+	10, // 39: warehouse.warehouse.v1.WriteOffStockResponse.movements:type_name -> warehouse.warehouse.v1.StockMovement
+	47, // 40: warehouse.warehouse.v1.TransferStockRequest.items:type_name -> warehouse.warehouse.v1.TransferStockItem
+	10, // 41: warehouse.warehouse.v1.TransferStockResponse.movements:type_name -> warehouse.warehouse.v1.StockMovement
+	50, // 42: warehouse.warehouse.v1.ReturnToSupplierRequest.items:type_name -> warehouse.warehouse.v1.ReturnToSupplierItem
+	10, // 43: warehouse.warehouse.v1.ReturnToSupplierResponse.movements:type_name -> warehouse.warehouse.v1.StockMovement
+	3,  // 44: warehouse.warehouse.v1.ListStockMovementsRequest.type:type_name -> warehouse.warehouse.v1.MovementType
+	10, // 45: warehouse.warehouse.v1.ListStockMovementsResponse.movements:type_name -> warehouse.warehouse.v1.StockMovement
+	11, // 46: warehouse.warehouse.v1.StartInventoryCheckResponse.check:type_name -> warehouse.warehouse.v1.InventoryCheck
+	12, // 47: warehouse.warehouse.v1.StartInventoryCheckResponse.items:type_name -> warehouse.warehouse.v1.InventoryCheckItem
+	12, // 48: warehouse.warehouse.v1.RecordActualQuantityResponse.item:type_name -> warehouse.warehouse.v1.InventoryCheckItem
+	11, // 49: warehouse.warehouse.v1.CompleteInventoryCheckResponse.check:type_name -> warehouse.warehouse.v1.InventoryCheck
+	11, // 50: warehouse.warehouse.v1.GetInventoryCheckResponse.check:type_name -> warehouse.warehouse.v1.InventoryCheck
+	12, // 51: warehouse.warehouse.v1.GetInventoryCheckResponse.items:type_name -> warehouse.warehouse.v1.InventoryCheckItem
+	12, // 52: warehouse.warehouse.v1.GetDiscrepanciesResponse.items:type_name -> warehouse.warehouse.v1.InventoryCheckItem
+	13, // 53: warehouse.warehouse.v1.ReserveForRepairOrderResponse.reservation:type_name -> warehouse.warehouse.v1.Reservation
+	13, // 54: warehouse.warehouse.v1.ReleaseReservationResponse.reservation:type_name -> warehouse.warehouse.v1.Reservation
+	13, // 55: warehouse.warehouse.v1.ConfirmWriteOffResponse.reservation:type_name -> warehouse.warehouse.v1.Reservation
+	4,  // 56: warehouse.warehouse.v1.ListReservationsRequest.status:type_name -> warehouse.warehouse.v1.ReservationStatus
+	13, // 57: warehouse.warehouse.v1.ListReservationsResponse.reservations:type_name -> warehouse.warehouse.v1.Reservation
+	81, // 58: warehouse.warehouse.v1.SearchAvailablePartsResponse.parts:type_name -> warehouse.warehouse.v1.AvailablePart
+	1,  // 59: warehouse.warehouse.v1.AvailablePart.condition:type_name -> warehouse.warehouse.v1.ItemCondition
+	14, // 60: warehouse.warehouse.v1.WarehouseService.CreateWarehouse:input_type -> warehouse.warehouse.v1.CreateWarehouseRequest
+	16, // 61: warehouse.warehouse.v1.WarehouseService.GetWarehouse:input_type -> warehouse.warehouse.v1.GetWarehouseRequest
+	18, // 62: warehouse.warehouse.v1.WarehouseService.UpdateWarehouse:input_type -> warehouse.warehouse.v1.UpdateWarehouseRequest
+	20, // 63: warehouse.warehouse.v1.WarehouseService.ListWarehouses:input_type -> warehouse.warehouse.v1.ListWarehousesRequest
+	22, // 64: warehouse.warehouse.v1.WarehouseService.CreateStorageLocation:input_type -> warehouse.warehouse.v1.CreateStorageLocationRequest
+	24, // 65: warehouse.warehouse.v1.WarehouseService.UpdateStorageLocation:input_type -> warehouse.warehouse.v1.UpdateStorageLocationRequest
+	26, // 66: warehouse.warehouse.v1.WarehouseService.ListStorageLocations:input_type -> warehouse.warehouse.v1.ListStorageLocationsRequest
+	28, // 67: warehouse.warehouse.v1.WarehouseService.DeleteStorageLocation:input_type -> warehouse.warehouse.v1.DeleteStorageLocationRequest
+	30, // 68: warehouse.warehouse.v1.WarehouseService.CreateItem:input_type -> warehouse.warehouse.v1.CreateItemRequest
+	33, // 69: warehouse.warehouse.v1.WarehouseService.GetItem:input_type -> warehouse.warehouse.v1.GetItemRequest
+	35, // 70: warehouse.warehouse.v1.WarehouseService.UpdateItem:input_type -> warehouse.warehouse.v1.UpdateItemRequest
+	37, // 71: warehouse.warehouse.v1.WarehouseService.ListItems:input_type -> warehouse.warehouse.v1.ListItemsRequest
+	39, // 72: warehouse.warehouse.v1.WarehouseService.SearchItems:input_type -> warehouse.warehouse.v1.SearchItemsRequest
+	42, // 73: warehouse.warehouse.v1.WarehouseService.ReceiveStock:input_type -> warehouse.warehouse.v1.ReceiveStockRequest
+	45, // 74: warehouse.warehouse.v1.WarehouseService.WriteOffStock:input_type -> warehouse.warehouse.v1.WriteOffStockRequest
+	48, // 75: warehouse.warehouse.v1.WarehouseService.TransferStock:input_type -> warehouse.warehouse.v1.TransferStockRequest
+	51, // 76: warehouse.warehouse.v1.WarehouseService.ReturnToSupplier:input_type -> warehouse.warehouse.v1.ReturnToSupplierRequest
+	53, // 77: warehouse.warehouse.v1.WarehouseService.ListStockMovements:input_type -> warehouse.warehouse.v1.ListStockMovementsRequest
+	55, // 78: warehouse.warehouse.v1.WarehouseService.GenerateBarcode:input_type -> warehouse.warehouse.v1.GenerateBarcodeRequest
+	57, // 79: warehouse.warehouse.v1.WarehouseService.GenerateQR:input_type -> warehouse.warehouse.v1.GenerateQRRequest
+	59, // 80: warehouse.warehouse.v1.WarehouseService.GenerateLabel:input_type -> warehouse.warehouse.v1.GenerateLabelRequest
+	61, // 81: warehouse.warehouse.v1.WarehouseService.StartInventoryCheck:input_type -> warehouse.warehouse.v1.StartInventoryCheckRequest
+	63, // 82: warehouse.warehouse.v1.WarehouseService.RecordActualQuantity:input_type -> warehouse.warehouse.v1.RecordActualQuantityRequest
+	65, // 83: warehouse.warehouse.v1.WarehouseService.CompleteInventoryCheck:input_type -> warehouse.warehouse.v1.CompleteInventoryCheckRequest
+	67, // 84: warehouse.warehouse.v1.WarehouseService.GetInventoryCheck:input_type -> warehouse.warehouse.v1.GetInventoryCheckRequest
+	69, // 85: warehouse.warehouse.v1.WarehouseService.GetDiscrepancies:input_type -> warehouse.warehouse.v1.GetDiscrepanciesRequest
+	71, // 86: warehouse.warehouse.v1.WarehouseService.ReserveForRepairOrder:input_type -> warehouse.warehouse.v1.ReserveForRepairOrderRequest
+	73, // 87: warehouse.warehouse.v1.WarehouseService.ReleaseReservation:input_type -> warehouse.warehouse.v1.ReleaseReservationRequest
+	75, // 88: warehouse.warehouse.v1.WarehouseService.ConfirmWriteOff:input_type -> warehouse.warehouse.v1.ConfirmWriteOffRequest
+	77, // 89: warehouse.warehouse.v1.WarehouseService.ListReservations:input_type -> warehouse.warehouse.v1.ListReservationsRequest
+	79, // 90: warehouse.warehouse.v1.WarehouseService.SearchAvailableParts:input_type -> warehouse.warehouse.v1.SearchAvailablePartsRequest
+	15, // 91: warehouse.warehouse.v1.WarehouseService.CreateWarehouse:output_type -> warehouse.warehouse.v1.CreateWarehouseResponse
+	17, // 92: warehouse.warehouse.v1.WarehouseService.GetWarehouse:output_type -> warehouse.warehouse.v1.GetWarehouseResponse
+	19, // 93: warehouse.warehouse.v1.WarehouseService.UpdateWarehouse:output_type -> warehouse.warehouse.v1.UpdateWarehouseResponse
+	21, // 94: warehouse.warehouse.v1.WarehouseService.ListWarehouses:output_type -> warehouse.warehouse.v1.ListWarehousesResponse
+	23, // 95: warehouse.warehouse.v1.WarehouseService.CreateStorageLocation:output_type -> warehouse.warehouse.v1.CreateStorageLocationResponse
+	25, // 96: warehouse.warehouse.v1.WarehouseService.UpdateStorageLocation:output_type -> warehouse.warehouse.v1.UpdateStorageLocationResponse
+	27, // 97: warehouse.warehouse.v1.WarehouseService.ListStorageLocations:output_type -> warehouse.warehouse.v1.ListStorageLocationsResponse
+	29, // 98: warehouse.warehouse.v1.WarehouseService.DeleteStorageLocation:output_type -> warehouse.warehouse.v1.DeleteStorageLocationResponse
+	32, // 99: warehouse.warehouse.v1.WarehouseService.CreateItem:output_type -> warehouse.warehouse.v1.CreateItemResponse
+	34, // 100: warehouse.warehouse.v1.WarehouseService.GetItem:output_type -> warehouse.warehouse.v1.GetItemResponse
+	36, // 101: warehouse.warehouse.v1.WarehouseService.UpdateItem:output_type -> warehouse.warehouse.v1.UpdateItemResponse
+	38, // 102: warehouse.warehouse.v1.WarehouseService.ListItems:output_type -> warehouse.warehouse.v1.ListItemsResponse
+	40, // 103: warehouse.warehouse.v1.WarehouseService.SearchItems:output_type -> warehouse.warehouse.v1.SearchItemsResponse
+	43, // 104: warehouse.warehouse.v1.WarehouseService.ReceiveStock:output_type -> warehouse.warehouse.v1.ReceiveStockResponse
+	46, // 105: warehouse.warehouse.v1.WarehouseService.WriteOffStock:output_type -> warehouse.warehouse.v1.WriteOffStockResponse
+	49, // 106: warehouse.warehouse.v1.WarehouseService.TransferStock:output_type -> warehouse.warehouse.v1.TransferStockResponse
+	52, // 107: warehouse.warehouse.v1.WarehouseService.ReturnToSupplier:output_type -> warehouse.warehouse.v1.ReturnToSupplierResponse
+	54, // 108: warehouse.warehouse.v1.WarehouseService.ListStockMovements:output_type -> warehouse.warehouse.v1.ListStockMovementsResponse
+	56, // 109: warehouse.warehouse.v1.WarehouseService.GenerateBarcode:output_type -> warehouse.warehouse.v1.GenerateBarcodeResponse
+	58, // 110: warehouse.warehouse.v1.WarehouseService.GenerateQR:output_type -> warehouse.warehouse.v1.GenerateQRResponse
+	60, // 111: warehouse.warehouse.v1.WarehouseService.GenerateLabel:output_type -> warehouse.warehouse.v1.GenerateLabelResponse
+	62, // 112: warehouse.warehouse.v1.WarehouseService.StartInventoryCheck:output_type -> warehouse.warehouse.v1.StartInventoryCheckResponse
+	64, // 113: warehouse.warehouse.v1.WarehouseService.RecordActualQuantity:output_type -> warehouse.warehouse.v1.RecordActualQuantityResponse
+	66, // 114: warehouse.warehouse.v1.WarehouseService.CompleteInventoryCheck:output_type -> warehouse.warehouse.v1.CompleteInventoryCheckResponse
+	68, // 115: warehouse.warehouse.v1.WarehouseService.GetInventoryCheck:output_type -> warehouse.warehouse.v1.GetInventoryCheckResponse
+	70, // 116: warehouse.warehouse.v1.WarehouseService.GetDiscrepancies:output_type -> warehouse.warehouse.v1.GetDiscrepanciesResponse
+	72, // 117: warehouse.warehouse.v1.WarehouseService.ReserveForRepairOrder:output_type -> warehouse.warehouse.v1.ReserveForRepairOrderResponse
+	74, // 118: warehouse.warehouse.v1.WarehouseService.ReleaseReservation:output_type -> warehouse.warehouse.v1.ReleaseReservationResponse
+	76, // 119: warehouse.warehouse.v1.WarehouseService.ConfirmWriteOff:output_type -> warehouse.warehouse.v1.ConfirmWriteOffResponse
+	78, // 120: warehouse.warehouse.v1.WarehouseService.ListReservations:output_type -> warehouse.warehouse.v1.ListReservationsResponse
+	80, // 121: warehouse.warehouse.v1.WarehouseService.SearchAvailableParts:output_type -> warehouse.warehouse.v1.SearchAvailablePartsResponse
+	91, // [91:122] is the sub-list for method output_type
+	60, // [60:91] is the sub-list for method input_type
+	60, // [60:60] is the sub-list for extension type_name
+	60, // [60:60] is the sub-list for extension extendee
+	0,  // [0:60] is the sub-list for field type_name
 }
 
 func init() { file_warehouse_warehouse_v1_warehouse_proto_init() }
@@ -5671,7 +5795,7 @@ func file_warehouse_warehouse_v1_warehouse_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_warehouse_warehouse_v1_warehouse_proto_rawDesc), len(file_warehouse_warehouse_v1_warehouse_proto_rawDesc)),
 			NumEnums:      6,
-			NumMessages:   74,
+			NumMessages:   76,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
