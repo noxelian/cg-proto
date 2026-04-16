@@ -538,8 +538,15 @@ type WarehouseItem struct {
 	QrData            string                 `protobuf:"bytes,16,opt,name=qr_data,json=qrData,proto3" json:"qr_data,omitempty"`
 	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,18,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	// Car compatibility
+	MarkId   int32 `protobuf:"varint,19,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	ModelId  int32 `protobuf:"varint,20,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	YearFrom int32 `protobuf:"varint,21,opt,name=year_from,json=yearFrom,proto3" json:"year_from,omitempty"`
+	YearTo   int32 `protobuf:"varint,22,opt,name=year_to,json=yearTo,proto3" json:"year_to,omitempty"`
+	// Photos
+	Photos        []string `protobuf:"bytes,23,rep,name=photos,proto3" json:"photos,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *WarehouseItem) Reset() {
@@ -694,6 +701,41 @@ func (x *WarehouseItem) GetCreatedAt() *timestamppb.Timestamp {
 func (x *WarehouseItem) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *WarehouseItem) GetMarkId() int32 {
+	if x != nil {
+		return x.MarkId
+	}
+	return 0
+}
+
+func (x *WarehouseItem) GetModelId() int32 {
+	if x != nil {
+		return x.ModelId
+	}
+	return 0
+}
+
+func (x *WarehouseItem) GetYearFrom() int32 {
+	if x != nil {
+		return x.YearFrom
+	}
+	return 0
+}
+
+func (x *WarehouseItem) GetYearTo() int32 {
+	if x != nil {
+		return x.YearTo
+	}
+	return 0
+}
+
+func (x *WarehouseItem) GetPhotos() []string {
+	if x != nil {
+		return x.Photos
 	}
 	return nil
 }
@@ -1952,8 +1994,17 @@ type CreateItemRequest struct {
 	CostPrice         int64                  `protobuf:"varint,10,opt,name=cost_price,json=costPrice,proto3" json:"cost_price,omitempty"`
 	SellPrice         int64                  `protobuf:"varint,11,opt,name=sell_price,json=sellPrice,proto3" json:"sell_price,omitempty"`
 	StorageLocationId int64                  `protobuf:"varint,12,opt,name=storage_location_id,json=storageLocationId,proto3" json:"storage_location_id,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	// Initial stock quantity (auto-creates income movement)
+	InitialQuantity int32 `protobuf:"varint,13,opt,name=initial_quantity,json=initialQuantity,proto3" json:"initial_quantity,omitempty"`
+	// Car compatibility
+	MarkId   int32 `protobuf:"varint,14,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	ModelId  int32 `protobuf:"varint,15,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	YearFrom int32 `protobuf:"varint,16,opt,name=year_from,json=yearFrom,proto3" json:"year_from,omitempty"`
+	YearTo   int32 `protobuf:"varint,17,opt,name=year_to,json=yearTo,proto3" json:"year_to,omitempty"`
+	// Photos
+	Photos        []string `protobuf:"bytes,18,rep,name=photos,proto3" json:"photos,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateItemRequest) Reset() {
@@ -2068,6 +2119,48 @@ func (x *CreateItemRequest) GetStorageLocationId() int64 {
 		return x.StorageLocationId
 	}
 	return 0
+}
+
+func (x *CreateItemRequest) GetInitialQuantity() int32 {
+	if x != nil {
+		return x.InitialQuantity
+	}
+	return 0
+}
+
+func (x *CreateItemRequest) GetMarkId() int32 {
+	if x != nil {
+		return x.MarkId
+	}
+	return 0
+}
+
+func (x *CreateItemRequest) GetModelId() int32 {
+	if x != nil {
+		return x.ModelId
+	}
+	return 0
+}
+
+func (x *CreateItemRequest) GetYearFrom() int32 {
+	if x != nil {
+		return x.YearFrom
+	}
+	return 0
+}
+
+func (x *CreateItemRequest) GetYearTo() int32 {
+	if x != nil {
+		return x.YearTo
+	}
+	return 0
+}
+
+func (x *CreateItemRequest) GetPhotos() []string {
+	if x != nil {
+		return x.Photos
+	}
+	return nil
 }
 
 type CreateItemResponse struct {
@@ -4934,7 +5027,7 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	"\x04code\x18\x03 \x01(\tR\x04code\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x129\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9a\x05\n" +
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9c\x06\n" +
 	"\rWarehouseItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
 	"\fwarehouse_id\x18\x02 \x01(\x03R\vwarehouseId\x12\x1d\n" +
@@ -4959,7 +5052,12 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xdf\x03\n" +
+	"updated_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x17\n" +
+	"\amark_id\x18\x13 \x01(\x05R\x06markId\x12\x19\n" +
+	"\bmodel_id\x18\x14 \x01(\x05R\amodelId\x12\x1b\n" +
+	"\tyear_from\x18\x15 \x01(\x05R\byearFrom\x12\x17\n" +
+	"\ayear_to\x18\x16 \x01(\x05R\x06yearTo\x12\x16\n" +
+	"\x06photos\x18\x17 \x03(\tR\x06photos\"\xdf\x03\n" +
 	"\rStockMovement\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12*\n" +
 	"\x11warehouse_item_id\x18\x02 \x01(\x03R\x0fwarehouseItemId\x128\n" +
@@ -5055,7 +5153,7 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	"\tlocations\x18\x01 \x03(\v2'.warehouse.warehouse.v1.StorageLocationR\tlocations\".\n" +
 	"\x1cDeleteStorageLocationRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1f\n" +
-	"\x1dDeleteStorageLocationResponse\"\xc9\x03\n" +
+	"\x1dDeleteStorageLocationResponse\"\xf6\x04\n" +
 	"\x11CreateItemRequest\x12!\n" +
 	"\fwarehouse_id\x18\x01 \x01(\x03R\vwarehouseId\x12\x1d\n" +
 	"\n" +
@@ -5072,7 +5170,13 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	" \x01(\x03R\tcostPrice\x12\x1d\n" +
 	"\n" +
 	"sell_price\x18\v \x01(\x03R\tsellPrice\x12.\n" +
-	"\x13storage_location_id\x18\f \x01(\x03R\x11storageLocationId\"O\n" +
+	"\x13storage_location_id\x18\f \x01(\x03R\x11storageLocationId\x12)\n" +
+	"\x10initial_quantity\x18\r \x01(\x05R\x0finitialQuantity\x12\x17\n" +
+	"\amark_id\x18\x0e \x01(\x05R\x06markId\x12\x19\n" +
+	"\bmodel_id\x18\x0f \x01(\x05R\amodelId\x12\x1b\n" +
+	"\tyear_from\x18\x10 \x01(\x05R\byearFrom\x12\x17\n" +
+	"\ayear_to\x18\x11 \x01(\x05R\x06yearTo\x12\x16\n" +
+	"\x06photos\x18\x12 \x03(\tR\x06photos\"O\n" +
 	"\x12CreateItemResponse\x129\n" +
 	"\x04item\x18\x01 \x01(\v2%.warehouse.warehouse.v1.WarehouseItemR\x04item\" \n" +
 	"\x0eGetItemRequest\x12\x0e\n" +

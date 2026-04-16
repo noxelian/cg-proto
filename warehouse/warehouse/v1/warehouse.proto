@@ -144,6 +144,13 @@ message WarehouseItem {
   string qr_data = 16;
   google.protobuf.Timestamp created_at = 17;
   google.protobuf.Timestamp updated_at = 18;
+  // Car compatibility
+  int32 mark_id = 19;
+  int32 model_id = 20;
+  int32 year_from = 21;
+  int32 year_to = 22;
+  // Photos
+  repeated string photos = 23;
 }
 
 message StockMovement {
@@ -295,6 +302,15 @@ message CreateItemRequest {
   int64 cost_price = 10;
   int64 sell_price = 11;
   int64 storage_location_id = 12;
+  // Initial stock quantity (auto-creates income movement)
+  int32 initial_quantity = 13;
+  // Car compatibility
+  int32 mark_id = 14;
+  int32 model_id = 15;
+  int32 year_from = 16;
+  int32 year_to = 17;
+  // Photos
+  repeated string photos = 18;
 }
 
 message CreateItemResponse {
