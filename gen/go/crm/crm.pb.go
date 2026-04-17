@@ -9747,8 +9747,12 @@ type ListWhatsAppConversationsRequest struct {
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	Limit          int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	Offset         int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Optional case-insensitive filter. Digit-only tokens match the
+	// counterpart phone (formatting-tolerant); free text matches the most
+	// recent wa_messages.body. Empty / whitespace is ignored.
+	Search        string `protobuf:"bytes,4,opt,name=search,proto3" json:"search,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListWhatsAppConversationsRequest) Reset() {
@@ -9800,6 +9804,13 @@ func (x *ListWhatsAppConversationsRequest) GetOffset() int32 {
 		return x.Offset
 	}
 	return 0
+}
+
+func (x *ListWhatsAppConversationsRequest) GetSearch() string {
+	if x != nil {
+		return x.Search
+	}
+	return ""
 }
 
 type ListWhatsAppConversationsResponse struct {
@@ -15175,11 +15186,12 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0flast_created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\rlastCreatedAt\x12 \n" +
 	"\flast_deal_id\x18\a \x01(\tR\n" +
 	"lastDealId\x12!\n" +
-	"\funread_count\x18\b \x01(\x03R\vunreadCount\"y\n" +
+	"\funread_count\x18\b \x01(\x03R\vunreadCount\"\x91\x01\n" +
 	" ListWhatsAppConversationsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x03 \x01(\x05R\x06offset\"|\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\x12\x16\n" +
+	"\x06search\x18\x04 \x01(\tR\x06search\"|\n" +
 	"!ListWhatsAppConversationsResponse\x12A\n" +
 	"\rconversations\x18\x01 \x03(\v2\x1b.crm.v1.WAConversationProtoR\rconversations\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\"\xcf\x01\n" +

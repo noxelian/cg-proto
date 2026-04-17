@@ -1250,6 +1250,10 @@ message ListWhatsAppConversationsRequest {
   string organization_id = 1;
   int32  limit           = 2;
   int32  offset          = 3;
+  // Optional case-insensitive filter. Digit-only tokens match the
+  // counterpart phone (formatting-tolerant); free text matches the most
+  // recent wa_messages.body. Empty / whitespace is ignored.
+  string search          = 4;
 }
 
 message ListWhatsAppConversationsResponse {
