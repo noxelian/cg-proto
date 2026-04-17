@@ -22,6 +22,104 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type IntegrationType int32
+
+const (
+	IntegrationType_INTEGRATION_TYPE_UNSPECIFIED IntegrationType = 0
+	IntegrationType_INTEGRATION_TYPE_API         IntegrationType = 1
+	IntegrationType_INTEGRATION_TYPE_EXCEL       IntegrationType = 2
+)
+
+// Enum value maps for IntegrationType.
+var (
+	IntegrationType_name = map[int32]string{
+		0: "INTEGRATION_TYPE_UNSPECIFIED",
+		1: "INTEGRATION_TYPE_API",
+		2: "INTEGRATION_TYPE_EXCEL",
+	}
+	IntegrationType_value = map[string]int32{
+		"INTEGRATION_TYPE_UNSPECIFIED": 0,
+		"INTEGRATION_TYPE_API":         1,
+		"INTEGRATION_TYPE_EXCEL":       2,
+	}
+)
+
+func (x IntegrationType) Enum() *IntegrationType {
+	p := new(IntegrationType)
+	*p = x
+	return p
+}
+
+func (x IntegrationType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (IntegrationType) Descriptor() protoreflect.EnumDescriptor {
+	return file_parts_provider_v1_provider_proto_enumTypes[0].Descriptor()
+}
+
+func (IntegrationType) Type() protoreflect.EnumType {
+	return &file_parts_provider_v1_provider_proto_enumTypes[0]
+}
+
+func (x IntegrationType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use IntegrationType.Descriptor instead.
+func (IntegrationType) EnumDescriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{0}
+}
+
+type ImportMode int32
+
+const (
+	ImportMode_IMPORT_MODE_UNSPECIFIED   ImportMode = 0
+	ImportMode_IMPORT_MODE_FULL_REPLACE  ImportMode = 1
+	ImportMode_IMPORT_MODE_APPEND_UPDATE ImportMode = 2
+)
+
+// Enum value maps for ImportMode.
+var (
+	ImportMode_name = map[int32]string{
+		0: "IMPORT_MODE_UNSPECIFIED",
+		1: "IMPORT_MODE_FULL_REPLACE",
+		2: "IMPORT_MODE_APPEND_UPDATE",
+	}
+	ImportMode_value = map[string]int32{
+		"IMPORT_MODE_UNSPECIFIED":   0,
+		"IMPORT_MODE_FULL_REPLACE":  1,
+		"IMPORT_MODE_APPEND_UPDATE": 2,
+	}
+)
+
+func (x ImportMode) Enum() *ImportMode {
+	p := new(ImportMode)
+	*p = x
+	return p
+}
+
+func (x ImportMode) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ImportMode) Descriptor() protoreflect.EnumDescriptor {
+	return file_parts_provider_v1_provider_proto_enumTypes[1].Descriptor()
+}
+
+func (ImportMode) Type() protoreflect.EnumType {
+	return &file_parts_provider_v1_provider_proto_enumTypes[1]
+}
+
+func (x ImportMode) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ImportMode.Descriptor instead.
+func (ImportMode) EnumDescriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{1}
+}
+
 // SearchPartsRequest is the input for searching parts across providers.
 type SearchPartsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -1233,6 +1331,1354 @@ func (x *StreamSearchPartsResponse) GetCompletedProviders() int32 {
 	return 0
 }
 
+type Supplier struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	OrgId           int64                  `protobuf:"varint,2,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	Name            string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	IntegrationType IntegrationType        `protobuf:"varint,4,opt,name=integration_type,json=integrationType,proto3,enum=parts.provider.v1.IntegrationType" json:"integration_type,omitempty"`
+	ServiceId       int32                  `protobuf:"varint,5,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	City            string                 `protobuf:"bytes,6,opt,name=city,proto3" json:"city,omitempty"`
+	Enabled         bool                   `protobuf:"varint,7,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	ApiProvider     string                 `protobuf:"bytes,8,opt,name=api_provider,json=apiProvider,proto3" json:"api_provider,omitempty"`
+	CatalogCount    int32                  `protobuf:"varint,9,opt,name=catalog_count,json=catalogCount,proto3" json:"catalog_count,omitempty"`
+	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *Supplier) Reset() {
+	*x = Supplier{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Supplier) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Supplier) ProtoMessage() {}
+
+func (x *Supplier) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Supplier.ProtoReflect.Descriptor instead.
+func (*Supplier) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *Supplier) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Supplier) GetOrgId() int64 {
+	if x != nil {
+		return x.OrgId
+	}
+	return 0
+}
+
+func (x *Supplier) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Supplier) GetIntegrationType() IntegrationType {
+	if x != nil {
+		return x.IntegrationType
+	}
+	return IntegrationType_INTEGRATION_TYPE_UNSPECIFIED
+}
+
+func (x *Supplier) GetServiceId() int32 {
+	if x != nil {
+		return x.ServiceId
+	}
+	return 0
+}
+
+func (x *Supplier) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *Supplier) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *Supplier) GetApiProvider() string {
+	if x != nil {
+		return x.ApiProvider
+	}
+	return ""
+}
+
+func (x *Supplier) GetCatalogCount() int32 {
+	if x != nil {
+		return x.CatalogCount
+	}
+	return 0
+}
+
+func (x *Supplier) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Supplier) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+type CreateSupplierRequest struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	OrgId           int64                  `protobuf:"varint,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	Name            string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	City            string                 `protobuf:"bytes,3,opt,name=city,proto3" json:"city,omitempty"`
+	IntegrationType IntegrationType        `protobuf:"varint,4,opt,name=integration_type,json=integrationType,proto3,enum=parts.provider.v1.IntegrationType" json:"integration_type,omitempty"`
+	ApiProvider     string                 `protobuf:"bytes,5,opt,name=api_provider,json=apiProvider,proto3" json:"api_provider,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *CreateSupplierRequest) Reset() {
+	*x = CreateSupplierRequest{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateSupplierRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSupplierRequest) ProtoMessage() {}
+
+func (x *CreateSupplierRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSupplierRequest.ProtoReflect.Descriptor instead.
+func (*CreateSupplierRequest) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *CreateSupplierRequest) GetOrgId() int64 {
+	if x != nil {
+		return x.OrgId
+	}
+	return 0
+}
+
+func (x *CreateSupplierRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CreateSupplierRequest) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *CreateSupplierRequest) GetIntegrationType() IntegrationType {
+	if x != nil {
+		return x.IntegrationType
+	}
+	return IntegrationType_INTEGRATION_TYPE_UNSPECIFIED
+}
+
+func (x *CreateSupplierRequest) GetApiProvider() string {
+	if x != nil {
+		return x.ApiProvider
+	}
+	return ""
+}
+
+type CreateSupplierResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Supplier      *Supplier              `protobuf:"bytes,1,opt,name=supplier,proto3" json:"supplier,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateSupplierResponse) Reset() {
+	*x = CreateSupplierResponse{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateSupplierResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSupplierResponse) ProtoMessage() {}
+
+func (x *CreateSupplierResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSupplierResponse.ProtoReflect.Descriptor instead.
+func (*CreateSupplierResponse) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *CreateSupplierResponse) GetSupplier() *Supplier {
+	if x != nil {
+		return x.Supplier
+	}
+	return nil
+}
+
+type UpdateSupplierRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	City          string                 `protobuf:"bytes,3,opt,name=city,proto3" json:"city,omitempty"`
+	Enabled       bool                   `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	OrgId         int64                  `protobuf:"varint,5,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateSupplierRequest) Reset() {
+	*x = UpdateSupplierRequest{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateSupplierRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateSupplierRequest) ProtoMessage() {}
+
+func (x *UpdateSupplierRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateSupplierRequest.ProtoReflect.Descriptor instead.
+func (*UpdateSupplierRequest) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *UpdateSupplierRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateSupplierRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *UpdateSupplierRequest) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *UpdateSupplierRequest) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *UpdateSupplierRequest) GetOrgId() int64 {
+	if x != nil {
+		return x.OrgId
+	}
+	return 0
+}
+
+type UpdateSupplierResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Supplier      *Supplier              `protobuf:"bytes,1,opt,name=supplier,proto3" json:"supplier,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateSupplierResponse) Reset() {
+	*x = UpdateSupplierResponse{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateSupplierResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateSupplierResponse) ProtoMessage() {}
+
+func (x *UpdateSupplierResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateSupplierResponse.ProtoReflect.Descriptor instead.
+func (*UpdateSupplierResponse) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *UpdateSupplierResponse) GetSupplier() *Supplier {
+	if x != nil {
+		return x.Supplier
+	}
+	return nil
+}
+
+type DeleteSupplierRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteSupplierRequest) Reset() {
+	*x = DeleteSupplierRequest{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteSupplierRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteSupplierRequest) ProtoMessage() {}
+
+func (x *DeleteSupplierRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteSupplierRequest.ProtoReflect.Descriptor instead.
+func (*DeleteSupplierRequest) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *DeleteSupplierRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type DeleteSupplierResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteSupplierResponse) Reset() {
+	*x = DeleteSupplierResponse{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteSupplierResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteSupplierResponse) ProtoMessage() {}
+
+func (x *DeleteSupplierResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteSupplierResponse.ProtoReflect.Descriptor instead.
+func (*DeleteSupplierResponse) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{21}
+}
+
+type GetSupplierRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSupplierRequest) Reset() {
+	*x = GetSupplierRequest{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSupplierRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSupplierRequest) ProtoMessage() {}
+
+func (x *GetSupplierRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSupplierRequest.ProtoReflect.Descriptor instead.
+func (*GetSupplierRequest) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *GetSupplierRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type GetSupplierResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Supplier      *Supplier              `protobuf:"bytes,1,opt,name=supplier,proto3" json:"supplier,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSupplierResponse) Reset() {
+	*x = GetSupplierResponse{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSupplierResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSupplierResponse) ProtoMessage() {}
+
+func (x *GetSupplierResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSupplierResponse.ProtoReflect.Descriptor instead.
+func (*GetSupplierResponse) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *GetSupplierResponse) GetSupplier() *Supplier {
+	if x != nil {
+		return x.Supplier
+	}
+	return nil
+}
+
+type ListSuppliersRequest struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Page            int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize        int32                  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	City            string                 `protobuf:"bytes,3,opt,name=city,proto3" json:"city,omitempty"`
+	EnabledOnly     bool                   `protobuf:"varint,4,opt,name=enabled_only,json=enabledOnly,proto3" json:"enabled_only,omitempty"`
+	IntegrationType IntegrationType        `protobuf:"varint,5,opt,name=integration_type,json=integrationType,proto3,enum=parts.provider.v1.IntegrationType" json:"integration_type,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ListSuppliersRequest) Reset() {
+	*x = ListSuppliersRequest{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSuppliersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSuppliersRequest) ProtoMessage() {}
+
+func (x *ListSuppliersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSuppliersRequest.ProtoReflect.Descriptor instead.
+func (*ListSuppliersRequest) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *ListSuppliersRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListSuppliersRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListSuppliersRequest) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *ListSuppliersRequest) GetEnabledOnly() bool {
+	if x != nil {
+		return x.EnabledOnly
+	}
+	return false
+}
+
+func (x *ListSuppliersRequest) GetIntegrationType() IntegrationType {
+	if x != nil {
+		return x.IntegrationType
+	}
+	return IntegrationType_INTEGRATION_TYPE_UNSPECIFIED
+}
+
+type ListSuppliersResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Suppliers     []*Supplier            `protobuf:"bytes,1,rep,name=suppliers,proto3" json:"suppliers,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSuppliersResponse) Reset() {
+	*x = ListSuppliersResponse{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSuppliersResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSuppliersResponse) ProtoMessage() {}
+
+func (x *ListSuppliersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSuppliersResponse.ProtoReflect.Descriptor instead.
+func (*ListSuppliersResponse) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *ListSuppliersResponse) GetSuppliers() []*Supplier {
+	if x != nil {
+		return x.Suppliers
+	}
+	return nil
+}
+
+func (x *ListSuppliersResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type ImportCatalogRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SupplierId    int64                  `protobuf:"varint,1,opt,name=supplier_id,json=supplierId,proto3" json:"supplier_id,omitempty"`
+	FileData      []byte                 `protobuf:"bytes,2,opt,name=file_data,json=fileData,proto3" json:"file_data,omitempty"`
+	FileName      string                 `protobuf:"bytes,3,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
+	Mode          ImportMode             `protobuf:"varint,4,opt,name=mode,proto3,enum=parts.provider.v1.ImportMode" json:"mode,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImportCatalogRequest) Reset() {
+	*x = ImportCatalogRequest{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImportCatalogRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImportCatalogRequest) ProtoMessage() {}
+
+func (x *ImportCatalogRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImportCatalogRequest.ProtoReflect.Descriptor instead.
+func (*ImportCatalogRequest) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *ImportCatalogRequest) GetSupplierId() int64 {
+	if x != nil {
+		return x.SupplierId
+	}
+	return 0
+}
+
+func (x *ImportCatalogRequest) GetFileData() []byte {
+	if x != nil {
+		return x.FileData
+	}
+	return nil
+}
+
+func (x *ImportCatalogRequest) GetFileName() string {
+	if x != nil {
+		return x.FileName
+	}
+	return ""
+}
+
+func (x *ImportCatalogRequest) GetMode() ImportMode {
+	if x != nil {
+		return x.Mode
+	}
+	return ImportMode_IMPORT_MODE_UNSPECIFIED
+}
+
+type ImportCatalogResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ImportId      int64                  `protobuf:"varint,1,opt,name=import_id,json=importId,proto3" json:"import_id,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	TotalRows     int32                  `protobuf:"varint,3,opt,name=total_rows,json=totalRows,proto3" json:"total_rows,omitempty"`
+	Imported      int32                  `protobuf:"varint,4,opt,name=imported,proto3" json:"imported,omitempty"`
+	Skipped       int32                  `protobuf:"varint,5,opt,name=skipped,proto3" json:"skipped,omitempty"`
+	Errors        int32                  `protobuf:"varint,6,opt,name=errors,proto3" json:"errors,omitempty"`
+	ErrorDetails  []*ImportError         `protobuf:"bytes,7,rep,name=error_details,json=errorDetails,proto3" json:"error_details,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImportCatalogResponse) Reset() {
+	*x = ImportCatalogResponse{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImportCatalogResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImportCatalogResponse) ProtoMessage() {}
+
+func (x *ImportCatalogResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImportCatalogResponse.ProtoReflect.Descriptor instead.
+func (*ImportCatalogResponse) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *ImportCatalogResponse) GetImportId() int64 {
+	if x != nil {
+		return x.ImportId
+	}
+	return 0
+}
+
+func (x *ImportCatalogResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *ImportCatalogResponse) GetTotalRows() int32 {
+	if x != nil {
+		return x.TotalRows
+	}
+	return 0
+}
+
+func (x *ImportCatalogResponse) GetImported() int32 {
+	if x != nil {
+		return x.Imported
+	}
+	return 0
+}
+
+func (x *ImportCatalogResponse) GetSkipped() int32 {
+	if x != nil {
+		return x.Skipped
+	}
+	return 0
+}
+
+func (x *ImportCatalogResponse) GetErrors() int32 {
+	if x != nil {
+		return x.Errors
+	}
+	return 0
+}
+
+func (x *ImportCatalogResponse) GetErrorDetails() []*ImportError {
+	if x != nil {
+		return x.ErrorDetails
+	}
+	return nil
+}
+
+type GetImportStatusRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ImportId      int64                  `protobuf:"varint,1,opt,name=import_id,json=importId,proto3" json:"import_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetImportStatusRequest) Reset() {
+	*x = GetImportStatusRequest{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetImportStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetImportStatusRequest) ProtoMessage() {}
+
+func (x *GetImportStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetImportStatusRequest.ProtoReflect.Descriptor instead.
+func (*GetImportStatusRequest) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *GetImportStatusRequest) GetImportId() int64 {
+	if x != nil {
+		return x.ImportId
+	}
+	return 0
+}
+
+type GetImportStatusResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ImportId      int64                  `protobuf:"varint,1,opt,name=import_id,json=importId,proto3" json:"import_id,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	TotalRows     int32                  `protobuf:"varint,3,opt,name=total_rows,json=totalRows,proto3" json:"total_rows,omitempty"`
+	Imported      int32                  `protobuf:"varint,4,opt,name=imported,proto3" json:"imported,omitempty"`
+	Skipped       int32                  `protobuf:"varint,5,opt,name=skipped,proto3" json:"skipped,omitempty"`
+	Errors        int32                  `protobuf:"varint,6,opt,name=errors,proto3" json:"errors,omitempty"`
+	ErrorDetails  []*ImportError         `protobuf:"bytes,7,rep,name=error_details,json=errorDetails,proto3" json:"error_details,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetImportStatusResponse) Reset() {
+	*x = GetImportStatusResponse{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetImportStatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetImportStatusResponse) ProtoMessage() {}
+
+func (x *GetImportStatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetImportStatusResponse.ProtoReflect.Descriptor instead.
+func (*GetImportStatusResponse) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *GetImportStatusResponse) GetImportId() int64 {
+	if x != nil {
+		return x.ImportId
+	}
+	return 0
+}
+
+func (x *GetImportStatusResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *GetImportStatusResponse) GetTotalRows() int32 {
+	if x != nil {
+		return x.TotalRows
+	}
+	return 0
+}
+
+func (x *GetImportStatusResponse) GetImported() int32 {
+	if x != nil {
+		return x.Imported
+	}
+	return 0
+}
+
+func (x *GetImportStatusResponse) GetSkipped() int32 {
+	if x != nil {
+		return x.Skipped
+	}
+	return 0
+}
+
+func (x *GetImportStatusResponse) GetErrors() int32 {
+	if x != nil {
+		return x.Errors
+	}
+	return 0
+}
+
+func (x *GetImportStatusResponse) GetErrorDetails() []*ImportError {
+	if x != nil {
+		return x.ErrorDetails
+	}
+	return nil
+}
+
+type ImportError struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Row           int32                  `protobuf:"varint,1,opt,name=row,proto3" json:"row,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImportError) Reset() {
+	*x = ImportError{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImportError) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImportError) ProtoMessage() {}
+
+func (x *ImportError) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImportError.ProtoReflect.Descriptor instead.
+func (*ImportError) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *ImportError) GetRow() int32 {
+	if x != nil {
+		return x.Row
+	}
+	return 0
+}
+
+func (x *ImportError) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type CatalogItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Article       string                 `protobuf:"bytes,2,opt,name=article,proto3" json:"article,omitempty"`
+	Brand         string                 `protobuf:"bytes,3,opt,name=brand,proto3" json:"brand,omitempty"`
+	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Price         int32                  `protobuf:"varint,5,opt,name=price,proto3" json:"price,omitempty"`
+	Quantity      int32                  `protobuf:"varint,6,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	DeliveryDays  int32                  `protobuf:"varint,7,opt,name=delivery_days,json=deliveryDays,proto3" json:"delivery_days,omitempty"`
+	IsOriginal    bool                   `protobuf:"varint,8,opt,name=is_original,json=isOriginal,proto3" json:"is_original,omitempty"`
+	Note          string                 `protobuf:"bytes,9,opt,name=note,proto3" json:"note,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CatalogItem) Reset() {
+	*x = CatalogItem{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CatalogItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CatalogItem) ProtoMessage() {}
+
+func (x *CatalogItem) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CatalogItem.ProtoReflect.Descriptor instead.
+func (*CatalogItem) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *CatalogItem) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *CatalogItem) GetArticle() string {
+	if x != nil {
+		return x.Article
+	}
+	return ""
+}
+
+func (x *CatalogItem) GetBrand() string {
+	if x != nil {
+		return x.Brand
+	}
+	return ""
+}
+
+func (x *CatalogItem) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *CatalogItem) GetPrice() int32 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
+func (x *CatalogItem) GetQuantity() int32 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *CatalogItem) GetDeliveryDays() int32 {
+	if x != nil {
+		return x.DeliveryDays
+	}
+	return 0
+}
+
+func (x *CatalogItem) GetIsOriginal() bool {
+	if x != nil {
+		return x.IsOriginal
+	}
+	return false
+}
+
+func (x *CatalogItem) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
+func (x *CatalogItem) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *CatalogItem) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+type ListCatalogItemsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SupplierId    int64                  `protobuf:"varint,1,opt,name=supplier_id,json=supplierId,proto3" json:"supplier_id,omitempty"`
+	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      int32                  `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	Search        string                 `protobuf:"bytes,4,opt,name=search,proto3" json:"search,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListCatalogItemsRequest) Reset() {
+	*x = ListCatalogItemsRequest{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListCatalogItemsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListCatalogItemsRequest) ProtoMessage() {}
+
+func (x *ListCatalogItemsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListCatalogItemsRequest.ProtoReflect.Descriptor instead.
+func (*ListCatalogItemsRequest) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *ListCatalogItemsRequest) GetSupplierId() int64 {
+	if x != nil {
+		return x.SupplierId
+	}
+	return 0
+}
+
+func (x *ListCatalogItemsRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListCatalogItemsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListCatalogItemsRequest) GetSearch() string {
+	if x != nil {
+		return x.Search
+	}
+	return ""
+}
+
+type ListCatalogItemsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*CatalogItem         `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListCatalogItemsResponse) Reset() {
+	*x = ListCatalogItemsResponse{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListCatalogItemsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListCatalogItemsResponse) ProtoMessage() {}
+
+func (x *ListCatalogItemsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListCatalogItemsResponse.ProtoReflect.Descriptor instead.
+func (*ListCatalogItemsResponse) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *ListCatalogItemsResponse) GetItems() []*CatalogItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *ListCatalogItemsResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type DeleteCatalogItemsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SupplierId    int64                  `protobuf:"varint,1,opt,name=supplier_id,json=supplierId,proto3" json:"supplier_id,omitempty"`
+	ItemIds       []int64                `protobuf:"varint,2,rep,packed,name=item_ids,json=itemIds,proto3" json:"item_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCatalogItemsRequest) Reset() {
+	*x = DeleteCatalogItemsRequest{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCatalogItemsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCatalogItemsRequest) ProtoMessage() {}
+
+func (x *DeleteCatalogItemsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCatalogItemsRequest.ProtoReflect.Descriptor instead.
+func (*DeleteCatalogItemsRequest) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *DeleteCatalogItemsRequest) GetSupplierId() int64 {
+	if x != nil {
+		return x.SupplierId
+	}
+	return 0
+}
+
+func (x *DeleteCatalogItemsRequest) GetItemIds() []int64 {
+	if x != nil {
+		return x.ItemIds
+	}
+	return nil
+}
+
+type DeleteCatalogItemsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Deleted       int32                  `protobuf:"varint,1,opt,name=deleted,proto3" json:"deleted,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCatalogItemsResponse) Reset() {
+	*x = DeleteCatalogItemsResponse{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCatalogItemsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCatalogItemsResponse) ProtoMessage() {}
+
+func (x *DeleteCatalogItemsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCatalogItemsResponse.ProtoReflect.Descriptor instead.
+func (*DeleteCatalogItemsResponse) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *DeleteCatalogItemsResponse) GetDeleted() int32 {
+	if x != nil {
+		return x.Deleted
+	}
+	return 0
+}
+
 var File_parts_provider_v1_provider_proto protoreflect.FileDescriptor
 
 const file_parts_provider_v1_provider_proto_rawDesc = "" +
@@ -1351,13 +2797,140 @@ const file_parts_provider_v1_provider_proto_rawDesc = "" +
 	"\tsearch_id\x18\x01 \x01(\x03R\bsearchId\x129\n" +
 	"\x06result\x18\x02 \x01(\v2!.parts.provider.v1.ProviderResultR\x06result\x12'\n" +
 	"\x0ftotal_providers\x18\x03 \x01(\x05R\x0etotalProviders\x12/\n" +
-	"\x13completed_providers\x18\x04 \x01(\x05R\x12completedProviders2\xa7\x04\n" +
+	"\x13completed_providers\x18\x04 \x01(\x05R\x12completedProviders\"\x9f\x03\n" +
+	"\bSupplier\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x15\n" +
+	"\x06org_id\x18\x02 \x01(\x03R\x05orgId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12M\n" +
+	"\x10integration_type\x18\x04 \x01(\x0e2\".parts.provider.v1.IntegrationTypeR\x0fintegrationType\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x05 \x01(\x05R\tserviceId\x12\x12\n" +
+	"\x04city\x18\x06 \x01(\tR\x04city\x12\x18\n" +
+	"\aenabled\x18\a \x01(\bR\aenabled\x12!\n" +
+	"\fapi_provider\x18\b \x01(\tR\vapiProvider\x12#\n" +
+	"\rcatalog_count\x18\t \x01(\x05R\fcatalogCount\x129\n" +
+	"\n" +
+	"created_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xc8\x01\n" +
+	"\x15CreateSupplierRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\x03R\x05orgId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
+	"\x04city\x18\x03 \x01(\tR\x04city\x12M\n" +
+	"\x10integration_type\x18\x04 \x01(\x0e2\".parts.provider.v1.IntegrationTypeR\x0fintegrationType\x12!\n" +
+	"\fapi_provider\x18\x05 \x01(\tR\vapiProvider\"Q\n" +
+	"\x16CreateSupplierResponse\x127\n" +
+	"\bsupplier\x18\x01 \x01(\v2\x1b.parts.provider.v1.SupplierR\bsupplier\"\x80\x01\n" +
+	"\x15UpdateSupplierRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
+	"\x04city\x18\x03 \x01(\tR\x04city\x12\x18\n" +
+	"\aenabled\x18\x04 \x01(\bR\aenabled\x12\x15\n" +
+	"\x06org_id\x18\x05 \x01(\x03R\x05orgId\"Q\n" +
+	"\x16UpdateSupplierResponse\x127\n" +
+	"\bsupplier\x18\x01 \x01(\v2\x1b.parts.provider.v1.SupplierR\bsupplier\"'\n" +
+	"\x15DeleteSupplierRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
+	"\x16DeleteSupplierResponse\"$\n" +
+	"\x12GetSupplierRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"N\n" +
+	"\x13GetSupplierResponse\x127\n" +
+	"\bsupplier\x18\x01 \x01(\v2\x1b.parts.provider.v1.SupplierR\bsupplier\"\xcd\x01\n" +
+	"\x14ListSuppliersRequest\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x12\n" +
+	"\x04city\x18\x03 \x01(\tR\x04city\x12!\n" +
+	"\fenabled_only\x18\x04 \x01(\bR\venabledOnly\x12M\n" +
+	"\x10integration_type\x18\x05 \x01(\x0e2\".parts.provider.v1.IntegrationTypeR\x0fintegrationType\"h\n" +
+	"\x15ListSuppliersResponse\x129\n" +
+	"\tsuppliers\x18\x01 \x03(\v2\x1b.parts.provider.v1.SupplierR\tsuppliers\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xa4\x01\n" +
+	"\x14ImportCatalogRequest\x12\x1f\n" +
+	"\vsupplier_id\x18\x01 \x01(\x03R\n" +
+	"supplierId\x12\x1b\n" +
+	"\tfile_data\x18\x02 \x01(\fR\bfileData\x12\x1b\n" +
+	"\tfile_name\x18\x03 \x01(\tR\bfileName\x121\n" +
+	"\x04mode\x18\x04 \x01(\x0e2\x1d.parts.provider.v1.ImportModeR\x04mode\"\xfe\x01\n" +
+	"\x15ImportCatalogResponse\x12\x1b\n" +
+	"\timport_id\x18\x01 \x01(\x03R\bimportId\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\x12\x1d\n" +
+	"\n" +
+	"total_rows\x18\x03 \x01(\x05R\ttotalRows\x12\x1a\n" +
+	"\bimported\x18\x04 \x01(\x05R\bimported\x12\x18\n" +
+	"\askipped\x18\x05 \x01(\x05R\askipped\x12\x16\n" +
+	"\x06errors\x18\x06 \x01(\x05R\x06errors\x12C\n" +
+	"\rerror_details\x18\a \x03(\v2\x1e.parts.provider.v1.ImportErrorR\ferrorDetails\"5\n" +
+	"\x16GetImportStatusRequest\x12\x1b\n" +
+	"\timport_id\x18\x01 \x01(\x03R\bimportId\"\x80\x02\n" +
+	"\x17GetImportStatusResponse\x12\x1b\n" +
+	"\timport_id\x18\x01 \x01(\x03R\bimportId\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\x12\x1d\n" +
+	"\n" +
+	"total_rows\x18\x03 \x01(\x05R\ttotalRows\x12\x1a\n" +
+	"\bimported\x18\x04 \x01(\x05R\bimported\x12\x18\n" +
+	"\askipped\x18\x05 \x01(\x05R\askipped\x12\x16\n" +
+	"\x06errors\x18\x06 \x01(\x05R\x06errors\x12C\n" +
+	"\rerror_details\x18\a \x03(\v2\x1e.parts.provider.v1.ImportErrorR\ferrorDetails\"9\n" +
+	"\vImportError\x12\x10\n" +
+	"\x03row\x18\x01 \x01(\x05R\x03row\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xe3\x02\n" +
+	"\vCatalogItem\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x18\n" +
+	"\aarticle\x18\x02 \x01(\tR\aarticle\x12\x14\n" +
+	"\x05brand\x18\x03 \x01(\tR\x05brand\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12\x14\n" +
+	"\x05price\x18\x05 \x01(\x05R\x05price\x12\x1a\n" +
+	"\bquantity\x18\x06 \x01(\x05R\bquantity\x12#\n" +
+	"\rdelivery_days\x18\a \x01(\x05R\fdeliveryDays\x12\x1f\n" +
+	"\vis_original\x18\b \x01(\bR\n" +
+	"isOriginal\x12\x12\n" +
+	"\x04note\x18\t \x01(\tR\x04note\x129\n" +
+	"\n" +
+	"created_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x83\x01\n" +
+	"\x17ListCatalogItemsRequest\x12\x1f\n" +
+	"\vsupplier_id\x18\x01 \x01(\x03R\n" +
+	"supplierId\x12\x12\n" +
+	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\x12\x16\n" +
+	"\x06search\x18\x04 \x01(\tR\x06search\"f\n" +
+	"\x18ListCatalogItemsResponse\x124\n" +
+	"\x05items\x18\x01 \x03(\v2\x1e.parts.provider.v1.CatalogItemR\x05items\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"W\n" +
+	"\x19DeleteCatalogItemsRequest\x12\x1f\n" +
+	"\vsupplier_id\x18\x01 \x01(\x03R\n" +
+	"supplierId\x12\x19\n" +
+	"\bitem_ids\x18\x02 \x03(\x03R\aitemIds\"6\n" +
+	"\x1aDeleteCatalogItemsResponse\x12\x18\n" +
+	"\adeleted\x18\x01 \x01(\x05R\adeleted*i\n" +
+	"\x0fIntegrationType\x12 \n" +
+	"\x1cINTEGRATION_TYPE_UNSPECIFIED\x10\x00\x12\x18\n" +
+	"\x14INTEGRATION_TYPE_API\x10\x01\x12\x1a\n" +
+	"\x16INTEGRATION_TYPE_EXCEL\x10\x02*f\n" +
+	"\n" +
+	"ImportMode\x12\x1b\n" +
+	"\x17IMPORT_MODE_UNSPECIFIED\x10\x00\x12\x1c\n" +
+	"\x18IMPORT_MODE_FULL_REPLACE\x10\x01\x12\x1d\n" +
+	"\x19IMPORT_MODE_APPEND_UPDATE\x10\x022\xa7\x04\n" +
 	"\x14PartsProviderService\x12\\\n" +
 	"\vSearchParts\x12%.parts.provider.v1.SearchPartsRequest\x1a&.parts.provider.v1.SearchPartsResponse\x12n\n" +
 	"\x11ListSearchHistory\x12+.parts.provider.v1.ListSearchHistoryRequest\x1a,.parts.provider.v1.ListSearchHistoryResponse\x12h\n" +
 	"\x0fGetSearchResult\x12).parts.provider.v1.GetSearchResultRequest\x1a*.parts.provider.v1.GetSearchResultResponse\x12k\n" +
 	"\x10SearchByProvider\x12*.parts.provider.v1.SearchByProviderRequest\x1a+.parts.provider.v1.SearchByProviderResponse\x12j\n" +
-	"\x11StreamSearchParts\x12%.parts.provider.v1.SearchPartsRequest\x1a,.parts.provider.v1.StreamSearchPartsResponse0\x01B<Z:github.com/4ubak/cg-proto/gen/go/parts/provider;providerv1b\x06proto3"
+	"\x11StreamSearchParts\x12%.parts.provider.v1.SearchPartsRequest\x1a,.parts.provider.v1.StreamSearchPartsResponse0\x012\xb6\a\n" +
+	"\x0fSupplierService\x12e\n" +
+	"\x0eCreateSupplier\x12(.parts.provider.v1.CreateSupplierRequest\x1a).parts.provider.v1.CreateSupplierResponse\x12e\n" +
+	"\x0eUpdateSupplier\x12(.parts.provider.v1.UpdateSupplierRequest\x1a).parts.provider.v1.UpdateSupplierResponse\x12e\n" +
+	"\x0eDeleteSupplier\x12(.parts.provider.v1.DeleteSupplierRequest\x1a).parts.provider.v1.DeleteSupplierResponse\x12\\\n" +
+	"\vGetSupplier\x12%.parts.provider.v1.GetSupplierRequest\x1a&.parts.provider.v1.GetSupplierResponse\x12b\n" +
+	"\rListSuppliers\x12'.parts.provider.v1.ListSuppliersRequest\x1a(.parts.provider.v1.ListSuppliersResponse\x12b\n" +
+	"\rImportCatalog\x12'.parts.provider.v1.ImportCatalogRequest\x1a(.parts.provider.v1.ImportCatalogResponse\x12h\n" +
+	"\x0fGetImportStatus\x12).parts.provider.v1.GetImportStatusRequest\x1a*.parts.provider.v1.GetImportStatusResponse\x12k\n" +
+	"\x10ListCatalogItems\x12*.parts.provider.v1.ListCatalogItemsRequest\x1a+.parts.provider.v1.ListCatalogItemsResponse\x12q\n" +
+	"\x12DeleteCatalogItems\x12,.parts.provider.v1.DeleteCatalogItemsRequest\x1a-.parts.provider.v1.DeleteCatalogItemsResponseB<Z:github.com/4ubak/cg-proto/gen/go/parts/provider;providerv1b\x06proto3"
 
 var (
 	file_parts_provider_v1_provider_proto_rawDescOnce sync.Once
@@ -1371,51 +2944,108 @@ func file_parts_provider_v1_provider_proto_rawDescGZIP() []byte {
 	return file_parts_provider_v1_provider_proto_rawDescData
 }
 
-var file_parts_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_parts_provider_v1_provider_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_parts_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 36)
 var file_parts_provider_v1_provider_proto_goTypes = []any{
-	(*SearchPartsRequest)(nil),        // 0: parts.provider.v1.SearchPartsRequest
-	(*SearchByProviderRequest)(nil),   // 1: parts.provider.v1.SearchByProviderRequest
-	(*SearchByProviderResponse)(nil),  // 2: parts.provider.v1.SearchByProviderResponse
-	(*SearchPartsResponse)(nil),       // 3: parts.provider.v1.SearchPartsResponse
-	(*ProviderResult)(nil),            // 4: parts.provider.v1.ProviderResult
-	(*Part)(nil),                      // 5: parts.provider.v1.Part
-	(*Installment)(nil),               // 6: parts.provider.v1.Installment
-	(*CurrencyInfo)(nil),              // 7: parts.provider.v1.CurrencyInfo
-	(*ListSearchHistoryRequest)(nil),  // 8: parts.provider.v1.ListSearchHistoryRequest
-	(*ListSearchHistoryResponse)(nil), // 9: parts.provider.v1.ListSearchHistoryResponse
-	(*SearchHistoryItem)(nil),         // 10: parts.provider.v1.SearchHistoryItem
-	(*GetSearchResultRequest)(nil),    // 11: parts.provider.v1.GetSearchResultRequest
-	(*GetSearchResultResponse)(nil),   // 12: parts.provider.v1.GetSearchResultResponse
-	(*SearchResultRecord)(nil),        // 13: parts.provider.v1.SearchResultRecord
-	(*StreamSearchPartsResponse)(nil), // 14: parts.provider.v1.StreamSearchPartsResponse
-	(*timestamppb.Timestamp)(nil),     // 15: google.protobuf.Timestamp
+	(IntegrationType)(0),               // 0: parts.provider.v1.IntegrationType
+	(ImportMode)(0),                    // 1: parts.provider.v1.ImportMode
+	(*SearchPartsRequest)(nil),         // 2: parts.provider.v1.SearchPartsRequest
+	(*SearchByProviderRequest)(nil),    // 3: parts.provider.v1.SearchByProviderRequest
+	(*SearchByProviderResponse)(nil),   // 4: parts.provider.v1.SearchByProviderResponse
+	(*SearchPartsResponse)(nil),        // 5: parts.provider.v1.SearchPartsResponse
+	(*ProviderResult)(nil),             // 6: parts.provider.v1.ProviderResult
+	(*Part)(nil),                       // 7: parts.provider.v1.Part
+	(*Installment)(nil),                // 8: parts.provider.v1.Installment
+	(*CurrencyInfo)(nil),               // 9: parts.provider.v1.CurrencyInfo
+	(*ListSearchHistoryRequest)(nil),   // 10: parts.provider.v1.ListSearchHistoryRequest
+	(*ListSearchHistoryResponse)(nil),  // 11: parts.provider.v1.ListSearchHistoryResponse
+	(*SearchHistoryItem)(nil),          // 12: parts.provider.v1.SearchHistoryItem
+	(*GetSearchResultRequest)(nil),     // 13: parts.provider.v1.GetSearchResultRequest
+	(*GetSearchResultResponse)(nil),    // 14: parts.provider.v1.GetSearchResultResponse
+	(*SearchResultRecord)(nil),         // 15: parts.provider.v1.SearchResultRecord
+	(*StreamSearchPartsResponse)(nil),  // 16: parts.provider.v1.StreamSearchPartsResponse
+	(*Supplier)(nil),                   // 17: parts.provider.v1.Supplier
+	(*CreateSupplierRequest)(nil),      // 18: parts.provider.v1.CreateSupplierRequest
+	(*CreateSupplierResponse)(nil),     // 19: parts.provider.v1.CreateSupplierResponse
+	(*UpdateSupplierRequest)(nil),      // 20: parts.provider.v1.UpdateSupplierRequest
+	(*UpdateSupplierResponse)(nil),     // 21: parts.provider.v1.UpdateSupplierResponse
+	(*DeleteSupplierRequest)(nil),      // 22: parts.provider.v1.DeleteSupplierRequest
+	(*DeleteSupplierResponse)(nil),     // 23: parts.provider.v1.DeleteSupplierResponse
+	(*GetSupplierRequest)(nil),         // 24: parts.provider.v1.GetSupplierRequest
+	(*GetSupplierResponse)(nil),        // 25: parts.provider.v1.GetSupplierResponse
+	(*ListSuppliersRequest)(nil),       // 26: parts.provider.v1.ListSuppliersRequest
+	(*ListSuppliersResponse)(nil),      // 27: parts.provider.v1.ListSuppliersResponse
+	(*ImportCatalogRequest)(nil),       // 28: parts.provider.v1.ImportCatalogRequest
+	(*ImportCatalogResponse)(nil),      // 29: parts.provider.v1.ImportCatalogResponse
+	(*GetImportStatusRequest)(nil),     // 30: parts.provider.v1.GetImportStatusRequest
+	(*GetImportStatusResponse)(nil),    // 31: parts.provider.v1.GetImportStatusResponse
+	(*ImportError)(nil),                // 32: parts.provider.v1.ImportError
+	(*CatalogItem)(nil),                // 33: parts.provider.v1.CatalogItem
+	(*ListCatalogItemsRequest)(nil),    // 34: parts.provider.v1.ListCatalogItemsRequest
+	(*ListCatalogItemsResponse)(nil),   // 35: parts.provider.v1.ListCatalogItemsResponse
+	(*DeleteCatalogItemsRequest)(nil),  // 36: parts.provider.v1.DeleteCatalogItemsRequest
+	(*DeleteCatalogItemsResponse)(nil), // 37: parts.provider.v1.DeleteCatalogItemsResponse
+	(*timestamppb.Timestamp)(nil),      // 38: google.protobuf.Timestamp
 }
 var file_parts_provider_v1_provider_proto_depIdxs = []int32{
-	4,  // 0: parts.provider.v1.SearchByProviderResponse.result:type_name -> parts.provider.v1.ProviderResult
-	4,  // 1: parts.provider.v1.SearchPartsResponse.results:type_name -> parts.provider.v1.ProviderResult
-	5,  // 2: parts.provider.v1.ProviderResult.parts:type_name -> parts.provider.v1.Part
-	7,  // 3: parts.provider.v1.Part.currency_info:type_name -> parts.provider.v1.CurrencyInfo
-	6,  // 4: parts.provider.v1.Part.installment:type_name -> parts.provider.v1.Installment
-	10, // 5: parts.provider.v1.ListSearchHistoryResponse.items:type_name -> parts.provider.v1.SearchHistoryItem
-	15, // 6: parts.provider.v1.SearchHistoryItem.created_at:type_name -> google.protobuf.Timestamp
-	13, // 7: parts.provider.v1.GetSearchResultResponse.results:type_name -> parts.provider.v1.SearchResultRecord
-	15, // 8: parts.provider.v1.SearchResultRecord.created_at:type_name -> google.protobuf.Timestamp
-	4,  // 9: parts.provider.v1.StreamSearchPartsResponse.result:type_name -> parts.provider.v1.ProviderResult
-	0,  // 10: parts.provider.v1.PartsProviderService.SearchParts:input_type -> parts.provider.v1.SearchPartsRequest
-	8,  // 11: parts.provider.v1.PartsProviderService.ListSearchHistory:input_type -> parts.provider.v1.ListSearchHistoryRequest
-	11, // 12: parts.provider.v1.PartsProviderService.GetSearchResult:input_type -> parts.provider.v1.GetSearchResultRequest
-	1,  // 13: parts.provider.v1.PartsProviderService.SearchByProvider:input_type -> parts.provider.v1.SearchByProviderRequest
-	0,  // 14: parts.provider.v1.PartsProviderService.StreamSearchParts:input_type -> parts.provider.v1.SearchPartsRequest
-	3,  // 15: parts.provider.v1.PartsProviderService.SearchParts:output_type -> parts.provider.v1.SearchPartsResponse
-	9,  // 16: parts.provider.v1.PartsProviderService.ListSearchHistory:output_type -> parts.provider.v1.ListSearchHistoryResponse
-	12, // 17: parts.provider.v1.PartsProviderService.GetSearchResult:output_type -> parts.provider.v1.GetSearchResultResponse
-	2,  // 18: parts.provider.v1.PartsProviderService.SearchByProvider:output_type -> parts.provider.v1.SearchByProviderResponse
-	14, // 19: parts.provider.v1.PartsProviderService.StreamSearchParts:output_type -> parts.provider.v1.StreamSearchPartsResponse
-	15, // [15:20] is the sub-list for method output_type
-	10, // [10:15] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	6,  // 0: parts.provider.v1.SearchByProviderResponse.result:type_name -> parts.provider.v1.ProviderResult
+	6,  // 1: parts.provider.v1.SearchPartsResponse.results:type_name -> parts.provider.v1.ProviderResult
+	7,  // 2: parts.provider.v1.ProviderResult.parts:type_name -> parts.provider.v1.Part
+	9,  // 3: parts.provider.v1.Part.currency_info:type_name -> parts.provider.v1.CurrencyInfo
+	8,  // 4: parts.provider.v1.Part.installment:type_name -> parts.provider.v1.Installment
+	12, // 5: parts.provider.v1.ListSearchHistoryResponse.items:type_name -> parts.provider.v1.SearchHistoryItem
+	38, // 6: parts.provider.v1.SearchHistoryItem.created_at:type_name -> google.protobuf.Timestamp
+	15, // 7: parts.provider.v1.GetSearchResultResponse.results:type_name -> parts.provider.v1.SearchResultRecord
+	38, // 8: parts.provider.v1.SearchResultRecord.created_at:type_name -> google.protobuf.Timestamp
+	6,  // 9: parts.provider.v1.StreamSearchPartsResponse.result:type_name -> parts.provider.v1.ProviderResult
+	0,  // 10: parts.provider.v1.Supplier.integration_type:type_name -> parts.provider.v1.IntegrationType
+	38, // 11: parts.provider.v1.Supplier.created_at:type_name -> google.protobuf.Timestamp
+	38, // 12: parts.provider.v1.Supplier.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 13: parts.provider.v1.CreateSupplierRequest.integration_type:type_name -> parts.provider.v1.IntegrationType
+	17, // 14: parts.provider.v1.CreateSupplierResponse.supplier:type_name -> parts.provider.v1.Supplier
+	17, // 15: parts.provider.v1.UpdateSupplierResponse.supplier:type_name -> parts.provider.v1.Supplier
+	17, // 16: parts.provider.v1.GetSupplierResponse.supplier:type_name -> parts.provider.v1.Supplier
+	0,  // 17: parts.provider.v1.ListSuppliersRequest.integration_type:type_name -> parts.provider.v1.IntegrationType
+	17, // 18: parts.provider.v1.ListSuppliersResponse.suppliers:type_name -> parts.provider.v1.Supplier
+	1,  // 19: parts.provider.v1.ImportCatalogRequest.mode:type_name -> parts.provider.v1.ImportMode
+	32, // 20: parts.provider.v1.ImportCatalogResponse.error_details:type_name -> parts.provider.v1.ImportError
+	32, // 21: parts.provider.v1.GetImportStatusResponse.error_details:type_name -> parts.provider.v1.ImportError
+	38, // 22: parts.provider.v1.CatalogItem.created_at:type_name -> google.protobuf.Timestamp
+	38, // 23: parts.provider.v1.CatalogItem.updated_at:type_name -> google.protobuf.Timestamp
+	33, // 24: parts.provider.v1.ListCatalogItemsResponse.items:type_name -> parts.provider.v1.CatalogItem
+	2,  // 25: parts.provider.v1.PartsProviderService.SearchParts:input_type -> parts.provider.v1.SearchPartsRequest
+	10, // 26: parts.provider.v1.PartsProviderService.ListSearchHistory:input_type -> parts.provider.v1.ListSearchHistoryRequest
+	13, // 27: parts.provider.v1.PartsProviderService.GetSearchResult:input_type -> parts.provider.v1.GetSearchResultRequest
+	3,  // 28: parts.provider.v1.PartsProviderService.SearchByProvider:input_type -> parts.provider.v1.SearchByProviderRequest
+	2,  // 29: parts.provider.v1.PartsProviderService.StreamSearchParts:input_type -> parts.provider.v1.SearchPartsRequest
+	18, // 30: parts.provider.v1.SupplierService.CreateSupplier:input_type -> parts.provider.v1.CreateSupplierRequest
+	20, // 31: parts.provider.v1.SupplierService.UpdateSupplier:input_type -> parts.provider.v1.UpdateSupplierRequest
+	22, // 32: parts.provider.v1.SupplierService.DeleteSupplier:input_type -> parts.provider.v1.DeleteSupplierRequest
+	24, // 33: parts.provider.v1.SupplierService.GetSupplier:input_type -> parts.provider.v1.GetSupplierRequest
+	26, // 34: parts.provider.v1.SupplierService.ListSuppliers:input_type -> parts.provider.v1.ListSuppliersRequest
+	28, // 35: parts.provider.v1.SupplierService.ImportCatalog:input_type -> parts.provider.v1.ImportCatalogRequest
+	30, // 36: parts.provider.v1.SupplierService.GetImportStatus:input_type -> parts.provider.v1.GetImportStatusRequest
+	34, // 37: parts.provider.v1.SupplierService.ListCatalogItems:input_type -> parts.provider.v1.ListCatalogItemsRequest
+	36, // 38: parts.provider.v1.SupplierService.DeleteCatalogItems:input_type -> parts.provider.v1.DeleteCatalogItemsRequest
+	5,  // 39: parts.provider.v1.PartsProviderService.SearchParts:output_type -> parts.provider.v1.SearchPartsResponse
+	11, // 40: parts.provider.v1.PartsProviderService.ListSearchHistory:output_type -> parts.provider.v1.ListSearchHistoryResponse
+	14, // 41: parts.provider.v1.PartsProviderService.GetSearchResult:output_type -> parts.provider.v1.GetSearchResultResponse
+	4,  // 42: parts.provider.v1.PartsProviderService.SearchByProvider:output_type -> parts.provider.v1.SearchByProviderResponse
+	16, // 43: parts.provider.v1.PartsProviderService.StreamSearchParts:output_type -> parts.provider.v1.StreamSearchPartsResponse
+	19, // 44: parts.provider.v1.SupplierService.CreateSupplier:output_type -> parts.provider.v1.CreateSupplierResponse
+	21, // 45: parts.provider.v1.SupplierService.UpdateSupplier:output_type -> parts.provider.v1.UpdateSupplierResponse
+	23, // 46: parts.provider.v1.SupplierService.DeleteSupplier:output_type -> parts.provider.v1.DeleteSupplierResponse
+	25, // 47: parts.provider.v1.SupplierService.GetSupplier:output_type -> parts.provider.v1.GetSupplierResponse
+	27, // 48: parts.provider.v1.SupplierService.ListSuppliers:output_type -> parts.provider.v1.ListSuppliersResponse
+	29, // 49: parts.provider.v1.SupplierService.ImportCatalog:output_type -> parts.provider.v1.ImportCatalogResponse
+	31, // 50: parts.provider.v1.SupplierService.GetImportStatus:output_type -> parts.provider.v1.GetImportStatusResponse
+	35, // 51: parts.provider.v1.SupplierService.ListCatalogItems:output_type -> parts.provider.v1.ListCatalogItemsResponse
+	37, // 52: parts.provider.v1.SupplierService.DeleteCatalogItems:output_type -> parts.provider.v1.DeleteCatalogItemsResponse
+	39, // [39:53] is the sub-list for method output_type
+	25, // [25:39] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_parts_provider_v1_provider_proto_init() }
@@ -1428,13 +3058,14 @@ func file_parts_provider_v1_provider_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_parts_provider_v1_provider_proto_rawDesc), len(file_parts_provider_v1_provider_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   15,
+			NumEnums:      2,
+			NumMessages:   36,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_parts_provider_v1_provider_proto_goTypes,
 		DependencyIndexes: file_parts_provider_v1_provider_proto_depIdxs,
+		EnumInfos:         file_parts_provider_v1_provider_proto_enumTypes,
 		MessageInfos:      file_parts_provider_v1_provider_proto_msgTypes,
 	}.Build()
 	File_parts_provider_v1_provider_proto = out.File

@@ -165,3 +165,170 @@ message StreamSearchPartsResponse {
   int32 total_providers = 3;
   int32 completed_providers = 4;
 }
+
+// ─── Supplier Management ─────────────────────────────────────────────
+
+// SupplierService manages parts suppliers (both API and Excel-based).
+service SupplierService {
+  rpc CreateSupplier(CreateSupplierRequest) returns (CreateSupplierResponse);
+  rpc UpdateSupplier(UpdateSupplierRequest) returns (UpdateSupplierResponse);
+  rpc DeleteSupplier(DeleteSupplierRequest) returns (DeleteSupplierResponse);
+  rpc GetSupplier(GetSupplierRequest) returns (GetSupplierResponse);
+  rpc ListSuppliers(ListSuppliersRequest) returns (ListSuppliersResponse);
+
+  // Excel catalog import
+  rpc ImportCatalog(ImportCatalogRequest) returns (ImportCatalogResponse);
+  rpc GetImportStatus(GetImportStatusRequest) returns (GetImportStatusResponse);
+
+  // Catalog browsing
+  rpc ListCatalogItems(ListCatalogItemsRequest) returns (ListCatalogItemsResponse);
+  rpc DeleteCatalogItems(DeleteCatalogItemsRequest) returns (DeleteCatalogItemsResponse);
+}
+
+enum IntegrationType {
+  INTEGRATION_TYPE_UNSPECIFIED = 0;
+  INTEGRATION_TYPE_API = 1;
+  INTEGRATION_TYPE_EXCEL = 2;
+}
+
+enum ImportMode {
+  IMPORT_MODE_UNSPECIFIED = 0;
+  IMPORT_MODE_FULL_REPLACE = 1;
+  IMPORT_MODE_APPEND_UPDATE = 2;
+}
+
+message Supplier {
+  int64 id = 1;
+  int64 org_id = 2;
+  string name = 3;
+  IntegrationType integration_type = 4;
+  int32 service_id = 5;
+  string city = 6;
+  bool enabled = 7;
+  string api_provider = 8;
+  int32 catalog_count = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message CreateSupplierRequest {
+  int64 org_id = 1;
+  string name = 2;
+  string city = 3;
+  IntegrationType integration_type = 4;
+  string api_provider = 5;
+}
+
+message CreateSupplierResponse {
+  Supplier supplier = 1;
+}
+
+message UpdateSupplierRequest {
+  int64 id = 1;
+  string name = 2;
+  string city = 3;
+  bool enabled = 4;
+  int64 org_id = 5;
+}
+
+message UpdateSupplierResponse {
+  Supplier supplier = 1;
+}
+
+message DeleteSupplierRequest {
+  int64 id = 1;
+}
+
+message DeleteSupplierResponse {}
+
+message GetSupplierRequest {
+  int64 id = 1;
+}
+
+message GetSupplierResponse {
+  Supplier supplier = 1;
+}
+
+message ListSuppliersRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  string city = 3;
+  bool enabled_only = 4;
+  IntegrationType integration_type = 5;
+}
+
+message ListSuppliersResponse {
+  repeated Supplier suppliers = 1;
+  int32 total = 2;
+}
+
+message ImportCatalogRequest {
+  int64 supplier_id = 1;
+  bytes file_data = 2;
+  string file_name = 3;
+  ImportMode mode = 4;
+}
+
+message ImportCatalogResponse {
+  int64 import_id = 1;
+  string status = 2;
+  int32 total_rows = 3;
+  int32 imported = 4;
+  int32 skipped = 5;
+  int32 errors = 6;
+  repeated ImportError error_details = 7;
+}
+
+message GetImportStatusRequest {
+  int64 import_id = 1;
+}
+
+message GetImportStatusResponse {
+  int64 import_id = 1;
+  string status = 2;
+  int32 total_rows = 3;
+  int32 imported = 4;
+  int32 skipped = 5;
+  int32 errors = 6;
+  repeated ImportError error_details = 7;
+}
+
+message ImportError {
+  int32 row = 1;
+  string message = 2;
+}
+
+message CatalogItem {
+  int64 id = 1;
+  string article = 2;
+  string brand = 3;
+  string name = 4;
+  int32 price = 5;
+  int32 quantity = 6;
+  int32 delivery_days = 7;
+  bool is_original = 8;
+  string note = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message ListCatalogItemsRequest {
+  int64 supplier_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  string search = 4;
+}
+
+message ListCatalogItemsResponse {
+  repeated CatalogItem items = 1;
+  int32 total = 2;
+}
+
+message DeleteCatalogItemsRequest {
+  int64 supplier_id = 1;
+  repeated int64 item_ids = 2;
+}
+
+message DeleteCatalogItemsResponse {
+  int32 deleted = 1;
+}

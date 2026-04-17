@@ -289,3 +289,417 @@ var PartsProviderService_ServiceDesc = grpc.ServiceDesc{
 	},
 	Metadata: "parts/provider/v1/provider.proto",
 }
+
+const (
+	SupplierService_CreateSupplier_FullMethodName     = "/parts.provider.v1.SupplierService/CreateSupplier"
+	SupplierService_UpdateSupplier_FullMethodName     = "/parts.provider.v1.SupplierService/UpdateSupplier"
+	SupplierService_DeleteSupplier_FullMethodName     = "/parts.provider.v1.SupplierService/DeleteSupplier"
+	SupplierService_GetSupplier_FullMethodName        = "/parts.provider.v1.SupplierService/GetSupplier"
+	SupplierService_ListSuppliers_FullMethodName      = "/parts.provider.v1.SupplierService/ListSuppliers"
+	SupplierService_ImportCatalog_FullMethodName      = "/parts.provider.v1.SupplierService/ImportCatalog"
+	SupplierService_GetImportStatus_FullMethodName    = "/parts.provider.v1.SupplierService/GetImportStatus"
+	SupplierService_ListCatalogItems_FullMethodName   = "/parts.provider.v1.SupplierService/ListCatalogItems"
+	SupplierService_DeleteCatalogItems_FullMethodName = "/parts.provider.v1.SupplierService/DeleteCatalogItems"
+)
+
+// SupplierServiceClient is the client API for SupplierService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// SupplierService manages parts suppliers (both API and Excel-based).
+type SupplierServiceClient interface {
+	CreateSupplier(ctx context.Context, in *CreateSupplierRequest, opts ...grpc.CallOption) (*CreateSupplierResponse, error)
+	UpdateSupplier(ctx context.Context, in *UpdateSupplierRequest, opts ...grpc.CallOption) (*UpdateSupplierResponse, error)
+	DeleteSupplier(ctx context.Context, in *DeleteSupplierRequest, opts ...grpc.CallOption) (*DeleteSupplierResponse, error)
+	GetSupplier(ctx context.Context, in *GetSupplierRequest, opts ...grpc.CallOption) (*GetSupplierResponse, error)
+	ListSuppliers(ctx context.Context, in *ListSuppliersRequest, opts ...grpc.CallOption) (*ListSuppliersResponse, error)
+	// Excel catalog import
+	ImportCatalog(ctx context.Context, in *ImportCatalogRequest, opts ...grpc.CallOption) (*ImportCatalogResponse, error)
+	GetImportStatus(ctx context.Context, in *GetImportStatusRequest, opts ...grpc.CallOption) (*GetImportStatusResponse, error)
+	// Catalog browsing
+	ListCatalogItems(ctx context.Context, in *ListCatalogItemsRequest, opts ...grpc.CallOption) (*ListCatalogItemsResponse, error)
+	DeleteCatalogItems(ctx context.Context, in *DeleteCatalogItemsRequest, opts ...grpc.CallOption) (*DeleteCatalogItemsResponse, error)
+}
+
+type supplierServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSupplierServiceClient(cc grpc.ClientConnInterface) SupplierServiceClient {
+	return &supplierServiceClient{cc}
+}
+
+func (c *supplierServiceClient) CreateSupplier(ctx context.Context, in *CreateSupplierRequest, opts ...grpc.CallOption) (*CreateSupplierResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateSupplierResponse)
+	err := c.cc.Invoke(ctx, SupplierService_CreateSupplier_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *supplierServiceClient) UpdateSupplier(ctx context.Context, in *UpdateSupplierRequest, opts ...grpc.CallOption) (*UpdateSupplierResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateSupplierResponse)
+	err := c.cc.Invoke(ctx, SupplierService_UpdateSupplier_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *supplierServiceClient) DeleteSupplier(ctx context.Context, in *DeleteSupplierRequest, opts ...grpc.CallOption) (*DeleteSupplierResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteSupplierResponse)
+	err := c.cc.Invoke(ctx, SupplierService_DeleteSupplier_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *supplierServiceClient) GetSupplier(ctx context.Context, in *GetSupplierRequest, opts ...grpc.CallOption) (*GetSupplierResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSupplierResponse)
+	err := c.cc.Invoke(ctx, SupplierService_GetSupplier_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *supplierServiceClient) ListSuppliers(ctx context.Context, in *ListSuppliersRequest, opts ...grpc.CallOption) (*ListSuppliersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListSuppliersResponse)
+	err := c.cc.Invoke(ctx, SupplierService_ListSuppliers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *supplierServiceClient) ImportCatalog(ctx context.Context, in *ImportCatalogRequest, opts ...grpc.CallOption) (*ImportCatalogResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ImportCatalogResponse)
+	err := c.cc.Invoke(ctx, SupplierService_ImportCatalog_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *supplierServiceClient) GetImportStatus(ctx context.Context, in *GetImportStatusRequest, opts ...grpc.CallOption) (*GetImportStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetImportStatusResponse)
+	err := c.cc.Invoke(ctx, SupplierService_GetImportStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *supplierServiceClient) ListCatalogItems(ctx context.Context, in *ListCatalogItemsRequest, opts ...grpc.CallOption) (*ListCatalogItemsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCatalogItemsResponse)
+	err := c.cc.Invoke(ctx, SupplierService_ListCatalogItems_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *supplierServiceClient) DeleteCatalogItems(ctx context.Context, in *DeleteCatalogItemsRequest, opts ...grpc.CallOption) (*DeleteCatalogItemsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteCatalogItemsResponse)
+	err := c.cc.Invoke(ctx, SupplierService_DeleteCatalogItems_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SupplierServiceServer is the server API for SupplierService service.
+// All implementations must embed UnimplementedSupplierServiceServer
+// for forward compatibility.
+//
+// SupplierService manages parts suppliers (both API and Excel-based).
+type SupplierServiceServer interface {
+	CreateSupplier(context.Context, *CreateSupplierRequest) (*CreateSupplierResponse, error)
+	UpdateSupplier(context.Context, *UpdateSupplierRequest) (*UpdateSupplierResponse, error)
+	DeleteSupplier(context.Context, *DeleteSupplierRequest) (*DeleteSupplierResponse, error)
+	GetSupplier(context.Context, *GetSupplierRequest) (*GetSupplierResponse, error)
+	ListSuppliers(context.Context, *ListSuppliersRequest) (*ListSuppliersResponse, error)
+	// Excel catalog import
+	ImportCatalog(context.Context, *ImportCatalogRequest) (*ImportCatalogResponse, error)
+	GetImportStatus(context.Context, *GetImportStatusRequest) (*GetImportStatusResponse, error)
+	// Catalog browsing
+	ListCatalogItems(context.Context, *ListCatalogItemsRequest) (*ListCatalogItemsResponse, error)
+	DeleteCatalogItems(context.Context, *DeleteCatalogItemsRequest) (*DeleteCatalogItemsResponse, error)
+	mustEmbedUnimplementedSupplierServiceServer()
+}
+
+// UnimplementedSupplierServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedSupplierServiceServer struct{}
+
+func (UnimplementedSupplierServiceServer) CreateSupplier(context.Context, *CreateSupplierRequest) (*CreateSupplierResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateSupplier not implemented")
+}
+func (UnimplementedSupplierServiceServer) UpdateSupplier(context.Context, *UpdateSupplierRequest) (*UpdateSupplierResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateSupplier not implemented")
+}
+func (UnimplementedSupplierServiceServer) DeleteSupplier(context.Context, *DeleteSupplierRequest) (*DeleteSupplierResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteSupplier not implemented")
+}
+func (UnimplementedSupplierServiceServer) GetSupplier(context.Context, *GetSupplierRequest) (*GetSupplierResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSupplier not implemented")
+}
+func (UnimplementedSupplierServiceServer) ListSuppliers(context.Context, *ListSuppliersRequest) (*ListSuppliersResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListSuppliers not implemented")
+}
+func (UnimplementedSupplierServiceServer) ImportCatalog(context.Context, *ImportCatalogRequest) (*ImportCatalogResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ImportCatalog not implemented")
+}
+func (UnimplementedSupplierServiceServer) GetImportStatus(context.Context, *GetImportStatusRequest) (*GetImportStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetImportStatus not implemented")
+}
+func (UnimplementedSupplierServiceServer) ListCatalogItems(context.Context, *ListCatalogItemsRequest) (*ListCatalogItemsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListCatalogItems not implemented")
+}
+func (UnimplementedSupplierServiceServer) DeleteCatalogItems(context.Context, *DeleteCatalogItemsRequest) (*DeleteCatalogItemsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteCatalogItems not implemented")
+}
+func (UnimplementedSupplierServiceServer) mustEmbedUnimplementedSupplierServiceServer() {}
+func (UnimplementedSupplierServiceServer) testEmbeddedByValue()                         {}
+
+// UnsafeSupplierServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SupplierServiceServer will
+// result in compilation errors.
+type UnsafeSupplierServiceServer interface {
+	mustEmbedUnimplementedSupplierServiceServer()
+}
+
+func RegisterSupplierServiceServer(s grpc.ServiceRegistrar, srv SupplierServiceServer) {
+	// If the following call panics, it indicates UnimplementedSupplierServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&SupplierService_ServiceDesc, srv)
+}
+
+func _SupplierService_CreateSupplier_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSupplierRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SupplierServiceServer).CreateSupplier(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SupplierService_CreateSupplier_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SupplierServiceServer).CreateSupplier(ctx, req.(*CreateSupplierRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SupplierService_UpdateSupplier_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateSupplierRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SupplierServiceServer).UpdateSupplier(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SupplierService_UpdateSupplier_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SupplierServiceServer).UpdateSupplier(ctx, req.(*UpdateSupplierRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SupplierService_DeleteSupplier_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteSupplierRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SupplierServiceServer).DeleteSupplier(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SupplierService_DeleteSupplier_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SupplierServiceServer).DeleteSupplier(ctx, req.(*DeleteSupplierRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SupplierService_GetSupplier_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSupplierRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SupplierServiceServer).GetSupplier(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SupplierService_GetSupplier_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SupplierServiceServer).GetSupplier(ctx, req.(*GetSupplierRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SupplierService_ListSuppliers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSuppliersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SupplierServiceServer).ListSuppliers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SupplierService_ListSuppliers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SupplierServiceServer).ListSuppliers(ctx, req.(*ListSuppliersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SupplierService_ImportCatalog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImportCatalogRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SupplierServiceServer).ImportCatalog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SupplierService_ImportCatalog_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SupplierServiceServer).ImportCatalog(ctx, req.(*ImportCatalogRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SupplierService_GetImportStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetImportStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SupplierServiceServer).GetImportStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SupplierService_GetImportStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SupplierServiceServer).GetImportStatus(ctx, req.(*GetImportStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SupplierService_ListCatalogItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCatalogItemsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SupplierServiceServer).ListCatalogItems(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SupplierService_ListCatalogItems_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SupplierServiceServer).ListCatalogItems(ctx, req.(*ListCatalogItemsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SupplierService_DeleteCatalogItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCatalogItemsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SupplierServiceServer).DeleteCatalogItems(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SupplierService_DeleteCatalogItems_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SupplierServiceServer).DeleteCatalogItems(ctx, req.(*DeleteCatalogItemsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// SupplierService_ServiceDesc is the grpc.ServiceDesc for SupplierService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SupplierService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "parts.provider.v1.SupplierService",
+	HandlerType: (*SupplierServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateSupplier",
+			Handler:    _SupplierService_CreateSupplier_Handler,
+		},
+		{
+			MethodName: "UpdateSupplier",
+			Handler:    _SupplierService_UpdateSupplier_Handler,
+		},
+		{
+			MethodName: "DeleteSupplier",
+			Handler:    _SupplierService_DeleteSupplier_Handler,
+		},
+		{
+			MethodName: "GetSupplier",
+			Handler:    _SupplierService_GetSupplier_Handler,
+		},
+		{
+			MethodName: "ListSuppliers",
+			Handler:    _SupplierService_ListSuppliers_Handler,
+		},
+		{
+			MethodName: "ImportCatalog",
+			Handler:    _SupplierService_ImportCatalog_Handler,
+		},
+		{
+			MethodName: "GetImportStatus",
+			Handler:    _SupplierService_GetImportStatus_Handler,
+		},
+		{
+			MethodName: "ListCatalogItems",
+			Handler:    _SupplierService_ListCatalogItems_Handler,
+		},
+		{
+			MethodName: "DeleteCatalogItems",
+			Handler:    _SupplierService_DeleteCatalogItems_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "parts/provider/v1/provider.proto",
+}
