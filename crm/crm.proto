@@ -169,6 +169,9 @@ service CRMService {
   // Phase 16: Recording pipeline — persist and query call recordings
   rpc CreateTelephonyRecording(CreateTelephonyRecordingRequest)           returns (CreateTelephonyRecordingResponse);
   rpc GetTelephonyCallRecording(GetTelephonyCallRecordingRequest)         returns (GetTelephonyCallRecordingResponse);
+
+  // Transcription pipeline — write recording transcript from the transcriber worker
+  rpc UpdateTelephonyRecordingTranscript(UpdateTelephonyRecordingTranscriptRequest) returns (UpdateTelephonyRecordingTranscriptResponse);
 }
 
 message Pipeline {
@@ -1714,6 +1717,15 @@ message TelephonyRecording {
   int32  duration_sec    = 5;
   int64  size_bytes      = 6;
   string created_at      = 7;
+
+  // Transcription fields — populated by the cg-ai transcriber worker.
+  // transcript_status: pending | processing | done | failed
+  string transcript_status    = 8;
+  string transcript_text      = 9;
+  string transcript_language  = 10;  // auto-detected: ru | kk | mixed
+  string transcription_engine = 11;  // e.g. "openai-whisper-1"
+  string transcribed_at       = 12;
+  string transcript_error     = 13;  // populated when transcript_status == "failed"
 }
 
 message CreateTelephonyRecordingRequest {
@@ -1734,5 +1746,22 @@ message GetTelephonyCallRecordingRequest {
 }
 
 message GetTelephonyCallRecordingResponse {
+  TelephonyRecording recording = 1;
+}
+
+// Transcriber worker writes the transcript back here when it's done (or marks
+// the recording as failed on unrecoverable errors). Caller must be the
+// transcriber — enforce via service-mesh auth at deploy time.
+message UpdateTelephonyRecordingTranscriptRequest {
+  string organization_id      = 1;
+  string recording_id         = 2;
+  string transcript_status    = 3;  // done | failed
+  string transcript_text      = 4;  // present when status == done
+  string transcript_language  = 5;
+  string transcription_engine = 6;
+  string transcript_error     = 7;  // present when status == failed
+}
+
+message UpdateTelephonyRecordingTranscriptResponse {
   TelephonyRecording recording = 1;
 }

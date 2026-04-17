@@ -19,100 +19,101 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CRMService_CreatePipeline_FullMethodName                  = "/crm.v1.CRMService/CreatePipeline"
-	CRMService_GetPipeline_FullMethodName                     = "/crm.v1.CRMService/GetPipeline"
-	CRMService_ListPipelines_FullMethodName                   = "/crm.v1.CRMService/ListPipelines"
-	CRMService_UpdatePipeline_FullMethodName                  = "/crm.v1.CRMService/UpdatePipeline"
-	CRMService_ArchivePipeline_FullMethodName                 = "/crm.v1.CRMService/ArchivePipeline"
-	CRMService_CreateStage_FullMethodName                     = "/crm.v1.CRMService/CreateStage"
-	CRMService_UpdateStage_FullMethodName                     = "/crm.v1.CRMService/UpdateStage"
-	CRMService_DeleteStage_FullMethodName                     = "/crm.v1.CRMService/DeleteStage"
-	CRMService_ReorderStages_FullMethodName                   = "/crm.v1.CRMService/ReorderStages"
-	CRMService_CreateContact_FullMethodName                   = "/crm.v1.CRMService/CreateContact"
-	CRMService_GetContact_FullMethodName                      = "/crm.v1.CRMService/GetContact"
-	CRMService_ListContacts_FullMethodName                    = "/crm.v1.CRMService/ListContacts"
-	CRMService_SearchContacts_FullMethodName                  = "/crm.v1.CRMService/SearchContacts"
-	CRMService_UpdateContact_FullMethodName                   = "/crm.v1.CRMService/UpdateContact"
-	CRMService_DeleteContact_FullMethodName                   = "/crm.v1.CRMService/DeleteContact"
-	CRMService_AddVehicle_FullMethodName                      = "/crm.v1.CRMService/AddVehicle"
-	CRMService_GetVehicle_FullMethodName                      = "/crm.v1.CRMService/GetVehicle"
-	CRMService_ListVehiclesByContact_FullMethodName           = "/crm.v1.CRMService/ListVehiclesByContact"
-	CRMService_GetServiceHistory_FullMethodName               = "/crm.v1.CRMService/GetServiceHistory"
-	CRMService_GetGarageByPhone_FullMethodName                = "/crm.v1.CRMService/GetGarageByPhone"
-	CRMService_LookupVehicle_FullMethodName                   = "/crm.v1.CRMService/LookupVehicle"
-	CRMService_CreateDeal_FullMethodName                      = "/crm.v1.CRMService/CreateDeal"
-	CRMService_GetDeal_FullMethodName                         = "/crm.v1.CRMService/GetDeal"
-	CRMService_ListDeals_FullMethodName                       = "/crm.v1.CRMService/ListDeals"
-	CRMService_UpdateDeal_FullMethodName                      = "/crm.v1.CRMService/UpdateDeal"
-	CRMService_MoveDealStage_FullMethodName                   = "/crm.v1.CRMService/MoveDealStage"
-	CRMService_CloseDeal_FullMethodName                       = "/crm.v1.CRMService/CloseDeal"
-	CRMService_ReOpenDeal_FullMethodName                      = "/crm.v1.CRMService/ReOpenDeal"
-	CRMService_GetDealActivities_FullMethodName               = "/crm.v1.CRMService/GetDealActivities"
-	CRMService_GetContactActivities_FullMethodName            = "/crm.v1.CRMService/GetContactActivities"
-	CRMService_ImportDeal_FullMethodName                      = "/crm.v1.CRMService/ImportDeal"
-	CRMService_PatchDealCustomFields_FullMethodName           = "/crm.v1.CRMService/PatchDealCustomFields"
-	CRMService_CreateLead_FullMethodName                      = "/crm.v1.CRMService/CreateLead"
-	CRMService_GetLead_FullMethodName                         = "/crm.v1.CRMService/GetLead"
-	CRMService_ListLeads_FullMethodName                       = "/crm.v1.CRMService/ListLeads"
-	CRMService_ChangeLeadStatus_FullMethodName                = "/crm.v1.CRMService/ChangeLeadStatus"
-	CRMService_ConvertLead_FullMethodName                     = "/crm.v1.CRMService/ConvertLead"
-	CRMService_CreateTask_FullMethodName                      = "/crm.v1.CRMService/CreateTask"
-	CRMService_GetTask_FullMethodName                         = "/crm.v1.CRMService/GetTask"
-	CRMService_ListTasks_FullMethodName                       = "/crm.v1.CRMService/ListTasks"
-	CRMService_UpdateTaskStatus_FullMethodName                = "/crm.v1.CRMService/UpdateTaskStatus"
-	CRMService_UpdateTask_FullMethodName                      = "/crm.v1.CRMService/UpdateTask"
-	CRMService_CreateCustomFieldDefinition_FullMethodName     = "/crm.v1.CRMService/CreateCustomFieldDefinition"
-	CRMService_GetCustomFieldDefinition_FullMethodName        = "/crm.v1.CRMService/GetCustomFieldDefinition"
-	CRMService_ListCustomFieldDefinitions_FullMethodName      = "/crm.v1.CRMService/ListCustomFieldDefinitions"
-	CRMService_UpdateCustomFieldDefinition_FullMethodName     = "/crm.v1.CRMService/UpdateCustomFieldDefinition"
-	CRMService_DeleteCustomFieldDefinition_FullMethodName     = "/crm.v1.CRMService/DeleteCustomFieldDefinition"
-	CRMService_CreateWebhookSubscription_FullMethodName       = "/crm.v1.CRMService/CreateWebhookSubscription"
-	CRMService_ListWebhookSubscriptions_FullMethodName        = "/crm.v1.CRMService/ListWebhookSubscriptions"
-	CRMService_UpdateWebhookSubscription_FullMethodName       = "/crm.v1.CRMService/UpdateWebhookSubscription"
-	CRMService_DeleteWebhookSubscription_FullMethodName       = "/crm.v1.CRMService/DeleteWebhookSubscription"
-	CRMService_GetFunnelConversion_FullMethodName             = "/crm.v1.CRMService/GetFunnelConversion"
-	CRMService_GetManagerStats_FullMethodName                 = "/crm.v1.CRMService/GetManagerStats"
-	CRMService_GetDealVolume_FullMethodName                   = "/crm.v1.CRMService/GetDealVolume"
-	CRMService_GetStageStats_FullMethodName                   = "/crm.v1.CRMService/GetStageStats"
-	CRMService_GetActivityStats_FullMethodName                = "/crm.v1.CRMService/GetActivityStats"
-	CRMService_GetDealSourcesBreakdown_FullMethodName         = "/crm.v1.CRMService/GetDealSourcesBreakdown"
-	CRMService_CreateNote_FullMethodName                      = "/crm.v1.CRMService/CreateNote"
-	CRMService_UpdateNote_FullMethodName                      = "/crm.v1.CRMService/UpdateNote"
-	CRMService_SendWhatsAppMessage_FullMethodName             = "/crm.v1.CRMService/SendWhatsAppMessage"
-	CRMService_SendWhatsAppTemplate_FullMethodName            = "/crm.v1.CRMService/SendWhatsAppTemplate"
-	CRMService_ListWhatsAppMessages_FullMethodName            = "/crm.v1.CRMService/ListWhatsAppMessages"
-	CRMService_ListWhatsAppConversations_FullMethodName       = "/crm.v1.CRMService/ListWhatsAppConversations"
-	CRMService_ListWhatsAppTemplates_FullMethodName           = "/crm.v1.CRMService/ListWhatsAppTemplates"
-	CRMService_HandleWhatsAppWebhook_FullMethodName           = "/crm.v1.CRMService/HandleWhatsAppWebhook"
-	CRMService_TelephonyOriginate_FullMethodName              = "/crm.v1.CRMService/TelephonyOriginate"
-	CRMService_TelephonyGetCall_FullMethodName                = "/crm.v1.CRMService/TelephonyGetCall"
-	CRMService_TelephonyListCalls_FullMethodName              = "/crm.v1.CRMService/TelephonyListCalls"
-	CRMService_TelephonyGetCredentials_FullMethodName         = "/crm.v1.CRMService/TelephonyGetCredentials"
-	CRMService_CreateTelephonyCall_FullMethodName             = "/crm.v1.CRMService/CreateTelephonyCall"
-	CRMService_UpdateTelephonyCallState_FullMethodName        = "/crm.v1.CRMService/UpdateTelephonyCallState"
-	CRMService_ListTelephonyCallsByOrg_FullMethodName         = "/crm.v1.CRMService/ListTelephonyCallsByOrg"
-	CRMService_ListOrphanedTelephonyCalls_FullMethodName      = "/crm.v1.CRMService/ListOrphanedTelephonyCalls"
-	CRMService_LookupEntityByPhone_FullMethodName             = "/crm.v1.CRMService/LookupEntityByPhone"
-	CRMService_UpsertTelephonyPipelineDID_FullMethodName      = "/crm.v1.CRMService/UpsertTelephonyPipelineDID"
-	CRMService_ListTelephonyPipelineDIDs_FullMethodName       = "/crm.v1.CRMService/ListTelephonyPipelineDIDs"
-	CRMService_DeleteTelephonyPipelineDID_FullMethodName      = "/crm.v1.CRMService/DeleteTelephonyPipelineDID"
-	CRMService_UpsertTelephonyUserExtension_FullMethodName    = "/crm.v1.CRMService/UpsertTelephonyUserExtension"
-	CRMService_GetTelephonyUserExtension_FullMethodName       = "/crm.v1.CRMService/GetTelephonyUserExtension"
-	CRMService_ListTelephonyUserExtensions_FullMethodName     = "/crm.v1.CRMService/ListTelephonyUserExtensions"
-	CRMService_DeleteTelephonyUserExtension_FullMethodName    = "/crm.v1.CRMService/DeleteTelephonyUserExtension"
-	CRMService_UpdateTelephonyUserExtensionDND_FullMethodName = "/crm.v1.CRMService/UpdateTelephonyUserExtensionDND"
-	CRMService_LookupExtensionByNumber_FullMethodName         = "/crm.v1.CRMService/LookupExtensionByNumber"
-	CRMService_GetTelephonyProviderConfig_FullMethodName      = "/crm.v1.CRMService/GetTelephonyProviderConfig"
-	CRMService_UpdateTelephonyProviderConfig_FullMethodName   = "/crm.v1.CRMService/UpdateTelephonyProviderConfig"
-	CRMService_ListTelephonyIVRConfig_FullMethodName          = "/crm.v1.CRMService/ListTelephonyIVRConfig"
-	CRMService_SaveTelephonyIVRConfig_FullMethodName          = "/crm.v1.CRMService/SaveTelephonyIVRConfig"
-	CRMService_GetTelephonyBusinessHours_FullMethodName       = "/crm.v1.CRMService/GetTelephonyBusinessHours"
-	CRMService_SaveTelephonyBusinessHours_FullMethodName      = "/crm.v1.CRMService/SaveTelephonyBusinessHours"
-	CRMService_GetTelephonyIVRGreeting_FullMethodName         = "/crm.v1.CRMService/GetTelephonyIVRGreeting"
-	CRMService_UpsertTelephonyIVRGreeting_FullMethodName      = "/crm.v1.CRMService/UpsertTelephonyIVRGreeting"
-	CRMService_GetTelephonyDialplanData_FullMethodName        = "/crm.v1.CRMService/GetTelephonyDialplanData"
-	CRMService_CreateTelephonyRecording_FullMethodName        = "/crm.v1.CRMService/CreateTelephonyRecording"
-	CRMService_GetTelephonyCallRecording_FullMethodName       = "/crm.v1.CRMService/GetTelephonyCallRecording"
+	CRMService_CreatePipeline_FullMethodName                     = "/crm.v1.CRMService/CreatePipeline"
+	CRMService_GetPipeline_FullMethodName                        = "/crm.v1.CRMService/GetPipeline"
+	CRMService_ListPipelines_FullMethodName                      = "/crm.v1.CRMService/ListPipelines"
+	CRMService_UpdatePipeline_FullMethodName                     = "/crm.v1.CRMService/UpdatePipeline"
+	CRMService_ArchivePipeline_FullMethodName                    = "/crm.v1.CRMService/ArchivePipeline"
+	CRMService_CreateStage_FullMethodName                        = "/crm.v1.CRMService/CreateStage"
+	CRMService_UpdateStage_FullMethodName                        = "/crm.v1.CRMService/UpdateStage"
+	CRMService_DeleteStage_FullMethodName                        = "/crm.v1.CRMService/DeleteStage"
+	CRMService_ReorderStages_FullMethodName                      = "/crm.v1.CRMService/ReorderStages"
+	CRMService_CreateContact_FullMethodName                      = "/crm.v1.CRMService/CreateContact"
+	CRMService_GetContact_FullMethodName                         = "/crm.v1.CRMService/GetContact"
+	CRMService_ListContacts_FullMethodName                       = "/crm.v1.CRMService/ListContacts"
+	CRMService_SearchContacts_FullMethodName                     = "/crm.v1.CRMService/SearchContacts"
+	CRMService_UpdateContact_FullMethodName                      = "/crm.v1.CRMService/UpdateContact"
+	CRMService_DeleteContact_FullMethodName                      = "/crm.v1.CRMService/DeleteContact"
+	CRMService_AddVehicle_FullMethodName                         = "/crm.v1.CRMService/AddVehicle"
+	CRMService_GetVehicle_FullMethodName                         = "/crm.v1.CRMService/GetVehicle"
+	CRMService_ListVehiclesByContact_FullMethodName              = "/crm.v1.CRMService/ListVehiclesByContact"
+	CRMService_GetServiceHistory_FullMethodName                  = "/crm.v1.CRMService/GetServiceHistory"
+	CRMService_GetGarageByPhone_FullMethodName                   = "/crm.v1.CRMService/GetGarageByPhone"
+	CRMService_LookupVehicle_FullMethodName                      = "/crm.v1.CRMService/LookupVehicle"
+	CRMService_CreateDeal_FullMethodName                         = "/crm.v1.CRMService/CreateDeal"
+	CRMService_GetDeal_FullMethodName                            = "/crm.v1.CRMService/GetDeal"
+	CRMService_ListDeals_FullMethodName                          = "/crm.v1.CRMService/ListDeals"
+	CRMService_UpdateDeal_FullMethodName                         = "/crm.v1.CRMService/UpdateDeal"
+	CRMService_MoveDealStage_FullMethodName                      = "/crm.v1.CRMService/MoveDealStage"
+	CRMService_CloseDeal_FullMethodName                          = "/crm.v1.CRMService/CloseDeal"
+	CRMService_ReOpenDeal_FullMethodName                         = "/crm.v1.CRMService/ReOpenDeal"
+	CRMService_GetDealActivities_FullMethodName                  = "/crm.v1.CRMService/GetDealActivities"
+	CRMService_GetContactActivities_FullMethodName               = "/crm.v1.CRMService/GetContactActivities"
+	CRMService_ImportDeal_FullMethodName                         = "/crm.v1.CRMService/ImportDeal"
+	CRMService_PatchDealCustomFields_FullMethodName              = "/crm.v1.CRMService/PatchDealCustomFields"
+	CRMService_CreateLead_FullMethodName                         = "/crm.v1.CRMService/CreateLead"
+	CRMService_GetLead_FullMethodName                            = "/crm.v1.CRMService/GetLead"
+	CRMService_ListLeads_FullMethodName                          = "/crm.v1.CRMService/ListLeads"
+	CRMService_ChangeLeadStatus_FullMethodName                   = "/crm.v1.CRMService/ChangeLeadStatus"
+	CRMService_ConvertLead_FullMethodName                        = "/crm.v1.CRMService/ConvertLead"
+	CRMService_CreateTask_FullMethodName                         = "/crm.v1.CRMService/CreateTask"
+	CRMService_GetTask_FullMethodName                            = "/crm.v1.CRMService/GetTask"
+	CRMService_ListTasks_FullMethodName                          = "/crm.v1.CRMService/ListTasks"
+	CRMService_UpdateTaskStatus_FullMethodName                   = "/crm.v1.CRMService/UpdateTaskStatus"
+	CRMService_UpdateTask_FullMethodName                         = "/crm.v1.CRMService/UpdateTask"
+	CRMService_CreateCustomFieldDefinition_FullMethodName        = "/crm.v1.CRMService/CreateCustomFieldDefinition"
+	CRMService_GetCustomFieldDefinition_FullMethodName           = "/crm.v1.CRMService/GetCustomFieldDefinition"
+	CRMService_ListCustomFieldDefinitions_FullMethodName         = "/crm.v1.CRMService/ListCustomFieldDefinitions"
+	CRMService_UpdateCustomFieldDefinition_FullMethodName        = "/crm.v1.CRMService/UpdateCustomFieldDefinition"
+	CRMService_DeleteCustomFieldDefinition_FullMethodName        = "/crm.v1.CRMService/DeleteCustomFieldDefinition"
+	CRMService_CreateWebhookSubscription_FullMethodName          = "/crm.v1.CRMService/CreateWebhookSubscription"
+	CRMService_ListWebhookSubscriptions_FullMethodName           = "/crm.v1.CRMService/ListWebhookSubscriptions"
+	CRMService_UpdateWebhookSubscription_FullMethodName          = "/crm.v1.CRMService/UpdateWebhookSubscription"
+	CRMService_DeleteWebhookSubscription_FullMethodName          = "/crm.v1.CRMService/DeleteWebhookSubscription"
+	CRMService_GetFunnelConversion_FullMethodName                = "/crm.v1.CRMService/GetFunnelConversion"
+	CRMService_GetManagerStats_FullMethodName                    = "/crm.v1.CRMService/GetManagerStats"
+	CRMService_GetDealVolume_FullMethodName                      = "/crm.v1.CRMService/GetDealVolume"
+	CRMService_GetStageStats_FullMethodName                      = "/crm.v1.CRMService/GetStageStats"
+	CRMService_GetActivityStats_FullMethodName                   = "/crm.v1.CRMService/GetActivityStats"
+	CRMService_GetDealSourcesBreakdown_FullMethodName            = "/crm.v1.CRMService/GetDealSourcesBreakdown"
+	CRMService_CreateNote_FullMethodName                         = "/crm.v1.CRMService/CreateNote"
+	CRMService_UpdateNote_FullMethodName                         = "/crm.v1.CRMService/UpdateNote"
+	CRMService_SendWhatsAppMessage_FullMethodName                = "/crm.v1.CRMService/SendWhatsAppMessage"
+	CRMService_SendWhatsAppTemplate_FullMethodName               = "/crm.v1.CRMService/SendWhatsAppTemplate"
+	CRMService_ListWhatsAppMessages_FullMethodName               = "/crm.v1.CRMService/ListWhatsAppMessages"
+	CRMService_ListWhatsAppConversations_FullMethodName          = "/crm.v1.CRMService/ListWhatsAppConversations"
+	CRMService_ListWhatsAppTemplates_FullMethodName              = "/crm.v1.CRMService/ListWhatsAppTemplates"
+	CRMService_HandleWhatsAppWebhook_FullMethodName              = "/crm.v1.CRMService/HandleWhatsAppWebhook"
+	CRMService_TelephonyOriginate_FullMethodName                 = "/crm.v1.CRMService/TelephonyOriginate"
+	CRMService_TelephonyGetCall_FullMethodName                   = "/crm.v1.CRMService/TelephonyGetCall"
+	CRMService_TelephonyListCalls_FullMethodName                 = "/crm.v1.CRMService/TelephonyListCalls"
+	CRMService_TelephonyGetCredentials_FullMethodName            = "/crm.v1.CRMService/TelephonyGetCredentials"
+	CRMService_CreateTelephonyCall_FullMethodName                = "/crm.v1.CRMService/CreateTelephonyCall"
+	CRMService_UpdateTelephonyCallState_FullMethodName           = "/crm.v1.CRMService/UpdateTelephonyCallState"
+	CRMService_ListTelephonyCallsByOrg_FullMethodName            = "/crm.v1.CRMService/ListTelephonyCallsByOrg"
+	CRMService_ListOrphanedTelephonyCalls_FullMethodName         = "/crm.v1.CRMService/ListOrphanedTelephonyCalls"
+	CRMService_LookupEntityByPhone_FullMethodName                = "/crm.v1.CRMService/LookupEntityByPhone"
+	CRMService_UpsertTelephonyPipelineDID_FullMethodName         = "/crm.v1.CRMService/UpsertTelephonyPipelineDID"
+	CRMService_ListTelephonyPipelineDIDs_FullMethodName          = "/crm.v1.CRMService/ListTelephonyPipelineDIDs"
+	CRMService_DeleteTelephonyPipelineDID_FullMethodName         = "/crm.v1.CRMService/DeleteTelephonyPipelineDID"
+	CRMService_UpsertTelephonyUserExtension_FullMethodName       = "/crm.v1.CRMService/UpsertTelephonyUserExtension"
+	CRMService_GetTelephonyUserExtension_FullMethodName          = "/crm.v1.CRMService/GetTelephonyUserExtension"
+	CRMService_ListTelephonyUserExtensions_FullMethodName        = "/crm.v1.CRMService/ListTelephonyUserExtensions"
+	CRMService_DeleteTelephonyUserExtension_FullMethodName       = "/crm.v1.CRMService/DeleteTelephonyUserExtension"
+	CRMService_UpdateTelephonyUserExtensionDND_FullMethodName    = "/crm.v1.CRMService/UpdateTelephonyUserExtensionDND"
+	CRMService_LookupExtensionByNumber_FullMethodName            = "/crm.v1.CRMService/LookupExtensionByNumber"
+	CRMService_GetTelephonyProviderConfig_FullMethodName         = "/crm.v1.CRMService/GetTelephonyProviderConfig"
+	CRMService_UpdateTelephonyProviderConfig_FullMethodName      = "/crm.v1.CRMService/UpdateTelephonyProviderConfig"
+	CRMService_ListTelephonyIVRConfig_FullMethodName             = "/crm.v1.CRMService/ListTelephonyIVRConfig"
+	CRMService_SaveTelephonyIVRConfig_FullMethodName             = "/crm.v1.CRMService/SaveTelephonyIVRConfig"
+	CRMService_GetTelephonyBusinessHours_FullMethodName          = "/crm.v1.CRMService/GetTelephonyBusinessHours"
+	CRMService_SaveTelephonyBusinessHours_FullMethodName         = "/crm.v1.CRMService/SaveTelephonyBusinessHours"
+	CRMService_GetTelephonyIVRGreeting_FullMethodName            = "/crm.v1.CRMService/GetTelephonyIVRGreeting"
+	CRMService_UpsertTelephonyIVRGreeting_FullMethodName         = "/crm.v1.CRMService/UpsertTelephonyIVRGreeting"
+	CRMService_GetTelephonyDialplanData_FullMethodName           = "/crm.v1.CRMService/GetTelephonyDialplanData"
+	CRMService_CreateTelephonyRecording_FullMethodName           = "/crm.v1.CRMService/CreateTelephonyRecording"
+	CRMService_GetTelephonyCallRecording_FullMethodName          = "/crm.v1.CRMService/GetTelephonyCallRecording"
+	CRMService_UpdateTelephonyRecordingTranscript_FullMethodName = "/crm.v1.CRMService/UpdateTelephonyRecordingTranscript"
 )
 
 // CRMServiceClient is the client API for CRMService service.
@@ -268,6 +269,8 @@ type CRMServiceClient interface {
 	// Phase 16: Recording pipeline — persist and query call recordings
 	CreateTelephonyRecording(ctx context.Context, in *CreateTelephonyRecordingRequest, opts ...grpc.CallOption) (*CreateTelephonyRecordingResponse, error)
 	GetTelephonyCallRecording(ctx context.Context, in *GetTelephonyCallRecordingRequest, opts ...grpc.CallOption) (*GetTelephonyCallRecordingResponse, error)
+	// Transcription pipeline — write recording transcript from the transcriber worker
+	UpdateTelephonyRecordingTranscript(ctx context.Context, in *UpdateTelephonyRecordingTranscriptRequest, opts ...grpc.CallOption) (*UpdateTelephonyRecordingTranscriptResponse, error)
 }
 
 type cRMServiceClient struct {
@@ -1230,6 +1233,16 @@ func (c *cRMServiceClient) GetTelephonyCallRecording(ctx context.Context, in *Ge
 	return out, nil
 }
 
+func (c *cRMServiceClient) UpdateTelephonyRecordingTranscript(ctx context.Context, in *UpdateTelephonyRecordingTranscriptRequest, opts ...grpc.CallOption) (*UpdateTelephonyRecordingTranscriptResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateTelephonyRecordingTranscriptResponse)
+	err := c.cc.Invoke(ctx, CRMService_UpdateTelephonyRecordingTranscript_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CRMServiceServer is the server API for CRMService service.
 // All implementations must embed UnimplementedCRMServiceServer
 // for forward compatibility.
@@ -1383,6 +1396,8 @@ type CRMServiceServer interface {
 	// Phase 16: Recording pipeline — persist and query call recordings
 	CreateTelephonyRecording(context.Context, *CreateTelephonyRecordingRequest) (*CreateTelephonyRecordingResponse, error)
 	GetTelephonyCallRecording(context.Context, *GetTelephonyCallRecordingRequest) (*GetTelephonyCallRecordingResponse, error)
+	// Transcription pipeline — write recording transcript from the transcriber worker
+	UpdateTelephonyRecordingTranscript(context.Context, *UpdateTelephonyRecordingTranscriptRequest) (*UpdateTelephonyRecordingTranscriptResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
 
@@ -1674,6 +1689,9 @@ func (UnimplementedCRMServiceServer) CreateTelephonyRecording(context.Context, *
 }
 func (UnimplementedCRMServiceServer) GetTelephonyCallRecording(context.Context, *GetTelephonyCallRecordingRequest) (*GetTelephonyCallRecordingResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTelephonyCallRecording not implemented")
+}
+func (UnimplementedCRMServiceServer) UpdateTelephonyRecordingTranscript(context.Context, *UpdateTelephonyRecordingTranscriptRequest) (*UpdateTelephonyRecordingTranscriptResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateTelephonyRecordingTranscript not implemented")
 }
 func (UnimplementedCRMServiceServer) mustEmbedUnimplementedCRMServiceServer() {}
 func (UnimplementedCRMServiceServer) testEmbeddedByValue()                    {}
@@ -3388,6 +3406,24 @@ func _CRMService_GetTelephonyCallRecording_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_UpdateTelephonyRecordingTranscript_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTelephonyRecordingTranscriptRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).UpdateTelephonyRecordingTranscript(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_UpdateTelephonyRecordingTranscript_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).UpdateTelephonyRecordingTranscript(ctx, req.(*UpdateTelephonyRecordingTranscriptRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CRMService_ServiceDesc is the grpc.ServiceDesc for CRMService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3770,6 +3806,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTelephonyCallRecording",
 			Handler:    _CRMService_GetTelephonyCallRecording_Handler,
+		},
+		{
+			MethodName: "UpdateTelephonyRecordingTranscript",
+			Handler:    _CRMService_UpdateTelephonyRecordingTranscript_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
