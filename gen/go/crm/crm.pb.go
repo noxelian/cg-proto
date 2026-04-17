@@ -9650,8 +9650,9 @@ type WAConversationProto struct {
 	LastContentType string                 `protobuf:"bytes,4,opt,name=last_content_type,json=lastContentType,proto3" json:"last_content_type,omitempty"` // text / image / document / …
 	LastDirection   string                 `protobuf:"bytes,5,opt,name=last_direction,json=lastDirection,proto3" json:"last_direction,omitempty"`         // inbound / outbound
 	LastCreatedAt   *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=last_created_at,json=lastCreatedAt,proto3" json:"last_created_at,omitempty"`
-	LastDealId      string                 `protobuf:"bytes,7,opt,name=last_deal_id,json=lastDealId,proto3" json:"last_deal_id,omitempty"`   // deal linked to the most recent message (optional)
-	UnreadCount     int64                  `protobuf:"varint,8,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"` // sum of deal.unread_wa_count across deals linked to this phone
+	LastDealId      string                 `protobuf:"bytes,7,opt,name=last_deal_id,json=lastDealId,proto3" json:"last_deal_id,omitempty"`           // deal linked to the most recent message (optional)
+	UnreadCount     int64                  `protobuf:"varint,8,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"`         // sum of deal.unread_wa_count across deals linked to this phone
+	ContactUserId   int64                  `protobuf:"varint,9,opt,name=contact_user_id,json=contactUserId,proto3" json:"contact_user_id,omitempty"` // cg-users user.id resolved by phone (0 when unknown), powers /contacts/:id deep-linking
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -9738,6 +9739,13 @@ func (x *WAConversationProto) GetLastDealId() string {
 func (x *WAConversationProto) GetUnreadCount() int64 {
 	if x != nil {
 		return x.UnreadCount
+	}
+	return 0
+}
+
+func (x *WAConversationProto) GetContactUserId() int64 {
+	if x != nil {
+		return x.ContactUserId
 	}
 	return 0
 }
@@ -15365,7 +15373,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x05limit\x18\x04 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x05 \x01(\x05R\x06offset\"R\n" +
 	"\x1cListWhatsAppMessagesResponse\x122\n" +
-	"\bmessages\x18\x01 \x03(\v2\x16.crm.v1.WAMessageProtoR\bmessages\"\xc7\x02\n" +
+	"\bmessages\x18\x01 \x03(\v2\x16.crm.v1.WAMessageProtoR\bmessages\"\xef\x02\n" +
 	"\x13WAConversationProto\x12\x14\n" +
 	"\x05phone\x18\x01 \x01(\tR\x05phone\x12!\n" +
 	"\fcontact_name\x18\x02 \x01(\tR\vcontactName\x12\x1b\n" +
@@ -15375,7 +15383,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0flast_created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\rlastCreatedAt\x12 \n" +
 	"\flast_deal_id\x18\a \x01(\tR\n" +
 	"lastDealId\x12!\n" +
-	"\funread_count\x18\b \x01(\x03R\vunreadCount\"\x91\x01\n" +
+	"\funread_count\x18\b \x01(\x03R\vunreadCount\x12&\n" +
+	"\x0fcontact_user_id\x18\t \x01(\x03R\rcontactUserId\"\x91\x01\n" +
 	" ListWhatsAppConversationsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +

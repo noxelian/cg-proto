@@ -1247,6 +1247,7 @@ message WAConversationProto {
   google.protobuf.Timestamp last_created_at = 6;
   string last_deal_id         = 7;  // deal linked to the most recent message (optional)
   int64  unread_count         = 8;  // sum of deal.unread_wa_count across deals linked to this phone
+  int64  contact_user_id      = 9;  // cg-users user.id resolved by phone (0 when unknown), powers /contacts/:id deep-linking
 }
 
 message ListWhatsAppConversationsRequest {
