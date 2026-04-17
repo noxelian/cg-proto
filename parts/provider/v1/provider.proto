@@ -19,6 +19,9 @@ service PartsProviderService {
 
   // SearchByProvider performs a search via a single named provider.
   rpc SearchByProvider(SearchByProviderRequest) returns (SearchByProviderResponse);
+
+  // StreamSearchParts performs a fan-out search and streams results as each provider completes.
+  rpc StreamSearchParts(SearchPartsRequest) returns (stream StreamSearchPartsResponse);
 }
 
 // SearchPartsRequest is the input for searching parts across providers.
@@ -153,4 +156,12 @@ message SearchResultRecord {
   string error_msg = 7;
   int32 duration_ms = 8;
   google.protobuf.Timestamp created_at = 9;
+}
+
+// StreamSearchPartsResponse is sent for each provider as it completes.
+message StreamSearchPartsResponse {
+  int64 search_id = 1;
+  ProviderResult result = 2;
+  int32 total_providers = 3;
+  int32 completed_providers = 4;
 }

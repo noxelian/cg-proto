@@ -23,6 +23,7 @@ const (
 	PartsProviderService_ListSearchHistory_FullMethodName = "/parts.provider.v1.PartsProviderService/ListSearchHistory"
 	PartsProviderService_GetSearchResult_FullMethodName   = "/parts.provider.v1.PartsProviderService/GetSearchResult"
 	PartsProviderService_SearchByProvider_FullMethodName  = "/parts.provider.v1.PartsProviderService/SearchByProvider"
+	PartsProviderService_StreamSearchParts_FullMethodName = "/parts.provider.v1.PartsProviderService/StreamSearchParts"
 )
 
 // PartsProviderServiceClient is the client API for PartsProviderService service.
@@ -39,6 +40,8 @@ type PartsProviderServiceClient interface {
 	GetSearchResult(ctx context.Context, in *GetSearchResultRequest, opts ...grpc.CallOption) (*GetSearchResultResponse, error)
 	// SearchByProvider performs a search via a single named provider.
 	SearchByProvider(ctx context.Context, in *SearchByProviderRequest, opts ...grpc.CallOption) (*SearchByProviderResponse, error)
+	// StreamSearchParts performs a fan-out search and streams results as each provider completes.
+	StreamSearchParts(ctx context.Context, in *SearchPartsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamSearchPartsResponse], error)
 }
 
 type partsProviderServiceClient struct {
@@ -89,6 +92,25 @@ func (c *partsProviderServiceClient) SearchByProvider(ctx context.Context, in *S
 	return out, nil
 }
 
+func (c *partsProviderServiceClient) StreamSearchParts(ctx context.Context, in *SearchPartsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamSearchPartsResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &PartsProviderService_ServiceDesc.Streams[0], PartsProviderService_StreamSearchParts_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[SearchPartsRequest, StreamSearchPartsResponse]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type PartsProviderService_StreamSearchPartsClient = grpc.ServerStreamingClient[StreamSearchPartsResponse]
+
 // PartsProviderServiceServer is the server API for PartsProviderService service.
 // All implementations must embed UnimplementedPartsProviderServiceServer
 // for forward compatibility.
@@ -103,6 +125,8 @@ type PartsProviderServiceServer interface {
 	GetSearchResult(context.Context, *GetSearchResultRequest) (*GetSearchResultResponse, error)
 	// SearchByProvider performs a search via a single named provider.
 	SearchByProvider(context.Context, *SearchByProviderRequest) (*SearchByProviderResponse, error)
+	// StreamSearchParts performs a fan-out search and streams results as each provider completes.
+	StreamSearchParts(*SearchPartsRequest, grpc.ServerStreamingServer[StreamSearchPartsResponse]) error
 	mustEmbedUnimplementedPartsProviderServiceServer()
 }
 
@@ -124,6 +148,9 @@ func (UnimplementedPartsProviderServiceServer) GetSearchResult(context.Context, 
 }
 func (UnimplementedPartsProviderServiceServer) SearchByProvider(context.Context, *SearchByProviderRequest) (*SearchByProviderResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SearchByProvider not implemented")
+}
+func (UnimplementedPartsProviderServiceServer) StreamSearchParts(*SearchPartsRequest, grpc.ServerStreamingServer[StreamSearchPartsResponse]) error {
+	return status.Error(codes.Unimplemented, "method StreamSearchParts not implemented")
 }
 func (UnimplementedPartsProviderServiceServer) mustEmbedUnimplementedPartsProviderServiceServer() {}
 func (UnimplementedPartsProviderServiceServer) testEmbeddedByValue()                              {}
@@ -218,6 +245,17 @@ func _PartsProviderService_SearchByProvider_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PartsProviderService_StreamSearchParts_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SearchPartsRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PartsProviderServiceServer).StreamSearchParts(m, &grpc.GenericServerStream[SearchPartsRequest, StreamSearchPartsResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type PartsProviderService_StreamSearchPartsServer = grpc.ServerStreamingServer[StreamSearchPartsResponse]
+
 // PartsProviderService_ServiceDesc is the grpc.ServiceDesc for PartsProviderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +280,12 @@ var PartsProviderService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PartsProviderService_SearchByProvider_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "StreamSearchParts",
+			Handler:       _PartsProviderService_StreamSearchParts_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "parts/provider/v1/provider.proto",
 }

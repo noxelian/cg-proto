@@ -1164,6 +1164,75 @@ func (x *SearchResultRecord) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// StreamSearchPartsResponse is sent for each provider as it completes.
+type StreamSearchPartsResponse struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	SearchId           int64                  `protobuf:"varint,1,opt,name=search_id,json=searchId,proto3" json:"search_id,omitempty"`
+	Result             *ProviderResult        `protobuf:"bytes,2,opt,name=result,proto3" json:"result,omitempty"`
+	TotalProviders     int32                  `protobuf:"varint,3,opt,name=total_providers,json=totalProviders,proto3" json:"total_providers,omitempty"`
+	CompletedProviders int32                  `protobuf:"varint,4,opt,name=completed_providers,json=completedProviders,proto3" json:"completed_providers,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *StreamSearchPartsResponse) Reset() {
+	*x = StreamSearchPartsResponse{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StreamSearchPartsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StreamSearchPartsResponse) ProtoMessage() {}
+
+func (x *StreamSearchPartsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StreamSearchPartsResponse.ProtoReflect.Descriptor instead.
+func (*StreamSearchPartsResponse) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *StreamSearchPartsResponse) GetSearchId() int64 {
+	if x != nil {
+		return x.SearchId
+	}
+	return 0
+}
+
+func (x *StreamSearchPartsResponse) GetResult() *ProviderResult {
+	if x != nil {
+		return x.Result
+	}
+	return nil
+}
+
+func (x *StreamSearchPartsResponse) GetTotalProviders() int32 {
+	if x != nil {
+		return x.TotalProviders
+	}
+	return 0
+}
+
+func (x *StreamSearchPartsResponse) GetCompletedProviders() int32 {
+	if x != nil {
+		return x.CompletedProviders
+	}
+	return 0
+}
+
 var File_parts_provider_v1_provider_proto protoreflect.FileDescriptor
 
 const file_parts_provider_v1_provider_proto_rawDesc = "" +
@@ -1277,12 +1346,18 @@ const file_parts_provider_v1_provider_proto_rawDesc = "" +
 	"\vduration_ms\x18\b \x01(\x05R\n" +
 	"durationMs\x129\n" +
 	"\n" +
-	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt2\xbb\x03\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xcd\x01\n" +
+	"\x19StreamSearchPartsResponse\x12\x1b\n" +
+	"\tsearch_id\x18\x01 \x01(\x03R\bsearchId\x129\n" +
+	"\x06result\x18\x02 \x01(\v2!.parts.provider.v1.ProviderResultR\x06result\x12'\n" +
+	"\x0ftotal_providers\x18\x03 \x01(\x05R\x0etotalProviders\x12/\n" +
+	"\x13completed_providers\x18\x04 \x01(\x05R\x12completedProviders2\xa7\x04\n" +
 	"\x14PartsProviderService\x12\\\n" +
 	"\vSearchParts\x12%.parts.provider.v1.SearchPartsRequest\x1a&.parts.provider.v1.SearchPartsResponse\x12n\n" +
 	"\x11ListSearchHistory\x12+.parts.provider.v1.ListSearchHistoryRequest\x1a,.parts.provider.v1.ListSearchHistoryResponse\x12h\n" +
 	"\x0fGetSearchResult\x12).parts.provider.v1.GetSearchResultRequest\x1a*.parts.provider.v1.GetSearchResultResponse\x12k\n" +
-	"\x10SearchByProvider\x12*.parts.provider.v1.SearchByProviderRequest\x1a+.parts.provider.v1.SearchByProviderResponseB<Z:github.com/4ubak/cg-proto/gen/go/parts/provider;providerv1b\x06proto3"
+	"\x10SearchByProvider\x12*.parts.provider.v1.SearchByProviderRequest\x1a+.parts.provider.v1.SearchByProviderResponse\x12j\n" +
+	"\x11StreamSearchParts\x12%.parts.provider.v1.SearchPartsRequest\x1a,.parts.provider.v1.StreamSearchPartsResponse0\x01B<Z:github.com/4ubak/cg-proto/gen/go/parts/provider;providerv1b\x06proto3"
 
 var (
 	file_parts_provider_v1_provider_proto_rawDescOnce sync.Once
@@ -1296,7 +1371,7 @@ func file_parts_provider_v1_provider_proto_rawDescGZIP() []byte {
 	return file_parts_provider_v1_provider_proto_rawDescData
 }
 
-var file_parts_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_parts_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_parts_provider_v1_provider_proto_goTypes = []any{
 	(*SearchPartsRequest)(nil),        // 0: parts.provider.v1.SearchPartsRequest
 	(*SearchByProviderRequest)(nil),   // 1: parts.provider.v1.SearchByProviderRequest
@@ -1312,7 +1387,8 @@ var file_parts_provider_v1_provider_proto_goTypes = []any{
 	(*GetSearchResultRequest)(nil),    // 11: parts.provider.v1.GetSearchResultRequest
 	(*GetSearchResultResponse)(nil),   // 12: parts.provider.v1.GetSearchResultResponse
 	(*SearchResultRecord)(nil),        // 13: parts.provider.v1.SearchResultRecord
-	(*timestamppb.Timestamp)(nil),     // 14: google.protobuf.Timestamp
+	(*StreamSearchPartsResponse)(nil), // 14: parts.provider.v1.StreamSearchPartsResponse
+	(*timestamppb.Timestamp)(nil),     // 15: google.protobuf.Timestamp
 }
 var file_parts_provider_v1_provider_proto_depIdxs = []int32{
 	4,  // 0: parts.provider.v1.SearchByProviderResponse.result:type_name -> parts.provider.v1.ProviderResult
@@ -1321,22 +1397,25 @@ var file_parts_provider_v1_provider_proto_depIdxs = []int32{
 	7,  // 3: parts.provider.v1.Part.currency_info:type_name -> parts.provider.v1.CurrencyInfo
 	6,  // 4: parts.provider.v1.Part.installment:type_name -> parts.provider.v1.Installment
 	10, // 5: parts.provider.v1.ListSearchHistoryResponse.items:type_name -> parts.provider.v1.SearchHistoryItem
-	14, // 6: parts.provider.v1.SearchHistoryItem.created_at:type_name -> google.protobuf.Timestamp
+	15, // 6: parts.provider.v1.SearchHistoryItem.created_at:type_name -> google.protobuf.Timestamp
 	13, // 7: parts.provider.v1.GetSearchResultResponse.results:type_name -> parts.provider.v1.SearchResultRecord
-	14, // 8: parts.provider.v1.SearchResultRecord.created_at:type_name -> google.protobuf.Timestamp
-	0,  // 9: parts.provider.v1.PartsProviderService.SearchParts:input_type -> parts.provider.v1.SearchPartsRequest
-	8,  // 10: parts.provider.v1.PartsProviderService.ListSearchHistory:input_type -> parts.provider.v1.ListSearchHistoryRequest
-	11, // 11: parts.provider.v1.PartsProviderService.GetSearchResult:input_type -> parts.provider.v1.GetSearchResultRequest
-	1,  // 12: parts.provider.v1.PartsProviderService.SearchByProvider:input_type -> parts.provider.v1.SearchByProviderRequest
-	3,  // 13: parts.provider.v1.PartsProviderService.SearchParts:output_type -> parts.provider.v1.SearchPartsResponse
-	9,  // 14: parts.provider.v1.PartsProviderService.ListSearchHistory:output_type -> parts.provider.v1.ListSearchHistoryResponse
-	12, // 15: parts.provider.v1.PartsProviderService.GetSearchResult:output_type -> parts.provider.v1.GetSearchResultResponse
-	2,  // 16: parts.provider.v1.PartsProviderService.SearchByProvider:output_type -> parts.provider.v1.SearchByProviderResponse
-	13, // [13:17] is the sub-list for method output_type
-	9,  // [9:13] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	15, // 8: parts.provider.v1.SearchResultRecord.created_at:type_name -> google.protobuf.Timestamp
+	4,  // 9: parts.provider.v1.StreamSearchPartsResponse.result:type_name -> parts.provider.v1.ProviderResult
+	0,  // 10: parts.provider.v1.PartsProviderService.SearchParts:input_type -> parts.provider.v1.SearchPartsRequest
+	8,  // 11: parts.provider.v1.PartsProviderService.ListSearchHistory:input_type -> parts.provider.v1.ListSearchHistoryRequest
+	11, // 12: parts.provider.v1.PartsProviderService.GetSearchResult:input_type -> parts.provider.v1.GetSearchResultRequest
+	1,  // 13: parts.provider.v1.PartsProviderService.SearchByProvider:input_type -> parts.provider.v1.SearchByProviderRequest
+	0,  // 14: parts.provider.v1.PartsProviderService.StreamSearchParts:input_type -> parts.provider.v1.SearchPartsRequest
+	3,  // 15: parts.provider.v1.PartsProviderService.SearchParts:output_type -> parts.provider.v1.SearchPartsResponse
+	9,  // 16: parts.provider.v1.PartsProviderService.ListSearchHistory:output_type -> parts.provider.v1.ListSearchHistoryResponse
+	12, // 17: parts.provider.v1.PartsProviderService.GetSearchResult:output_type -> parts.provider.v1.GetSearchResultResponse
+	2,  // 18: parts.provider.v1.PartsProviderService.SearchByProvider:output_type -> parts.provider.v1.SearchByProviderResponse
+	14, // 19: parts.provider.v1.PartsProviderService.StreamSearchParts:output_type -> parts.provider.v1.StreamSearchPartsResponse
+	15, // [15:20] is the sub-list for method output_type
+	10, // [10:15] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_parts_provider_v1_provider_proto_init() }
@@ -1350,7 +1429,7 @@ func file_parts_provider_v1_provider_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_parts_provider_v1_provider_proto_rawDesc), len(file_parts_provider_v1_provider_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
