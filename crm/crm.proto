@@ -1339,6 +1339,8 @@ message MatchedEntity {
   string pipeline_id  = 4;
   // deal_id: UUID of the active deal associated with the contact (empty for leads or no-match)
   string deal_id      = 5;
+  // assigned_to: user_id of the manager assigned to the deal (for priority routing)
+  int64  assigned_to  = 6;
 }
 
 message TelephonyCall {
