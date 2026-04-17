@@ -515,6 +515,13 @@ message DealProto {
   // — inherits the lead's own source when present), "whatsapp", "landing",
   // "phone", "referral", etc. Empty on legacy rows that predate this field.
   string source           = 25;
+
+  // True when the most recent call on this deal was an inbound call the
+  // manager did not pick up (direction=inbound, state=ended, duration=0
+  // and no later answered/outbound call). Populated server-side by
+  // ListDeals and GetDeal for kanban/deal-detail visual alerting. Stays
+  // true until the manager places/answers a subsequent call on the deal.
+  bool has_missed_call    = 26;
 }
 
 message DealStageHistoryProto {
