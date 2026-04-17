@@ -25,6 +25,7 @@ const (
 	UserService_GetUserByPhone_FullMethodName           = "/users.user.v1.UserService/GetUserByPhone"
 	UserService_CreateUser_FullMethodName               = "/users.user.v1.UserService/CreateUser"
 	UserService_GetUsersByIDs_FullMethodName            = "/users.user.v1.UserService/GetUsersByIDs"
+	UserService_GetUsersByPhones_FullMethodName         = "/users.user.v1.UserService/GetUsersByPhones"
 	UserService_FindOrCreateByPhone_FullMethodName      = "/users.user.v1.UserService/FindOrCreateByPhone"
 	UserService_GetSettings_FullMethodName              = "/users.user.v1.UserService/GetSettings"
 	UserService_UpdateSettings_FullMethodName           = "/users.user.v1.UserService/UpdateSettings"
@@ -57,6 +58,11 @@ type UserServiceClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	// GetUsersByIDs returns multiple users by IDs (for batch loading)
 	GetUsersByIDs(ctx context.Context, in *GetUsersByIDsRequest, opts ...grpc.CallOption) (*GetUsersByIDsResponse, error)
+	// GetUsersByPhones returns multiple users matched by their stored phone
+	// (digits-only comparison). Lets cg-crm enrich call/chat lists with
+	// cg-users names in a single round trip instead of N GetUserByPhone
+	// calls.
+	GetUsersByPhones(ctx context.Context, in *GetUsersByPhonesRequest, opts ...grpc.CallOption) (*GetUsersByPhonesResponse, error)
 	// FindOrCreateByPhone atomically finds user by phone or creates minimal record (for sync service)
 	FindOrCreateByPhone(ctx context.Context, in *FindOrCreateByPhoneRequest, opts ...grpc.CallOption) (*FindOrCreateByPhoneResponse, error)
 	// GetSettings returns user notification settings
@@ -146,6 +152,16 @@ func (c *userServiceClient) GetUsersByIDs(ctx context.Context, in *GetUsersByIDs
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUsersByIDsResponse)
 	err := c.cc.Invoke(ctx, UserService_GetUsersByIDs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetUsersByPhones(ctx context.Context, in *GetUsersByPhonesRequest, opts ...grpc.CallOption) (*GetUsersByPhonesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUsersByPhonesResponse)
+	err := c.cc.Invoke(ctx, UserService_GetUsersByPhones_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -308,6 +324,11 @@ type UserServiceServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	// GetUsersByIDs returns multiple users by IDs (for batch loading)
 	GetUsersByIDs(context.Context, *GetUsersByIDsRequest) (*GetUsersByIDsResponse, error)
+	// GetUsersByPhones returns multiple users matched by their stored phone
+	// (digits-only comparison). Lets cg-crm enrich call/chat lists with
+	// cg-users names in a single round trip instead of N GetUserByPhone
+	// calls.
+	GetUsersByPhones(context.Context, *GetUsersByPhonesRequest) (*GetUsersByPhonesResponse, error)
 	// FindOrCreateByPhone atomically finds user by phone or creates minimal record (for sync service)
 	FindOrCreateByPhone(context.Context, *FindOrCreateByPhoneRequest) (*FindOrCreateByPhoneResponse, error)
 	// GetSettings returns user notification settings
@@ -360,6 +381,9 @@ func (UnimplementedUserServiceServer) CreateUser(context.Context, *CreateUserReq
 }
 func (UnimplementedUserServiceServer) GetUsersByIDs(context.Context, *GetUsersByIDsRequest) (*GetUsersByIDsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUsersByIDs not implemented")
+}
+func (UnimplementedUserServiceServer) GetUsersByPhones(context.Context, *GetUsersByPhonesRequest) (*GetUsersByPhonesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetUsersByPhones not implemented")
 }
 func (UnimplementedUserServiceServer) FindOrCreateByPhone(context.Context, *FindOrCreateByPhoneRequest) (*FindOrCreateByPhoneResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method FindOrCreateByPhone not implemented")
@@ -528,6 +552,24 @@ func _UserService_GetUsersByIDs_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).GetUsersByIDs(ctx, req.(*GetUsersByIDsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetUsersByPhones_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUsersByPhonesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUsersByPhones(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetUsersByPhones_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUsersByPhones(ctx, req.(*GetUsersByPhonesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -814,6 +856,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUsersByIDs",
 			Handler:    _UserService_GetUsersByIDs_Handler,
+		},
+		{
+			MethodName: "GetUsersByPhones",
+			Handler:    _UserService_GetUsersByPhones_Handler,
 		},
 		{
 			MethodName: "FindOrCreateByPhone",

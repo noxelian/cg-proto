@@ -25,6 +25,12 @@ service UserService {
   // GetUsersByIDs returns multiple users by IDs (for batch loading)
   rpc GetUsersByIDs(GetUsersByIDsRequest) returns (GetUsersByIDsResponse);
 
+  // GetUsersByPhones returns multiple users matched by their stored phone
+  // (digits-only comparison). Lets cg-crm enrich call/chat lists with
+  // cg-users names in a single round trip instead of N GetUserByPhone
+  // calls.
+  rpc GetUsersByPhones(GetUsersByPhonesRequest) returns (GetUsersByPhonesResponse);
+
   // FindOrCreateByPhone atomically finds user by phone or creates minimal record (for sync service)
   rpc FindOrCreateByPhone(FindOrCreateByPhoneRequest) returns (FindOrCreateByPhoneResponse);
   
@@ -128,6 +134,19 @@ message GetUsersByIDsRequest {
 }
 
 message GetUsersByIDsResponse {
+  repeated User users = 1;
+}
+
+message GetUsersByPhonesRequest {
+  // Phones in any formatting; the server normalises to digits before
+  // comparing. Duplicates are deduped server-side.
+  repeated string phones = 1;
+}
+
+message GetUsersByPhonesResponse {
+  // One entry per phone that matched a stored user. Phones with no
+  // match are omitted — callers detect "no contact for this phone" by
+  // its absence in the list.
   repeated User users = 1;
 }
 

@@ -658,6 +658,99 @@ func (x *GetUsersByIDsResponse) GetUsers() []*User {
 	return nil
 }
 
+type GetUsersByPhonesRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Phones in any formatting; the server normalises to digits before
+	// comparing. Duplicates are deduped server-side.
+	Phones        []string `protobuf:"bytes,1,rep,name=phones,proto3" json:"phones,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUsersByPhonesRequest) Reset() {
+	*x = GetUsersByPhonesRequest{}
+	mi := &file_users_user_user_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUsersByPhonesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUsersByPhonesRequest) ProtoMessage() {}
+
+func (x *GetUsersByPhonesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUsersByPhonesRequest.ProtoReflect.Descriptor instead.
+func (*GetUsersByPhonesRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetUsersByPhonesRequest) GetPhones() []string {
+	if x != nil {
+		return x.Phones
+	}
+	return nil
+}
+
+type GetUsersByPhonesResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// One entry per phone that matched a stored user. Phones with no
+	// match are omitted — callers detect "no contact for this phone" by
+	// its absence in the list.
+	Users         []*User `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUsersByPhonesResponse) Reset() {
+	*x = GetUsersByPhonesResponse{}
+	mi := &file_users_user_user_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUsersByPhonesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUsersByPhonesResponse) ProtoMessage() {}
+
+func (x *GetUsersByPhonesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUsersByPhonesResponse.ProtoReflect.Descriptor instead.
+func (*GetUsersByPhonesResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetUsersByPhonesResponse) GetUsers() []*User {
+	if x != nil {
+		return x.Users
+	}
+	return nil
+}
+
 // User by Phone (for auth service)
 type GetUserByPhoneRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -668,7 +761,7 @@ type GetUserByPhoneRequest struct {
 
 func (x *GetUserByPhoneRequest) Reset() {
 	*x = GetUserByPhoneRequest{}
-	mi := &file_users_user_user_proto_msgTypes[10]
+	mi := &file_users_user_user_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -680,7 +773,7 @@ func (x *GetUserByPhoneRequest) String() string {
 func (*GetUserByPhoneRequest) ProtoMessage() {}
 
 func (x *GetUserByPhoneRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[10]
+	mi := &file_users_user_user_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -693,7 +786,7 @@ func (x *GetUserByPhoneRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserByPhoneRequest.ProtoReflect.Descriptor instead.
 func (*GetUserByPhoneRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{10}
+	return file_users_user_user_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetUserByPhoneRequest) GetPhone() string {
@@ -712,7 +805,7 @@ type GetUserByPhoneResponse struct {
 
 func (x *GetUserByPhoneResponse) Reset() {
 	*x = GetUserByPhoneResponse{}
-	mi := &file_users_user_user_proto_msgTypes[11]
+	mi := &file_users_user_user_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -724,7 +817,7 @@ func (x *GetUserByPhoneResponse) String() string {
 func (*GetUserByPhoneResponse) ProtoMessage() {}
 
 func (x *GetUserByPhoneResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[11]
+	mi := &file_users_user_user_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -737,7 +830,7 @@ func (x *GetUserByPhoneResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserByPhoneResponse.ProtoReflect.Descriptor instead.
 func (*GetUserByPhoneResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{11}
+	return file_users_user_user_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetUserByPhoneResponse) GetUser() *User {
@@ -757,7 +850,7 @@ type CreateUserRequest struct {
 
 func (x *CreateUserRequest) Reset() {
 	*x = CreateUserRequest{}
-	mi := &file_users_user_user_proto_msgTypes[12]
+	mi := &file_users_user_user_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -769,7 +862,7 @@ func (x *CreateUserRequest) String() string {
 func (*CreateUserRequest) ProtoMessage() {}
 
 func (x *CreateUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[12]
+	mi := &file_users_user_user_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -782,7 +875,7 @@ func (x *CreateUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateUserRequest.ProtoReflect.Descriptor instead.
 func (*CreateUserRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{12}
+	return file_users_user_user_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *CreateUserRequest) GetPhone() string {
@@ -801,7 +894,7 @@ type CreateUserResponse struct {
 
 func (x *CreateUserResponse) Reset() {
 	*x = CreateUserResponse{}
-	mi := &file_users_user_user_proto_msgTypes[13]
+	mi := &file_users_user_user_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -813,7 +906,7 @@ func (x *CreateUserResponse) String() string {
 func (*CreateUserResponse) ProtoMessage() {}
 
 func (x *CreateUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[13]
+	mi := &file_users_user_user_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -826,7 +919,7 @@ func (x *CreateUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateUserResponse.ProtoReflect.Descriptor instead.
 func (*CreateUserResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{13}
+	return file_users_user_user_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *CreateUserResponse) GetUser() *User {
@@ -846,7 +939,7 @@ type FindOrCreateByPhoneRequest struct {
 
 func (x *FindOrCreateByPhoneRequest) Reset() {
 	*x = FindOrCreateByPhoneRequest{}
-	mi := &file_users_user_user_proto_msgTypes[14]
+	mi := &file_users_user_user_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -858,7 +951,7 @@ func (x *FindOrCreateByPhoneRequest) String() string {
 func (*FindOrCreateByPhoneRequest) ProtoMessage() {}
 
 func (x *FindOrCreateByPhoneRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[14]
+	mi := &file_users_user_user_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -871,7 +964,7 @@ func (x *FindOrCreateByPhoneRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FindOrCreateByPhoneRequest.ProtoReflect.Descriptor instead.
 func (*FindOrCreateByPhoneRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{14}
+	return file_users_user_user_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *FindOrCreateByPhoneRequest) GetPhone() string {
@@ -891,7 +984,7 @@ type FindOrCreateByPhoneResponse struct {
 
 func (x *FindOrCreateByPhoneResponse) Reset() {
 	*x = FindOrCreateByPhoneResponse{}
-	mi := &file_users_user_user_proto_msgTypes[15]
+	mi := &file_users_user_user_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -903,7 +996,7 @@ func (x *FindOrCreateByPhoneResponse) String() string {
 func (*FindOrCreateByPhoneResponse) ProtoMessage() {}
 
 func (x *FindOrCreateByPhoneResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[15]
+	mi := &file_users_user_user_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -916,7 +1009,7 @@ func (x *FindOrCreateByPhoneResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FindOrCreateByPhoneResponse.ProtoReflect.Descriptor instead.
 func (*FindOrCreateByPhoneResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{15}
+	return file_users_user_user_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *FindOrCreateByPhoneResponse) GetUser() *User {
@@ -948,7 +1041,7 @@ type UserSettings struct {
 
 func (x *UserSettings) Reset() {
 	*x = UserSettings{}
-	mi := &file_users_user_user_proto_msgTypes[16]
+	mi := &file_users_user_user_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -960,7 +1053,7 @@ func (x *UserSettings) String() string {
 func (*UserSettings) ProtoMessage() {}
 
 func (x *UserSettings) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[16]
+	mi := &file_users_user_user_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -973,7 +1066,7 @@ func (x *UserSettings) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserSettings.ProtoReflect.Descriptor instead.
 func (*UserSettings) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{16}
+	return file_users_user_user_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *UserSettings) GetPushEnabled() bool {
@@ -1026,7 +1119,7 @@ type GetSettingsRequest struct {
 
 func (x *GetSettingsRequest) Reset() {
 	*x = GetSettingsRequest{}
-	mi := &file_users_user_user_proto_msgTypes[17]
+	mi := &file_users_user_user_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1038,7 +1131,7 @@ func (x *GetSettingsRequest) String() string {
 func (*GetSettingsRequest) ProtoMessage() {}
 
 func (x *GetSettingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[17]
+	mi := &file_users_user_user_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1051,7 +1144,7 @@ func (x *GetSettingsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSettingsRequest.ProtoReflect.Descriptor instead.
 func (*GetSettingsRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{17}
+	return file_users_user_user_proto_rawDescGZIP(), []int{19}
 }
 
 type GetSettingsResponse struct {
@@ -1063,7 +1156,7 @@ type GetSettingsResponse struct {
 
 func (x *GetSettingsResponse) Reset() {
 	*x = GetSettingsResponse{}
-	mi := &file_users_user_user_proto_msgTypes[18]
+	mi := &file_users_user_user_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1075,7 +1168,7 @@ func (x *GetSettingsResponse) String() string {
 func (*GetSettingsResponse) ProtoMessage() {}
 
 func (x *GetSettingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[18]
+	mi := &file_users_user_user_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1088,7 +1181,7 @@ func (x *GetSettingsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSettingsResponse.ProtoReflect.Descriptor instead.
 func (*GetSettingsResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{18}
+	return file_users_user_user_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GetSettingsResponse) GetSettings() *UserSettings {
@@ -1112,7 +1205,7 @@ type UpdateSettingsRequest struct {
 
 func (x *UpdateSettingsRequest) Reset() {
 	*x = UpdateSettingsRequest{}
-	mi := &file_users_user_user_proto_msgTypes[19]
+	mi := &file_users_user_user_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1124,7 +1217,7 @@ func (x *UpdateSettingsRequest) String() string {
 func (*UpdateSettingsRequest) ProtoMessage() {}
 
 func (x *UpdateSettingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[19]
+	mi := &file_users_user_user_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1137,7 +1230,7 @@ func (x *UpdateSettingsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSettingsRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSettingsRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{19}
+	return file_users_user_user_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *UpdateSettingsRequest) GetPushEnabled() bool {
@@ -1191,7 +1284,7 @@ type UpdateSettingsResponse struct {
 
 func (x *UpdateSettingsResponse) Reset() {
 	*x = UpdateSettingsResponse{}
-	mi := &file_users_user_user_proto_msgTypes[20]
+	mi := &file_users_user_user_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1203,7 +1296,7 @@ func (x *UpdateSettingsResponse) String() string {
 func (*UpdateSettingsResponse) ProtoMessage() {}
 
 func (x *UpdateSettingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[20]
+	mi := &file_users_user_user_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1216,7 +1309,7 @@ func (x *UpdateSettingsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSettingsResponse.ProtoReflect.Descriptor instead.
 func (*UpdateSettingsResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{20}
+	return file_users_user_user_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *UpdateSettingsResponse) GetSettings() *UserSettings {
@@ -1241,7 +1334,7 @@ type Device struct {
 
 func (x *Device) Reset() {
 	*x = Device{}
-	mi := &file_users_user_user_proto_msgTypes[21]
+	mi := &file_users_user_user_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1253,7 +1346,7 @@ func (x *Device) String() string {
 func (*Device) ProtoMessage() {}
 
 func (x *Device) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[21]
+	mi := &file_users_user_user_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1266,7 +1359,7 @@ func (x *Device) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Device.ProtoReflect.Descriptor instead.
 func (*Device) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{21}
+	return file_users_user_user_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *Device) GetId() string {
@@ -1322,7 +1415,7 @@ type RegisterDeviceRequest struct {
 
 func (x *RegisterDeviceRequest) Reset() {
 	*x = RegisterDeviceRequest{}
-	mi := &file_users_user_user_proto_msgTypes[22]
+	mi := &file_users_user_user_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1334,7 +1427,7 @@ func (x *RegisterDeviceRequest) String() string {
 func (*RegisterDeviceRequest) ProtoMessage() {}
 
 func (x *RegisterDeviceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[22]
+	mi := &file_users_user_user_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1347,7 +1440,7 @@ func (x *RegisterDeviceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterDeviceRequest.ProtoReflect.Descriptor instead.
 func (*RegisterDeviceRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{22}
+	return file_users_user_user_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *RegisterDeviceRequest) GetDeviceId() string {
@@ -1380,7 +1473,7 @@ type RegisterDeviceResponse struct {
 
 func (x *RegisterDeviceResponse) Reset() {
 	*x = RegisterDeviceResponse{}
-	mi := &file_users_user_user_proto_msgTypes[23]
+	mi := &file_users_user_user_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1392,7 +1485,7 @@ func (x *RegisterDeviceResponse) String() string {
 func (*RegisterDeviceResponse) ProtoMessage() {}
 
 func (x *RegisterDeviceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[23]
+	mi := &file_users_user_user_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1405,7 +1498,7 @@ func (x *RegisterDeviceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterDeviceResponse.ProtoReflect.Descriptor instead.
 func (*RegisterDeviceResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{23}
+	return file_users_user_user_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *RegisterDeviceResponse) GetSuccess() bool {
@@ -1424,7 +1517,7 @@ type UnregisterDeviceRequest struct {
 
 func (x *UnregisterDeviceRequest) Reset() {
 	*x = UnregisterDeviceRequest{}
-	mi := &file_users_user_user_proto_msgTypes[24]
+	mi := &file_users_user_user_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1436,7 +1529,7 @@ func (x *UnregisterDeviceRequest) String() string {
 func (*UnregisterDeviceRequest) ProtoMessage() {}
 
 func (x *UnregisterDeviceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[24]
+	mi := &file_users_user_user_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1449,7 +1542,7 @@ func (x *UnregisterDeviceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnregisterDeviceRequest.ProtoReflect.Descriptor instead.
 func (*UnregisterDeviceRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{24}
+	return file_users_user_user_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *UnregisterDeviceRequest) GetDeviceId() string {
@@ -1468,7 +1561,7 @@ type UnregisterDeviceResponse struct {
 
 func (x *UnregisterDeviceResponse) Reset() {
 	*x = UnregisterDeviceResponse{}
-	mi := &file_users_user_user_proto_msgTypes[25]
+	mi := &file_users_user_user_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1480,7 +1573,7 @@ func (x *UnregisterDeviceResponse) String() string {
 func (*UnregisterDeviceResponse) ProtoMessage() {}
 
 func (x *UnregisterDeviceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[25]
+	mi := &file_users_user_user_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1493,7 +1586,7 @@ func (x *UnregisterDeviceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnregisterDeviceResponse.ProtoReflect.Descriptor instead.
 func (*UnregisterDeviceResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{25}
+	return file_users_user_user_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *UnregisterDeviceResponse) GetSuccess() bool {
@@ -1511,7 +1604,7 @@ type GetDevicesRequest struct {
 
 func (x *GetDevicesRequest) Reset() {
 	*x = GetDevicesRequest{}
-	mi := &file_users_user_user_proto_msgTypes[26]
+	mi := &file_users_user_user_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1523,7 +1616,7 @@ func (x *GetDevicesRequest) String() string {
 func (*GetDevicesRequest) ProtoMessage() {}
 
 func (x *GetDevicesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[26]
+	mi := &file_users_user_user_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1536,7 +1629,7 @@ func (x *GetDevicesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDevicesRequest.ProtoReflect.Descriptor instead.
 func (*GetDevicesRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{26}
+	return file_users_user_user_proto_rawDescGZIP(), []int{28}
 }
 
 type GetDevicesResponse struct {
@@ -1548,7 +1641,7 @@ type GetDevicesResponse struct {
 
 func (x *GetDevicesResponse) Reset() {
 	*x = GetDevicesResponse{}
-	mi := &file_users_user_user_proto_msgTypes[27]
+	mi := &file_users_user_user_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1560,7 +1653,7 @@ func (x *GetDevicesResponse) String() string {
 func (*GetDevicesResponse) ProtoMessage() {}
 
 func (x *GetDevicesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[27]
+	mi := &file_users_user_user_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1573,7 +1666,7 @@ func (x *GetDevicesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDevicesResponse.ProtoReflect.Descriptor instead.
 func (*GetDevicesResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{27}
+	return file_users_user_user_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *GetDevicesResponse) GetDevices() []*Device {
@@ -1593,7 +1686,7 @@ type DeleteAccountRequest struct {
 
 func (x *DeleteAccountRequest) Reset() {
 	*x = DeleteAccountRequest{}
-	mi := &file_users_user_user_proto_msgTypes[28]
+	mi := &file_users_user_user_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1605,7 +1698,7 @@ func (x *DeleteAccountRequest) String() string {
 func (*DeleteAccountRequest) ProtoMessage() {}
 
 func (x *DeleteAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[28]
+	mi := &file_users_user_user_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1618,7 +1711,7 @@ func (x *DeleteAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAccountRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAccountRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{28}
+	return file_users_user_user_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *DeleteAccountRequest) GetReason() string {
@@ -1637,7 +1730,7 @@ type DeleteAccountResponse struct {
 
 func (x *DeleteAccountResponse) Reset() {
 	*x = DeleteAccountResponse{}
-	mi := &file_users_user_user_proto_msgTypes[29]
+	mi := &file_users_user_user_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1649,7 +1742,7 @@ func (x *DeleteAccountResponse) String() string {
 func (*DeleteAccountResponse) ProtoMessage() {}
 
 func (x *DeleteAccountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[29]
+	mi := &file_users_user_user_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1662,7 +1755,7 @@ func (x *DeleteAccountResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAccountResponse.ProtoReflect.Descriptor instead.
 func (*DeleteAccountResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{29}
+	return file_users_user_user_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *DeleteAccountResponse) GetSuccess() bool {
@@ -1682,7 +1775,7 @@ type SetPlatformRolesRequest struct {
 
 func (x *SetPlatformRolesRequest) Reset() {
 	*x = SetPlatformRolesRequest{}
-	mi := &file_users_user_user_proto_msgTypes[30]
+	mi := &file_users_user_user_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1694,7 +1787,7 @@ func (x *SetPlatformRolesRequest) String() string {
 func (*SetPlatformRolesRequest) ProtoMessage() {}
 
 func (x *SetPlatformRolesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[30]
+	mi := &file_users_user_user_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1707,7 +1800,7 @@ func (x *SetPlatformRolesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetPlatformRolesRequest.ProtoReflect.Descriptor instead.
 func (*SetPlatformRolesRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{30}
+	return file_users_user_user_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *SetPlatformRolesRequest) GetUserId() int64 {
@@ -1732,7 +1825,7 @@ type SetPlatformRolesResponse struct {
 
 func (x *SetPlatformRolesResponse) Reset() {
 	*x = SetPlatformRolesResponse{}
-	mi := &file_users_user_user_proto_msgTypes[31]
+	mi := &file_users_user_user_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1744,7 +1837,7 @@ func (x *SetPlatformRolesResponse) String() string {
 func (*SetPlatformRolesResponse) ProtoMessage() {}
 
 func (x *SetPlatformRolesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[31]
+	mi := &file_users_user_user_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1757,7 +1850,7 @@ func (x *SetPlatformRolesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetPlatformRolesResponse.ProtoReflect.Descriptor instead.
 func (*SetPlatformRolesResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{31}
+	return file_users_user_user_proto_rawDescGZIP(), []int{33}
 }
 
 type GetPlatformRolesRequest struct {
@@ -1769,7 +1862,7 @@ type GetPlatformRolesRequest struct {
 
 func (x *GetPlatformRolesRequest) Reset() {
 	*x = GetPlatformRolesRequest{}
-	mi := &file_users_user_user_proto_msgTypes[32]
+	mi := &file_users_user_user_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1781,7 +1874,7 @@ func (x *GetPlatformRolesRequest) String() string {
 func (*GetPlatformRolesRequest) ProtoMessage() {}
 
 func (x *GetPlatformRolesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[32]
+	mi := &file_users_user_user_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1794,7 +1887,7 @@ func (x *GetPlatformRolesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlatformRolesRequest.ProtoReflect.Descriptor instead.
 func (*GetPlatformRolesRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{32}
+	return file_users_user_user_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *GetPlatformRolesRequest) GetUserId() int64 {
@@ -1813,7 +1906,7 @@ type GetPlatformRolesResponse struct {
 
 func (x *GetPlatformRolesResponse) Reset() {
 	*x = GetPlatformRolesResponse{}
-	mi := &file_users_user_user_proto_msgTypes[33]
+	mi := &file_users_user_user_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1825,7 +1918,7 @@ func (x *GetPlatformRolesResponse) String() string {
 func (*GetPlatformRolesResponse) ProtoMessage() {}
 
 func (x *GetPlatformRolesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[33]
+	mi := &file_users_user_user_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1838,7 +1931,7 @@ func (x *GetPlatformRolesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlatformRolesResponse.ProtoReflect.Descriptor instead.
 func (*GetPlatformRolesResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{33}
+	return file_users_user_user_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *GetPlatformRolesResponse) GetRoles() []PlatformRole {
@@ -1857,7 +1950,7 @@ type CheckPlatformRolesRequest struct {
 
 func (x *CheckPlatformRolesRequest) Reset() {
 	*x = CheckPlatformRolesRequest{}
-	mi := &file_users_user_user_proto_msgTypes[34]
+	mi := &file_users_user_user_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1869,7 +1962,7 @@ func (x *CheckPlatformRolesRequest) String() string {
 func (*CheckPlatformRolesRequest) ProtoMessage() {}
 
 func (x *CheckPlatformRolesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[34]
+	mi := &file_users_user_user_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1882,7 +1975,7 @@ func (x *CheckPlatformRolesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckPlatformRolesRequest.ProtoReflect.Descriptor instead.
 func (*CheckPlatformRolesRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{34}
+	return file_users_user_user_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *CheckPlatformRolesRequest) GetUserId() int64 {
@@ -1902,7 +1995,7 @@ type CheckPlatformRolesResponse struct {
 
 func (x *CheckPlatformRolesResponse) Reset() {
 	*x = CheckPlatformRolesResponse{}
-	mi := &file_users_user_user_proto_msgTypes[35]
+	mi := &file_users_user_user_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1914,7 +2007,7 @@ func (x *CheckPlatformRolesResponse) String() string {
 func (*CheckPlatformRolesResponse) ProtoMessage() {}
 
 func (x *CheckPlatformRolesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[35]
+	mi := &file_users_user_user_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1927,7 +2020,7 @@ func (x *CheckPlatformRolesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckPlatformRolesResponse.ProtoReflect.Descriptor instead.
 func (*CheckPlatformRolesResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{35}
+	return file_users_user_user_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *CheckPlatformRolesResponse) GetRoles() []PlatformRole {
@@ -1954,7 +2047,7 @@ type SetPlatformOrgAccessRequest struct {
 
 func (x *SetPlatformOrgAccessRequest) Reset() {
 	*x = SetPlatformOrgAccessRequest{}
-	mi := &file_users_user_user_proto_msgTypes[36]
+	mi := &file_users_user_user_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1966,7 +2059,7 @@ func (x *SetPlatformOrgAccessRequest) String() string {
 func (*SetPlatformOrgAccessRequest) ProtoMessage() {}
 
 func (x *SetPlatformOrgAccessRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[36]
+	mi := &file_users_user_user_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1979,7 +2072,7 @@ func (x *SetPlatformOrgAccessRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetPlatformOrgAccessRequest.ProtoReflect.Descriptor instead.
 func (*SetPlatformOrgAccessRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{36}
+	return file_users_user_user_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *SetPlatformOrgAccessRequest) GetUserId() int64 {
@@ -2004,7 +2097,7 @@ type SetPlatformOrgAccessResponse struct {
 
 func (x *SetPlatformOrgAccessResponse) Reset() {
 	*x = SetPlatformOrgAccessResponse{}
-	mi := &file_users_user_user_proto_msgTypes[37]
+	mi := &file_users_user_user_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2016,7 +2109,7 @@ func (x *SetPlatformOrgAccessResponse) String() string {
 func (*SetPlatformOrgAccessResponse) ProtoMessage() {}
 
 func (x *SetPlatformOrgAccessResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[37]
+	mi := &file_users_user_user_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2029,7 +2122,7 @@ func (x *SetPlatformOrgAccessResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetPlatformOrgAccessResponse.ProtoReflect.Descriptor instead.
 func (*SetPlatformOrgAccessResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{37}
+	return file_users_user_user_proto_rawDescGZIP(), []int{39}
 }
 
 type GetPlatformOrgAccessRequest struct {
@@ -2041,7 +2134,7 @@ type GetPlatformOrgAccessRequest struct {
 
 func (x *GetPlatformOrgAccessRequest) Reset() {
 	*x = GetPlatformOrgAccessRequest{}
-	mi := &file_users_user_user_proto_msgTypes[38]
+	mi := &file_users_user_user_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2053,7 +2146,7 @@ func (x *GetPlatformOrgAccessRequest) String() string {
 func (*GetPlatformOrgAccessRequest) ProtoMessage() {}
 
 func (x *GetPlatformOrgAccessRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[38]
+	mi := &file_users_user_user_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2066,7 +2159,7 @@ func (x *GetPlatformOrgAccessRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlatformOrgAccessRequest.ProtoReflect.Descriptor instead.
 func (*GetPlatformOrgAccessRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{38}
+	return file_users_user_user_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *GetPlatformOrgAccessRequest) GetUserId() int64 {
@@ -2085,7 +2178,7 @@ type GetPlatformOrgAccessResponse struct {
 
 func (x *GetPlatformOrgAccessResponse) Reset() {
 	*x = GetPlatformOrgAccessResponse{}
-	mi := &file_users_user_user_proto_msgTypes[39]
+	mi := &file_users_user_user_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2097,7 +2190,7 @@ func (x *GetPlatformOrgAccessResponse) String() string {
 func (*GetPlatformOrgAccessResponse) ProtoMessage() {}
 
 func (x *GetPlatformOrgAccessResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[39]
+	mi := &file_users_user_user_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2110,7 +2203,7 @@ func (x *GetPlatformOrgAccessResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlatformOrgAccessResponse.ProtoReflect.Descriptor instead.
 func (*GetPlatformOrgAccessResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{39}
+	return file_users_user_user_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetPlatformOrgAccessResponse) GetOrgIds() []string {
@@ -2132,7 +2225,7 @@ type ListUsersRequest struct {
 
 func (x *ListUsersRequest) Reset() {
 	*x = ListUsersRequest{}
-	mi := &file_users_user_user_proto_msgTypes[40]
+	mi := &file_users_user_user_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2144,7 +2237,7 @@ func (x *ListUsersRequest) String() string {
 func (*ListUsersRequest) ProtoMessage() {}
 
 func (x *ListUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[40]
+	mi := &file_users_user_user_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2157,7 +2250,7 @@ func (x *ListUsersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUsersRequest.ProtoReflect.Descriptor instead.
 func (*ListUsersRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{40}
+	return file_users_user_user_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *ListUsersRequest) GetPage() int32 {
@@ -2191,7 +2284,7 @@ type ListUsersResponse struct {
 
 func (x *ListUsersResponse) Reset() {
 	*x = ListUsersResponse{}
-	mi := &file_users_user_user_proto_msgTypes[41]
+	mi := &file_users_user_user_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2203,7 +2296,7 @@ func (x *ListUsersResponse) String() string {
 func (*ListUsersResponse) ProtoMessage() {}
 
 func (x *ListUsersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[41]
+	mi := &file_users_user_user_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2216,7 +2309,7 @@ func (x *ListUsersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUsersResponse.ProtoReflect.Descriptor instead.
 func (*ListUsersResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{41}
+	return file_users_user_user_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *ListUsersResponse) GetUsers() []*User {
@@ -2246,7 +2339,7 @@ type PlatformMember struct {
 
 func (x *PlatformMember) Reset() {
 	*x = PlatformMember{}
-	mi := &file_users_user_user_proto_msgTypes[42]
+	mi := &file_users_user_user_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2258,7 +2351,7 @@ func (x *PlatformMember) String() string {
 func (*PlatformMember) ProtoMessage() {}
 
 func (x *PlatformMember) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[42]
+	mi := &file_users_user_user_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2271,7 +2364,7 @@ func (x *PlatformMember) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlatformMember.ProtoReflect.Descriptor instead.
 func (*PlatformMember) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{42}
+	return file_users_user_user_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *PlatformMember) GetUserId() int64 {
@@ -2311,7 +2404,7 @@ type ListUsersByPlatformRolesRequest struct {
 
 func (x *ListUsersByPlatformRolesRequest) Reset() {
 	*x = ListUsersByPlatformRolesRequest{}
-	mi := &file_users_user_user_proto_msgTypes[43]
+	mi := &file_users_user_user_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2323,7 +2416,7 @@ func (x *ListUsersByPlatformRolesRequest) String() string {
 func (*ListUsersByPlatformRolesRequest) ProtoMessage() {}
 
 func (x *ListUsersByPlatformRolesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[43]
+	mi := &file_users_user_user_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2336,7 +2429,7 @@ func (x *ListUsersByPlatformRolesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUsersByPlatformRolesRequest.ProtoReflect.Descriptor instead.
 func (*ListUsersByPlatformRolesRequest) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{43}
+	return file_users_user_user_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *ListUsersByPlatformRolesRequest) GetRoles() []PlatformRole {
@@ -2355,7 +2448,7 @@ type ListUsersByPlatformRolesResponse struct {
 
 func (x *ListUsersByPlatformRolesResponse) Reset() {
 	*x = ListUsersByPlatformRolesResponse{}
-	mi := &file_users_user_user_proto_msgTypes[44]
+	mi := &file_users_user_user_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2367,7 +2460,7 @@ func (x *ListUsersByPlatformRolesResponse) String() string {
 func (*ListUsersByPlatformRolesResponse) ProtoMessage() {}
 
 func (x *ListUsersByPlatformRolesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_user_user_proto_msgTypes[44]
+	mi := &file_users_user_user_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2380,7 +2473,7 @@ func (x *ListUsersByPlatformRolesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUsersByPlatformRolesResponse.ProtoReflect.Descriptor instead.
 func (*ListUsersByPlatformRolesResponse) Descriptor() ([]byte, []int) {
-	return file_users_user_user_proto_rawDescGZIP(), []int{44}
+	return file_users_user_user_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *ListUsersByPlatformRolesResponse) GetMembers() []*PlatformMember {
@@ -2443,6 +2536,10 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x14GetUsersByIDsRequest\x12\x19\n" +
 	"\buser_ids\x18\x01 \x03(\x03R\auserIds\"B\n" +
 	"\x15GetUsersByIDsResponse\x12)\n" +
+	"\x05users\x18\x01 \x03(\v2\x13.users.user.v1.UserR\x05users\"1\n" +
+	"\x17GetUsersByPhonesRequest\x12\x16\n" +
+	"\x06phones\x18\x01 \x03(\tR\x06phones\"E\n" +
+	"\x18GetUsersByPhonesResponse\x12)\n" +
 	"\x05users\x18\x01 \x03(\v2\x13.users.user.v1.UserR\x05users\"-\n" +
 	"\x15GetUserByPhoneRequest\x12\x14\n" +
 	"\x05phone\x18\x01 \x01(\tR\x05phone\"A\n" +
@@ -2555,7 +2652,7 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x13PLATFORM_ROLE_ADMIN\x10\x04\x12\x1f\n" +
 	"\x1bPLATFORM_ROLE_SALES_MANAGER\x10\x05\x12\x1b\n" +
 	"\x17PLATFORM_ROLE_RECRUITER\x10\x06\x12\"\n" +
-	"\x1ePLATFORM_ROLE_AUTOBODY_MANAGER\x10\a2\x9a\x0f\n" +
+	"\x1ePLATFORM_ROLE_AUTOBODY_MANAGER\x10\a2\xff\x0f\n" +
 	"\vUserService\x12Q\n" +
 	"\n" +
 	"GetProfile\x12 .users.user.v1.GetProfileRequest\x1a!.users.user.v1.GetProfileResponse\x12Z\n" +
@@ -2564,7 +2661,8 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x0eGetUserByPhone\x12$.users.user.v1.GetUserByPhoneRequest\x1a%.users.user.v1.GetUserByPhoneResponse\x12Q\n" +
 	"\n" +
 	"CreateUser\x12 .users.user.v1.CreateUserRequest\x1a!.users.user.v1.CreateUserResponse\x12Z\n" +
-	"\rGetUsersByIDs\x12#.users.user.v1.GetUsersByIDsRequest\x1a$.users.user.v1.GetUsersByIDsResponse\x12l\n" +
+	"\rGetUsersByIDs\x12#.users.user.v1.GetUsersByIDsRequest\x1a$.users.user.v1.GetUsersByIDsResponse\x12c\n" +
+	"\x10GetUsersByPhones\x12&.users.user.v1.GetUsersByPhonesRequest\x1a'.users.user.v1.GetUsersByPhonesResponse\x12l\n" +
 	"\x13FindOrCreateByPhone\x12).users.user.v1.FindOrCreateByPhoneRequest\x1a*.users.user.v1.FindOrCreateByPhoneResponse\x12T\n" +
 	"\vGetSettings\x12!.users.user.v1.GetSettingsRequest\x1a\".users.user.v1.GetSettingsResponse\x12]\n" +
 	"\x0eUpdateSettings\x12$.users.user.v1.UpdateSettingsRequest\x1a%.users.user.v1.UpdateSettingsResponse\x12]\n" +
@@ -2594,7 +2692,7 @@ func file_users_user_user_proto_rawDescGZIP() []byte {
 }
 
 var file_users_user_user_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_users_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 45)
+var file_users_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 47)
 var file_users_user_user_proto_goTypes = []any{
 	(PlatformRole)(0),                        // 0: users.user.v1.PlatformRole
 	(*User)(nil),                             // 1: users.user.v1.User
@@ -2607,111 +2705,116 @@ var file_users_user_user_proto_goTypes = []any{
 	(*GetUserByIDResponse)(nil),              // 8: users.user.v1.GetUserByIDResponse
 	(*GetUsersByIDsRequest)(nil),             // 9: users.user.v1.GetUsersByIDsRequest
 	(*GetUsersByIDsResponse)(nil),            // 10: users.user.v1.GetUsersByIDsResponse
-	(*GetUserByPhoneRequest)(nil),            // 11: users.user.v1.GetUserByPhoneRequest
-	(*GetUserByPhoneResponse)(nil),           // 12: users.user.v1.GetUserByPhoneResponse
-	(*CreateUserRequest)(nil),                // 13: users.user.v1.CreateUserRequest
-	(*CreateUserResponse)(nil),               // 14: users.user.v1.CreateUserResponse
-	(*FindOrCreateByPhoneRequest)(nil),       // 15: users.user.v1.FindOrCreateByPhoneRequest
-	(*FindOrCreateByPhoneResponse)(nil),      // 16: users.user.v1.FindOrCreateByPhoneResponse
-	(*UserSettings)(nil),                     // 17: users.user.v1.UserSettings
-	(*GetSettingsRequest)(nil),               // 18: users.user.v1.GetSettingsRequest
-	(*GetSettingsResponse)(nil),              // 19: users.user.v1.GetSettingsResponse
-	(*UpdateSettingsRequest)(nil),            // 20: users.user.v1.UpdateSettingsRequest
-	(*UpdateSettingsResponse)(nil),           // 21: users.user.v1.UpdateSettingsResponse
-	(*Device)(nil),                           // 22: users.user.v1.Device
-	(*RegisterDeviceRequest)(nil),            // 23: users.user.v1.RegisterDeviceRequest
-	(*RegisterDeviceResponse)(nil),           // 24: users.user.v1.RegisterDeviceResponse
-	(*UnregisterDeviceRequest)(nil),          // 25: users.user.v1.UnregisterDeviceRequest
-	(*UnregisterDeviceResponse)(nil),         // 26: users.user.v1.UnregisterDeviceResponse
-	(*GetDevicesRequest)(nil),                // 27: users.user.v1.GetDevicesRequest
-	(*GetDevicesResponse)(nil),               // 28: users.user.v1.GetDevicesResponse
-	(*DeleteAccountRequest)(nil),             // 29: users.user.v1.DeleteAccountRequest
-	(*DeleteAccountResponse)(nil),            // 30: users.user.v1.DeleteAccountResponse
-	(*SetPlatformRolesRequest)(nil),          // 31: users.user.v1.SetPlatformRolesRequest
-	(*SetPlatformRolesResponse)(nil),         // 32: users.user.v1.SetPlatformRolesResponse
-	(*GetPlatformRolesRequest)(nil),          // 33: users.user.v1.GetPlatformRolesRequest
-	(*GetPlatformRolesResponse)(nil),         // 34: users.user.v1.GetPlatformRolesResponse
-	(*CheckPlatformRolesRequest)(nil),        // 35: users.user.v1.CheckPlatformRolesRequest
-	(*CheckPlatformRolesResponse)(nil),       // 36: users.user.v1.CheckPlatformRolesResponse
-	(*SetPlatformOrgAccessRequest)(nil),      // 37: users.user.v1.SetPlatformOrgAccessRequest
-	(*SetPlatformOrgAccessResponse)(nil),     // 38: users.user.v1.SetPlatformOrgAccessResponse
-	(*GetPlatformOrgAccessRequest)(nil),      // 39: users.user.v1.GetPlatformOrgAccessRequest
-	(*GetPlatformOrgAccessResponse)(nil),     // 40: users.user.v1.GetPlatformOrgAccessResponse
-	(*ListUsersRequest)(nil),                 // 41: users.user.v1.ListUsersRequest
-	(*ListUsersResponse)(nil),                // 42: users.user.v1.ListUsersResponse
-	(*PlatformMember)(nil),                   // 43: users.user.v1.PlatformMember
-	(*ListUsersByPlatformRolesRequest)(nil),  // 44: users.user.v1.ListUsersByPlatformRolesRequest
-	(*ListUsersByPlatformRolesResponse)(nil), // 45: users.user.v1.ListUsersByPlatformRolesResponse
-	(*timestamppb.Timestamp)(nil),            // 46: google.protobuf.Timestamp
+	(*GetUsersByPhonesRequest)(nil),          // 11: users.user.v1.GetUsersByPhonesRequest
+	(*GetUsersByPhonesResponse)(nil),         // 12: users.user.v1.GetUsersByPhonesResponse
+	(*GetUserByPhoneRequest)(nil),            // 13: users.user.v1.GetUserByPhoneRequest
+	(*GetUserByPhoneResponse)(nil),           // 14: users.user.v1.GetUserByPhoneResponse
+	(*CreateUserRequest)(nil),                // 15: users.user.v1.CreateUserRequest
+	(*CreateUserResponse)(nil),               // 16: users.user.v1.CreateUserResponse
+	(*FindOrCreateByPhoneRequest)(nil),       // 17: users.user.v1.FindOrCreateByPhoneRequest
+	(*FindOrCreateByPhoneResponse)(nil),      // 18: users.user.v1.FindOrCreateByPhoneResponse
+	(*UserSettings)(nil),                     // 19: users.user.v1.UserSettings
+	(*GetSettingsRequest)(nil),               // 20: users.user.v1.GetSettingsRequest
+	(*GetSettingsResponse)(nil),              // 21: users.user.v1.GetSettingsResponse
+	(*UpdateSettingsRequest)(nil),            // 22: users.user.v1.UpdateSettingsRequest
+	(*UpdateSettingsResponse)(nil),           // 23: users.user.v1.UpdateSettingsResponse
+	(*Device)(nil),                           // 24: users.user.v1.Device
+	(*RegisterDeviceRequest)(nil),            // 25: users.user.v1.RegisterDeviceRequest
+	(*RegisterDeviceResponse)(nil),           // 26: users.user.v1.RegisterDeviceResponse
+	(*UnregisterDeviceRequest)(nil),          // 27: users.user.v1.UnregisterDeviceRequest
+	(*UnregisterDeviceResponse)(nil),         // 28: users.user.v1.UnregisterDeviceResponse
+	(*GetDevicesRequest)(nil),                // 29: users.user.v1.GetDevicesRequest
+	(*GetDevicesResponse)(nil),               // 30: users.user.v1.GetDevicesResponse
+	(*DeleteAccountRequest)(nil),             // 31: users.user.v1.DeleteAccountRequest
+	(*DeleteAccountResponse)(nil),            // 32: users.user.v1.DeleteAccountResponse
+	(*SetPlatformRolesRequest)(nil),          // 33: users.user.v1.SetPlatformRolesRequest
+	(*SetPlatformRolesResponse)(nil),         // 34: users.user.v1.SetPlatformRolesResponse
+	(*GetPlatformRolesRequest)(nil),          // 35: users.user.v1.GetPlatformRolesRequest
+	(*GetPlatformRolesResponse)(nil),         // 36: users.user.v1.GetPlatformRolesResponse
+	(*CheckPlatformRolesRequest)(nil),        // 37: users.user.v1.CheckPlatformRolesRequest
+	(*CheckPlatformRolesResponse)(nil),       // 38: users.user.v1.CheckPlatformRolesResponse
+	(*SetPlatformOrgAccessRequest)(nil),      // 39: users.user.v1.SetPlatformOrgAccessRequest
+	(*SetPlatformOrgAccessResponse)(nil),     // 40: users.user.v1.SetPlatformOrgAccessResponse
+	(*GetPlatformOrgAccessRequest)(nil),      // 41: users.user.v1.GetPlatformOrgAccessRequest
+	(*GetPlatformOrgAccessResponse)(nil),     // 42: users.user.v1.GetPlatformOrgAccessResponse
+	(*ListUsersRequest)(nil),                 // 43: users.user.v1.ListUsersRequest
+	(*ListUsersResponse)(nil),                // 44: users.user.v1.ListUsersResponse
+	(*PlatformMember)(nil),                   // 45: users.user.v1.PlatformMember
+	(*ListUsersByPlatformRolesRequest)(nil),  // 46: users.user.v1.ListUsersByPlatformRolesRequest
+	(*ListUsersByPlatformRolesResponse)(nil), // 47: users.user.v1.ListUsersByPlatformRolesResponse
+	(*timestamppb.Timestamp)(nil),            // 48: google.protobuf.Timestamp
 }
 var file_users_user_user_proto_depIdxs = []int32{
-	46, // 0: users.user.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	46, // 1: users.user.v1.User.updated_at:type_name -> google.protobuf.Timestamp
+	48, // 0: users.user.v1.User.created_at:type_name -> google.protobuf.Timestamp
+	48, // 1: users.user.v1.User.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 2: users.user.v1.GetProfileResponse.user:type_name -> users.user.v1.User
 	2,  // 3: users.user.v1.GetProfileResponse.counters:type_name -> users.user.v1.UserCounters
 	1,  // 4: users.user.v1.UpdateProfileResponse.user:type_name -> users.user.v1.User
 	1,  // 5: users.user.v1.GetUserByIDResponse.user:type_name -> users.user.v1.User
 	1,  // 6: users.user.v1.GetUsersByIDsResponse.users:type_name -> users.user.v1.User
-	1,  // 7: users.user.v1.GetUserByPhoneResponse.user:type_name -> users.user.v1.User
-	1,  // 8: users.user.v1.CreateUserResponse.user:type_name -> users.user.v1.User
-	1,  // 9: users.user.v1.FindOrCreateByPhoneResponse.user:type_name -> users.user.v1.User
-	17, // 10: users.user.v1.GetSettingsResponse.settings:type_name -> users.user.v1.UserSettings
-	17, // 11: users.user.v1.UpdateSettingsResponse.settings:type_name -> users.user.v1.UserSettings
-	46, // 12: users.user.v1.Device.created_at:type_name -> google.protobuf.Timestamp
-	46, // 13: users.user.v1.Device.last_used_at:type_name -> google.protobuf.Timestamp
-	22, // 14: users.user.v1.GetDevicesResponse.devices:type_name -> users.user.v1.Device
-	0,  // 15: users.user.v1.SetPlatformRolesRequest.roles:type_name -> users.user.v1.PlatformRole
-	0,  // 16: users.user.v1.GetPlatformRolesResponse.roles:type_name -> users.user.v1.PlatformRole
-	0,  // 17: users.user.v1.CheckPlatformRolesResponse.roles:type_name -> users.user.v1.PlatformRole
-	1,  // 18: users.user.v1.ListUsersResponse.users:type_name -> users.user.v1.User
-	0,  // 19: users.user.v1.PlatformMember.roles:type_name -> users.user.v1.PlatformRole
-	0,  // 20: users.user.v1.ListUsersByPlatformRolesRequest.roles:type_name -> users.user.v1.PlatformRole
-	43, // 21: users.user.v1.ListUsersByPlatformRolesResponse.members:type_name -> users.user.v1.PlatformMember
-	3,  // 22: users.user.v1.UserService.GetProfile:input_type -> users.user.v1.GetProfileRequest
-	5,  // 23: users.user.v1.UserService.UpdateProfile:input_type -> users.user.v1.UpdateProfileRequest
-	7,  // 24: users.user.v1.UserService.GetUserByID:input_type -> users.user.v1.GetUserByIDRequest
-	11, // 25: users.user.v1.UserService.GetUserByPhone:input_type -> users.user.v1.GetUserByPhoneRequest
-	13, // 26: users.user.v1.UserService.CreateUser:input_type -> users.user.v1.CreateUserRequest
-	9,  // 27: users.user.v1.UserService.GetUsersByIDs:input_type -> users.user.v1.GetUsersByIDsRequest
-	15, // 28: users.user.v1.UserService.FindOrCreateByPhone:input_type -> users.user.v1.FindOrCreateByPhoneRequest
-	18, // 29: users.user.v1.UserService.GetSettings:input_type -> users.user.v1.GetSettingsRequest
-	20, // 30: users.user.v1.UserService.UpdateSettings:input_type -> users.user.v1.UpdateSettingsRequest
-	23, // 31: users.user.v1.UserService.RegisterDevice:input_type -> users.user.v1.RegisterDeviceRequest
-	25, // 32: users.user.v1.UserService.UnregisterDevice:input_type -> users.user.v1.UnregisterDeviceRequest
-	27, // 33: users.user.v1.UserService.GetDevices:input_type -> users.user.v1.GetDevicesRequest
-	29, // 34: users.user.v1.UserService.DeleteAccount:input_type -> users.user.v1.DeleteAccountRequest
-	41, // 35: users.user.v1.UserService.ListUsers:input_type -> users.user.v1.ListUsersRequest
-	31, // 36: users.user.v1.UserService.SetPlatformRoles:input_type -> users.user.v1.SetPlatformRolesRequest
-	33, // 37: users.user.v1.UserService.GetPlatformRoles:input_type -> users.user.v1.GetPlatformRolesRequest
-	35, // 38: users.user.v1.UserService.CheckPlatformRoles:input_type -> users.user.v1.CheckPlatformRolesRequest
-	37, // 39: users.user.v1.UserService.SetPlatformOrgAccess:input_type -> users.user.v1.SetPlatformOrgAccessRequest
-	39, // 40: users.user.v1.UserService.GetPlatformOrgAccess:input_type -> users.user.v1.GetPlatformOrgAccessRequest
-	44, // 41: users.user.v1.UserService.ListUsersByPlatformRoles:input_type -> users.user.v1.ListUsersByPlatformRolesRequest
-	4,  // 42: users.user.v1.UserService.GetProfile:output_type -> users.user.v1.GetProfileResponse
-	6,  // 43: users.user.v1.UserService.UpdateProfile:output_type -> users.user.v1.UpdateProfileResponse
-	8,  // 44: users.user.v1.UserService.GetUserByID:output_type -> users.user.v1.GetUserByIDResponse
-	12, // 45: users.user.v1.UserService.GetUserByPhone:output_type -> users.user.v1.GetUserByPhoneResponse
-	14, // 46: users.user.v1.UserService.CreateUser:output_type -> users.user.v1.CreateUserResponse
-	10, // 47: users.user.v1.UserService.GetUsersByIDs:output_type -> users.user.v1.GetUsersByIDsResponse
-	16, // 48: users.user.v1.UserService.FindOrCreateByPhone:output_type -> users.user.v1.FindOrCreateByPhoneResponse
-	19, // 49: users.user.v1.UserService.GetSettings:output_type -> users.user.v1.GetSettingsResponse
-	21, // 50: users.user.v1.UserService.UpdateSettings:output_type -> users.user.v1.UpdateSettingsResponse
-	24, // 51: users.user.v1.UserService.RegisterDevice:output_type -> users.user.v1.RegisterDeviceResponse
-	26, // 52: users.user.v1.UserService.UnregisterDevice:output_type -> users.user.v1.UnregisterDeviceResponse
-	28, // 53: users.user.v1.UserService.GetDevices:output_type -> users.user.v1.GetDevicesResponse
-	30, // 54: users.user.v1.UserService.DeleteAccount:output_type -> users.user.v1.DeleteAccountResponse
-	42, // 55: users.user.v1.UserService.ListUsers:output_type -> users.user.v1.ListUsersResponse
-	32, // 56: users.user.v1.UserService.SetPlatformRoles:output_type -> users.user.v1.SetPlatformRolesResponse
-	34, // 57: users.user.v1.UserService.GetPlatformRoles:output_type -> users.user.v1.GetPlatformRolesResponse
-	36, // 58: users.user.v1.UserService.CheckPlatformRoles:output_type -> users.user.v1.CheckPlatformRolesResponse
-	38, // 59: users.user.v1.UserService.SetPlatformOrgAccess:output_type -> users.user.v1.SetPlatformOrgAccessResponse
-	40, // 60: users.user.v1.UserService.GetPlatformOrgAccess:output_type -> users.user.v1.GetPlatformOrgAccessResponse
-	45, // 61: users.user.v1.UserService.ListUsersByPlatformRoles:output_type -> users.user.v1.ListUsersByPlatformRolesResponse
-	42, // [42:62] is the sub-list for method output_type
-	22, // [22:42] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	1,  // 7: users.user.v1.GetUsersByPhonesResponse.users:type_name -> users.user.v1.User
+	1,  // 8: users.user.v1.GetUserByPhoneResponse.user:type_name -> users.user.v1.User
+	1,  // 9: users.user.v1.CreateUserResponse.user:type_name -> users.user.v1.User
+	1,  // 10: users.user.v1.FindOrCreateByPhoneResponse.user:type_name -> users.user.v1.User
+	19, // 11: users.user.v1.GetSettingsResponse.settings:type_name -> users.user.v1.UserSettings
+	19, // 12: users.user.v1.UpdateSettingsResponse.settings:type_name -> users.user.v1.UserSettings
+	48, // 13: users.user.v1.Device.created_at:type_name -> google.protobuf.Timestamp
+	48, // 14: users.user.v1.Device.last_used_at:type_name -> google.protobuf.Timestamp
+	24, // 15: users.user.v1.GetDevicesResponse.devices:type_name -> users.user.v1.Device
+	0,  // 16: users.user.v1.SetPlatformRolesRequest.roles:type_name -> users.user.v1.PlatformRole
+	0,  // 17: users.user.v1.GetPlatformRolesResponse.roles:type_name -> users.user.v1.PlatformRole
+	0,  // 18: users.user.v1.CheckPlatformRolesResponse.roles:type_name -> users.user.v1.PlatformRole
+	1,  // 19: users.user.v1.ListUsersResponse.users:type_name -> users.user.v1.User
+	0,  // 20: users.user.v1.PlatformMember.roles:type_name -> users.user.v1.PlatformRole
+	0,  // 21: users.user.v1.ListUsersByPlatformRolesRequest.roles:type_name -> users.user.v1.PlatformRole
+	45, // 22: users.user.v1.ListUsersByPlatformRolesResponse.members:type_name -> users.user.v1.PlatformMember
+	3,  // 23: users.user.v1.UserService.GetProfile:input_type -> users.user.v1.GetProfileRequest
+	5,  // 24: users.user.v1.UserService.UpdateProfile:input_type -> users.user.v1.UpdateProfileRequest
+	7,  // 25: users.user.v1.UserService.GetUserByID:input_type -> users.user.v1.GetUserByIDRequest
+	13, // 26: users.user.v1.UserService.GetUserByPhone:input_type -> users.user.v1.GetUserByPhoneRequest
+	15, // 27: users.user.v1.UserService.CreateUser:input_type -> users.user.v1.CreateUserRequest
+	9,  // 28: users.user.v1.UserService.GetUsersByIDs:input_type -> users.user.v1.GetUsersByIDsRequest
+	11, // 29: users.user.v1.UserService.GetUsersByPhones:input_type -> users.user.v1.GetUsersByPhonesRequest
+	17, // 30: users.user.v1.UserService.FindOrCreateByPhone:input_type -> users.user.v1.FindOrCreateByPhoneRequest
+	20, // 31: users.user.v1.UserService.GetSettings:input_type -> users.user.v1.GetSettingsRequest
+	22, // 32: users.user.v1.UserService.UpdateSettings:input_type -> users.user.v1.UpdateSettingsRequest
+	25, // 33: users.user.v1.UserService.RegisterDevice:input_type -> users.user.v1.RegisterDeviceRequest
+	27, // 34: users.user.v1.UserService.UnregisterDevice:input_type -> users.user.v1.UnregisterDeviceRequest
+	29, // 35: users.user.v1.UserService.GetDevices:input_type -> users.user.v1.GetDevicesRequest
+	31, // 36: users.user.v1.UserService.DeleteAccount:input_type -> users.user.v1.DeleteAccountRequest
+	43, // 37: users.user.v1.UserService.ListUsers:input_type -> users.user.v1.ListUsersRequest
+	33, // 38: users.user.v1.UserService.SetPlatformRoles:input_type -> users.user.v1.SetPlatformRolesRequest
+	35, // 39: users.user.v1.UserService.GetPlatformRoles:input_type -> users.user.v1.GetPlatformRolesRequest
+	37, // 40: users.user.v1.UserService.CheckPlatformRoles:input_type -> users.user.v1.CheckPlatformRolesRequest
+	39, // 41: users.user.v1.UserService.SetPlatformOrgAccess:input_type -> users.user.v1.SetPlatformOrgAccessRequest
+	41, // 42: users.user.v1.UserService.GetPlatformOrgAccess:input_type -> users.user.v1.GetPlatformOrgAccessRequest
+	46, // 43: users.user.v1.UserService.ListUsersByPlatformRoles:input_type -> users.user.v1.ListUsersByPlatformRolesRequest
+	4,  // 44: users.user.v1.UserService.GetProfile:output_type -> users.user.v1.GetProfileResponse
+	6,  // 45: users.user.v1.UserService.UpdateProfile:output_type -> users.user.v1.UpdateProfileResponse
+	8,  // 46: users.user.v1.UserService.GetUserByID:output_type -> users.user.v1.GetUserByIDResponse
+	14, // 47: users.user.v1.UserService.GetUserByPhone:output_type -> users.user.v1.GetUserByPhoneResponse
+	16, // 48: users.user.v1.UserService.CreateUser:output_type -> users.user.v1.CreateUserResponse
+	10, // 49: users.user.v1.UserService.GetUsersByIDs:output_type -> users.user.v1.GetUsersByIDsResponse
+	12, // 50: users.user.v1.UserService.GetUsersByPhones:output_type -> users.user.v1.GetUsersByPhonesResponse
+	18, // 51: users.user.v1.UserService.FindOrCreateByPhone:output_type -> users.user.v1.FindOrCreateByPhoneResponse
+	21, // 52: users.user.v1.UserService.GetSettings:output_type -> users.user.v1.GetSettingsResponse
+	23, // 53: users.user.v1.UserService.UpdateSettings:output_type -> users.user.v1.UpdateSettingsResponse
+	26, // 54: users.user.v1.UserService.RegisterDevice:output_type -> users.user.v1.RegisterDeviceResponse
+	28, // 55: users.user.v1.UserService.UnregisterDevice:output_type -> users.user.v1.UnregisterDeviceResponse
+	30, // 56: users.user.v1.UserService.GetDevices:output_type -> users.user.v1.GetDevicesResponse
+	32, // 57: users.user.v1.UserService.DeleteAccount:output_type -> users.user.v1.DeleteAccountResponse
+	44, // 58: users.user.v1.UserService.ListUsers:output_type -> users.user.v1.ListUsersResponse
+	34, // 59: users.user.v1.UserService.SetPlatformRoles:output_type -> users.user.v1.SetPlatformRolesResponse
+	36, // 60: users.user.v1.UserService.GetPlatformRoles:output_type -> users.user.v1.GetPlatformRolesResponse
+	38, // 61: users.user.v1.UserService.CheckPlatformRoles:output_type -> users.user.v1.CheckPlatformRolesResponse
+	40, // 62: users.user.v1.UserService.SetPlatformOrgAccess:output_type -> users.user.v1.SetPlatformOrgAccessResponse
+	42, // 63: users.user.v1.UserService.GetPlatformOrgAccess:output_type -> users.user.v1.GetPlatformOrgAccessResponse
+	47, // 64: users.user.v1.UserService.ListUsersByPlatformRoles:output_type -> users.user.v1.ListUsersByPlatformRolesResponse
+	44, // [44:65] is the sub-list for method output_type
+	23, // [23:44] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_users_user_user_proto_init() }
@@ -2720,14 +2823,14 @@ func file_users_user_user_proto_init() {
 		return
 	}
 	file_users_user_user_proto_msgTypes[4].OneofWrappers = []any{}
-	file_users_user_user_proto_msgTypes[19].OneofWrappers = []any{}
+	file_users_user_user_proto_msgTypes[21].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_users_user_user_proto_rawDesc), len(file_users_user_user_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   45,
+			NumMessages:   47,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
