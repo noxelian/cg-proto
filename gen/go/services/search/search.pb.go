@@ -320,13 +320,15 @@ type RequestDocument struct {
 	Note   string   `protobuf:"bytes,12,opt,name=note,proto3" json:"note,omitempty"`
 	Photos []string `protobuf:"bytes,13,rep,name=photos,proto3" json:"photos,omitempty"`
 	// Location
-	CityId        int64                  `protobuf:"varint,14,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
-	CityName      string                 `protobuf:"bytes,15,opt,name=city_name,json=cityName,proto3" json:"city_name,omitempty"`
-	Address       string                 `protobuf:"bytes,16,opt,name=address,proto3" json:"address,omitempty"`
-	Latitude      float64                `protobuf:"fixed64,17,opt,name=latitude,proto3" json:"latitude,omitempty"`
-	Longitude     float64                `protobuf:"fixed64,18,opt,name=longitude,proto3" json:"longitude,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,19,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	PublishedAt   *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=published_at,json=publishedAt,proto3" json:"published_at,omitempty"`
+	CityId      int64                  `protobuf:"varint,14,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
+	CityName    string                 `protobuf:"bytes,15,opt,name=city_name,json=cityName,proto3" json:"city_name,omitempty"`
+	Address     string                 `protobuf:"bytes,16,opt,name=address,proto3" json:"address,omitempty"`
+	Latitude    float64                `protobuf:"fixed64,17,opt,name=latitude,proto3" json:"latitude,omitempty"`
+	Longitude   float64                `protobuf:"fixed64,18,opt,name=longitude,proto3" json:"longitude,omitempty"`
+	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,19,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	PublishedAt *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=published_at,json=publishedAt,proto3" json:"published_at,omitempty"`
+	// Denormalized user phone for admin search by phone number
+	UserPhone     string `protobuf:"bytes,21,opt,name=user_phone,json=userPhone,proto3" json:"user_phone,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -501,6 +503,13 @@ func (x *RequestDocument) GetPublishedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *RequestDocument) GetUserPhone() string {
+	if x != nil {
+		return x.UserPhone
+	}
+	return ""
+}
+
 // Facet bucket for aggregations
 type FacetBucket struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -641,18 +650,21 @@ func (x *Facets) GetCarMakes() []*FacetBucket {
 
 // Search
 type SearchRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Query         string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
-	Type          RequestType            `protobuf:"varint,2,opt,name=type,proto3,enum=services.search.v1.RequestType" json:"type,omitempty"`
-	GroupId       int64                  `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	CategoryId    int64                  `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
-	CityId        int64                  `protobuf:"varint,5,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
-	CarMakeId     int64                  `protobuf:"varint,6,opt,name=car_make_id,json=carMakeId,proto3" json:"car_make_id,omitempty"`
-	CarModelId    int64                  `protobuf:"varint,7,opt,name=car_model_id,json=carModelId,proto3" json:"car_model_id,omitempty"`
-	Year          int32                  `protobuf:"varint,8,opt,name=year,proto3" json:"year,omitempty"`
-	Page          int32                  `protobuf:"varint,9,opt,name=page,proto3" json:"page,omitempty"`
-	PageSize      int32                  `protobuf:"varint,10,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	SortBy        SortBy                 `protobuf:"varint,11,opt,name=sort_by,json=sortBy,proto3,enum=services.search.v1.SortBy" json:"sort_by,omitempty"`
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	Query      string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
+	Type       RequestType            `protobuf:"varint,2,opt,name=type,proto3,enum=services.search.v1.RequestType" json:"type,omitempty"`
+	GroupId    int64                  `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	CategoryId int64                  `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	CityId     int64                  `protobuf:"varint,5,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
+	CarMakeId  int64                  `protobuf:"varint,6,opt,name=car_make_id,json=carMakeId,proto3" json:"car_make_id,omitempty"`
+	CarModelId int64                  `protobuf:"varint,7,opt,name=car_model_id,json=carModelId,proto3" json:"car_model_id,omitempty"`
+	Year       int32                  `protobuf:"varint,8,opt,name=year,proto3" json:"year,omitempty"`
+	Page       int32                  `protobuf:"varint,9,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize   int32                  `protobuf:"varint,10,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	SortBy     SortBy                 `protobuf:"varint,11,opt,name=sort_by,json=sortBy,proto3,enum=services.search.v1.SortBy" json:"sort_by,omitempty"`
+	// Optional status filter. When unspecified, all statuses are returned
+	// (admin use case). When set, only that status is returned.
+	Status        RequestStatus `protobuf:"varint,12,opt,name=status,proto3,enum=services.search.v1.RequestStatus" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -762,6 +774,13 @@ func (x *SearchRequest) GetSortBy() SortBy {
 		return x.SortBy
 	}
 	return SortBy_SORT_BY_UNSPECIFIED
+}
+
+func (x *SearchRequest) GetStatus() RequestStatus {
+	if x != nil {
+		return x.Status
+	}
+	return RequestStatus_REQUEST_STATUS_UNSPECIFIED
 }
 
 type SearchResponse struct {
@@ -1730,7 +1749,7 @@ var File_services_search_search_proto protoreflect.FileDescriptor
 
 const file_services_search_search_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservices/search/search.proto\x12\x12services.search.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb8\x05\n" +
+	"\x1cservices/search/search.proto\x12\x12services.search.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd7\x05\n" +
 	"\x0fRequestDocument\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x123\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x1f.services.search.v1.RequestTypeR\x04type\x129\n" +
@@ -1754,7 +1773,9 @@ const file_services_search_search_proto_rawDesc = "" +
 	"\tlongitude\x18\x12 \x01(\x01R\tlongitude\x129\n" +
 	"\n" +
 	"created_at\x18\x13 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12=\n" +
-	"\fpublished_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\vpublishedAt\"I\n" +
+	"\fpublished_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\vpublishedAt\x12\x1d\n" +
+	"\n" +
+	"user_phone\x18\x15 \x01(\tR\tuserPhone\"I\n" +
 	"\vFacetBucket\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
@@ -1766,7 +1787,7 @@ const file_services_search_search_proto_rawDesc = "" +
 	"categories\x18\x03 \x03(\v2\x1f.services.search.v1.FacetBucketR\n" +
 	"categories\x127\n" +
 	"\x06cities\x18\x04 \x03(\v2\x1f.services.search.v1.FacetBucketR\x06cities\x12<\n" +
-	"\tcar_makes\x18\x05 \x03(\v2\x1f.services.search.v1.FacetBucketR\bcarMakes\"\xeb\x02\n" +
+	"\tcar_makes\x18\x05 \x03(\v2\x1f.services.search.v1.FacetBucketR\bcarMakes\"\xa6\x03\n" +
 	"\rSearchRequest\x12\x14\n" +
 	"\x05query\x18\x01 \x01(\tR\x05query\x123\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x1f.services.search.v1.RequestTypeR\x04type\x12\x19\n" +
@@ -1781,7 +1802,8 @@ const file_services_search_search_proto_rawDesc = "" +
 	"\x04page\x18\t \x01(\x05R\x04page\x12\x1b\n" +
 	"\tpage_size\x18\n" +
 	" \x01(\x05R\bpageSize\x123\n" +
-	"\asort_by\x18\v \x01(\x0e2\x1a.services.search.v1.SortByR\x06sortBy\"\x9b\x01\n" +
+	"\asort_by\x18\v \x01(\x0e2\x1a.services.search.v1.SortByR\x06sortBy\x129\n" +
+	"\x06status\x18\f \x01(\x0e2!.services.search.v1.RequestStatusR\x06status\"\x9b\x01\n" +
 	"\x0eSearchResponse\x12?\n" +
 	"\brequests\x18\x01 \x03(\v2#.services.search.v1.RequestDocumentR\brequests\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\x122\n" +
@@ -1948,37 +1970,38 @@ var file_services_search_search_proto_depIdxs = []int32{
 	6,  // 8: services.search.v1.Facets.car_makes:type_name -> services.search.v1.FacetBucket
 	0,  // 9: services.search.v1.SearchRequest.type:type_name -> services.search.v1.RequestType
 	2,  // 10: services.search.v1.SearchRequest.sort_by:type_name -> services.search.v1.SortBy
-	5,  // 11: services.search.v1.SearchResponse.requests:type_name -> services.search.v1.RequestDocument
-	7,  // 12: services.search.v1.SearchResponse.facets:type_name -> services.search.v1.Facets
-	5,  // 13: services.search.v1.SimilarResponse.requests:type_name -> services.search.v1.RequestDocument
-	5,  // 14: services.search.v1.IndexRequestRequest.request:type_name -> services.search.v1.RequestDocument
-	3,  // 15: services.search.v1.OrganizationDocument.type:type_name -> services.search.v1.OrganizationType
-	3,  // 16: services.search.v1.SearchOrganizationsRequest.type:type_name -> services.search.v1.OrganizationType
-	4,  // 17: services.search.v1.SearchOrganizationsRequest.sort_by:type_name -> services.search.v1.OrganizationSortBy
-	20, // 18: services.search.v1.SearchOrganizationsResponse.organizations:type_name -> services.search.v1.OrganizationDocument
-	23, // 19: services.search.v1.SearchOrganizationsResponse.facets:type_name -> services.search.v1.OrganizationFacets
-	6,  // 20: services.search.v1.OrganizationFacets.types:type_name -> services.search.v1.FacetBucket
-	6,  // 21: services.search.v1.OrganizationFacets.cities:type_name -> services.search.v1.FacetBucket
-	6,  // 22: services.search.v1.OrganizationFacets.categories:type_name -> services.search.v1.FacetBucket
-	8,  // 23: services.search.v1.SearchService.Search:input_type -> services.search.v1.SearchRequest
-	21, // 24: services.search.v1.SearchService.SearchOrganizations:input_type -> services.search.v1.SearchOrganizationsRequest
-	10, // 25: services.search.v1.SearchService.Suggest:input_type -> services.search.v1.SuggestRequest
-	12, // 26: services.search.v1.SearchService.Similar:input_type -> services.search.v1.SimilarRequest
-	14, // 27: services.search.v1.SearchService.Reindex:input_type -> services.search.v1.ReindexRequest
-	16, // 28: services.search.v1.SearchService.IndexRequest:input_type -> services.search.v1.IndexRequestRequest
-	18, // 29: services.search.v1.SearchService.DeleteFromIndex:input_type -> services.search.v1.DeleteFromIndexRequest
-	9,  // 30: services.search.v1.SearchService.Search:output_type -> services.search.v1.SearchResponse
-	22, // 31: services.search.v1.SearchService.SearchOrganizations:output_type -> services.search.v1.SearchOrganizationsResponse
-	11, // 32: services.search.v1.SearchService.Suggest:output_type -> services.search.v1.SuggestResponse
-	13, // 33: services.search.v1.SearchService.Similar:output_type -> services.search.v1.SimilarResponse
-	15, // 34: services.search.v1.SearchService.Reindex:output_type -> services.search.v1.ReindexResponse
-	17, // 35: services.search.v1.SearchService.IndexRequest:output_type -> services.search.v1.IndexRequestResponse
-	19, // 36: services.search.v1.SearchService.DeleteFromIndex:output_type -> services.search.v1.DeleteFromIndexResponse
-	30, // [30:37] is the sub-list for method output_type
-	23, // [23:30] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	1,  // 11: services.search.v1.SearchRequest.status:type_name -> services.search.v1.RequestStatus
+	5,  // 12: services.search.v1.SearchResponse.requests:type_name -> services.search.v1.RequestDocument
+	7,  // 13: services.search.v1.SearchResponse.facets:type_name -> services.search.v1.Facets
+	5,  // 14: services.search.v1.SimilarResponse.requests:type_name -> services.search.v1.RequestDocument
+	5,  // 15: services.search.v1.IndexRequestRequest.request:type_name -> services.search.v1.RequestDocument
+	3,  // 16: services.search.v1.OrganizationDocument.type:type_name -> services.search.v1.OrganizationType
+	3,  // 17: services.search.v1.SearchOrganizationsRequest.type:type_name -> services.search.v1.OrganizationType
+	4,  // 18: services.search.v1.SearchOrganizationsRequest.sort_by:type_name -> services.search.v1.OrganizationSortBy
+	20, // 19: services.search.v1.SearchOrganizationsResponse.organizations:type_name -> services.search.v1.OrganizationDocument
+	23, // 20: services.search.v1.SearchOrganizationsResponse.facets:type_name -> services.search.v1.OrganizationFacets
+	6,  // 21: services.search.v1.OrganizationFacets.types:type_name -> services.search.v1.FacetBucket
+	6,  // 22: services.search.v1.OrganizationFacets.cities:type_name -> services.search.v1.FacetBucket
+	6,  // 23: services.search.v1.OrganizationFacets.categories:type_name -> services.search.v1.FacetBucket
+	8,  // 24: services.search.v1.SearchService.Search:input_type -> services.search.v1.SearchRequest
+	21, // 25: services.search.v1.SearchService.SearchOrganizations:input_type -> services.search.v1.SearchOrganizationsRequest
+	10, // 26: services.search.v1.SearchService.Suggest:input_type -> services.search.v1.SuggestRequest
+	12, // 27: services.search.v1.SearchService.Similar:input_type -> services.search.v1.SimilarRequest
+	14, // 28: services.search.v1.SearchService.Reindex:input_type -> services.search.v1.ReindexRequest
+	16, // 29: services.search.v1.SearchService.IndexRequest:input_type -> services.search.v1.IndexRequestRequest
+	18, // 30: services.search.v1.SearchService.DeleteFromIndex:input_type -> services.search.v1.DeleteFromIndexRequest
+	9,  // 31: services.search.v1.SearchService.Search:output_type -> services.search.v1.SearchResponse
+	22, // 32: services.search.v1.SearchService.SearchOrganizations:output_type -> services.search.v1.SearchOrganizationsResponse
+	11, // 33: services.search.v1.SearchService.Suggest:output_type -> services.search.v1.SuggestResponse
+	13, // 34: services.search.v1.SearchService.Similar:output_type -> services.search.v1.SimilarResponse
+	15, // 35: services.search.v1.SearchService.Reindex:output_type -> services.search.v1.ReindexResponse
+	17, // 36: services.search.v1.SearchService.IndexRequest:output_type -> services.search.v1.IndexRequestResponse
+	19, // 37: services.search.v1.SearchService.DeleteFromIndex:output_type -> services.search.v1.DeleteFromIndexResponse
+	31, // [31:38] is the sub-list for method output_type
+	24, // [24:31] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_services_search_search_proto_init() }

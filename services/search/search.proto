@@ -80,6 +80,9 @@ message RequestDocument {
   
   google.protobuf.Timestamp created_at = 19;
   google.protobuf.Timestamp published_at = 20;
+
+  // Denormalized user phone for admin search by phone number
+  string user_phone = 21;
 }
 
 // Facet bucket for aggregations
@@ -111,6 +114,10 @@ message SearchRequest {
   int32 page = 9;
   int32 page_size = 10;
   SortBy sort_by = 11;
+
+  // Optional status filter. When unspecified, all statuses are returned
+  // (admin use case). When set, only that status is returned.
+  RequestStatus status = 12;
 }
 
 message SearchResponse {
