@@ -302,11 +302,13 @@ func (OrganizationSortBy) EnumDescriptor() ([]byte, []int) {
 
 // Request document for search results
 type RequestDocument struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	Id     int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Type   RequestType            `protobuf:"varint,2,opt,name=type,proto3,enum=services.search.v1.RequestType" json:"type,omitempty"`
-	Status RequestStatus          `protobuf:"varint,3,opt,name=status,proto3,enum=services.search.v1.RequestStatus" json:"status,omitempty"`
-	UserId int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// UUID string — matches the primary key in the requests table. Was int64
+	// historically, which broke reindex after the UUID migration.
+	Id     string        `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Type   RequestType   `protobuf:"varint,2,opt,name=type,proto3,enum=services.search.v1.RequestType" json:"type,omitempty"`
+	Status RequestStatus `protobuf:"varint,3,opt,name=status,proto3,enum=services.search.v1.RequestStatus" json:"status,omitempty"`
+	UserId int64         `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// NSI references
 	GroupId     int64   `protobuf:"varint,5,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
 	CategoryIds []int64 `protobuf:"varint,6,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
@@ -363,11 +365,11 @@ func (*RequestDocument) Descriptor() ([]byte, []int) {
 	return file_services_search_search_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *RequestDocument) GetId() int64 {
+func (x *RequestDocument) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *RequestDocument) GetType() RequestType {
@@ -943,7 +945,7 @@ func (x *SuggestResponse) GetSuggestions() []string {
 // Similar requests
 type SimilarRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RequestId     int64                  `protobuf:"varint,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -979,11 +981,11 @@ func (*SimilarRequest) Descriptor() ([]byte, []int) {
 	return file_services_search_search_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *SimilarRequest) GetRequestId() int64 {
+func (x *SimilarRequest) GetRequestId() string {
 	if x != nil {
 		return x.RequestId
 	}
-	return 0
+	return ""
 }
 
 func (x *SimilarRequest) GetLimit() int32 {
@@ -1234,7 +1236,7 @@ func (x *IndexRequestResponse) GetSuccess() bool {
 // DeleteFromIndex (internal)
 type DeleteFromIndexRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RequestId     int64                  `protobuf:"varint,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1269,11 +1271,11 @@ func (*DeleteFromIndexRequest) Descriptor() ([]byte, []int) {
 	return file_services_search_search_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *DeleteFromIndexRequest) GetRequestId() int64 {
+func (x *DeleteFromIndexRequest) GetRequestId() string {
 	if x != nil {
 		return x.RequestId
 	}
-	return 0
+	return ""
 }
 
 type DeleteFromIndexResponse struct {
@@ -1751,7 +1753,7 @@ const file_services_search_search_proto_rawDesc = "" +
 	"\n" +
 	"\x1cservices/search/search.proto\x12\x12services.search.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd7\x05\n" +
 	"\x0fRequestDocument\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x123\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x123\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x1f.services.search.v1.RequestTypeR\x04type\x129\n" +
 	"\x06status\x18\x03 \x01(\x0e2!.services.search.v1.RequestStatusR\x06status\x12\x17\n" +
 	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x19\n" +
@@ -1815,7 +1817,7 @@ const file_services_search_search_proto_rawDesc = "" +
 	"\vsuggestions\x18\x01 \x03(\tR\vsuggestions\"E\n" +
 	"\x0eSimilarRequest\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\x03R\trequestId\x12\x14\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\"R\n" +
 	"\x0fSimilarResponse\x12?\n" +
 	"\brequests\x18\x01 \x03(\v2#.services.search.v1.RequestDocumentR\brequests\"$\n" +
@@ -1832,7 +1834,7 @@ const file_services_search_search_proto_rawDesc = "" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"7\n" +
 	"\x16DeleteFromIndexRequest\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\x03R\trequestId\"3\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\"3\n" +
 	"\x17DeleteFromIndexResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x8f\x04\n" +
 	"\x14OrganizationDocument\x12\x0e\n" +
