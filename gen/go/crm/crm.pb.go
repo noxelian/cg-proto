@@ -299,18 +299,30 @@ func (x *Pipeline) GetStages() []*Stage {
 }
 
 type Stage struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	PipelineId    string                 `protobuf:"bytes,2,opt,name=pipeline_id,json=pipelineId,proto3" json:"pipeline_id,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Color         string                 `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
-	Position      int32                  `protobuf:"varint,5,opt,name=position,proto3" json:"position,omitempty"`
-	IsTerminal    bool                   `protobuf:"varint,6,opt,name=is_terminal,json=isTerminal,proto3" json:"is_terminal,omitempty"`
-	TerminalType  string                 `protobuf:"bytes,7,opt,name=terminal_type,json=terminalType,proto3" json:"terminal_type,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Id           string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	PipelineId   string                 `protobuf:"bytes,2,opt,name=pipeline_id,json=pipelineId,proto3" json:"pipeline_id,omitempty"`
+	Name         string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Color        string                 `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
+	Position     int32                  `protobuf:"varint,5,opt,name=position,proto3" json:"position,omitempty"`
+	IsTerminal   bool                   `protobuf:"varint,6,opt,name=is_terminal,json=isTerminal,proto3" json:"is_terminal,omitempty"`
+	TerminalType string                 `protobuf:"bytes,7,opt,name=terminal_type,json=terminalType,proto3" json:"terminal_type,omitempty"`
+	CreatedAt    *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt    *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// Exit-requirement flags — evaluated on MoveDealStage (any move) and
+	// CloseDeal when closing as "won". Lost transitions skip these.
+	// Semantics on the deal:
+	//
+	//	requires_vehicle  -> deal.vehicle_id != null
+	//	requires_task     -> at least one task linked to deal (any status)
+	//	requires_user     -> deal.user_id != null (client linked)
+	//	requires_assignee -> deal.assigned_to != null (manager set)
+	RequiresVehicle  bool `protobuf:"varint,10,opt,name=requires_vehicle,json=requiresVehicle,proto3" json:"requires_vehicle,omitempty"`
+	RequiresTask     bool `protobuf:"varint,11,opt,name=requires_task,json=requiresTask,proto3" json:"requires_task,omitempty"`
+	RequiresUser     bool `protobuf:"varint,12,opt,name=requires_user,json=requiresUser,proto3" json:"requires_user,omitempty"`
+	RequiresAssignee bool `protobuf:"varint,13,opt,name=requires_assignee,json=requiresAssignee,proto3" json:"requires_assignee,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *Stage) Reset() {
@@ -404,6 +416,34 @@ func (x *Stage) GetUpdatedAt() *timestamppb.Timestamp {
 		return x.UpdatedAt
 	}
 	return nil
+}
+
+func (x *Stage) GetRequiresVehicle() bool {
+	if x != nil {
+		return x.RequiresVehicle
+	}
+	return false
+}
+
+func (x *Stage) GetRequiresTask() bool {
+	if x != nil {
+		return x.RequiresTask
+	}
+	return false
+}
+
+func (x *Stage) GetRequiresUser() bool {
+	if x != nil {
+		return x.RequiresUser
+	}
+	return false
+}
+
+func (x *Stage) GetRequiresAssignee() bool {
+	if x != nil {
+		return x.RequiresAssignee
+	}
+	return false
 }
 
 type CreatePipelineRequest struct {
@@ -910,8 +950,13 @@ type CreateStageRequest struct {
 	Color          string                 `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
 	IsTerminal     bool                   `protobuf:"varint,5,opt,name=is_terminal,json=isTerminal,proto3" json:"is_terminal,omitempty"`
 	TerminalType   string                 `protobuf:"bytes,6,opt,name=terminal_type,json=terminalType,proto3" json:"terminal_type,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Exit-requirement flags (see Stage for semantics). Optional.
+	RequiresVehicle  bool `protobuf:"varint,7,opt,name=requires_vehicle,json=requiresVehicle,proto3" json:"requires_vehicle,omitempty"`
+	RequiresTask     bool `protobuf:"varint,8,opt,name=requires_task,json=requiresTask,proto3" json:"requires_task,omitempty"`
+	RequiresUser     bool `protobuf:"varint,9,opt,name=requires_user,json=requiresUser,proto3" json:"requires_user,omitempty"`
+	RequiresAssignee bool `protobuf:"varint,10,opt,name=requires_assignee,json=requiresAssignee,proto3" json:"requires_assignee,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *CreateStageRequest) Reset() {
@@ -986,6 +1031,34 @@ func (x *CreateStageRequest) GetTerminalType() string {
 	return ""
 }
 
+func (x *CreateStageRequest) GetRequiresVehicle() bool {
+	if x != nil {
+		return x.RequiresVehicle
+	}
+	return false
+}
+
+func (x *CreateStageRequest) GetRequiresTask() bool {
+	if x != nil {
+		return x.RequiresTask
+	}
+	return false
+}
+
+func (x *CreateStageRequest) GetRequiresUser() bool {
+	if x != nil {
+		return x.RequiresUser
+	}
+	return false
+}
+
+func (x *CreateStageRequest) GetRequiresAssignee() bool {
+	if x != nil {
+		return x.RequiresAssignee
+	}
+	return false
+}
+
 type CreateStageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Stage         *Stage                 `protobuf:"bytes,1,opt,name=stage,proto3" json:"stage,omitempty"`
@@ -1038,8 +1111,13 @@ type UpdateStageRequest struct {
 	Color          string                 `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
 	IsTerminal     bool                   `protobuf:"varint,5,opt,name=is_terminal,json=isTerminal,proto3" json:"is_terminal,omitempty"`
 	TerminalType   string                 `protobuf:"bytes,6,opt,name=terminal_type,json=terminalType,proto3" json:"terminal_type,omitempty"` // "won" or "lost" when is_terminal=true, "" otherwise
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Exit-requirement flags (see Stage for semantics). Optional.
+	RequiresVehicle  bool `protobuf:"varint,7,opt,name=requires_vehicle,json=requiresVehicle,proto3" json:"requires_vehicle,omitempty"`
+	RequiresTask     bool `protobuf:"varint,8,opt,name=requires_task,json=requiresTask,proto3" json:"requires_task,omitempty"`
+	RequiresUser     bool `protobuf:"varint,9,opt,name=requires_user,json=requiresUser,proto3" json:"requires_user,omitempty"`
+	RequiresAssignee bool `protobuf:"varint,10,opt,name=requires_assignee,json=requiresAssignee,proto3" json:"requires_assignee,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *UpdateStageRequest) Reset() {
@@ -1112,6 +1190,34 @@ func (x *UpdateStageRequest) GetTerminalType() string {
 		return x.TerminalType
 	}
 	return ""
+}
+
+func (x *UpdateStageRequest) GetRequiresVehicle() bool {
+	if x != nil {
+		return x.RequiresVehicle
+	}
+	return false
+}
+
+func (x *UpdateStageRequest) GetRequiresTask() bool {
+	if x != nil {
+		return x.RequiresTask
+	}
+	return false
+}
+
+func (x *UpdateStageRequest) GetRequiresUser() bool {
+	if x != nil {
+		return x.RequiresUser
+	}
+	return false
+}
+
+func (x *UpdateStageRequest) GetRequiresAssignee() bool {
+	if x != nil {
+		return x.RequiresAssignee
+	}
+	return false
 }
 
 type UpdateStageResponse struct {
@@ -6756,14 +6862,22 @@ type CustomFieldDefinitionProto struct {
 	EntityType     string                 `protobuf:"bytes,3,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"` // "deal" or "contact"
 	Name           string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
 	FieldKey       string                 `protobuf:"bytes,5,opt,name=field_key,json=fieldKey,proto3" json:"field_key,omitempty"`
-	FieldType      string                 `protobuf:"bytes,6,opt,name=field_type,json=fieldType,proto3" json:"field_type,omitempty"` // "text", "number", "date", "select", "checkbox"
-	Options        []*FieldOptionProto    `protobuf:"bytes,7,rep,name=options,proto3" json:"options,omitempty"`
-	IsRequired     bool                   `protobuf:"varint,8,opt,name=is_required,json=isRequired,proto3" json:"is_required,omitempty"`
-	Position       int32                  `protobuf:"varint,9,opt,name=position,proto3" json:"position,omitempty"`
-	CreatedAt      string                 `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"` // RFC3339
-	UpdatedAt      string                 `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"` // RFC3339
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// field_type values: "text", "textarea", "number", "date", "datetime",
+	// "select", "checkbox", "url". Validated app-side (no DB CHECK).
+	FieldType  string              `protobuf:"bytes,6,opt,name=field_type,json=fieldType,proto3" json:"field_type,omitempty"`
+	Options    []*FieldOptionProto `protobuf:"bytes,7,rep,name=options,proto3" json:"options,omitempty"`
+	IsRequired bool                `protobuf:"varint,8,opt,name=is_required,json=isRequired,proto3" json:"is_required,omitempty"`
+	Position   int32               `protobuf:"varint,9,opt,name=position,proto3" json:"position,omitempty"`
+	CreatedAt  string              `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"` // RFC3339
+	UpdatedAt  string              `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"` // RFC3339
+	// Empty when the definition is org-wide (applies to every deal in the
+	// org). Non-empty when scoped to a specific pipeline stage — the UI
+	// renders it only on deals currently in that stage and, if
+	// is_required=true, the server blocks MoveDealStage out of that stage
+	// until deal.custom_fields[field_key] is non-empty.
+	StageId       string `protobuf:"bytes,12,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CustomFieldDefinitionProto) Reset() {
@@ -6873,6 +6987,13 @@ func (x *CustomFieldDefinitionProto) GetUpdatedAt() string {
 	return ""
 }
 
+func (x *CustomFieldDefinitionProto) GetStageId() string {
+	if x != nil {
+		return x.StageId
+	}
+	return ""
+}
+
 type CreateCustomFieldDefinitionRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
@@ -6883,8 +7004,11 @@ type CreateCustomFieldDefinitionRequest struct {
 	Options        []*FieldOptionProto    `protobuf:"bytes,6,rep,name=options,proto3" json:"options,omitempty"`
 	IsRequired     bool                   `protobuf:"varint,7,opt,name=is_required,json=isRequired,proto3" json:"is_required,omitempty"`
 	Position       int32                  `protobuf:"varint,8,opt,name=position,proto3" json:"position,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Optional stage scope. When empty the field is org-wide; when set
+	// the field lives on that stage only (see CustomFieldDefinitionProto).
+	StageId       string `protobuf:"bytes,9,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateCustomFieldDefinitionRequest) Reset() {
@@ -6971,6 +7095,13 @@ func (x *CreateCustomFieldDefinitionRequest) GetPosition() int32 {
 		return x.Position
 	}
 	return 0
+}
+
+func (x *CreateCustomFieldDefinitionRequest) GetStageId() string {
+	if x != nil {
+		return x.StageId
+	}
+	return ""
 }
 
 type CreateCustomFieldDefinitionResponse struct {
@@ -7219,8 +7350,12 @@ type UpdateCustomFieldDefinitionRequest struct {
 	Options        []*FieldOptionProto    `protobuf:"bytes,6,rep,name=options,proto3" json:"options,omitempty"`
 	IsRequired     bool                   `protobuf:"varint,7,opt,name=is_required,json=isRequired,proto3" json:"is_required,omitempty"`
 	Position       int32                  `protobuf:"varint,8,opt,name=position,proto3" json:"position,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Optional stage scope (empty = org-wide). Changing this effectively
+	// re-scopes the field — use with care on definitions that already
+	// have values recorded on deals.
+	StageId       string `protobuf:"bytes,9,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateCustomFieldDefinitionRequest) Reset() {
@@ -7307,6 +7442,13 @@ func (x *UpdateCustomFieldDefinitionRequest) GetPosition() int32 {
 		return x.Position
 	}
 	return 0
+}
+
+func (x *UpdateCustomFieldDefinitionRequest) GetStageId() string {
+	if x != nil {
+		return x.StageId
+	}
+	return ""
 }
 
 type UpdateCustomFieldDefinitionResponse struct {
@@ -14644,7 +14786,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12%\n" +
 	"\x06stages\x18\n" +
-	" \x03(\v2\r.crm.v1.StageR\x06stages\"\xba\x02\n" +
+	" \x03(\v2\r.crm.v1.StageR\x06stages\"\xdc\x03\n" +
 	"\x05Stage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -14658,7 +14800,12 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"v\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12)\n" +
+	"\x10requires_vehicle\x18\n" +
+	" \x01(\bR\x0frequiresVehicle\x12#\n" +
+	"\rrequires_task\x18\v \x01(\bR\frequiresTask\x12#\n" +
+	"\rrequires_user\x18\f \x01(\bR\frequiresUser\x12+\n" +
+	"\x11requires_assignee\x18\r \x01(\bR\x10requiresAssignee\"v\n" +
 	"\x15CreatePipelineRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -14685,7 +14832,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x16ArchivePipelineRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"\x19\n" +
-	"\x17ArchivePipelineResponse\"\xce\x01\n" +
+	"\x17ArchivePipelineResponse\"\xf0\x02\n" +
 	"\x12CreateStageRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -14694,9 +14841,14 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x05color\x18\x04 \x01(\tR\x05color\x12\x1f\n" +
 	"\vis_terminal\x18\x05 \x01(\bR\n" +
 	"isTerminal\x12#\n" +
-	"\rterminal_type\x18\x06 \x01(\tR\fterminalType\":\n" +
+	"\rterminal_type\x18\x06 \x01(\tR\fterminalType\x12)\n" +
+	"\x10requires_vehicle\x18\a \x01(\bR\x0frequiresVehicle\x12#\n" +
+	"\rrequires_task\x18\b \x01(\bR\frequiresTask\x12#\n" +
+	"\rrequires_user\x18\t \x01(\bR\frequiresUser\x12+\n" +
+	"\x11requires_assignee\x18\n" +
+	" \x01(\bR\x10requiresAssignee\":\n" +
 	"\x13CreateStageResponse\x12#\n" +
-	"\x05stage\x18\x01 \x01(\v2\r.crm.v1.StageR\x05stage\"\xbd\x01\n" +
+	"\x05stage\x18\x01 \x01(\v2\r.crm.v1.StageR\x05stage\"\xdf\x02\n" +
 	"\x12UpdateStageRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x12\n" +
@@ -14704,7 +14856,12 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x05color\x18\x04 \x01(\tR\x05color\x12\x1f\n" +
 	"\vis_terminal\x18\x05 \x01(\bR\n" +
 	"isTerminal\x12#\n" +
-	"\rterminal_type\x18\x06 \x01(\tR\fterminalType\":\n" +
+	"\rterminal_type\x18\x06 \x01(\tR\fterminalType\x12)\n" +
+	"\x10requires_vehicle\x18\a \x01(\bR\x0frequiresVehicle\x12#\n" +
+	"\rrequires_task\x18\b \x01(\bR\frequiresTask\x12#\n" +
+	"\rrequires_user\x18\t \x01(\bR\frequiresUser\x12+\n" +
+	"\x11requires_assignee\x18\n" +
+	" \x01(\bR\x10requiresAssignee\":\n" +
 	"\x13UpdateStageResponse\x12#\n" +
 	"\x05stage\x18\x01 \x01(\v2\r.crm.v1.StageR\x05stage\"n\n" +
 	"\x12DeleteStageRequest\x12'\n" +
@@ -15188,7 +15345,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x04task\x18\x01 \x01(\v2\x11.crm.v1.TaskProtoR\x04task\">\n" +
 	"\x10FieldOptionProto\x12\x14\n" +
 	"\x05value\x18\x01 \x01(\tR\x05value\x12\x14\n" +
-	"\x05label\x18\x02 \x01(\tR\x05label\"\xf5\x02\n" +
+	"\x05label\x18\x02 \x01(\tR\x05label\"\x90\x03\n" +
 	"\x1aCustomFieldDefinitionProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x1f\n" +
@@ -15206,7 +15363,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"created_at\x18\n" +
 	" \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\tR\tupdatedAt\"\xaf\x02\n" +
+	"updated_at\x18\v \x01(\tR\tupdatedAt\x12\x19\n" +
+	"\bstage_id\x18\f \x01(\tR\astageId\"\xca\x02\n" +
 	"\"CreateCustomFieldDefinitionRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\ventity_type\x18\x02 \x01(\tR\n" +
@@ -15218,7 +15376,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\aoptions\x18\x06 \x03(\v2\x18.crm.v1.FieldOptionProtoR\aoptions\x12\x1f\n" +
 	"\vis_required\x18\a \x01(\bR\n" +
 	"isRequired\x12\x1a\n" +
-	"\bposition\x18\b \x01(\x05R\bposition\"i\n" +
+	"\bposition\x18\b \x01(\x05R\bposition\x12\x19\n" +
+	"\bstage_id\x18\t \x01(\tR\astageId\"i\n" +
 	"#CreateCustomFieldDefinitionResponse\x12B\n" +
 	"\n" +
 	"definition\x18\x01 \x01(\v2\".crm.v1.CustomFieldDefinitionProtoR\n" +
@@ -15235,7 +15394,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\ventity_type\x18\x02 \x01(\tR\n" +
 	"entityType\"j\n" +
 	"\"ListCustomFieldDefinitionsResponse\x12D\n" +
-	"\vdefinitions\x18\x01 \x03(\v2\".crm.v1.CustomFieldDefinitionProtoR\vdefinitions\"\x9e\x02\n" +
+	"\vdefinitions\x18\x01 \x03(\v2\".crm.v1.CustomFieldDefinitionProtoR\vdefinitions\"\xb9\x02\n" +
 	"\"UpdateCustomFieldDefinitionRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x12\n" +
@@ -15246,7 +15405,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\aoptions\x18\x06 \x03(\v2\x18.crm.v1.FieldOptionProtoR\aoptions\x12\x1f\n" +
 	"\vis_required\x18\a \x01(\bR\n" +
 	"isRequired\x12\x1a\n" +
-	"\bposition\x18\b \x01(\x05R\bposition\"i\n" +
+	"\bposition\x18\b \x01(\x05R\bposition\x12\x19\n" +
+	"\bstage_id\x18\t \x01(\tR\astageId\"i\n" +
 	"#UpdateCustomFieldDefinitionResponse\x12B\n" +
 	"\n" +
 	"definition\x18\x01 \x01(\v2\".crm.v1.CustomFieldDefinitionProtoR\n" +
