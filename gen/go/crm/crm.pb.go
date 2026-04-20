@@ -3158,6 +3158,13 @@ type DealProto struct {
 	// ListDeals and GetDeal for kanban/deal-detail visual alerting. Stays
 	// true until the manager places/answers a subsequent call on the deal.
 	HasMissedCall bool `protobuf:"varint,26,opt,name=has_missed_call,json=hasMissedCall,proto3" json:"has_missed_call,omitempty"`
+	// External-source link. Populated when the deal was created by an
+	// external system (admin panel, partner website) via the service-key
+	// /external/deals API. (source, external_id) is idempotent per
+	// organization; external_url is the deep-link back to the source
+	// record for the "Open in source system" UI action. Empty otherwise.
+	ExternalId    string `protobuf:"bytes,27,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
+	ExternalUrl   string `protobuf:"bytes,28,opt,name=external_url,json=externalUrl,proto3" json:"external_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3365,6 +3372,20 @@ func (x *DealProto) GetHasMissedCall() bool {
 		return x.HasMissedCall
 	}
 	return false
+}
+
+func (x *DealProto) GetExternalId() string {
+	if x != nil {
+		return x.ExternalId
+	}
+	return ""
+}
+
+func (x *DealProto) GetExternalUrl() string {
+	if x != nil {
+		return x.ExternalUrl
+	}
+	return ""
 }
 
 type DealStageHistoryProto struct {
@@ -3581,8 +3602,18 @@ type CreateDealRequest struct {
 	ExpectedClose  *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=expected_close,json=expectedClose,proto3" json:"expected_close,omitempty"`
 	// Origin of the deal. If empty, the server defaults to "manual". When a
 	// deal is created via ConvertLead, the lead's source is propagated here
-	// automatically — callers should not pass a value in that flow.
-	Source        string `protobuf:"bytes,11,opt,name=source,proto3" json:"source,omitempty"`
+	// automatically — callers should not pass a value in that flow. Required
+	// (and must be non-"manual") when external_id is set.
+	Source string `protobuf:"bytes,11,opt,name=source,proto3" json:"source,omitempty"`
+	// External-system record identifier. When non-empty, the pair
+	// (source, external_id) is enforced unique per organization and
+	// repeated create calls return the existing deal instead of
+	// duplicating. Intended for service-key integrations (admin panel,
+	// partner websites).
+	ExternalId string `protobuf:"bytes,12,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
+	// Deep-link to the source record in the external system. Rendered by
+	// the CRM UI as "Open in source system". Optional.
+	ExternalUrl   string `protobuf:"bytes,13,opt,name=external_url,json=externalUrl,proto3" json:"external_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3690,6 +3721,20 @@ func (x *CreateDealRequest) GetExpectedClose() *timestamppb.Timestamp {
 func (x *CreateDealRequest) GetSource() string {
 	if x != nil {
 		return x.Source
+	}
+	return ""
+}
+
+func (x *CreateDealRequest) GetExternalId() string {
+	if x != nil {
+		return x.ExternalId
+	}
+	return ""
+}
+
+func (x *CreateDealRequest) GetExternalUrl() string {
+	if x != nil {
+		return x.ExternalUrl
 	}
 	return ""
 }
@@ -14796,7 +14841,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x03vin\x18\x02 \x01(\tR\x03vin\x12#\n" +
 	"\rlicense_plate\x18\x03 \x01(\tR\flicensePlate\"?\n" +
 	"\x15LookupVehicleResponse\x12&\n" +
-	"\x03car\x18\x01 \x01(\v2\x14.crm.v1.CarInfoProtoR\x03car\"\x9e\a\n" +
+	"\x03car\x18\x01 \x01(\v2\x14.crm.v1.CarInfoProtoR\x03car\"\xe2\a\n" +
 	"\tDealProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x1f\n" +
@@ -14830,7 +14875,10 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\rassigned_name\x18\x17 \x01(\tR\fassignedName\x12&\n" +
 	"\x0funread_wa_count\x18\x18 \x01(\x05R\runreadWaCount\x12\x16\n" +
 	"\x06source\x18\x19 \x01(\tR\x06source\x12&\n" +
-	"\x0fhas_missed_call\x18\x1a \x01(\bR\rhasMissedCallJ\x04\b\a\x10\b\"\xde\x01\n" +
+	"\x0fhas_missed_call\x18\x1a \x01(\bR\rhasMissedCall\x12\x1f\n" +
+	"\vexternal_id\x18\x1b \x01(\tR\n" +
+	"externalId\x12!\n" +
+	"\fexternal_url\x18\x1c \x01(\tR\vexternalUrlJ\x04\b\a\x10\b\"\xde\x01\n" +
 	"\x15DealStageHistoryProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\"\n" +
@@ -14854,7 +14902,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"created_by\x18\t \x01(\x03R\tcreatedBy\x129\n" +
 	"\n" +
 	"created_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xf6\x02\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xba\x03\n" +
 	"\x11CreateDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -14870,7 +14918,10 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\bcurrency\x18\t \x01(\tR\bcurrency\x12A\n" +
 	"\x0eexpected_close\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\rexpectedClose\x12\x16\n" +
-	"\x06source\x18\v \x01(\tR\x06source\";\n" +
+	"\x06source\x18\v \x01(\tR\x06source\x12\x1f\n" +
+	"\vexternal_id\x18\f \x01(\tR\n" +
+	"externalId\x12!\n" +
+	"\fexternal_url\x18\r \x01(\tR\vexternalUrl\";\n" +
 	"\x12CreateDealResponse\x12%\n" +
 	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"I\n" +
 	"\x0eGetDealRequest\x12'\n" +

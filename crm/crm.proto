@@ -525,6 +525,14 @@ message DealProto {
   // ListDeals and GetDeal for kanban/deal-detail visual alerting. Stays
   // true until the manager places/answers a subsequent call on the deal.
   bool has_missed_call    = 26;
+
+  // External-source link. Populated when the deal was created by an
+  // external system (admin panel, partner website) via the service-key
+  // /external/deals API. (source, external_id) is idempotent per
+  // organization; external_url is the deep-link back to the source
+  // record for the "Open in source system" UI action. Empty otherwise.
+  string external_id      = 27;
+  string external_url     = 28;
 }
 
 message DealStageHistoryProto {
@@ -562,8 +570,18 @@ message CreateDealRequest {
   google.protobuf.Timestamp expected_close = 10;
   // Origin of the deal. If empty, the server defaults to "manual". When a
   // deal is created via ConvertLead, the lead's source is propagated here
-  // automatically — callers should not pass a value in that flow.
+  // automatically — callers should not pass a value in that flow. Required
+  // (and must be non-"manual") when external_id is set.
   string source          = 11;
+  // External-system record identifier. When non-empty, the pair
+  // (source, external_id) is enforced unique per organization and
+  // repeated create calls return the existing deal instead of
+  // duplicating. Intended for service-key integrations (admin panel,
+  // partner websites).
+  string external_id     = 12;
+  // Deep-link to the source record in the external system. Rendered by
+  // the CRM UI as "Open in source system". Optional.
+  string external_url    = 13;
 }
 
 message CreateDealResponse {
