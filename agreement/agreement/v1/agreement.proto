@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package agreement.agreement.v1;
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/agreement/agreement;agreementv1";
+
+// AgreementService generates DOCX documents from templates
+// (contract and work-order). Pure template substitution — no business logic.
+service AgreementService {
+  rpc GenerateContract(GenerateContractRequest) returns (GenerateDocResponse);
+  rpc GenerateOrder(GenerateOrderRequest) returns (GenerateDocResponse);
+}
+
+// GenerateDocResponse carries the rendered DOCX binary.
+message GenerateDocResponse {
+  bytes file = 1;
+  string filename = 2;
+  string content_type = 3;
+}
+
+message GenerateContractRequest {
+  string docnum = 1;
+  string customdogdate = 2;
+  string owner = 3;
+  string ppassportnum = 4;
+  string model = 5;
+  string gosnum = 6;
+  string vin = 7;
+  string datemade = 8;
+  optional string datedtp = 9;
+  string datestatement = 10;
+  // Numeric price value (float), rendered as integer-less string.
+  double pricerepare_int = 11;
+}
+
+// WorkOrderItem — item for works/paints loops.
+// norm_hours: formatted string "11,22" (comma + up to 2 digits).
+// total: digit-only string without separators ("15000").
+message WorkOrderItem {
+  string name = 1;
+  string norm_hours = 2;
+  string total = 3;
+}
+
+// WorkOrderPartItem — item for parts loop.
+// All numeric fields are digit-only strings without separators.
+message WorkOrderPartItem {
+  string name = 1;
+  string part_price = 2;
+  string quan_parts = 3;
+  string total = 4;
+}
+
+message GenerateOrderRequest {
+  string docnum = 1;
+  string docdate = 2;
+  string model = 3;
+  string datemade = 4;
+  string gosnum = 5;
+  string vin = 6;
+  string bodycolor = 7;
+  string ptsnumber = 8;
+  string owner = 9;
+  string expertfio = 10;
+  // All prices below are digit-only strings ("15000" — without separators).
+  string priceworks = 11;
+  string pricepaints = 12;
+  optional string priceparts = 13;
+  string pricematerall = 14;
+  string pricerepare_int = 15;
+  string hnprice = 16;
+  repeated WorkOrderItem works = 17;
+  repeated WorkOrderItem paints = 18;
+  repeated WorkOrderPartItem parts = 19;
+}
