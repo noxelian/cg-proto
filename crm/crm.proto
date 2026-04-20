@@ -41,6 +41,12 @@ service CRMService {
 
   // Deal RPCs (Phase 4 -- deal lifecycle)
   rpc CreateDeal(CreateDealRequest)                         returns (CreateDealResponse);
+  // CreateExternalDeal creates a deal on behalf of a trusted external system
+  // (admin panel, partner website) authenticated by the BFF's API-key
+  // gateway. Skips user-level permission checks — caller is authenticated
+  // at the BFF boundary, not by a cg-users JWT. Reuses CreateDealRequest;
+  // caller must supply created_by explicitly (no JWT to derive it from).
+  rpc CreateExternalDeal(CreateDealRequest)                 returns (CreateDealResponse);
   rpc GetDeal(GetDealRequest)                               returns (GetDealResponse);
   rpc ListDeals(ListDealsRequest)                           returns (ListDealsResponse);
   rpc UpdateDeal(UpdateDealRequest)                         returns (UpdateDealResponse);
@@ -582,6 +588,10 @@ message CreateDealRequest {
   // Deep-link to the source record in the external system. Rendered by
   // the CRM UI as "Open in source system". Optional.
   string external_url    = 13;
+  // cg-users user_id stamped as the deal creator. Internal callers leave
+  // this empty and the server derives it from the JWT. External callers
+  // (service-key path) must supply it explicitly.
+  int64  created_by      = 14;
 }
 
 message CreateDealResponse {

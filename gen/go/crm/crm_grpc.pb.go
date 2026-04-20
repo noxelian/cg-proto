@@ -41,6 +41,7 @@ const (
 	CRMService_GetGarageByPhone_FullMethodName                   = "/crm.v1.CRMService/GetGarageByPhone"
 	CRMService_LookupVehicle_FullMethodName                      = "/crm.v1.CRMService/LookupVehicle"
 	CRMService_CreateDeal_FullMethodName                         = "/crm.v1.CRMService/CreateDeal"
+	CRMService_CreateExternalDeal_FullMethodName                 = "/crm.v1.CRMService/CreateExternalDeal"
 	CRMService_GetDeal_FullMethodName                            = "/crm.v1.CRMService/GetDeal"
 	CRMService_ListDeals_FullMethodName                          = "/crm.v1.CRMService/ListDeals"
 	CRMService_UpdateDeal_FullMethodName                         = "/crm.v1.CRMService/UpdateDeal"
@@ -159,6 +160,12 @@ type CRMServiceClient interface {
 	LookupVehicle(ctx context.Context, in *LookupVehicleRequest, opts ...grpc.CallOption) (*LookupVehicleResponse, error)
 	// Deal RPCs (Phase 4 -- deal lifecycle)
 	CreateDeal(ctx context.Context, in *CreateDealRequest, opts ...grpc.CallOption) (*CreateDealResponse, error)
+	// CreateExternalDeal creates a deal on behalf of a trusted external system
+	// (admin panel, partner website) authenticated by the BFF's API-key
+	// gateway. Skips user-level permission checks — caller is authenticated
+	// at the BFF boundary, not by a cg-users JWT. Reuses CreateDealRequest;
+	// caller must supply created_by explicitly (no JWT to derive it from).
+	CreateExternalDeal(ctx context.Context, in *CreateDealRequest, opts ...grpc.CallOption) (*CreateDealResponse, error)
 	GetDeal(ctx context.Context, in *GetDealRequest, opts ...grpc.CallOption) (*GetDealResponse, error)
 	ListDeals(ctx context.Context, in *ListDealsRequest, opts ...grpc.CallOption) (*ListDealsResponse, error)
 	UpdateDeal(ctx context.Context, in *UpdateDealRequest, opts ...grpc.CallOption) (*UpdateDealResponse, error)
@@ -507,6 +514,16 @@ func (c *cRMServiceClient) CreateDeal(ctx context.Context, in *CreateDealRequest
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateDealResponse)
 	err := c.cc.Invoke(ctx, CRMService_CreateDeal_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) CreateExternalDeal(ctx context.Context, in *CreateDealRequest, opts ...grpc.CallOption) (*CreateDealResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateDealResponse)
+	err := c.cc.Invoke(ctx, CRMService_CreateExternalDeal_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1286,6 +1303,12 @@ type CRMServiceServer interface {
 	LookupVehicle(context.Context, *LookupVehicleRequest) (*LookupVehicleResponse, error)
 	// Deal RPCs (Phase 4 -- deal lifecycle)
 	CreateDeal(context.Context, *CreateDealRequest) (*CreateDealResponse, error)
+	// CreateExternalDeal creates a deal on behalf of a trusted external system
+	// (admin panel, partner website) authenticated by the BFF's API-key
+	// gateway. Skips user-level permission checks — caller is authenticated
+	// at the BFF boundary, not by a cg-users JWT. Reuses CreateDealRequest;
+	// caller must supply created_by explicitly (no JWT to derive it from).
+	CreateExternalDeal(context.Context, *CreateDealRequest) (*CreateDealResponse, error)
 	GetDeal(context.Context, *GetDealRequest) (*GetDealResponse, error)
 	ListDeals(context.Context, *ListDealsRequest) (*ListDealsResponse, error)
 	UpdateDeal(context.Context, *UpdateDealRequest) (*UpdateDealResponse, error)
@@ -1473,6 +1496,9 @@ func (UnimplementedCRMServiceServer) LookupVehicle(context.Context, *LookupVehic
 }
 func (UnimplementedCRMServiceServer) CreateDeal(context.Context, *CreateDealRequest) (*CreateDealResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateDeal not implemented")
+}
+func (UnimplementedCRMServiceServer) CreateExternalDeal(context.Context, *CreateDealRequest) (*CreateDealResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateExternalDeal not implemented")
 }
 func (UnimplementedCRMServiceServer) GetDeal(context.Context, *GetDealRequest) (*GetDealResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetDeal not implemented")
@@ -2106,6 +2132,24 @@ func _CRMService_CreateDeal_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRMServiceServer).CreateDeal(ctx, req.(*CreateDealRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_CreateExternalDeal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateDealRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).CreateExternalDeal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_CreateExternalDeal_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).CreateExternalDeal(ctx, req.(*CreateDealRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3518,6 +3562,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateDeal",
 			Handler:    _CRMService_CreateDeal_Handler,
+		},
+		{
+			MethodName: "CreateExternalDeal",
+			Handler:    _CRMService_CreateExternalDeal_Handler,
 		},
 		{
 			MethodName: "GetDeal",
