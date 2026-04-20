@@ -215,6 +215,8 @@ message Stage {
   bool requires_task     = 11;
   bool requires_user     = 12;
   bool requires_assignee = 13;
+  // True -> deal.amount_tiin must be > 0 to leave this stage (or close as won).
+  bool requires_amount   = 14;
 }
 
 message CreatePipelineRequest {
@@ -275,6 +277,7 @@ message CreateStageRequest {
   bool   requires_task     = 8;
   bool   requires_user     = 9;
   bool   requires_assignee = 10;
+  bool   requires_amount   = 11;
 }
 
 message CreateStageResponse {
@@ -293,6 +296,7 @@ message UpdateStageRequest {
   bool   requires_task     = 8;
   bool   requires_user     = 9;
   bool   requires_assignee = 10;
+  bool   requires_amount   = 11;
 }
 
 message UpdateStageResponse {
