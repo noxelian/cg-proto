@@ -85,6 +85,10 @@ const (
 	CRMService_ListWhatsAppConversations_FullMethodName          = "/crm.v1.CRMService/ListWhatsAppConversations"
 	CRMService_ListWhatsAppTemplates_FullMethodName              = "/crm.v1.CRMService/ListWhatsAppTemplates"
 	CRMService_HandleWhatsAppWebhook_FullMethodName              = "/crm.v1.CRMService/HandleWhatsAppWebhook"
+	CRMService_SendWazzupMessage_FullMethodName                  = "/crm.v1.CRMService/SendWazzupMessage"
+	CRMService_ListWazzupMessages_FullMethodName                 = "/crm.v1.CRMService/ListWazzupMessages"
+	CRMService_ListWazzupConversations_FullMethodName            = "/crm.v1.CRMService/ListWazzupConversations"
+	CRMService_HandleWazzupWebhook_FullMethodName                = "/crm.v1.CRMService/HandleWazzupWebhook"
 	CRMService_TelephonyOriginate_FullMethodName                 = "/crm.v1.CRMService/TelephonyOriginate"
 	CRMService_TelephonyGetCall_FullMethodName                   = "/crm.v1.CRMService/TelephonyGetCall"
 	CRMService_TelephonyListCalls_FullMethodName                 = "/crm.v1.CRMService/TelephonyListCalls"
@@ -243,6 +247,13 @@ type CRMServiceClient interface {
 	ListWhatsAppConversations(ctx context.Context, in *ListWhatsAppConversationsRequest, opts ...grpc.CallOption) (*ListWhatsAppConversationsResponse, error)
 	ListWhatsAppTemplates(ctx context.Context, in *ListWhatsAppTemplatesRequest, opts ...grpc.CallOption) (*ListWhatsAppTemplatesResponse, error)
 	HandleWhatsAppWebhook(ctx context.Context, in *WhatsAppWebhookRequest, opts ...grpc.CallOption) (*WhatsAppWebhookResponse, error)
+	// Wazzup24 messaging RPCs — separate provider mirroring the WhatsApp channel
+	// that's still connected to AmoCRM. Lets the new CRM surface the same chats
+	// without disrupting AmoCRM's existing Wazzup integration.
+	SendWazzupMessage(ctx context.Context, in *SendWazzupMessageRequest, opts ...grpc.CallOption) (*SendWazzupMessageResponse, error)
+	ListWazzupMessages(ctx context.Context, in *ListWazzupMessagesRequest, opts ...grpc.CallOption) (*ListWazzupMessagesResponse, error)
+	ListWazzupConversations(ctx context.Context, in *ListWazzupConversationsRequest, opts ...grpc.CallOption) (*ListWazzupConversationsResponse, error)
+	HandleWazzupWebhook(ctx context.Context, in *WazzupWebhookRequest, opts ...grpc.CallOption) (*WazzupWebhookResponse, error)
 	// Telephony RPCs (Phase 8 — provider-agnostic; replaces Sipuni-specific methods)
 	TelephonyOriginate(ctx context.Context, in *TelephonyOriginateRequest, opts ...grpc.CallOption) (*TelephonyOriginateResponse, error)
 	TelephonyGetCall(ctx context.Context, in *TelephonyGetCallRequest, opts ...grpc.CallOption) (*TelephonyGetCallResponse, error)
@@ -962,6 +973,46 @@ func (c *cRMServiceClient) HandleWhatsAppWebhook(ctx context.Context, in *WhatsA
 	return out, nil
 }
 
+func (c *cRMServiceClient) SendWazzupMessage(ctx context.Context, in *SendWazzupMessageRequest, opts ...grpc.CallOption) (*SendWazzupMessageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendWazzupMessageResponse)
+	err := c.cc.Invoke(ctx, CRMService_SendWazzupMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ListWazzupMessages(ctx context.Context, in *ListWazzupMessagesRequest, opts ...grpc.CallOption) (*ListWazzupMessagesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWazzupMessagesResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListWazzupMessages_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ListWazzupConversations(ctx context.Context, in *ListWazzupConversationsRequest, opts ...grpc.CallOption) (*ListWazzupConversationsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWazzupConversationsResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListWazzupConversations_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) HandleWazzupWebhook(ctx context.Context, in *WazzupWebhookRequest, opts ...grpc.CallOption) (*WazzupWebhookResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WazzupWebhookResponse)
+	err := c.cc.Invoke(ctx, CRMService_HandleWazzupWebhook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) TelephonyOriginate(ctx context.Context, in *TelephonyOriginateRequest, opts ...grpc.CallOption) (*TelephonyOriginateResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TelephonyOriginateResponse)
@@ -1388,6 +1439,13 @@ type CRMServiceServer interface {
 	ListWhatsAppConversations(context.Context, *ListWhatsAppConversationsRequest) (*ListWhatsAppConversationsResponse, error)
 	ListWhatsAppTemplates(context.Context, *ListWhatsAppTemplatesRequest) (*ListWhatsAppTemplatesResponse, error)
 	HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error)
+	// Wazzup24 messaging RPCs — separate provider mirroring the WhatsApp channel
+	// that's still connected to AmoCRM. Lets the new CRM surface the same chats
+	// without disrupting AmoCRM's existing Wazzup integration.
+	SendWazzupMessage(context.Context, *SendWazzupMessageRequest) (*SendWazzupMessageResponse, error)
+	ListWazzupMessages(context.Context, *ListWazzupMessagesRequest) (*ListWazzupMessagesResponse, error)
+	ListWazzupConversations(context.Context, *ListWazzupConversationsRequest) (*ListWazzupConversationsResponse, error)
+	HandleWazzupWebhook(context.Context, *WazzupWebhookRequest) (*WazzupWebhookResponse, error)
 	// Telephony RPCs (Phase 8 — provider-agnostic; replaces Sipuni-specific methods)
 	TelephonyOriginate(context.Context, *TelephonyOriginateRequest) (*TelephonyOriginateResponse, error)
 	TelephonyGetCall(context.Context, *TelephonyGetCallRequest) (*TelephonyGetCallResponse, error)
@@ -1632,6 +1690,18 @@ func (UnimplementedCRMServiceServer) ListWhatsAppTemplates(context.Context, *Lis
 }
 func (UnimplementedCRMServiceServer) HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HandleWhatsAppWebhook not implemented")
+}
+func (UnimplementedCRMServiceServer) SendWazzupMessage(context.Context, *SendWazzupMessageRequest) (*SendWazzupMessageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SendWazzupMessage not implemented")
+}
+func (UnimplementedCRMServiceServer) ListWazzupMessages(context.Context, *ListWazzupMessagesRequest) (*ListWazzupMessagesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListWazzupMessages not implemented")
+}
+func (UnimplementedCRMServiceServer) ListWazzupConversations(context.Context, *ListWazzupConversationsRequest) (*ListWazzupConversationsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListWazzupConversations not implemented")
+}
+func (UnimplementedCRMServiceServer) HandleWazzupWebhook(context.Context, *WazzupWebhookRequest) (*WazzupWebhookResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method HandleWazzupWebhook not implemented")
 }
 func (UnimplementedCRMServiceServer) TelephonyOriginate(context.Context, *TelephonyOriginateRequest) (*TelephonyOriginateResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method TelephonyOriginate not implemented")
@@ -2932,6 +3002,78 @@ func _CRMService_HandleWhatsAppWebhook_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_SendWazzupMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendWazzupMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).SendWazzupMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_SendWazzupMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).SendWazzupMessage(ctx, req.(*SendWazzupMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ListWazzupMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWazzupMessagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListWazzupMessages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListWazzupMessages_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListWazzupMessages(ctx, req.(*ListWazzupMessagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ListWazzupConversations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWazzupConversationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListWazzupConversations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListWazzupConversations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListWazzupConversations(ctx, req.(*ListWazzupConversationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_HandleWazzupWebhook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WazzupWebhookRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).HandleWazzupWebhook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_HandleWazzupWebhook_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).HandleWazzupWebhook(ctx, req.(*WazzupWebhookRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_TelephonyOriginate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TelephonyOriginateRequest)
 	if err := dec(in); err != nil {
@@ -3742,6 +3884,22 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HandleWhatsAppWebhook",
 			Handler:    _CRMService_HandleWhatsAppWebhook_Handler,
+		},
+		{
+			MethodName: "SendWazzupMessage",
+			Handler:    _CRMService_SendWazzupMessage_Handler,
+		},
+		{
+			MethodName: "ListWazzupMessages",
+			Handler:    _CRMService_ListWazzupMessages_Handler,
+		},
+		{
+			MethodName: "ListWazzupConversations",
+			Handler:    _CRMService_ListWazzupConversations_Handler,
+		},
+		{
+			MethodName: "HandleWazzupWebhook",
+			Handler:    _CRMService_HandleWazzupWebhook_Handler,
 		},
 		{
 			MethodName: "TelephonyOriginate",

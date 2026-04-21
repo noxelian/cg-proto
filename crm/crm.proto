@@ -134,6 +134,14 @@ service CRMService {
   rpc ListWhatsAppTemplates(ListWhatsAppTemplatesRequest) returns (ListWhatsAppTemplatesResponse);
   rpc HandleWhatsAppWebhook(WhatsAppWebhookRequest)       returns (WhatsAppWebhookResponse);
 
+  // Wazzup24 messaging RPCs — separate provider mirroring the WhatsApp channel
+  // that's still connected to AmoCRM. Lets the new CRM surface the same chats
+  // without disrupting AmoCRM's existing Wazzup integration.
+  rpc SendWazzupMessage(SendWazzupMessageRequest)               returns (SendWazzupMessageResponse);
+  rpc ListWazzupMessages(ListWazzupMessagesRequest)             returns (ListWazzupMessagesResponse);
+  rpc ListWazzupConversations(ListWazzupConversationsRequest)   returns (ListWazzupConversationsResponse);
+  rpc HandleWazzupWebhook(WazzupWebhookRequest)                 returns (WazzupWebhookResponse);
+
   // Telephony RPCs (Phase 8 — provider-agnostic; replaces Sipuni-specific methods)
   rpc TelephonyOriginate(TelephonyOriginateRequest)         returns (TelephonyOriginateResponse);
   rpc TelephonyGetCall(TelephonyGetCallRequest)             returns (TelephonyGetCallResponse);
@@ -1471,6 +1479,75 @@ message WhatsAppTemplate {
 message WhatsAppTemplateParam {
   int32  index = 1;  // 1-based index matching {{1}}, {{2}}, etc.
   string example = 2;  // example value from Meta
+}
+
+// ==================== Wazzup24 Messages ====================
+
+message WazzupMessageProto {
+  string id            = 1;
+  string chat_id       = 2;  // counterpart phone (digits only)
+  string chat_type     = 3;  // whatsapp / instagram / ...
+  string direction     = 4;  // inbound / outbound
+  string content_type  = 5;
+  string body          = 6;
+  string media_url     = 7;
+  string status        = 8;
+  string author_name   = 9;
+  string external_id   = 10; // Wazzup messageId
+  string channel_id    = 11; // Wazzup channelId
+  google.protobuf.Timestamp created_at = 12;
+}
+
+message SendWazzupMessageRequest {
+  string organization_id = 1;
+  string chat_id         = 2;  // destination phone (with or without '+')
+  string text            = 3;
+}
+
+message SendWazzupMessageResponse {
+  WazzupMessageProto message = 1;
+}
+
+message ListWazzupMessagesRequest {
+  string organization_id = 1;
+  string chat_id         = 2;
+  int32  limit           = 3;
+  int32  offset          = 4;
+}
+
+message ListWazzupMessagesResponse {
+  repeated WazzupMessageProto messages = 1;
+}
+
+message WazzupConversationProto {
+  string chat_id           = 1;
+  string chat_type         = 2;
+  string display_name      = 3;  // from wazzup_contacts when known
+  string last_body         = 4;
+  string last_content_type = 5;
+  string last_direction    = 6;
+  google.protobuf.Timestamp last_created_at = 7;
+}
+
+message ListWazzupConversationsRequest {
+  string organization_id = 1;
+  int32  limit           = 2;
+  int32  offset          = 3;
+  string search          = 4;
+}
+
+message ListWazzupConversationsResponse {
+  repeated WazzupConversationProto conversations = 1;
+  int64 total = 2;
+}
+
+// Raw Wazzup webhook body forwarded by BFF to cg-crm.
+message WazzupWebhookRequest {
+  bytes raw_body = 1;
+}
+
+message WazzupWebhookResponse {
+  bool ok = 1;
 }
 
 // ==================== Telephony (Phase 8 — provider-agnostic) ====================
