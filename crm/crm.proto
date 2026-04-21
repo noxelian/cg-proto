@@ -44,9 +44,11 @@ service CRMService {
   // CreateExternalDeal creates a deal on behalf of a trusted external system
   // (admin panel, partner website) authenticated by the BFF's API-key
   // gateway. Skips user-level permission checks — caller is authenticated
-  // at the BFF boundary, not by a cg-users JWT. Reuses CreateDealRequest;
-  // caller must supply created_by explicitly (no JWT to derive it from).
-  rpc CreateExternalDeal(CreateDealRequest)                 returns (CreateDealResponse);
+  // at the BFF boundary, not by a cg-users JWT. Uses a dedicated request
+  // message so the external path can evolve independently of the UI path
+  // (lookup-or-create contact/vehicle, idempotent upsert with history,
+  // merge-on-resubmit semantics for photos and other repeat-submissions).
+  rpc CreateExternalDeal(CreateExternalDealRequest)         returns (CreateExternalDealResponse);
   rpc GetDeal(GetDealRequest)                               returns (GetDealResponse);
   rpc ListDeals(ListDealsRequest)                           returns (ListDealsResponse);
   rpc UpdateDeal(UpdateDealRequest)                         returns (UpdateDealResponse);
@@ -565,6 +567,10 @@ message DealProto {
   // record for the "Open in source system" UI action. Empty otherwise.
   string external_id      = 27;
   string external_url     = 28;
+
+  // Free-form long description set at creation and replaced on
+  // external-deal resubmit. Rendered as the deal-card "Описание" block.
+  string description      = 29;
 }
 
 message DealStageHistoryProto {
@@ -618,10 +624,96 @@ message CreateDealRequest {
   // this empty and the server derives it from the JWT. External callers
   // (service-key path) must supply it explicitly.
   int64  created_by      = 14;
+  // Free-form long description stored on the deal. Optional.
+  string description     = 15;
 }
 
 message CreateDealResponse {
   DealProto deal = 1;
+}
+
+// VehicleLookup carries the fields needed to find-or-create a car in
+// cg-users/garage. Used only on the external-deal path: cg-crm calls
+// garage.FindOrCreateCar(user_id, ...) and links the resulting car ID
+// to the deal. All fields optional — when the whole block is empty no
+// vehicle lookup is attempted.
+message VehicleLookup {
+  string vin           = 1;
+  string license_plate = 2;
+  int64  mark_id       = 3;
+  int64  model_id      = 4;
+  int64  generation_id = 5;
+  int32  year          = 6;
+  string color         = 7;
+}
+
+// CreateExternalDealRequest is the payload for the service-key
+// /external/deals path. It differs from CreateDealRequest in three ways:
+//   - contact_phone/contact_name enable lookup-or-create in cg-users so
+//     callers don't have to pre-resolve user_id.
+//   - vehicle carries fields for garage.FindOrCreateCar so callers don't
+//     have to pre-resolve vehicle_id.
+//   - custom_fields is a string map (easy to populate from JSON callers
+//     without depending on google.protobuf.Struct).
+//
+// Idempotency: (organization_id, pipeline_id, resolved user_id) — repeat
+// calls return the existing open deal and merge photos/documents into
+// custom_fields while replacing title/description/marketing fields.
+// source is NOT accepted from the body; it is set by the BFF from the
+// matched API-key configuration.
+message CreateExternalDealRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+  string stage_id        = 3; // optional — defaults to first non-terminal
+  string title           = 4;
+  string description     = 5; // optional
+
+  // cg-users user_id of the admin creating the deal. Required — no JWT
+  // in the service-key path to derive it from.
+  int64  created_by      = 6;
+
+  // Contact — at least one of user_id OR contact_phone must be non-empty.
+  // If user_id is 0 and contact_phone is set, cg-crm calls
+  // cg-users FindOrCreateByPhone and uses the resulting user_id for
+  // idempotency and link.
+  int64  user_id         = 7;
+  string contact_phone   = 8;
+  string contact_name    = 9;
+
+  int64  assigned_to     = 10;
+  double amount          = 11;
+  string currency        = 12;
+  google.protobuf.Timestamp expected_close = 13;
+
+  // Optional vehicle lookup — when populated, cg-crm resolves the
+  // cg-users/garage car and sets deal.vehicle_id.
+  VehicleLookup vehicle  = 14;
+
+  // Caller-side record identifier — stored as metadata for deep-link
+  // back. Does NOT drive dedup (dedup is by contact).
+  string external_id     = 15;
+  string external_url    = 16;
+
+  // String-valued custom fields merged into the deal's custom_fields
+  // JSONB. On resubmit: keys like "photos"/"documents" (expected to be
+  // JSON-array strings of URLs) are appended (set-union) instead of
+  // being replaced; all other keys are replaced.
+  map<string, string> custom_fields = 17;
+
+  // Origin tag stamped by the BFF from the matched API-key config
+  // (e.g. "admin_panel"). The HTTP body of /external/deals does NOT
+  // accept this field — the BFF overwrites it after looking up the
+  // key so clients cannot spoof origin. cg-crm rejects empty and
+  // "manual" values.
+  string source = 18;
+}
+
+message CreateExternalDealResponse {
+  DealProto deal = 1;
+  // True when an existing deal was returned (and updated with the new
+  // submission data) instead of a new row being inserted. Callers use
+  // this to drive UX like "reused existing deal" vs "new deal created".
+  bool was_existing = 2;
 }
 
 message GetDealRequest {
