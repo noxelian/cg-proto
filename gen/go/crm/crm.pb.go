@@ -9886,17 +9886,22 @@ func (x *UpdateNoteResponse) GetNote() *NoteProto {
 }
 
 type WAMessageProto struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Phone         string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
-	Direction     string                 `protobuf:"bytes,3,opt,name=direction,proto3" json:"direction,omitempty"`                        // "inbound" / "outbound"
-	ContentType   string                 `protobuf:"bytes,4,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"` // "text" / "image" / "document" / "video" / "audio" / "template"
-	Body          string                 `protobuf:"bytes,5,opt,name=body,proto3" json:"body,omitempty"`
-	MediaUrl      string                 `protobuf:"bytes,6,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`
-	Status        string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"` // "sent" / "delivered" / "read" / "failed" / "received"
-	DealId        string                 `protobuf:"bytes,8,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
-	WaMessageId   string                 `protobuf:"bytes,9,opt,name=wa_message_id,json=waMessageId,proto3" json:"wa_message_id,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Id          string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Phone       string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
+	Direction   string                 `protobuf:"bytes,3,opt,name=direction,proto3" json:"direction,omitempty"`                        // "inbound" / "outbound"
+	ContentType string                 `protobuf:"bytes,4,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"` // "text" / "image" / "document" / "video" / "audio" / "template"
+	Body        string                 `protobuf:"bytes,5,opt,name=body,proto3" json:"body,omitempty"`
+	MediaUrl    string                 `protobuf:"bytes,6,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`
+	Status      string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"` // "sent" / "delivered" / "read" / "failed" / "received"
+	DealId      string                 `protobuf:"bytes,8,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
+	WaMessageId string                 `protobuf:"bytes,9,opt,name=wa_message_id,json=waMessageId,proto3" json:"wa_message_id,omitempty"`
+	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// Populated only for failed messages. Meta's numeric error code (e.g.
+	// 131047 = 24h re-engagement window closed) plus the human-readable
+	// message/title/details. Zero / empty string when no error.
+	ErrorCode     int32  `protobuf:"varint,11,opt,name=error_code,json=errorCode,proto3" json:"error_code,omitempty"`
+	ErrorMessage  string `protobuf:"bytes,12,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -9999,6 +10004,20 @@ func (x *WAMessageProto) GetCreatedAt() *timestamppb.Timestamp {
 		return x.CreatedAt
 	}
 	return nil
+}
+
+func (x *WAMessageProto) GetErrorCode() int32 {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return 0
+}
+
+func (x *WAMessageProto) GetErrorMessage() string {
+	if x != nil {
+		return x.ErrorMessage
+	}
+	return ""
 }
 
 type SendWhatsAppMessageRequest struct {
@@ -16668,7 +16687,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\anote_id\x18\x02 \x01(\tR\x06noteId\x12\x12\n" +
 	"\x04body\x18\x03 \x01(\tR\x04body\";\n" +
 	"\x12UpdateNoteResponse\x12%\n" +
-	"\x04note\x18\x01 \x01(\v2\x11.crm.v1.NoteProtoR\x04note\"\xb8\x02\n" +
+	"\x04note\x18\x01 \x01(\v2\x11.crm.v1.NoteProtoR\x04note\"\xfc\x02\n" +
 	"\x0eWAMessageProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x1c\n" +
@@ -16681,7 +16700,10 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\rwa_message_id\x18\t \x01(\tR\vwaMessageId\x129\n" +
 	"\n" +
 	"created_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xc8\x01\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"error_code\x18\v \x01(\x05R\terrorCode\x12#\n" +
+	"\rerror_message\x18\f \x01(\tR\ferrorMessage\"\xc8\x01\n" +
 	"\x1aSendWhatsAppMessageRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\x14\n" +

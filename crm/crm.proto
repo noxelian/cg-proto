@@ -1380,6 +1380,11 @@ message WAMessageProto {
   string deal_id      = 8;
   string wa_message_id = 9;
   google.protobuf.Timestamp created_at = 10;
+  // Populated only for failed messages. Meta's numeric error code (e.g.
+  // 131047 = 24h re-engagement window closed) plus the human-readable
+  // message/title/details. Zero / empty string when no error.
+  int32  error_code    = 11;
+  string error_message = 12;
 }
 
 message SendWhatsAppMessageRequest {
