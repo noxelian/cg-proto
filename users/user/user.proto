@@ -91,6 +91,19 @@ service UserService {
   // RelabelPhone updates the label on a phone. Allowed values:
   // mobile | work | home | whatsapp | other.
   rpc RelabelPhone(RelabelPhoneRequest) returns (RelabelPhoneResponse);
+
+  // Platform role catalog — CRUD for dynamic role definitions.
+  // Roles are identified by string codes (not the static PlatformRole enum)
+  // so admins can introduce new roles without proto changes.
+  rpc ListPlatformRoleDefs(ListPlatformRoleDefsRequest) returns (ListPlatformRoleDefsResponse);
+  rpc GetPlatformRoleDef(GetPlatformRoleDefRequest) returns (GetPlatformRoleDefResponse);
+  rpc CreatePlatformRoleDef(CreatePlatformRoleDefRequest) returns (CreatePlatformRoleDefResponse);
+  rpc UpdatePlatformRoleDef(UpdatePlatformRoleDefRequest) returns (UpdatePlatformRoleDefResponse);
+  rpc DeletePlatformRoleDef(DeletePlatformRoleDefRequest) returns (DeletePlatformRoleDefResponse);
+
+  // ListModules returns the static list of UI/API modules that can be
+  // assigned to roles via allowed_modules.
+  rpc ListModules(ListModulesRequest) returns (ListModulesResponse);
 }
 
 enum PlatformRole {
@@ -418,4 +431,77 @@ message RelabelPhoneRequest {
 
 message RelabelPhoneResponse {
   UserPhone phone = 1;
+}
+
+// --- Platform role catalog ---
+
+message PlatformRoleDef {
+  string code = 1;
+  string label = 2;
+  string description = 3;
+  repeated string allowed_modules = 4;
+  bool is_org_scoped = 5;
+  bool is_system = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message ListPlatformRoleDefsRequest {}
+
+message ListPlatformRoleDefsResponse {
+  repeated PlatformRoleDef roles = 1;
+}
+
+message GetPlatformRoleDefRequest {
+  string code = 1;
+}
+
+message GetPlatformRoleDefResponse {
+  PlatformRoleDef role = 1;
+}
+
+message CreatePlatformRoleDefRequest {
+  string code = 1;
+  string label = 2;
+  string description = 3;
+  repeated string allowed_modules = 4;
+  bool is_org_scoped = 5;
+}
+
+message CreatePlatformRoleDefResponse {
+  PlatformRoleDef role = 1;
+}
+
+message UpdatePlatformRoleDefRequest {
+  string code = 1;
+  // Optional fields — omit to leave unchanged. For system roles,
+  // allowed_modules and is_org_scoped are locked.
+  optional string label = 2;
+  optional string description = 3;
+  repeated string allowed_modules = 4;
+  bool allowed_modules_set = 5;  // true when allowed_modules intent is explicit (even if empty)
+  optional bool is_org_scoped = 6;
+}
+
+message UpdatePlatformRoleDefResponse {
+  PlatformRoleDef role = 1;
+}
+
+message DeletePlatformRoleDefRequest {
+  string code = 1;
+}
+
+message DeletePlatformRoleDefResponse {}
+
+// Module describes an assignable UI/API section.
+message Module {
+  string id = 1;
+  string label = 2;
+}
+
+message ListModulesRequest {}
+
+message ListModulesResponse {
+  repeated Module modules = 1;
+  string wildcard = 2; // "*" — grants access to every module
 }

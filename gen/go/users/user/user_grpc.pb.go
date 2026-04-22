@@ -45,6 +45,12 @@ const (
 	UserService_RemovePhone_FullMethodName              = "/users.user.v1.UserService/RemovePhone"
 	UserService_SetPrimaryPhone_FullMethodName          = "/users.user.v1.UserService/SetPrimaryPhone"
 	UserService_RelabelPhone_FullMethodName             = "/users.user.v1.UserService/RelabelPhone"
+	UserService_ListPlatformRoleDefs_FullMethodName     = "/users.user.v1.UserService/ListPlatformRoleDefs"
+	UserService_GetPlatformRoleDef_FullMethodName       = "/users.user.v1.UserService/GetPlatformRoleDef"
+	UserService_CreatePlatformRoleDef_FullMethodName    = "/users.user.v1.UserService/CreatePlatformRoleDef"
+	UserService_UpdatePlatformRoleDef_FullMethodName    = "/users.user.v1.UserService/UpdatePlatformRoleDef"
+	UserService_DeletePlatformRoleDef_FullMethodName    = "/users.user.v1.UserService/DeletePlatformRoleDef"
+	UserService_ListModules_FullMethodName              = "/users.user.v1.UserService/ListModules"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -109,6 +115,17 @@ type UserServiceClient interface {
 	// RelabelPhone updates the label on a phone. Allowed values:
 	// mobile | work | home | whatsapp | other.
 	RelabelPhone(ctx context.Context, in *RelabelPhoneRequest, opts ...grpc.CallOption) (*RelabelPhoneResponse, error)
+	// Platform role catalog — CRUD for dynamic role definitions.
+	// Roles are identified by string codes (not the static PlatformRole enum)
+	// so admins can introduce new roles without proto changes.
+	ListPlatformRoleDefs(ctx context.Context, in *ListPlatformRoleDefsRequest, opts ...grpc.CallOption) (*ListPlatformRoleDefsResponse, error)
+	GetPlatformRoleDef(ctx context.Context, in *GetPlatformRoleDefRequest, opts ...grpc.CallOption) (*GetPlatformRoleDefResponse, error)
+	CreatePlatformRoleDef(ctx context.Context, in *CreatePlatformRoleDefRequest, opts ...grpc.CallOption) (*CreatePlatformRoleDefResponse, error)
+	UpdatePlatformRoleDef(ctx context.Context, in *UpdatePlatformRoleDefRequest, opts ...grpc.CallOption) (*UpdatePlatformRoleDefResponse, error)
+	DeletePlatformRoleDef(ctx context.Context, in *DeletePlatformRoleDefRequest, opts ...grpc.CallOption) (*DeletePlatformRoleDefResponse, error)
+	// ListModules returns the static list of UI/API modules that can be
+	// assigned to roles via allowed_modules.
+	ListModules(ctx context.Context, in *ListModulesRequest, opts ...grpc.CallOption) (*ListModulesResponse, error)
 }
 
 type userServiceClient struct {
@@ -379,6 +396,66 @@ func (c *userServiceClient) RelabelPhone(ctx context.Context, in *RelabelPhoneRe
 	return out, nil
 }
 
+func (c *userServiceClient) ListPlatformRoleDefs(ctx context.Context, in *ListPlatformRoleDefsRequest, opts ...grpc.CallOption) (*ListPlatformRoleDefsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPlatformRoleDefsResponse)
+	err := c.cc.Invoke(ctx, UserService_ListPlatformRoleDefs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetPlatformRoleDef(ctx context.Context, in *GetPlatformRoleDefRequest, opts ...grpc.CallOption) (*GetPlatformRoleDefResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPlatformRoleDefResponse)
+	err := c.cc.Invoke(ctx, UserService_GetPlatformRoleDef_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) CreatePlatformRoleDef(ctx context.Context, in *CreatePlatformRoleDefRequest, opts ...grpc.CallOption) (*CreatePlatformRoleDefResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreatePlatformRoleDefResponse)
+	err := c.cc.Invoke(ctx, UserService_CreatePlatformRoleDef_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdatePlatformRoleDef(ctx context.Context, in *UpdatePlatformRoleDefRequest, opts ...grpc.CallOption) (*UpdatePlatformRoleDefResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdatePlatformRoleDefResponse)
+	err := c.cc.Invoke(ctx, UserService_UpdatePlatformRoleDef_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) DeletePlatformRoleDef(ctx context.Context, in *DeletePlatformRoleDefRequest, opts ...grpc.CallOption) (*DeletePlatformRoleDefResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeletePlatformRoleDefResponse)
+	err := c.cc.Invoke(ctx, UserService_DeletePlatformRoleDef_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ListModules(ctx context.Context, in *ListModulesRequest, opts ...grpc.CallOption) (*ListModulesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListModulesResponse)
+	err := c.cc.Invoke(ctx, UserService_ListModules_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -441,6 +518,17 @@ type UserServiceServer interface {
 	// RelabelPhone updates the label on a phone. Allowed values:
 	// mobile | work | home | whatsapp | other.
 	RelabelPhone(context.Context, *RelabelPhoneRequest) (*RelabelPhoneResponse, error)
+	// Platform role catalog — CRUD for dynamic role definitions.
+	// Roles are identified by string codes (not the static PlatformRole enum)
+	// so admins can introduce new roles without proto changes.
+	ListPlatformRoleDefs(context.Context, *ListPlatformRoleDefsRequest) (*ListPlatformRoleDefsResponse, error)
+	GetPlatformRoleDef(context.Context, *GetPlatformRoleDefRequest) (*GetPlatformRoleDefResponse, error)
+	CreatePlatformRoleDef(context.Context, *CreatePlatformRoleDefRequest) (*CreatePlatformRoleDefResponse, error)
+	UpdatePlatformRoleDef(context.Context, *UpdatePlatformRoleDefRequest) (*UpdatePlatformRoleDefResponse, error)
+	DeletePlatformRoleDef(context.Context, *DeletePlatformRoleDefRequest) (*DeletePlatformRoleDefResponse, error)
+	// ListModules returns the static list of UI/API modules that can be
+	// assigned to roles via allowed_modules.
+	ListModules(context.Context, *ListModulesRequest) (*ListModulesResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -528,6 +616,24 @@ func (UnimplementedUserServiceServer) SetPrimaryPhone(context.Context, *SetPrima
 }
 func (UnimplementedUserServiceServer) RelabelPhone(context.Context, *RelabelPhoneRequest) (*RelabelPhoneResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RelabelPhone not implemented")
+}
+func (UnimplementedUserServiceServer) ListPlatformRoleDefs(context.Context, *ListPlatformRoleDefsRequest) (*ListPlatformRoleDefsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPlatformRoleDefs not implemented")
+}
+func (UnimplementedUserServiceServer) GetPlatformRoleDef(context.Context, *GetPlatformRoleDefRequest) (*GetPlatformRoleDefResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPlatformRoleDef not implemented")
+}
+func (UnimplementedUserServiceServer) CreatePlatformRoleDef(context.Context, *CreatePlatformRoleDefRequest) (*CreatePlatformRoleDefResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreatePlatformRoleDef not implemented")
+}
+func (UnimplementedUserServiceServer) UpdatePlatformRoleDef(context.Context, *UpdatePlatformRoleDefRequest) (*UpdatePlatformRoleDefResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdatePlatformRoleDef not implemented")
+}
+func (UnimplementedUserServiceServer) DeletePlatformRoleDef(context.Context, *DeletePlatformRoleDefRequest) (*DeletePlatformRoleDefResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeletePlatformRoleDef not implemented")
+}
+func (UnimplementedUserServiceServer) ListModules(context.Context, *ListModulesRequest) (*ListModulesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListModules not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -1018,6 +1124,114 @@ func _UserService_RelabelPhone_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_ListPlatformRoleDefs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPlatformRoleDefsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListPlatformRoleDefs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListPlatformRoleDefs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListPlatformRoleDefs(ctx, req.(*ListPlatformRoleDefsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetPlatformRoleDef_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPlatformRoleDefRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetPlatformRoleDef(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetPlatformRoleDef_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetPlatformRoleDef(ctx, req.(*GetPlatformRoleDefRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_CreatePlatformRoleDef_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePlatformRoleDefRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CreatePlatformRoleDef(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_CreatePlatformRoleDef_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CreatePlatformRoleDef(ctx, req.(*CreatePlatformRoleDefRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdatePlatformRoleDef_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePlatformRoleDefRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdatePlatformRoleDef(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_UpdatePlatformRoleDef_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdatePlatformRoleDef(ctx, req.(*UpdatePlatformRoleDefRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_DeletePlatformRoleDef_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePlatformRoleDefRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DeletePlatformRoleDef(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_DeletePlatformRoleDef_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DeletePlatformRoleDef(ctx, req.(*DeletePlatformRoleDefRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ListModules_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListModulesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListModules(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListModules_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListModules(ctx, req.(*ListModulesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1128,6 +1342,30 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RelabelPhone",
 			Handler:    _UserService_RelabelPhone_Handler,
+		},
+		{
+			MethodName: "ListPlatformRoleDefs",
+			Handler:    _UserService_ListPlatformRoleDefs_Handler,
+		},
+		{
+			MethodName: "GetPlatformRoleDef",
+			Handler:    _UserService_GetPlatformRoleDef_Handler,
+		},
+		{
+			MethodName: "CreatePlatformRoleDef",
+			Handler:    _UserService_CreatePlatformRoleDef_Handler,
+		},
+		{
+			MethodName: "UpdatePlatformRoleDef",
+			Handler:    _UserService_UpdatePlatformRoleDef_Handler,
+		},
+		{
+			MethodName: "DeletePlatformRoleDef",
+			Handler:    _UserService_DeletePlatformRoleDef_Handler,
+		},
+		{
+			MethodName: "ListModules",
+			Handler:    _UserService_ListModules_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
