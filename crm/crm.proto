@@ -1385,6 +1385,10 @@ message WAMessageProto {
   // message/title/details. Zero / empty string when no error.
   int32  error_code    = 11;
   string error_message = 12;
+  // cg-users user_id whose phone book contains `phone` (any of their up
+  // to 5 numbers matches). 0 when nobody in the phone book owns the
+  // number — same sentinel convention as WAConversationProto.contact_user_id.
+  int64  matched_user_id = 13;
 }
 
 message SendWhatsAppMessageRequest {
@@ -1501,6 +1505,9 @@ message WazzupMessageProto {
   string external_id   = 10; // Wazzup messageId
   string channel_id    = 11; // Wazzup channelId
   google.protobuf.Timestamp created_at = 12;
+  // cg-users user_id whose phone book contains chat_id. 0 when no
+  // user in the phone book owns the number.
+  int64  matched_user_id = 13;
 }
 
 message SendWazzupMessageRequest {
@@ -1532,6 +1539,9 @@ message WazzupConversationProto {
   string last_content_type = 5;
   string last_direction    = 6;
   google.protobuf.Timestamp last_created_at = 7;
+  // cg-users user_id whose phone book contains chat_id. 0 when
+  // unknown. Lets the inbox prompt "attach chat to user X".
+  int64  matched_user_id   = 8;
 }
 
 message ListWazzupConversationsRequest {
