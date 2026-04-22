@@ -9900,8 +9900,12 @@ type WAMessageProto struct {
 	// Populated only for failed messages. Meta's numeric error code (e.g.
 	// 131047 = 24h re-engagement window closed) plus the human-readable
 	// message/title/details. Zero / empty string when no error.
-	ErrorCode     int32  `protobuf:"varint,11,opt,name=error_code,json=errorCode,proto3" json:"error_code,omitempty"`
-	ErrorMessage  string `protobuf:"bytes,12,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	ErrorCode    int32  `protobuf:"varint,11,opt,name=error_code,json=errorCode,proto3" json:"error_code,omitempty"`
+	ErrorMessage string `protobuf:"bytes,12,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	// cg-users user_id whose phone book contains `phone` (any of their up
+	// to 5 numbers matches). 0 when nobody in the phone book owns the
+	// number — same sentinel convention as WAConversationProto.contact_user_id.
+	MatchedUserId int64 `protobuf:"varint,13,opt,name=matched_user_id,json=matchedUserId,proto3" json:"matched_user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10018,6 +10022,13 @@ func (x *WAMessageProto) GetErrorMessage() string {
 		return x.ErrorMessage
 	}
 	return ""
+}
+
+func (x *WAMessageProto) GetMatchedUserId() int64 {
+	if x != nil {
+		return x.MatchedUserId
+	}
+	return 0
 }
 
 type SendWhatsAppMessageRequest struct {
@@ -10944,19 +10955,22 @@ func (x *WhatsAppTemplateParam) GetExample() string {
 }
 
 type WazzupMessageProto struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ChatId        string                 `protobuf:"bytes,2,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`       // counterpart phone (digits only)
-	ChatType      string                 `protobuf:"bytes,3,opt,name=chat_type,json=chatType,proto3" json:"chat_type,omitempty"` // whatsapp / instagram / ...
-	Direction     string                 `protobuf:"bytes,4,opt,name=direction,proto3" json:"direction,omitempty"`               // inbound / outbound
-	ContentType   string                 `protobuf:"bytes,5,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
-	Body          string                 `protobuf:"bytes,6,opt,name=body,proto3" json:"body,omitempty"`
-	MediaUrl      string                 `protobuf:"bytes,7,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`
-	Status        string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
-	AuthorName    string                 `protobuf:"bytes,9,opt,name=author_name,json=authorName,proto3" json:"author_name,omitempty"`
-	ExternalId    string                 `protobuf:"bytes,10,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"` // Wazzup messageId
-	ChannelId     string                 `protobuf:"bytes,11,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`    // Wazzup channelId
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Id          string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ChatId      string                 `protobuf:"bytes,2,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`       // counterpart phone (digits only)
+	ChatType    string                 `protobuf:"bytes,3,opt,name=chat_type,json=chatType,proto3" json:"chat_type,omitempty"` // whatsapp / instagram / ...
+	Direction   string                 `protobuf:"bytes,4,opt,name=direction,proto3" json:"direction,omitempty"`               // inbound / outbound
+	ContentType string                 `protobuf:"bytes,5,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	Body        string                 `protobuf:"bytes,6,opt,name=body,proto3" json:"body,omitempty"`
+	MediaUrl    string                 `protobuf:"bytes,7,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`
+	Status      string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	AuthorName  string                 `protobuf:"bytes,9,opt,name=author_name,json=authorName,proto3" json:"author_name,omitempty"`
+	ExternalId  string                 `protobuf:"bytes,10,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"` // Wazzup messageId
+	ChannelId   string                 `protobuf:"bytes,11,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`    // Wazzup channelId
+	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// cg-users user_id whose phone book contains chat_id. 0 when no
+	// user in the phone book owns the number.
+	MatchedUserId int64 `protobuf:"varint,13,opt,name=matched_user_id,json=matchedUserId,proto3" json:"matched_user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -11073,6 +11087,13 @@ func (x *WazzupMessageProto) GetCreatedAt() *timestamppb.Timestamp {
 		return x.CreatedAt
 	}
 	return nil
+}
+
+func (x *WazzupMessageProto) GetMatchedUserId() int64 {
+	if x != nil {
+		return x.MatchedUserId
+	}
+	return 0
 }
 
 type SendWazzupMessageRequest struct {
@@ -11300,8 +11321,11 @@ type WazzupConversationProto struct {
 	LastContentType string                 `protobuf:"bytes,5,opt,name=last_content_type,json=lastContentType,proto3" json:"last_content_type,omitempty"`
 	LastDirection   string                 `protobuf:"bytes,6,opt,name=last_direction,json=lastDirection,proto3" json:"last_direction,omitempty"`
 	LastCreatedAt   *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=last_created_at,json=lastCreatedAt,proto3" json:"last_created_at,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// cg-users user_id whose phone book contains chat_id. 0 when
+	// unknown. Lets the inbox prompt "attach chat to user X".
+	MatchedUserId int64 `protobuf:"varint,8,opt,name=matched_user_id,json=matchedUserId,proto3" json:"matched_user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *WazzupConversationProto) Reset() {
@@ -11381,6 +11405,13 @@ func (x *WazzupConversationProto) GetLastCreatedAt() *timestamppb.Timestamp {
 		return x.LastCreatedAt
 	}
 	return nil
+}
+
+func (x *WazzupConversationProto) GetMatchedUserId() int64 {
+	if x != nil {
+		return x.MatchedUserId
+	}
+	return 0
 }
 
 type ListWazzupConversationsRequest struct {
@@ -16687,7 +16718,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\anote_id\x18\x02 \x01(\tR\x06noteId\x12\x12\n" +
 	"\x04body\x18\x03 \x01(\tR\x04body\";\n" +
 	"\x12UpdateNoteResponse\x12%\n" +
-	"\x04note\x18\x01 \x01(\v2\x11.crm.v1.NoteProtoR\x04note\"\xfc\x02\n" +
+	"\x04note\x18\x01 \x01(\v2\x11.crm.v1.NoteProtoR\x04note\"\xa4\x03\n" +
 	"\x0eWAMessageProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x1c\n" +
@@ -16703,7 +16734,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"error_code\x18\v \x01(\x05R\terrorCode\x12#\n" +
-	"\rerror_message\x18\f \x01(\tR\ferrorMessage\"\xc8\x01\n" +
+	"\rerror_message\x18\f \x01(\tR\ferrorMessage\x12&\n" +
+	"\x0fmatched_user_id\x18\r \x01(\x03R\rmatchedUserId\"\xc8\x01\n" +
 	"\x1aSendWhatsAppMessageRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\x14\n" +
@@ -16766,7 +16798,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x06params\x18\x06 \x03(\v2\x1d.crm.v1.WhatsAppTemplateParamR\x06params\"G\n" +
 	"\x15WhatsAppTemplateParam\x12\x14\n" +
 	"\x05index\x18\x01 \x01(\x05R\x05index\x12\x18\n" +
-	"\aexample\x18\x02 \x01(\tR\aexample\"\x80\x03\n" +
+	"\aexample\x18\x02 \x01(\tR\aexample\"\xa8\x03\n" +
 	"\x12WazzupMessageProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\achat_id\x18\x02 \x01(\tR\x06chatId\x12\x1b\n" +
@@ -16784,7 +16816,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\n" +
 	"channel_id\x18\v \x01(\tR\tchannelId\x129\n" +
 	"\n" +
-	"created_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"p\n" +
+	"created_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12&\n" +
+	"\x0fmatched_user_id\x18\r \x01(\x03R\rmatchedUserId\"p\n" +
 	"\x18SendWazzupMessageRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\achat_id\x18\x02 \x01(\tR\x06chatId\x12\x12\n" +
@@ -16797,7 +16830,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x04 \x01(\x05R\x06offset\"T\n" +
 	"\x1aListWazzupMessagesResponse\x126\n" +
-	"\bmessages\x18\x01 \x03(\v2\x1a.crm.v1.WazzupMessageProtoR\bmessages\"\xa6\x02\n" +
+	"\bmessages\x18\x01 \x03(\v2\x1a.crm.v1.WazzupMessageProtoR\bmessages\"\xce\x02\n" +
 	"\x17WazzupConversationProto\x12\x17\n" +
 	"\achat_id\x18\x01 \x01(\tR\x06chatId\x12\x1b\n" +
 	"\tchat_type\x18\x02 \x01(\tR\bchatType\x12!\n" +
@@ -16805,7 +16838,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\tlast_body\x18\x04 \x01(\tR\blastBody\x12*\n" +
 	"\x11last_content_type\x18\x05 \x01(\tR\x0flastContentType\x12%\n" +
 	"\x0elast_direction\x18\x06 \x01(\tR\rlastDirection\x12B\n" +
-	"\x0flast_created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\rlastCreatedAt\"\x8f\x01\n" +
+	"\x0flast_created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\rlastCreatedAt\x12&\n" +
+	"\x0fmatched_user_id\x18\b \x01(\x03R\rmatchedUserId\"\x8f\x01\n" +
 	"\x1eListWazzupConversationsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
