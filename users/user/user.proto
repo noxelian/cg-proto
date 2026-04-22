@@ -65,6 +65,32 @@ service UserService {
   // ListUsersByPlatformRoles returns users that have any of the given platform roles.
   // If roles is empty, returns all users that have at least one platform role.
   rpc ListUsersByPlatformRoles(ListUsersByPlatformRolesRequest) returns (ListUsersByPlatformRolesResponse);
+
+  // ==== Phone book (multi-phone feature) ====
+  // A user owns up to 5 phone numbers, any of which identifies them across
+  // auth, telephony, WhatsApp/Wazzup and CRM. All writes are authenticated;
+  // Phase 1 accepts writes from the owning user or a platform admin.
+
+  // ListPhones returns every phone on the user's account, primary first.
+  rpc ListPhones(ListPhonesRequest) returns (ListPhonesResponse);
+
+  // AddPhone inserts a new phone. Returns ALREADY_EXISTS when the phone is
+  // already owned by someone else, and RESOURCE_EXHAUSTED when the caller
+  // already has 5 phones. CRM operators add phones with is_verified=false
+  // so the number can't be used to log in until the owner passes SMS-OTP.
+  rpc AddPhone(AddPhoneRequest) returns (AddPhoneResponse);
+
+  // RemovePhone deletes a phone. Returns FAILED_PRECONDITION if the phone
+  // is currently primary — the caller must promote another first.
+  rpc RemovePhone(RemovePhoneRequest) returns (RemovePhoneResponse);
+
+  // SetPrimaryPhone atomically demotes the current primary and promotes
+  // the target within one transaction.
+  rpc SetPrimaryPhone(SetPrimaryPhoneRequest) returns (SetPrimaryPhoneResponse);
+
+  // RelabelPhone updates the label on a phone. Allowed values:
+  // mobile | work | home | whatsapp | other.
+  rpc RelabelPhone(RelabelPhoneRequest) returns (RelabelPhoneResponse);
 }
 
 enum PlatformRole {
@@ -319,4 +345,77 @@ message ListUsersByPlatformRolesRequest {
 
 message ListUsersByPlatformRolesResponse {
   repeated PlatformMember members = 1;
+}
+
+// ==== Phone book (Phase 1 messages) ====
+
+// UserPhone is one entry in the user's phone book. The service layer
+// exposes the canonical +7XXXXXXXXXX shape in `phone`; callers pass
+// mixed-format input on writes and receive normalised output on reads.
+message UserPhone {
+  int64  id          = 1;
+  int64  user_id     = 2;
+  string phone       = 3;   // +7XXXXXXXXXX
+  string label       = 4;   // mobile|work|home|whatsapp|other
+  bool   is_primary  = 5;
+  bool   is_verified = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message ListPhonesRequest {
+  // Target user. If zero, the JWT caller's own user_id is used. A
+  // non-zero value is admin-only (callers without the relevant platform
+  // role receive PERMISSION_DENIED).
+  int64 user_id = 1;
+}
+
+message ListPhonesResponse {
+  repeated UserPhone phones = 1;
+}
+
+message AddPhoneRequest {
+  // Target user (see ListPhonesRequest.user_id semantics).
+  int64  user_id     = 1;
+  // Phone in any format; the server normalises to +7XXXXXXXXXX before
+  // validation and storage.
+  string phone       = 2;
+  string label       = 3; // default "mobile" when empty
+  // Make the new phone the user's primary. The current primary (if any)
+  // is demoted in the same transaction.
+  bool   is_primary  = 4;
+  // Platform admins can pre-verify on behalf of the user; self-service
+  // callers ignore this field and must pass SMS-OTP before the phone
+  // becomes verified.
+  bool   is_verified = 5;
+}
+
+message AddPhoneResponse {
+  UserPhone phone = 1;
+}
+
+message RemovePhoneRequest {
+  int64 user_id  = 1;
+  int64 phone_id = 2;
+}
+
+message RemovePhoneResponse {}
+
+message SetPrimaryPhoneRequest {
+  int64 user_id  = 1;
+  int64 phone_id = 2;
+}
+
+message SetPrimaryPhoneResponse {
+  UserPhone phone = 1;
+}
+
+message RelabelPhoneRequest {
+  int64  user_id  = 1;
+  int64  phone_id = 2;
+  string label    = 3;
+}
+
+message RelabelPhoneResponse {
+  UserPhone phone = 1;
 }

@@ -40,6 +40,11 @@ const (
 	UserService_SetPlatformOrgAccess_FullMethodName     = "/users.user.v1.UserService/SetPlatformOrgAccess"
 	UserService_GetPlatformOrgAccess_FullMethodName     = "/users.user.v1.UserService/GetPlatformOrgAccess"
 	UserService_ListUsersByPlatformRoles_FullMethodName = "/users.user.v1.UserService/ListUsersByPlatformRoles"
+	UserService_ListPhones_FullMethodName               = "/users.user.v1.UserService/ListPhones"
+	UserService_AddPhone_FullMethodName                 = "/users.user.v1.UserService/AddPhone"
+	UserService_RemovePhone_FullMethodName              = "/users.user.v1.UserService/RemovePhone"
+	UserService_SetPrimaryPhone_FullMethodName          = "/users.user.v1.UserService/SetPrimaryPhone"
+	UserService_RelabelPhone_FullMethodName             = "/users.user.v1.UserService/RelabelPhone"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -88,6 +93,22 @@ type UserServiceClient interface {
 	// ListUsersByPlatformRoles returns users that have any of the given platform roles.
 	// If roles is empty, returns all users that have at least one platform role.
 	ListUsersByPlatformRoles(ctx context.Context, in *ListUsersByPlatformRolesRequest, opts ...grpc.CallOption) (*ListUsersByPlatformRolesResponse, error)
+	// ListPhones returns every phone on the user's account, primary first.
+	ListPhones(ctx context.Context, in *ListPhonesRequest, opts ...grpc.CallOption) (*ListPhonesResponse, error)
+	// AddPhone inserts a new phone. Returns ALREADY_EXISTS when the phone is
+	// already owned by someone else, and RESOURCE_EXHAUSTED when the caller
+	// already has 5 phones. CRM operators add phones with is_verified=false
+	// so the number can't be used to log in until the owner passes SMS-OTP.
+	AddPhone(ctx context.Context, in *AddPhoneRequest, opts ...grpc.CallOption) (*AddPhoneResponse, error)
+	// RemovePhone deletes a phone. Returns FAILED_PRECONDITION if the phone
+	// is currently primary — the caller must promote another first.
+	RemovePhone(ctx context.Context, in *RemovePhoneRequest, opts ...grpc.CallOption) (*RemovePhoneResponse, error)
+	// SetPrimaryPhone atomically demotes the current primary and promotes
+	// the target within one transaction.
+	SetPrimaryPhone(ctx context.Context, in *SetPrimaryPhoneRequest, opts ...grpc.CallOption) (*SetPrimaryPhoneResponse, error)
+	// RelabelPhone updates the label on a phone. Allowed values:
+	// mobile | work | home | whatsapp | other.
+	RelabelPhone(ctx context.Context, in *RelabelPhoneRequest, opts ...grpc.CallOption) (*RelabelPhoneResponse, error)
 }
 
 type userServiceClient struct {
@@ -308,6 +329,56 @@ func (c *userServiceClient) ListUsersByPlatformRoles(ctx context.Context, in *Li
 	return out, nil
 }
 
+func (c *userServiceClient) ListPhones(ctx context.Context, in *ListPhonesRequest, opts ...grpc.CallOption) (*ListPhonesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPhonesResponse)
+	err := c.cc.Invoke(ctx, UserService_ListPhones_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) AddPhone(ctx context.Context, in *AddPhoneRequest, opts ...grpc.CallOption) (*AddPhoneResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddPhoneResponse)
+	err := c.cc.Invoke(ctx, UserService_AddPhone_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) RemovePhone(ctx context.Context, in *RemovePhoneRequest, opts ...grpc.CallOption) (*RemovePhoneResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RemovePhoneResponse)
+	err := c.cc.Invoke(ctx, UserService_RemovePhone_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) SetPrimaryPhone(ctx context.Context, in *SetPrimaryPhoneRequest, opts ...grpc.CallOption) (*SetPrimaryPhoneResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetPrimaryPhoneResponse)
+	err := c.cc.Invoke(ctx, UserService_SetPrimaryPhone_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) RelabelPhone(ctx context.Context, in *RelabelPhoneRequest, opts ...grpc.CallOption) (*RelabelPhoneResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RelabelPhoneResponse)
+	err := c.cc.Invoke(ctx, UserService_RelabelPhone_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -354,6 +425,22 @@ type UserServiceServer interface {
 	// ListUsersByPlatformRoles returns users that have any of the given platform roles.
 	// If roles is empty, returns all users that have at least one platform role.
 	ListUsersByPlatformRoles(context.Context, *ListUsersByPlatformRolesRequest) (*ListUsersByPlatformRolesResponse, error)
+	// ListPhones returns every phone on the user's account, primary first.
+	ListPhones(context.Context, *ListPhonesRequest) (*ListPhonesResponse, error)
+	// AddPhone inserts a new phone. Returns ALREADY_EXISTS when the phone is
+	// already owned by someone else, and RESOURCE_EXHAUSTED when the caller
+	// already has 5 phones. CRM operators add phones with is_verified=false
+	// so the number can't be used to log in until the owner passes SMS-OTP.
+	AddPhone(context.Context, *AddPhoneRequest) (*AddPhoneResponse, error)
+	// RemovePhone deletes a phone. Returns FAILED_PRECONDITION if the phone
+	// is currently primary — the caller must promote another first.
+	RemovePhone(context.Context, *RemovePhoneRequest) (*RemovePhoneResponse, error)
+	// SetPrimaryPhone atomically demotes the current primary and promotes
+	// the target within one transaction.
+	SetPrimaryPhone(context.Context, *SetPrimaryPhoneRequest) (*SetPrimaryPhoneResponse, error)
+	// RelabelPhone updates the label on a phone. Allowed values:
+	// mobile | work | home | whatsapp | other.
+	RelabelPhone(context.Context, *RelabelPhoneRequest) (*RelabelPhoneResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -426,6 +513,21 @@ func (UnimplementedUserServiceServer) GetPlatformOrgAccess(context.Context, *Get
 }
 func (UnimplementedUserServiceServer) ListUsersByPlatformRoles(context.Context, *ListUsersByPlatformRolesRequest) (*ListUsersByPlatformRolesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUsersByPlatformRoles not implemented")
+}
+func (UnimplementedUserServiceServer) ListPhones(context.Context, *ListPhonesRequest) (*ListPhonesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPhones not implemented")
+}
+func (UnimplementedUserServiceServer) AddPhone(context.Context, *AddPhoneRequest) (*AddPhoneResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddPhone not implemented")
+}
+func (UnimplementedUserServiceServer) RemovePhone(context.Context, *RemovePhoneRequest) (*RemovePhoneResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RemovePhone not implemented")
+}
+func (UnimplementedUserServiceServer) SetPrimaryPhone(context.Context, *SetPrimaryPhoneRequest) (*SetPrimaryPhoneResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetPrimaryPhone not implemented")
+}
+func (UnimplementedUserServiceServer) RelabelPhone(context.Context, *RelabelPhoneRequest) (*RelabelPhoneResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RelabelPhone not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -826,6 +928,96 @@ func _UserService_ListUsersByPlatformRoles_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_ListPhones_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPhonesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListPhones(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListPhones_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListPhones(ctx, req.(*ListPhonesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_AddPhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddPhoneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AddPhone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_AddPhone_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AddPhone(ctx, req.(*AddPhoneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_RemovePhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemovePhoneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).RemovePhone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_RemovePhone_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).RemovePhone(ctx, req.(*RemovePhoneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_SetPrimaryPhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetPrimaryPhoneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SetPrimaryPhone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_SetPrimaryPhone_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SetPrimaryPhone(ctx, req.(*SetPrimaryPhoneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_RelabelPhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RelabelPhoneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).RelabelPhone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_RelabelPhone_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).RelabelPhone(ctx, req.(*RelabelPhoneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -916,6 +1108,26 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUsersByPlatformRoles",
 			Handler:    _UserService_ListUsersByPlatformRoles_Handler,
+		},
+		{
+			MethodName: "ListPhones",
+			Handler:    _UserService_ListPhones_Handler,
+		},
+		{
+			MethodName: "AddPhone",
+			Handler:    _UserService_AddPhone_Handler,
+		},
+		{
+			MethodName: "RemovePhone",
+			Handler:    _UserService_RemovePhone_Handler,
+		},
+		{
+			MethodName: "SetPrimaryPhone",
+			Handler:    _UserService_SetPrimaryPhone_Handler,
+		},
+		{
+			MethodName: "RelabelPhone",
+			Handler:    _UserService_RelabelPhone_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
