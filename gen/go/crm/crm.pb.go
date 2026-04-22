@@ -11324,6 +11324,9 @@ type WazzupConversationProto struct {
 	// cg-users user_id whose phone book contains chat_id. 0 when
 	// unknown. Lets the inbox prompt "attach chat to user X".
 	MatchedUserId int64 `protobuf:"varint,8,opt,name=matched_user_id,json=matchedUserId,proto3" json:"matched_user_id,omitempty"`
+	// Mirrors WAConversationProto.contact_user_id for inbox rendering.
+	// Populated from user_phones via the same lookup used on ingest.
+	ContactUserId int64 `protobuf:"varint,9,opt,name=contact_user_id,json=contactUserId,proto3" json:"contact_user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -11410,6 +11413,13 @@ func (x *WazzupConversationProto) GetLastCreatedAt() *timestamppb.Timestamp {
 func (x *WazzupConversationProto) GetMatchedUserId() int64 {
 	if x != nil {
 		return x.MatchedUserId
+	}
+	return 0
+}
+
+func (x *WazzupConversationProto) GetContactUserId() int64 {
+	if x != nil {
+		return x.ContactUserId
 	}
 	return 0
 }
@@ -16830,7 +16840,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x04 \x01(\x05R\x06offset\"T\n" +
 	"\x1aListWazzupMessagesResponse\x126\n" +
-	"\bmessages\x18\x01 \x03(\v2\x1a.crm.v1.WazzupMessageProtoR\bmessages\"\xce\x02\n" +
+	"\bmessages\x18\x01 \x03(\v2\x1a.crm.v1.WazzupMessageProtoR\bmessages\"\xf6\x02\n" +
 	"\x17WazzupConversationProto\x12\x17\n" +
 	"\achat_id\x18\x01 \x01(\tR\x06chatId\x12\x1b\n" +
 	"\tchat_type\x18\x02 \x01(\tR\bchatType\x12!\n" +
@@ -16839,7 +16849,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x11last_content_type\x18\x05 \x01(\tR\x0flastContentType\x12%\n" +
 	"\x0elast_direction\x18\x06 \x01(\tR\rlastDirection\x12B\n" +
 	"\x0flast_created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\rlastCreatedAt\x12&\n" +
-	"\x0fmatched_user_id\x18\b \x01(\x03R\rmatchedUserId\"\x8f\x01\n" +
+	"\x0fmatched_user_id\x18\b \x01(\x03R\rmatchedUserId\x12&\n" +
+	"\x0fcontact_user_id\x18\t \x01(\x03R\rcontactUserId\"\x8f\x01\n" +
 	"\x1eListWazzupConversationsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +

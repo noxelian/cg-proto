@@ -1542,6 +1542,9 @@ message WazzupConversationProto {
   // cg-users user_id whose phone book contains chat_id. 0 when
   // unknown. Lets the inbox prompt "attach chat to user X".
   int64  matched_user_id   = 8;
+  // Mirrors WAConversationProto.contact_user_id for inbox rendering.
+  // Populated from user_phones via the same lookup used on ingest.
+  int64  contact_user_id   = 9;
 }
 
 message ListWazzupConversationsRequest {
