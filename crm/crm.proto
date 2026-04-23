@@ -1722,6 +1722,11 @@ message TelephonyCall {
   string                      state                    = 18;  // 'ringing'|'answered'|'ended'|'failed' (lifecycle, distinct from deprecated `status`)
   string                      hangup_cause             = 19;  // ARI hangup cause code OR 'reconciled'
   google.protobuf.Timestamp   janitor_reconciled_at    = 20;  // D-24 SC#3 — set when janitor sweep marks call as reconciled
+
+  // Extension that answered the call. For inbound: set from queue claim. For
+  // outbound: same as src_num (the initiating manager's extension). Used for
+  // per-manager call-history filtering.
+  string                      answered_by_extension    = 21;
 }
 
 message TelephonyOriginateRequest {
@@ -1915,6 +1920,7 @@ message UpdateTelephonyCallStateRequest {
   google.protobuf.Timestamp   answered_at           = 6;  // optional
   google.protobuf.Timestamp   ended_at              = 7;  // optional
   google.protobuf.Timestamp   janitor_reconciled_at = 8;  // optional, set by janitor sweep
+  string                      answered_by_extension = 9;  // optional — set when transitioning to 'answered' for per-manager filtering
 }
 message UpdateTelephonyCallStateResponse {
   TelephonyCall call    = 1;
@@ -1922,10 +1928,17 @@ message UpdateTelephonyCallStateResponse {
 }
 
 message ListTelephonyCallsByOrgRequest {
-  string          organization_id = 1;
-  int32           limit           = 2;
-  int32           offset          = 3;
-  repeated string state_filter    = 4;  // optional: e.g. ['ringing','answered']
+  string          organization_id  = 1;
+  int32           limit            = 2;
+  int32           offset           = 3;
+  repeated string state_filter     = 4;  // optional: e.g. ['ringing','answered']
+  // extension_filter restricts results to calls owned by a specific manager:
+  //   - outbound where src_num = extension_filter
+  //   - inbound  where answered_by_extension = extension_filter
+  // Empty = no restriction. Missed inbound calls (state=ended & duration=0)
+  // are always returned when include_missed=true regardless of this filter.
+  string          extension_filter = 5;
+  bool            include_missed   = 6;  // when extension_filter is set, also include unanswered inbound calls
 }
 message ListTelephonyCallsByOrgResponse {
   repeated TelephonyCall calls = 1;

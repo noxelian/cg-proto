@@ -12312,6 +12312,10 @@ type TelephonyCall struct {
 	State               string                 `protobuf:"bytes,18,opt,name=state,proto3" json:"state,omitempty"`                                                          // 'ringing'|'answered'|'ended'|'failed' (lifecycle, distinct from deprecated `status`)
 	HangupCause         string                 `protobuf:"bytes,19,opt,name=hangup_cause,json=hangupCause,proto3" json:"hangup_cause,omitempty"`                           // ARI hangup cause code OR 'reconciled'
 	JanitorReconciledAt *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=janitor_reconciled_at,json=janitorReconciledAt,proto3" json:"janitor_reconciled_at,omitempty"` // D-24 SC#3 — set when janitor sweep marks call as reconciled
+	// Extension that answered the call. For inbound: set from queue claim. For
+	// outbound: same as src_num (the initiating manager's extension). Used for
+	// per-manager call-history filtering.
+	AnsweredByExtension string `protobuf:"bytes,21,opt,name=answered_by_extension,json=answeredByExtension,proto3" json:"answered_by_extension,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -12484,6 +12488,13 @@ func (x *TelephonyCall) GetJanitorReconciledAt() *timestamppb.Timestamp {
 		return x.JanitorReconciledAt
 	}
 	return nil
+}
+
+func (x *TelephonyCall) GetAnsweredByExtension() string {
+	if x != nil {
+		return x.AnsweredByExtension
+	}
+	return ""
 }
 
 type TelephonyOriginateRequest struct {
@@ -14486,6 +14497,7 @@ type UpdateTelephonyCallStateRequest struct {
 	AnsweredAt          *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=answered_at,json=answeredAt,proto3" json:"answered_at,omitempty"`                              // optional
 	EndedAt             *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"`                                       // optional
 	JanitorReconciledAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=janitor_reconciled_at,json=janitorReconciledAt,proto3" json:"janitor_reconciled_at,omitempty"` // optional, set by janitor sweep
+	AnsweredByExtension string                 `protobuf:"bytes,9,opt,name=answered_by_extension,json=answeredByExtension,proto3" json:"answered_by_extension,omitempty"` // optional — set when transitioning to 'answered' for per-manager filtering
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -14576,6 +14588,13 @@ func (x *UpdateTelephonyCallStateRequest) GetJanitorReconciledAt() *timestamppb.
 	return nil
 }
 
+func (x *UpdateTelephonyCallStateRequest) GetAnsweredByExtension() string {
+	if x != nil {
+		return x.AnsweredByExtension
+	}
+	return ""
+}
+
 type UpdateTelephonyCallStateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Call          *TelephonyCall         `protobuf:"bytes,1,opt,name=call,proto3" json:"call,omitempty"`
@@ -14634,8 +14653,16 @@ type ListTelephonyCallsByOrgRequest struct {
 	Limit          int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	Offset         int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
 	StateFilter    []string               `protobuf:"bytes,4,rep,name=state_filter,json=stateFilter,proto3" json:"state_filter,omitempty"` // optional: e.g. ['ringing','answered']
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// extension_filter restricts results to calls owned by a specific manager:
+	//   - outbound where src_num = extension_filter
+	//   - inbound  where answered_by_extension = extension_filter
+	//
+	// Empty = no restriction. Missed inbound calls (state=ended & duration=0)
+	// are always returned when include_missed=true regardless of this filter.
+	ExtensionFilter string `protobuf:"bytes,5,opt,name=extension_filter,json=extensionFilter,proto3" json:"extension_filter,omitempty"`
+	IncludeMissed   bool   `protobuf:"varint,6,opt,name=include_missed,json=includeMissed,proto3" json:"include_missed,omitempty"` // when extension_filter is set, also include unanswered inbound calls
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ListTelephonyCallsByOrgRequest) Reset() {
@@ -14694,6 +14721,20 @@ func (x *ListTelephonyCallsByOrgRequest) GetStateFilter() []string {
 		return x.StateFilter
 	}
 	return nil
+}
+
+func (x *ListTelephonyCallsByOrgRequest) GetExtensionFilter() string {
+	if x != nil {
+		return x.ExtensionFilter
+	}
+	return ""
+}
+
+func (x *ListTelephonyCallsByOrgRequest) GetIncludeMissed() bool {
+	if x != nil {
+		return x.IncludeMissed
+	}
+	return false
 }
 
 type ListTelephonyCallsByOrgResponse struct {
@@ -17481,7 +17522,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"pipelineId\x12\x17\n" +
 	"\adeal_id\x18\x05 \x01(\tR\x06dealId\x12\x1f\n" +
 	"\vassigned_to\x18\x06 \x01(\x03R\n" +
-	"assignedTo\"\xa8\a\n" +
+	"assignedTo\"\xdc\a\n" +
 	"\rTelephonyCall\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x125\n" +
 	"\bprovider\x18\x02 \x01(\x0e2\x19.crm.v1.TelephonyProviderR\bprovider\x12\x1f\n" +
@@ -17508,7 +17549,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0ematched_entity\x18\x11 \x01(\v2\x15.crm.v1.MatchedEntityR\rmatchedEntity\x12\x14\n" +
 	"\x05state\x18\x12 \x01(\tR\x05state\x12!\n" +
 	"\fhangup_cause\x18\x13 \x01(\tR\vhangupCause\x12N\n" +
-	"\x15janitor_reconciled_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x13janitorReconciledAtB\x0e\n" +
+	"\x15janitor_reconciled_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x13janitorReconciledAt\x122\n" +
+	"\x15answered_by_extension\x18\x15 \x01(\tR\x13answeredByExtensionB\x0e\n" +
 	"\f_pipeline_idB\n" +
 	"\n" +
 	"\b_deal_idB\r\n" +
@@ -17654,7 +17696,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0ematched_entity\x18\x02 \x01(\v2\x15.crm.v1.MatchedEntityR\rmatchedEntity\"b\n" +
 	"\x1bCreateTelephonyCallResponse\x12)\n" +
 	"\x04call\x18\x01 \x01(\v2\x15.crm.v1.TelephonyCallR\x04call\x12\x18\n" +
-	"\acreated\x18\x02 \x01(\bR\acreated\"\x8e\x03\n" +
+	"\acreated\x18\x02 \x01(\bR\acreated\"\xc2\x03\n" +
 	"\x1fUpdateTelephonyCallStateRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\acall_id\x18\x02 \x01(\tR\x06callId\x12%\n" +
@@ -17664,15 +17706,18 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\vanswered_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"answeredAt\x125\n" +
 	"\bended_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\aendedAt\x12N\n" +
-	"\x15janitor_reconciled_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\x13janitorReconciledAt\"g\n" +
+	"\x15janitor_reconciled_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\x13janitorReconciledAt\x122\n" +
+	"\x15answered_by_extension\x18\t \x01(\tR\x13answeredByExtension\"g\n" +
 	" UpdateTelephonyCallStateResponse\x12)\n" +
 	"\x04call\x18\x01 \x01(\v2\x15.crm.v1.TelephonyCallR\x04call\x12\x18\n" +
-	"\aupdated\x18\x02 \x01(\bR\aupdated\"\x9a\x01\n" +
+	"\aupdated\x18\x02 \x01(\bR\aupdated\"\xec\x01\n" +
 	"\x1eListTelephonyCallsByOrgRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x03 \x01(\x05R\x06offset\x12!\n" +
-	"\fstate_filter\x18\x04 \x03(\tR\vstateFilter\"d\n" +
+	"\fstate_filter\x18\x04 \x03(\tR\vstateFilter\x12)\n" +
+	"\x10extension_filter\x18\x05 \x01(\tR\x0fextensionFilter\x12%\n" +
+	"\x0einclude_missed\x18\x06 \x01(\bR\rincludeMissed\"d\n" +
 	"\x1fListTelephonyCallsByOrgResponse\x12+\n" +
 	"\x05calls\x18\x01 \x03(\v2\x15.crm.v1.TelephonyCallR\x05calls\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"t\n" +
