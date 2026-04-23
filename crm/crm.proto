@@ -58,6 +58,15 @@ service CRMService {
   rpc GetDealActivities(GetDealActivitiesRequest)           returns (GetDealActivitiesResponse);
   rpc GetContactActivities(GetContactActivitiesRequest)     returns (GetContactActivitiesResponse);
 
+  // GetPipelineAggregates returns board-wide kanban KPIs for the given
+  // pipeline: tasks_today / no_task / overdue / new_today / new_yesterday /
+  // forecast. Computed with a single SQL over the full pipeline so the
+  // counts are consistent whether the manager has lazy-loaded every column
+  // or not. Optional date_from/date_to narrow the "new deals" window and
+  // the forecast set (expected_close within range) — the task-related
+  // counters are absolute (today / overdue in server time), unaffected.
+  rpc GetPipelineAggregates(GetPipelineAggregatesRequest)   returns (GetPipelineAggregatesResponse);
+
   // ImportDeal upserts a deal identified by external_id stored in custom_fields.
   // Used for migrating data from external CRMs (AmoCRM, Bitrix, etc.) without
   // creating duplicates on re-imports.
@@ -870,6 +879,38 @@ message ReOpenDealRequest {
 
 message ReOpenDealResponse {
   DealProto deal = 1;
+}
+
+// GetPipelineAggregatesRequest scopes the aggregate calculation to a single
+// pipeline within an organization. date_from/date_to bound the "new deals"
+// window and forecast range (both inclusive). Both timestamps are optional;
+// when both are empty the defaults are (today 00:00..today 23:59:59) for the
+// "new today" counter only — forecast uses expected_close >= today.
+message GetPipelineAggregatesRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+  google.protobuf.Timestamp date_from = 3;
+  google.protobuf.Timestamp date_to   = 4;
+  // Optional assigned_to scope — when set, all counters are filtered to
+  // deals owned by this manager. 0 = no scope (whole pipeline).
+  int64 assigned_to      = 5;
+}
+
+message GetPipelineAggregatesResponse {
+  // Deals whose last active task has due_at within [today 00:00, today 24:00).
+  int64 tasks_today     = 1;
+  // Deals with no active task (last_task missing or status in done|cancelled).
+  int64 no_task         = 2;
+  // Deals whose last active task has due_at < now.
+  int64 overdue         = 3;
+  // Deals created within the date_from..date_to window (defaults to today).
+  int64 new_today       = 4;
+  // Deals created the day before the date_from..date_to window (defaults to yesterday).
+  int64 new_yesterday   = 5;
+  // Open deals with expected_close >= today (or within date_from..date_to).
+  int64 forecast_count  = 6;
+  // Sum of `amount` over the forecast set (same currency assumption as the pipeline).
+  double forecast_sum   = 7;
 }
 
 message GetDealActivitiesRequest {

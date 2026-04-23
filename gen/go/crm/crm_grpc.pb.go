@@ -50,6 +50,7 @@ const (
 	CRMService_ReOpenDeal_FullMethodName                         = "/crm.v1.CRMService/ReOpenDeal"
 	CRMService_GetDealActivities_FullMethodName                  = "/crm.v1.CRMService/GetDealActivities"
 	CRMService_GetContactActivities_FullMethodName               = "/crm.v1.CRMService/GetContactActivities"
+	CRMService_GetPipelineAggregates_FullMethodName              = "/crm.v1.CRMService/GetPipelineAggregates"
 	CRMService_ImportDeal_FullMethodName                         = "/crm.v1.CRMService/ImportDeal"
 	CRMService_PatchDealCustomFields_FullMethodName              = "/crm.v1.CRMService/PatchDealCustomFields"
 	CRMService_CreateLead_FullMethodName                         = "/crm.v1.CRMService/CreateLead"
@@ -180,6 +181,14 @@ type CRMServiceClient interface {
 	ReOpenDeal(ctx context.Context, in *ReOpenDealRequest, opts ...grpc.CallOption) (*ReOpenDealResponse, error)
 	GetDealActivities(ctx context.Context, in *GetDealActivitiesRequest, opts ...grpc.CallOption) (*GetDealActivitiesResponse, error)
 	GetContactActivities(ctx context.Context, in *GetContactActivitiesRequest, opts ...grpc.CallOption) (*GetContactActivitiesResponse, error)
+	// GetPipelineAggregates returns board-wide kanban KPIs for the given
+	// pipeline: tasks_today / no_task / overdue / new_today / new_yesterday /
+	// forecast. Computed with a single SQL over the full pipeline so the
+	// counts are consistent whether the manager has lazy-loaded every column
+	// or not. Optional date_from/date_to narrow the "new deals" window and
+	// the forecast set (expected_close within range) — the task-related
+	// counters are absolute (today / overdue in server time), unaffected.
+	GetPipelineAggregates(ctx context.Context, in *GetPipelineAggregatesRequest, opts ...grpc.CallOption) (*GetPipelineAggregatesResponse, error)
 	// ImportDeal upserts a deal identified by external_id stored in custom_fields.
 	// Used for migrating data from external CRMs (AmoCRM, Bitrix, etc.) without
 	// creating duplicates on re-imports.
@@ -617,6 +626,16 @@ func (c *cRMServiceClient) GetContactActivities(ctx context.Context, in *GetCont
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetContactActivitiesResponse)
 	err := c.cc.Invoke(ctx, CRMService_GetContactActivities_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetPipelineAggregates(ctx context.Context, in *GetPipelineAggregatesRequest, opts ...grpc.CallOption) (*GetPipelineAggregatesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPipelineAggregatesResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetPipelineAggregates_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1372,6 +1391,14 @@ type CRMServiceServer interface {
 	ReOpenDeal(context.Context, *ReOpenDealRequest) (*ReOpenDealResponse, error)
 	GetDealActivities(context.Context, *GetDealActivitiesRequest) (*GetDealActivitiesResponse, error)
 	GetContactActivities(context.Context, *GetContactActivitiesRequest) (*GetContactActivitiesResponse, error)
+	// GetPipelineAggregates returns board-wide kanban KPIs for the given
+	// pipeline: tasks_today / no_task / overdue / new_today / new_yesterday /
+	// forecast. Computed with a single SQL over the full pipeline so the
+	// counts are consistent whether the manager has lazy-loaded every column
+	// or not. Optional date_from/date_to narrow the "new deals" window and
+	// the forecast set (expected_close within range) — the task-related
+	// counters are absolute (today / overdue in server time), unaffected.
+	GetPipelineAggregates(context.Context, *GetPipelineAggregatesRequest) (*GetPipelineAggregatesResponse, error)
 	// ImportDeal upserts a deal identified by external_id stored in custom_fields.
 	// Used for migrating data from external CRMs (AmoCRM, Bitrix, etc.) without
 	// creating duplicates on re-imports.
@@ -1585,6 +1612,9 @@ func (UnimplementedCRMServiceServer) GetDealActivities(context.Context, *GetDeal
 }
 func (UnimplementedCRMServiceServer) GetContactActivities(context.Context, *GetContactActivitiesRequest) (*GetContactActivitiesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetContactActivities not implemented")
+}
+func (UnimplementedCRMServiceServer) GetPipelineAggregates(context.Context, *GetPipelineAggregatesRequest) (*GetPipelineAggregatesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPipelineAggregates not implemented")
 }
 func (UnimplementedCRMServiceServer) ImportDeal(context.Context, *ImportDealRequest) (*ImportDealResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ImportDeal not implemented")
@@ -2368,6 +2398,24 @@ func _CRMService_GetContactActivities_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRMServiceServer).GetContactActivities(ctx, req.(*GetContactActivitiesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetPipelineAggregates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPipelineAggregatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetPipelineAggregates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetPipelineAggregates_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetPipelineAggregates(ctx, req.(*GetPipelineAggregatesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3744,6 +3792,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetContactActivities",
 			Handler:    _CRMService_GetContactActivities_Handler,
+		},
+		{
+			MethodName: "GetPipelineAggregates",
+			Handler:    _CRMService_GetPipelineAggregates_Handler,
 		},
 		{
 			MethodName: "ImportDeal",
