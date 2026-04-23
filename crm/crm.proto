@@ -13,6 +13,11 @@ service CRMService {
   rpc ListPipelines(ListPipelinesRequest)     returns (ListPipelinesResponse);
   rpc UpdatePipeline(UpdatePipelineRequest)   returns (UpdatePipelineResponse);
   rpc ArchivePipeline(ArchivePipelineRequest) returns (ArchivePipelineResponse);
+  // Pipeline-level membership management. Admins (scope=all) manage who
+  // can see a pipeline; managers see only pipelines they're members of.
+  rpc ListPipelineMembers(ListPipelineMembersRequest)     returns (ListPipelineMembersResponse);
+  rpc AddPipelineMember(AddPipelineMemberRequest)         returns (AddPipelineMemberResponse);
+  rpc RemovePipelineMember(RemovePipelineMemberRequest)   returns (RemovePipelineMemberResponse);
   rpc CreateStage(CreateStageRequest)         returns (CreateStageResponse);
   rpc UpdateStage(UpdateStageRequest)         returns (UpdateStageResponse);
   rpc DeleteStage(DeleteStageRequest)         returns (DeleteStageResponse);
@@ -264,6 +269,45 @@ message ListPipelinesRequest {
 
 message ListPipelinesResponse {
   repeated Pipeline pipelines = 1;
+}
+
+// PipelineMemberProto — one row of pipeline_members. user_id is an
+// cg-users BIGINT; name is enriched by the BFF for display convenience.
+message PipelineMemberProto {
+  string pipeline_id = 1;
+  int64  user_id     = 2;
+  string name        = 3; // enriched from cg-users
+  string phone       = 4; // enriched from cg-users, optional
+  int64  added_by    = 5;
+  google.protobuf.Timestamp added_at = 6;
+}
+
+message ListPipelineMembersRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+}
+
+message ListPipelineMembersResponse {
+  repeated PipelineMemberProto members = 1;
+}
+
+message AddPipelineMemberRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+  int64  user_id         = 3;
+}
+
+message AddPipelineMemberResponse {
+  PipelineMemberProto member = 1;
+}
+
+message RemovePipelineMemberRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2;
+  int64  user_id         = 3;
+}
+
+message RemovePipelineMemberResponse {
 }
 
 message UpdatePipelineRequest {
