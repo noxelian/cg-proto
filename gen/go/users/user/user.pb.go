@@ -1768,7 +1768,8 @@ func (x *DeleteAccountResponse) GetSuccess() bool {
 type SetPlatformRolesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Roles         []PlatformRole         `protobuf:"varint,2,rep,packed,name=roles,proto3,enum=users.user.v1.PlatformRole" json:"roles,omitempty"` // replaces entire set
+	Roles         []PlatformRole         `protobuf:"varint,2,rep,packed,name=roles,proto3,enum=users.user.v1.PlatformRole" json:"roles,omitempty"` // DEPRECATED: use role_codes. Kept for wire compat.
+	RoleCodes     []string               `protobuf:"bytes,3,rep,name=role_codes,json=roleCodes,proto3" json:"role_codes,omitempty"`                // preferred: string codes (supports dynamic catalog roles)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1813,6 +1814,13 @@ func (x *SetPlatformRolesRequest) GetUserId() int64 {
 func (x *SetPlatformRolesRequest) GetRoles() []PlatformRole {
 	if x != nil {
 		return x.Roles
+	}
+	return nil
+}
+
+func (x *SetPlatformRolesRequest) GetRoleCodes() []string {
+	if x != nil {
+		return x.RoleCodes
 	}
 	return nil
 }
@@ -1899,7 +1907,8 @@ func (x *GetPlatformRolesRequest) GetUserId() int64 {
 
 type GetPlatformRolesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Roles         []PlatformRole         `protobuf:"varint,1,rep,packed,name=roles,proto3,enum=users.user.v1.PlatformRole" json:"roles,omitempty"`
+	Roles         []PlatformRole         `protobuf:"varint,1,rep,packed,name=roles,proto3,enum=users.user.v1.PlatformRole" json:"roles,omitempty"` // DEPRECATED: use role_codes.
+	RoleCodes     []string               `protobuf:"bytes,2,rep,name=role_codes,json=roleCodes,proto3" json:"role_codes,omitempty"`                // preferred
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1937,6 +1946,13 @@ func (*GetPlatformRolesResponse) Descriptor() ([]byte, []int) {
 func (x *GetPlatformRolesResponse) GetRoles() []PlatformRole {
 	if x != nil {
 		return x.Roles
+	}
+	return nil
+}
+
+func (x *GetPlatformRolesResponse) GetRoleCodes() []string {
+	if x != nil {
+		return x.RoleCodes
 	}
 	return nil
 }
@@ -1987,8 +2003,9 @@ func (x *CheckPlatformRolesRequest) GetUserId() int64 {
 
 type CheckPlatformRolesResponse struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Roles            []PlatformRole         `protobuf:"varint,1,rep,packed,name=roles,proto3,enum=users.user.v1.PlatformRole" json:"roles,omitempty"`
-	AccessibleOrgIds []string               `protobuf:"bytes,2,rep,name=accessible_org_ids,json=accessibleOrgIds,proto3" json:"accessible_org_ids,omitempty"` // populated only for MECHANIC
+	Roles            []PlatformRole         `protobuf:"varint,1,rep,packed,name=roles,proto3,enum=users.user.v1.PlatformRole" json:"roles,omitempty"` // DEPRECATED: use role_codes.
+	AccessibleOrgIds []string               `protobuf:"bytes,2,rep,name=accessible_org_ids,json=accessibleOrgIds,proto3" json:"accessible_org_ids,omitempty"`
+	RoleCodes        []string               `protobuf:"bytes,3,rep,name=role_codes,json=roleCodes,proto3" json:"role_codes,omitempty"` // preferred
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -2033,6 +2050,13 @@ func (x *CheckPlatformRolesResponse) GetRoles() []PlatformRole {
 func (x *CheckPlatformRolesResponse) GetAccessibleOrgIds() []string {
 	if x != nil {
 		return x.AccessibleOrgIds
+	}
+	return nil
+}
+
+func (x *CheckPlatformRolesResponse) GetRoleCodes() []string {
+	if x != nil {
+		return x.RoleCodes
 	}
 	return nil
 }
@@ -2332,7 +2356,8 @@ type PlatformMember struct {
 	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Phone         string                 `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
-	Roles         []PlatformRole         `protobuf:"varint,4,rep,packed,name=roles,proto3,enum=users.user.v1.PlatformRole" json:"roles,omitempty"`
+	Roles         []PlatformRole         `protobuf:"varint,4,rep,packed,name=roles,proto3,enum=users.user.v1.PlatformRole" json:"roles,omitempty"` // DEPRECATED: use role_codes.
+	RoleCodes     []string               `protobuf:"bytes,5,rep,name=role_codes,json=roleCodes,proto3" json:"role_codes,omitempty"`                // preferred
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2395,9 +2420,17 @@ func (x *PlatformMember) GetRoles() []PlatformRole {
 	return nil
 }
 
+func (x *PlatformMember) GetRoleCodes() []string {
+	if x != nil {
+		return x.RoleCodes
+	}
+	return nil
+}
+
 type ListUsersByPlatformRolesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Roles         []PlatformRole         `protobuf:"varint,1,rep,packed,name=roles,proto3,enum=users.user.v1.PlatformRole" json:"roles,omitempty"` // filter by these roles; empty = all users with any role
+	Roles         []PlatformRole         `protobuf:"varint,1,rep,packed,name=roles,proto3,enum=users.user.v1.PlatformRole" json:"roles,omitempty"` // DEPRECATED: use role_codes.
+	RoleCodes     []string               `protobuf:"bytes,2,rep,name=role_codes,json=roleCodes,proto3" json:"role_codes,omitempty"`                // preferred: filter by these string codes; empty = all users with any role
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2435,6 +2468,13 @@ func (*ListUsersByPlatformRolesRequest) Descriptor() ([]byte, []int) {
 func (x *ListUsersByPlatformRolesRequest) GetRoles() []PlatformRole {
 	if x != nil {
 		return x.Roles
+	}
+	return nil
+}
+
+func (x *ListUsersByPlatformRolesRequest) GetRoleCodes() []string {
+	if x != nil {
+		return x.RoleCodes
 	}
 	return nil
 }
@@ -3955,20 +3995,26 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x14DeleteAccountRequest\x12\x16\n" +
 	"\x06reason\x18\x01 \x01(\tR\x06reason\"1\n" +
 	"\x15DeleteAccountResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"e\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x84\x01\n" +
 	"\x17SetPlatformRolesRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x121\n" +
-	"\x05roles\x18\x02 \x03(\x0e2\x1b.users.user.v1.PlatformRoleR\x05roles\"\x1a\n" +
+	"\x05roles\x18\x02 \x03(\x0e2\x1b.users.user.v1.PlatformRoleR\x05roles\x12\x1d\n" +
+	"\n" +
+	"role_codes\x18\x03 \x03(\tR\troleCodes\"\x1a\n" +
 	"\x18SetPlatformRolesResponse\"2\n" +
 	"\x17GetPlatformRolesRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"M\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"l\n" +
 	"\x18GetPlatformRolesResponse\x121\n" +
-	"\x05roles\x18\x01 \x03(\x0e2\x1b.users.user.v1.PlatformRoleR\x05roles\"4\n" +
+	"\x05roles\x18\x01 \x03(\x0e2\x1b.users.user.v1.PlatformRoleR\x05roles\x12\x1d\n" +
+	"\n" +
+	"role_codes\x18\x02 \x03(\tR\troleCodes\"4\n" +
 	"\x19CheckPlatformRolesRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"}\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\x9c\x01\n" +
 	"\x1aCheckPlatformRolesResponse\x121\n" +
 	"\x05roles\x18\x01 \x03(\x0e2\x1b.users.user.v1.PlatformRoleR\x05roles\x12,\n" +
-	"\x12accessible_org_ids\x18\x02 \x03(\tR\x10accessibleOrgIds\"O\n" +
+	"\x12accessible_org_ids\x18\x02 \x03(\tR\x10accessibleOrgIds\x12\x1d\n" +
+	"\n" +
+	"role_codes\x18\x03 \x03(\tR\troleCodes\"O\n" +
 	"\x1bSetPlatformOrgAccessRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x17\n" +
 	"\aorg_ids\x18\x02 \x03(\tR\x06orgIds\"\x1e\n" +
@@ -3983,14 +4029,18 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x06search\x18\x03 \x01(\tR\x06search\"T\n" +
 	"\x11ListUsersResponse\x12)\n" +
 	"\x05users\x18\x01 \x03(\v2\x13.users.user.v1.UserR\x05users\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"\x86\x01\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xa5\x01\n" +
 	"\x0ePlatformMember\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
 	"\x05phone\x18\x03 \x01(\tR\x05phone\x121\n" +
-	"\x05roles\x18\x04 \x03(\x0e2\x1b.users.user.v1.PlatformRoleR\x05roles\"T\n" +
+	"\x05roles\x18\x04 \x03(\x0e2\x1b.users.user.v1.PlatformRoleR\x05roles\x12\x1d\n" +
+	"\n" +
+	"role_codes\x18\x05 \x03(\tR\troleCodes\"s\n" +
 	"\x1fListUsersByPlatformRolesRequest\x121\n" +
-	"\x05roles\x18\x01 \x03(\x0e2\x1b.users.user.v1.PlatformRoleR\x05roles\"[\n" +
+	"\x05roles\x18\x01 \x03(\x0e2\x1b.users.user.v1.PlatformRoleR\x05roles\x12\x1d\n" +
+	"\n" +
+	"role_codes\x18\x02 \x03(\tR\troleCodes\"[\n" +
 	" ListUsersByPlatformRolesResponse\x127\n" +
 	"\amembers\x18\x01 \x03(\v2\x1d.users.user.v1.PlatformMemberR\amembers\"\x96\x02\n" +
 	"\tUserPhone\x12\x0e\n" +

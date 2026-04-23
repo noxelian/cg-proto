@@ -295,7 +295,8 @@ message DeleteAccountResponse {
 
 message SetPlatformRolesRequest {
   int64 user_id = 1;
-  repeated PlatformRole roles = 2;  // replaces entire set
+  repeated PlatformRole roles = 2;       // DEPRECATED: use role_codes. Kept for wire compat.
+  repeated string role_codes = 3;        // preferred: string codes (supports dynamic catalog roles)
 }
 
 message SetPlatformRolesResponse {}
@@ -305,7 +306,8 @@ message GetPlatformRolesRequest {
 }
 
 message GetPlatformRolesResponse {
-  repeated PlatformRole roles = 1;
+  repeated PlatformRole roles = 1;       // DEPRECATED: use role_codes.
+  repeated string role_codes = 2;        // preferred
 }
 
 message CheckPlatformRolesRequest {
@@ -313,8 +315,9 @@ message CheckPlatformRolesRequest {
 }
 
 message CheckPlatformRolesResponse {
-  repeated PlatformRole roles = 1;
-  repeated string accessible_org_ids = 2;  // populated only for MECHANIC
+  repeated PlatformRole roles = 1;       // DEPRECATED: use role_codes.
+  repeated string accessible_org_ids = 2;
+  repeated string role_codes = 3;        // preferred
 }
 
 message SetPlatformOrgAccessRequest {
@@ -349,11 +352,13 @@ message PlatformMember {
   int64 user_id = 1;
   string name = 2;
   string phone = 3;
-  repeated PlatformRole roles = 4;
+  repeated PlatformRole roles = 4;       // DEPRECATED: use role_codes.
+  repeated string role_codes = 5;        // preferred
 }
 
 message ListUsersByPlatformRolesRequest {
-  repeated PlatformRole roles = 1;  // filter by these roles; empty = all users with any role
+  repeated PlatformRole roles = 1;       // DEPRECATED: use role_codes.
+  repeated string role_codes = 2;        // preferred: filter by these string codes; empty = all users with any role
 }
 
 message ListUsersByPlatformRolesResponse {
