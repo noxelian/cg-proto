@@ -1630,6 +1630,9 @@ message WazzupConversationProto {
   // Mirrors WAConversationProto.contact_user_id for inbox rendering.
   // Populated from user_phones via the same lookup used on ingest.
   int64  contact_user_id   = 9;
+  // Number of unread inbound messages in this chat. 0 means fully read.
+  // Populated via COUNT(*) FILTER (WHERE is_read = false AND direction = 'inbound').
+  int64  unread_count       = 10;
 }
 
 message ListWazzupConversationsRequest {
