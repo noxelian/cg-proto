@@ -7,8 +7,8 @@ option go_package = "github.com/4ubak/cg-proto/gen/go/billing/billing;billingv1"
 import "google/protobuf/timestamp.proto";
 
 // BillingService handles financial accounting: ledger entries, org balances,
-// payouts, reconciliation, and revenue reporting.
-// Consumes events from cg-payments, cg-orders, cg-booking via Kafka.
+// payouts, reconciliation, revenue reporting, and user spending history.
+// Consumes events from cg-payments, cg-orders, cg-booking, cg-workshop via Kafka.
 service BillingService {
   // === Ledger ===
   rpc RecordLedgerEntry(RecordLedgerEntryRequest) returns (RecordLedgerEntryResponse);
@@ -27,6 +27,21 @@ service BillingService {
   // === Reporting ===
   rpc GetOrgStatement(GetOrgStatementRequest) returns (GetOrgStatementResponse);
   rpc GetRevenueStats(GetRevenueStatsRequest) returns (GetRevenueStatsResponse);
+
+  // === User / dual-subject spending ===
+
+  // GetStatement returns cursor-paginated ledger entries for any subject
+  // (user or organization). Use this for "my spending history" on mobile and
+  // "org earnings statement" on web.
+  rpc GetStatement(GetStatementRequest) returns (GetStatementResponse);
+
+  // GetUserBalance returns aggregate spending totals for a user.
+  rpc GetUserBalance(GetUserBalanceRequest) returns (GetUserBalanceResponse);
+
+  // ListSpending returns enriched spending entries for a user: each entry
+  // includes entity_type, entity_id, amount, currency, and a counterparty_name
+  // resolved from upstream services. Intended for the mobile "spending feed".
+  rpc ListSpending(ListSpendingRequest) returns (ListSpendingResponse);
 }
 
 // =============================================
@@ -66,6 +81,12 @@ enum ReconciliationStatus {
   RECONCILIATION_STATUS_DUPLICATE = 4;
 }
 
+enum SubjectType {
+  SUBJECT_TYPE_UNSPECIFIED = 0;
+  SUBJECT_TYPE_USER = 1;
+  SUBJECT_TYPE_ORGANIZATION = 2;
+}
+
 // =============================================
 // Core messages
 // =============================================
@@ -75,16 +96,18 @@ enum ReconciliationStatus {
 message LedgerEntry {
   int64 id = 1;
   LedgerEntryType entry_type = 2;
-  string debit_account = 3;         // e.g. "buyer:123", "platform:commission", "escrow:order:456"
+  string debit_account = 3;         // e.g. "user:123", "platform:commission", "escrow:order:456"
   string credit_account = 4;        // e.g. "seller:org_abc", "platform:revenue"
   int64 amount = 5;
   string currency = 6;
-  string entity_type = 7;           // "order", "subscription", "booking", "bid_purchase"
+  string entity_type = 7;           // "order", "subscription", "booking", "bid_purchase", "repair_order"
   int64 entity_id = 8;
   string organization_id = 9;
   string description = 10;
   string idempotency_key = 11;
   google.protobuf.Timestamp created_at = 12;
+  SubjectType subject_type = 13;
+  int64 subject_id = 14;
 }
 
 // OrgBalance represents the current financial state of an organization.
@@ -98,6 +121,16 @@ message OrgBalance {
   int64 total_commission_paid = 7;  // lifetime commission to platform
   string currency = 8;
   google.protobuf.Timestamp updated_at = 9;
+}
+
+// UserBalance holds aggregate spending totals for a user.
+message UserBalance {
+  int64 user_id = 1;
+  int64 total_spent_kzt = 2;
+  int64 total_refunded_kzt = 3;
+  google.protobuf.Timestamp last_transaction_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  string currency = 6;
 }
 
 message Payout {
@@ -126,6 +159,20 @@ message RevenueDataPoint {
   string currency = 9;
 }
 
+// SpendingEntry is a single enriched spending record shown to the user.
+message SpendingEntry {
+  int64 id = 1;
+  string entity_type = 2;          // "order", "subscription", "booking", "repair_order"
+  int64 entity_id = 3;
+  int64 amount = 4;
+  string currency = 5;
+  string counterparty_name = 6;    // org/workshop name resolved by BFF; empty if unresolvable
+  string status = 7;               // "succeeded", "refunded", etc. — informational only
+  string description = 8;
+  google.protobuf.Timestamp created_at = 9;
+  LedgerEntryType entry_type = 10;
+}
+
 // =============================================
 // Ledger RPCs
 // =============================================
@@ -141,6 +188,8 @@ message RecordLedgerEntryRequest {
   string organization_id = 8;
   string description = 9;
   string idempotency_key = 10;
+  SubjectType subject_type = 11;
+  int64 subject_id = 12;
 }
 
 message RecordLedgerEntryResponse {
@@ -252,4 +301,49 @@ message GetRevenueStatsResponse {
   repeated RevenueDataPoint data_points = 1;
   int64 total_revenue = 2;
   string currency = 3;
+}
+
+// =============================================
+// User / dual-subject RPCs
+// =============================================
+
+message GetStatementRequest {
+  SubjectType subject_type = 1;
+  int64 subject_id = 2;
+  google.protobuf.Timestamp from = 3;
+  google.protobuf.Timestamp to = 4;
+  int32 limit = 5;
+  // Opaque cursor returned by the previous page. Empty on first call.
+  string cursor = 6;
+}
+
+message GetStatementResponse {
+  repeated LedgerEntry entries = 1;
+  int32 total = 2;
+  // next_cursor is non-empty when more results are available.
+  string next_cursor = 3;
+}
+
+message GetUserBalanceRequest {
+  int64 user_id = 1;
+}
+
+message GetUserBalanceResponse {
+  UserBalance balance = 1;
+}
+
+message ListSpendingRequest {
+  int64 user_id = 1;
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+  int32 limit = 4;
+  string cursor = 5;
+  // Optional: filter to a single entity_type ("subscription", "order", etc.)
+  string entity_type = 6;
+}
+
+message ListSpendingResponse {
+  repeated SpendingEntry entries = 1;
+  int32 total = 2;
+  string next_cursor = 3;
 }

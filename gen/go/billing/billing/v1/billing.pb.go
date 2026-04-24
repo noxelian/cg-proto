@@ -214,22 +214,73 @@ func (ReconciliationStatus) EnumDescriptor() ([]byte, []int) {
 	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{2}
 }
 
+type SubjectType int32
+
+const (
+	SubjectType_SUBJECT_TYPE_UNSPECIFIED  SubjectType = 0
+	SubjectType_SUBJECT_TYPE_USER         SubjectType = 1
+	SubjectType_SUBJECT_TYPE_ORGANIZATION SubjectType = 2
+)
+
+// Enum value maps for SubjectType.
+var (
+	SubjectType_name = map[int32]string{
+		0: "SUBJECT_TYPE_UNSPECIFIED",
+		1: "SUBJECT_TYPE_USER",
+		2: "SUBJECT_TYPE_ORGANIZATION",
+	}
+	SubjectType_value = map[string]int32{
+		"SUBJECT_TYPE_UNSPECIFIED":  0,
+		"SUBJECT_TYPE_USER":         1,
+		"SUBJECT_TYPE_ORGANIZATION": 2,
+	}
+)
+
+func (x SubjectType) Enum() *SubjectType {
+	p := new(SubjectType)
+	*p = x
+	return p
+}
+
+func (x SubjectType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SubjectType) Descriptor() protoreflect.EnumDescriptor {
+	return file_billing_billing_v1_billing_proto_enumTypes[3].Descriptor()
+}
+
+func (SubjectType) Type() protoreflect.EnumType {
+	return &file_billing_billing_v1_billing_proto_enumTypes[3]
+}
+
+func (x SubjectType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SubjectType.Descriptor instead.
+func (SubjectType) EnumDescriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{3}
+}
+
 // LedgerEntry represents a double-entry accounting record.
 // Every financial operation creates a debit + credit pair that must balance.
 type LedgerEntry struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	EntryType      LedgerEntryType        `protobuf:"varint,2,opt,name=entry_type,json=entryType,proto3,enum=billing.billing.v1.LedgerEntryType" json:"entry_type,omitempty"`
-	DebitAccount   string                 `protobuf:"bytes,3,opt,name=debit_account,json=debitAccount,proto3" json:"debit_account,omitempty"`    // e.g. "buyer:123", "platform:commission", "escrow:order:456"
+	DebitAccount   string                 `protobuf:"bytes,3,opt,name=debit_account,json=debitAccount,proto3" json:"debit_account,omitempty"`    // e.g. "user:123", "platform:commission", "escrow:order:456"
 	CreditAccount  string                 `protobuf:"bytes,4,opt,name=credit_account,json=creditAccount,proto3" json:"credit_account,omitempty"` // e.g. "seller:org_abc", "platform:revenue"
 	Amount         int64                  `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`
 	Currency       string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`
-	EntityType     string                 `protobuf:"bytes,7,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"` // "order", "subscription", "booking", "bid_purchase"
+	EntityType     string                 `protobuf:"bytes,7,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"` // "order", "subscription", "booking", "bid_purchase", "repair_order"
 	EntityId       int64                  `protobuf:"varint,8,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,9,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	Description    string                 `protobuf:"bytes,10,opt,name=description,proto3" json:"description,omitempty"`
 	IdempotencyKey string                 `protobuf:"bytes,11,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
 	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	SubjectType    SubjectType            `protobuf:"varint,13,opt,name=subject_type,json=subjectType,proto3,enum=billing.billing.v1.SubjectType" json:"subject_type,omitempty"`
+	SubjectId      int64                  `protobuf:"varint,14,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -348,6 +399,20 @@ func (x *LedgerEntry) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *LedgerEntry) GetSubjectType() SubjectType {
+	if x != nil {
+		return x.SubjectType
+	}
+	return SubjectType_SUBJECT_TYPE_UNSPECIFIED
+}
+
+func (x *LedgerEntry) GetSubjectId() int64 {
+	if x != nil {
+		return x.SubjectId
+	}
+	return 0
+}
+
 // OrgBalance represents the current financial state of an organization.
 type OrgBalance struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
@@ -457,6 +522,91 @@ func (x *OrgBalance) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// UserBalance holds aggregate spending totals for a user.
+type UserBalance struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	UserId            int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TotalSpentKzt     int64                  `protobuf:"varint,2,opt,name=total_spent_kzt,json=totalSpentKzt,proto3" json:"total_spent_kzt,omitempty"`
+	TotalRefundedKzt  int64                  `protobuf:"varint,3,opt,name=total_refunded_kzt,json=totalRefundedKzt,proto3" json:"total_refunded_kzt,omitempty"`
+	LastTransactionAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=last_transaction_at,json=lastTransactionAt,proto3" json:"last_transaction_at,omitempty"`
+	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Currency          string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *UserBalance) Reset() {
+	*x = UserBalance{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserBalance) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserBalance) ProtoMessage() {}
+
+func (x *UserBalance) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserBalance.ProtoReflect.Descriptor instead.
+func (*UserBalance) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *UserBalance) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *UserBalance) GetTotalSpentKzt() int64 {
+	if x != nil {
+		return x.TotalSpentKzt
+	}
+	return 0
+}
+
+func (x *UserBalance) GetTotalRefundedKzt() int64 {
+	if x != nil {
+		return x.TotalRefundedKzt
+	}
+	return 0
+}
+
+func (x *UserBalance) GetLastTransactionAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastTransactionAt
+	}
+	return nil
+}
+
+func (x *UserBalance) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *UserBalance) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
 type Payout struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -476,7 +626,7 @@ type Payout struct {
 
 func (x *Payout) Reset() {
 	*x = Payout{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[2]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -488,7 +638,7 @@ func (x *Payout) String() string {
 func (*Payout) ProtoMessage() {}
 
 func (x *Payout) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[2]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -501,7 +651,7 @@ func (x *Payout) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Payout.ProtoReflect.Descriptor instead.
 func (*Payout) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{2}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Payout) GetId() int64 {
@@ -598,7 +748,7 @@ type RevenueDataPoint struct {
 
 func (x *RevenueDataPoint) Reset() {
 	*x = RevenueDataPoint{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[3]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -610,7 +760,7 @@ func (x *RevenueDataPoint) String() string {
 func (*RevenueDataPoint) ProtoMessage() {}
 
 func (x *RevenueDataPoint) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[3]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -623,7 +773,7 @@ func (x *RevenueDataPoint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevenueDataPoint.ProtoReflect.Descriptor instead.
 func (*RevenueDataPoint) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{3}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *RevenueDataPoint) GetPeriod() string {
@@ -689,6 +839,123 @@ func (x *RevenueDataPoint) GetCurrency() string {
 	return ""
 }
 
+// SpendingEntry is a single enriched spending record shown to the user.
+type SpendingEntry struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	EntityType       string                 `protobuf:"bytes,2,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"` // "order", "subscription", "booking", "repair_order"
+	EntityId         int64                  `protobuf:"varint,3,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
+	Amount           int64                  `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`
+	Currency         string                 `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`
+	CounterpartyName string                 `protobuf:"bytes,6,opt,name=counterparty_name,json=counterpartyName,proto3" json:"counterparty_name,omitempty"` // org/workshop name resolved by BFF; empty if unresolvable
+	Status           string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`                                             // "succeeded", "refunded", etc. — informational only
+	Description      string                 `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
+	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	EntryType        LedgerEntryType        `protobuf:"varint,10,opt,name=entry_type,json=entryType,proto3,enum=billing.billing.v1.LedgerEntryType" json:"entry_type,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *SpendingEntry) Reset() {
+	*x = SpendingEntry{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SpendingEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SpendingEntry) ProtoMessage() {}
+
+func (x *SpendingEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SpendingEntry.ProtoReflect.Descriptor instead.
+func (*SpendingEntry) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *SpendingEntry) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *SpendingEntry) GetEntityType() string {
+	if x != nil {
+		return x.EntityType
+	}
+	return ""
+}
+
+func (x *SpendingEntry) GetEntityId() int64 {
+	if x != nil {
+		return x.EntityId
+	}
+	return 0
+}
+
+func (x *SpendingEntry) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *SpendingEntry) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *SpendingEntry) GetCounterpartyName() string {
+	if x != nil {
+		return x.CounterpartyName
+	}
+	return ""
+}
+
+func (x *SpendingEntry) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *SpendingEntry) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *SpendingEntry) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *SpendingEntry) GetEntryType() LedgerEntryType {
+	if x != nil {
+		return x.EntryType
+	}
+	return LedgerEntryType_LEDGER_ENTRY_TYPE_UNSPECIFIED
+}
+
 type RecordLedgerEntryRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	EntryType      LedgerEntryType        `protobuf:"varint,1,opt,name=entry_type,json=entryType,proto3,enum=billing.billing.v1.LedgerEntryType" json:"entry_type,omitempty"`
@@ -701,13 +968,15 @@ type RecordLedgerEntryRequest struct {
 	OrganizationId string                 `protobuf:"bytes,8,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	Description    string                 `protobuf:"bytes,9,opt,name=description,proto3" json:"description,omitempty"`
 	IdempotencyKey string                 `protobuf:"bytes,10,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	SubjectType    SubjectType            `protobuf:"varint,11,opt,name=subject_type,json=subjectType,proto3,enum=billing.billing.v1.SubjectType" json:"subject_type,omitempty"`
+	SubjectId      int64                  `protobuf:"varint,12,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
 
 func (x *RecordLedgerEntryRequest) Reset() {
 	*x = RecordLedgerEntryRequest{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[4]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -719,7 +988,7 @@ func (x *RecordLedgerEntryRequest) String() string {
 func (*RecordLedgerEntryRequest) ProtoMessage() {}
 
 func (x *RecordLedgerEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[4]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -732,7 +1001,7 @@ func (x *RecordLedgerEntryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecordLedgerEntryRequest.ProtoReflect.Descriptor instead.
 func (*RecordLedgerEntryRequest) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{4}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *RecordLedgerEntryRequest) GetEntryType() LedgerEntryType {
@@ -805,6 +1074,20 @@ func (x *RecordLedgerEntryRequest) GetIdempotencyKey() string {
 	return ""
 }
 
+func (x *RecordLedgerEntryRequest) GetSubjectType() SubjectType {
+	if x != nil {
+		return x.SubjectType
+	}
+	return SubjectType_SUBJECT_TYPE_UNSPECIFIED
+}
+
+func (x *RecordLedgerEntryRequest) GetSubjectId() int64 {
+	if x != nil {
+		return x.SubjectId
+	}
+	return 0
+}
+
 type RecordLedgerEntryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Entry         *LedgerEntry           `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
@@ -814,7 +1097,7 @@ type RecordLedgerEntryResponse struct {
 
 func (x *RecordLedgerEntryResponse) Reset() {
 	*x = RecordLedgerEntryResponse{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[5]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -826,7 +1109,7 @@ func (x *RecordLedgerEntryResponse) String() string {
 func (*RecordLedgerEntryResponse) ProtoMessage() {}
 
 func (x *RecordLedgerEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[5]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -839,7 +1122,7 @@ func (x *RecordLedgerEntryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecordLedgerEntryResponse.ProtoReflect.Descriptor instead.
 func (*RecordLedgerEntryResponse) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{5}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *RecordLedgerEntryResponse) GetEntry() *LedgerEntry {
@@ -865,7 +1148,7 @@ type ListLedgerEntriesRequest struct {
 
 func (x *ListLedgerEntriesRequest) Reset() {
 	*x = ListLedgerEntriesRequest{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[6]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -877,7 +1160,7 @@ func (x *ListLedgerEntriesRequest) String() string {
 func (*ListLedgerEntriesRequest) ProtoMessage() {}
 
 func (x *ListLedgerEntriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[6]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -890,7 +1173,7 @@ func (x *ListLedgerEntriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListLedgerEntriesRequest.ProtoReflect.Descriptor instead.
 func (*ListLedgerEntriesRequest) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{6}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListLedgerEntriesRequest) GetOrganizationId() string {
@@ -959,7 +1242,7 @@ type ListLedgerEntriesResponse struct {
 
 func (x *ListLedgerEntriesResponse) Reset() {
 	*x = ListLedgerEntriesResponse{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[7]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -971,7 +1254,7 @@ func (x *ListLedgerEntriesResponse) String() string {
 func (*ListLedgerEntriesResponse) ProtoMessage() {}
 
 func (x *ListLedgerEntriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[7]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -984,7 +1267,7 @@ func (x *ListLedgerEntriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListLedgerEntriesResponse.ProtoReflect.Descriptor instead.
 func (*ListLedgerEntriesResponse) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{7}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ListLedgerEntriesResponse) GetEntries() []*LedgerEntry {
@@ -1010,7 +1293,7 @@ type GetOrgBalanceRequest struct {
 
 func (x *GetOrgBalanceRequest) Reset() {
 	*x = GetOrgBalanceRequest{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[8]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1022,7 +1305,7 @@ func (x *GetOrgBalanceRequest) String() string {
 func (*GetOrgBalanceRequest) ProtoMessage() {}
 
 func (x *GetOrgBalanceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[8]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1035,7 +1318,7 @@ func (x *GetOrgBalanceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrgBalanceRequest.ProtoReflect.Descriptor instead.
 func (*GetOrgBalanceRequest) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{8}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetOrgBalanceRequest) GetOrganizationId() string {
@@ -1054,7 +1337,7 @@ type GetOrgBalanceResponse struct {
 
 func (x *GetOrgBalanceResponse) Reset() {
 	*x = GetOrgBalanceResponse{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[9]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1066,7 +1349,7 @@ func (x *GetOrgBalanceResponse) String() string {
 func (*GetOrgBalanceResponse) ProtoMessage() {}
 
 func (x *GetOrgBalanceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[9]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1079,7 +1362,7 @@ func (x *GetOrgBalanceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrgBalanceResponse.ProtoReflect.Descriptor instead.
 func (*GetOrgBalanceResponse) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{9}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetOrgBalanceResponse) GetBalance() *OrgBalance {
@@ -1103,7 +1386,7 @@ type InitiatePayoutRequest struct {
 
 func (x *InitiatePayoutRequest) Reset() {
 	*x = InitiatePayoutRequest{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[10]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1115,7 +1398,7 @@ func (x *InitiatePayoutRequest) String() string {
 func (*InitiatePayoutRequest) ProtoMessage() {}
 
 func (x *InitiatePayoutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[10]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1128,7 +1411,7 @@ func (x *InitiatePayoutRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InitiatePayoutRequest.ProtoReflect.Descriptor instead.
 func (*InitiatePayoutRequest) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{10}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *InitiatePayoutRequest) GetOrganizationId() string {
@@ -1182,7 +1465,7 @@ type InitiatePayoutResponse struct {
 
 func (x *InitiatePayoutResponse) Reset() {
 	*x = InitiatePayoutResponse{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[11]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1194,7 +1477,7 @@ func (x *InitiatePayoutResponse) String() string {
 func (*InitiatePayoutResponse) ProtoMessage() {}
 
 func (x *InitiatePayoutResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[11]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1207,7 +1490,7 @@ func (x *InitiatePayoutResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InitiatePayoutResponse.ProtoReflect.Descriptor instead.
 func (*InitiatePayoutResponse) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{11}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *InitiatePayoutResponse) GetPayout() *Payout {
@@ -1229,7 +1512,7 @@ type GetPayoutHistoryRequest struct {
 
 func (x *GetPayoutHistoryRequest) Reset() {
 	*x = GetPayoutHistoryRequest{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[12]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1241,7 +1524,7 @@ func (x *GetPayoutHistoryRequest) String() string {
 func (*GetPayoutHistoryRequest) ProtoMessage() {}
 
 func (x *GetPayoutHistoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[12]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1254,7 +1537,7 @@ func (x *GetPayoutHistoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPayoutHistoryRequest.ProtoReflect.Descriptor instead.
 func (*GetPayoutHistoryRequest) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{12}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetPayoutHistoryRequest) GetOrganizationId() string {
@@ -1295,7 +1578,7 @@ type GetPayoutHistoryResponse struct {
 
 func (x *GetPayoutHistoryResponse) Reset() {
 	*x = GetPayoutHistoryResponse{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[13]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1307,7 +1590,7 @@ func (x *GetPayoutHistoryResponse) String() string {
 func (*GetPayoutHistoryResponse) ProtoMessage() {}
 
 func (x *GetPayoutHistoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[13]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1320,7 +1603,7 @@ func (x *GetPayoutHistoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPayoutHistoryResponse.ProtoReflect.Descriptor instead.
 func (*GetPayoutHistoryResponse) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{13}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *GetPayoutHistoryResponse) GetPayouts() []*Payout {
@@ -1351,7 +1634,7 @@ type ReconcileTransactionRequest struct {
 
 func (x *ReconcileTransactionRequest) Reset() {
 	*x = ReconcileTransactionRequest{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[14]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1363,7 +1646,7 @@ func (x *ReconcileTransactionRequest) String() string {
 func (*ReconcileTransactionRequest) ProtoMessage() {}
 
 func (x *ReconcileTransactionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[14]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1376,7 +1659,7 @@ func (x *ReconcileTransactionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReconcileTransactionRequest.ProtoReflect.Descriptor instead.
 func (*ReconcileTransactionRequest) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{14}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ReconcileTransactionRequest) GetTransactionId() int64 {
@@ -1431,7 +1714,7 @@ type ReconcileTransactionResponse struct {
 
 func (x *ReconcileTransactionResponse) Reset() {
 	*x = ReconcileTransactionResponse{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[15]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1443,7 +1726,7 @@ func (x *ReconcileTransactionResponse) String() string {
 func (*ReconcileTransactionResponse) ProtoMessage() {}
 
 func (x *ReconcileTransactionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[15]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1456,7 +1739,7 @@ func (x *ReconcileTransactionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReconcileTransactionResponse.ProtoReflect.Descriptor instead.
 func (*ReconcileTransactionResponse) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{15}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ReconcileTransactionResponse) GetStatus() ReconciliationStatus {
@@ -1484,7 +1767,7 @@ type GetOrgStatementRequest struct {
 
 func (x *GetOrgStatementRequest) Reset() {
 	*x = GetOrgStatementRequest{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[16]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1496,7 +1779,7 @@ func (x *GetOrgStatementRequest) String() string {
 func (*GetOrgStatementRequest) ProtoMessage() {}
 
 func (x *GetOrgStatementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[16]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1509,7 +1792,7 @@ func (x *GetOrgStatementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrgStatementRequest.ProtoReflect.Descriptor instead.
 func (*GetOrgStatementRequest) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{16}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetOrgStatementRequest) GetOrganizationId() string {
@@ -1548,7 +1831,7 @@ type GetOrgStatementResponse struct {
 
 func (x *GetOrgStatementResponse) Reset() {
 	*x = GetOrgStatementResponse{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[17]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1560,7 +1843,7 @@ func (x *GetOrgStatementResponse) String() string {
 func (*GetOrgStatementResponse) ProtoMessage() {}
 
 func (x *GetOrgStatementResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[17]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1573,7 +1856,7 @@ func (x *GetOrgStatementResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrgStatementResponse.ProtoReflect.Descriptor instead.
 func (*GetOrgStatementResponse) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{17}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GetOrgStatementResponse) GetOrganizationId() string {
@@ -1636,7 +1919,7 @@ type GetRevenueStatsRequest struct {
 
 func (x *GetRevenueStatsRequest) Reset() {
 	*x = GetRevenueStatsRequest{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[18]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1648,7 +1931,7 @@ func (x *GetRevenueStatsRequest) String() string {
 func (*GetRevenueStatsRequest) ProtoMessage() {}
 
 func (x *GetRevenueStatsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[18]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1661,7 +1944,7 @@ func (x *GetRevenueStatsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRevenueStatsRequest.ProtoReflect.Descriptor instead.
 func (*GetRevenueStatsRequest) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{18}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GetRevenueStatsRequest) GetFrom() *timestamppb.Timestamp {
@@ -1696,7 +1979,7 @@ type GetRevenueStatsResponse struct {
 
 func (x *GetRevenueStatsResponse) Reset() {
 	*x = GetRevenueStatsResponse{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[19]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1708,7 +1991,7 @@ func (x *GetRevenueStatsResponse) String() string {
 func (*GetRevenueStatsResponse) ProtoMessage() {}
 
 func (x *GetRevenueStatsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[19]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1721,7 +2004,7 @@ func (x *GetRevenueStatsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRevenueStatsResponse.ProtoReflect.Descriptor instead.
 func (*GetRevenueStatsResponse) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{19}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetRevenueStatsResponse) GetDataPoints() []*RevenueDataPoint {
@@ -1745,11 +2028,390 @@ func (x *GetRevenueStatsResponse) GetCurrency() string {
 	return ""
 }
 
+type GetStatementRequest struct {
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	SubjectType SubjectType            `protobuf:"varint,1,opt,name=subject_type,json=subjectType,proto3,enum=billing.billing.v1.SubjectType" json:"subject_type,omitempty"`
+	SubjectId   int64                  `protobuf:"varint,2,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
+	From        *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=from,proto3" json:"from,omitempty"`
+	To          *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=to,proto3" json:"to,omitempty"`
+	Limit       int32                  `protobuf:"varint,5,opt,name=limit,proto3" json:"limit,omitempty"`
+	// Opaque cursor returned by the previous page. Empty on first call.
+	Cursor        string `protobuf:"bytes,6,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetStatementRequest) Reset() {
+	*x = GetStatementRequest{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetStatementRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetStatementRequest) ProtoMessage() {}
+
+func (x *GetStatementRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetStatementRequest.ProtoReflect.Descriptor instead.
+func (*GetStatementRequest) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *GetStatementRequest) GetSubjectType() SubjectType {
+	if x != nil {
+		return x.SubjectType
+	}
+	return SubjectType_SUBJECT_TYPE_UNSPECIFIED
+}
+
+func (x *GetStatementRequest) GetSubjectId() int64 {
+	if x != nil {
+		return x.SubjectId
+	}
+	return 0
+}
+
+func (x *GetStatementRequest) GetFrom() *timestamppb.Timestamp {
+	if x != nil {
+		return x.From
+	}
+	return nil
+}
+
+func (x *GetStatementRequest) GetTo() *timestamppb.Timestamp {
+	if x != nil {
+		return x.To
+	}
+	return nil
+}
+
+func (x *GetStatementRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *GetStatementRequest) GetCursor() string {
+	if x != nil {
+		return x.Cursor
+	}
+	return ""
+}
+
+type GetStatementResponse struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Entries []*LedgerEntry         `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
+	Total   int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	// next_cursor is non-empty when more results are available.
+	NextCursor    string `protobuf:"bytes,3,opt,name=next_cursor,json=nextCursor,proto3" json:"next_cursor,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetStatementResponse) Reset() {
+	*x = GetStatementResponse{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetStatementResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetStatementResponse) ProtoMessage() {}
+
+func (x *GetStatementResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetStatementResponse.ProtoReflect.Descriptor instead.
+func (*GetStatementResponse) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *GetStatementResponse) GetEntries() []*LedgerEntry {
+	if x != nil {
+		return x.Entries
+	}
+	return nil
+}
+
+func (x *GetStatementResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *GetStatementResponse) GetNextCursor() string {
+	if x != nil {
+		return x.NextCursor
+	}
+	return ""
+}
+
+type GetUserBalanceRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserBalanceRequest) Reset() {
+	*x = GetUserBalanceRequest{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserBalanceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserBalanceRequest) ProtoMessage() {}
+
+func (x *GetUserBalanceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserBalanceRequest.ProtoReflect.Descriptor instead.
+func (*GetUserBalanceRequest) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *GetUserBalanceRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type GetUserBalanceResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Balance       *UserBalance           `protobuf:"bytes,1,opt,name=balance,proto3" json:"balance,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserBalanceResponse) Reset() {
+	*x = GetUserBalanceResponse{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserBalanceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserBalanceResponse) ProtoMessage() {}
+
+func (x *GetUserBalanceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserBalanceResponse.ProtoReflect.Descriptor instead.
+func (*GetUserBalanceResponse) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *GetUserBalanceResponse) GetBalance() *UserBalance {
+	if x != nil {
+		return x.Balance
+	}
+	return nil
+}
+
+type ListSpendingRequest struct {
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	UserId int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	From   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=from,proto3" json:"from,omitempty"`
+	To     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=to,proto3" json:"to,omitempty"`
+	Limit  int32                  `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	Cursor string                 `protobuf:"bytes,5,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	// Optional: filter to a single entity_type ("subscription", "order", etc.)
+	EntityType    string `protobuf:"bytes,6,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSpendingRequest) Reset() {
+	*x = ListSpendingRequest{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSpendingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSpendingRequest) ProtoMessage() {}
+
+func (x *ListSpendingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSpendingRequest.ProtoReflect.Descriptor instead.
+func (*ListSpendingRequest) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *ListSpendingRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ListSpendingRequest) GetFrom() *timestamppb.Timestamp {
+	if x != nil {
+		return x.From
+	}
+	return nil
+}
+
+func (x *ListSpendingRequest) GetTo() *timestamppb.Timestamp {
+	if x != nil {
+		return x.To
+	}
+	return nil
+}
+
+func (x *ListSpendingRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListSpendingRequest) GetCursor() string {
+	if x != nil {
+		return x.Cursor
+	}
+	return ""
+}
+
+func (x *ListSpendingRequest) GetEntityType() string {
+	if x != nil {
+		return x.EntityType
+	}
+	return ""
+}
+
+type ListSpendingResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Entries       []*SpendingEntry       `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	NextCursor    string                 `protobuf:"bytes,3,opt,name=next_cursor,json=nextCursor,proto3" json:"next_cursor,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSpendingResponse) Reset() {
+	*x = ListSpendingResponse{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSpendingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSpendingResponse) ProtoMessage() {}
+
+func (x *ListSpendingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSpendingResponse.ProtoReflect.Descriptor instead.
+func (*ListSpendingResponse) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *ListSpendingResponse) GetEntries() []*SpendingEntry {
+	if x != nil {
+		return x.Entries
+	}
+	return nil
+}
+
+func (x *ListSpendingResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *ListSpendingResponse) GetNextCursor() string {
+	if x != nil {
+		return x.NextCursor
+	}
+	return ""
+}
+
 var File_billing_billing_v1_billing_proto protoreflect.FileDescriptor
 
 const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\n" +
-	" billing/billing/v1/billing.proto\x12\x12billing.billing.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xce\x03\n" +
+	" billing/billing/v1/billing.proto\x12\x12billing.billing.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb1\x04\n" +
 	"\vLedgerEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
@@ -1766,7 +2428,10 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	" \x01(\tR\vdescription\x12'\n" +
 	"\x0fidempotency_key\x18\v \x01(\tR\x0eidempotencyKey\x129\n" +
 	"\n" +
-	"created_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x82\x03\n" +
+	"created_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12B\n" +
+	"\fsubject_type\x18\r \x01(\x0e2\x1f.billing.billing.v1.SubjectTypeR\vsubjectType\x12\x1d\n" +
+	"\n" +
+	"subject_id\x18\x0e \x01(\x03R\tsubjectId\"\x82\x03\n" +
 	"\n" +
 	"OrgBalance\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12+\n" +
@@ -1778,7 +2443,15 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\x15total_commission_paid\x18\a \x01(\x03R\x13totalCommissionPaid\x12\x1a\n" +
 	"\bcurrency\x18\b \x01(\tR\bcurrency\x129\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xbf\x03\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x9f\x02\n" +
+	"\vUserBalance\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12&\n" +
+	"\x0ftotal_spent_kzt\x18\x02 \x01(\x03R\rtotalSpentKzt\x12,\n" +
+	"\x12total_refunded_kzt\x18\x03 \x01(\x03R\x10totalRefundedKzt\x12J\n" +
+	"\x13last_transaction_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x11lastTransactionAt\x129\n" +
+	"\n" +
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1a\n" +
+	"\bcurrency\x18\x06 \x01(\tR\bcurrency\"\xbf\x03\n" +
 	"\x06Payout\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x16\n" +
@@ -1801,7 +2474,22 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\x0ebooking_amount\x18\x06 \x01(\x03R\rbookingAmount\x12+\n" +
 	"\x11commission_amount\x18\a \x01(\x03R\x10commissionAmount\x12#\n" +
 	"\rrefund_amount\x18\b \x01(\x03R\frefundAmount\x12\x1a\n" +
-	"\bcurrency\x18\t \x01(\tR\bcurrency\"\x90\x03\n" +
+	"\bcurrency\x18\t \x01(\tR\bcurrency\"\xf7\x02\n" +
+	"\rSpendingEntry\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
+	"\ventity_type\x18\x02 \x01(\tR\n" +
+	"entityType\x12\x1b\n" +
+	"\tentity_id\x18\x03 \x01(\x03R\bentityId\x12\x16\n" +
+	"\x06amount\x18\x04 \x01(\x03R\x06amount\x12\x1a\n" +
+	"\bcurrency\x18\x05 \x01(\tR\bcurrency\x12+\n" +
+	"\x11counterparty_name\x18\x06 \x01(\tR\x10counterpartyName\x12\x16\n" +
+	"\x06status\x18\a \x01(\tR\x06status\x12 \n" +
+	"\vdescription\x18\b \x01(\tR\vdescription\x129\n" +
+	"\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12B\n" +
+	"\n" +
+	"entry_type\x18\n" +
+	" \x01(\x0e2#.billing.billing.v1.LedgerEntryTypeR\tentryType\"\xf3\x03\n" +
 	"\x18RecordLedgerEntryRequest\x12B\n" +
 	"\n" +
 	"entry_type\x18\x01 \x01(\x0e2#.billing.billing.v1.LedgerEntryTypeR\tentryType\x12#\n" +
@@ -1815,7 +2503,10 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\x0forganization_id\x18\b \x01(\tR\x0eorganizationId\x12 \n" +
 	"\vdescription\x18\t \x01(\tR\vdescription\x12'\n" +
 	"\x0fidempotency_key\x18\n" +
-	" \x01(\tR\x0eidempotencyKey\"R\n" +
+	" \x01(\tR\x0eidempotencyKey\x12B\n" +
+	"\fsubject_type\x18\v \x01(\x0e2\x1f.billing.billing.v1.SubjectTypeR\vsubjectType\x12\x1d\n" +
+	"\n" +
+	"subject_id\x18\f \x01(\x03R\tsubjectId\"R\n" +
 	"\x19RecordLedgerEntryResponse\x125\n" +
 	"\x05entry\x18\x01 \x01(\v2\x1f.billing.billing.v1.LedgerEntryR\x05entry\"\xd2\x02\n" +
 	"\x18ListLedgerEntriesRequest\x12'\n" +
@@ -1884,7 +2575,37 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\vdata_points\x18\x01 \x03(\v2$.billing.billing.v1.RevenueDataPointR\n" +
 	"dataPoints\x12#\n" +
 	"\rtotal_revenue\x18\x02 \x01(\x03R\ftotalRevenue\x12\x1a\n" +
-	"\bcurrency\x18\x03 \x01(\tR\bcurrency*\xf5\x03\n" +
+	"\bcurrency\x18\x03 \x01(\tR\bcurrency\"\x82\x02\n" +
+	"\x13GetStatementRequest\x12B\n" +
+	"\fsubject_type\x18\x01 \x01(\x0e2\x1f.billing.billing.v1.SubjectTypeR\vsubjectType\x12\x1d\n" +
+	"\n" +
+	"subject_id\x18\x02 \x01(\x03R\tsubjectId\x12.\n" +
+	"\x04from\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
+	"\x02to\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x14\n" +
+	"\x05limit\x18\x05 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06cursor\x18\x06 \x01(\tR\x06cursor\"\x88\x01\n" +
+	"\x14GetStatementResponse\x129\n" +
+	"\aentries\x18\x01 \x03(\v2\x1f.billing.billing.v1.LedgerEntryR\aentries\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\x12\x1f\n" +
+	"\vnext_cursor\x18\x03 \x01(\tR\n" +
+	"nextCursor\"0\n" +
+	"\x15GetUserBalanceRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"S\n" +
+	"\x16GetUserBalanceResponse\x129\n" +
+	"\abalance\x18\x01 \x01(\v2\x1f.billing.billing.v1.UserBalanceR\abalance\"\xd9\x01\n" +
+	"\x13ListSpendingRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12.\n" +
+	"\x04from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
+	"\x02to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x14\n" +
+	"\x05limit\x18\x04 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06cursor\x18\x05 \x01(\tR\x06cursor\x12\x1f\n" +
+	"\ventity_type\x18\x06 \x01(\tR\n" +
+	"entityType\"\x8a\x01\n" +
+	"\x14ListSpendingResponse\x12;\n" +
+	"\aentries\x18\x01 \x03(\v2!.billing.billing.v1.SpendingEntryR\aentries\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\x12\x1f\n" +
+	"\vnext_cursor\x18\x03 \x01(\tR\n" +
+	"nextCursor*\xf5\x03\n" +
 	"\x0fLedgerEntryType\x12!\n" +
 	"\x1dLEDGER_ENTRY_TYPE_UNSPECIFIED\x10\x00\x12&\n" +
 	"\"LEDGER_ENTRY_TYPE_PAYMENT_RECEIVED\x10\x01\x12'\n" +
@@ -1912,7 +2633,11 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\x1dRECONCILIATION_STATUS_MATCHED\x10\x01\x12$\n" +
 	" RECONCILIATION_STATUS_MISMATCHED\x10\x02\x12!\n" +
 	"\x1dRECONCILIATION_STATUS_MISSING\x10\x03\x12#\n" +
-	"\x1fRECONCILIATION_STATUS_DUPLICATE\x10\x042\x85\a\n" +
+	"\x1fRECONCILIATION_STATUS_DUPLICATE\x10\x04*a\n" +
+	"\vSubjectType\x12\x1c\n" +
+	"\x18SUBJECT_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
+	"\x11SUBJECT_TYPE_USER\x10\x01\x12\x1d\n" +
+	"\x19SUBJECT_TYPE_ORGANIZATION\x10\x022\xb4\t\n" +
 	"\x0eBillingService\x12p\n" +
 	"\x11RecordLedgerEntry\x12,.billing.billing.v1.RecordLedgerEntryRequest\x1a-.billing.billing.v1.RecordLedgerEntryResponse\x12p\n" +
 	"\x11ListLedgerEntries\x12,.billing.billing.v1.ListLedgerEntriesRequest\x1a-.billing.billing.v1.ListLedgerEntriesResponse\x12d\n" +
@@ -1921,7 +2646,10 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\x10GetPayoutHistory\x12+.billing.billing.v1.GetPayoutHistoryRequest\x1a,.billing.billing.v1.GetPayoutHistoryResponse\x12y\n" +
 	"\x14ReconcileTransaction\x12/.billing.billing.v1.ReconcileTransactionRequest\x1a0.billing.billing.v1.ReconcileTransactionResponse\x12j\n" +
 	"\x0fGetOrgStatement\x12*.billing.billing.v1.GetOrgStatementRequest\x1a+.billing.billing.v1.GetOrgStatementResponse\x12j\n" +
-	"\x0fGetRevenueStats\x12*.billing.billing.v1.GetRevenueStatsRequest\x1a+.billing.billing.v1.GetRevenueStatsResponseB<Z:github.com/4ubak/cg-proto/gen/go/billing/billing;billingv1b\x06proto3"
+	"\x0fGetRevenueStats\x12*.billing.billing.v1.GetRevenueStatsRequest\x1a+.billing.billing.v1.GetRevenueStatsResponse\x12a\n" +
+	"\fGetStatement\x12'.billing.billing.v1.GetStatementRequest\x1a(.billing.billing.v1.GetStatementResponse\x12g\n" +
+	"\x0eGetUserBalance\x12).billing.billing.v1.GetUserBalanceRequest\x1a*.billing.billing.v1.GetUserBalanceResponse\x12a\n" +
+	"\fListSpending\x12'.billing.billing.v1.ListSpendingRequest\x1a(.billing.billing.v1.ListSpendingResponseB<Z:github.com/4ubak/cg-proto/gen/go/billing/billing;billingv1b\x06proto3"
 
 var (
 	file_billing_billing_v1_billing_proto_rawDescOnce sync.Once
@@ -1935,79 +2663,108 @@ func file_billing_billing_v1_billing_proto_rawDescGZIP() []byte {
 	return file_billing_billing_v1_billing_proto_rawDescData
 }
 
-var file_billing_billing_v1_billing_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_billing_billing_v1_billing_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_billing_billing_v1_billing_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_billing_billing_v1_billing_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_billing_billing_v1_billing_proto_goTypes = []any{
 	(LedgerEntryType)(0),                 // 0: billing.billing.v1.LedgerEntryType
 	(PayoutStatus)(0),                    // 1: billing.billing.v1.PayoutStatus
 	(ReconciliationStatus)(0),            // 2: billing.billing.v1.ReconciliationStatus
-	(*LedgerEntry)(nil),                  // 3: billing.billing.v1.LedgerEntry
-	(*OrgBalance)(nil),                   // 4: billing.billing.v1.OrgBalance
-	(*Payout)(nil),                       // 5: billing.billing.v1.Payout
-	(*RevenueDataPoint)(nil),             // 6: billing.billing.v1.RevenueDataPoint
-	(*RecordLedgerEntryRequest)(nil),     // 7: billing.billing.v1.RecordLedgerEntryRequest
-	(*RecordLedgerEntryResponse)(nil),    // 8: billing.billing.v1.RecordLedgerEntryResponse
-	(*ListLedgerEntriesRequest)(nil),     // 9: billing.billing.v1.ListLedgerEntriesRequest
-	(*ListLedgerEntriesResponse)(nil),    // 10: billing.billing.v1.ListLedgerEntriesResponse
-	(*GetOrgBalanceRequest)(nil),         // 11: billing.billing.v1.GetOrgBalanceRequest
-	(*GetOrgBalanceResponse)(nil),        // 12: billing.billing.v1.GetOrgBalanceResponse
-	(*InitiatePayoutRequest)(nil),        // 13: billing.billing.v1.InitiatePayoutRequest
-	(*InitiatePayoutResponse)(nil),       // 14: billing.billing.v1.InitiatePayoutResponse
-	(*GetPayoutHistoryRequest)(nil),      // 15: billing.billing.v1.GetPayoutHistoryRequest
-	(*GetPayoutHistoryResponse)(nil),     // 16: billing.billing.v1.GetPayoutHistoryResponse
-	(*ReconcileTransactionRequest)(nil),  // 17: billing.billing.v1.ReconcileTransactionRequest
-	(*ReconcileTransactionResponse)(nil), // 18: billing.billing.v1.ReconcileTransactionResponse
-	(*GetOrgStatementRequest)(nil),       // 19: billing.billing.v1.GetOrgStatementRequest
-	(*GetOrgStatementResponse)(nil),      // 20: billing.billing.v1.GetOrgStatementResponse
-	(*GetRevenueStatsRequest)(nil),       // 21: billing.billing.v1.GetRevenueStatsRequest
-	(*GetRevenueStatsResponse)(nil),      // 22: billing.billing.v1.GetRevenueStatsResponse
-	(*timestamppb.Timestamp)(nil),        // 23: google.protobuf.Timestamp
+	(SubjectType)(0),                     // 3: billing.billing.v1.SubjectType
+	(*LedgerEntry)(nil),                  // 4: billing.billing.v1.LedgerEntry
+	(*OrgBalance)(nil),                   // 5: billing.billing.v1.OrgBalance
+	(*UserBalance)(nil),                  // 6: billing.billing.v1.UserBalance
+	(*Payout)(nil),                       // 7: billing.billing.v1.Payout
+	(*RevenueDataPoint)(nil),             // 8: billing.billing.v1.RevenueDataPoint
+	(*SpendingEntry)(nil),                // 9: billing.billing.v1.SpendingEntry
+	(*RecordLedgerEntryRequest)(nil),     // 10: billing.billing.v1.RecordLedgerEntryRequest
+	(*RecordLedgerEntryResponse)(nil),    // 11: billing.billing.v1.RecordLedgerEntryResponse
+	(*ListLedgerEntriesRequest)(nil),     // 12: billing.billing.v1.ListLedgerEntriesRequest
+	(*ListLedgerEntriesResponse)(nil),    // 13: billing.billing.v1.ListLedgerEntriesResponse
+	(*GetOrgBalanceRequest)(nil),         // 14: billing.billing.v1.GetOrgBalanceRequest
+	(*GetOrgBalanceResponse)(nil),        // 15: billing.billing.v1.GetOrgBalanceResponse
+	(*InitiatePayoutRequest)(nil),        // 16: billing.billing.v1.InitiatePayoutRequest
+	(*InitiatePayoutResponse)(nil),       // 17: billing.billing.v1.InitiatePayoutResponse
+	(*GetPayoutHistoryRequest)(nil),      // 18: billing.billing.v1.GetPayoutHistoryRequest
+	(*GetPayoutHistoryResponse)(nil),     // 19: billing.billing.v1.GetPayoutHistoryResponse
+	(*ReconcileTransactionRequest)(nil),  // 20: billing.billing.v1.ReconcileTransactionRequest
+	(*ReconcileTransactionResponse)(nil), // 21: billing.billing.v1.ReconcileTransactionResponse
+	(*GetOrgStatementRequest)(nil),       // 22: billing.billing.v1.GetOrgStatementRequest
+	(*GetOrgStatementResponse)(nil),      // 23: billing.billing.v1.GetOrgStatementResponse
+	(*GetRevenueStatsRequest)(nil),       // 24: billing.billing.v1.GetRevenueStatsRequest
+	(*GetRevenueStatsResponse)(nil),      // 25: billing.billing.v1.GetRevenueStatsResponse
+	(*GetStatementRequest)(nil),          // 26: billing.billing.v1.GetStatementRequest
+	(*GetStatementResponse)(nil),         // 27: billing.billing.v1.GetStatementResponse
+	(*GetUserBalanceRequest)(nil),        // 28: billing.billing.v1.GetUserBalanceRequest
+	(*GetUserBalanceResponse)(nil),       // 29: billing.billing.v1.GetUserBalanceResponse
+	(*ListSpendingRequest)(nil),          // 30: billing.billing.v1.ListSpendingRequest
+	(*ListSpendingResponse)(nil),         // 31: billing.billing.v1.ListSpendingResponse
+	(*timestamppb.Timestamp)(nil),        // 32: google.protobuf.Timestamp
 }
 var file_billing_billing_v1_billing_proto_depIdxs = []int32{
 	0,  // 0: billing.billing.v1.LedgerEntry.entry_type:type_name -> billing.billing.v1.LedgerEntryType
-	23, // 1: billing.billing.v1.LedgerEntry.created_at:type_name -> google.protobuf.Timestamp
-	23, // 2: billing.billing.v1.OrgBalance.updated_at:type_name -> google.protobuf.Timestamp
-	1,  // 3: billing.billing.v1.Payout.status:type_name -> billing.billing.v1.PayoutStatus
-	23, // 4: billing.billing.v1.Payout.requested_at:type_name -> google.protobuf.Timestamp
-	23, // 5: billing.billing.v1.Payout.completed_at:type_name -> google.protobuf.Timestamp
-	0,  // 6: billing.billing.v1.RecordLedgerEntryRequest.entry_type:type_name -> billing.billing.v1.LedgerEntryType
-	3,  // 7: billing.billing.v1.RecordLedgerEntryResponse.entry:type_name -> billing.billing.v1.LedgerEntry
-	0,  // 8: billing.billing.v1.ListLedgerEntriesRequest.entry_type:type_name -> billing.billing.v1.LedgerEntryType
-	23, // 9: billing.billing.v1.ListLedgerEntriesRequest.from:type_name -> google.protobuf.Timestamp
-	23, // 10: billing.billing.v1.ListLedgerEntriesRequest.to:type_name -> google.protobuf.Timestamp
-	3,  // 11: billing.billing.v1.ListLedgerEntriesResponse.entries:type_name -> billing.billing.v1.LedgerEntry
-	4,  // 12: billing.billing.v1.GetOrgBalanceResponse.balance:type_name -> billing.billing.v1.OrgBalance
-	5,  // 13: billing.billing.v1.InitiatePayoutResponse.payout:type_name -> billing.billing.v1.Payout
-	1,  // 14: billing.billing.v1.GetPayoutHistoryRequest.status:type_name -> billing.billing.v1.PayoutStatus
-	5,  // 15: billing.billing.v1.GetPayoutHistoryResponse.payouts:type_name -> billing.billing.v1.Payout
-	2,  // 16: billing.billing.v1.ReconcileTransactionResponse.status:type_name -> billing.billing.v1.ReconciliationStatus
-	23, // 17: billing.billing.v1.GetOrgStatementRequest.from:type_name -> google.protobuf.Timestamp
-	23, // 18: billing.billing.v1.GetOrgStatementRequest.to:type_name -> google.protobuf.Timestamp
-	3,  // 19: billing.billing.v1.GetOrgStatementResponse.entries:type_name -> billing.billing.v1.LedgerEntry
-	23, // 20: billing.billing.v1.GetRevenueStatsRequest.from:type_name -> google.protobuf.Timestamp
-	23, // 21: billing.billing.v1.GetRevenueStatsRequest.to:type_name -> google.protobuf.Timestamp
-	6,  // 22: billing.billing.v1.GetRevenueStatsResponse.data_points:type_name -> billing.billing.v1.RevenueDataPoint
-	7,  // 23: billing.billing.v1.BillingService.RecordLedgerEntry:input_type -> billing.billing.v1.RecordLedgerEntryRequest
-	9,  // 24: billing.billing.v1.BillingService.ListLedgerEntries:input_type -> billing.billing.v1.ListLedgerEntriesRequest
-	11, // 25: billing.billing.v1.BillingService.GetOrgBalance:input_type -> billing.billing.v1.GetOrgBalanceRequest
-	13, // 26: billing.billing.v1.BillingService.InitiatePayout:input_type -> billing.billing.v1.InitiatePayoutRequest
-	15, // 27: billing.billing.v1.BillingService.GetPayoutHistory:input_type -> billing.billing.v1.GetPayoutHistoryRequest
-	17, // 28: billing.billing.v1.BillingService.ReconcileTransaction:input_type -> billing.billing.v1.ReconcileTransactionRequest
-	19, // 29: billing.billing.v1.BillingService.GetOrgStatement:input_type -> billing.billing.v1.GetOrgStatementRequest
-	21, // 30: billing.billing.v1.BillingService.GetRevenueStats:input_type -> billing.billing.v1.GetRevenueStatsRequest
-	8,  // 31: billing.billing.v1.BillingService.RecordLedgerEntry:output_type -> billing.billing.v1.RecordLedgerEntryResponse
-	10, // 32: billing.billing.v1.BillingService.ListLedgerEntries:output_type -> billing.billing.v1.ListLedgerEntriesResponse
-	12, // 33: billing.billing.v1.BillingService.GetOrgBalance:output_type -> billing.billing.v1.GetOrgBalanceResponse
-	14, // 34: billing.billing.v1.BillingService.InitiatePayout:output_type -> billing.billing.v1.InitiatePayoutResponse
-	16, // 35: billing.billing.v1.BillingService.GetPayoutHistory:output_type -> billing.billing.v1.GetPayoutHistoryResponse
-	18, // 36: billing.billing.v1.BillingService.ReconcileTransaction:output_type -> billing.billing.v1.ReconcileTransactionResponse
-	20, // 37: billing.billing.v1.BillingService.GetOrgStatement:output_type -> billing.billing.v1.GetOrgStatementResponse
-	22, // 38: billing.billing.v1.BillingService.GetRevenueStats:output_type -> billing.billing.v1.GetRevenueStatsResponse
-	31, // [31:39] is the sub-list for method output_type
-	23, // [23:31] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	32, // 1: billing.billing.v1.LedgerEntry.created_at:type_name -> google.protobuf.Timestamp
+	3,  // 2: billing.billing.v1.LedgerEntry.subject_type:type_name -> billing.billing.v1.SubjectType
+	32, // 3: billing.billing.v1.OrgBalance.updated_at:type_name -> google.protobuf.Timestamp
+	32, // 4: billing.billing.v1.UserBalance.last_transaction_at:type_name -> google.protobuf.Timestamp
+	32, // 5: billing.billing.v1.UserBalance.updated_at:type_name -> google.protobuf.Timestamp
+	1,  // 6: billing.billing.v1.Payout.status:type_name -> billing.billing.v1.PayoutStatus
+	32, // 7: billing.billing.v1.Payout.requested_at:type_name -> google.protobuf.Timestamp
+	32, // 8: billing.billing.v1.Payout.completed_at:type_name -> google.protobuf.Timestamp
+	32, // 9: billing.billing.v1.SpendingEntry.created_at:type_name -> google.protobuf.Timestamp
+	0,  // 10: billing.billing.v1.SpendingEntry.entry_type:type_name -> billing.billing.v1.LedgerEntryType
+	0,  // 11: billing.billing.v1.RecordLedgerEntryRequest.entry_type:type_name -> billing.billing.v1.LedgerEntryType
+	3,  // 12: billing.billing.v1.RecordLedgerEntryRequest.subject_type:type_name -> billing.billing.v1.SubjectType
+	4,  // 13: billing.billing.v1.RecordLedgerEntryResponse.entry:type_name -> billing.billing.v1.LedgerEntry
+	0,  // 14: billing.billing.v1.ListLedgerEntriesRequest.entry_type:type_name -> billing.billing.v1.LedgerEntryType
+	32, // 15: billing.billing.v1.ListLedgerEntriesRequest.from:type_name -> google.protobuf.Timestamp
+	32, // 16: billing.billing.v1.ListLedgerEntriesRequest.to:type_name -> google.protobuf.Timestamp
+	4,  // 17: billing.billing.v1.ListLedgerEntriesResponse.entries:type_name -> billing.billing.v1.LedgerEntry
+	5,  // 18: billing.billing.v1.GetOrgBalanceResponse.balance:type_name -> billing.billing.v1.OrgBalance
+	7,  // 19: billing.billing.v1.InitiatePayoutResponse.payout:type_name -> billing.billing.v1.Payout
+	1,  // 20: billing.billing.v1.GetPayoutHistoryRequest.status:type_name -> billing.billing.v1.PayoutStatus
+	7,  // 21: billing.billing.v1.GetPayoutHistoryResponse.payouts:type_name -> billing.billing.v1.Payout
+	2,  // 22: billing.billing.v1.ReconcileTransactionResponse.status:type_name -> billing.billing.v1.ReconciliationStatus
+	32, // 23: billing.billing.v1.GetOrgStatementRequest.from:type_name -> google.protobuf.Timestamp
+	32, // 24: billing.billing.v1.GetOrgStatementRequest.to:type_name -> google.protobuf.Timestamp
+	4,  // 25: billing.billing.v1.GetOrgStatementResponse.entries:type_name -> billing.billing.v1.LedgerEntry
+	32, // 26: billing.billing.v1.GetRevenueStatsRequest.from:type_name -> google.protobuf.Timestamp
+	32, // 27: billing.billing.v1.GetRevenueStatsRequest.to:type_name -> google.protobuf.Timestamp
+	8,  // 28: billing.billing.v1.GetRevenueStatsResponse.data_points:type_name -> billing.billing.v1.RevenueDataPoint
+	3,  // 29: billing.billing.v1.GetStatementRequest.subject_type:type_name -> billing.billing.v1.SubjectType
+	32, // 30: billing.billing.v1.GetStatementRequest.from:type_name -> google.protobuf.Timestamp
+	32, // 31: billing.billing.v1.GetStatementRequest.to:type_name -> google.protobuf.Timestamp
+	4,  // 32: billing.billing.v1.GetStatementResponse.entries:type_name -> billing.billing.v1.LedgerEntry
+	6,  // 33: billing.billing.v1.GetUserBalanceResponse.balance:type_name -> billing.billing.v1.UserBalance
+	32, // 34: billing.billing.v1.ListSpendingRequest.from:type_name -> google.protobuf.Timestamp
+	32, // 35: billing.billing.v1.ListSpendingRequest.to:type_name -> google.protobuf.Timestamp
+	9,  // 36: billing.billing.v1.ListSpendingResponse.entries:type_name -> billing.billing.v1.SpendingEntry
+	10, // 37: billing.billing.v1.BillingService.RecordLedgerEntry:input_type -> billing.billing.v1.RecordLedgerEntryRequest
+	12, // 38: billing.billing.v1.BillingService.ListLedgerEntries:input_type -> billing.billing.v1.ListLedgerEntriesRequest
+	14, // 39: billing.billing.v1.BillingService.GetOrgBalance:input_type -> billing.billing.v1.GetOrgBalanceRequest
+	16, // 40: billing.billing.v1.BillingService.InitiatePayout:input_type -> billing.billing.v1.InitiatePayoutRequest
+	18, // 41: billing.billing.v1.BillingService.GetPayoutHistory:input_type -> billing.billing.v1.GetPayoutHistoryRequest
+	20, // 42: billing.billing.v1.BillingService.ReconcileTransaction:input_type -> billing.billing.v1.ReconcileTransactionRequest
+	22, // 43: billing.billing.v1.BillingService.GetOrgStatement:input_type -> billing.billing.v1.GetOrgStatementRequest
+	24, // 44: billing.billing.v1.BillingService.GetRevenueStats:input_type -> billing.billing.v1.GetRevenueStatsRequest
+	26, // 45: billing.billing.v1.BillingService.GetStatement:input_type -> billing.billing.v1.GetStatementRequest
+	28, // 46: billing.billing.v1.BillingService.GetUserBalance:input_type -> billing.billing.v1.GetUserBalanceRequest
+	30, // 47: billing.billing.v1.BillingService.ListSpending:input_type -> billing.billing.v1.ListSpendingRequest
+	11, // 48: billing.billing.v1.BillingService.RecordLedgerEntry:output_type -> billing.billing.v1.RecordLedgerEntryResponse
+	13, // 49: billing.billing.v1.BillingService.ListLedgerEntries:output_type -> billing.billing.v1.ListLedgerEntriesResponse
+	15, // 50: billing.billing.v1.BillingService.GetOrgBalance:output_type -> billing.billing.v1.GetOrgBalanceResponse
+	17, // 51: billing.billing.v1.BillingService.InitiatePayout:output_type -> billing.billing.v1.InitiatePayoutResponse
+	19, // 52: billing.billing.v1.BillingService.GetPayoutHistory:output_type -> billing.billing.v1.GetPayoutHistoryResponse
+	21, // 53: billing.billing.v1.BillingService.ReconcileTransaction:output_type -> billing.billing.v1.ReconcileTransactionResponse
+	23, // 54: billing.billing.v1.BillingService.GetOrgStatement:output_type -> billing.billing.v1.GetOrgStatementResponse
+	25, // 55: billing.billing.v1.BillingService.GetRevenueStats:output_type -> billing.billing.v1.GetRevenueStatsResponse
+	27, // 56: billing.billing.v1.BillingService.GetStatement:output_type -> billing.billing.v1.GetStatementResponse
+	29, // 57: billing.billing.v1.BillingService.GetUserBalance:output_type -> billing.billing.v1.GetUserBalanceResponse
+	31, // 58: billing.billing.v1.BillingService.ListSpending:output_type -> billing.billing.v1.ListSpendingResponse
+	48, // [48:59] is the sub-list for method output_type
+	37, // [37:48] is the sub-list for method input_type
+	37, // [37:37] is the sub-list for extension type_name
+	37, // [37:37] is the sub-list for extension extendee
+	0,  // [0:37] is the sub-list for field type_name
 }
 
 func init() { file_billing_billing_v1_billing_proto_init() }
@@ -2020,8 +2777,8 @@ func file_billing_billing_v1_billing_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_billing_billing_v1_billing_proto_rawDesc), len(file_billing_billing_v1_billing_proto_rawDesc)),
-			NumEnums:      3,
-			NumMessages:   20,
+			NumEnums:      4,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

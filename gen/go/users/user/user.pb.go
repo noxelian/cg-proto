@@ -3872,6 +3872,460 @@ func (x *ListModulesResponse) GetWildcard() string {
 	return ""
 }
 
+type AdminGetProfileRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminGetProfileRequest) Reset() {
+	*x = AdminGetProfileRequest{}
+	mi := &file_users_user_user_proto_msgTypes[72]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminGetProfileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminGetProfileRequest) ProtoMessage() {}
+
+func (x *AdminGetProfileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[72]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminGetProfileRequest.ProtoReflect.Descriptor instead.
+func (*AdminGetProfileRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{72}
+}
+
+func (x *AdminGetProfileRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type AdminGetProfileResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	Counters      *UserCounters          `protobuf:"bytes,2,opt,name=counters,proto3" json:"counters,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminGetProfileResponse) Reset() {
+	*x = AdminGetProfileResponse{}
+	mi := &file_users_user_user_proto_msgTypes[73]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminGetProfileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminGetProfileResponse) ProtoMessage() {}
+
+func (x *AdminGetProfileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[73]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminGetProfileResponse.ProtoReflect.Descriptor instead.
+func (*AdminGetProfileResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{73}
+}
+
+func (x *AdminGetProfileResponse) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *AdminGetProfileResponse) GetCounters() *UserCounters {
+	if x != nil {
+		return x.Counters
+	}
+	return nil
+}
+
+type AdminUpdateProfileRequest struct {
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	UserId    int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Name      *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`
+	AvatarUrl *string                `protobuf:"bytes,3,opt,name=avatar_url,json=avatarUrl,proto3,oneof" json:"avatar_url,omitempty"`
+	Email     *string                `protobuf:"bytes,4,opt,name=email,proto3,oneof" json:"email,omitempty"`
+	CityId    *int64                 `protobuf:"varint,5,opt,name=city_id,json=cityId,proto3,oneof" json:"city_id,omitempty"`
+	// Phone change; returns ALREADY_EXISTS if phone is taken.
+	Phone         *string `protobuf:"bytes,6,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminUpdateProfileRequest) Reset() {
+	*x = AdminUpdateProfileRequest{}
+	mi := &file_users_user_user_proto_msgTypes[74]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminUpdateProfileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminUpdateProfileRequest) ProtoMessage() {}
+
+func (x *AdminUpdateProfileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[74]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminUpdateProfileRequest.ProtoReflect.Descriptor instead.
+func (*AdminUpdateProfileRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{74}
+}
+
+func (x *AdminUpdateProfileRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *AdminUpdateProfileRequest) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
+	}
+	return ""
+}
+
+func (x *AdminUpdateProfileRequest) GetAvatarUrl() string {
+	if x != nil && x.AvatarUrl != nil {
+		return *x.AvatarUrl
+	}
+	return ""
+}
+
+func (x *AdminUpdateProfileRequest) GetEmail() string {
+	if x != nil && x.Email != nil {
+		return *x.Email
+	}
+	return ""
+}
+
+func (x *AdminUpdateProfileRequest) GetCityId() int64 {
+	if x != nil && x.CityId != nil {
+		return *x.CityId
+	}
+	return 0
+}
+
+func (x *AdminUpdateProfileRequest) GetPhone() string {
+	if x != nil && x.Phone != nil {
+		return *x.Phone
+	}
+	return ""
+}
+
+type AdminUpdateProfileResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminUpdateProfileResponse) Reset() {
+	*x = AdminUpdateProfileResponse{}
+	mi := &file_users_user_user_proto_msgTypes[75]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminUpdateProfileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminUpdateProfileResponse) ProtoMessage() {}
+
+func (x *AdminUpdateProfileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[75]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminUpdateProfileResponse.ProtoReflect.Descriptor instead.
+func (*AdminUpdateProfileResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{75}
+}
+
+func (x *AdminUpdateProfileResponse) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+type AdminListCarsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminListCarsRequest) Reset() {
+	*x = AdminListCarsRequest{}
+	mi := &file_users_user_user_proto_msgTypes[76]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminListCarsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminListCarsRequest) ProtoMessage() {}
+
+func (x *AdminListCarsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[76]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminListCarsRequest.ProtoReflect.Descriptor instead.
+func (*AdminListCarsRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{76}
+}
+
+func (x *AdminListCarsRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *AdminListCarsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *AdminListCarsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type AdminListCarsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Cars          []*AdminCar            `protobuf:"bytes,1,rep,name=cars,proto3" json:"cars,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminListCarsResponse) Reset() {
+	*x = AdminListCarsResponse{}
+	mi := &file_users_user_user_proto_msgTypes[77]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminListCarsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminListCarsResponse) ProtoMessage() {}
+
+func (x *AdminListCarsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[77]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminListCarsResponse.ProtoReflect.Descriptor instead.
+func (*AdminListCarsResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{77}
+}
+
+func (x *AdminListCarsResponse) GetCars() []*AdminCar {
+	if x != nil {
+		return x.Cars
+	}
+	return nil
+}
+
+func (x *AdminListCarsResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+// AdminCar is a minimal car view for admin purposes.
+type AdminCar struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	MarkId        int32                  `protobuf:"varint,3,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	ModelId       int32                  `protobuf:"varint,4,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	Year          int32                  `protobuf:"varint,5,opt,name=year,proto3" json:"year,omitempty"`
+	Vin           string                 `protobuf:"bytes,6,opt,name=vin,proto3" json:"vin,omitempty"`
+	LicensePlate  string                 `protobuf:"bytes,7,opt,name=license_plate,json=licensePlate,proto3" json:"license_plate,omitempty"`
+	Color         string                 `protobuf:"bytes,8,opt,name=color,proto3" json:"color,omitempty"`
+	IsPrimary     bool                   `protobuf:"varint,9,opt,name=is_primary,json=isPrimary,proto3" json:"is_primary,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminCar) Reset() {
+	*x = AdminCar{}
+	mi := &file_users_user_user_proto_msgTypes[78]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminCar) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminCar) ProtoMessage() {}
+
+func (x *AdminCar) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[78]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminCar.ProtoReflect.Descriptor instead.
+func (*AdminCar) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{78}
+}
+
+func (x *AdminCar) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *AdminCar) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *AdminCar) GetMarkId() int32 {
+	if x != nil {
+		return x.MarkId
+	}
+	return 0
+}
+
+func (x *AdminCar) GetModelId() int32 {
+	if x != nil {
+		return x.ModelId
+	}
+	return 0
+}
+
+func (x *AdminCar) GetYear() int32 {
+	if x != nil {
+		return x.Year
+	}
+	return 0
+}
+
+func (x *AdminCar) GetVin() string {
+	if x != nil {
+		return x.Vin
+	}
+	return ""
+}
+
+func (x *AdminCar) GetLicensePlate() string {
+	if x != nil {
+		return x.LicensePlate
+	}
+	return ""
+}
+
+func (x *AdminCar) GetColor() string {
+	if x != nil {
+		return x.Color
+	}
+	return ""
+}
+
+func (x *AdminCar) GetIsPrimary() bool {
+	if x != nil {
+		return x.IsPrimary
+	}
+	return false
+}
+
+func (x *AdminCar) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
 var File_users_user_user_proto protoreflect.FileDescriptor
 
 const file_users_user_user_proto_rawDesc = "" +
@@ -4132,7 +4586,49 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x12ListModulesRequest\"b\n" +
 	"\x13ListModulesResponse\x12/\n" +
 	"\amodules\x18\x01 \x03(\v2\x15.users.user.v1.ModuleR\amodules\x12\x1a\n" +
-	"\bwildcard\x18\x02 \x01(\tR\bwildcard*\x85\x02\n" +
+	"\bwildcard\x18\x02 \x01(\tR\bwildcard\"1\n" +
+	"\x16AdminGetProfileRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"{\n" +
+	"\x17AdminGetProfileResponse\x12'\n" +
+	"\x04user\x18\x01 \x01(\v2\x13.users.user.v1.UserR\x04user\x127\n" +
+	"\bcounters\x18\x02 \x01(\v2\x1b.users.user.v1.UserCountersR\bcounters\"\xfd\x01\n" +
+	"\x19AdminUpdateProfileRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x17\n" +
+	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"avatar_url\x18\x03 \x01(\tH\x01R\tavatarUrl\x88\x01\x01\x12\x19\n" +
+	"\x05email\x18\x04 \x01(\tH\x02R\x05email\x88\x01\x01\x12\x1c\n" +
+	"\acity_id\x18\x05 \x01(\x03H\x03R\x06cityId\x88\x01\x01\x12\x19\n" +
+	"\x05phone\x18\x06 \x01(\tH\x04R\x05phone\x88\x01\x01B\a\n" +
+	"\x05_nameB\r\n" +
+	"\v_avatar_urlB\b\n" +
+	"\x06_emailB\n" +
+	"\n" +
+	"\b_city_idB\b\n" +
+	"\x06_phone\"E\n" +
+	"\x1aAdminUpdateProfileResponse\x12'\n" +
+	"\x04user\x18\x01 \x01(\v2\x13.users.user.v1.UserR\x04user\"]\n" +
+	"\x14AdminListCarsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"Z\n" +
+	"\x15AdminListCarsResponse\x12+\n" +
+	"\x04cars\x18\x01 \x03(\v2\x17.users.user.v1.AdminCarR\x04cars\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xa2\x02\n" +
+	"\bAdminCar\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x17\n" +
+	"\amark_id\x18\x03 \x01(\x05R\x06markId\x12\x19\n" +
+	"\bmodel_id\x18\x04 \x01(\x05R\amodelId\x12\x12\n" +
+	"\x04year\x18\x05 \x01(\x05R\x04year\x12\x10\n" +
+	"\x03vin\x18\x06 \x01(\tR\x03vin\x12#\n" +
+	"\rlicense_plate\x18\a \x01(\tR\flicensePlate\x12\x14\n" +
+	"\x05color\x18\b \x01(\tR\x05color\x12\x1d\n" +
+	"\n" +
+	"is_primary\x18\t \x01(\bR\tisPrimary\x129\n" +
+	"\n" +
+	"created_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt*\x85\x02\n" +
 	"\fPlatformRole\x12\x1d\n" +
 	"\x19PLATFORM_ROLE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16PLATFORM_ROLE_MECHANIC\x10\x01\x12\x1e\n" +
@@ -4178,7 +4674,11 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x15CreatePlatformRoleDef\x12+.users.user.v1.CreatePlatformRoleDefRequest\x1a,.users.user.v1.CreatePlatformRoleDefResponse\x12r\n" +
 	"\x15UpdatePlatformRoleDef\x12+.users.user.v1.UpdatePlatformRoleDefRequest\x1a,.users.user.v1.UpdatePlatformRoleDefResponse\x12r\n" +
 	"\x15DeletePlatformRoleDef\x12+.users.user.v1.DeletePlatformRoleDefRequest\x1a,.users.user.v1.DeletePlatformRoleDefResponse\x12T\n" +
-	"\vListModules\x12!.users.user.v1.ListModulesRequest\x1a\".users.user.v1.ListModulesResponseB4Z2github.com/4ubak/cg-proto/gen/go/users/user;userv1b\x06proto3"
+	"\vListModules\x12!.users.user.v1.ListModulesRequest\x1a\".users.user.v1.ListModulesResponse2\xbb\x02\n" +
+	"\x10AdminUserService\x12`\n" +
+	"\x0fAdminGetProfile\x12%.users.user.v1.AdminGetProfileRequest\x1a&.users.user.v1.AdminGetProfileResponse\x12i\n" +
+	"\x12AdminUpdateProfile\x12(.users.user.v1.AdminUpdateProfileRequest\x1a).users.user.v1.AdminUpdateProfileResponse\x12Z\n" +
+	"\rAdminListCars\x12#.users.user.v1.AdminListCarsRequest\x1a$.users.user.v1.AdminListCarsResponseB4Z2github.com/4ubak/cg-proto/gen/go/users/user;userv1b\x06proto3"
 
 var (
 	file_users_user_user_proto_rawDescOnce sync.Once
@@ -4193,7 +4693,7 @@ func file_users_user_user_proto_rawDescGZIP() []byte {
 }
 
 var file_users_user_user_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_users_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 72)
+var file_users_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 79)
 var file_users_user_user_proto_goTypes = []any{
 	(PlatformRole)(0),                        // 0: users.user.v1.PlatformRole
 	(*User)(nil),                             // 1: users.user.v1.User
@@ -4268,11 +4768,18 @@ var file_users_user_user_proto_goTypes = []any{
 	(*Module)(nil),                           // 70: users.user.v1.Module
 	(*ListModulesRequest)(nil),               // 71: users.user.v1.ListModulesRequest
 	(*ListModulesResponse)(nil),              // 72: users.user.v1.ListModulesResponse
-	(*timestamppb.Timestamp)(nil),            // 73: google.protobuf.Timestamp
+	(*AdminGetProfileRequest)(nil),           // 73: users.user.v1.AdminGetProfileRequest
+	(*AdminGetProfileResponse)(nil),          // 74: users.user.v1.AdminGetProfileResponse
+	(*AdminUpdateProfileRequest)(nil),        // 75: users.user.v1.AdminUpdateProfileRequest
+	(*AdminUpdateProfileResponse)(nil),       // 76: users.user.v1.AdminUpdateProfileResponse
+	(*AdminListCarsRequest)(nil),             // 77: users.user.v1.AdminListCarsRequest
+	(*AdminListCarsResponse)(nil),            // 78: users.user.v1.AdminListCarsResponse
+	(*AdminCar)(nil),                         // 79: users.user.v1.AdminCar
+	(*timestamppb.Timestamp)(nil),            // 80: google.protobuf.Timestamp
 }
 var file_users_user_user_proto_depIdxs = []int32{
-	73, // 0: users.user.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	73, // 1: users.user.v1.User.updated_at:type_name -> google.protobuf.Timestamp
+	80, // 0: users.user.v1.User.created_at:type_name -> google.protobuf.Timestamp
+	80, // 1: users.user.v1.User.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 2: users.user.v1.GetProfileResponse.user:type_name -> users.user.v1.User
 	2,  // 3: users.user.v1.GetProfileResponse.counters:type_name -> users.user.v1.UserCounters
 	1,  // 4: users.user.v1.UpdateProfileResponse.user:type_name -> users.user.v1.User
@@ -4284,8 +4791,8 @@ var file_users_user_user_proto_depIdxs = []int32{
 	1,  // 10: users.user.v1.FindOrCreateByPhoneResponse.user:type_name -> users.user.v1.User
 	19, // 11: users.user.v1.GetSettingsResponse.settings:type_name -> users.user.v1.UserSettings
 	19, // 12: users.user.v1.UpdateSettingsResponse.settings:type_name -> users.user.v1.UserSettings
-	73, // 13: users.user.v1.Device.created_at:type_name -> google.protobuf.Timestamp
-	73, // 14: users.user.v1.Device.last_used_at:type_name -> google.protobuf.Timestamp
+	80, // 13: users.user.v1.Device.created_at:type_name -> google.protobuf.Timestamp
+	80, // 14: users.user.v1.Device.last_used_at:type_name -> google.protobuf.Timestamp
 	24, // 15: users.user.v1.GetDevicesResponse.devices:type_name -> users.user.v1.Device
 	0,  // 16: users.user.v1.SetPlatformRolesRequest.roles:type_name -> users.user.v1.PlatformRole
 	0,  // 17: users.user.v1.GetPlatformRolesResponse.roles:type_name -> users.user.v1.PlatformRole
@@ -4294,88 +4801,99 @@ var file_users_user_user_proto_depIdxs = []int32{
 	0,  // 20: users.user.v1.PlatformMember.roles:type_name -> users.user.v1.PlatformRole
 	0,  // 21: users.user.v1.ListUsersByPlatformRolesRequest.roles:type_name -> users.user.v1.PlatformRole
 	45, // 22: users.user.v1.ListUsersByPlatformRolesResponse.members:type_name -> users.user.v1.PlatformMember
-	73, // 23: users.user.v1.UserPhone.created_at:type_name -> google.protobuf.Timestamp
-	73, // 24: users.user.v1.UserPhone.updated_at:type_name -> google.protobuf.Timestamp
+	80, // 23: users.user.v1.UserPhone.created_at:type_name -> google.protobuf.Timestamp
+	80, // 24: users.user.v1.UserPhone.updated_at:type_name -> google.protobuf.Timestamp
 	48, // 25: users.user.v1.ListPhonesResponse.phones:type_name -> users.user.v1.UserPhone
 	48, // 26: users.user.v1.AddPhoneResponse.phone:type_name -> users.user.v1.UserPhone
 	48, // 27: users.user.v1.SetPrimaryPhoneResponse.phone:type_name -> users.user.v1.UserPhone
 	48, // 28: users.user.v1.RelabelPhoneResponse.phone:type_name -> users.user.v1.UserPhone
-	73, // 29: users.user.v1.PlatformRoleDef.created_at:type_name -> google.protobuf.Timestamp
-	73, // 30: users.user.v1.PlatformRoleDef.updated_at:type_name -> google.protobuf.Timestamp
+	80, // 29: users.user.v1.PlatformRoleDef.created_at:type_name -> google.protobuf.Timestamp
+	80, // 30: users.user.v1.PlatformRoleDef.updated_at:type_name -> google.protobuf.Timestamp
 	59, // 31: users.user.v1.ListPlatformRoleDefsResponse.roles:type_name -> users.user.v1.PlatformRoleDef
 	59, // 32: users.user.v1.GetPlatformRoleDefResponse.role:type_name -> users.user.v1.PlatformRoleDef
 	59, // 33: users.user.v1.CreatePlatformRoleDefResponse.role:type_name -> users.user.v1.PlatformRoleDef
 	59, // 34: users.user.v1.UpdatePlatformRoleDefResponse.role:type_name -> users.user.v1.PlatformRoleDef
 	70, // 35: users.user.v1.ListModulesResponse.modules:type_name -> users.user.v1.Module
-	3,  // 36: users.user.v1.UserService.GetProfile:input_type -> users.user.v1.GetProfileRequest
-	5,  // 37: users.user.v1.UserService.UpdateProfile:input_type -> users.user.v1.UpdateProfileRequest
-	7,  // 38: users.user.v1.UserService.GetUserByID:input_type -> users.user.v1.GetUserByIDRequest
-	13, // 39: users.user.v1.UserService.GetUserByPhone:input_type -> users.user.v1.GetUserByPhoneRequest
-	15, // 40: users.user.v1.UserService.CreateUser:input_type -> users.user.v1.CreateUserRequest
-	9,  // 41: users.user.v1.UserService.GetUsersByIDs:input_type -> users.user.v1.GetUsersByIDsRequest
-	11, // 42: users.user.v1.UserService.GetUsersByPhones:input_type -> users.user.v1.GetUsersByPhonesRequest
-	17, // 43: users.user.v1.UserService.FindOrCreateByPhone:input_type -> users.user.v1.FindOrCreateByPhoneRequest
-	20, // 44: users.user.v1.UserService.GetSettings:input_type -> users.user.v1.GetSettingsRequest
-	22, // 45: users.user.v1.UserService.UpdateSettings:input_type -> users.user.v1.UpdateSettingsRequest
-	25, // 46: users.user.v1.UserService.RegisterDevice:input_type -> users.user.v1.RegisterDeviceRequest
-	27, // 47: users.user.v1.UserService.UnregisterDevice:input_type -> users.user.v1.UnregisterDeviceRequest
-	29, // 48: users.user.v1.UserService.GetDevices:input_type -> users.user.v1.GetDevicesRequest
-	31, // 49: users.user.v1.UserService.DeleteAccount:input_type -> users.user.v1.DeleteAccountRequest
-	43, // 50: users.user.v1.UserService.ListUsers:input_type -> users.user.v1.ListUsersRequest
-	33, // 51: users.user.v1.UserService.SetPlatformRoles:input_type -> users.user.v1.SetPlatformRolesRequest
-	35, // 52: users.user.v1.UserService.GetPlatformRoles:input_type -> users.user.v1.GetPlatformRolesRequest
-	37, // 53: users.user.v1.UserService.CheckPlatformRoles:input_type -> users.user.v1.CheckPlatformRolesRequest
-	39, // 54: users.user.v1.UserService.SetPlatformOrgAccess:input_type -> users.user.v1.SetPlatformOrgAccessRequest
-	41, // 55: users.user.v1.UserService.GetPlatformOrgAccess:input_type -> users.user.v1.GetPlatformOrgAccessRequest
-	46, // 56: users.user.v1.UserService.ListUsersByPlatformRoles:input_type -> users.user.v1.ListUsersByPlatformRolesRequest
-	49, // 57: users.user.v1.UserService.ListPhones:input_type -> users.user.v1.ListPhonesRequest
-	51, // 58: users.user.v1.UserService.AddPhone:input_type -> users.user.v1.AddPhoneRequest
-	53, // 59: users.user.v1.UserService.RemovePhone:input_type -> users.user.v1.RemovePhoneRequest
-	55, // 60: users.user.v1.UserService.SetPrimaryPhone:input_type -> users.user.v1.SetPrimaryPhoneRequest
-	57, // 61: users.user.v1.UserService.RelabelPhone:input_type -> users.user.v1.RelabelPhoneRequest
-	60, // 62: users.user.v1.UserService.ListPlatformRoleDefs:input_type -> users.user.v1.ListPlatformRoleDefsRequest
-	62, // 63: users.user.v1.UserService.GetPlatformRoleDef:input_type -> users.user.v1.GetPlatformRoleDefRequest
-	64, // 64: users.user.v1.UserService.CreatePlatformRoleDef:input_type -> users.user.v1.CreatePlatformRoleDefRequest
-	66, // 65: users.user.v1.UserService.UpdatePlatformRoleDef:input_type -> users.user.v1.UpdatePlatformRoleDefRequest
-	68, // 66: users.user.v1.UserService.DeletePlatformRoleDef:input_type -> users.user.v1.DeletePlatformRoleDefRequest
-	71, // 67: users.user.v1.UserService.ListModules:input_type -> users.user.v1.ListModulesRequest
-	4,  // 68: users.user.v1.UserService.GetProfile:output_type -> users.user.v1.GetProfileResponse
-	6,  // 69: users.user.v1.UserService.UpdateProfile:output_type -> users.user.v1.UpdateProfileResponse
-	8,  // 70: users.user.v1.UserService.GetUserByID:output_type -> users.user.v1.GetUserByIDResponse
-	14, // 71: users.user.v1.UserService.GetUserByPhone:output_type -> users.user.v1.GetUserByPhoneResponse
-	16, // 72: users.user.v1.UserService.CreateUser:output_type -> users.user.v1.CreateUserResponse
-	10, // 73: users.user.v1.UserService.GetUsersByIDs:output_type -> users.user.v1.GetUsersByIDsResponse
-	12, // 74: users.user.v1.UserService.GetUsersByPhones:output_type -> users.user.v1.GetUsersByPhonesResponse
-	18, // 75: users.user.v1.UserService.FindOrCreateByPhone:output_type -> users.user.v1.FindOrCreateByPhoneResponse
-	21, // 76: users.user.v1.UserService.GetSettings:output_type -> users.user.v1.GetSettingsResponse
-	23, // 77: users.user.v1.UserService.UpdateSettings:output_type -> users.user.v1.UpdateSettingsResponse
-	26, // 78: users.user.v1.UserService.RegisterDevice:output_type -> users.user.v1.RegisterDeviceResponse
-	28, // 79: users.user.v1.UserService.UnregisterDevice:output_type -> users.user.v1.UnregisterDeviceResponse
-	30, // 80: users.user.v1.UserService.GetDevices:output_type -> users.user.v1.GetDevicesResponse
-	32, // 81: users.user.v1.UserService.DeleteAccount:output_type -> users.user.v1.DeleteAccountResponse
-	44, // 82: users.user.v1.UserService.ListUsers:output_type -> users.user.v1.ListUsersResponse
-	34, // 83: users.user.v1.UserService.SetPlatformRoles:output_type -> users.user.v1.SetPlatformRolesResponse
-	36, // 84: users.user.v1.UserService.GetPlatformRoles:output_type -> users.user.v1.GetPlatformRolesResponse
-	38, // 85: users.user.v1.UserService.CheckPlatformRoles:output_type -> users.user.v1.CheckPlatformRolesResponse
-	40, // 86: users.user.v1.UserService.SetPlatformOrgAccess:output_type -> users.user.v1.SetPlatformOrgAccessResponse
-	42, // 87: users.user.v1.UserService.GetPlatformOrgAccess:output_type -> users.user.v1.GetPlatformOrgAccessResponse
-	47, // 88: users.user.v1.UserService.ListUsersByPlatformRoles:output_type -> users.user.v1.ListUsersByPlatformRolesResponse
-	50, // 89: users.user.v1.UserService.ListPhones:output_type -> users.user.v1.ListPhonesResponse
-	52, // 90: users.user.v1.UserService.AddPhone:output_type -> users.user.v1.AddPhoneResponse
-	54, // 91: users.user.v1.UserService.RemovePhone:output_type -> users.user.v1.RemovePhoneResponse
-	56, // 92: users.user.v1.UserService.SetPrimaryPhone:output_type -> users.user.v1.SetPrimaryPhoneResponse
-	58, // 93: users.user.v1.UserService.RelabelPhone:output_type -> users.user.v1.RelabelPhoneResponse
-	61, // 94: users.user.v1.UserService.ListPlatformRoleDefs:output_type -> users.user.v1.ListPlatformRoleDefsResponse
-	63, // 95: users.user.v1.UserService.GetPlatformRoleDef:output_type -> users.user.v1.GetPlatformRoleDefResponse
-	65, // 96: users.user.v1.UserService.CreatePlatformRoleDef:output_type -> users.user.v1.CreatePlatformRoleDefResponse
-	67, // 97: users.user.v1.UserService.UpdatePlatformRoleDef:output_type -> users.user.v1.UpdatePlatformRoleDefResponse
-	69, // 98: users.user.v1.UserService.DeletePlatformRoleDef:output_type -> users.user.v1.DeletePlatformRoleDefResponse
-	72, // 99: users.user.v1.UserService.ListModules:output_type -> users.user.v1.ListModulesResponse
-	68, // [68:100] is the sub-list for method output_type
-	36, // [36:68] is the sub-list for method input_type
-	36, // [36:36] is the sub-list for extension type_name
-	36, // [36:36] is the sub-list for extension extendee
-	0,  // [0:36] is the sub-list for field type_name
+	1,  // 36: users.user.v1.AdminGetProfileResponse.user:type_name -> users.user.v1.User
+	2,  // 37: users.user.v1.AdminGetProfileResponse.counters:type_name -> users.user.v1.UserCounters
+	1,  // 38: users.user.v1.AdminUpdateProfileResponse.user:type_name -> users.user.v1.User
+	79, // 39: users.user.v1.AdminListCarsResponse.cars:type_name -> users.user.v1.AdminCar
+	80, // 40: users.user.v1.AdminCar.created_at:type_name -> google.protobuf.Timestamp
+	3,  // 41: users.user.v1.UserService.GetProfile:input_type -> users.user.v1.GetProfileRequest
+	5,  // 42: users.user.v1.UserService.UpdateProfile:input_type -> users.user.v1.UpdateProfileRequest
+	7,  // 43: users.user.v1.UserService.GetUserByID:input_type -> users.user.v1.GetUserByIDRequest
+	13, // 44: users.user.v1.UserService.GetUserByPhone:input_type -> users.user.v1.GetUserByPhoneRequest
+	15, // 45: users.user.v1.UserService.CreateUser:input_type -> users.user.v1.CreateUserRequest
+	9,  // 46: users.user.v1.UserService.GetUsersByIDs:input_type -> users.user.v1.GetUsersByIDsRequest
+	11, // 47: users.user.v1.UserService.GetUsersByPhones:input_type -> users.user.v1.GetUsersByPhonesRequest
+	17, // 48: users.user.v1.UserService.FindOrCreateByPhone:input_type -> users.user.v1.FindOrCreateByPhoneRequest
+	20, // 49: users.user.v1.UserService.GetSettings:input_type -> users.user.v1.GetSettingsRequest
+	22, // 50: users.user.v1.UserService.UpdateSettings:input_type -> users.user.v1.UpdateSettingsRequest
+	25, // 51: users.user.v1.UserService.RegisterDevice:input_type -> users.user.v1.RegisterDeviceRequest
+	27, // 52: users.user.v1.UserService.UnregisterDevice:input_type -> users.user.v1.UnregisterDeviceRequest
+	29, // 53: users.user.v1.UserService.GetDevices:input_type -> users.user.v1.GetDevicesRequest
+	31, // 54: users.user.v1.UserService.DeleteAccount:input_type -> users.user.v1.DeleteAccountRequest
+	43, // 55: users.user.v1.UserService.ListUsers:input_type -> users.user.v1.ListUsersRequest
+	33, // 56: users.user.v1.UserService.SetPlatformRoles:input_type -> users.user.v1.SetPlatformRolesRequest
+	35, // 57: users.user.v1.UserService.GetPlatformRoles:input_type -> users.user.v1.GetPlatformRolesRequest
+	37, // 58: users.user.v1.UserService.CheckPlatformRoles:input_type -> users.user.v1.CheckPlatformRolesRequest
+	39, // 59: users.user.v1.UserService.SetPlatformOrgAccess:input_type -> users.user.v1.SetPlatformOrgAccessRequest
+	41, // 60: users.user.v1.UserService.GetPlatformOrgAccess:input_type -> users.user.v1.GetPlatformOrgAccessRequest
+	46, // 61: users.user.v1.UserService.ListUsersByPlatformRoles:input_type -> users.user.v1.ListUsersByPlatformRolesRequest
+	49, // 62: users.user.v1.UserService.ListPhones:input_type -> users.user.v1.ListPhonesRequest
+	51, // 63: users.user.v1.UserService.AddPhone:input_type -> users.user.v1.AddPhoneRequest
+	53, // 64: users.user.v1.UserService.RemovePhone:input_type -> users.user.v1.RemovePhoneRequest
+	55, // 65: users.user.v1.UserService.SetPrimaryPhone:input_type -> users.user.v1.SetPrimaryPhoneRequest
+	57, // 66: users.user.v1.UserService.RelabelPhone:input_type -> users.user.v1.RelabelPhoneRequest
+	60, // 67: users.user.v1.UserService.ListPlatformRoleDefs:input_type -> users.user.v1.ListPlatformRoleDefsRequest
+	62, // 68: users.user.v1.UserService.GetPlatformRoleDef:input_type -> users.user.v1.GetPlatformRoleDefRequest
+	64, // 69: users.user.v1.UserService.CreatePlatformRoleDef:input_type -> users.user.v1.CreatePlatformRoleDefRequest
+	66, // 70: users.user.v1.UserService.UpdatePlatformRoleDef:input_type -> users.user.v1.UpdatePlatformRoleDefRequest
+	68, // 71: users.user.v1.UserService.DeletePlatformRoleDef:input_type -> users.user.v1.DeletePlatformRoleDefRequest
+	71, // 72: users.user.v1.UserService.ListModules:input_type -> users.user.v1.ListModulesRequest
+	73, // 73: users.user.v1.AdminUserService.AdminGetProfile:input_type -> users.user.v1.AdminGetProfileRequest
+	75, // 74: users.user.v1.AdminUserService.AdminUpdateProfile:input_type -> users.user.v1.AdminUpdateProfileRequest
+	77, // 75: users.user.v1.AdminUserService.AdminListCars:input_type -> users.user.v1.AdminListCarsRequest
+	4,  // 76: users.user.v1.UserService.GetProfile:output_type -> users.user.v1.GetProfileResponse
+	6,  // 77: users.user.v1.UserService.UpdateProfile:output_type -> users.user.v1.UpdateProfileResponse
+	8,  // 78: users.user.v1.UserService.GetUserByID:output_type -> users.user.v1.GetUserByIDResponse
+	14, // 79: users.user.v1.UserService.GetUserByPhone:output_type -> users.user.v1.GetUserByPhoneResponse
+	16, // 80: users.user.v1.UserService.CreateUser:output_type -> users.user.v1.CreateUserResponse
+	10, // 81: users.user.v1.UserService.GetUsersByIDs:output_type -> users.user.v1.GetUsersByIDsResponse
+	12, // 82: users.user.v1.UserService.GetUsersByPhones:output_type -> users.user.v1.GetUsersByPhonesResponse
+	18, // 83: users.user.v1.UserService.FindOrCreateByPhone:output_type -> users.user.v1.FindOrCreateByPhoneResponse
+	21, // 84: users.user.v1.UserService.GetSettings:output_type -> users.user.v1.GetSettingsResponse
+	23, // 85: users.user.v1.UserService.UpdateSettings:output_type -> users.user.v1.UpdateSettingsResponse
+	26, // 86: users.user.v1.UserService.RegisterDevice:output_type -> users.user.v1.RegisterDeviceResponse
+	28, // 87: users.user.v1.UserService.UnregisterDevice:output_type -> users.user.v1.UnregisterDeviceResponse
+	30, // 88: users.user.v1.UserService.GetDevices:output_type -> users.user.v1.GetDevicesResponse
+	32, // 89: users.user.v1.UserService.DeleteAccount:output_type -> users.user.v1.DeleteAccountResponse
+	44, // 90: users.user.v1.UserService.ListUsers:output_type -> users.user.v1.ListUsersResponse
+	34, // 91: users.user.v1.UserService.SetPlatformRoles:output_type -> users.user.v1.SetPlatformRolesResponse
+	36, // 92: users.user.v1.UserService.GetPlatformRoles:output_type -> users.user.v1.GetPlatformRolesResponse
+	38, // 93: users.user.v1.UserService.CheckPlatformRoles:output_type -> users.user.v1.CheckPlatformRolesResponse
+	40, // 94: users.user.v1.UserService.SetPlatformOrgAccess:output_type -> users.user.v1.SetPlatformOrgAccessResponse
+	42, // 95: users.user.v1.UserService.GetPlatformOrgAccess:output_type -> users.user.v1.GetPlatformOrgAccessResponse
+	47, // 96: users.user.v1.UserService.ListUsersByPlatformRoles:output_type -> users.user.v1.ListUsersByPlatformRolesResponse
+	50, // 97: users.user.v1.UserService.ListPhones:output_type -> users.user.v1.ListPhonesResponse
+	52, // 98: users.user.v1.UserService.AddPhone:output_type -> users.user.v1.AddPhoneResponse
+	54, // 99: users.user.v1.UserService.RemovePhone:output_type -> users.user.v1.RemovePhoneResponse
+	56, // 100: users.user.v1.UserService.SetPrimaryPhone:output_type -> users.user.v1.SetPrimaryPhoneResponse
+	58, // 101: users.user.v1.UserService.RelabelPhone:output_type -> users.user.v1.RelabelPhoneResponse
+	61, // 102: users.user.v1.UserService.ListPlatformRoleDefs:output_type -> users.user.v1.ListPlatformRoleDefsResponse
+	63, // 103: users.user.v1.UserService.GetPlatformRoleDef:output_type -> users.user.v1.GetPlatformRoleDefResponse
+	65, // 104: users.user.v1.UserService.CreatePlatformRoleDef:output_type -> users.user.v1.CreatePlatformRoleDefResponse
+	67, // 105: users.user.v1.UserService.UpdatePlatformRoleDef:output_type -> users.user.v1.UpdatePlatformRoleDefResponse
+	69, // 106: users.user.v1.UserService.DeletePlatformRoleDef:output_type -> users.user.v1.DeletePlatformRoleDefResponse
+	72, // 107: users.user.v1.UserService.ListModules:output_type -> users.user.v1.ListModulesResponse
+	74, // 108: users.user.v1.AdminUserService.AdminGetProfile:output_type -> users.user.v1.AdminGetProfileResponse
+	76, // 109: users.user.v1.AdminUserService.AdminUpdateProfile:output_type -> users.user.v1.AdminUpdateProfileResponse
+	78, // 110: users.user.v1.AdminUserService.AdminListCars:output_type -> users.user.v1.AdminListCarsResponse
+	76, // [76:111] is the sub-list for method output_type
+	41, // [41:76] is the sub-list for method input_type
+	41, // [41:41] is the sub-list for extension type_name
+	41, // [41:41] is the sub-list for extension extendee
+	0,  // [0:41] is the sub-list for field type_name
 }
 
 func init() { file_users_user_user_proto_init() }
@@ -4386,15 +4904,16 @@ func file_users_user_user_proto_init() {
 	file_users_user_user_proto_msgTypes[4].OneofWrappers = []any{}
 	file_users_user_user_proto_msgTypes[21].OneofWrappers = []any{}
 	file_users_user_user_proto_msgTypes[65].OneofWrappers = []any{}
+	file_users_user_user_proto_msgTypes[74].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_users_user_user_proto_rawDesc), len(file_users_user_user_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   72,
+			NumMessages:   79,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_users_user_user_proto_goTypes,
 		DependencyIndexes: file_users_user_user_proto_depIdxs,

@@ -27,6 +27,9 @@ const (
 	BillingService_ReconcileTransaction_FullMethodName = "/billing.billing.v1.BillingService/ReconcileTransaction"
 	BillingService_GetOrgStatement_FullMethodName      = "/billing.billing.v1.BillingService/GetOrgStatement"
 	BillingService_GetRevenueStats_FullMethodName      = "/billing.billing.v1.BillingService/GetRevenueStats"
+	BillingService_GetStatement_FullMethodName         = "/billing.billing.v1.BillingService/GetStatement"
+	BillingService_GetUserBalance_FullMethodName       = "/billing.billing.v1.BillingService/GetUserBalance"
+	BillingService_ListSpending_FullMethodName         = "/billing.billing.v1.BillingService/ListSpending"
 )
 
 // BillingServiceClient is the client API for BillingService service.
@@ -34,8 +37,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // BillingService handles financial accounting: ledger entries, org balances,
-// payouts, reconciliation, and revenue reporting.
-// Consumes events from cg-payments, cg-orders, cg-booking via Kafka.
+// payouts, reconciliation, revenue reporting, and user spending history.
+// Consumes events from cg-payments, cg-orders, cg-booking, cg-workshop via Kafka.
 type BillingServiceClient interface {
 	// === Ledger ===
 	RecordLedgerEntry(ctx context.Context, in *RecordLedgerEntryRequest, opts ...grpc.CallOption) (*RecordLedgerEntryResponse, error)
@@ -50,6 +53,16 @@ type BillingServiceClient interface {
 	// === Reporting ===
 	GetOrgStatement(ctx context.Context, in *GetOrgStatementRequest, opts ...grpc.CallOption) (*GetOrgStatementResponse, error)
 	GetRevenueStats(ctx context.Context, in *GetRevenueStatsRequest, opts ...grpc.CallOption) (*GetRevenueStatsResponse, error)
+	// GetStatement returns cursor-paginated ledger entries for any subject
+	// (user or organization). Use this for "my spending history" on mobile and
+	// "org earnings statement" on web.
+	GetStatement(ctx context.Context, in *GetStatementRequest, opts ...grpc.CallOption) (*GetStatementResponse, error)
+	// GetUserBalance returns aggregate spending totals for a user.
+	GetUserBalance(ctx context.Context, in *GetUserBalanceRequest, opts ...grpc.CallOption) (*GetUserBalanceResponse, error)
+	// ListSpending returns enriched spending entries for a user: each entry
+	// includes entity_type, entity_id, amount, currency, and a counterparty_name
+	// resolved from upstream services. Intended for the mobile "spending feed".
+	ListSpending(ctx context.Context, in *ListSpendingRequest, opts ...grpc.CallOption) (*ListSpendingResponse, error)
 }
 
 type billingServiceClient struct {
@@ -140,13 +153,43 @@ func (c *billingServiceClient) GetRevenueStats(ctx context.Context, in *GetReven
 	return out, nil
 }
 
+func (c *billingServiceClient) GetStatement(ctx context.Context, in *GetStatementRequest, opts ...grpc.CallOption) (*GetStatementResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetStatementResponse)
+	err := c.cc.Invoke(ctx, BillingService_GetStatement_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) GetUserBalance(ctx context.Context, in *GetUserBalanceRequest, opts ...grpc.CallOption) (*GetUserBalanceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserBalanceResponse)
+	err := c.cc.Invoke(ctx, BillingService_GetUserBalance_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) ListSpending(ctx context.Context, in *ListSpendingRequest, opts ...grpc.CallOption) (*ListSpendingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListSpendingResponse)
+	err := c.cc.Invoke(ctx, BillingService_ListSpending_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BillingServiceServer is the server API for BillingService service.
 // All implementations must embed UnimplementedBillingServiceServer
 // for forward compatibility.
 //
 // BillingService handles financial accounting: ledger entries, org balances,
-// payouts, reconciliation, and revenue reporting.
-// Consumes events from cg-payments, cg-orders, cg-booking via Kafka.
+// payouts, reconciliation, revenue reporting, and user spending history.
+// Consumes events from cg-payments, cg-orders, cg-booking, cg-workshop via Kafka.
 type BillingServiceServer interface {
 	// === Ledger ===
 	RecordLedgerEntry(context.Context, *RecordLedgerEntryRequest) (*RecordLedgerEntryResponse, error)
@@ -161,6 +204,16 @@ type BillingServiceServer interface {
 	// === Reporting ===
 	GetOrgStatement(context.Context, *GetOrgStatementRequest) (*GetOrgStatementResponse, error)
 	GetRevenueStats(context.Context, *GetRevenueStatsRequest) (*GetRevenueStatsResponse, error)
+	// GetStatement returns cursor-paginated ledger entries for any subject
+	// (user or organization). Use this for "my spending history" on mobile and
+	// "org earnings statement" on web.
+	GetStatement(context.Context, *GetStatementRequest) (*GetStatementResponse, error)
+	// GetUserBalance returns aggregate spending totals for a user.
+	GetUserBalance(context.Context, *GetUserBalanceRequest) (*GetUserBalanceResponse, error)
+	// ListSpending returns enriched spending entries for a user: each entry
+	// includes entity_type, entity_id, amount, currency, and a counterparty_name
+	// resolved from upstream services. Intended for the mobile "spending feed".
+	ListSpending(context.Context, *ListSpendingRequest) (*ListSpendingResponse, error)
 	mustEmbedUnimplementedBillingServiceServer()
 }
 
@@ -194,6 +247,15 @@ func (UnimplementedBillingServiceServer) GetOrgStatement(context.Context, *GetOr
 }
 func (UnimplementedBillingServiceServer) GetRevenueStats(context.Context, *GetRevenueStatsRequest) (*GetRevenueStatsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRevenueStats not implemented")
+}
+func (UnimplementedBillingServiceServer) GetStatement(context.Context, *GetStatementRequest) (*GetStatementResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetStatement not implemented")
+}
+func (UnimplementedBillingServiceServer) GetUserBalance(context.Context, *GetUserBalanceRequest) (*GetUserBalanceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetUserBalance not implemented")
+}
+func (UnimplementedBillingServiceServer) ListSpending(context.Context, *ListSpendingRequest) (*ListSpendingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListSpending not implemented")
 }
 func (UnimplementedBillingServiceServer) mustEmbedUnimplementedBillingServiceServer() {}
 func (UnimplementedBillingServiceServer) testEmbeddedByValue()                        {}
@@ -360,6 +422,60 @@ func _BillingService_GetRevenueStats_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BillingService_GetStatement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStatementRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).GetStatement(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_GetStatement_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).GetStatement(ctx, req.(*GetStatementRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_GetUserBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserBalanceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).GetUserBalance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_GetUserBalance_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).GetUserBalance(ctx, req.(*GetUserBalanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_ListSpending_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSpendingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).ListSpending(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_ListSpending_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).ListSpending(ctx, req.(*ListSpendingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BillingService_ServiceDesc is the grpc.ServiceDesc for BillingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -398,6 +514,18 @@ var BillingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRevenueStats",
 			Handler:    _BillingService_GetRevenueStats_Handler,
+		},
+		{
+			MethodName: "GetStatement",
+			Handler:    _BillingService_GetStatement_Handler,
+		},
+		{
+			MethodName: "GetUserBalance",
+			Handler:    _BillingService_GetUserBalance_Handler,
+		},
+		{
+			MethodName: "ListSpending",
+			Handler:    _BillingService_ListSpending_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

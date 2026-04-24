@@ -15,8 +15,10 @@ service NotificationService {
   rpc GetUnreadCount(GetUnreadCountRequest) returns (GetUnreadCountResponse);
   rpc RegisterDevice(RegisterDeviceRequest) returns (RegisterDeviceResponse);
   rpc UnregisterDevice(UnregisterDeviceRequest) returns (UnregisterDeviceResponse);
+  rpc UpdateDevice(UpdateDeviceRequest) returns (UpdateDeviceResponse);
+  rpc ListUserDevices(ListUserDevicesRequest) returns (ListUserDevicesResponse);
   rpc GetSMSBalance(GetSMSBalanceRequest) returns (GetSMSBalanceResponse);
-  
+
   // Preferences
   rpc GetPreferences(GetPreferencesRequest) returns (GetPreferencesResponse);
   rpc UpdatePreferences(UpdatePreferencesRequest) returns (UpdatePreferencesResponse);
@@ -47,6 +49,19 @@ message Notification {
   string body = 6;
   map<string, string> data = 7;
   bool is_read = 8;
+  google.protobuf.Timestamp created_at = 9;
+}
+
+// DeviceInfo is returned by RegisterDevice, UpdateDevice, and ListUserDevices.
+message DeviceInfo {
+  int64 id = 1;
+  int64 user_id = 2;
+  string token = 3;
+  string platform = 4;
+  string app_version = 5;
+  string device_model = 6;
+  string locale = 7;
+  google.protobuf.Timestamp last_seen_at = 8;
   google.protobuf.Timestamp created_at = 9;
 }
 
@@ -115,24 +130,52 @@ message GetUnreadCountResponse {
   int32 count = 1;
 }
 
+// RegisterDevice — upsert by (user_id, fcm_token).
+// fcm_token field carries any push token: FCM registration token or APNs device token.
 message RegisterDeviceRequest {
   int64 user_id = 1;
-  string device_id = 2;
-  string fcm_token = 3;
-  string platform = 4;
+  string device_id = 2;   // legacy; prefer using fcm_token as the canonical token
+  string fcm_token = 3;   // canonical push token for all platforms
+  string platform = 4;    // "ios" | "android" | "web"
+  string app_version = 5;
+  string device_model = 6;
+  string locale = 7;
 }
 
 message RegisterDeviceResponse {
   bool success = 1;
+  DeviceInfo device = 2;
 }
 
 message UnregisterDeviceRequest {
   int64 user_id = 1;
-  string device_id = 2;
+  string device_id = 2;   // token value (legacy field name kept for compat)
 }
 
 message UnregisterDeviceResponse {
   bool success = 1;
+}
+
+// UpdateDevice — partial update of device metadata.
+message UpdateDeviceRequest {
+  int64 user_id = 1;
+  string token = 2;
+  string app_version = 3;
+  string device_model = 4;
+  string locale = 5;
+}
+
+message UpdateDeviceResponse {
+  DeviceInfo device = 1;
+}
+
+// ListUserDevices — returns all registered devices for a user.
+message ListUserDevicesRequest {
+  int64 user_id = 1;
+}
+
+message ListUserDevicesResponse {
+  repeated DeviceInfo devices = 1;
 }
 
 message GetSMSBalanceRequest {}
@@ -176,4 +219,3 @@ message UpdatePreferencesRequest {
 message UpdatePreferencesResponse {
   NotificationPreferences preferences = 1;
 }
-

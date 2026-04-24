@@ -27,6 +27,8 @@ const (
 	NotificationService_GetUnreadCount_FullMethodName    = "/communication.notification.v1.NotificationService/GetUnreadCount"
 	NotificationService_RegisterDevice_FullMethodName    = "/communication.notification.v1.NotificationService/RegisterDevice"
 	NotificationService_UnregisterDevice_FullMethodName  = "/communication.notification.v1.NotificationService/UnregisterDevice"
+	NotificationService_UpdateDevice_FullMethodName      = "/communication.notification.v1.NotificationService/UpdateDevice"
+	NotificationService_ListUserDevices_FullMethodName   = "/communication.notification.v1.NotificationService/ListUserDevices"
 	NotificationService_GetSMSBalance_FullMethodName     = "/communication.notification.v1.NotificationService/GetSMSBalance"
 	NotificationService_GetPreferences_FullMethodName    = "/communication.notification.v1.NotificationService/GetPreferences"
 	NotificationService_UpdatePreferences_FullMethodName = "/communication.notification.v1.NotificationService/UpdatePreferences"
@@ -44,6 +46,8 @@ type NotificationServiceClient interface {
 	GetUnreadCount(ctx context.Context, in *GetUnreadCountRequest, opts ...grpc.CallOption) (*GetUnreadCountResponse, error)
 	RegisterDevice(ctx context.Context, in *RegisterDeviceRequest, opts ...grpc.CallOption) (*RegisterDeviceResponse, error)
 	UnregisterDevice(ctx context.Context, in *UnregisterDeviceRequest, opts ...grpc.CallOption) (*UnregisterDeviceResponse, error)
+	UpdateDevice(ctx context.Context, in *UpdateDeviceRequest, opts ...grpc.CallOption) (*UpdateDeviceResponse, error)
+	ListUserDevices(ctx context.Context, in *ListUserDevicesRequest, opts ...grpc.CallOption) (*ListUserDevicesResponse, error)
 	GetSMSBalance(ctx context.Context, in *GetSMSBalanceRequest, opts ...grpc.CallOption) (*GetSMSBalanceResponse, error)
 	// Preferences
 	GetPreferences(ctx context.Context, in *GetPreferencesRequest, opts ...grpc.CallOption) (*GetPreferencesResponse, error)
@@ -138,6 +142,26 @@ func (c *notificationServiceClient) UnregisterDevice(ctx context.Context, in *Un
 	return out, nil
 }
 
+func (c *notificationServiceClient) UpdateDevice(ctx context.Context, in *UpdateDeviceRequest, opts ...grpc.CallOption) (*UpdateDeviceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateDeviceResponse)
+	err := c.cc.Invoke(ctx, NotificationService_UpdateDevice_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notificationServiceClient) ListUserDevices(ctx context.Context, in *ListUserDevicesRequest, opts ...grpc.CallOption) (*ListUserDevicesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserDevicesResponse)
+	err := c.cc.Invoke(ctx, NotificationService_ListUserDevices_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *notificationServiceClient) GetSMSBalance(ctx context.Context, in *GetSMSBalanceRequest, opts ...grpc.CallOption) (*GetSMSBalanceResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSMSBalanceResponse)
@@ -180,6 +204,8 @@ type NotificationServiceServer interface {
 	GetUnreadCount(context.Context, *GetUnreadCountRequest) (*GetUnreadCountResponse, error)
 	RegisterDevice(context.Context, *RegisterDeviceRequest) (*RegisterDeviceResponse, error)
 	UnregisterDevice(context.Context, *UnregisterDeviceRequest) (*UnregisterDeviceResponse, error)
+	UpdateDevice(context.Context, *UpdateDeviceRequest) (*UpdateDeviceResponse, error)
+	ListUserDevices(context.Context, *ListUserDevicesRequest) (*ListUserDevicesResponse, error)
 	GetSMSBalance(context.Context, *GetSMSBalanceRequest) (*GetSMSBalanceResponse, error)
 	// Preferences
 	GetPreferences(context.Context, *GetPreferencesRequest) (*GetPreferencesResponse, error)
@@ -217,6 +243,12 @@ func (UnimplementedNotificationServiceServer) RegisterDevice(context.Context, *R
 }
 func (UnimplementedNotificationServiceServer) UnregisterDevice(context.Context, *UnregisterDeviceRequest) (*UnregisterDeviceResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UnregisterDevice not implemented")
+}
+func (UnimplementedNotificationServiceServer) UpdateDevice(context.Context, *UpdateDeviceRequest) (*UpdateDeviceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateDevice not implemented")
+}
+func (UnimplementedNotificationServiceServer) ListUserDevices(context.Context, *ListUserDevicesRequest) (*ListUserDevicesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListUserDevices not implemented")
 }
 func (UnimplementedNotificationServiceServer) GetSMSBalance(context.Context, *GetSMSBalanceRequest) (*GetSMSBalanceResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSMSBalance not implemented")
@@ -392,6 +424,42 @@ func _NotificationService_UnregisterDevice_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NotificationService_UpdateDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateDeviceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationServiceServer).UpdateDevice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationService_UpdateDevice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationServiceServer).UpdateDevice(ctx, req.(*UpdateDeviceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NotificationService_ListUserDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserDevicesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationServiceServer).ListUserDevices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationService_ListUserDevices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationServiceServer).ListUserDevices(ctx, req.(*ListUserDevicesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _NotificationService_GetSMSBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSMSBalanceRequest)
 	if err := dec(in); err != nil {
@@ -484,6 +552,14 @@ var NotificationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UnregisterDevice",
 			Handler:    _NotificationService_UnregisterDevice_Handler,
+		},
+		{
+			MethodName: "UpdateDevice",
+			Handler:    _NotificationService_UpdateDevice_Handler,
+		},
+		{
+			MethodName: "ListUserDevices",
+			Handler:    _NotificationService_ListUserDevices_Handler,
 		},
 		{
 			MethodName: "GetSMSBalance",

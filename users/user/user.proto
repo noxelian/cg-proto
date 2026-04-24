@@ -106,6 +106,20 @@ service UserService {
   rpc ListModules(ListModulesRequest) returns (ListModulesResponse);
 }
 
+// AdminUserService provides admin-only RPCs for managing any user's data.
+// All methods require a valid JWT with platform role "admin" or "support"
+// asserted via the x-platform-role gRPC metadata header (set by BFF).
+service AdminUserService {
+  // AdminGetProfile returns profile for any user by ID.
+  rpc AdminGetProfile(AdminGetProfileRequest) returns (AdminGetProfileResponse);
+
+  // AdminUpdateProfile updates profile for any user by ID.
+  rpc AdminUpdateProfile(AdminUpdateProfileRequest) returns (AdminUpdateProfileResponse);
+
+  // AdminListCars returns cars owned by any user.
+  rpc AdminListCars(AdminListCarsRequest) returns (AdminListCarsResponse);
+}
+
 enum PlatformRole {
   PLATFORM_ROLE_UNSPECIFIED = 0;
   PLATFORM_ROLE_MECHANIC = 1;          // MC — mechanic, scoped to assigned orgs
@@ -509,4 +523,54 @@ message ListModulesRequest {}
 message ListModulesResponse {
   repeated Module modules = 1;
   string wildcard = 2; // "*" — grants access to every module
+}
+
+// ==== Admin RPCs (AdminUserService) ====
+
+message AdminGetProfileRequest {
+  int64 user_id = 1;
+}
+
+message AdminGetProfileResponse {
+  User user = 1;
+  UserCounters counters = 2;
+}
+
+message AdminUpdateProfileRequest {
+  int64 user_id = 1;
+  optional string name = 2;
+  optional string avatar_url = 3;
+  optional string email = 4;
+  optional int64 city_id = 5;
+  // Phone change; returns ALREADY_EXISTS if phone is taken.
+  optional string phone = 6;
+}
+
+message AdminUpdateProfileResponse {
+  User user = 1;
+}
+
+message AdminListCarsRequest {
+  int64 user_id = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message AdminListCarsResponse {
+  repeated AdminCar cars = 1;
+  int32 total = 2;
+}
+
+// AdminCar is a minimal car view for admin purposes.
+message AdminCar {
+  int64 id = 1;
+  int64 user_id = 2;
+  int32 mark_id = 3;
+  int32 model_id = 4;
+  int32 year = 5;
+  string vin = 6;
+  string license_plate = 7;
+  string color = 8;
+  bool is_primary = 9;
+  google.protobuf.Timestamp created_at = 10;
 }

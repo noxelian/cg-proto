@@ -1371,3 +1371,195 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "users/user/user.proto",
 }
+
+const (
+	AdminUserService_AdminGetProfile_FullMethodName    = "/users.user.v1.AdminUserService/AdminGetProfile"
+	AdminUserService_AdminUpdateProfile_FullMethodName = "/users.user.v1.AdminUserService/AdminUpdateProfile"
+	AdminUserService_AdminListCars_FullMethodName      = "/users.user.v1.AdminUserService/AdminListCars"
+)
+
+// AdminUserServiceClient is the client API for AdminUserService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// AdminUserService provides admin-only RPCs for managing any user's data.
+// All methods require a valid JWT with platform role "admin" or "support"
+// asserted via the x-platform-role gRPC metadata header (set by BFF).
+type AdminUserServiceClient interface {
+	// AdminGetProfile returns profile for any user by ID.
+	AdminGetProfile(ctx context.Context, in *AdminGetProfileRequest, opts ...grpc.CallOption) (*AdminGetProfileResponse, error)
+	// AdminUpdateProfile updates profile for any user by ID.
+	AdminUpdateProfile(ctx context.Context, in *AdminUpdateProfileRequest, opts ...grpc.CallOption) (*AdminUpdateProfileResponse, error)
+	// AdminListCars returns cars owned by any user.
+	AdminListCars(ctx context.Context, in *AdminListCarsRequest, opts ...grpc.CallOption) (*AdminListCarsResponse, error)
+}
+
+type adminUserServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewAdminUserServiceClient(cc grpc.ClientConnInterface) AdminUserServiceClient {
+	return &adminUserServiceClient{cc}
+}
+
+func (c *adminUserServiceClient) AdminGetProfile(ctx context.Context, in *AdminGetProfileRequest, opts ...grpc.CallOption) (*AdminGetProfileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminGetProfileResponse)
+	err := c.cc.Invoke(ctx, AdminUserService_AdminGetProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminUserServiceClient) AdminUpdateProfile(ctx context.Context, in *AdminUpdateProfileRequest, opts ...grpc.CallOption) (*AdminUpdateProfileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminUpdateProfileResponse)
+	err := c.cc.Invoke(ctx, AdminUserService_AdminUpdateProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminUserServiceClient) AdminListCars(ctx context.Context, in *AdminListCarsRequest, opts ...grpc.CallOption) (*AdminListCarsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminListCarsResponse)
+	err := c.cc.Invoke(ctx, AdminUserService_AdminListCars_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AdminUserServiceServer is the server API for AdminUserService service.
+// All implementations must embed UnimplementedAdminUserServiceServer
+// for forward compatibility.
+//
+// AdminUserService provides admin-only RPCs for managing any user's data.
+// All methods require a valid JWT with platform role "admin" or "support"
+// asserted via the x-platform-role gRPC metadata header (set by BFF).
+type AdminUserServiceServer interface {
+	// AdminGetProfile returns profile for any user by ID.
+	AdminGetProfile(context.Context, *AdminGetProfileRequest) (*AdminGetProfileResponse, error)
+	// AdminUpdateProfile updates profile for any user by ID.
+	AdminUpdateProfile(context.Context, *AdminUpdateProfileRequest) (*AdminUpdateProfileResponse, error)
+	// AdminListCars returns cars owned by any user.
+	AdminListCars(context.Context, *AdminListCarsRequest) (*AdminListCarsResponse, error)
+	mustEmbedUnimplementedAdminUserServiceServer()
+}
+
+// UnimplementedAdminUserServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedAdminUserServiceServer struct{}
+
+func (UnimplementedAdminUserServiceServer) AdminGetProfile(context.Context, *AdminGetProfileRequest) (*AdminGetProfileResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminGetProfile not implemented")
+}
+func (UnimplementedAdminUserServiceServer) AdminUpdateProfile(context.Context, *AdminUpdateProfileRequest) (*AdminUpdateProfileResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminUpdateProfile not implemented")
+}
+func (UnimplementedAdminUserServiceServer) AdminListCars(context.Context, *AdminListCarsRequest) (*AdminListCarsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminListCars not implemented")
+}
+func (UnimplementedAdminUserServiceServer) mustEmbedUnimplementedAdminUserServiceServer() {}
+func (UnimplementedAdminUserServiceServer) testEmbeddedByValue()                          {}
+
+// UnsafeAdminUserServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AdminUserServiceServer will
+// result in compilation errors.
+type UnsafeAdminUserServiceServer interface {
+	mustEmbedUnimplementedAdminUserServiceServer()
+}
+
+func RegisterAdminUserServiceServer(s grpc.ServiceRegistrar, srv AdminUserServiceServer) {
+	// If the following call panics, it indicates UnimplementedAdminUserServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&AdminUserService_ServiceDesc, srv)
+}
+
+func _AdminUserService_AdminGetProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminGetProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminUserServiceServer).AdminGetProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminUserService_AdminGetProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminUserServiceServer).AdminGetProfile(ctx, req.(*AdminGetProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminUserService_AdminUpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminUpdateProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminUserServiceServer).AdminUpdateProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminUserService_AdminUpdateProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminUserServiceServer).AdminUpdateProfile(ctx, req.(*AdminUpdateProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminUserService_AdminListCars_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminListCarsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminUserServiceServer).AdminListCars(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminUserService_AdminListCars_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminUserServiceServer).AdminListCars(ctx, req.(*AdminListCarsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// AdminUserService_ServiceDesc is the grpc.ServiceDesc for AdminUserService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var AdminUserService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "users.user.v1.AdminUserService",
+	HandlerType: (*AdminUserServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AdminGetProfile",
+			Handler:    _AdminUserService_AdminGetProfile_Handler,
+		},
+		{
+			MethodName: "AdminUpdateProfile",
+			Handler:    _AdminUserService_AdminUpdateProfile_Handler,
+		},
+		{
+			MethodName: "AdminListCars",
+			Handler:    _AdminUserService_AdminListCars_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "users/user/user.proto",
+}

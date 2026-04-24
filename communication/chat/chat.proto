@@ -99,3 +99,36 @@ message MarkAsReadResponse {
   int32 marked_count = 1;
 }
 
+// AdminChatService provides admin-only RPCs for chat moderation.
+// All methods require a valid JWT with platform role "admin" or "support"
+// asserted via the x-platform-role gRPC metadata header (set by BFF).
+service AdminChatService {
+  // AdminGetUserChats returns chats for any user by ID.
+  rpc AdminGetUserChats(AdminGetUserChatsRequest) returns (AdminGetUserChatsResponse);
+
+  // AdminGetChatMessages returns messages from any chat by ID.
+  rpc AdminGetChatMessages(AdminGetChatMessagesRequest) returns (AdminGetChatMessagesResponse);
+}
+
+message AdminGetUserChatsRequest {
+  int64 user_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message AdminGetUserChatsResponse {
+  repeated Chat chats = 1;
+  int32 total = 2;
+}
+
+message AdminGetChatMessagesRequest {
+  int64 chat_id = 1;
+  int64 before_id = 2;
+  int32 limit = 3;
+}
+
+message AdminGetChatMessagesResponse {
+  repeated Message messages = 1;
+  bool has_more = 2;
+}
+

@@ -309,3 +309,155 @@ var ChatService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "communication/chat/chat.proto",
 }
+
+const (
+	AdminChatService_AdminGetUserChats_FullMethodName    = "/communication.chat.v1.AdminChatService/AdminGetUserChats"
+	AdminChatService_AdminGetChatMessages_FullMethodName = "/communication.chat.v1.AdminChatService/AdminGetChatMessages"
+)
+
+// AdminChatServiceClient is the client API for AdminChatService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// AdminChatService provides admin-only RPCs for chat moderation.
+// All methods require a valid JWT with platform role "admin" or "support"
+// asserted via the x-platform-role gRPC metadata header (set by BFF).
+type AdminChatServiceClient interface {
+	// AdminGetUserChats returns chats for any user by ID.
+	AdminGetUserChats(ctx context.Context, in *AdminGetUserChatsRequest, opts ...grpc.CallOption) (*AdminGetUserChatsResponse, error)
+	// AdminGetChatMessages returns messages from any chat by ID.
+	AdminGetChatMessages(ctx context.Context, in *AdminGetChatMessagesRequest, opts ...grpc.CallOption) (*AdminGetChatMessagesResponse, error)
+}
+
+type adminChatServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewAdminChatServiceClient(cc grpc.ClientConnInterface) AdminChatServiceClient {
+	return &adminChatServiceClient{cc}
+}
+
+func (c *adminChatServiceClient) AdminGetUserChats(ctx context.Context, in *AdminGetUserChatsRequest, opts ...grpc.CallOption) (*AdminGetUserChatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminGetUserChatsResponse)
+	err := c.cc.Invoke(ctx, AdminChatService_AdminGetUserChats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminChatServiceClient) AdminGetChatMessages(ctx context.Context, in *AdminGetChatMessagesRequest, opts ...grpc.CallOption) (*AdminGetChatMessagesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminGetChatMessagesResponse)
+	err := c.cc.Invoke(ctx, AdminChatService_AdminGetChatMessages_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AdminChatServiceServer is the server API for AdminChatService service.
+// All implementations must embed UnimplementedAdminChatServiceServer
+// for forward compatibility.
+//
+// AdminChatService provides admin-only RPCs for chat moderation.
+// All methods require a valid JWT with platform role "admin" or "support"
+// asserted via the x-platform-role gRPC metadata header (set by BFF).
+type AdminChatServiceServer interface {
+	// AdminGetUserChats returns chats for any user by ID.
+	AdminGetUserChats(context.Context, *AdminGetUserChatsRequest) (*AdminGetUserChatsResponse, error)
+	// AdminGetChatMessages returns messages from any chat by ID.
+	AdminGetChatMessages(context.Context, *AdminGetChatMessagesRequest) (*AdminGetChatMessagesResponse, error)
+	mustEmbedUnimplementedAdminChatServiceServer()
+}
+
+// UnimplementedAdminChatServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedAdminChatServiceServer struct{}
+
+func (UnimplementedAdminChatServiceServer) AdminGetUserChats(context.Context, *AdminGetUserChatsRequest) (*AdminGetUserChatsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminGetUserChats not implemented")
+}
+func (UnimplementedAdminChatServiceServer) AdminGetChatMessages(context.Context, *AdminGetChatMessagesRequest) (*AdminGetChatMessagesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminGetChatMessages not implemented")
+}
+func (UnimplementedAdminChatServiceServer) mustEmbedUnimplementedAdminChatServiceServer() {}
+func (UnimplementedAdminChatServiceServer) testEmbeddedByValue()                          {}
+
+// UnsafeAdminChatServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AdminChatServiceServer will
+// result in compilation errors.
+type UnsafeAdminChatServiceServer interface {
+	mustEmbedUnimplementedAdminChatServiceServer()
+}
+
+func RegisterAdminChatServiceServer(s grpc.ServiceRegistrar, srv AdminChatServiceServer) {
+	// If the following call panics, it indicates UnimplementedAdminChatServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&AdminChatService_ServiceDesc, srv)
+}
+
+func _AdminChatService_AdminGetUserChats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminGetUserChatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminChatServiceServer).AdminGetUserChats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminChatService_AdminGetUserChats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminChatServiceServer).AdminGetUserChats(ctx, req.(*AdminGetUserChatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminChatService_AdminGetChatMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminGetChatMessagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminChatServiceServer).AdminGetChatMessages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminChatService_AdminGetChatMessages_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminChatServiceServer).AdminGetChatMessages(ctx, req.(*AdminGetChatMessagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// AdminChatService_ServiceDesc is the grpc.ServiceDesc for AdminChatService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var AdminChatService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "communication.chat.v1.AdminChatService",
+	HandlerType: (*AdminChatServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AdminGetUserChats",
+			Handler:    _AdminChatService_AdminGetUserChats_Handler,
+		},
+		{
+			MethodName: "AdminGetChatMessages",
+			Handler:    _AdminChatService_AdminGetChatMessages_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "communication/chat/chat.proto",
+}
