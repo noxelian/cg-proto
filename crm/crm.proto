@@ -147,6 +147,12 @@ service CRMService {
   rpc ListWhatsAppConversations(ListWhatsAppConversationsRequest) returns (ListWhatsAppConversationsResponse);
   rpc ListWhatsAppTemplates(ListWhatsAppTemplatesRequest) returns (ListWhatsAppTemplatesResponse);
   rpc HandleWhatsAppWebhook(WhatsAppWebhookRequest)       returns (WhatsAppWebhookResponse);
+  // MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
+  // given phone. Replaces the previous side-effect reset that fired on every
+  // ListWhatsAppMessages poll — that behaviour raced with incoming inbound
+  // messages and prevented badges from ever surfacing when a chat was open
+  // or polled. Now the frontend calls this explicitly on chat selection.
+  rpc MarkWhatsAppChatRead(MarkWhatsAppChatReadRequest) returns (MarkWhatsAppChatReadResponse);
 
   // Wazzup24 messaging RPCs — separate provider mirroring the WhatsApp channel
   // that's still connected to AmoCRM. Lets the new CRM surface the same chats
@@ -1527,6 +1533,13 @@ message ListWhatsAppConversationsResponse {
   repeated WAConversationProto conversations = 1;
   int64 total = 2; // total distinct phones, for pagination
 }
+
+message MarkWhatsAppChatReadRequest {
+  string organization_id = 1;
+  string phone           = 2;
+}
+
+message MarkWhatsAppChatReadResponse {}
 
 // SendWhatsAppTemplate — send a pre-approved template message.
 message SendWhatsAppTemplateRequest {

@@ -89,6 +89,7 @@ const (
 	CRMService_ListWhatsAppConversations_FullMethodName          = "/crm.v1.CRMService/ListWhatsAppConversations"
 	CRMService_ListWhatsAppTemplates_FullMethodName              = "/crm.v1.CRMService/ListWhatsAppTemplates"
 	CRMService_HandleWhatsAppWebhook_FullMethodName              = "/crm.v1.CRMService/HandleWhatsAppWebhook"
+	CRMService_MarkWhatsAppChatRead_FullMethodName               = "/crm.v1.CRMService/MarkWhatsAppChatRead"
 	CRMService_SendWazzupMessage_FullMethodName                  = "/crm.v1.CRMService/SendWazzupMessage"
 	CRMService_ListWazzupMessages_FullMethodName                 = "/crm.v1.CRMService/ListWazzupMessages"
 	CRMService_ListWazzupConversations_FullMethodName            = "/crm.v1.CRMService/ListWazzupConversations"
@@ -264,6 +265,12 @@ type CRMServiceClient interface {
 	ListWhatsAppConversations(ctx context.Context, in *ListWhatsAppConversationsRequest, opts ...grpc.CallOption) (*ListWhatsAppConversationsResponse, error)
 	ListWhatsAppTemplates(ctx context.Context, in *ListWhatsAppTemplatesRequest, opts ...grpc.CallOption) (*ListWhatsAppTemplatesResponse, error)
 	HandleWhatsAppWebhook(ctx context.Context, in *WhatsAppWebhookRequest, opts ...grpc.CallOption) (*WhatsAppWebhookResponse, error)
+	// MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
+	// given phone. Replaces the previous side-effect reset that fired on every
+	// ListWhatsAppMessages poll — that behaviour raced with incoming inbound
+	// messages and prevented badges from ever surfacing when a chat was open
+	// or polled. Now the frontend calls this explicitly on chat selection.
+	MarkWhatsAppChatRead(ctx context.Context, in *MarkWhatsAppChatReadRequest, opts ...grpc.CallOption) (*MarkWhatsAppChatReadResponse, error)
 	// Wazzup24 messaging RPCs — separate provider mirroring the WhatsApp channel
 	// that's still connected to AmoCRM. Lets the new CRM surface the same chats
 	// without disrupting AmoCRM's existing Wazzup integration.
@@ -1030,6 +1037,16 @@ func (c *cRMServiceClient) HandleWhatsAppWebhook(ctx context.Context, in *WhatsA
 	return out, nil
 }
 
+func (c *cRMServiceClient) MarkWhatsAppChatRead(ctx context.Context, in *MarkWhatsAppChatReadRequest, opts ...grpc.CallOption) (*MarkWhatsAppChatReadResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MarkWhatsAppChatReadResponse)
+	err := c.cc.Invoke(ctx, CRMService_MarkWhatsAppChatRead_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) SendWazzupMessage(ctx context.Context, in *SendWazzupMessageRequest, opts ...grpc.CallOption) (*SendWazzupMessageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SendWazzupMessageResponse)
@@ -1509,6 +1526,12 @@ type CRMServiceServer interface {
 	ListWhatsAppConversations(context.Context, *ListWhatsAppConversationsRequest) (*ListWhatsAppConversationsResponse, error)
 	ListWhatsAppTemplates(context.Context, *ListWhatsAppTemplatesRequest) (*ListWhatsAppTemplatesResponse, error)
 	HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error)
+	// MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
+	// given phone. Replaces the previous side-effect reset that fired on every
+	// ListWhatsAppMessages poll — that behaviour raced with incoming inbound
+	// messages and prevented badges from ever surfacing when a chat was open
+	// or polled. Now the frontend calls this explicitly on chat selection.
+	MarkWhatsAppChatRead(context.Context, *MarkWhatsAppChatReadRequest) (*MarkWhatsAppChatReadResponse, error)
 	// Wazzup24 messaging RPCs — separate provider mirroring the WhatsApp channel
 	// that's still connected to AmoCRM. Lets the new CRM surface the same chats
 	// without disrupting AmoCRM's existing Wazzup integration.
@@ -1772,6 +1795,9 @@ func (UnimplementedCRMServiceServer) ListWhatsAppTemplates(context.Context, *Lis
 }
 func (UnimplementedCRMServiceServer) HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HandleWhatsAppWebhook not implemented")
+}
+func (UnimplementedCRMServiceServer) MarkWhatsAppChatRead(context.Context, *MarkWhatsAppChatReadRequest) (*MarkWhatsAppChatReadResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MarkWhatsAppChatRead not implemented")
 }
 func (UnimplementedCRMServiceServer) SendWazzupMessage(context.Context, *SendWazzupMessageRequest) (*SendWazzupMessageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendWazzupMessage not implemented")
@@ -3156,6 +3182,24 @@ func _CRMService_HandleWhatsAppWebhook_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_MarkWhatsAppChatRead_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MarkWhatsAppChatReadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).MarkWhatsAppChatRead(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_MarkWhatsAppChatRead_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).MarkWhatsAppChatRead(ctx, req.(*MarkWhatsAppChatReadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_SendWazzupMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SendWazzupMessageRequest)
 	if err := dec(in); err != nil {
@@ -4054,6 +4098,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HandleWhatsAppWebhook",
 			Handler:    _CRMService_HandleWhatsAppWebhook_Handler,
+		},
+		{
+			MethodName: "MarkWhatsAppChatRead",
+			Handler:    _CRMService_MarkWhatsAppChatRead_Handler,
 		},
 		{
 			MethodName: "SendWazzupMessage",
