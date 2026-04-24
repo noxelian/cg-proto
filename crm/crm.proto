@@ -1322,6 +1322,10 @@ message GetManagerStatsRequest {
   string organization_id           = 1;
   google.protobuf.Timestamp date_from = 2;
   google.protobuf.Timestamp date_to   = 3;
+  // When non-empty, scopes the aggregation to a single pipeline and returns
+  // a row for every member of that pipeline (pipeline_members) — even those
+  // with zero deals in the period, so the table surfaces idle managers.
+  string pipeline_id               = 4;
 }
 
 message ManagerStatProto {
@@ -1389,6 +1393,10 @@ message GetActivityStatsRequest {
   google.protobuf.Timestamp date_from = 2;
   google.protobuf.Timestamp date_to   = 3;
   int64  user_id         = 4; // when >0, filter to this user; otherwise org-wide
+  // When non-empty, scopes calls/notes/tasks to a single pipeline via
+  // deal_id → pipeline_id (for notes/tasks) and telephony_calls.pipeline_id
+  // or matched deal (for calls). Empty = org-wide (legacy).
+  string pipeline_id     = 5;
 }
 
 message GetActivityStatsResponse {

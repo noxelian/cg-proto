@@ -9267,8 +9267,12 @@ type GetManagerStatsRequest struct {
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	DateFrom       *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=date_from,json=dateFrom,proto3" json:"date_from,omitempty"`
 	DateTo         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=date_to,json=dateTo,proto3" json:"date_to,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// When non-empty, scopes the aggregation to a single pipeline and returns
+	// a row for every member of that pipeline (pipeline_members) — even those
+	// with zero deals in the period, so the table surfaces idle managers.
+	PipelineId    string `protobuf:"bytes,4,opt,name=pipeline_id,json=pipelineId,proto3" json:"pipeline_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetManagerStatsRequest) Reset() {
@@ -9320,6 +9324,13 @@ func (x *GetManagerStatsRequest) GetDateTo() *timestamppb.Timestamp {
 		return x.DateTo
 	}
 	return nil
+}
+
+func (x *GetManagerStatsRequest) GetPipelineId() string {
+	if x != nil {
+		return x.PipelineId
+	}
+	return ""
 }
 
 type ManagerStatProto struct {
@@ -9801,8 +9812,12 @@ type GetActivityStatsRequest struct {
 	DateFrom       *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=date_from,json=dateFrom,proto3" json:"date_from,omitempty"`
 	DateTo         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=date_to,json=dateTo,proto3" json:"date_to,omitempty"`
 	UserId         int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // when >0, filter to this user; otherwise org-wide
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// When non-empty, scopes calls/notes/tasks to a single pipeline via
+	// deal_id → pipeline_id (for notes/tasks) and telephony_calls.pipeline_id
+	// or matched deal (for calls). Empty = org-wide (legacy).
+	PipelineId    string `protobuf:"bytes,5,opt,name=pipeline_id,json=pipelineId,proto3" json:"pipeline_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetActivityStatsRequest) Reset() {
@@ -9861,6 +9876,13 @@ func (x *GetActivityStatsRequest) GetUserId() int64 {
 		return x.UserId
 	}
 	return 0
+}
+
+func (x *GetActivityStatsRequest) GetPipelineId() string {
+	if x != nil {
+		return x.PipelineId
+	}
+	return ""
 }
 
 type GetActivityStatsResponse struct {
@@ -17376,11 +17398,13 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0fconverted_deals\x18\x05 \x01(\x03R\x0econvertedDeals\x12'\n" +
 	"\x0fconversion_rate\x18\x06 \x01(\x01R\x0econversionRate\"O\n" +
 	"\x1bGetFunnelConversionResponse\x120\n" +
-	"\x06stages\x18\x01 \x03(\v2\x18.crm.v1.FunnelStageProtoR\x06stages\"\xaf\x01\n" +
+	"\x06stages\x18\x01 \x03(\v2\x18.crm.v1.FunnelStageProtoR\x06stages\"\xd0\x01\n" +
 	"\x16GetManagerStatsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x127\n" +
 	"\tdate_from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\bdateFrom\x123\n" +
-	"\adate_to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x06dateTo\"\xc2\x01\n" +
+	"\adate_to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x06dateTo\x12\x1f\n" +
+	"\vpipeline_id\x18\x04 \x01(\tR\n" +
+	"pipelineId\"\xc2\x01\n" +
 	"\x10ManagerStatProto\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
@@ -17425,12 +17449,14 @@ const file_crm_crm_proto_rawDesc = "" +
 	"totalDeals\x12;\n" +
 	"\x1adeals_without_active_tasks\x18\x03 \x01(\x03R\x17dealsWithoutActiveTasks\"E\n" +
 	"\x15GetStageStatsResponse\x12,\n" +
-	"\x05stats\x18\x01 \x03(\v2\x16.crm.v1.StageStatProtoR\x05stats\"\xc9\x01\n" +
+	"\x05stats\x18\x01 \x03(\v2\x16.crm.v1.StageStatProtoR\x05stats\"\xea\x01\n" +
 	"\x17GetActivityStatsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x127\n" +
 	"\tdate_from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\bdateFrom\x123\n" +
 	"\adate_to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x06dateTo\x12\x17\n" +
-	"\auser_id\x18\x04 \x01(\x03R\x06userId\"\xc4\x02\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1f\n" +
+	"\vpipeline_id\x18\x05 \x01(\tR\n" +
+	"pipelineId\"\xc4\x02\n" +
 	"\x18GetActivityStatsResponse\x12#\n" +
 	"\rcalls_inbound\x18\x01 \x01(\x03R\fcallsInbound\x12%\n" +
 	"\x0ecalls_outbound\x18\x02 \x01(\x03R\rcallsOutbound\x12%\n" +
