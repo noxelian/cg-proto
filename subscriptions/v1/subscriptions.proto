@@ -29,10 +29,13 @@ service SubscriptionsService {
   // GetSubscription returns a single subscription by id.
   rpc GetSubscription(GetSubscriptionRequest) returns (Subscription);
 
+  // === Phase 58: Media RPC ===
+  rpc UploadMedia(UploadMediaRequest) returns (UploadMediaResponse);
+  rpc ListMedia(ListMediaRequest) returns (ListMediaResponse);
+
   // === Deferred RPCs (NOT declared in Phase 55 — TODO comments only) ===
   // TODO(Phase 59): rpc IngestPayment(IngestPaymentRequest) returns (IngestPaymentResponse);
   // TODO(Phase 59): rpc CreateSubscription(CreateSubscriptionRequest) returns (Subscription);
-  // TODO(Phase 58): rpc UploadMedia(UploadMediaRequest) returns (UploadMediaResponse);
   // TODO(Phase 62): rpc StartInspection(StartInspectionRequest) returns (StartInspectionResponse);
   // TODO(Phase 62): rpc CompleteInspectionAct(CompleteInspectionActRequest) returns (CompleteInspectionActResponse);
   // TODO(Phase 62): rpc ActivateSubscription(ActivateSubscriptionRequest) returns (Subscription);
@@ -173,4 +176,62 @@ message ListSubscriptionsResponse {
 message GetSubscriptionRequest {
   string id = 1;
   bool include_product = 2;
+}
+
+// =============================================
+// Phase 58: Media (subscription_media table)
+// =============================================
+
+// MediaKind mirrors the subscription_media_kind enum.
+enum MediaKind {
+  MEDIA_KIND_UNSPECIFIED = 0;
+  MEDIA_KIND_BASELINE_PHOTO = 1;  // image/* (incl. image/heic) — Phase 62
+  MEDIA_KIND_BASELINE_VIDEO = 2;  // video/* — Phase 62
+  MEDIA_KIND_DAMAGE_PHOTO = 3;    // image/* — Phase 63
+  MEDIA_KIND_DAMAGE_VIDEO = 4;    // video/* — Phase 63
+  MEDIA_KIND_CLAIM_EVIDENCE = 5;  // image/* OR video/*
+}
+
+// Media is a single uploaded file's metadata. fs_url is a FULL PUBLIC URL
+// (FS_PUBLIC_BASE_URL + "/" + path).
+message Media {
+  string id = 1;
+  string subscription_id = 2;
+  optional string claim_id = 3;       // set in Phase 63
+  optional string inspection_id = 4;  // set in Phase 62
+  MediaKind kind = 5;
+  string fs_url = 6;                  // FULL PUBLIC URL
+  optional string thumbnail_url = 7;
+  string mime_type = 8;               // post-HEIC-normalization
+  int64 size_bytes = 9;
+  optional int64 uploaded_by = 10;
+  google.protobuf.Timestamp uploaded_at = 11;
+}
+
+message UploadMediaRequest {
+  string subscription_id = 1;
+  MediaKind kind = 2;
+  optional string claim_id = 3;       // IGNORED in Phase 58 (parent table missing)
+  optional string inspection_id = 4;  // IGNORED in Phase 58 (parent table missing)
+  bytes data = 5;                     // ≤60MB hard cap
+  string filename = 6;
+  string content_type = 7;            // image/jpeg|png|webp|heic, video/mp4|quicktime
+  optional int64 uploaded_by = 8;
+}
+
+message UploadMediaResponse {
+  Media media = 1;
+}
+
+message ListMediaRequest {
+  optional string subscription_id = 1;
+  optional string claim_id = 2;
+  optional string inspection_id = 3;
+  optional MediaKind kind = 4;
+  int32 limit = 5;
+  int32 offset = 6;
+}
+
+message ListMediaResponse {
+  repeated Media media = 1;
 }

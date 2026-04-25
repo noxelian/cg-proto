@@ -23,6 +23,8 @@ const (
 	SubscriptionsService_GetProduct_FullMethodName        = "/cg.subscriptions.v1.SubscriptionsService/GetProduct"
 	SubscriptionsService_ListSubscriptions_FullMethodName = "/cg.subscriptions.v1.SubscriptionsService/ListSubscriptions"
 	SubscriptionsService_GetSubscription_FullMethodName   = "/cg.subscriptions.v1.SubscriptionsService/GetSubscription"
+	SubscriptionsService_UploadMedia_FullMethodName       = "/cg.subscriptions.v1.SubscriptionsService/UploadMedia"
+	SubscriptionsService_ListMedia_FullMethodName         = "/cg.subscriptions.v1.SubscriptionsService/ListMedia"
 )
 
 // SubscriptionsServiceClient is the client API for SubscriptionsService service.
@@ -45,6 +47,9 @@ type SubscriptionsServiceClient interface {
 	ListSubscriptions(ctx context.Context, in *ListSubscriptionsRequest, opts ...grpc.CallOption) (*ListSubscriptionsResponse, error)
 	// GetSubscription returns a single subscription by id.
 	GetSubscription(ctx context.Context, in *GetSubscriptionRequest, opts ...grpc.CallOption) (*Subscription, error)
+	// === Phase 58: Media RPC ===
+	UploadMedia(ctx context.Context, in *UploadMediaRequest, opts ...grpc.CallOption) (*UploadMediaResponse, error)
+	ListMedia(ctx context.Context, in *ListMediaRequest, opts ...grpc.CallOption) (*ListMediaResponse, error)
 }
 
 type subscriptionsServiceClient struct {
@@ -95,6 +100,26 @@ func (c *subscriptionsServiceClient) GetSubscription(ctx context.Context, in *Ge
 	return out, nil
 }
 
+func (c *subscriptionsServiceClient) UploadMedia(ctx context.Context, in *UploadMediaRequest, opts ...grpc.CallOption) (*UploadMediaResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UploadMediaResponse)
+	err := c.cc.Invoke(ctx, SubscriptionsService_UploadMedia_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionsServiceClient) ListMedia(ctx context.Context, in *ListMediaRequest, opts ...grpc.CallOption) (*ListMediaResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMediaResponse)
+	err := c.cc.Invoke(ctx, SubscriptionsService_ListMedia_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SubscriptionsServiceServer is the server API for SubscriptionsService service.
 // All implementations must embed UnimplementedSubscriptionsServiceServer
 // for forward compatibility.
@@ -115,6 +140,9 @@ type SubscriptionsServiceServer interface {
 	ListSubscriptions(context.Context, *ListSubscriptionsRequest) (*ListSubscriptionsResponse, error)
 	// GetSubscription returns a single subscription by id.
 	GetSubscription(context.Context, *GetSubscriptionRequest) (*Subscription, error)
+	// === Phase 58: Media RPC ===
+	UploadMedia(context.Context, *UploadMediaRequest) (*UploadMediaResponse, error)
+	ListMedia(context.Context, *ListMediaRequest) (*ListMediaResponse, error)
 	mustEmbedUnimplementedSubscriptionsServiceServer()
 }
 
@@ -136,6 +164,12 @@ func (UnimplementedSubscriptionsServiceServer) ListSubscriptions(context.Context
 }
 func (UnimplementedSubscriptionsServiceServer) GetSubscription(context.Context, *GetSubscriptionRequest) (*Subscription, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSubscription not implemented")
+}
+func (UnimplementedSubscriptionsServiceServer) UploadMedia(context.Context, *UploadMediaRequest) (*UploadMediaResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UploadMedia not implemented")
+}
+func (UnimplementedSubscriptionsServiceServer) ListMedia(context.Context, *ListMediaRequest) (*ListMediaResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMedia not implemented")
 }
 func (UnimplementedSubscriptionsServiceServer) mustEmbedUnimplementedSubscriptionsServiceServer() {}
 func (UnimplementedSubscriptionsServiceServer) testEmbeddedByValue()                              {}
@@ -230,6 +264,42 @@ func _SubscriptionsService_GetSubscription_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SubscriptionsService_UploadMedia_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadMediaRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionsServiceServer).UploadMedia(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionsService_UploadMedia_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionsServiceServer).UploadMedia(ctx, req.(*UploadMediaRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionsService_ListMedia_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMediaRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionsServiceServer).ListMedia(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionsService_ListMedia_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionsServiceServer).ListMedia(ctx, req.(*ListMediaRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SubscriptionsService_ServiceDesc is the grpc.ServiceDesc for SubscriptionsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -252,6 +322,14 @@ var SubscriptionsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSubscription",
 			Handler:    _SubscriptionsService_GetSubscription_Handler,
+		},
+		{
+			MethodName: "UploadMedia",
+			Handler:    _SubscriptionsService_UploadMedia_Handler,
+		},
+		{
+			MethodName: "ListMedia",
+			Handler:    _SubscriptionsService_ListMedia_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
