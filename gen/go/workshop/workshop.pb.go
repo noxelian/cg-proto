@@ -3922,10 +3922,23 @@ type CreateRepairOrderRequest struct {
 	PaymentType   PaymentType            `protobuf:"varint,13,opt,name=payment_type,json=paymentType,proto3,enum=workshop.v1.PaymentType" json:"payment_type,omitempty"`
 	ParentOrderId *int64                 `protobuf:"varint,14,opt,name=parent_order_id,json=parentOrderId,proto3,oneof" json:"parent_order_id,omitempty"`
 	// User/Garage integration
-	UserId        int64 `protobuf:"varint,15,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                  // canonical user ref from cg-users
-	GarageCarId   int64 `protobuf:"varint,16,opt,name=garage_car_id,json=garageCarId,proto3" json:"garage_car_id,omitempty"` // ref to user_cars.id (0 = not linked)
-	MarkId        int32 `protobuf:"varint,17,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`                  // NSI car mark ID
-	ModelId       int32 `protobuf:"varint,18,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`               // NSI car model ID
+	UserId      int64 `protobuf:"varint,15,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                  // canonical user ref from cg-users
+	GarageCarId int64 `protobuf:"varint,16,opt,name=garage_car_id,json=garageCarId,proto3" json:"garage_car_id,omitempty"` // ref to user_cars.id (0 = not linked)
+	MarkId      int32 `protobuf:"varint,17,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`                  // NSI car mark ID
+	ModelId     int32 `protobuf:"varint,18,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`               // NSI car model ID
+	// Source of the order request (free string, open enum).
+	// Known values: "shield_claim" (cg-subscriptions claim approval),
+	//
+	//	"crm_deal"     (CRM deal → workshop conversion),
+	//	"manual"       (created manually in admin UI).
+	//
+	// Unknown values are accepted; semantic validation is the caller's responsibility.
+	Source *string `protobuf:"bytes,19,opt,name=source,proto3,oneof" json:"source,omitempty"`
+	// External entity reference (e.g. claim_id UUID for source="shield_claim",
+	// crm_deal_id for source="crm_deal"). Free string up to 64 chars.
+	// Used by downstream consumers (e.g. cg-subscriptions) to match
+	// repair_order completion to the originating entity. NOT validated here.
+	ExternalRef   *string `protobuf:"bytes,20,opt,name=external_ref,json=externalRef,proto3,oneof" json:"external_ref,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4086,6 +4099,20 @@ func (x *CreateRepairOrderRequest) GetModelId() int32 {
 		return x.ModelId
 	}
 	return 0
+}
+
+func (x *CreateRepairOrderRequest) GetSource() string {
+	if x != nil && x.Source != nil {
+		return *x.Source
+	}
+	return ""
+}
+
+func (x *CreateRepairOrderRequest) GetExternalRef() string {
+	if x != nil && x.ExternalRef != nil {
+		return *x.ExternalRef
+	}
+	return ""
 }
 
 type CreateRepairOrderResponse struct {
@@ -12669,7 +12696,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\vactive_only\x18\x01 \x01(\bR\n" +
 	"activeOnly\"5\n" +
 	"\x1aListWorkshopOrgIDsResponse\x12\x17\n" +
-	"\aorg_ids\x18\x01 \x03(\tR\x06orgIds\"\x95\x05\n" +
+	"\aorg_ids\x18\x01 \x03(\tR\x06orgIds\"\xf6\x05\n" +
 	"\x18CreateRepairOrderRequest\x12\x1f\n" +
 	"\vworkshop_id\x18\x01 \x01(\x03R\n" +
 	"workshopId\x12#\n" +
@@ -12692,8 +12719,12 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\auser_id\x18\x0f \x01(\x03R\x06userId\x12\"\n" +
 	"\rgarage_car_id\x18\x10 \x01(\x03R\vgarageCarId\x12\x17\n" +
 	"\amark_id\x18\x11 \x01(\x05R\x06markId\x12\x19\n" +
-	"\bmodel_id\x18\x12 \x01(\x05R\amodelIdB\x12\n" +
-	"\x10_parent_order_id\"K\n" +
+	"\bmodel_id\x18\x12 \x01(\x05R\amodelId\x12\x1b\n" +
+	"\x06source\x18\x13 \x01(\tH\x01R\x06source\x88\x01\x01\x12&\n" +
+	"\fexternal_ref\x18\x14 \x01(\tH\x02R\vexternalRef\x88\x01\x01B\x12\n" +
+	"\x10_parent_order_idB\t\n" +
+	"\a_sourceB\x0f\n" +
+	"\r_external_ref\"K\n" +
 	"\x19CreateRepairOrderResponse\x12.\n" +
 	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order\"2\n" +
 	"\x15GetRepairOrderRequest\x12\x19\n" +

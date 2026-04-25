@@ -621,6 +621,17 @@ message CreateRepairOrderRequest {
   int64 garage_car_id = 16;  // ref to user_cars.id (0 = not linked)
   int32 mark_id       = 17;  // NSI car mark ID
   int32 model_id      = 18;  // NSI car model ID
+  // Source of the order request (free string, open enum).
+  // Known values: "shield_claim" (cg-subscriptions claim approval),
+  //               "crm_deal"     (CRM deal → workshop conversion),
+  //               "manual"       (created manually in admin UI).
+  // Unknown values are accepted; semantic validation is the caller's responsibility.
+  optional string source = 19;
+  // External entity reference (e.g. claim_id UUID for source="shield_claim",
+  // crm_deal_id for source="crm_deal"). Free string up to 64 chars.
+  // Used by downstream consumers (e.g. cg-subscriptions) to match
+  // repair_order completion to the originating entity. NOT validated here.
+  optional string external_ref = 20;
 }
 
 message CreateRepairOrderResponse {
