@@ -130,7 +130,7 @@ message GetUnreadCountResponse {
   int32 count = 1;
 }
 
-// RegisterDevice — upsert by (user_id, fcm_token).
+// RegisterDevice — upsert by (user_id, fcm_token, app).
 // fcm_token field carries any push token: FCM registration token or APNs device token.
 message RegisterDeviceRequest {
   int64 user_id = 1;
@@ -140,6 +140,8 @@ message RegisterDeviceRequest {
   string app_version = 5;
   string device_model = 6;
   string locale = 7;
+  // app identifies which application registered this device: "client" (default) or "partner"
+  string app = 8;
 }
 
 message RegisterDeviceResponse {

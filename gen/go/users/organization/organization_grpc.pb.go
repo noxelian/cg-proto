@@ -48,6 +48,7 @@ const (
 	OrganizationService_GetOrgProfile_FullMethodName                   = "/users.organization.v1.OrganizationService/GetOrgProfile"
 	OrganizationService_UpdateOrgProfile_FullMethodName                = "/users.organization.v1.OrganizationService/UpdateOrgProfile"
 	OrganizationService_GetOrganizationSubscriptionInfo_FullMethodName = "/users.organization.v1.OrganizationService/GetOrganizationSubscriptionInfo"
+	OrganizationService_ListUserOrganizations_FullMethodName           = "/users.organization.v1.OrganizationService/ListUserOrganizations"
 	OrganizationService_SetPlatformRole_FullMethodName                 = "/users.organization.v1.OrganizationService/SetPlatformRole"
 	OrganizationService_GetPlatformRole_FullMethodName                 = "/users.organization.v1.OrganizationService/GetPlatformRole"
 	OrganizationService_SetPlatformOrgAccess_FullMethodName            = "/users.organization.v1.OrganizationService/SetPlatformOrgAccess"
@@ -102,6 +103,10 @@ type OrganizationServiceClient interface {
 	UpdateOrgProfile(ctx context.Context, in *UpdateOrgProfileRequest, opts ...grpc.CallOption) (*UpdateOrgProfileResponse, error)
 	// Subscription info (for payment service)
 	GetOrganizationSubscriptionInfo(ctx context.Context, in *GetOrgSubscriptionInfoRequest, opts ...grpc.CallOption) (*GetOrgSubscriptionInfoResponse, error)
+	// ListUserOrganizations returns orgs where user_id is an active member,
+	// including the caller's role and whether the org has an active subscription.
+	// Used by auth service (SelectOrg flow) and partner onboarding UI.
+	ListUserOrganizations(ctx context.Context, in *ListUserOrganizationsRequest, opts ...grpc.CallOption) (*ListUserOrganizationsResponse, error)
 	// Deprecated: Do not use.
 	// Platform roles (CTOgram employee roles)
 	// Deprecated: Use UserService.SetPlatformRoles instead.
@@ -418,6 +423,16 @@ func (c *organizationServiceClient) GetOrganizationSubscriptionInfo(ctx context.
 	return out, nil
 }
 
+func (c *organizationServiceClient) ListUserOrganizations(ctx context.Context, in *ListUserOrganizationsRequest, opts ...grpc.CallOption) (*ListUserOrganizationsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserOrganizationsResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_ListUserOrganizations_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Deprecated: Do not use.
 func (c *organizationServiceClient) SetPlatformRole(ctx context.Context, in *SetPlatformRoleRequest, opts ...grpc.CallOption) (*SetPlatformRoleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -520,6 +535,10 @@ type OrganizationServiceServer interface {
 	UpdateOrgProfile(context.Context, *UpdateOrgProfileRequest) (*UpdateOrgProfileResponse, error)
 	// Subscription info (for payment service)
 	GetOrganizationSubscriptionInfo(context.Context, *GetOrgSubscriptionInfoRequest) (*GetOrgSubscriptionInfoResponse, error)
+	// ListUserOrganizations returns orgs where user_id is an active member,
+	// including the caller's role and whether the org has an active subscription.
+	// Used by auth service (SelectOrg flow) and partner onboarding UI.
+	ListUserOrganizations(context.Context, *ListUserOrganizationsRequest) (*ListUserOrganizationsResponse, error)
 	// Deprecated: Do not use.
 	// Platform roles (CTOgram employee roles)
 	// Deprecated: Use UserService.SetPlatformRoles instead.
@@ -632,6 +651,9 @@ func (UnimplementedOrganizationServiceServer) UpdateOrgProfile(context.Context, 
 }
 func (UnimplementedOrganizationServiceServer) GetOrganizationSubscriptionInfo(context.Context, *GetOrgSubscriptionInfoRequest) (*GetOrgSubscriptionInfoResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrganizationSubscriptionInfo not implemented")
+}
+func (UnimplementedOrganizationServiceServer) ListUserOrganizations(context.Context, *ListUserOrganizationsRequest) (*ListUserOrganizationsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListUserOrganizations not implemented")
 }
 func (UnimplementedOrganizationServiceServer) SetPlatformRole(context.Context, *SetPlatformRoleRequest) (*SetPlatformRoleResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetPlatformRole not implemented")
@@ -1191,6 +1213,24 @@ func _OrganizationService_GetOrganizationSubscriptionInfo_Handler(srv interface{
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationService_ListUserOrganizations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserOrganizationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).ListUserOrganizations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_ListUserOrganizations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).ListUserOrganizations(ctx, req.(*ListUserOrganizationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrganizationService_SetPlatformRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetPlatformRoleRequest)
 	if err := dec(in); err != nil {
@@ -1403,6 +1443,10 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOrganizationSubscriptionInfo",
 			Handler:    _OrganizationService_GetOrganizationSubscriptionInfo_Handler,
+		},
+		{
+			MethodName: "ListUserOrganizations",
+			Handler:    _OrganizationService_ListUserOrganizations_Handler,
 		},
 		{
 			MethodName: "SetPlatformRole",

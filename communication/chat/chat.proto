@@ -10,26 +10,35 @@ service ChatService {
   rpc CreateChat(CreateChatRequest) returns (CreateChatResponse);
   rpc GetChat(GetChatRequest) returns (GetChatResponse);
   rpc GetUserChats(GetUserChatsRequest) returns (GetUserChatsResponse);
+  rpc GetOrgChats(GetOrgChatsRequest) returns (GetOrgChatsResponse);
   rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
   rpc GetMessages(GetMessagesRequest) returns (GetMessagesResponse);
   rpc MarkAsRead(MarkAsReadRequest) returns (MarkAsReadResponse);
 }
 
+// Chat represents a conversation between buyer and seller/org.
+// caller_role and caller_unread_count are populated by the server based on
+// the authenticated caller's identity relative to this chat.
 message Chat {
-  int64 id = 1;
+  string id = 1;
   int64 ad_id = 2;
   int64 buyer_id = 3;
   int64 seller_id = 4;
-  int64 seller_org_id = 5;
+  // FIX: was int64 — seller organization is identified by UUID string
+  string seller_org_id = 5;
   Message last_message = 6;
   int32 unread_count = 7;
   google.protobuf.Timestamp created_at = 8;
   google.protobuf.Timestamp updated_at = 9;
+  // caller_role is "buyer" or "seller", computed from caller identity.
+  string caller_role = 10;
+  // caller_unread_count is the unread count for the caller's role.
+  int32 caller_unread_count = 11;
 }
 
 message Message {
-  int64 id = 1;
-  int64 chat_id = 2;
+  string id = 1;
+  string chat_id = 2;
   int64 sender_id = 3;
   string content = 4;
   string message_type = 5;
@@ -41,7 +50,8 @@ message CreateChatRequest {
   int64 ad_id = 1;
   int64 buyer_id = 2;
   int64 seller_id = 3;
-  int64 seller_org_id = 4;
+  // seller_org_id is the UUID of the seller organization (empty for individual sellers).
+  string seller_org_id = 4;
 }
 
 message CreateChatResponse {
@@ -49,7 +59,7 @@ message CreateChatResponse {
 }
 
 message GetChatRequest {
-  int64 chat_id = 1;
+  string chat_id = 1;
 }
 
 message GetChatResponse {
@@ -67,8 +77,26 @@ message GetUserChatsResponse {
   int32 total = 2;
 }
 
+// GetOrgChatsRequest fetches chats for an organization.
+// The caller must be a member of the organization (validated via JWT org claim).
+message GetOrgChatsRequest {
+  string organization_id = 1;
+  int32 limit = 2;
+  // cursor is the last chat ID for cursor-based pagination.
+  string cursor = 3;
+  // status filters chats: "open" | "closed" | "all". Defaults to "all".
+  string status = 4;
+}
+
+message GetOrgChatsResponse {
+  repeated Chat chats = 1;
+  // next_cursor is the ID of the last item returned; empty means no more pages.
+  string next_cursor = 2;
+  int32 total = 3;
+}
+
 message SendMessageRequest {
-  int64 chat_id = 1;
+  string chat_id = 1;
   int64 sender_id = 2;
   string content = 3;
   string message_type = 4;
@@ -79,8 +107,8 @@ message SendMessageResponse {
 }
 
 message GetMessagesRequest {
-  int64 chat_id = 1;
-  int64 before_id = 2;
+  string chat_id = 1;
+  string before_id = 2;
   int32 limit = 3;
 }
 
@@ -90,9 +118,9 @@ message GetMessagesResponse {
 }
 
 message MarkAsReadRequest {
-  int64 chat_id = 1;
+  string chat_id = 1;
   int64 user_id = 2;
-  int64 last_message_id = 3;
+  string last_message_id = 3;
 }
 
 message MarkAsReadResponse {
@@ -122,8 +150,8 @@ message AdminGetUserChatsResponse {
 }
 
 message AdminGetChatMessagesRequest {
-  int64 chat_id = 1;
-  int64 before_id = 2;
+  string chat_id = 1;
+  string before_id = 2;
   int32 limit = 3;
 }
 

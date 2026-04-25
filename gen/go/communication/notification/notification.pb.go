@@ -1013,17 +1013,19 @@ func (x *GetUnreadCountResponse) GetCount() int32 {
 	return 0
 }
 
-// RegisterDevice — upsert by (user_id, fcm_token).
+// RegisterDevice — upsert by (user_id, fcm_token, app).
 // fcm_token field carries any push token: FCM registration token or APNs device token.
 type RegisterDeviceRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	DeviceId      string                 `protobuf:"bytes,2,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"` // legacy; prefer using fcm_token as the canonical token
-	FcmToken      string                 `protobuf:"bytes,3,opt,name=fcm_token,json=fcmToken,proto3" json:"fcm_token,omitempty"` // canonical push token for all platforms
-	Platform      string                 `protobuf:"bytes,4,opt,name=platform,proto3" json:"platform,omitempty"`                 // "ios" | "android" | "web"
-	AppVersion    string                 `protobuf:"bytes,5,opt,name=app_version,json=appVersion,proto3" json:"app_version,omitempty"`
-	DeviceModel   string                 `protobuf:"bytes,6,opt,name=device_model,json=deviceModel,proto3" json:"device_model,omitempty"`
-	Locale        string                 `protobuf:"bytes,7,opt,name=locale,proto3" json:"locale,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	UserId      int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	DeviceId    string                 `protobuf:"bytes,2,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"` // legacy; prefer using fcm_token as the canonical token
+	FcmToken    string                 `protobuf:"bytes,3,opt,name=fcm_token,json=fcmToken,proto3" json:"fcm_token,omitempty"` // canonical push token for all platforms
+	Platform    string                 `protobuf:"bytes,4,opt,name=platform,proto3" json:"platform,omitempty"`                 // "ios" | "android" | "web"
+	AppVersion  string                 `protobuf:"bytes,5,opt,name=app_version,json=appVersion,proto3" json:"app_version,omitempty"`
+	DeviceModel string                 `protobuf:"bytes,6,opt,name=device_model,json=deviceModel,proto3" json:"device_model,omitempty"`
+	Locale      string                 `protobuf:"bytes,7,opt,name=locale,proto3" json:"locale,omitempty"`
+	// app identifies which application registered this device: "client" (default) or "partner"
+	App           string `protobuf:"bytes,8,opt,name=app,proto3" json:"app,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1103,6 +1105,13 @@ func (x *RegisterDeviceRequest) GetDeviceModel() string {
 func (x *RegisterDeviceRequest) GetLocale() string {
 	if x != nil {
 		return x.Locale
+	}
+	return ""
+}
+
+func (x *RegisterDeviceRequest) GetApp() string {
+	if x != nil {
+		return x.App
 	}
 	return ""
 }
@@ -1966,7 +1975,7 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\x15GetUnreadCountRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\".\n" +
 	"\x16GetUnreadCountResponse\x12\x14\n" +
-	"\x05count\x18\x01 \x01(\x05R\x05count\"\xe2\x01\n" +
+	"\x05count\x18\x01 \x01(\x05R\x05count\"\xf4\x01\n" +
 	"\x15RegisterDeviceRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1b\n" +
 	"\tdevice_id\x18\x02 \x01(\tR\bdeviceId\x12\x1b\n" +
@@ -1975,7 +1984,8 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\vapp_version\x18\x05 \x01(\tR\n" +
 	"appVersion\x12!\n" +
 	"\fdevice_model\x18\x06 \x01(\tR\vdeviceModel\x12\x16\n" +
-	"\x06locale\x18\a \x01(\tR\x06locale\"u\n" +
+	"\x06locale\x18\a \x01(\tR\x06locale\x12\x10\n" +
+	"\x03app\x18\b \x01(\tR\x03app\"u\n" +
 	"\x16RegisterDeviceResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12A\n" +
 	"\x06device\x18\x02 \x01(\v2).communication.notification.v1.DeviceInfoR\x06device\"O\n" +

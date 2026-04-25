@@ -64,6 +64,11 @@ service OrganizationService {
   // Subscription info (for payment service)
   rpc GetOrganizationSubscriptionInfo(GetOrgSubscriptionInfoRequest) returns (GetOrgSubscriptionInfoResponse);
 
+  // ListUserOrganizations returns orgs where user_id is an active member,
+  // including the caller's role and whether the org has an active subscription.
+  // Used by auth service (SelectOrg flow) and partner onboarding UI.
+  rpc ListUserOrganizations(ListUserOrganizationsRequest) returns (ListUserOrganizationsResponse);
+
   // Platform roles (CTOgram employee roles)
   // Deprecated: Use UserService.SetPlatformRoles instead.
   rpc SetPlatformRole(SetPlatformRoleRequest) returns (SetPlatformRoleResponse) {
@@ -619,4 +624,32 @@ message GetMemberPermissionOverridesRequest {
 
 message GetMemberPermissionOverridesResponse {
   repeated PermissionOverride overrides = 1;
+}
+
+// =============================================
+// ListUserOrganizations — partner onboarding / select-org flow
+// =============================================
+
+message ListUserOrganizationsRequest {
+  // user_id whose memberships to return.
+  // Service accounts may specify any user; regular callers should pass their own ID.
+  int64 user_id = 1;
+}
+
+// UserOrgEntry is a compact membership record used by the select-org picker.
+message UserOrgEntry {
+  string id = 1;
+  string name = 2;
+  OrganizationType type = 3;
+  // role_code is the caller's role in this organization (e.g. "owner", "admin")
+  string role_code = 4;
+  // status is the organization status: "active" | "suspended" | "closed"
+  string status = 5;
+  // has_active_subscription is true when the org has a paid subscription.
+  bool has_active_subscription = 6;
+  int64 city_id = 7;
+}
+
+message ListUserOrganizationsResponse {
+  repeated UserOrgEntry organizations = 1;
 }

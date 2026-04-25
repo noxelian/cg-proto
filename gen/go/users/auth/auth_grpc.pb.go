@@ -25,6 +25,7 @@ const (
 	AuthService_Logout_FullMethodName        = "/users.auth.v1.AuthService/Logout"
 	AuthService_ValidateToken_FullMethodName = "/users.auth.v1.AuthService/ValidateToken"
 	AuthService_GetSessions_FullMethodName   = "/users.auth.v1.AuthService/GetSessions"
+	AuthService_SelectOrg_FullMethodName     = "/users.auth.v1.AuthService/SelectOrg"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -43,6 +44,10 @@ type AuthServiceClient interface {
 	ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error)
 	// GetSessions returns active sessions for user
 	GetSessions(ctx context.Context, in *GetSessionsRequest, opts ...grpc.CallOption) (*GetSessionsResponse, error)
+	// SelectOrg issues a new token pair with org context embedded.
+	// Requires: authenticated JWT with app="partner".
+	// Returns 403 if the caller is not a member of the requested organization.
+	SelectOrg(ctx context.Context, in *SelectOrgRequest, opts ...grpc.CallOption) (*SelectOrgResponse, error)
 }
 
 type authServiceClient struct {
@@ -113,6 +118,16 @@ func (c *authServiceClient) GetSessions(ctx context.Context, in *GetSessionsRequ
 	return out, nil
 }
 
+func (c *authServiceClient) SelectOrg(ctx context.Context, in *SelectOrgRequest, opts ...grpc.CallOption) (*SelectOrgResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SelectOrgResponse)
+	err := c.cc.Invoke(ctx, AuthService_SelectOrg_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -129,6 +144,10 @@ type AuthServiceServer interface {
 	ValidateToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error)
 	// GetSessions returns active sessions for user
 	GetSessions(context.Context, *GetSessionsRequest) (*GetSessionsResponse, error)
+	// SelectOrg issues a new token pair with org context embedded.
+	// Requires: authenticated JWT with app="partner".
+	// Returns 403 if the caller is not a member of the requested organization.
+	SelectOrg(context.Context, *SelectOrgRequest) (*SelectOrgResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -156,6 +175,9 @@ func (UnimplementedAuthServiceServer) ValidateToken(context.Context, *ValidateTo
 }
 func (UnimplementedAuthServiceServer) GetSessions(context.Context, *GetSessionsRequest) (*GetSessionsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSessions not implemented")
+}
+func (UnimplementedAuthServiceServer) SelectOrg(context.Context, *SelectOrgRequest) (*SelectOrgResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SelectOrg not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -286,6 +308,24 @@ func _AuthService_GetSessions_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_SelectOrg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SelectOrgRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).SelectOrg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_SelectOrg_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).SelectOrg(ctx, req.(*SelectOrgRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -316,6 +356,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSessions",
 			Handler:    _AuthService_GetSessions_Handler,
+		},
+		{
+			MethodName: "SelectOrg",
+			Handler:    _AuthService_SelectOrg_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

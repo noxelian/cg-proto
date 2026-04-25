@@ -135,11 +135,13 @@ func (x *SendCodeResponse) GetMessage() string {
 }
 
 type VerifyCodeRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Phone         string                 `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
-	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
-	DeviceId      string                 `protobuf:"bytes,3,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	InviteCode    string                 `protobuf:"bytes,4,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"` // optional: join organization on registration
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	Phone      string                 `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
+	Code       string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	DeviceId   string                 `protobuf:"bytes,3,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
+	InviteCode string                 `protobuf:"bytes,4,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"` // optional: join organization on registration
+	// app identifies the calling application: "client" (default) or "partner"
+	App           string `protobuf:"bytes,5,opt,name=app,proto3" json:"app,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -198,6 +200,13 @@ func (x *VerifyCodeRequest) GetDeviceId() string {
 func (x *VerifyCodeRequest) GetInviteCode() string {
 	if x != nil {
 		return x.InviteCode
+	}
+	return ""
+}
+
+func (x *VerifyCodeRequest) GetApp() string {
+	if x != nil {
+		return x.App
 	}
 	return ""
 }
@@ -515,10 +524,16 @@ func (x *ValidateTokenRequest) GetAccessToken() string {
 }
 
 type ValidateTokenResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Valid         bool                   `protobuf:"varint,1,opt,name=valid,proto3" json:"valid,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Phone         string                 `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	Valid  bool                   `protobuf:"varint,1,opt,name=valid,proto3" json:"valid,omitempty"`
+	UserId int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Phone  string                 `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
+	// App context claims (present only if the token carries them)
+	App           string `protobuf:"bytes,4,opt,name=app,proto3" json:"app,omitempty"`
+	OrgId         string `protobuf:"bytes,5,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	OrgType       string `protobuf:"bytes,6,opt,name=org_type,json=orgType,proto3" json:"org_type,omitempty"`
+	CityId        int64  `protobuf:"varint,7,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
+	OrgRole       string `protobuf:"bytes,8,opt,name=org_role,json=orgRole,proto3" json:"org_role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -574,6 +589,147 @@ func (x *ValidateTokenResponse) GetPhone() string {
 	return ""
 }
 
+func (x *ValidateTokenResponse) GetApp() string {
+	if x != nil {
+		return x.App
+	}
+	return ""
+}
+
+func (x *ValidateTokenResponse) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *ValidateTokenResponse) GetOrgType() string {
+	if x != nil {
+		return x.OrgType
+	}
+	return ""
+}
+
+func (x *ValidateTokenResponse) GetCityId() int64 {
+	if x != nil {
+		return x.CityId
+	}
+	return 0
+}
+
+func (x *ValidateTokenResponse) GetOrgRole() string {
+	if x != nil {
+		return x.OrgRole
+	}
+	return ""
+}
+
+// SelectOrgRequest — exchange current partner JWT for one scoped to an org.
+type SelectOrgRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *SelectOrgRequest) Reset() {
+	*x = SelectOrgRequest{}
+	mi := &file_users_auth_auth_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SelectOrgRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SelectOrgRequest) ProtoMessage() {}
+
+func (x *SelectOrgRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_auth_auth_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SelectOrgRequest.ProtoReflect.Descriptor instead.
+func (*SelectOrgRequest) Descriptor() ([]byte, []int) {
+	return file_users_auth_auth_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *SelectOrgRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+// SelectOrgResponse — new token pair with org_id/org_type/city_id/org_role embedded.
+type SelectOrgResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SelectOrgResponse) Reset() {
+	*x = SelectOrgResponse{}
+	mi := &file_users_auth_auth_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SelectOrgResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SelectOrgResponse) ProtoMessage() {}
+
+func (x *SelectOrgResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_auth_auth_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SelectOrgResponse.ProtoReflect.Descriptor instead.
+func (*SelectOrgResponse) Descriptor() ([]byte, []int) {
+	return file_users_auth_auth_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *SelectOrgResponse) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *SelectOrgResponse) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+func (x *SelectOrgResponse) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
+}
+
 type GetSessionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -583,7 +739,7 @@ type GetSessionsRequest struct {
 
 func (x *GetSessionsRequest) Reset() {
 	*x = GetSessionsRequest{}
-	mi := &file_users_auth_auth_proto_msgTypes[10]
+	mi := &file_users_auth_auth_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -595,7 +751,7 @@ func (x *GetSessionsRequest) String() string {
 func (*GetSessionsRequest) ProtoMessage() {}
 
 func (x *GetSessionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_users_auth_auth_proto_msgTypes[10]
+	mi := &file_users_auth_auth_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -608,7 +764,7 @@ func (x *GetSessionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSessionsRequest.ProtoReflect.Descriptor instead.
 func (*GetSessionsRequest) Descriptor() ([]byte, []int) {
-	return file_users_auth_auth_proto_rawDescGZIP(), []int{10}
+	return file_users_auth_auth_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetSessionsRequest) GetUserId() int64 {
@@ -627,7 +783,7 @@ type GetSessionsResponse struct {
 
 func (x *GetSessionsResponse) Reset() {
 	*x = GetSessionsResponse{}
-	mi := &file_users_auth_auth_proto_msgTypes[11]
+	mi := &file_users_auth_auth_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -639,7 +795,7 @@ func (x *GetSessionsResponse) String() string {
 func (*GetSessionsResponse) ProtoMessage() {}
 
 func (x *GetSessionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_users_auth_auth_proto_msgTypes[11]
+	mi := &file_users_auth_auth_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -652,7 +808,7 @@ func (x *GetSessionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSessionsResponse.ProtoReflect.Descriptor instead.
 func (*GetSessionsResponse) Descriptor() ([]byte, []int) {
-	return file_users_auth_auth_proto_rawDescGZIP(), []int{11}
+	return file_users_auth_auth_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetSessionsResponse) GetSessions() []*Session {
@@ -676,7 +832,7 @@ type User struct {
 
 func (x *User) Reset() {
 	*x = User{}
-	mi := &file_users_auth_auth_proto_msgTypes[12]
+	mi := &file_users_auth_auth_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -688,7 +844,7 @@ func (x *User) String() string {
 func (*User) ProtoMessage() {}
 
 func (x *User) ProtoReflect() protoreflect.Message {
-	mi := &file_users_auth_auth_proto_msgTypes[12]
+	mi := &file_users_auth_auth_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -701,7 +857,7 @@ func (x *User) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use User.ProtoReflect.Descriptor instead.
 func (*User) Descriptor() ([]byte, []int) {
-	return file_users_auth_auth_proto_rawDescGZIP(), []int{12}
+	return file_users_auth_auth_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *User) GetId() int64 {
@@ -760,7 +916,7 @@ type Session struct {
 
 func (x *Session) Reset() {
 	*x = Session{}
-	mi := &file_users_auth_auth_proto_msgTypes[13]
+	mi := &file_users_auth_auth_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -772,7 +928,7 @@ func (x *Session) String() string {
 func (*Session) ProtoMessage() {}
 
 func (x *Session) ProtoReflect() protoreflect.Message {
-	mi := &file_users_auth_auth_proto_msgTypes[13]
+	mi := &file_users_auth_auth_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -785,7 +941,7 @@ func (x *Session) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Session.ProtoReflect.Descriptor instead.
 func (*Session) Descriptor() ([]byte, []int) {
-	return file_users_auth_auth_proto_rawDescGZIP(), []int{13}
+	return file_users_auth_auth_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *Session) GetId() string {
@@ -842,13 +998,14 @@ const file_users_auth_auth_proto_rawDesc = "" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x1f\n" +
 	"\vretry_after\x18\x02 \x01(\x05R\n" +
 	"retryAfter\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage\"{\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage\"\x8d\x01\n" +
 	"\x11VerifyCodeRequest\x12\x14\n" +
 	"\x05phone\x18\x01 \x01(\tR\x05phone\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x1b\n" +
 	"\tdevice_id\x18\x03 \x01(\tR\bdeviceId\x12\x1f\n" +
 	"\vinvite_code\x18\x04 \x01(\tR\n" +
-	"inviteCode\"\xe0\x01\n" +
+	"inviteCode\x12\x10\n" +
+	"\x03app\x18\x05 \x01(\tR\x03app\"\xe0\x01\n" +
 	"\x12VerifyCodeResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x129\n" +
@@ -868,11 +1025,23 @@ const file_users_auth_auth_proto_rawDesc = "" +
 	"\x0eLogoutResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"9\n" +
 	"\x14ValidateTokenRequest\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\"\\\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\"\xd4\x01\n" +
 	"\x15ValidateTokenResponse\x12\x14\n" +
 	"\x05valid\x18\x01 \x01(\bR\x05valid\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x14\n" +
-	"\x05phone\x18\x03 \x01(\tR\x05phone\"-\n" +
+	"\x05phone\x18\x03 \x01(\tR\x05phone\x12\x10\n" +
+	"\x03app\x18\x04 \x01(\tR\x03app\x12\x15\n" +
+	"\x06org_id\x18\x05 \x01(\tR\x05orgId\x12\x19\n" +
+	"\borg_type\x18\x06 \x01(\tR\aorgType\x12\x17\n" +
+	"\acity_id\x18\a \x01(\x03R\x06cityId\x12\x19\n" +
+	"\borg_role\x18\b \x01(\tR\aorgRole\";\n" +
+	"\x10SelectOrgRequest\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\"\x96\x01\n" +
+	"\x11SelectOrgResponse\x12!\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x129\n" +
+	"\n" +
+	"expires_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"-\n" +
 	"\x12GetSessionsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"I\n" +
 	"\x13GetSessionsResponse\x122\n" +
@@ -895,7 +1064,7 @@ const file_users_auth_auth_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12<\n" +
 	"\flast_used_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"lastUsedAt2\xff\x03\n" +
+	"lastUsedAt2\xcf\x04\n" +
 	"\vAuthService\x12K\n" +
 	"\bSendCode\x12\x1e.users.auth.v1.SendCodeRequest\x1a\x1f.users.auth.v1.SendCodeResponse\x12Q\n" +
 	"\n" +
@@ -903,7 +1072,8 @@ const file_users_auth_auth_proto_rawDesc = "" +
 	"\fRefreshToken\x12\".users.auth.v1.RefreshTokenRequest\x1a#.users.auth.v1.RefreshTokenResponse\x12E\n" +
 	"\x06Logout\x12\x1c.users.auth.v1.LogoutRequest\x1a\x1d.users.auth.v1.LogoutResponse\x12Z\n" +
 	"\rValidateToken\x12#.users.auth.v1.ValidateTokenRequest\x1a$.users.auth.v1.ValidateTokenResponse\x12T\n" +
-	"\vGetSessions\x12!.users.auth.v1.GetSessionsRequest\x1a\".users.auth.v1.GetSessionsResponseB4Z2github.com/4ubak/cg-proto/gen/go/users/auth;authv1b\x06proto3"
+	"\vGetSessions\x12!.users.auth.v1.GetSessionsRequest\x1a\".users.auth.v1.GetSessionsResponse\x12N\n" +
+	"\tSelectOrg\x12\x1f.users.auth.v1.SelectOrgRequest\x1a .users.auth.v1.SelectOrgResponseB4Z2github.com/4ubak/cg-proto/gen/go/users/auth;authv1b\x06proto3"
 
 var (
 	file_users_auth_auth_proto_rawDescOnce sync.Once
@@ -917,7 +1087,7 @@ func file_users_auth_auth_proto_rawDescGZIP() []byte {
 	return file_users_auth_auth_proto_rawDescData
 }
 
-var file_users_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_users_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_users_auth_auth_proto_goTypes = []any{
 	(*SendCodeRequest)(nil),       // 0: users.auth.v1.SendCodeRequest
 	(*SendCodeResponse)(nil),      // 1: users.auth.v1.SendCodeResponse
@@ -929,38 +1099,43 @@ var file_users_auth_auth_proto_goTypes = []any{
 	(*LogoutResponse)(nil),        // 7: users.auth.v1.LogoutResponse
 	(*ValidateTokenRequest)(nil),  // 8: users.auth.v1.ValidateTokenRequest
 	(*ValidateTokenResponse)(nil), // 9: users.auth.v1.ValidateTokenResponse
-	(*GetSessionsRequest)(nil),    // 10: users.auth.v1.GetSessionsRequest
-	(*GetSessionsResponse)(nil),   // 11: users.auth.v1.GetSessionsResponse
-	(*User)(nil),                  // 12: users.auth.v1.User
-	(*Session)(nil),               // 13: users.auth.v1.Session
-	(*timestamppb.Timestamp)(nil), // 14: google.protobuf.Timestamp
+	(*SelectOrgRequest)(nil),      // 10: users.auth.v1.SelectOrgRequest
+	(*SelectOrgResponse)(nil),     // 11: users.auth.v1.SelectOrgResponse
+	(*GetSessionsRequest)(nil),    // 12: users.auth.v1.GetSessionsRequest
+	(*GetSessionsResponse)(nil),   // 13: users.auth.v1.GetSessionsResponse
+	(*User)(nil),                  // 14: users.auth.v1.User
+	(*Session)(nil),               // 15: users.auth.v1.Session
+	(*timestamppb.Timestamp)(nil), // 16: google.protobuf.Timestamp
 }
 var file_users_auth_auth_proto_depIdxs = []int32{
-	14, // 0: users.auth.v1.VerifyCodeResponse.expires_at:type_name -> google.protobuf.Timestamp
-	12, // 1: users.auth.v1.VerifyCodeResponse.user:type_name -> users.auth.v1.User
-	14, // 2: users.auth.v1.RefreshTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
-	13, // 3: users.auth.v1.GetSessionsResponse.sessions:type_name -> users.auth.v1.Session
-	14, // 4: users.auth.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	14, // 5: users.auth.v1.User.updated_at:type_name -> google.protobuf.Timestamp
-	14, // 6: users.auth.v1.Session.created_at:type_name -> google.protobuf.Timestamp
-	14, // 7: users.auth.v1.Session.last_used_at:type_name -> google.protobuf.Timestamp
-	0,  // 8: users.auth.v1.AuthService.SendCode:input_type -> users.auth.v1.SendCodeRequest
-	2,  // 9: users.auth.v1.AuthService.VerifyCode:input_type -> users.auth.v1.VerifyCodeRequest
-	4,  // 10: users.auth.v1.AuthService.RefreshToken:input_type -> users.auth.v1.RefreshTokenRequest
-	6,  // 11: users.auth.v1.AuthService.Logout:input_type -> users.auth.v1.LogoutRequest
-	8,  // 12: users.auth.v1.AuthService.ValidateToken:input_type -> users.auth.v1.ValidateTokenRequest
-	10, // 13: users.auth.v1.AuthService.GetSessions:input_type -> users.auth.v1.GetSessionsRequest
-	1,  // 14: users.auth.v1.AuthService.SendCode:output_type -> users.auth.v1.SendCodeResponse
-	3,  // 15: users.auth.v1.AuthService.VerifyCode:output_type -> users.auth.v1.VerifyCodeResponse
-	5,  // 16: users.auth.v1.AuthService.RefreshToken:output_type -> users.auth.v1.RefreshTokenResponse
-	7,  // 17: users.auth.v1.AuthService.Logout:output_type -> users.auth.v1.LogoutResponse
-	9,  // 18: users.auth.v1.AuthService.ValidateToken:output_type -> users.auth.v1.ValidateTokenResponse
-	11, // 19: users.auth.v1.AuthService.GetSessions:output_type -> users.auth.v1.GetSessionsResponse
-	14, // [14:20] is the sub-list for method output_type
-	8,  // [8:14] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	16, // 0: users.auth.v1.VerifyCodeResponse.expires_at:type_name -> google.protobuf.Timestamp
+	14, // 1: users.auth.v1.VerifyCodeResponse.user:type_name -> users.auth.v1.User
+	16, // 2: users.auth.v1.RefreshTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
+	16, // 3: users.auth.v1.SelectOrgResponse.expires_at:type_name -> google.protobuf.Timestamp
+	15, // 4: users.auth.v1.GetSessionsResponse.sessions:type_name -> users.auth.v1.Session
+	16, // 5: users.auth.v1.User.created_at:type_name -> google.protobuf.Timestamp
+	16, // 6: users.auth.v1.User.updated_at:type_name -> google.protobuf.Timestamp
+	16, // 7: users.auth.v1.Session.created_at:type_name -> google.protobuf.Timestamp
+	16, // 8: users.auth.v1.Session.last_used_at:type_name -> google.protobuf.Timestamp
+	0,  // 9: users.auth.v1.AuthService.SendCode:input_type -> users.auth.v1.SendCodeRequest
+	2,  // 10: users.auth.v1.AuthService.VerifyCode:input_type -> users.auth.v1.VerifyCodeRequest
+	4,  // 11: users.auth.v1.AuthService.RefreshToken:input_type -> users.auth.v1.RefreshTokenRequest
+	6,  // 12: users.auth.v1.AuthService.Logout:input_type -> users.auth.v1.LogoutRequest
+	8,  // 13: users.auth.v1.AuthService.ValidateToken:input_type -> users.auth.v1.ValidateTokenRequest
+	12, // 14: users.auth.v1.AuthService.GetSessions:input_type -> users.auth.v1.GetSessionsRequest
+	10, // 15: users.auth.v1.AuthService.SelectOrg:input_type -> users.auth.v1.SelectOrgRequest
+	1,  // 16: users.auth.v1.AuthService.SendCode:output_type -> users.auth.v1.SendCodeResponse
+	3,  // 17: users.auth.v1.AuthService.VerifyCode:output_type -> users.auth.v1.VerifyCodeResponse
+	5,  // 18: users.auth.v1.AuthService.RefreshToken:output_type -> users.auth.v1.RefreshTokenResponse
+	7,  // 19: users.auth.v1.AuthService.Logout:output_type -> users.auth.v1.LogoutResponse
+	9,  // 20: users.auth.v1.AuthService.ValidateToken:output_type -> users.auth.v1.ValidateTokenResponse
+	13, // 21: users.auth.v1.AuthService.GetSessions:output_type -> users.auth.v1.GetSessionsResponse
+	11, // 22: users.auth.v1.AuthService.SelectOrg:output_type -> users.auth.v1.SelectOrgResponse
+	16, // [16:23] is the sub-list for method output_type
+	9,  // [9:16] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_users_auth_auth_proto_init() }
@@ -974,7 +1149,7 @@ func file_users_auth_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_users_auth_auth_proto_rawDesc), len(file_users_auth_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

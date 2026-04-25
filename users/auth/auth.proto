@@ -9,21 +9,26 @@ import "google/protobuf/timestamp.proto";
 service AuthService {
   // SendCode sends verification code to phone number
   rpc SendCode(SendCodeRequest) returns (SendCodeResponse);
-  
+
   // VerifyCode verifies the code and returns tokens
   rpc VerifyCode(VerifyCodeRequest) returns (VerifyCodeResponse);
-  
+
   // RefreshToken refreshes access token using refresh token
   rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
-  
+
   // Logout invalidates refresh token
   rpc Logout(LogoutRequest) returns (LogoutResponse);
-  
+
   // ValidateToken validates access token (internal use)
   rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
-  
+
   // GetSessions returns active sessions for user
   rpc GetSessions(GetSessionsRequest) returns (GetSessionsResponse);
+
+  // SelectOrg issues a new token pair with org context embedded.
+  // Requires: authenticated JWT with app="partner".
+  // Returns 403 if the caller is not a member of the requested organization.
+  rpc SelectOrg(SelectOrgRequest) returns (SelectOrgResponse);
 }
 
 message SendCodeRequest {
@@ -42,6 +47,8 @@ message VerifyCodeRequest {
   string code = 2;
   string device_id = 3;
   string invite_code = 4;  // optional: join organization on registration
+  // app identifies the calling application: "client" (default) or "partner"
+  string app = 5;
 }
 
 message VerifyCodeResponse {
@@ -78,6 +85,24 @@ message ValidateTokenResponse {
   bool valid = 1;
   int64 user_id = 2;
   string phone = 3;
+  // App context claims (present only if the token carries them)
+  string app = 4;
+  string org_id = 5;
+  string org_type = 6;
+  int64 city_id = 7;
+  string org_role = 8;
+}
+
+// SelectOrgRequest — exchange current partner JWT for one scoped to an org.
+message SelectOrgRequest {
+  string organization_id = 1;
+}
+
+// SelectOrgResponse — new token pair with org_id/org_type/city_id/org_role embedded.
+message SelectOrgResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  google.protobuf.Timestamp expires_at = 3;
 }
 
 message GetSessionsRequest {
