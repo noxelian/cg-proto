@@ -1,0 +1,214 @@
+syntax = "proto3";
+
+package orders.promo.v1;
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/orders/promo;promov1";
+
+import "google/protobuf/timestamp.proto";
+
+// PromoService handles promo code lifecycle: validate, apply, revert, and admin CRUD.
+service PromoService {
+  // === User-facing ===
+
+  // ValidatePromoCode checks if a code is applicable for the given order context.
+  // Does NOT increment usage counters.
+  rpc ValidatePromoCode(ValidatePromoCodeRequest) returns (ValidatePromoCodeResponse);
+
+  // ApplyPromoCode records usage and returns the actual discount applied.
+  // Idempotent per (code, order_id) pair.
+  rpc ApplyPromoCode(ApplyPromoCodeRequest) returns (ApplyPromoCodeResponse);
+
+  // RevertPromoCode reverses a promo application when an order is cancelled/refunded.
+  rpc RevertPromoCode(RevertPromoCodeRequest) returns (RevertPromoCodeResponse);
+
+  // === Admin ===
+
+  rpc CreatePromoCode(CreatePromoCodeRequest) returns (CreatePromoCodeResponse);
+  rpc UpdatePromoCode(UpdatePromoCodeRequest) returns (UpdatePromoCodeResponse);
+  rpc DeactivatePromoCode(DeactivatePromoCodeRequest) returns (DeactivatePromoCodeResponse);
+  rpc ListPromoCodes(ListPromoCodesRequest) returns (ListPromoCodesResponse);
+  rpc GetPromoCode(GetPromoCodeRequest) returns (GetPromoCodeResponse);
+  rpc GetPromoCodeUsages(GetPromoCodeUsagesRequest) returns (GetPromoCodeUsagesResponse);
+}
+
+// =============================================
+// Enums
+// =============================================
+
+enum DiscountType {
+  DISCOUNT_TYPE_UNSPECIFIED = 0;
+  DISCOUNT_TYPE_PERCENT = 1;
+  DISCOUNT_TYPE_FIXED_AMOUNT = 2;
+}
+
+enum ApplicableTo {
+  APPLICABLE_TO_UNSPECIFIED = 0;
+  APPLICABLE_TO_ALL = 1;
+  APPLICABLE_TO_MARKETPLACE = 2;
+  APPLICABLE_TO_SUBSCRIPTION = 3;
+  APPLICABLE_TO_WORKSHOP = 4;
+}
+
+// =============================================
+// Messages
+// =============================================
+
+message PromoCode {
+  int64 id = 1;
+  string code = 2;
+  string description = 3;
+  DiscountType discount_type = 4;
+  int64 discount_value = 5;
+  int64 min_order_amount = 6;
+  optional int64 max_discount_amount = 7;
+  ApplicableTo applicable_to = 8;
+  google.protobuf.Timestamp starts_at = 9;
+  optional google.protobuf.Timestamp expires_at = 10;
+  optional int32 max_total_uses = 11;
+  int32 max_uses_per_user = 12;
+  int32 current_uses = 13;
+  bool is_active = 14;
+  google.protobuf.Timestamp created_at = 15;
+  google.protobuf.Timestamp updated_at = 16;
+}
+
+message Discount {
+  // Total order amount before discount.
+  int64 original_amount = 1;
+  // Discount amount that will be subtracted (already capped by max_discount_amount).
+  int64 discount_amount = 2;
+  // Order amount after discount.
+  int64 final_amount = 3;
+  // Applied discount percent (0 for fixed_amount type).
+  int32 discount_percent = 4;
+  // Human-readable description, e.g. "10% off, up to 5000₸".
+  string description = 5;
+}
+
+message PromoUsage {
+  int64 id = 1;
+  int64 promo_code_id = 2;
+  int64 user_id = 3;
+  optional int64 order_id = 4;
+  optional int64 subscription_id = 5;
+  int64 applied_amount = 6;
+  google.protobuf.Timestamp applied_at = 7;
+}
+
+// =============================================
+// User-facing requests/responses
+// =============================================
+
+message ValidatePromoCodeRequest {
+  string code = 1;
+  int64 user_id = 2;
+  // "marketplace", "subscription", "workshop"
+  string order_type = 3;
+  // Order amount in tiyn, before discount.
+  int64 amount = 4;
+}
+
+message ValidatePromoCodeResponse {
+  bool valid = 1;
+  // Populated only when valid=true.
+  Discount discount = 2;
+  // Human-readable error message when valid=false.
+  string message = 3;
+}
+
+message ApplyPromoCodeRequest {
+  string code = 1;
+  int64 user_id = 2;
+  int64 amount = 3;
+  // Exactly one of order_id / subscription_id must be set.
+  optional int64 order_id = 4;
+  optional int64 subscription_id = 5;
+}
+
+message ApplyPromoCodeResponse {
+  Discount discount = 1;
+  int64 usage_id = 2;
+}
+
+message RevertPromoCodeRequest {
+  // Pass order_id to revert all promo usages for that order.
+  optional int64 order_id = 1;
+  optional int64 subscription_id = 2;
+}
+
+message RevertPromoCodeResponse {}
+
+// =============================================
+// Admin requests/responses
+// =============================================
+
+message CreatePromoCodeRequest {
+  string code = 1;
+  string description = 2;
+  DiscountType discount_type = 3;
+  int64 discount_value = 4;
+  int64 min_order_amount = 5;
+  optional int64 max_discount_amount = 6;
+  ApplicableTo applicable_to = 7;
+  google.protobuf.Timestamp starts_at = 8;
+  optional google.protobuf.Timestamp expires_at = 9;
+  optional int32 max_total_uses = 10;
+  int32 max_uses_per_user = 11;
+}
+
+message CreatePromoCodeResponse {
+  PromoCode promo_code = 1;
+}
+
+message UpdatePromoCodeRequest {
+  int64 id = 1;
+  optional string description = 2;
+  optional int64 min_order_amount = 3;
+  optional int64 max_discount_amount = 4;
+  optional google.protobuf.Timestamp expires_at = 5;
+  optional int32 max_total_uses = 6;
+  optional int32 max_uses_per_user = 7;
+  optional bool is_active = 8;
+}
+
+message UpdatePromoCodeResponse {
+  PromoCode promo_code = 1;
+}
+
+message DeactivatePromoCodeRequest {
+  int64 id = 1;
+}
+
+message DeactivatePromoCodeResponse {}
+
+message ListPromoCodesRequest {
+  bool active_only = 1;
+  // "all", "marketplace", "subscription", "workshop"
+  string applicable_to = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message ListPromoCodesResponse {
+  repeated PromoCode promo_codes = 1;
+  int32 total = 2;
+}
+
+message GetPromoCodeRequest {
+  int64 id = 1;
+}
+
+message GetPromoCodeResponse {
+  PromoCode promo_code = 1;
+}
+
+message GetPromoCodeUsagesRequest {
+  int64 promo_code_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message GetPromoCodeUsagesResponse {
+  repeated PromoUsage usages = 1;
+  int32 total = 2;
+}

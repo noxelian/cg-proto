@@ -41,6 +41,14 @@ service BidService {
   // GetBidPartPrices fetches current prices for a batch of bid parts.
   // Used by CartService.RefreshPrices to detect price changes on cart items.
   rpc GetBidPartPrices(GetBidPartPricesRequest) returns (GetBidPartPricesResponse);
+
+  // MarkBidRead marks a bid (response) as read by the given user.
+  // Idempotent — calling multiple times is safe.
+  rpc MarkBidRead(MarkBidReadRequest) returns (MarkBidReadResponse);
+
+  // GetRequestResponsesSummary returns per-request aggregates (total responses,
+  // unread count, last_response_at) for a set of request IDs owned by a user.
+  rpc GetRequestResponsesSummary(GetRequestResponsesSummaryRequest) returns (GetRequestResponsesSummaryResponse);
 }
 
 enum BidType {
@@ -274,3 +282,36 @@ message MarkPartsPurchasedRequest {
 }
 
 message MarkPartsPurchasedResponse {}
+
+// MarkBidRead
+message MarkBidReadRequest {
+  int64  bid_id     = 1;
+  int64  user_id    = 2;
+  string request_id = 3;
+}
+
+message MarkBidReadResponse {
+  // already_read is true when the read record already existed (idempotent).
+  bool already_read = 1;
+}
+
+// GetRequestResponsesSummary
+message RequestResponseSummary {
+  string request_id       = 1;
+  int32  total_responses  = 2;
+  int32  unread_count     = 3;
+  // last_response_at is RFC3339; empty string when no responses exist.
+  string last_response_at = 4;
+}
+
+message GetRequestResponsesSummaryRequest {
+  // request_ids is the set of request UUIDs to aggregate.
+  repeated string request_ids = 1;
+  // user_id is used to look up which bids have already been read.
+  int64 user_id = 2;
+}
+
+message GetRequestResponsesSummaryResponse {
+  // summaries maps request_id -> summary; absent entries mean zero responses.
+  repeated RequestResponseSummary summaries = 1;
+}
