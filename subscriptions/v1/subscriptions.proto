@@ -1,0 +1,176 @@
+syntax = "proto3";
+
+package cg.subscriptions.v1;
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/subscriptions/v1;subscriptionsv1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+// SubscriptionsService — read-only API for the B2C subscriptions catalog and
+// instances (Phase 55). Mutating RPCs (CreateSubscription, IngestPayment,
+// UploadMedia, StartInspection, CompleteInspectionAct, ActivateSubscription,
+// SubmitClaim, ApproveClaim, RejectClaim) are deferred to Phase 58/59/62/63
+// — declared as TODO comments here, but NOT as empty message stubs (adding
+// them later would break wire format).
+service SubscriptionsService {
+  // === Read-only RPCs (Phase 55) ===
+
+  // ListProducts returns active subscription products in the catalog.
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+
+  // GetProduct returns a single product by id or code.
+  rpc GetProduct(GetProductRequest) returns (Product);
+
+  // ListSubscriptions returns subscription instances filtered by user/phone/
+  // status/family with page/page_size/total pagination.
+  rpc ListSubscriptions(ListSubscriptionsRequest) returns (ListSubscriptionsResponse);
+
+  // GetSubscription returns a single subscription by id.
+  rpc GetSubscription(GetSubscriptionRequest) returns (Subscription);
+
+  // === Deferred RPCs (NOT declared in Phase 55 — TODO comments only) ===
+  // TODO(Phase 59): rpc IngestPayment(IngestPaymentRequest) returns (IngestPaymentResponse);
+  // TODO(Phase 59): rpc CreateSubscription(CreateSubscriptionRequest) returns (Subscription);
+  // TODO(Phase 58): rpc UploadMedia(UploadMediaRequest) returns (UploadMediaResponse);
+  // TODO(Phase 62): rpc StartInspection(StartInspectionRequest) returns (StartInspectionResponse);
+  // TODO(Phase 62): rpc CompleteInspectionAct(CompleteInspectionActRequest) returns (CompleteInspectionActResponse);
+  // TODO(Phase 62): rpc ActivateSubscription(ActivateSubscriptionRequest) returns (Subscription);
+  // TODO(Phase 63): rpc SubmitClaim(SubmitClaimRequest) returns (SubmitClaimResponse);
+  // TODO(Phase 63): rpc ApproveClaim(ApproveClaimRequest) returns (ApproveClaimResponse);
+  // TODO(Phase 63): rpc RejectClaim(RejectClaimRequest) returns (RejectClaimResponse);
+  // CRITICAL: Do NOT add empty message stubs for the above — adding them later
+  // would break wire format. Add full RPC + messages in target phases.
+}
+
+// =============================================
+// Enums (mirror Postgres enums from Phase 54)
+// =============================================
+
+// Family discriminator across B2C subscription products. Mirrors enum
+// subscription_family in Phase 54 migration 000001.
+enum Family {
+  FAMILY_UNSPECIFIED = 0;
+  FAMILY_BODY_SHIELD = 1;
+  FAMILY_MAINTENANCE = 2;
+  FAMILY_EVACUATION  = 3;
+}
+
+// Lifecycle of a single subscription instance. Mirrors enum
+// subscription_status in Phase 54 migration 000001.
+enum SubscriptionStatus {
+  SUBSCRIPTION_STATUS_UNSPECIFIED = 0;
+  SUBSCRIPTION_STATUS_PENDING_CONTACT = 1;
+  SUBSCRIPTION_STATUS_INSPECTION_SCHEDULED = 2;
+  SUBSCRIPTION_STATUS_INSPECTION_IN_PROGRESS = 3;
+  SUBSCRIPTION_STATUS_INSPECTION_DONE = 4;
+  SUBSCRIPTION_STATUS_ACTIVE = 5;
+  SUBSCRIPTION_STATUS_EXHAUSTED = 6;
+  SUBSCRIPTION_STATUS_EXPIRED = 7;
+  SUBSCRIPTION_STATUS_CANCELLED = 8;
+}
+
+// PartsPolicy used in body_shield product.config. Mirrors enum parts_policy
+// in Phase 54 migration 000001.
+enum PartsPolicy {
+  PARTS_POLICY_UNSPECIFIED = 0;
+  PARTS_POLICY_ALT_USED    = 1;
+  PARTS_POLICY_OEM_COMPAT  = 2;
+  PARTS_POLICY_OEM         = 3;
+}
+
+// =============================================
+// Messages
+// =============================================
+
+// Product — an entry in the subscription catalog. `name` is the internal
+// short ref ("Easy"/"Body"/"Premium") and `display_name` is the user-facing
+// label ("AUTOBODY Shield Easy"). `config` is opaque JSONB so that future
+// families (maintenance/evacuation) can ship their own schema without proto
+// breaking changes.
+message Product {
+  string id = 1;             // UUID
+  string code = 2;           // body_shield_easy, body_shield_body, body_shield_premium
+  Family family = 3;
+  string name = 4;           // internal short ref ("Easy", "Body", "Premium")
+  string display_name = 5;   // user-facing label ("AUTOBODY Shield Easy")
+  string description = 6;
+  int64 price_tiin = 7;
+  int32 legacy_pay_type = 8; // 15 для Body Shield (payment_request.type_id)
+  // Family-specific config as opaque JSONB. For body_shield:
+  //   coverage_limit_tiin (int64)
+  //   claims_limit (int32, -1 = UNLIMITED, e.g. Premium tariff)
+  //   franchise_tiin (int64)
+  //   parts_policy (string: "alt_used"|"oem_compat"|"oem")
+  //   priority (string)
+  //   extras (array<string>)
+  // For maintenance/evacuation families — different schema, no proto breaking change.
+  google.protobuf.Struct config = 9;
+  bool is_active = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+}
+
+// Subscription — instance of a B2C subscription bought by a customer.
+// Lifecycle owned by cg-subscriptions service.
+message Subscription {
+  string id = 1;
+  optional int64 user_id = 2;
+  string phone = 3;
+  optional int64 car_id = 4;
+  string product_id = 5;
+  optional Product product = 6;          // nested for client convenience (when include_product=true)
+  optional string crm_deal_id = 7;
+  SubscriptionStatus status = 8;
+  int64 legacy_payment_request_id = 9;
+  int64 paid_amount_tiin = 10;
+  optional google.protobuf.Timestamp activated_at = 11;
+  optional google.protobuf.Timestamp expires_at = 12;
+  int64 used_amount_tiin = 13;
+  int32 used_claims = 14;
+  int32 loyalty_year = 15;
+  google.protobuf.Timestamp created_at = 16;
+  google.protobuf.Timestamp updated_at = 17;
+}
+
+// =============================================
+// Read RPC requests/responses
+// =============================================
+
+message ListProductsRequest {
+  optional Family family = 1;
+  optional bool is_active = 2;
+}
+
+message ListProductsResponse {
+  repeated Product products = 1;
+}
+
+message GetProductRequest {
+  oneof selector {
+    string id = 1;
+    string code = 2;
+  }
+}
+
+// ListSubscriptionsRequest uses page/page_size pagination (NOT cursor/page_token)
+// — matches project convention (see billing/billing/v1/billing.proto:206-213).
+message ListSubscriptionsRequest {
+  optional int64 user_id = 1;
+  optional string phone = 2;
+  optional SubscriptionStatus status = 3;
+  optional Family family = 4;
+  int32 page = 5;            // 1-based; 0 treated as 1
+  int32 page_size = 6;       // default 50, max 200
+  bool include_product = 7;  // when true, populate Subscription.product
+}
+
+message ListSubscriptionsResponse {
+  repeated Subscription subscriptions = 1;
+  int32 total = 2;           // total rows under filter (for pagination UI)
+}
+
+message GetSubscriptionRequest {
+  string id = 1;
+  bool include_product = 2;
+}
