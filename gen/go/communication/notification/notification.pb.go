@@ -478,9 +478,21 @@ func (x *SendPushResponse) GetDevicesSent() int32 {
 }
 
 type SendSMSRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Phone         string                 `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Phone string                 `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
+	// Free-form SMS body. Used verbatim when template_code is empty (legacy
+	// path / OTP / one-off messages). NOTE: 61-CONTEXT.md D-01 referred to
+	// this field as `body`; the live wire name is `message` — we kept it for
+	// backward compat, the rename was cosmetic only.
+	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	// Optional. When non-empty, cg-communication renders the template registered
+	// under this code with template_data and ignores `message` (Phase 61 NTF-01 D-02/D-03).
+	TemplateCode string `protobuf:"bytes,3,opt,name=template_code,json=templateCode,proto3" json:"template_code,omitempty"`
+	// Optional. Substitution variables for the template referenced by template_code.
+	// Keys MUST match Go text/template field accessors (e.g. "PlanName" → {{.PlanName}}).
+	// Renderer runs with Option("missingkey=error") so absent keys produce an error,
+	// never a `<no value>` placeholder reaching the recipient.
+	TemplateData  map[string]string `protobuf:"bytes,4,rep,name=template_data,json=templateData,proto3" json:"template_data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -527,6 +539,20 @@ func (x *SendSMSRequest) GetMessage() string {
 		return x.Message
 	}
 	return ""
+}
+
+func (x *SendSMSRequest) GetTemplateCode() string {
+	if x != nil {
+		return x.TemplateCode
+	}
+	return ""
+}
+
+func (x *SendSMSRequest) GetTemplateData() map[string]string {
+	if x != nil {
+		return x.TemplateData
+	}
+	return nil
 }
 
 type SendSMSResponse struct {
@@ -1939,10 +1965,15 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"O\n" +
 	"\x10SendPushResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12!\n" +
-	"\fdevices_sent\x18\x02 \x01(\x05R\vdevicesSent\"@\n" +
+	"\fdevices_sent\x18\x02 \x01(\x05R\vdevicesSent\"\x8c\x02\n" +
 	"\x0eSendSMSRequest\x12\x14\n" +
 	"\x05phone\x18\x01 \x01(\tR\x05phone\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"+\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12#\n" +
+	"\rtemplate_code\x18\x03 \x01(\tR\ftemplateCode\x12d\n" +
+	"\rtemplate_data\x18\x04 \x03(\v2?.communication.notification.v1.SendSMSRequest.TemplateDataEntryR\ftemplateData\x1a?\n" +
+	"\x11TemplateDataEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"+\n" +
 	"\x0fSendSMSResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x9b\x02\n" +
 	"\x10SendEmailRequest\x12\x14\n" +
@@ -2085,7 +2116,7 @@ func file_communication_notification_notification_proto_rawDescGZIP() []byte {
 }
 
 var file_communication_notification_notification_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_communication_notification_notification_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
+var file_communication_notification_notification_proto_msgTypes = make([]protoimpl.MessageInfo, 33)
 var file_communication_notification_notification_proto_goTypes = []any{
 	(NotificationType)(0),             // 0: communication.notification.v1.NotificationType
 	(NotificationCategory)(0),         // 1: communication.notification.v1.NotificationCategory
@@ -2120,57 +2151,59 @@ var file_communication_notification_notification_proto_goTypes = []any{
 	(*UpdatePreferencesResponse)(nil), // 30: communication.notification.v1.UpdatePreferencesResponse
 	nil,                               // 31: communication.notification.v1.Notification.DataEntry
 	nil,                               // 32: communication.notification.v1.SendPushRequest.DataEntry
-	nil,                               // 33: communication.notification.v1.SendEmailRequest.TemplateDataEntry
-	(*timestamppb.Timestamp)(nil),     // 34: google.protobuf.Timestamp
+	nil,                               // 33: communication.notification.v1.SendSMSRequest.TemplateDataEntry
+	nil,                               // 34: communication.notification.v1.SendEmailRequest.TemplateDataEntry
+	(*timestamppb.Timestamp)(nil),     // 35: google.protobuf.Timestamp
 }
 var file_communication_notification_notification_proto_depIdxs = []int32{
 	0,  // 0: communication.notification.v1.Notification.type:type_name -> communication.notification.v1.NotificationType
 	1,  // 1: communication.notification.v1.Notification.category:type_name -> communication.notification.v1.NotificationCategory
 	31, // 2: communication.notification.v1.Notification.data:type_name -> communication.notification.v1.Notification.DataEntry
-	34, // 3: communication.notification.v1.Notification.created_at:type_name -> google.protobuf.Timestamp
-	34, // 4: communication.notification.v1.DeviceInfo.last_seen_at:type_name -> google.protobuf.Timestamp
-	34, // 5: communication.notification.v1.DeviceInfo.created_at:type_name -> google.protobuf.Timestamp
+	35, // 3: communication.notification.v1.Notification.created_at:type_name -> google.protobuf.Timestamp
+	35, // 4: communication.notification.v1.DeviceInfo.last_seen_at:type_name -> google.protobuf.Timestamp
+	35, // 5: communication.notification.v1.DeviceInfo.created_at:type_name -> google.protobuf.Timestamp
 	1,  // 6: communication.notification.v1.SendPushRequest.category:type_name -> communication.notification.v1.NotificationCategory
 	32, // 7: communication.notification.v1.SendPushRequest.data:type_name -> communication.notification.v1.SendPushRequest.DataEntry
-	33, // 8: communication.notification.v1.SendEmailRequest.template_data:type_name -> communication.notification.v1.SendEmailRequest.TemplateDataEntry
-	1,  // 9: communication.notification.v1.GetNotificationsRequest.category:type_name -> communication.notification.v1.NotificationCategory
-	2,  // 10: communication.notification.v1.GetNotificationsResponse.notifications:type_name -> communication.notification.v1.Notification
-	3,  // 11: communication.notification.v1.RegisterDeviceResponse.device:type_name -> communication.notification.v1.DeviceInfo
-	3,  // 12: communication.notification.v1.UpdateDeviceResponse.device:type_name -> communication.notification.v1.DeviceInfo
-	3,  // 13: communication.notification.v1.ListUserDevicesResponse.devices:type_name -> communication.notification.v1.DeviceInfo
-	26, // 14: communication.notification.v1.GetPreferencesResponse.preferences:type_name -> communication.notification.v1.NotificationPreferences
-	26, // 15: communication.notification.v1.UpdatePreferencesResponse.preferences:type_name -> communication.notification.v1.NotificationPreferences
-	4,  // 16: communication.notification.v1.NotificationService.SendPush:input_type -> communication.notification.v1.SendPushRequest
-	6,  // 17: communication.notification.v1.NotificationService.SendSMS:input_type -> communication.notification.v1.SendSMSRequest
-	8,  // 18: communication.notification.v1.NotificationService.SendEmail:input_type -> communication.notification.v1.SendEmailRequest
-	10, // 19: communication.notification.v1.NotificationService.GetNotifications:input_type -> communication.notification.v1.GetNotificationsRequest
-	12, // 20: communication.notification.v1.NotificationService.MarkAsRead:input_type -> communication.notification.v1.MarkAsReadRequest
-	14, // 21: communication.notification.v1.NotificationService.GetUnreadCount:input_type -> communication.notification.v1.GetUnreadCountRequest
-	16, // 22: communication.notification.v1.NotificationService.RegisterDevice:input_type -> communication.notification.v1.RegisterDeviceRequest
-	18, // 23: communication.notification.v1.NotificationService.UnregisterDevice:input_type -> communication.notification.v1.UnregisterDeviceRequest
-	20, // 24: communication.notification.v1.NotificationService.UpdateDevice:input_type -> communication.notification.v1.UpdateDeviceRequest
-	22, // 25: communication.notification.v1.NotificationService.ListUserDevices:input_type -> communication.notification.v1.ListUserDevicesRequest
-	24, // 26: communication.notification.v1.NotificationService.GetSMSBalance:input_type -> communication.notification.v1.GetSMSBalanceRequest
-	27, // 27: communication.notification.v1.NotificationService.GetPreferences:input_type -> communication.notification.v1.GetPreferencesRequest
-	29, // 28: communication.notification.v1.NotificationService.UpdatePreferences:input_type -> communication.notification.v1.UpdatePreferencesRequest
-	5,  // 29: communication.notification.v1.NotificationService.SendPush:output_type -> communication.notification.v1.SendPushResponse
-	7,  // 30: communication.notification.v1.NotificationService.SendSMS:output_type -> communication.notification.v1.SendSMSResponse
-	9,  // 31: communication.notification.v1.NotificationService.SendEmail:output_type -> communication.notification.v1.SendEmailResponse
-	11, // 32: communication.notification.v1.NotificationService.GetNotifications:output_type -> communication.notification.v1.GetNotificationsResponse
-	13, // 33: communication.notification.v1.NotificationService.MarkAsRead:output_type -> communication.notification.v1.MarkAsReadResponse
-	15, // 34: communication.notification.v1.NotificationService.GetUnreadCount:output_type -> communication.notification.v1.GetUnreadCountResponse
-	17, // 35: communication.notification.v1.NotificationService.RegisterDevice:output_type -> communication.notification.v1.RegisterDeviceResponse
-	19, // 36: communication.notification.v1.NotificationService.UnregisterDevice:output_type -> communication.notification.v1.UnregisterDeviceResponse
-	21, // 37: communication.notification.v1.NotificationService.UpdateDevice:output_type -> communication.notification.v1.UpdateDeviceResponse
-	23, // 38: communication.notification.v1.NotificationService.ListUserDevices:output_type -> communication.notification.v1.ListUserDevicesResponse
-	25, // 39: communication.notification.v1.NotificationService.GetSMSBalance:output_type -> communication.notification.v1.GetSMSBalanceResponse
-	28, // 40: communication.notification.v1.NotificationService.GetPreferences:output_type -> communication.notification.v1.GetPreferencesResponse
-	30, // 41: communication.notification.v1.NotificationService.UpdatePreferences:output_type -> communication.notification.v1.UpdatePreferencesResponse
-	29, // [29:42] is the sub-list for method output_type
-	16, // [16:29] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	33, // 8: communication.notification.v1.SendSMSRequest.template_data:type_name -> communication.notification.v1.SendSMSRequest.TemplateDataEntry
+	34, // 9: communication.notification.v1.SendEmailRequest.template_data:type_name -> communication.notification.v1.SendEmailRequest.TemplateDataEntry
+	1,  // 10: communication.notification.v1.GetNotificationsRequest.category:type_name -> communication.notification.v1.NotificationCategory
+	2,  // 11: communication.notification.v1.GetNotificationsResponse.notifications:type_name -> communication.notification.v1.Notification
+	3,  // 12: communication.notification.v1.RegisterDeviceResponse.device:type_name -> communication.notification.v1.DeviceInfo
+	3,  // 13: communication.notification.v1.UpdateDeviceResponse.device:type_name -> communication.notification.v1.DeviceInfo
+	3,  // 14: communication.notification.v1.ListUserDevicesResponse.devices:type_name -> communication.notification.v1.DeviceInfo
+	26, // 15: communication.notification.v1.GetPreferencesResponse.preferences:type_name -> communication.notification.v1.NotificationPreferences
+	26, // 16: communication.notification.v1.UpdatePreferencesResponse.preferences:type_name -> communication.notification.v1.NotificationPreferences
+	4,  // 17: communication.notification.v1.NotificationService.SendPush:input_type -> communication.notification.v1.SendPushRequest
+	6,  // 18: communication.notification.v1.NotificationService.SendSMS:input_type -> communication.notification.v1.SendSMSRequest
+	8,  // 19: communication.notification.v1.NotificationService.SendEmail:input_type -> communication.notification.v1.SendEmailRequest
+	10, // 20: communication.notification.v1.NotificationService.GetNotifications:input_type -> communication.notification.v1.GetNotificationsRequest
+	12, // 21: communication.notification.v1.NotificationService.MarkAsRead:input_type -> communication.notification.v1.MarkAsReadRequest
+	14, // 22: communication.notification.v1.NotificationService.GetUnreadCount:input_type -> communication.notification.v1.GetUnreadCountRequest
+	16, // 23: communication.notification.v1.NotificationService.RegisterDevice:input_type -> communication.notification.v1.RegisterDeviceRequest
+	18, // 24: communication.notification.v1.NotificationService.UnregisterDevice:input_type -> communication.notification.v1.UnregisterDeviceRequest
+	20, // 25: communication.notification.v1.NotificationService.UpdateDevice:input_type -> communication.notification.v1.UpdateDeviceRequest
+	22, // 26: communication.notification.v1.NotificationService.ListUserDevices:input_type -> communication.notification.v1.ListUserDevicesRequest
+	24, // 27: communication.notification.v1.NotificationService.GetSMSBalance:input_type -> communication.notification.v1.GetSMSBalanceRequest
+	27, // 28: communication.notification.v1.NotificationService.GetPreferences:input_type -> communication.notification.v1.GetPreferencesRequest
+	29, // 29: communication.notification.v1.NotificationService.UpdatePreferences:input_type -> communication.notification.v1.UpdatePreferencesRequest
+	5,  // 30: communication.notification.v1.NotificationService.SendPush:output_type -> communication.notification.v1.SendPushResponse
+	7,  // 31: communication.notification.v1.NotificationService.SendSMS:output_type -> communication.notification.v1.SendSMSResponse
+	9,  // 32: communication.notification.v1.NotificationService.SendEmail:output_type -> communication.notification.v1.SendEmailResponse
+	11, // 33: communication.notification.v1.NotificationService.GetNotifications:output_type -> communication.notification.v1.GetNotificationsResponse
+	13, // 34: communication.notification.v1.NotificationService.MarkAsRead:output_type -> communication.notification.v1.MarkAsReadResponse
+	15, // 35: communication.notification.v1.NotificationService.GetUnreadCount:output_type -> communication.notification.v1.GetUnreadCountResponse
+	17, // 36: communication.notification.v1.NotificationService.RegisterDevice:output_type -> communication.notification.v1.RegisterDeviceResponse
+	19, // 37: communication.notification.v1.NotificationService.UnregisterDevice:output_type -> communication.notification.v1.UnregisterDeviceResponse
+	21, // 38: communication.notification.v1.NotificationService.UpdateDevice:output_type -> communication.notification.v1.UpdateDeviceResponse
+	23, // 39: communication.notification.v1.NotificationService.ListUserDevices:output_type -> communication.notification.v1.ListUserDevicesResponse
+	25, // 40: communication.notification.v1.NotificationService.GetSMSBalance:output_type -> communication.notification.v1.GetSMSBalanceResponse
+	28, // 41: communication.notification.v1.NotificationService.GetPreferences:output_type -> communication.notification.v1.GetPreferencesResponse
+	30, // 42: communication.notification.v1.NotificationService.UpdatePreferences:output_type -> communication.notification.v1.UpdatePreferencesResponse
+	30, // [30:43] is the sub-list for method output_type
+	17, // [17:30] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_communication_notification_notification_proto_init() }
@@ -2185,7 +2218,7 @@ func file_communication_notification_notification_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_communication_notification_notification_proto_rawDesc), len(file_communication_notification_notification_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   32,
+			NumMessages:   33,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

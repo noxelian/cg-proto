@@ -80,7 +80,19 @@ message SendPushResponse {
 
 message SendSMSRequest {
   string phone = 1;
+  // Free-form SMS body. Used verbatim when template_code is empty (legacy
+  // path / OTP / one-off messages). NOTE: 61-CONTEXT.md D-01 referred to
+  // this field as `body`; the live wire name is `message` — we kept it for
+  // backward compat, the rename was cosmetic only.
   string message = 2;
+  // Optional. When non-empty, cg-communication renders the template registered
+  // under this code with template_data and ignores `message` (Phase 61 NTF-01 D-02/D-03).
+  string template_code = 3;
+  // Optional. Substitution variables for the template referenced by template_code.
+  // Keys MUST match Go text/template field accessors (e.g. "PlanName" → {{.PlanName}}).
+  // Renderer runs with Option("missingkey=error") so absent keys produce an error,
+  // never a `<no value>` placeholder reaching the recipient.
+  map<string, string> template_data = 4;
 }
 
 message SendSMSResponse {
