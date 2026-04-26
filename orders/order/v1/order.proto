@@ -22,6 +22,7 @@ service OrderService {
   rpc CancelSubscription(CancelSubscriptionRequest) returns (CancelSubscriptionResponse);
   rpc CheckBidAccess(CheckBidAccessRequest) returns (CheckBidAccessResponse);
   rpc CalculateSubscriptionPrice(CalculateSubscriptionPriceRequest) returns (CalculateSubscriptionPriceResponse);
+  rpc GetSubscriptionStatus(GetSubscriptionStatusRequest) returns (GetSubscriptionStatusResponse);
 
   // === Bid purchases ===
   rpc PurchaseBid(PurchaseBidRequest) returns (PurchaseBidResponse);
@@ -615,4 +616,19 @@ message SetOrderStatusRequest {
 
 message SetOrderStatusResponse {
   Order order = 1;
+}
+
+// =============================================
+// Subscription status RPC
+// =============================================
+
+message GetSubscriptionStatusRequest {
+  string organization_id = 1;
+}
+
+message GetSubscriptionStatusResponse {
+  bool has_active_subscription = 1;
+  Subscription active_subscription = 2;     // null when no active subscription
+  int32 bid_purchases_remaining = 3;
+  google.protobuf.Timestamp valid_until = 4; // expiry of active subscription, if any
 }

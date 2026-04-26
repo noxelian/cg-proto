@@ -5,6 +5,7 @@ package users.organization.v1;
 option go_package = "github.com/4ubak/cg-proto/gen/go/users/organization;organizationv1";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 
 service OrganizationService {
   // CreateOrganization creates a new organization
@@ -68,6 +69,17 @@ service OrganizationService {
   // including the caller's role and whether the org has an active subscription.
   // Used by auth service (SelectOrg flow) and partner onboarding UI.
   rpc ListUserOrganizations(ListUserOrganizationsRequest) returns (ListUserOrganizationsResponse);
+
+  // Onboarding RPCs (partner app)
+
+  // CreateDraftOrganization creates an org with status='trial' (minimal fields).
+  rpc CreateDraftOrganization(CreateDraftOrganizationRequest) returns (CreateDraftOrganizationResponse);
+
+  // UpdateOrganizationInfo performs a partial update of legal/contact fields.
+  rpc UpdateOrganizationInfo(UpdateOrganizationInfoRequest) returns (UpdateOrganizationInfoResponse);
+
+  // RequestActivation transitions org status from trial -> pending_docs.
+  rpc RequestActivation(RequestActivationRequest) returns (RequestActivationResponse);
 
   // Platform roles (CTOgram employee roles)
   // Deprecated: Use UserService.SetPlatformRoles instead.
@@ -148,6 +160,12 @@ message Organization {
   optional int32 year_to = 26;
   bool is_rented = 27;
   int32 posts_count = 28;
+  // Onboarding / legal fields
+  bool documents_complete = 29;
+  optional string bin = 30;
+  optional string legal_address = 31;
+  optional string contact_phone = 32;
+  optional string contact_email = 33;
 }
 
 message OrganizationSettings {
@@ -652,4 +670,132 @@ message UserOrgEntry {
 
 message ListUserOrganizationsResponse {
   repeated UserOrgEntry organizations = 1;
+}
+
+// =============================================
+// Onboarding messages
+// =============================================
+
+message CreateDraftOrganizationRequest {
+  int64 owner_user_id = 1;
+  string name = 2;
+  int64 city_id = 3;
+  // "workshop" maps to STO/BodyShop types; "supplier" maps to PARTS_SUPPLIER.
+  // Full OrganizationType value also accepted (e.g. ORGANIZATION_TYPE_STO).
+  string org_type = 4;
+}
+
+message CreateDraftOrganizationResponse {
+  Organization organization = 1;
+}
+
+message UpdateOrganizationInfoRequest {
+  string organization_id = 1;
+  int64 caller_user_id = 2;
+  google.protobuf.StringValue bin = 3;           // БИН (12 digits, KZ) — optional
+  google.protobuf.StringValue legal_address = 4; // optional
+  google.protobuf.StringValue contact_phone = 5; // optional
+  google.protobuf.StringValue contact_email = 6; // optional
+}
+
+message UpdateOrganizationInfoResponse {
+  Organization organization = 1;
+}
+
+message RequestActivationRequest {
+  string organization_id = 1;
+  int64 caller_user_id = 2;
+}
+
+message RequestActivationResponse {
+  bool success = 1;
+}
+
+// =============================================
+// Organization Documents
+// =============================================
+
+service OrganizationDocumentService {
+  // UploadDocument stores document metadata (file already uploaded to S3 by BFF).
+  rpc UploadDocument(UploadDocumentRequest) returns (UploadDocumentResponse);
+
+  // ListDocuments returns all documents for an organization.
+  rpc ListDocuments(ListDocumentsRequest) returns (ListDocumentsResponse);
+
+  // GetDocument returns a single document by ID.
+  rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
+
+  // DeleteDocument removes a pending document. Only pending docs can be deleted.
+  rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse);
+
+  // ReviewDocument approves or rejects a document — platform_admin only.
+  rpc ReviewDocument(ReviewDocumentRequest) returns (ReviewDocumentResponse);
+}
+
+message OrganizationDocument {
+  int64 id = 1;
+  string organization_id = 2;
+  string doc_type = 3;        // business_license, tax_certificate, iban, passport, contract, photo
+  string file_url = 4;
+  string file_name = 5;
+  int64 file_size = 6;
+  string mime_type = 7;
+  string status = 8;          // pending, approved, rejected
+  string rejection_reason = 9;
+  int64 uploaded_by_user_id = 10;
+  google.protobuf.Timestamp uploaded_at = 11;
+  optional int64 reviewed_by_user_id = 12;
+  optional google.protobuf.Timestamp reviewed_at = 13;
+}
+
+message UploadDocumentRequest {
+  string organization_id = 1;
+  int64 caller_user_id = 2;
+  string doc_type = 3;
+  string file_url = 4;
+  string file_name = 5;
+  int64 file_size = 6;
+  string mime_type = 7;
+}
+
+message UploadDocumentResponse {
+  OrganizationDocument document = 1;
+}
+
+message ListDocumentsRequest {
+  string organization_id = 1;
+  int64 caller_user_id = 2;
+}
+
+message ListDocumentsResponse {
+  repeated OrganizationDocument documents = 1;
+}
+
+message GetDocumentRequest {
+  int64 document_id = 1;
+  int64 caller_user_id = 2;
+}
+
+message GetDocumentResponse {
+  OrganizationDocument document = 1;
+}
+
+message DeleteDocumentRequest {
+  int64 document_id = 1;
+  int64 caller_user_id = 2;
+}
+
+message DeleteDocumentResponse {
+  bool success = 1;
+}
+
+message ReviewDocumentRequest {
+  int64 document_id = 1;
+  int64 reviewer_user_id = 2;
+  bool approve = 3;
+  string rejection_reason = 4; // required when approve=false
+}
+
+message ReviewDocumentResponse {
+  OrganizationDocument document = 1;
 }

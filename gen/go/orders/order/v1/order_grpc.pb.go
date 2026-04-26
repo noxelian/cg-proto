@@ -29,6 +29,7 @@ const (
 	OrderService_CancelSubscription_FullMethodName             = "/orders.order.v1.OrderService/CancelSubscription"
 	OrderService_CheckBidAccess_FullMethodName                 = "/orders.order.v1.OrderService/CheckBidAccess"
 	OrderService_CalculateSubscriptionPrice_FullMethodName     = "/orders.order.v1.OrderService/CalculateSubscriptionPrice"
+	OrderService_GetSubscriptionStatus_FullMethodName          = "/orders.order.v1.OrderService/GetSubscriptionStatus"
 	OrderService_PurchaseBid_FullMethodName                    = "/orders.order.v1.OrderService/PurchaseBid"
 	OrderService_GetBidPurchasePrice_FullMethodName            = "/orders.order.v1.OrderService/GetBidPurchasePrice"
 	OrderService_CreateOrder_FullMethodName                    = "/orders.order.v1.OrderService/CreateOrder"
@@ -69,6 +70,7 @@ type OrderServiceClient interface {
 	CancelSubscription(ctx context.Context, in *CancelSubscriptionRequest, opts ...grpc.CallOption) (*CancelSubscriptionResponse, error)
 	CheckBidAccess(ctx context.Context, in *CheckBidAccessRequest, opts ...grpc.CallOption) (*CheckBidAccessResponse, error)
 	CalculateSubscriptionPrice(ctx context.Context, in *CalculateSubscriptionPriceRequest, opts ...grpc.CallOption) (*CalculateSubscriptionPriceResponse, error)
+	GetSubscriptionStatus(ctx context.Context, in *GetSubscriptionStatusRequest, opts ...grpc.CallOption) (*GetSubscriptionStatusResponse, error)
 	// === Bid purchases ===
 	PurchaseBid(ctx context.Context, in *PurchaseBidRequest, opts ...grpc.CallOption) (*PurchaseBidResponse, error)
 	GetBidPurchasePrice(ctx context.Context, in *GetBidPurchasePriceRequest, opts ...grpc.CallOption) (*GetBidPurchasePriceResponse, error)
@@ -196,6 +198,16 @@ func (c *orderServiceClient) CalculateSubscriptionPrice(ctx context.Context, in 
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CalculateSubscriptionPriceResponse)
 	err := c.cc.Invoke(ctx, OrderService_CalculateSubscriptionPrice_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) GetSubscriptionStatus(ctx context.Context, in *GetSubscriptionStatusRequest, opts ...grpc.CallOption) (*GetSubscriptionStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSubscriptionStatusResponse)
+	err := c.cc.Invoke(ctx, OrderService_GetSubscriptionStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -411,6 +423,7 @@ type OrderServiceServer interface {
 	CancelSubscription(context.Context, *CancelSubscriptionRequest) (*CancelSubscriptionResponse, error)
 	CheckBidAccess(context.Context, *CheckBidAccessRequest) (*CheckBidAccessResponse, error)
 	CalculateSubscriptionPrice(context.Context, *CalculateSubscriptionPriceRequest) (*CalculateSubscriptionPriceResponse, error)
+	GetSubscriptionStatus(context.Context, *GetSubscriptionStatusRequest) (*GetSubscriptionStatusResponse, error)
 	// === Bid purchases ===
 	PurchaseBid(context.Context, *PurchaseBidRequest) (*PurchaseBidResponse, error)
 	GetBidPurchasePrice(context.Context, *GetBidPurchasePriceRequest) (*GetBidPurchasePriceResponse, error)
@@ -473,6 +486,9 @@ func (UnimplementedOrderServiceServer) CheckBidAccess(context.Context, *CheckBid
 }
 func (UnimplementedOrderServiceServer) CalculateSubscriptionPrice(context.Context, *CalculateSubscriptionPriceRequest) (*CalculateSubscriptionPriceResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CalculateSubscriptionPrice not implemented")
+}
+func (UnimplementedOrderServiceServer) GetSubscriptionStatus(context.Context, *GetSubscriptionStatusRequest) (*GetSubscriptionStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSubscriptionStatus not implemented")
 }
 func (UnimplementedOrderServiceServer) PurchaseBid(context.Context, *PurchaseBidRequest) (*PurchaseBidResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method PurchaseBid not implemented")
@@ -728,6 +744,24 @@ func _OrderService_CalculateSubscriptionPrice_Handler(srv interface{}, ctx conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OrderServiceServer).CalculateSubscriptionPrice(ctx, req.(*CalculateSubscriptionPriceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_GetSubscriptionStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSubscriptionStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).GetSubscriptionStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_GetSubscriptionStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).GetSubscriptionStatus(ctx, req.(*GetSubscriptionStatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1120,6 +1154,10 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CalculateSubscriptionPrice",
 			Handler:    _OrderService_CalculateSubscriptionPrice_Handler,
+		},
+		{
+			MethodName: "GetSubscriptionStatus",
+			Handler:    _OrderService_GetSubscriptionStatus_Handler,
 		},
 		{
 			MethodName: "PurchaseBid",

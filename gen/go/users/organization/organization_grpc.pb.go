@@ -49,6 +49,9 @@ const (
 	OrganizationService_UpdateOrgProfile_FullMethodName                = "/users.organization.v1.OrganizationService/UpdateOrgProfile"
 	OrganizationService_GetOrganizationSubscriptionInfo_FullMethodName = "/users.organization.v1.OrganizationService/GetOrganizationSubscriptionInfo"
 	OrganizationService_ListUserOrganizations_FullMethodName           = "/users.organization.v1.OrganizationService/ListUserOrganizations"
+	OrganizationService_CreateDraftOrganization_FullMethodName         = "/users.organization.v1.OrganizationService/CreateDraftOrganization"
+	OrganizationService_UpdateOrganizationInfo_FullMethodName          = "/users.organization.v1.OrganizationService/UpdateOrganizationInfo"
+	OrganizationService_RequestActivation_FullMethodName               = "/users.organization.v1.OrganizationService/RequestActivation"
 	OrganizationService_SetPlatformRole_FullMethodName                 = "/users.organization.v1.OrganizationService/SetPlatformRole"
 	OrganizationService_GetPlatformRole_FullMethodName                 = "/users.organization.v1.OrganizationService/GetPlatformRole"
 	OrganizationService_SetPlatformOrgAccess_FullMethodName            = "/users.organization.v1.OrganizationService/SetPlatformOrgAccess"
@@ -107,6 +110,12 @@ type OrganizationServiceClient interface {
 	// including the caller's role and whether the org has an active subscription.
 	// Used by auth service (SelectOrg flow) and partner onboarding UI.
 	ListUserOrganizations(ctx context.Context, in *ListUserOrganizationsRequest, opts ...grpc.CallOption) (*ListUserOrganizationsResponse, error)
+	// CreateDraftOrganization creates an org with status='trial' (minimal fields).
+	CreateDraftOrganization(ctx context.Context, in *CreateDraftOrganizationRequest, opts ...grpc.CallOption) (*CreateDraftOrganizationResponse, error)
+	// UpdateOrganizationInfo performs a partial update of legal/contact fields.
+	UpdateOrganizationInfo(ctx context.Context, in *UpdateOrganizationInfoRequest, opts ...grpc.CallOption) (*UpdateOrganizationInfoResponse, error)
+	// RequestActivation transitions org status from trial -> pending_docs.
+	RequestActivation(ctx context.Context, in *RequestActivationRequest, opts ...grpc.CallOption) (*RequestActivationResponse, error)
 	// Deprecated: Do not use.
 	// Platform roles (CTOgram employee roles)
 	// Deprecated: Use UserService.SetPlatformRoles instead.
@@ -433,6 +442,36 @@ func (c *organizationServiceClient) ListUserOrganizations(ctx context.Context, i
 	return out, nil
 }
 
+func (c *organizationServiceClient) CreateDraftOrganization(ctx context.Context, in *CreateDraftOrganizationRequest, opts ...grpc.CallOption) (*CreateDraftOrganizationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateDraftOrganizationResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_CreateDraftOrganization_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) UpdateOrganizationInfo(ctx context.Context, in *UpdateOrganizationInfoRequest, opts ...grpc.CallOption) (*UpdateOrganizationInfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateOrganizationInfoResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_UpdateOrganizationInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) RequestActivation(ctx context.Context, in *RequestActivationRequest, opts ...grpc.CallOption) (*RequestActivationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RequestActivationResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_RequestActivation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Deprecated: Do not use.
 func (c *organizationServiceClient) SetPlatformRole(ctx context.Context, in *SetPlatformRoleRequest, opts ...grpc.CallOption) (*SetPlatformRoleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -539,6 +578,12 @@ type OrganizationServiceServer interface {
 	// including the caller's role and whether the org has an active subscription.
 	// Used by auth service (SelectOrg flow) and partner onboarding UI.
 	ListUserOrganizations(context.Context, *ListUserOrganizationsRequest) (*ListUserOrganizationsResponse, error)
+	// CreateDraftOrganization creates an org with status='trial' (minimal fields).
+	CreateDraftOrganization(context.Context, *CreateDraftOrganizationRequest) (*CreateDraftOrganizationResponse, error)
+	// UpdateOrganizationInfo performs a partial update of legal/contact fields.
+	UpdateOrganizationInfo(context.Context, *UpdateOrganizationInfoRequest) (*UpdateOrganizationInfoResponse, error)
+	// RequestActivation transitions org status from trial -> pending_docs.
+	RequestActivation(context.Context, *RequestActivationRequest) (*RequestActivationResponse, error)
 	// Deprecated: Do not use.
 	// Platform roles (CTOgram employee roles)
 	// Deprecated: Use UserService.SetPlatformRoles instead.
@@ -654,6 +699,15 @@ func (UnimplementedOrganizationServiceServer) GetOrganizationSubscriptionInfo(co
 }
 func (UnimplementedOrganizationServiceServer) ListUserOrganizations(context.Context, *ListUserOrganizationsRequest) (*ListUserOrganizationsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUserOrganizations not implemented")
+}
+func (UnimplementedOrganizationServiceServer) CreateDraftOrganization(context.Context, *CreateDraftOrganizationRequest) (*CreateDraftOrganizationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateDraftOrganization not implemented")
+}
+func (UnimplementedOrganizationServiceServer) UpdateOrganizationInfo(context.Context, *UpdateOrganizationInfoRequest) (*UpdateOrganizationInfoResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateOrganizationInfo not implemented")
+}
+func (UnimplementedOrganizationServiceServer) RequestActivation(context.Context, *RequestActivationRequest) (*RequestActivationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RequestActivation not implemented")
 }
 func (UnimplementedOrganizationServiceServer) SetPlatformRole(context.Context, *SetPlatformRoleRequest) (*SetPlatformRoleResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetPlatformRole not implemented")
@@ -1231,6 +1285,60 @@ func _OrganizationService_ListUserOrganizations_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationService_CreateDraftOrganization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateDraftOrganizationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).CreateDraftOrganization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_CreateDraftOrganization_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).CreateDraftOrganization(ctx, req.(*CreateDraftOrganizationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_UpdateOrganizationInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOrganizationInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).UpdateOrganizationInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_UpdateOrganizationInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).UpdateOrganizationInfo(ctx, req.(*UpdateOrganizationInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_RequestActivation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestActivationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).RequestActivation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_RequestActivation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).RequestActivation(ctx, req.(*RequestActivationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrganizationService_SetPlatformRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetPlatformRoleRequest)
 	if err := dec(in); err != nil {
@@ -1449,6 +1557,18 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OrganizationService_ListUserOrganizations_Handler,
 		},
 		{
+			MethodName: "CreateDraftOrganization",
+			Handler:    _OrganizationService_CreateDraftOrganization_Handler,
+		},
+		{
+			MethodName: "UpdateOrganizationInfo",
+			Handler:    _OrganizationService_UpdateOrganizationInfo_Handler,
+		},
+		{
+			MethodName: "RequestActivation",
+			Handler:    _OrganizationService_RequestActivation_Handler,
+		},
+		{
 			MethodName: "SetPlatformRole",
 			Handler:    _OrganizationService_SetPlatformRole_Handler,
 		},
@@ -1467,6 +1587,271 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckPlatformRole",
 			Handler:    _OrganizationService_CheckPlatformRole_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "users/organization/organization.proto",
+}
+
+const (
+	OrganizationDocumentService_UploadDocument_FullMethodName = "/users.organization.v1.OrganizationDocumentService/UploadDocument"
+	OrganizationDocumentService_ListDocuments_FullMethodName  = "/users.organization.v1.OrganizationDocumentService/ListDocuments"
+	OrganizationDocumentService_GetDocument_FullMethodName    = "/users.organization.v1.OrganizationDocumentService/GetDocument"
+	OrganizationDocumentService_DeleteDocument_FullMethodName = "/users.organization.v1.OrganizationDocumentService/DeleteDocument"
+	OrganizationDocumentService_ReviewDocument_FullMethodName = "/users.organization.v1.OrganizationDocumentService/ReviewDocument"
+)
+
+// OrganizationDocumentServiceClient is the client API for OrganizationDocumentService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OrganizationDocumentServiceClient interface {
+	// UploadDocument stores document metadata (file already uploaded to S3 by BFF).
+	UploadDocument(ctx context.Context, in *UploadDocumentRequest, opts ...grpc.CallOption) (*UploadDocumentResponse, error)
+	// ListDocuments returns all documents for an organization.
+	ListDocuments(ctx context.Context, in *ListDocumentsRequest, opts ...grpc.CallOption) (*ListDocumentsResponse, error)
+	// GetDocument returns a single document by ID.
+	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
+	// DeleteDocument removes a pending document. Only pending docs can be deleted.
+	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error)
+	// ReviewDocument approves or rejects a document — platform_admin only.
+	ReviewDocument(ctx context.Context, in *ReviewDocumentRequest, opts ...grpc.CallOption) (*ReviewDocumentResponse, error)
+}
+
+type organizationDocumentServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOrganizationDocumentServiceClient(cc grpc.ClientConnInterface) OrganizationDocumentServiceClient {
+	return &organizationDocumentServiceClient{cc}
+}
+
+func (c *organizationDocumentServiceClient) UploadDocument(ctx context.Context, in *UploadDocumentRequest, opts ...grpc.CallOption) (*UploadDocumentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UploadDocumentResponse)
+	err := c.cc.Invoke(ctx, OrganizationDocumentService_UploadDocument_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationDocumentServiceClient) ListDocuments(ctx context.Context, in *ListDocumentsRequest, opts ...grpc.CallOption) (*ListDocumentsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListDocumentsResponse)
+	err := c.cc.Invoke(ctx, OrganizationDocumentService_ListDocuments_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationDocumentServiceClient) GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDocumentResponse)
+	err := c.cc.Invoke(ctx, OrganizationDocumentService_GetDocument_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationDocumentServiceClient) DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteDocumentResponse)
+	err := c.cc.Invoke(ctx, OrganizationDocumentService_DeleteDocument_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationDocumentServiceClient) ReviewDocument(ctx context.Context, in *ReviewDocumentRequest, opts ...grpc.CallOption) (*ReviewDocumentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReviewDocumentResponse)
+	err := c.cc.Invoke(ctx, OrganizationDocumentService_ReviewDocument_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OrganizationDocumentServiceServer is the server API for OrganizationDocumentService service.
+// All implementations must embed UnimplementedOrganizationDocumentServiceServer
+// for forward compatibility.
+type OrganizationDocumentServiceServer interface {
+	// UploadDocument stores document metadata (file already uploaded to S3 by BFF).
+	UploadDocument(context.Context, *UploadDocumentRequest) (*UploadDocumentResponse, error)
+	// ListDocuments returns all documents for an organization.
+	ListDocuments(context.Context, *ListDocumentsRequest) (*ListDocumentsResponse, error)
+	// GetDocument returns a single document by ID.
+	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
+	// DeleteDocument removes a pending document. Only pending docs can be deleted.
+	DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error)
+	// ReviewDocument approves or rejects a document — platform_admin only.
+	ReviewDocument(context.Context, *ReviewDocumentRequest) (*ReviewDocumentResponse, error)
+	mustEmbedUnimplementedOrganizationDocumentServiceServer()
+}
+
+// UnimplementedOrganizationDocumentServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedOrganizationDocumentServiceServer struct{}
+
+func (UnimplementedOrganizationDocumentServiceServer) UploadDocument(context.Context, *UploadDocumentRequest) (*UploadDocumentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UploadDocument not implemented")
+}
+func (UnimplementedOrganizationDocumentServiceServer) ListDocuments(context.Context, *ListDocumentsRequest) (*ListDocumentsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListDocuments not implemented")
+}
+func (UnimplementedOrganizationDocumentServiceServer) GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetDocument not implemented")
+}
+func (UnimplementedOrganizationDocumentServiceServer) DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteDocument not implemented")
+}
+func (UnimplementedOrganizationDocumentServiceServer) ReviewDocument(context.Context, *ReviewDocumentRequest) (*ReviewDocumentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReviewDocument not implemented")
+}
+func (UnimplementedOrganizationDocumentServiceServer) mustEmbedUnimplementedOrganizationDocumentServiceServer() {
+}
+func (UnimplementedOrganizationDocumentServiceServer) testEmbeddedByValue() {}
+
+// UnsafeOrganizationDocumentServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OrganizationDocumentServiceServer will
+// result in compilation errors.
+type UnsafeOrganizationDocumentServiceServer interface {
+	mustEmbedUnimplementedOrganizationDocumentServiceServer()
+}
+
+func RegisterOrganizationDocumentServiceServer(s grpc.ServiceRegistrar, srv OrganizationDocumentServiceServer) {
+	// If the following call panics, it indicates UnimplementedOrganizationDocumentServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&OrganizationDocumentService_ServiceDesc, srv)
+}
+
+func _OrganizationDocumentService_UploadDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationDocumentServiceServer).UploadDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationDocumentService_UploadDocument_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationDocumentServiceServer).UploadDocument(ctx, req.(*UploadDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationDocumentService_ListDocuments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListDocumentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationDocumentServiceServer).ListDocuments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationDocumentService_ListDocuments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationDocumentServiceServer).ListDocuments(ctx, req.(*ListDocumentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationDocumentService_GetDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationDocumentServiceServer).GetDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationDocumentService_GetDocument_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationDocumentServiceServer).GetDocument(ctx, req.(*GetDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationDocumentService_DeleteDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationDocumentServiceServer).DeleteDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationDocumentService_DeleteDocument_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationDocumentServiceServer).DeleteDocument(ctx, req.(*DeleteDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationDocumentService_ReviewDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReviewDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationDocumentServiceServer).ReviewDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationDocumentService_ReviewDocument_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationDocumentServiceServer).ReviewDocument(ctx, req.(*ReviewDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// OrganizationDocumentService_ServiceDesc is the grpc.ServiceDesc for OrganizationDocumentService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var OrganizationDocumentService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "users.organization.v1.OrganizationDocumentService",
+	HandlerType: (*OrganizationDocumentServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "UploadDocument",
+			Handler:    _OrganizationDocumentService_UploadDocument_Handler,
+		},
+		{
+			MethodName: "ListDocuments",
+			Handler:    _OrganizationDocumentService_ListDocuments_Handler,
+		},
+		{
+			MethodName: "GetDocument",
+			Handler:    _OrganizationDocumentService_GetDocument_Handler,
+		},
+		{
+			MethodName: "DeleteDocument",
+			Handler:    _OrganizationDocumentService_DeleteDocument_Handler,
+		},
+		{
+			MethodName: "ReviewDocument",
+			Handler:    _OrganizationDocumentService_ReviewDocument_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

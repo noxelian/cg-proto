@@ -5041,6 +5041,118 @@ func (x *SetOrderStatusResponse) GetOrder() *Order {
 	return nil
 }
 
+type GetSubscriptionStatusRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *GetSubscriptionStatusRequest) Reset() {
+	*x = GetSubscriptionStatusRequest{}
+	mi := &file_orders_order_v1_order_proto_msgTypes[69]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSubscriptionStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSubscriptionStatusRequest) ProtoMessage() {}
+
+func (x *GetSubscriptionStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_orders_order_v1_order_proto_msgTypes[69]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSubscriptionStatusRequest.ProtoReflect.Descriptor instead.
+func (*GetSubscriptionStatusRequest) Descriptor() ([]byte, []int) {
+	return file_orders_order_v1_order_proto_rawDescGZIP(), []int{69}
+}
+
+func (x *GetSubscriptionStatusRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+type GetSubscriptionStatusResponse struct {
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	HasActiveSubscription bool                   `protobuf:"varint,1,opt,name=has_active_subscription,json=hasActiveSubscription,proto3" json:"has_active_subscription,omitempty"`
+	ActiveSubscription    *Subscription          `protobuf:"bytes,2,opt,name=active_subscription,json=activeSubscription,proto3" json:"active_subscription,omitempty"` // null when no active subscription
+	BidPurchasesRemaining int32                  `protobuf:"varint,3,opt,name=bid_purchases_remaining,json=bidPurchasesRemaining,proto3" json:"bid_purchases_remaining,omitempty"`
+	ValidUntil            *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=valid_until,json=validUntil,proto3" json:"valid_until,omitempty"` // expiry of active subscription, if any
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *GetSubscriptionStatusResponse) Reset() {
+	*x = GetSubscriptionStatusResponse{}
+	mi := &file_orders_order_v1_order_proto_msgTypes[70]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSubscriptionStatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSubscriptionStatusResponse) ProtoMessage() {}
+
+func (x *GetSubscriptionStatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_orders_order_v1_order_proto_msgTypes[70]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSubscriptionStatusResponse.ProtoReflect.Descriptor instead.
+func (*GetSubscriptionStatusResponse) Descriptor() ([]byte, []int) {
+	return file_orders_order_v1_order_proto_rawDescGZIP(), []int{70}
+}
+
+func (x *GetSubscriptionStatusResponse) GetHasActiveSubscription() bool {
+	if x != nil {
+		return x.HasActiveSubscription
+	}
+	return false
+}
+
+func (x *GetSubscriptionStatusResponse) GetActiveSubscription() *Subscription {
+	if x != nil {
+		return x.ActiveSubscription
+	}
+	return nil
+}
+
+func (x *GetSubscriptionStatusResponse) GetBidPurchasesRemaining() int32 {
+	if x != nil {
+		return x.BidPurchasesRemaining
+	}
+	return 0
+}
+
+func (x *GetSubscriptionStatusResponse) GetValidUntil() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ValidUntil
+	}
+	return nil
+}
+
 var File_orders_order_v1_order_proto protoreflect.FileDescriptor
 
 const file_orders_order_v1_order_proto_rawDesc = "" +
@@ -5440,7 +5552,15 @@ const file_orders_order_v1_order_proto_rawDesc = "" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\x124\n" +
 	"\x06status\x18\x02 \x01(\x0e2\x1c.orders.order.v1.OrderStatusR\x06status\"F\n" +
 	"\x16SetOrderStatusResponse\x12,\n" +
-	"\x05order\x18\x01 \x01(\v2\x16.orders.order.v1.OrderR\x05order*\\\n" +
+	"\x05order\x18\x01 \x01(\v2\x16.orders.order.v1.OrderR\x05order\"G\n" +
+	"\x1cGetSubscriptionStatusRequest\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\"\x9c\x02\n" +
+	"\x1dGetSubscriptionStatusResponse\x126\n" +
+	"\x17has_active_subscription\x18\x01 \x01(\bR\x15hasActiveSubscription\x12N\n" +
+	"\x13active_subscription\x18\x02 \x01(\v2\x1d.orders.order.v1.SubscriptionR\x12activeSubscription\x126\n" +
+	"\x17bid_purchases_remaining\x18\x03 \x01(\x05R\x15bidPurchasesRemaining\x12;\n" +
+	"\vvalid_until\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"validUntil*\\\n" +
 	"\bPlanType\x12\x19\n" +
 	"\x15PLAN_TYPE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16PLAN_TYPE_SUBSCRIPTION\x10\x01\x12\x19\n" +
@@ -5496,7 +5616,7 @@ const file_orders_order_v1_order_proto_rawDesc = "" +
 	"\x17DELIVERY_STATUS_SHIPPED\x10\x02\x12\x1d\n" +
 	"\x19DELIVERY_STATUS_DELIVERED\x10\x03\x12\x1d\n" +
 	"\x19DELIVERY_STATUS_INSTALLED\x10\x04\x12\x1d\n" +
-	"\x19DELIVERY_STATUS_CANCELLED\x10\x052\xff\x17\n" +
+	"\x19DELIVERY_STATUS_CANCELLED\x10\x052\xf7\x18\n" +
 	"\fOrderService\x12R\n" +
 	"\tListPlans\x12!.orders.order.v1.ListPlansRequest\x1a\".orders.order.v1.ListPlansResponse\x12U\n" +
 	"\n" +
@@ -5509,7 +5629,8 @@ const file_orders_order_v1_order_proto_rawDesc = "" +
 	"\x15GetSubscriptionsByOrg\x12-.orders.order.v1.GetSubscriptionsByOrgRequest\x1a..orders.order.v1.GetSubscriptionsByOrgResponse\x12m\n" +
 	"\x12CancelSubscription\x12*.orders.order.v1.CancelSubscriptionRequest\x1a+.orders.order.v1.CancelSubscriptionResponse\x12a\n" +
 	"\x0eCheckBidAccess\x12&.orders.order.v1.CheckBidAccessRequest\x1a'.orders.order.v1.CheckBidAccessResponse\x12\x85\x01\n" +
-	"\x1aCalculateSubscriptionPrice\x122.orders.order.v1.CalculateSubscriptionPriceRequest\x1a3.orders.order.v1.CalculateSubscriptionPriceResponse\x12X\n" +
+	"\x1aCalculateSubscriptionPrice\x122.orders.order.v1.CalculateSubscriptionPriceRequest\x1a3.orders.order.v1.CalculateSubscriptionPriceResponse\x12v\n" +
+	"\x15GetSubscriptionStatus\x12-.orders.order.v1.GetSubscriptionStatusRequest\x1a..orders.order.v1.GetSubscriptionStatusResponse\x12X\n" +
 	"\vPurchaseBid\x12#.orders.order.v1.PurchaseBidRequest\x1a$.orders.order.v1.PurchaseBidResponse\x12p\n" +
 	"\x13GetBidPurchasePrice\x12+.orders.order.v1.GetBidPurchasePriceRequest\x1a,.orders.order.v1.GetBidPurchasePriceResponse\x12X\n" +
 	"\vCreateOrder\x12#.orders.order.v1.CreateOrderRequest\x1a$.orders.order.v1.CreateOrderResponse\x12O\n" +
@@ -5544,7 +5665,7 @@ func file_orders_order_v1_order_proto_rawDescGZIP() []byte {
 }
 
 var file_orders_order_v1_order_proto_enumTypes = make([]protoimpl.EnumInfo, 9)
-var file_orders_order_v1_order_proto_msgTypes = make([]protoimpl.MessageInfo, 74)
+var file_orders_order_v1_order_proto_msgTypes = make([]protoimpl.MessageInfo, 76)
 var file_orders_order_v1_order_proto_goTypes = []any{
 	(PlanType)(0),                                  // 0: orders.order.v1.PlanType
 	(SubscriptionStatus)(0),                        // 1: orders.order.v1.SubscriptionStatus
@@ -5624,146 +5745,152 @@ var file_orders_order_v1_order_proto_goTypes = []any{
 	(*UpdateDeliveryStatusResponse)(nil),           // 75: orders.order.v1.UpdateDeliveryStatusResponse
 	(*SetOrderStatusRequest)(nil),                  // 76: orders.order.v1.SetOrderStatusRequest
 	(*SetOrderStatusResponse)(nil),                 // 77: orders.order.v1.SetOrderStatusResponse
-	nil,                                            // 78: orders.order.v1.Plan.FeaturesEntry
-	nil,                                            // 79: orders.order.v1.Subscription.TierAttributesEntry
-	nil,                                            // 80: orders.order.v1.CreatePlanRequest.FeaturesEntry
-	nil,                                            // 81: orders.order.v1.UpdatePlanRequest.FeaturesEntry
-	nil,                                            // 82: orders.order.v1.CreateSubscriptionRequest.TierAttributesEntry
-	(*timestamppb.Timestamp)(nil),                  // 83: google.protobuf.Timestamp
+	(*GetSubscriptionStatusRequest)(nil),           // 78: orders.order.v1.GetSubscriptionStatusRequest
+	(*GetSubscriptionStatusResponse)(nil),          // 79: orders.order.v1.GetSubscriptionStatusResponse
+	nil,                                            // 80: orders.order.v1.Plan.FeaturesEntry
+	nil,                                            // 81: orders.order.v1.Subscription.TierAttributesEntry
+	nil,                                            // 82: orders.order.v1.CreatePlanRequest.FeaturesEntry
+	nil,                                            // 83: orders.order.v1.UpdatePlanRequest.FeaturesEntry
+	nil,                                            // 84: orders.order.v1.CreateSubscriptionRequest.TierAttributesEntry
+	(*timestamppb.Timestamp)(nil),                  // 85: google.protobuf.Timestamp
 }
 var file_orders_order_v1_order_proto_depIdxs = []int32{
-	0,  // 0: orders.order.v1.Plan.plan_type:type_name -> orders.order.v1.PlanType
-	78, // 1: orders.order.v1.Plan.features:type_name -> orders.order.v1.Plan.FeaturesEntry
-	10, // 2: orders.order.v1.Plan.prices:type_name -> orders.order.v1.PlanPrice
-	83, // 3: orders.order.v1.Plan.created_at:type_name -> google.protobuf.Timestamp
-	83, // 4: orders.order.v1.Plan.updated_at:type_name -> google.protobuf.Timestamp
-	11, // 5: orders.order.v1.PlanPrice.tiers:type_name -> orders.order.v1.PlanPriceTier
-	1,  // 6: orders.order.v1.Subscription.status:type_name -> orders.order.v1.SubscriptionStatus
-	83, // 7: orders.order.v1.Subscription.current_period_start:type_name -> google.protobuf.Timestamp
-	83, // 8: orders.order.v1.Subscription.current_period_end:type_name -> google.protobuf.Timestamp
-	83, // 9: orders.order.v1.Subscription.cancelled_at:type_name -> google.protobuf.Timestamp
-	79, // 10: orders.order.v1.Subscription.tier_attributes:type_name -> orders.order.v1.Subscription.TierAttributesEntry
-	83, // 11: orders.order.v1.Subscription.created_at:type_name -> google.protobuf.Timestamp
-	83, // 12: orders.order.v1.Subscription.updated_at:type_name -> google.protobuf.Timestamp
-	9,  // 13: orders.order.v1.Subscription.plan:type_name -> orders.order.v1.Plan
-	2,  // 14: orders.order.v1.Order.status:type_name -> orders.order.v1.OrderStatus
-	4,  // 15: orders.order.v1.Order.delivery_type:type_name -> orders.order.v1.DeliveryType
-	3,  // 16: orders.order.v1.Order.escrow_status:type_name -> orders.order.v1.EscrowStatus
-	14, // 17: orders.order.v1.Order.items:type_name -> orders.order.v1.OrderItem
-	83, // 18: orders.order.v1.Order.created_at:type_name -> google.protobuf.Timestamp
-	83, // 19: orders.order.v1.Order.updated_at:type_name -> google.protobuf.Timestamp
-	5,  // 20: orders.order.v1.Order.order_type:type_name -> orders.order.v1.OrderType
-	6,  // 21: orders.order.v1.OrderItem.source:type_name -> orders.order.v1.ItemSource
-	8,  // 22: orders.order.v1.OrderItem.delivery_status:type_name -> orders.order.v1.DeliveryStatus
-	7,  // 23: orders.order.v1.OrderItem.item_condition:type_name -> orders.order.v1.ItemCondition
-	83, // 24: orders.order.v1.OrderItem.deleted_at:type_name -> google.protobuf.Timestamp
-	83, // 25: orders.order.v1.BidPurchase.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 26: orders.order.v1.ListPlansResponse.plans:type_name -> orders.order.v1.Plan
-	0,  // 27: orders.order.v1.CreatePlanRequest.plan_type:type_name -> orders.order.v1.PlanType
-	80, // 28: orders.order.v1.CreatePlanRequest.features:type_name -> orders.order.v1.CreatePlanRequest.FeaturesEntry
-	9,  // 29: orders.order.v1.CreatePlanResponse.plan:type_name -> orders.order.v1.Plan
-	81, // 30: orders.order.v1.UpdatePlanRequest.features:type_name -> orders.order.v1.UpdatePlanRequest.FeaturesEntry
-	9,  // 31: orders.order.v1.UpdatePlanResponse.plan:type_name -> orders.order.v1.Plan
-	23, // 32: orders.order.v1.SetPlanPricesRequest.prices:type_name -> orders.order.v1.PlanPriceInput
-	24, // 33: orders.order.v1.PlanPriceInput.tiers:type_name -> orders.order.v1.PlanPriceTierInput
-	9,  // 34: orders.order.v1.SetPlanPricesResponse.plan:type_name -> orders.order.v1.Plan
-	82, // 35: orders.order.v1.CreateSubscriptionRequest.tier_attributes:type_name -> orders.order.v1.CreateSubscriptionRequest.TierAttributesEntry
-	12, // 36: orders.order.v1.CreateSubscriptionResponse.subscription:type_name -> orders.order.v1.Subscription
-	12, // 37: orders.order.v1.GetSubscriptionResponse.subscription:type_name -> orders.order.v1.Subscription
-	12, // 38: orders.order.v1.GetSubscriptionsByOrgResponse.subscriptions:type_name -> orders.order.v1.Subscription
-	12, // 39: orders.order.v1.CancelSubscriptionResponse.subscription:type_name -> orders.order.v1.Subscription
-	15, // 40: orders.order.v1.PurchaseBidResponse.bid_purchase:type_name -> orders.order.v1.BidPurchase
-	43, // 41: orders.order.v1.CreateOrderRequest.items:type_name -> orders.order.v1.OrderItemInput
-	4,  // 42: orders.order.v1.CreateOrderRequest.delivery_type:type_name -> orders.order.v1.DeliveryType
-	13, // 43: orders.order.v1.CreateOrderResponse.order:type_name -> orders.order.v1.Order
-	13, // 44: orders.order.v1.GetOrderResponse.order:type_name -> orders.order.v1.Order
-	2,  // 45: orders.order.v1.ListOrdersRequest.status:type_name -> orders.order.v1.OrderStatus
-	5,  // 46: orders.order.v1.ListOrdersRequest.order_type:type_name -> orders.order.v1.OrderType
-	13, // 47: orders.order.v1.GetOrdersByCheckoutIdResponse.orders:type_name -> orders.order.v1.Order
-	13, // 48: orders.order.v1.ListOrdersResponse.orders:type_name -> orders.order.v1.Order
-	13, // 49: orders.order.v1.ConfirmShipmentResponse.order:type_name -> orders.order.v1.Order
-	13, // 50: orders.order.v1.ConfirmReceiptResponse.order:type_name -> orders.order.v1.Order
-	13, // 51: orders.order.v1.CancelOrderResponse.order:type_name -> orders.order.v1.Order
-	60, // 52: orders.order.v1.CreateWorkshopOrderRequest.items:type_name -> orders.order.v1.WorkshopOrderItemInput
-	6,  // 53: orders.order.v1.WorkshopOrderItemInput.source:type_name -> orders.order.v1.ItemSource
-	7,  // 54: orders.order.v1.WorkshopOrderItemInput.condition:type_name -> orders.order.v1.ItemCondition
-	13, // 55: orders.order.v1.CreateWorkshopOrderResponse.order:type_name -> orders.order.v1.Order
-	13, // 56: orders.order.v1.GetOrderByRepairOrderIdResponse.order:type_name -> orders.order.v1.Order
-	13, // 57: orders.order.v1.GetOrderByRepairOrderAndSellerResponse.order:type_name -> orders.order.v1.Order
-	13, // 58: orders.order.v1.ListOrdersByRepairOrderIdResponse.orders:type_name -> orders.order.v1.Order
-	60, // 59: orders.order.v1.AddOrderItemRequest.item:type_name -> orders.order.v1.WorkshopOrderItemInput
-	13, // 60: orders.order.v1.AddOrderItemResponse.order:type_name -> orders.order.v1.Order
-	6,  // 61: orders.order.v1.UpdateOrderItemRequest.source:type_name -> orders.order.v1.ItemSource
-	7,  // 62: orders.order.v1.UpdateOrderItemRequest.condition:type_name -> orders.order.v1.ItemCondition
-	13, // 63: orders.order.v1.UpdateOrderItemResponse.order:type_name -> orders.order.v1.Order
-	13, // 64: orders.order.v1.DeleteOrderItemResponse.order:type_name -> orders.order.v1.Order
-	8,  // 65: orders.order.v1.UpdateDeliveryStatusRequest.delivery_status:type_name -> orders.order.v1.DeliveryStatus
-	13, // 66: orders.order.v1.UpdateDeliveryStatusResponse.order:type_name -> orders.order.v1.Order
-	2,  // 67: orders.order.v1.SetOrderStatusRequest.status:type_name -> orders.order.v1.OrderStatus
-	13, // 68: orders.order.v1.SetOrderStatusResponse.order:type_name -> orders.order.v1.Order
-	16, // 69: orders.order.v1.OrderService.ListPlans:input_type -> orders.order.v1.ListPlansRequest
-	18, // 70: orders.order.v1.OrderService.CreatePlan:input_type -> orders.order.v1.CreatePlanRequest
-	20, // 71: orders.order.v1.OrderService.UpdatePlan:input_type -> orders.order.v1.UpdatePlanRequest
-	22, // 72: orders.order.v1.OrderService.SetPlanPrices:input_type -> orders.order.v1.SetPlanPricesRequest
-	26, // 73: orders.order.v1.OrderService.CreateSubscription:input_type -> orders.order.v1.CreateSubscriptionRequest
-	28, // 74: orders.order.v1.OrderService.GetSubscription:input_type -> orders.order.v1.GetSubscriptionRequest
-	30, // 75: orders.order.v1.OrderService.GetSubscriptionsByOrg:input_type -> orders.order.v1.GetSubscriptionsByOrgRequest
-	32, // 76: orders.order.v1.OrderService.CancelSubscription:input_type -> orders.order.v1.CancelSubscriptionRequest
-	34, // 77: orders.order.v1.OrderService.CheckBidAccess:input_type -> orders.order.v1.CheckBidAccessRequest
-	36, // 78: orders.order.v1.OrderService.CalculateSubscriptionPrice:input_type -> orders.order.v1.CalculateSubscriptionPriceRequest
-	38, // 79: orders.order.v1.OrderService.PurchaseBid:input_type -> orders.order.v1.PurchaseBidRequest
-	40, // 80: orders.order.v1.OrderService.GetBidPurchasePrice:input_type -> orders.order.v1.GetBidPurchasePriceRequest
-	42, // 81: orders.order.v1.OrderService.CreateOrder:input_type -> orders.order.v1.CreateOrderRequest
-	45, // 82: orders.order.v1.OrderService.GetOrder:input_type -> orders.order.v1.GetOrderRequest
-	47, // 83: orders.order.v1.OrderService.ListOrders:input_type -> orders.order.v1.ListOrdersRequest
-	51, // 84: orders.order.v1.OrderService.ConfirmShipment:input_type -> orders.order.v1.ConfirmShipmentRequest
-	53, // 85: orders.order.v1.OrderService.ConfirmReceipt:input_type -> orders.order.v1.ConfirmReceiptRequest
-	55, // 86: orders.order.v1.OrderService.CancelOrder:input_type -> orders.order.v1.CancelOrderRequest
-	48, // 87: orders.order.v1.OrderService.GetOrdersByCheckoutId:input_type -> orders.order.v1.GetOrdersByCheckoutIdRequest
-	59, // 88: orders.order.v1.OrderService.CreateWorkshopOrder:input_type -> orders.order.v1.CreateWorkshopOrderRequest
-	62, // 89: orders.order.v1.OrderService.GetOrderByRepairOrderId:input_type -> orders.order.v1.GetOrderByRepairOrderIdRequest
-	64, // 90: orders.order.v1.OrderService.GetOrderByRepairOrderAndSeller:input_type -> orders.order.v1.GetOrderByRepairOrderAndSellerRequest
-	66, // 91: orders.order.v1.OrderService.ListOrdersByRepairOrderId:input_type -> orders.order.v1.ListOrdersByRepairOrderIdRequest
-	68, // 92: orders.order.v1.OrderService.AddOrderItem:input_type -> orders.order.v1.AddOrderItemRequest
-	70, // 93: orders.order.v1.OrderService.UpdateOrderItem:input_type -> orders.order.v1.UpdateOrderItemRequest
-	72, // 94: orders.order.v1.OrderService.DeleteOrderItem:input_type -> orders.order.v1.DeleteOrderItemRequest
-	74, // 95: orders.order.v1.OrderService.UpdateDeliveryStatus:input_type -> orders.order.v1.UpdateDeliveryStatusRequest
-	76, // 96: orders.order.v1.OrderService.SetOrderStatus:input_type -> orders.order.v1.SetOrderStatusRequest
-	57, // 97: orders.order.v1.OrderService.GetSubscriptionStats:input_type -> orders.order.v1.GetSubscriptionStatsRequest
-	17, // 98: orders.order.v1.OrderService.ListPlans:output_type -> orders.order.v1.ListPlansResponse
-	19, // 99: orders.order.v1.OrderService.CreatePlan:output_type -> orders.order.v1.CreatePlanResponse
-	21, // 100: orders.order.v1.OrderService.UpdatePlan:output_type -> orders.order.v1.UpdatePlanResponse
-	25, // 101: orders.order.v1.OrderService.SetPlanPrices:output_type -> orders.order.v1.SetPlanPricesResponse
-	27, // 102: orders.order.v1.OrderService.CreateSubscription:output_type -> orders.order.v1.CreateSubscriptionResponse
-	29, // 103: orders.order.v1.OrderService.GetSubscription:output_type -> orders.order.v1.GetSubscriptionResponse
-	31, // 104: orders.order.v1.OrderService.GetSubscriptionsByOrg:output_type -> orders.order.v1.GetSubscriptionsByOrgResponse
-	33, // 105: orders.order.v1.OrderService.CancelSubscription:output_type -> orders.order.v1.CancelSubscriptionResponse
-	35, // 106: orders.order.v1.OrderService.CheckBidAccess:output_type -> orders.order.v1.CheckBidAccessResponse
-	37, // 107: orders.order.v1.OrderService.CalculateSubscriptionPrice:output_type -> orders.order.v1.CalculateSubscriptionPriceResponse
-	39, // 108: orders.order.v1.OrderService.PurchaseBid:output_type -> orders.order.v1.PurchaseBidResponse
-	41, // 109: orders.order.v1.OrderService.GetBidPurchasePrice:output_type -> orders.order.v1.GetBidPurchasePriceResponse
-	44, // 110: orders.order.v1.OrderService.CreateOrder:output_type -> orders.order.v1.CreateOrderResponse
-	46, // 111: orders.order.v1.OrderService.GetOrder:output_type -> orders.order.v1.GetOrderResponse
-	50, // 112: orders.order.v1.OrderService.ListOrders:output_type -> orders.order.v1.ListOrdersResponse
-	52, // 113: orders.order.v1.OrderService.ConfirmShipment:output_type -> orders.order.v1.ConfirmShipmentResponse
-	54, // 114: orders.order.v1.OrderService.ConfirmReceipt:output_type -> orders.order.v1.ConfirmReceiptResponse
-	56, // 115: orders.order.v1.OrderService.CancelOrder:output_type -> orders.order.v1.CancelOrderResponse
-	49, // 116: orders.order.v1.OrderService.GetOrdersByCheckoutId:output_type -> orders.order.v1.GetOrdersByCheckoutIdResponse
-	61, // 117: orders.order.v1.OrderService.CreateWorkshopOrder:output_type -> orders.order.v1.CreateWorkshopOrderResponse
-	63, // 118: orders.order.v1.OrderService.GetOrderByRepairOrderId:output_type -> orders.order.v1.GetOrderByRepairOrderIdResponse
-	65, // 119: orders.order.v1.OrderService.GetOrderByRepairOrderAndSeller:output_type -> orders.order.v1.GetOrderByRepairOrderAndSellerResponse
-	67, // 120: orders.order.v1.OrderService.ListOrdersByRepairOrderId:output_type -> orders.order.v1.ListOrdersByRepairOrderIdResponse
-	69, // 121: orders.order.v1.OrderService.AddOrderItem:output_type -> orders.order.v1.AddOrderItemResponse
-	71, // 122: orders.order.v1.OrderService.UpdateOrderItem:output_type -> orders.order.v1.UpdateOrderItemResponse
-	73, // 123: orders.order.v1.OrderService.DeleteOrderItem:output_type -> orders.order.v1.DeleteOrderItemResponse
-	75, // 124: orders.order.v1.OrderService.UpdateDeliveryStatus:output_type -> orders.order.v1.UpdateDeliveryStatusResponse
-	77, // 125: orders.order.v1.OrderService.SetOrderStatus:output_type -> orders.order.v1.SetOrderStatusResponse
-	58, // 126: orders.order.v1.OrderService.GetSubscriptionStats:output_type -> orders.order.v1.GetSubscriptionStatsResponse
-	98, // [98:127] is the sub-list for method output_type
-	69, // [69:98] is the sub-list for method input_type
-	69, // [69:69] is the sub-list for extension type_name
-	69, // [69:69] is the sub-list for extension extendee
-	0,  // [0:69] is the sub-list for field type_name
+	0,   // 0: orders.order.v1.Plan.plan_type:type_name -> orders.order.v1.PlanType
+	80,  // 1: orders.order.v1.Plan.features:type_name -> orders.order.v1.Plan.FeaturesEntry
+	10,  // 2: orders.order.v1.Plan.prices:type_name -> orders.order.v1.PlanPrice
+	85,  // 3: orders.order.v1.Plan.created_at:type_name -> google.protobuf.Timestamp
+	85,  // 4: orders.order.v1.Plan.updated_at:type_name -> google.protobuf.Timestamp
+	11,  // 5: orders.order.v1.PlanPrice.tiers:type_name -> orders.order.v1.PlanPriceTier
+	1,   // 6: orders.order.v1.Subscription.status:type_name -> orders.order.v1.SubscriptionStatus
+	85,  // 7: orders.order.v1.Subscription.current_period_start:type_name -> google.protobuf.Timestamp
+	85,  // 8: orders.order.v1.Subscription.current_period_end:type_name -> google.protobuf.Timestamp
+	85,  // 9: orders.order.v1.Subscription.cancelled_at:type_name -> google.protobuf.Timestamp
+	81,  // 10: orders.order.v1.Subscription.tier_attributes:type_name -> orders.order.v1.Subscription.TierAttributesEntry
+	85,  // 11: orders.order.v1.Subscription.created_at:type_name -> google.protobuf.Timestamp
+	85,  // 12: orders.order.v1.Subscription.updated_at:type_name -> google.protobuf.Timestamp
+	9,   // 13: orders.order.v1.Subscription.plan:type_name -> orders.order.v1.Plan
+	2,   // 14: orders.order.v1.Order.status:type_name -> orders.order.v1.OrderStatus
+	4,   // 15: orders.order.v1.Order.delivery_type:type_name -> orders.order.v1.DeliveryType
+	3,   // 16: orders.order.v1.Order.escrow_status:type_name -> orders.order.v1.EscrowStatus
+	14,  // 17: orders.order.v1.Order.items:type_name -> orders.order.v1.OrderItem
+	85,  // 18: orders.order.v1.Order.created_at:type_name -> google.protobuf.Timestamp
+	85,  // 19: orders.order.v1.Order.updated_at:type_name -> google.protobuf.Timestamp
+	5,   // 20: orders.order.v1.Order.order_type:type_name -> orders.order.v1.OrderType
+	6,   // 21: orders.order.v1.OrderItem.source:type_name -> orders.order.v1.ItemSource
+	8,   // 22: orders.order.v1.OrderItem.delivery_status:type_name -> orders.order.v1.DeliveryStatus
+	7,   // 23: orders.order.v1.OrderItem.item_condition:type_name -> orders.order.v1.ItemCondition
+	85,  // 24: orders.order.v1.OrderItem.deleted_at:type_name -> google.protobuf.Timestamp
+	85,  // 25: orders.order.v1.BidPurchase.created_at:type_name -> google.protobuf.Timestamp
+	9,   // 26: orders.order.v1.ListPlansResponse.plans:type_name -> orders.order.v1.Plan
+	0,   // 27: orders.order.v1.CreatePlanRequest.plan_type:type_name -> orders.order.v1.PlanType
+	82,  // 28: orders.order.v1.CreatePlanRequest.features:type_name -> orders.order.v1.CreatePlanRequest.FeaturesEntry
+	9,   // 29: orders.order.v1.CreatePlanResponse.plan:type_name -> orders.order.v1.Plan
+	83,  // 30: orders.order.v1.UpdatePlanRequest.features:type_name -> orders.order.v1.UpdatePlanRequest.FeaturesEntry
+	9,   // 31: orders.order.v1.UpdatePlanResponse.plan:type_name -> orders.order.v1.Plan
+	23,  // 32: orders.order.v1.SetPlanPricesRequest.prices:type_name -> orders.order.v1.PlanPriceInput
+	24,  // 33: orders.order.v1.PlanPriceInput.tiers:type_name -> orders.order.v1.PlanPriceTierInput
+	9,   // 34: orders.order.v1.SetPlanPricesResponse.plan:type_name -> orders.order.v1.Plan
+	84,  // 35: orders.order.v1.CreateSubscriptionRequest.tier_attributes:type_name -> orders.order.v1.CreateSubscriptionRequest.TierAttributesEntry
+	12,  // 36: orders.order.v1.CreateSubscriptionResponse.subscription:type_name -> orders.order.v1.Subscription
+	12,  // 37: orders.order.v1.GetSubscriptionResponse.subscription:type_name -> orders.order.v1.Subscription
+	12,  // 38: orders.order.v1.GetSubscriptionsByOrgResponse.subscriptions:type_name -> orders.order.v1.Subscription
+	12,  // 39: orders.order.v1.CancelSubscriptionResponse.subscription:type_name -> orders.order.v1.Subscription
+	15,  // 40: orders.order.v1.PurchaseBidResponse.bid_purchase:type_name -> orders.order.v1.BidPurchase
+	43,  // 41: orders.order.v1.CreateOrderRequest.items:type_name -> orders.order.v1.OrderItemInput
+	4,   // 42: orders.order.v1.CreateOrderRequest.delivery_type:type_name -> orders.order.v1.DeliveryType
+	13,  // 43: orders.order.v1.CreateOrderResponse.order:type_name -> orders.order.v1.Order
+	13,  // 44: orders.order.v1.GetOrderResponse.order:type_name -> orders.order.v1.Order
+	2,   // 45: orders.order.v1.ListOrdersRequest.status:type_name -> orders.order.v1.OrderStatus
+	5,   // 46: orders.order.v1.ListOrdersRequest.order_type:type_name -> orders.order.v1.OrderType
+	13,  // 47: orders.order.v1.GetOrdersByCheckoutIdResponse.orders:type_name -> orders.order.v1.Order
+	13,  // 48: orders.order.v1.ListOrdersResponse.orders:type_name -> orders.order.v1.Order
+	13,  // 49: orders.order.v1.ConfirmShipmentResponse.order:type_name -> orders.order.v1.Order
+	13,  // 50: orders.order.v1.ConfirmReceiptResponse.order:type_name -> orders.order.v1.Order
+	13,  // 51: orders.order.v1.CancelOrderResponse.order:type_name -> orders.order.v1.Order
+	60,  // 52: orders.order.v1.CreateWorkshopOrderRequest.items:type_name -> orders.order.v1.WorkshopOrderItemInput
+	6,   // 53: orders.order.v1.WorkshopOrderItemInput.source:type_name -> orders.order.v1.ItemSource
+	7,   // 54: orders.order.v1.WorkshopOrderItemInput.condition:type_name -> orders.order.v1.ItemCondition
+	13,  // 55: orders.order.v1.CreateWorkshopOrderResponse.order:type_name -> orders.order.v1.Order
+	13,  // 56: orders.order.v1.GetOrderByRepairOrderIdResponse.order:type_name -> orders.order.v1.Order
+	13,  // 57: orders.order.v1.GetOrderByRepairOrderAndSellerResponse.order:type_name -> orders.order.v1.Order
+	13,  // 58: orders.order.v1.ListOrdersByRepairOrderIdResponse.orders:type_name -> orders.order.v1.Order
+	60,  // 59: orders.order.v1.AddOrderItemRequest.item:type_name -> orders.order.v1.WorkshopOrderItemInput
+	13,  // 60: orders.order.v1.AddOrderItemResponse.order:type_name -> orders.order.v1.Order
+	6,   // 61: orders.order.v1.UpdateOrderItemRequest.source:type_name -> orders.order.v1.ItemSource
+	7,   // 62: orders.order.v1.UpdateOrderItemRequest.condition:type_name -> orders.order.v1.ItemCondition
+	13,  // 63: orders.order.v1.UpdateOrderItemResponse.order:type_name -> orders.order.v1.Order
+	13,  // 64: orders.order.v1.DeleteOrderItemResponse.order:type_name -> orders.order.v1.Order
+	8,   // 65: orders.order.v1.UpdateDeliveryStatusRequest.delivery_status:type_name -> orders.order.v1.DeliveryStatus
+	13,  // 66: orders.order.v1.UpdateDeliveryStatusResponse.order:type_name -> orders.order.v1.Order
+	2,   // 67: orders.order.v1.SetOrderStatusRequest.status:type_name -> orders.order.v1.OrderStatus
+	13,  // 68: orders.order.v1.SetOrderStatusResponse.order:type_name -> orders.order.v1.Order
+	12,  // 69: orders.order.v1.GetSubscriptionStatusResponse.active_subscription:type_name -> orders.order.v1.Subscription
+	85,  // 70: orders.order.v1.GetSubscriptionStatusResponse.valid_until:type_name -> google.protobuf.Timestamp
+	16,  // 71: orders.order.v1.OrderService.ListPlans:input_type -> orders.order.v1.ListPlansRequest
+	18,  // 72: orders.order.v1.OrderService.CreatePlan:input_type -> orders.order.v1.CreatePlanRequest
+	20,  // 73: orders.order.v1.OrderService.UpdatePlan:input_type -> orders.order.v1.UpdatePlanRequest
+	22,  // 74: orders.order.v1.OrderService.SetPlanPrices:input_type -> orders.order.v1.SetPlanPricesRequest
+	26,  // 75: orders.order.v1.OrderService.CreateSubscription:input_type -> orders.order.v1.CreateSubscriptionRequest
+	28,  // 76: orders.order.v1.OrderService.GetSubscription:input_type -> orders.order.v1.GetSubscriptionRequest
+	30,  // 77: orders.order.v1.OrderService.GetSubscriptionsByOrg:input_type -> orders.order.v1.GetSubscriptionsByOrgRequest
+	32,  // 78: orders.order.v1.OrderService.CancelSubscription:input_type -> orders.order.v1.CancelSubscriptionRequest
+	34,  // 79: orders.order.v1.OrderService.CheckBidAccess:input_type -> orders.order.v1.CheckBidAccessRequest
+	36,  // 80: orders.order.v1.OrderService.CalculateSubscriptionPrice:input_type -> orders.order.v1.CalculateSubscriptionPriceRequest
+	78,  // 81: orders.order.v1.OrderService.GetSubscriptionStatus:input_type -> orders.order.v1.GetSubscriptionStatusRequest
+	38,  // 82: orders.order.v1.OrderService.PurchaseBid:input_type -> orders.order.v1.PurchaseBidRequest
+	40,  // 83: orders.order.v1.OrderService.GetBidPurchasePrice:input_type -> orders.order.v1.GetBidPurchasePriceRequest
+	42,  // 84: orders.order.v1.OrderService.CreateOrder:input_type -> orders.order.v1.CreateOrderRequest
+	45,  // 85: orders.order.v1.OrderService.GetOrder:input_type -> orders.order.v1.GetOrderRequest
+	47,  // 86: orders.order.v1.OrderService.ListOrders:input_type -> orders.order.v1.ListOrdersRequest
+	51,  // 87: orders.order.v1.OrderService.ConfirmShipment:input_type -> orders.order.v1.ConfirmShipmentRequest
+	53,  // 88: orders.order.v1.OrderService.ConfirmReceipt:input_type -> orders.order.v1.ConfirmReceiptRequest
+	55,  // 89: orders.order.v1.OrderService.CancelOrder:input_type -> orders.order.v1.CancelOrderRequest
+	48,  // 90: orders.order.v1.OrderService.GetOrdersByCheckoutId:input_type -> orders.order.v1.GetOrdersByCheckoutIdRequest
+	59,  // 91: orders.order.v1.OrderService.CreateWorkshopOrder:input_type -> orders.order.v1.CreateWorkshopOrderRequest
+	62,  // 92: orders.order.v1.OrderService.GetOrderByRepairOrderId:input_type -> orders.order.v1.GetOrderByRepairOrderIdRequest
+	64,  // 93: orders.order.v1.OrderService.GetOrderByRepairOrderAndSeller:input_type -> orders.order.v1.GetOrderByRepairOrderAndSellerRequest
+	66,  // 94: orders.order.v1.OrderService.ListOrdersByRepairOrderId:input_type -> orders.order.v1.ListOrdersByRepairOrderIdRequest
+	68,  // 95: orders.order.v1.OrderService.AddOrderItem:input_type -> orders.order.v1.AddOrderItemRequest
+	70,  // 96: orders.order.v1.OrderService.UpdateOrderItem:input_type -> orders.order.v1.UpdateOrderItemRequest
+	72,  // 97: orders.order.v1.OrderService.DeleteOrderItem:input_type -> orders.order.v1.DeleteOrderItemRequest
+	74,  // 98: orders.order.v1.OrderService.UpdateDeliveryStatus:input_type -> orders.order.v1.UpdateDeliveryStatusRequest
+	76,  // 99: orders.order.v1.OrderService.SetOrderStatus:input_type -> orders.order.v1.SetOrderStatusRequest
+	57,  // 100: orders.order.v1.OrderService.GetSubscriptionStats:input_type -> orders.order.v1.GetSubscriptionStatsRequest
+	17,  // 101: orders.order.v1.OrderService.ListPlans:output_type -> orders.order.v1.ListPlansResponse
+	19,  // 102: orders.order.v1.OrderService.CreatePlan:output_type -> orders.order.v1.CreatePlanResponse
+	21,  // 103: orders.order.v1.OrderService.UpdatePlan:output_type -> orders.order.v1.UpdatePlanResponse
+	25,  // 104: orders.order.v1.OrderService.SetPlanPrices:output_type -> orders.order.v1.SetPlanPricesResponse
+	27,  // 105: orders.order.v1.OrderService.CreateSubscription:output_type -> orders.order.v1.CreateSubscriptionResponse
+	29,  // 106: orders.order.v1.OrderService.GetSubscription:output_type -> orders.order.v1.GetSubscriptionResponse
+	31,  // 107: orders.order.v1.OrderService.GetSubscriptionsByOrg:output_type -> orders.order.v1.GetSubscriptionsByOrgResponse
+	33,  // 108: orders.order.v1.OrderService.CancelSubscription:output_type -> orders.order.v1.CancelSubscriptionResponse
+	35,  // 109: orders.order.v1.OrderService.CheckBidAccess:output_type -> orders.order.v1.CheckBidAccessResponse
+	37,  // 110: orders.order.v1.OrderService.CalculateSubscriptionPrice:output_type -> orders.order.v1.CalculateSubscriptionPriceResponse
+	79,  // 111: orders.order.v1.OrderService.GetSubscriptionStatus:output_type -> orders.order.v1.GetSubscriptionStatusResponse
+	39,  // 112: orders.order.v1.OrderService.PurchaseBid:output_type -> orders.order.v1.PurchaseBidResponse
+	41,  // 113: orders.order.v1.OrderService.GetBidPurchasePrice:output_type -> orders.order.v1.GetBidPurchasePriceResponse
+	44,  // 114: orders.order.v1.OrderService.CreateOrder:output_type -> orders.order.v1.CreateOrderResponse
+	46,  // 115: orders.order.v1.OrderService.GetOrder:output_type -> orders.order.v1.GetOrderResponse
+	50,  // 116: orders.order.v1.OrderService.ListOrders:output_type -> orders.order.v1.ListOrdersResponse
+	52,  // 117: orders.order.v1.OrderService.ConfirmShipment:output_type -> orders.order.v1.ConfirmShipmentResponse
+	54,  // 118: orders.order.v1.OrderService.ConfirmReceipt:output_type -> orders.order.v1.ConfirmReceiptResponse
+	56,  // 119: orders.order.v1.OrderService.CancelOrder:output_type -> orders.order.v1.CancelOrderResponse
+	49,  // 120: orders.order.v1.OrderService.GetOrdersByCheckoutId:output_type -> orders.order.v1.GetOrdersByCheckoutIdResponse
+	61,  // 121: orders.order.v1.OrderService.CreateWorkshopOrder:output_type -> orders.order.v1.CreateWorkshopOrderResponse
+	63,  // 122: orders.order.v1.OrderService.GetOrderByRepairOrderId:output_type -> orders.order.v1.GetOrderByRepairOrderIdResponse
+	65,  // 123: orders.order.v1.OrderService.GetOrderByRepairOrderAndSeller:output_type -> orders.order.v1.GetOrderByRepairOrderAndSellerResponse
+	67,  // 124: orders.order.v1.OrderService.ListOrdersByRepairOrderId:output_type -> orders.order.v1.ListOrdersByRepairOrderIdResponse
+	69,  // 125: orders.order.v1.OrderService.AddOrderItem:output_type -> orders.order.v1.AddOrderItemResponse
+	71,  // 126: orders.order.v1.OrderService.UpdateOrderItem:output_type -> orders.order.v1.UpdateOrderItemResponse
+	73,  // 127: orders.order.v1.OrderService.DeleteOrderItem:output_type -> orders.order.v1.DeleteOrderItemResponse
+	75,  // 128: orders.order.v1.OrderService.UpdateDeliveryStatus:output_type -> orders.order.v1.UpdateDeliveryStatusResponse
+	77,  // 129: orders.order.v1.OrderService.SetOrderStatus:output_type -> orders.order.v1.SetOrderStatusResponse
+	58,  // 130: orders.order.v1.OrderService.GetSubscriptionStats:output_type -> orders.order.v1.GetSubscriptionStatsResponse
+	101, // [101:131] is the sub-list for method output_type
+	71,  // [71:101] is the sub-list for method input_type
+	71,  // [71:71] is the sub-list for extension type_name
+	71,  // [71:71] is the sub-list for extension extendee
+	0,   // [0:71] is the sub-list for field type_name
 }
 
 func init() { file_orders_order_v1_order_proto_init() }
@@ -5781,7 +5908,7 @@ func file_orders_order_v1_order_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_orders_order_v1_order_proto_rawDesc), len(file_orders_order_v1_order_proto_rawDesc)),
 			NumEnums:      9,
-			NumMessages:   74,
+			NumMessages:   76,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
