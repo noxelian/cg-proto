@@ -33,15 +33,84 @@ service SubscriptionsService {
   rpc UploadMedia(UploadMediaRequest) returns (UploadMediaResponse);
   rpc ListMedia(ListMediaRequest) returns (ListMediaResponse);
 
+  // === Phase 63: Claim flow RPCs ===
+
+  // SubmitClaim creates a new customer claim (manager-driven).
+  // Validation chain (D-04): subscription.status='active', under claims_limit
+  // and coverage_limit (<= boundary per QA-FIX-7), payload.zones not in
+  // inspection_act.exclusions. Race-safe via SELECT ... FOR UPDATE (D-05).
+  rpc SubmitClaim(SubmitClaimRequest) returns (SubmitClaimResponse);
+
+  // ApproveClaim moves the claim to approved/repair_in_progress and triggers
+  // cg-workshop.CreateRepairOrder. Idempotent on retry per D-11. Approved-
+  // without-repair_order_id is a PENDING RETRY state (per ARCH-FIX-3).
+  rpc ApproveClaim(ApproveClaimRequest) returns (ApproveClaimResponse);
+
+  rpc RejectClaim(RejectClaimRequest) returns (RejectClaimResponse);
+  rpc GetClaim(GetClaimRequest) returns (Claim);
+  rpc ListClaims(ListClaimsRequest) returns (ListClaimsResponse);
+
+  // === Phase 62: Inspection Act + Activation RPCs ===
+
+  // StartInspection creates (or returns existing) draft inspection_act for a
+  // subscription. Idempotent: second call with same subscription_id returns
+  // the same draft id (created=false).
+  //
+  // Validation: subscription.status MUST be in {pending_contact,
+  // inspection_scheduled, inspection_in_progress}. Error codes:
+  //   - NOT_FOUND: subscription not found
+  //   - FAILED_PRECONDITION: subscription already active/exhausted/expired
+  rpc StartInspection(StartInspectionRequest) returns (StartInspectionResponse);
+
+  // UploadInspectionMedia is a thin alias of UploadMedia that REQUIRES
+  // inspection_id and validates view_code metadata for baseline_photo kind.
+  // Implemented as a wrapper over media.Service.Upload (Phase 58) with
+  // server-side metadata enrichment ({"view_code":"<code>"} -> metadata JSONB).
+  //
+  // Validation:
+  //   - kind MUST be MEDIA_KIND_BASELINE_PHOTO, BASELINE_VIDEO, or DAMAGE_PHOTO
+  //   - view_code REQUIRED when kind=BASELINE_PHOTO; allowed values:
+  //     front, rear, left, right, top, interior
+  //   - inspection_id MUST exist and act.status='draft'
+  rpc UploadInspectionMedia(UploadInspectionMediaRequest) returns (UploadInspectionMediaResponse);
+
+  // GetInspectionBySubscription returns the most recent inspection_act for a
+  // subscription (draft OR submitted). Used by admin-web /admin/shield to
+  // resume an in-progress draft on page load. Returns NOT_FOUND if none.
+  rpc GetInspectionBySubscription(GetInspectionBySubscriptionRequest) returns (GetInspectionBySubscriptionResponse);
+
+  // UpdateInspectionDraft applies a partial PATCH to a draft inspection_act
+  // (per Phase 62 C-07 PATCH semantics). Each field is "set if non-nil";
+  // exclusions replaces the entire JSONB array atomically.
+  // Returns NOT_FOUND if no draft exists, FAILED_PRECONDITION if already
+  // submitted, INVALID_ARGUMENT for invalid exclusions schema.
+  rpc UpdateInspectionDraft(UpdateInspectionDraftRequest) returns (UpdateInspectionDraftResponse);
+
+  // CompleteInspectionAct transitions the act from draft -> submitted.
+  // Server-authoritative submit gate (per Phase 62 C-05):
+  //   - 6 distinct baseline_photo view_codes uploaded
+  //   - every damaged zone has a damage_photo (media_id linked)
+  //   - address present if location='on_site'
+  //   - mileage > 0
+  //   - vin_confirmed = true
+  // On success: act.status='submitted', subscription.status='inspection_done'.
+  // Failure returns FAILED_PRECONDITION with structured details ('missing' field).
+  rpc CompleteInspectionAct(CompleteInspectionActRequest) returns (CompleteInspectionActResponse);
+
+  // ActivateSubscription is the FINAL step. Requires the subscription's
+  // most recent inspection_act in status='submitted'. On success:
+  //   - subscription.status='active'
+  //   - activated_at=NOW()
+  //   - expires_at=activated_at + 1 year
+  //   - CRM Deal MoveDealStage(SHIELD_STAGE_ACTIVE_ID) (best-effort)
+  //   - Kafka publish subscription.activated event (best-effort)
+  //   - SMS template shield_activated to phone (best-effort)
+  // Idempotent: returns updated Subscription if already active.
+  rpc ActivateSubscription(ActivateSubscriptionRequest) returns (Subscription);
+
   // === Deferred RPCs (NOT declared in Phase 55 — TODO comments only) ===
   // TODO(Phase 59): rpc IngestPayment(IngestPaymentRequest) returns (IngestPaymentResponse);
   // TODO(Phase 59): rpc CreateSubscription(CreateSubscriptionRequest) returns (Subscription);
-  // TODO(Phase 62): rpc StartInspection(StartInspectionRequest) returns (StartInspectionResponse);
-  // TODO(Phase 62): rpc CompleteInspectionAct(CompleteInspectionActRequest) returns (CompleteInspectionActResponse);
-  // TODO(Phase 62): rpc ActivateSubscription(ActivateSubscriptionRequest) returns (Subscription);
-  // TODO(Phase 63): rpc SubmitClaim(SubmitClaimRequest) returns (SubmitClaimResponse);
-  // TODO(Phase 63): rpc ApproveClaim(ApproveClaimRequest) returns (ApproveClaimResponse);
-  // TODO(Phase 63): rpc RejectClaim(RejectClaimRequest) returns (RejectClaimResponse);
   // CRITICAL: Do NOT add empty message stubs for the above — adding them later
   // would break wire format. Add full RPC + messages in target phases.
 }
@@ -234,4 +303,261 @@ message ListMediaRequest {
 
 message ListMediaResponse {
   repeated Media media = 1;
+}
+
+// =============================================
+// Phase 63: Claim flow (subscription_claim table)
+// =============================================
+
+// ClaimKind mirrors the Postgres claim_kind enum (Phase 54).
+enum ClaimKind {
+  CLAIM_KIND_UNSPECIFIED = 0;
+  CLAIM_KIND_DAMAGE      = 1;
+  CLAIM_KIND_MAINTENANCE = 2;
+  CLAIM_KIND_TOW         = 3;
+}
+
+// ClaimStatus mirrors the Postgres claim_status enum (Phase 54).
+enum ClaimStatus {
+  CLAIM_STATUS_UNSPECIFIED         = 0;
+  CLAIM_STATUS_SUBMITTED           = 1;
+  CLAIM_STATUS_IN_REVIEW           = 2;
+  CLAIM_STATUS_APPROVED            = 3;
+  CLAIM_STATUS_REJECTED            = 4;
+  CLAIM_STATUS_REPAIR_IN_PROGRESS  = 5;
+  CLAIM_STATUS_COMPLETED           = 6;
+}
+
+// Claim represents one row in subscription_claim. Money in tiin (1 KZT = 100 tiin).
+// repair_order_id is int64 (cg-workshop's BIGSERIAL id) per C-01 of 63-PLAN.
+message Claim {
+  string id = 1;
+  string subscription_id = 2;
+  ClaimKind kind = 3;
+  ClaimStatus status = 4;
+  google.protobuf.Struct payload = 5;
+  int64 estimate_amount_tiin = 6;
+  int64 franchise_amount_tiin = 7;
+  optional int64 final_amount_tiin = 8;
+  optional int64 repair_order_id = 9;
+  optional int64 manager_id = 10;
+  optional string manager_notes = 11;
+  string claim_number = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Timestamp updated_at = 14;
+}
+
+// CoverageBreakdown is returned by SubmitClaim per CLM-08 -- helps admin-web
+// show remaining capacity inline with the new claim.
+message CoverageBreakdown {
+  int64 coverage_limit_tiin = 1;
+  int64 used_amount_tiin = 2;
+  int64 remaining_tiin = 3;
+  int64 this_claim_tiin = 4;
+  int32 claims_limit = 5;        // -1 = unlimited
+  int32 used_claims = 6;
+}
+
+message SubmitClaimRequest {
+  string subscription_id = 1;
+  ClaimKind kind = 2;
+  google.protobuf.Struct payload = 3;
+  repeated string media_ids = 4;
+  int64 estimate_amount_tiin = 5;
+  // manager_id intentionally NOT in request — extracted from JWT ctx server-side
+  // (T-63-02-03). Field number 6 reserved for future use.
+  reserved 6;
+  reserved "manager_id";
+  optional string manager_notes = 7;
+}
+
+message SubmitClaimResponse {
+  Claim claim = 1;
+  CoverageBreakdown breakdown = 2;
+}
+
+message ApproveClaimRequest {
+  string claim_id = 1;
+  reserved 2;
+  reserved "manager_id";
+  optional string manager_notes = 3;
+}
+
+message ApproveClaimResponse {
+  Claim claim = 1;
+}
+
+message RejectClaimRequest {
+  string claim_id = 1;
+  reserved 2;
+  reserved "manager_id";
+  string manager_notes = 3;
+}
+
+message RejectClaimResponse {
+  Claim claim = 1;
+}
+
+message GetClaimRequest {
+  string claim_id = 1;
+}
+
+// ListClaimsRequest uses page/page_size pagination per C-10 of 63-PLAN.
+message ListClaimsRequest {
+  optional ClaimStatus status = 1;
+  optional string subscription_id = 2;
+  optional int64 manager_id = 3;
+  int32 page = 4;            // 1-based; 0 treated as 1
+  int32 page_size = 5;       // default 50, max 200
+}
+
+message ListClaimsResponse {
+  repeated Claim claims = 1;
+  int32 total = 2;
+}
+
+// =============================================
+// Phase 62: Inspection Act (subscription_inspection_act table)
+// =============================================
+
+// InspectionStatus mirrors enum inspection_status in cg-subscriptions
+// migration 000013.
+enum InspectionStatus {
+  INSPECTION_STATUS_UNSPECIFIED = 0;
+  INSPECTION_STATUS_DRAFT = 1;
+  INSPECTION_STATUS_SUBMITTED = 2;
+}
+
+// InspectionLocation mirrors enum inspection_location.
+enum InspectionLocation {
+  INSPECTION_LOCATION_UNSPECIFIED = 0;
+  INSPECTION_LOCATION_SHOP = 1;
+  INSPECTION_LOCATION_ON_SITE = 2;
+}
+
+// ZoneState — one entry in inspection_act.exclusions JSONB.
+// severity == "" means "OK" (zone clean — but in practice OK zones are NOT
+// stored; only damaged zones land in the list).
+// Allowed zones: front_bumper, rear_bumper, hood, doors, fenders, roof,
+// interior, glass.
+message ZoneState {
+  string zone = 1;
+  string severity = 2;       // "minor" | "major" | ""
+  string note = 3;           // optional, <=500 chars
+  optional string media_id = 4;  // UUID linking to subscription_media
+}
+
+// InspectionAct mirrors the row in subscription_inspection_act.
+message InspectionAct {
+  string id = 1;
+  string subscription_id = 2;
+  int64 inspected_by = 3;
+  optional google.protobuf.Timestamp inspected_at = 4;
+  InspectionLocation location = 5;
+  optional string address = 6;
+  // Vehicle data (autofilled via cg_car, manually overridable per LEG-08)
+  optional string plate = 7;
+  optional string car_mark = 8;
+  optional string car_model = 9;
+  optional int32 car_year = 10;
+  optional string vin = 11;
+  bool vin_confirmed = 12;
+  optional int32 mileage = 13;
+  optional string summary = 14;
+  // exclusions array — only damaged zones (severity != "" in domain).
+  repeated ZoneState exclusions = 15;
+  InspectionStatus status = 16;
+  google.protobuf.Timestamp created_at = 17;
+  google.protobuf.Timestamp updated_at = 18;
+}
+
+// ----- StartInspection -----
+message StartInspectionRequest {
+  string subscription_id = 1;
+  int64 inspected_by = 2;  // admin user id (manager) — wired by BFF from JWT
+}
+
+message StartInspectionResponse {
+  InspectionAct inspection_act = 1;
+  bool created = 2;  // true if new draft created, false if existing returned
+}
+
+// ----- UploadInspectionMedia -----
+// Wraps UploadMedia (Phase 58) with mandatory inspection_id + view_code.
+// Multipart over BFF; gRPC consumes file_data bytes.
+message UploadInspectionMediaRequest {
+  string inspection_id = 1;
+  // kind must be one of the inspection-relevant MediaKind values:
+  // BASELINE_PHOTO, BASELINE_VIDEO, DAMAGE_PHOTO.
+  MediaKind kind = 2;
+  // view_code REQUIRED when kind == MEDIA_KIND_BASELINE_PHOTO; ignored otherwise.
+  // Allowed: front, rear, left, right, top, interior.
+  string view_code = 3;
+  bytes file_data = 4;
+  string filename = 5;
+  string content_type = 6;
+  // Optional zone for damage_photo — if present, server links the photo to
+  // exclusions[zone].media_id automatically.
+  optional string zone = 7;
+  // uploaded_by — admin user id (manager); wired by BFF from JWT.
+  optional int64 uploaded_by = 8;
+}
+
+message UploadInspectionMediaResponse {
+  Media media = 1;
+}
+
+// ----- GetInspectionBySubscription -----
+message GetInspectionBySubscriptionRequest {
+  string subscription_id = 1;
+}
+
+message GetInspectionBySubscriptionResponse {
+  InspectionAct inspection_act = 1;
+}
+
+// ----- UpdateInspectionDraft -----
+// Partial PATCH per C-07. Each optional field is "set if present"; to clear
+// a nullable text column to NULL, send empty string. The exclusions field,
+// when present, REPLACES the entire JSONB array (caller owns merge semantics).
+message UpdateInspectionDraftRequest {
+  string inspection_id = 1;
+  optional InspectionLocation location = 2;
+  optional string address = 3;
+  optional string plate = 4;
+  optional string car_mark = 5;
+  optional string car_model = 6;
+  optional int32 car_year = 7;
+  optional string vin = 8;
+  optional bool vin_confirmed = 9;
+  optional int32 mileage = 10;
+  optional string summary = 11;
+  // When set, replaces exclusions JSONB atomically. Caller MUST send the full
+  // array (not a delta).
+  repeated ZoneState exclusions = 12;
+  // exclusions_replace = true signals "use exclusions field even if empty"
+  // (otherwise empty repeated == omitted; we cannot distinguish "clear all"
+  // from "no change"). Client sets this to true when toggling all zones to OK.
+  bool exclusions_replace = 13;
+}
+
+message UpdateInspectionDraftResponse {
+  InspectionAct inspection_act = 1;
+}
+
+// ----- CompleteInspectionAct -----
+message CompleteInspectionActRequest {
+  string inspection_id = 1;
+}
+
+message CompleteInspectionActResponse {
+  InspectionAct inspection_act = 1;
+  Subscription subscription = 2;  // post-update (status='inspection_done')
+}
+
+// ----- ActivateSubscription -----
+message ActivateSubscriptionRequest {
+  string subscription_id = 1;
+  // activated_by — admin user id (manager). Wired by BFF from JWT.
+  int64 activated_by = 2;
 }

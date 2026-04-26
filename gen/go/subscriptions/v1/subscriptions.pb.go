@@ -259,6 +259,222 @@ func (MediaKind) EnumDescriptor() ([]byte, []int) {
 	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{3}
 }
 
+// ClaimKind mirrors the Postgres claim_kind enum (Phase 54).
+type ClaimKind int32
+
+const (
+	ClaimKind_CLAIM_KIND_UNSPECIFIED ClaimKind = 0
+	ClaimKind_CLAIM_KIND_DAMAGE      ClaimKind = 1
+	ClaimKind_CLAIM_KIND_MAINTENANCE ClaimKind = 2
+	ClaimKind_CLAIM_KIND_TOW         ClaimKind = 3
+)
+
+// Enum value maps for ClaimKind.
+var (
+	ClaimKind_name = map[int32]string{
+		0: "CLAIM_KIND_UNSPECIFIED",
+		1: "CLAIM_KIND_DAMAGE",
+		2: "CLAIM_KIND_MAINTENANCE",
+		3: "CLAIM_KIND_TOW",
+	}
+	ClaimKind_value = map[string]int32{
+		"CLAIM_KIND_UNSPECIFIED": 0,
+		"CLAIM_KIND_DAMAGE":      1,
+		"CLAIM_KIND_MAINTENANCE": 2,
+		"CLAIM_KIND_TOW":         3,
+	}
+)
+
+func (x ClaimKind) Enum() *ClaimKind {
+	p := new(ClaimKind)
+	*p = x
+	return p
+}
+
+func (x ClaimKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ClaimKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_subscriptions_v1_subscriptions_proto_enumTypes[4].Descriptor()
+}
+
+func (ClaimKind) Type() protoreflect.EnumType {
+	return &file_subscriptions_v1_subscriptions_proto_enumTypes[4]
+}
+
+func (x ClaimKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ClaimKind.Descriptor instead.
+func (ClaimKind) EnumDescriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{4}
+}
+
+// ClaimStatus mirrors the Postgres claim_status enum (Phase 54).
+type ClaimStatus int32
+
+const (
+	ClaimStatus_CLAIM_STATUS_UNSPECIFIED        ClaimStatus = 0
+	ClaimStatus_CLAIM_STATUS_SUBMITTED          ClaimStatus = 1
+	ClaimStatus_CLAIM_STATUS_IN_REVIEW          ClaimStatus = 2
+	ClaimStatus_CLAIM_STATUS_APPROVED           ClaimStatus = 3
+	ClaimStatus_CLAIM_STATUS_REJECTED           ClaimStatus = 4
+	ClaimStatus_CLAIM_STATUS_REPAIR_IN_PROGRESS ClaimStatus = 5
+	ClaimStatus_CLAIM_STATUS_COMPLETED          ClaimStatus = 6
+)
+
+// Enum value maps for ClaimStatus.
+var (
+	ClaimStatus_name = map[int32]string{
+		0: "CLAIM_STATUS_UNSPECIFIED",
+		1: "CLAIM_STATUS_SUBMITTED",
+		2: "CLAIM_STATUS_IN_REVIEW",
+		3: "CLAIM_STATUS_APPROVED",
+		4: "CLAIM_STATUS_REJECTED",
+		5: "CLAIM_STATUS_REPAIR_IN_PROGRESS",
+		6: "CLAIM_STATUS_COMPLETED",
+	}
+	ClaimStatus_value = map[string]int32{
+		"CLAIM_STATUS_UNSPECIFIED":        0,
+		"CLAIM_STATUS_SUBMITTED":          1,
+		"CLAIM_STATUS_IN_REVIEW":          2,
+		"CLAIM_STATUS_APPROVED":           3,
+		"CLAIM_STATUS_REJECTED":           4,
+		"CLAIM_STATUS_REPAIR_IN_PROGRESS": 5,
+		"CLAIM_STATUS_COMPLETED":          6,
+	}
+)
+
+func (x ClaimStatus) Enum() *ClaimStatus {
+	p := new(ClaimStatus)
+	*p = x
+	return p
+}
+
+func (x ClaimStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ClaimStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_subscriptions_v1_subscriptions_proto_enumTypes[5].Descriptor()
+}
+
+func (ClaimStatus) Type() protoreflect.EnumType {
+	return &file_subscriptions_v1_subscriptions_proto_enumTypes[5]
+}
+
+func (x ClaimStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ClaimStatus.Descriptor instead.
+func (ClaimStatus) EnumDescriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{5}
+}
+
+// InspectionStatus mirrors enum inspection_status in cg-subscriptions
+// migration 000013.
+type InspectionStatus int32
+
+const (
+	InspectionStatus_INSPECTION_STATUS_UNSPECIFIED InspectionStatus = 0
+	InspectionStatus_INSPECTION_STATUS_DRAFT       InspectionStatus = 1
+	InspectionStatus_INSPECTION_STATUS_SUBMITTED   InspectionStatus = 2
+)
+
+// Enum value maps for InspectionStatus.
+var (
+	InspectionStatus_name = map[int32]string{
+		0: "INSPECTION_STATUS_UNSPECIFIED",
+		1: "INSPECTION_STATUS_DRAFT",
+		2: "INSPECTION_STATUS_SUBMITTED",
+	}
+	InspectionStatus_value = map[string]int32{
+		"INSPECTION_STATUS_UNSPECIFIED": 0,
+		"INSPECTION_STATUS_DRAFT":       1,
+		"INSPECTION_STATUS_SUBMITTED":   2,
+	}
+)
+
+func (x InspectionStatus) Enum() *InspectionStatus {
+	p := new(InspectionStatus)
+	*p = x
+	return p
+}
+
+func (x InspectionStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (InspectionStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_subscriptions_v1_subscriptions_proto_enumTypes[6].Descriptor()
+}
+
+func (InspectionStatus) Type() protoreflect.EnumType {
+	return &file_subscriptions_v1_subscriptions_proto_enumTypes[6]
+}
+
+func (x InspectionStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use InspectionStatus.Descriptor instead.
+func (InspectionStatus) EnumDescriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{6}
+}
+
+// InspectionLocation mirrors enum inspection_location.
+type InspectionLocation int32
+
+const (
+	InspectionLocation_INSPECTION_LOCATION_UNSPECIFIED InspectionLocation = 0
+	InspectionLocation_INSPECTION_LOCATION_SHOP        InspectionLocation = 1
+	InspectionLocation_INSPECTION_LOCATION_ON_SITE     InspectionLocation = 2
+)
+
+// Enum value maps for InspectionLocation.
+var (
+	InspectionLocation_name = map[int32]string{
+		0: "INSPECTION_LOCATION_UNSPECIFIED",
+		1: "INSPECTION_LOCATION_SHOP",
+		2: "INSPECTION_LOCATION_ON_SITE",
+	}
+	InspectionLocation_value = map[string]int32{
+		"INSPECTION_LOCATION_UNSPECIFIED": 0,
+		"INSPECTION_LOCATION_SHOP":        1,
+		"INSPECTION_LOCATION_ON_SITE":     2,
+	}
+)
+
+func (x InspectionLocation) Enum() *InspectionLocation {
+	p := new(InspectionLocation)
+	*p = x
+	return p
+}
+
+func (x InspectionLocation) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (InspectionLocation) Descriptor() protoreflect.EnumDescriptor {
+	return file_subscriptions_v1_subscriptions_proto_enumTypes[7].Descriptor()
+}
+
+func (InspectionLocation) Type() protoreflect.EnumType {
+	return &file_subscriptions_v1_subscriptions_proto_enumTypes[7]
+}
+
+func (x InspectionLocation) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use InspectionLocation.Descriptor instead.
+func (InspectionLocation) EnumDescriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{7}
+}
+
 // Product — an entry in the subscription catalog. `name` is the internal
 // short ref ("Easy"/"Body"/"Premium") and `display_name` is the user-facing
 // label ("AUTOBODY Shield Easy"). `config` is opaque JSONB so that future
@@ -1354,6 +1570,1691 @@ func (x *ListMediaResponse) GetMedia() []*Media {
 	return nil
 }
 
+// Claim represents one row in subscription_claim. Money in tiin (1 KZT = 100 tiin).
+// repair_order_id is int64 (cg-workshop's BIGSERIAL id) per C-01 of 63-PLAN.
+type Claim struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	Id                  string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	SubscriptionId      string                 `protobuf:"bytes,2,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	Kind                ClaimKind              `protobuf:"varint,3,opt,name=kind,proto3,enum=cg.subscriptions.v1.ClaimKind" json:"kind,omitempty"`
+	Status              ClaimStatus            `protobuf:"varint,4,opt,name=status,proto3,enum=cg.subscriptions.v1.ClaimStatus" json:"status,omitempty"`
+	Payload             *structpb.Struct       `protobuf:"bytes,5,opt,name=payload,proto3" json:"payload,omitempty"`
+	EstimateAmountTiin  int64                  `protobuf:"varint,6,opt,name=estimate_amount_tiin,json=estimateAmountTiin,proto3" json:"estimate_amount_tiin,omitempty"`
+	FranchiseAmountTiin int64                  `protobuf:"varint,7,opt,name=franchise_amount_tiin,json=franchiseAmountTiin,proto3" json:"franchise_amount_tiin,omitempty"`
+	FinalAmountTiin     *int64                 `protobuf:"varint,8,opt,name=final_amount_tiin,json=finalAmountTiin,proto3,oneof" json:"final_amount_tiin,omitempty"`
+	RepairOrderId       *int64                 `protobuf:"varint,9,opt,name=repair_order_id,json=repairOrderId,proto3,oneof" json:"repair_order_id,omitempty"`
+	ManagerId           *int64                 `protobuf:"varint,10,opt,name=manager_id,json=managerId,proto3,oneof" json:"manager_id,omitempty"`
+	ManagerNotes        *string                `protobuf:"bytes,11,opt,name=manager_notes,json=managerNotes,proto3,oneof" json:"manager_notes,omitempty"`
+	ClaimNumber         string                 `protobuf:"bytes,12,opt,name=claim_number,json=claimNumber,proto3" json:"claim_number,omitempty"`
+	CreatedAt           *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt           *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *Claim) Reset() {
+	*x = Claim{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Claim) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Claim) ProtoMessage() {}
+
+func (x *Claim) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Claim.ProtoReflect.Descriptor instead.
+func (*Claim) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *Claim) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Claim) GetSubscriptionId() string {
+	if x != nil {
+		return x.SubscriptionId
+	}
+	return ""
+}
+
+func (x *Claim) GetKind() ClaimKind {
+	if x != nil {
+		return x.Kind
+	}
+	return ClaimKind_CLAIM_KIND_UNSPECIFIED
+}
+
+func (x *Claim) GetStatus() ClaimStatus {
+	if x != nil {
+		return x.Status
+	}
+	return ClaimStatus_CLAIM_STATUS_UNSPECIFIED
+}
+
+func (x *Claim) GetPayload() *structpb.Struct {
+	if x != nil {
+		return x.Payload
+	}
+	return nil
+}
+
+func (x *Claim) GetEstimateAmountTiin() int64 {
+	if x != nil {
+		return x.EstimateAmountTiin
+	}
+	return 0
+}
+
+func (x *Claim) GetFranchiseAmountTiin() int64 {
+	if x != nil {
+		return x.FranchiseAmountTiin
+	}
+	return 0
+}
+
+func (x *Claim) GetFinalAmountTiin() int64 {
+	if x != nil && x.FinalAmountTiin != nil {
+		return *x.FinalAmountTiin
+	}
+	return 0
+}
+
+func (x *Claim) GetRepairOrderId() int64 {
+	if x != nil && x.RepairOrderId != nil {
+		return *x.RepairOrderId
+	}
+	return 0
+}
+
+func (x *Claim) GetManagerId() int64 {
+	if x != nil && x.ManagerId != nil {
+		return *x.ManagerId
+	}
+	return 0
+}
+
+func (x *Claim) GetManagerNotes() string {
+	if x != nil && x.ManagerNotes != nil {
+		return *x.ManagerNotes
+	}
+	return ""
+}
+
+func (x *Claim) GetClaimNumber() string {
+	if x != nil {
+		return x.ClaimNumber
+	}
+	return ""
+}
+
+func (x *Claim) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Claim) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+// CoverageBreakdown is returned by SubmitClaim per CLM-08 -- helps admin-web
+// show remaining capacity inline with the new claim.
+type CoverageBreakdown struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	CoverageLimitTiin int64                  `protobuf:"varint,1,opt,name=coverage_limit_tiin,json=coverageLimitTiin,proto3" json:"coverage_limit_tiin,omitempty"`
+	UsedAmountTiin    int64                  `protobuf:"varint,2,opt,name=used_amount_tiin,json=usedAmountTiin,proto3" json:"used_amount_tiin,omitempty"`
+	RemainingTiin     int64                  `protobuf:"varint,3,opt,name=remaining_tiin,json=remainingTiin,proto3" json:"remaining_tiin,omitempty"`
+	ThisClaimTiin     int64                  `protobuf:"varint,4,opt,name=this_claim_tiin,json=thisClaimTiin,proto3" json:"this_claim_tiin,omitempty"`
+	ClaimsLimit       int32                  `protobuf:"varint,5,opt,name=claims_limit,json=claimsLimit,proto3" json:"claims_limit,omitempty"` // -1 = unlimited
+	UsedClaims        int32                  `protobuf:"varint,6,opt,name=used_claims,json=usedClaims,proto3" json:"used_claims,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *CoverageBreakdown) Reset() {
+	*x = CoverageBreakdown{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CoverageBreakdown) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CoverageBreakdown) ProtoMessage() {}
+
+func (x *CoverageBreakdown) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CoverageBreakdown.ProtoReflect.Descriptor instead.
+func (*CoverageBreakdown) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *CoverageBreakdown) GetCoverageLimitTiin() int64 {
+	if x != nil {
+		return x.CoverageLimitTiin
+	}
+	return 0
+}
+
+func (x *CoverageBreakdown) GetUsedAmountTiin() int64 {
+	if x != nil {
+		return x.UsedAmountTiin
+	}
+	return 0
+}
+
+func (x *CoverageBreakdown) GetRemainingTiin() int64 {
+	if x != nil {
+		return x.RemainingTiin
+	}
+	return 0
+}
+
+func (x *CoverageBreakdown) GetThisClaimTiin() int64 {
+	if x != nil {
+		return x.ThisClaimTiin
+	}
+	return 0
+}
+
+func (x *CoverageBreakdown) GetClaimsLimit() int32 {
+	if x != nil {
+		return x.ClaimsLimit
+	}
+	return 0
+}
+
+func (x *CoverageBreakdown) GetUsedClaims() int32 {
+	if x != nil {
+		return x.UsedClaims
+	}
+	return 0
+}
+
+type SubmitClaimRequest struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	SubscriptionId     string                 `protobuf:"bytes,1,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	Kind               ClaimKind              `protobuf:"varint,2,opt,name=kind,proto3,enum=cg.subscriptions.v1.ClaimKind" json:"kind,omitempty"`
+	Payload            *structpb.Struct       `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload,omitempty"`
+	MediaIds           []string               `protobuf:"bytes,4,rep,name=media_ids,json=mediaIds,proto3" json:"media_ids,omitempty"`
+	EstimateAmountTiin int64                  `protobuf:"varint,5,opt,name=estimate_amount_tiin,json=estimateAmountTiin,proto3" json:"estimate_amount_tiin,omitempty"`
+	ManagerNotes       *string                `protobuf:"bytes,7,opt,name=manager_notes,json=managerNotes,proto3,oneof" json:"manager_notes,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *SubmitClaimRequest) Reset() {
+	*x = SubmitClaimRequest{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubmitClaimRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubmitClaimRequest) ProtoMessage() {}
+
+func (x *SubmitClaimRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubmitClaimRequest.ProtoReflect.Descriptor instead.
+func (*SubmitClaimRequest) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *SubmitClaimRequest) GetSubscriptionId() string {
+	if x != nil {
+		return x.SubscriptionId
+	}
+	return ""
+}
+
+func (x *SubmitClaimRequest) GetKind() ClaimKind {
+	if x != nil {
+		return x.Kind
+	}
+	return ClaimKind_CLAIM_KIND_UNSPECIFIED
+}
+
+func (x *SubmitClaimRequest) GetPayload() *structpb.Struct {
+	if x != nil {
+		return x.Payload
+	}
+	return nil
+}
+
+func (x *SubmitClaimRequest) GetMediaIds() []string {
+	if x != nil {
+		return x.MediaIds
+	}
+	return nil
+}
+
+func (x *SubmitClaimRequest) GetEstimateAmountTiin() int64 {
+	if x != nil {
+		return x.EstimateAmountTiin
+	}
+	return 0
+}
+
+func (x *SubmitClaimRequest) GetManagerNotes() string {
+	if x != nil && x.ManagerNotes != nil {
+		return *x.ManagerNotes
+	}
+	return ""
+}
+
+type SubmitClaimResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Claim         *Claim                 `protobuf:"bytes,1,opt,name=claim,proto3" json:"claim,omitempty"`
+	Breakdown     *CoverageBreakdown     `protobuf:"bytes,2,opt,name=breakdown,proto3" json:"breakdown,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SubmitClaimResponse) Reset() {
+	*x = SubmitClaimResponse{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubmitClaimResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubmitClaimResponse) ProtoMessage() {}
+
+func (x *SubmitClaimResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubmitClaimResponse.ProtoReflect.Descriptor instead.
+func (*SubmitClaimResponse) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *SubmitClaimResponse) GetClaim() *Claim {
+	if x != nil {
+		return x.Claim
+	}
+	return nil
+}
+
+func (x *SubmitClaimResponse) GetBreakdown() *CoverageBreakdown {
+	if x != nil {
+		return x.Breakdown
+	}
+	return nil
+}
+
+type ApproveClaimRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ClaimId       string                 `protobuf:"bytes,1,opt,name=claim_id,json=claimId,proto3" json:"claim_id,omitempty"`
+	ManagerNotes  *string                `protobuf:"bytes,3,opt,name=manager_notes,json=managerNotes,proto3,oneof" json:"manager_notes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApproveClaimRequest) Reset() {
+	*x = ApproveClaimRequest{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApproveClaimRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApproveClaimRequest) ProtoMessage() {}
+
+func (x *ApproveClaimRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApproveClaimRequest.ProtoReflect.Descriptor instead.
+func (*ApproveClaimRequest) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *ApproveClaimRequest) GetClaimId() string {
+	if x != nil {
+		return x.ClaimId
+	}
+	return ""
+}
+
+func (x *ApproveClaimRequest) GetManagerNotes() string {
+	if x != nil && x.ManagerNotes != nil {
+		return *x.ManagerNotes
+	}
+	return ""
+}
+
+type ApproveClaimResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Claim         *Claim                 `protobuf:"bytes,1,opt,name=claim,proto3" json:"claim,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApproveClaimResponse) Reset() {
+	*x = ApproveClaimResponse{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApproveClaimResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApproveClaimResponse) ProtoMessage() {}
+
+func (x *ApproveClaimResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApproveClaimResponse.ProtoReflect.Descriptor instead.
+func (*ApproveClaimResponse) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *ApproveClaimResponse) GetClaim() *Claim {
+	if x != nil {
+		return x.Claim
+	}
+	return nil
+}
+
+type RejectClaimRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ClaimId       string                 `protobuf:"bytes,1,opt,name=claim_id,json=claimId,proto3" json:"claim_id,omitempty"`
+	ManagerNotes  string                 `protobuf:"bytes,3,opt,name=manager_notes,json=managerNotes,proto3" json:"manager_notes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RejectClaimRequest) Reset() {
+	*x = RejectClaimRequest{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RejectClaimRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RejectClaimRequest) ProtoMessage() {}
+
+func (x *RejectClaimRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RejectClaimRequest.ProtoReflect.Descriptor instead.
+func (*RejectClaimRequest) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *RejectClaimRequest) GetClaimId() string {
+	if x != nil {
+		return x.ClaimId
+	}
+	return ""
+}
+
+func (x *RejectClaimRequest) GetManagerNotes() string {
+	if x != nil {
+		return x.ManagerNotes
+	}
+	return ""
+}
+
+type RejectClaimResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Claim         *Claim                 `protobuf:"bytes,1,opt,name=claim,proto3" json:"claim,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RejectClaimResponse) Reset() {
+	*x = RejectClaimResponse{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RejectClaimResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RejectClaimResponse) ProtoMessage() {}
+
+func (x *RejectClaimResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RejectClaimResponse.ProtoReflect.Descriptor instead.
+func (*RejectClaimResponse) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *RejectClaimResponse) GetClaim() *Claim {
+	if x != nil {
+		return x.Claim
+	}
+	return nil
+}
+
+type GetClaimRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ClaimId       string                 `protobuf:"bytes,1,opt,name=claim_id,json=claimId,proto3" json:"claim_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetClaimRequest) Reset() {
+	*x = GetClaimRequest{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetClaimRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetClaimRequest) ProtoMessage() {}
+
+func (x *GetClaimRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetClaimRequest.ProtoReflect.Descriptor instead.
+func (*GetClaimRequest) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *GetClaimRequest) GetClaimId() string {
+	if x != nil {
+		return x.ClaimId
+	}
+	return ""
+}
+
+// ListClaimsRequest uses page/page_size pagination per C-10 of 63-PLAN.
+type ListClaimsRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Status         *ClaimStatus           `protobuf:"varint,1,opt,name=status,proto3,enum=cg.subscriptions.v1.ClaimStatus,oneof" json:"status,omitempty"`
+	SubscriptionId *string                `protobuf:"bytes,2,opt,name=subscription_id,json=subscriptionId,proto3,oneof" json:"subscription_id,omitempty"`
+	ManagerId      *int64                 `protobuf:"varint,3,opt,name=manager_id,json=managerId,proto3,oneof" json:"manager_id,omitempty"`
+	Page           int32                  `protobuf:"varint,4,opt,name=page,proto3" json:"page,omitempty"`                         // 1-based; 0 treated as 1
+	PageSize       int32                  `protobuf:"varint,5,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"` // default 50, max 200
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ListClaimsRequest) Reset() {
+	*x = ListClaimsRequest{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListClaimsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListClaimsRequest) ProtoMessage() {}
+
+func (x *ListClaimsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListClaimsRequest.ProtoReflect.Descriptor instead.
+func (*ListClaimsRequest) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *ListClaimsRequest) GetStatus() ClaimStatus {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return ClaimStatus_CLAIM_STATUS_UNSPECIFIED
+}
+
+func (x *ListClaimsRequest) GetSubscriptionId() string {
+	if x != nil && x.SubscriptionId != nil {
+		return *x.SubscriptionId
+	}
+	return ""
+}
+
+func (x *ListClaimsRequest) GetManagerId() int64 {
+	if x != nil && x.ManagerId != nil {
+		return *x.ManagerId
+	}
+	return 0
+}
+
+func (x *ListClaimsRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListClaimsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+type ListClaimsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Claims        []*Claim               `protobuf:"bytes,1,rep,name=claims,proto3" json:"claims,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListClaimsResponse) Reset() {
+	*x = ListClaimsResponse{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListClaimsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListClaimsResponse) ProtoMessage() {}
+
+func (x *ListClaimsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListClaimsResponse.ProtoReflect.Descriptor instead.
+func (*ListClaimsResponse) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *ListClaimsResponse) GetClaims() []*Claim {
+	if x != nil {
+		return x.Claims
+	}
+	return nil
+}
+
+func (x *ListClaimsResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+// ZoneState — one entry in inspection_act.exclusions JSONB.
+// severity == "" means "OK" (zone clean — but in practice OK zones are NOT
+// stored; only damaged zones land in the list).
+// Allowed zones: front_bumper, rear_bumper, hood, doors, fenders, roof,
+// interior, glass.
+type ZoneState struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Zone          string                 `protobuf:"bytes,1,opt,name=zone,proto3" json:"zone,omitempty"`
+	Severity      string                 `protobuf:"bytes,2,opt,name=severity,proto3" json:"severity,omitempty"`                    // "minor" | "major" | ""
+	Note          string                 `protobuf:"bytes,3,opt,name=note,proto3" json:"note,omitempty"`                            // optional, <=500 chars
+	MediaId       *string                `protobuf:"bytes,4,opt,name=media_id,json=mediaId,proto3,oneof" json:"media_id,omitempty"` // UUID linking to subscription_media
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ZoneState) Reset() {
+	*x = ZoneState{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ZoneState) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ZoneState) ProtoMessage() {}
+
+func (x *ZoneState) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ZoneState.ProtoReflect.Descriptor instead.
+func (*ZoneState) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *ZoneState) GetZone() string {
+	if x != nil {
+		return x.Zone
+	}
+	return ""
+}
+
+func (x *ZoneState) GetSeverity() string {
+	if x != nil {
+		return x.Severity
+	}
+	return ""
+}
+
+func (x *ZoneState) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
+func (x *ZoneState) GetMediaId() string {
+	if x != nil && x.MediaId != nil {
+		return *x.MediaId
+	}
+	return ""
+}
+
+// InspectionAct mirrors the row in subscription_inspection_act.
+type InspectionAct struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	SubscriptionId string                 `protobuf:"bytes,2,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	InspectedBy    int64                  `protobuf:"varint,3,opt,name=inspected_by,json=inspectedBy,proto3" json:"inspected_by,omitempty"`
+	InspectedAt    *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=inspected_at,json=inspectedAt,proto3,oneof" json:"inspected_at,omitempty"`
+	Location       InspectionLocation     `protobuf:"varint,5,opt,name=location,proto3,enum=cg.subscriptions.v1.InspectionLocation" json:"location,omitempty"`
+	Address        *string                `protobuf:"bytes,6,opt,name=address,proto3,oneof" json:"address,omitempty"`
+	// Vehicle data (autofilled via cg_car, manually overridable per LEG-08)
+	Plate        *string `protobuf:"bytes,7,opt,name=plate,proto3,oneof" json:"plate,omitempty"`
+	CarMark      *string `protobuf:"bytes,8,opt,name=car_mark,json=carMark,proto3,oneof" json:"car_mark,omitempty"`
+	CarModel     *string `protobuf:"bytes,9,opt,name=car_model,json=carModel,proto3,oneof" json:"car_model,omitempty"`
+	CarYear      *int32  `protobuf:"varint,10,opt,name=car_year,json=carYear,proto3,oneof" json:"car_year,omitempty"`
+	Vin          *string `protobuf:"bytes,11,opt,name=vin,proto3,oneof" json:"vin,omitempty"`
+	VinConfirmed bool    `protobuf:"varint,12,opt,name=vin_confirmed,json=vinConfirmed,proto3" json:"vin_confirmed,omitempty"`
+	Mileage      *int32  `protobuf:"varint,13,opt,name=mileage,proto3,oneof" json:"mileage,omitempty"`
+	Summary      *string `protobuf:"bytes,14,opt,name=summary,proto3,oneof" json:"summary,omitempty"`
+	// exclusions array — only damaged zones (severity != "" in domain).
+	Exclusions    []*ZoneState           `protobuf:"bytes,15,rep,name=exclusions,proto3" json:"exclusions,omitempty"`
+	Status        InspectionStatus       `protobuf:"varint,16,opt,name=status,proto3,enum=cg.subscriptions.v1.InspectionStatus" json:"status,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,18,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InspectionAct) Reset() {
+	*x = InspectionAct{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InspectionAct) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InspectionAct) ProtoMessage() {}
+
+func (x *InspectionAct) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InspectionAct.ProtoReflect.Descriptor instead.
+func (*InspectionAct) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *InspectionAct) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *InspectionAct) GetSubscriptionId() string {
+	if x != nil {
+		return x.SubscriptionId
+	}
+	return ""
+}
+
+func (x *InspectionAct) GetInspectedBy() int64 {
+	if x != nil {
+		return x.InspectedBy
+	}
+	return 0
+}
+
+func (x *InspectionAct) GetInspectedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.InspectedAt
+	}
+	return nil
+}
+
+func (x *InspectionAct) GetLocation() InspectionLocation {
+	if x != nil {
+		return x.Location
+	}
+	return InspectionLocation_INSPECTION_LOCATION_UNSPECIFIED
+}
+
+func (x *InspectionAct) GetAddress() string {
+	if x != nil && x.Address != nil {
+		return *x.Address
+	}
+	return ""
+}
+
+func (x *InspectionAct) GetPlate() string {
+	if x != nil && x.Plate != nil {
+		return *x.Plate
+	}
+	return ""
+}
+
+func (x *InspectionAct) GetCarMark() string {
+	if x != nil && x.CarMark != nil {
+		return *x.CarMark
+	}
+	return ""
+}
+
+func (x *InspectionAct) GetCarModel() string {
+	if x != nil && x.CarModel != nil {
+		return *x.CarModel
+	}
+	return ""
+}
+
+func (x *InspectionAct) GetCarYear() int32 {
+	if x != nil && x.CarYear != nil {
+		return *x.CarYear
+	}
+	return 0
+}
+
+func (x *InspectionAct) GetVin() string {
+	if x != nil && x.Vin != nil {
+		return *x.Vin
+	}
+	return ""
+}
+
+func (x *InspectionAct) GetVinConfirmed() bool {
+	if x != nil {
+		return x.VinConfirmed
+	}
+	return false
+}
+
+func (x *InspectionAct) GetMileage() int32 {
+	if x != nil && x.Mileage != nil {
+		return *x.Mileage
+	}
+	return 0
+}
+
+func (x *InspectionAct) GetSummary() string {
+	if x != nil && x.Summary != nil {
+		return *x.Summary
+	}
+	return ""
+}
+
+func (x *InspectionAct) GetExclusions() []*ZoneState {
+	if x != nil {
+		return x.Exclusions
+	}
+	return nil
+}
+
+func (x *InspectionAct) GetStatus() InspectionStatus {
+	if x != nil {
+		return x.Status
+	}
+	return InspectionStatus_INSPECTION_STATUS_UNSPECIFIED
+}
+
+func (x *InspectionAct) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *InspectionAct) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+// ----- StartInspection -----
+type StartInspectionRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	SubscriptionId string                 `protobuf:"bytes,1,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	InspectedBy    int64                  `protobuf:"varint,2,opt,name=inspected_by,json=inspectedBy,proto3" json:"inspected_by,omitempty"` // admin user id (manager) — wired by BFF from JWT
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *StartInspectionRequest) Reset() {
+	*x = StartInspectionRequest{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StartInspectionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StartInspectionRequest) ProtoMessage() {}
+
+func (x *StartInspectionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StartInspectionRequest.ProtoReflect.Descriptor instead.
+func (*StartInspectionRequest) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *StartInspectionRequest) GetSubscriptionId() string {
+	if x != nil {
+		return x.SubscriptionId
+	}
+	return ""
+}
+
+func (x *StartInspectionRequest) GetInspectedBy() int64 {
+	if x != nil {
+		return x.InspectedBy
+	}
+	return 0
+}
+
+type StartInspectionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	InspectionAct *InspectionAct         `protobuf:"bytes,1,opt,name=inspection_act,json=inspectionAct,proto3" json:"inspection_act,omitempty"`
+	Created       bool                   `protobuf:"varint,2,opt,name=created,proto3" json:"created,omitempty"` // true if new draft created, false if existing returned
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StartInspectionResponse) Reset() {
+	*x = StartInspectionResponse{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StartInspectionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StartInspectionResponse) ProtoMessage() {}
+
+func (x *StartInspectionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StartInspectionResponse.ProtoReflect.Descriptor instead.
+func (*StartInspectionResponse) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *StartInspectionResponse) GetInspectionAct() *InspectionAct {
+	if x != nil {
+		return x.InspectionAct
+	}
+	return nil
+}
+
+func (x *StartInspectionResponse) GetCreated() bool {
+	if x != nil {
+		return x.Created
+	}
+	return false
+}
+
+// ----- UploadInspectionMedia -----
+// Wraps UploadMedia (Phase 58) with mandatory inspection_id + view_code.
+// Multipart over BFF; gRPC consumes file_data bytes.
+type UploadInspectionMediaRequest struct {
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	InspectionId string                 `protobuf:"bytes,1,opt,name=inspection_id,json=inspectionId,proto3" json:"inspection_id,omitempty"`
+	// kind must be one of the inspection-relevant MediaKind values:
+	// BASELINE_PHOTO, BASELINE_VIDEO, DAMAGE_PHOTO.
+	Kind MediaKind `protobuf:"varint,2,opt,name=kind,proto3,enum=cg.subscriptions.v1.MediaKind" json:"kind,omitempty"`
+	// view_code REQUIRED when kind == MEDIA_KIND_BASELINE_PHOTO; ignored otherwise.
+	// Allowed: front, rear, left, right, top, interior.
+	ViewCode    string `protobuf:"bytes,3,opt,name=view_code,json=viewCode,proto3" json:"view_code,omitempty"`
+	FileData    []byte `protobuf:"bytes,4,opt,name=file_data,json=fileData,proto3" json:"file_data,omitempty"`
+	Filename    string `protobuf:"bytes,5,opt,name=filename,proto3" json:"filename,omitempty"`
+	ContentType string `protobuf:"bytes,6,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	// Optional zone for damage_photo — if present, server links the photo to
+	// exclusions[zone].media_id automatically.
+	Zone *string `protobuf:"bytes,7,opt,name=zone,proto3,oneof" json:"zone,omitempty"`
+	// uploaded_by — admin user id (manager); wired by BFF from JWT.
+	UploadedBy    *int64 `protobuf:"varint,8,opt,name=uploaded_by,json=uploadedBy,proto3,oneof" json:"uploaded_by,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadInspectionMediaRequest) Reset() {
+	*x = UploadInspectionMediaRequest{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadInspectionMediaRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadInspectionMediaRequest) ProtoMessage() {}
+
+func (x *UploadInspectionMediaRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadInspectionMediaRequest.ProtoReflect.Descriptor instead.
+func (*UploadInspectionMediaRequest) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *UploadInspectionMediaRequest) GetInspectionId() string {
+	if x != nil {
+		return x.InspectionId
+	}
+	return ""
+}
+
+func (x *UploadInspectionMediaRequest) GetKind() MediaKind {
+	if x != nil {
+		return x.Kind
+	}
+	return MediaKind_MEDIA_KIND_UNSPECIFIED
+}
+
+func (x *UploadInspectionMediaRequest) GetViewCode() string {
+	if x != nil {
+		return x.ViewCode
+	}
+	return ""
+}
+
+func (x *UploadInspectionMediaRequest) GetFileData() []byte {
+	if x != nil {
+		return x.FileData
+	}
+	return nil
+}
+
+func (x *UploadInspectionMediaRequest) GetFilename() string {
+	if x != nil {
+		return x.Filename
+	}
+	return ""
+}
+
+func (x *UploadInspectionMediaRequest) GetContentType() string {
+	if x != nil {
+		return x.ContentType
+	}
+	return ""
+}
+
+func (x *UploadInspectionMediaRequest) GetZone() string {
+	if x != nil && x.Zone != nil {
+		return *x.Zone
+	}
+	return ""
+}
+
+func (x *UploadInspectionMediaRequest) GetUploadedBy() int64 {
+	if x != nil && x.UploadedBy != nil {
+		return *x.UploadedBy
+	}
+	return 0
+}
+
+type UploadInspectionMediaResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Media         *Media                 `protobuf:"bytes,1,opt,name=media,proto3" json:"media,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadInspectionMediaResponse) Reset() {
+	*x = UploadInspectionMediaResponse{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadInspectionMediaResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadInspectionMediaResponse) ProtoMessage() {}
+
+func (x *UploadInspectionMediaResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadInspectionMediaResponse.ProtoReflect.Descriptor instead.
+func (*UploadInspectionMediaResponse) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *UploadInspectionMediaResponse) GetMedia() *Media {
+	if x != nil {
+		return x.Media
+	}
+	return nil
+}
+
+// ----- GetInspectionBySubscription -----
+type GetInspectionBySubscriptionRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	SubscriptionId string                 `protobuf:"bytes,1,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *GetInspectionBySubscriptionRequest) Reset() {
+	*x = GetInspectionBySubscriptionRequest{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInspectionBySubscriptionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInspectionBySubscriptionRequest) ProtoMessage() {}
+
+func (x *GetInspectionBySubscriptionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInspectionBySubscriptionRequest.ProtoReflect.Descriptor instead.
+func (*GetInspectionBySubscriptionRequest) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *GetInspectionBySubscriptionRequest) GetSubscriptionId() string {
+	if x != nil {
+		return x.SubscriptionId
+	}
+	return ""
+}
+
+type GetInspectionBySubscriptionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	InspectionAct *InspectionAct         `protobuf:"bytes,1,opt,name=inspection_act,json=inspectionAct,proto3" json:"inspection_act,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetInspectionBySubscriptionResponse) Reset() {
+	*x = GetInspectionBySubscriptionResponse{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInspectionBySubscriptionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInspectionBySubscriptionResponse) ProtoMessage() {}
+
+func (x *GetInspectionBySubscriptionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInspectionBySubscriptionResponse.ProtoReflect.Descriptor instead.
+func (*GetInspectionBySubscriptionResponse) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *GetInspectionBySubscriptionResponse) GetInspectionAct() *InspectionAct {
+	if x != nil {
+		return x.InspectionAct
+	}
+	return nil
+}
+
+// ----- UpdateInspectionDraft -----
+// Partial PATCH per C-07. Each optional field is "set if present"; to clear
+// a nullable text column to NULL, send empty string. The exclusions field,
+// when present, REPLACES the entire JSONB array (caller owns merge semantics).
+type UpdateInspectionDraftRequest struct {
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	InspectionId string                 `protobuf:"bytes,1,opt,name=inspection_id,json=inspectionId,proto3" json:"inspection_id,omitempty"`
+	Location     *InspectionLocation    `protobuf:"varint,2,opt,name=location,proto3,enum=cg.subscriptions.v1.InspectionLocation,oneof" json:"location,omitempty"`
+	Address      *string                `protobuf:"bytes,3,opt,name=address,proto3,oneof" json:"address,omitempty"`
+	Plate        *string                `protobuf:"bytes,4,opt,name=plate,proto3,oneof" json:"plate,omitempty"`
+	CarMark      *string                `protobuf:"bytes,5,opt,name=car_mark,json=carMark,proto3,oneof" json:"car_mark,omitempty"`
+	CarModel     *string                `protobuf:"bytes,6,opt,name=car_model,json=carModel,proto3,oneof" json:"car_model,omitempty"`
+	CarYear      *int32                 `protobuf:"varint,7,opt,name=car_year,json=carYear,proto3,oneof" json:"car_year,omitempty"`
+	Vin          *string                `protobuf:"bytes,8,opt,name=vin,proto3,oneof" json:"vin,omitempty"`
+	VinConfirmed *bool                  `protobuf:"varint,9,opt,name=vin_confirmed,json=vinConfirmed,proto3,oneof" json:"vin_confirmed,omitempty"`
+	Mileage      *int32                 `protobuf:"varint,10,opt,name=mileage,proto3,oneof" json:"mileage,omitempty"`
+	Summary      *string                `protobuf:"bytes,11,opt,name=summary,proto3,oneof" json:"summary,omitempty"`
+	// When set, replaces exclusions JSONB atomically. Caller MUST send the full
+	// array (not a delta).
+	Exclusions []*ZoneState `protobuf:"bytes,12,rep,name=exclusions,proto3" json:"exclusions,omitempty"`
+	// exclusions_replace = true signals "use exclusions field even if empty"
+	// (otherwise empty repeated == omitted; we cannot distinguish "clear all"
+	// from "no change"). Client sets this to true when toggling all zones to OK.
+	ExclusionsReplace bool `protobuf:"varint,13,opt,name=exclusions_replace,json=exclusionsReplace,proto3" json:"exclusions_replace,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *UpdateInspectionDraftRequest) Reset() {
+	*x = UpdateInspectionDraftRequest{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateInspectionDraftRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateInspectionDraftRequest) ProtoMessage() {}
+
+func (x *UpdateInspectionDraftRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateInspectionDraftRequest.ProtoReflect.Descriptor instead.
+func (*UpdateInspectionDraftRequest) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *UpdateInspectionDraftRequest) GetInspectionId() string {
+	if x != nil {
+		return x.InspectionId
+	}
+	return ""
+}
+
+func (x *UpdateInspectionDraftRequest) GetLocation() InspectionLocation {
+	if x != nil && x.Location != nil {
+		return *x.Location
+	}
+	return InspectionLocation_INSPECTION_LOCATION_UNSPECIFIED
+}
+
+func (x *UpdateInspectionDraftRequest) GetAddress() string {
+	if x != nil && x.Address != nil {
+		return *x.Address
+	}
+	return ""
+}
+
+func (x *UpdateInspectionDraftRequest) GetPlate() string {
+	if x != nil && x.Plate != nil {
+		return *x.Plate
+	}
+	return ""
+}
+
+func (x *UpdateInspectionDraftRequest) GetCarMark() string {
+	if x != nil && x.CarMark != nil {
+		return *x.CarMark
+	}
+	return ""
+}
+
+func (x *UpdateInspectionDraftRequest) GetCarModel() string {
+	if x != nil && x.CarModel != nil {
+		return *x.CarModel
+	}
+	return ""
+}
+
+func (x *UpdateInspectionDraftRequest) GetCarYear() int32 {
+	if x != nil && x.CarYear != nil {
+		return *x.CarYear
+	}
+	return 0
+}
+
+func (x *UpdateInspectionDraftRequest) GetVin() string {
+	if x != nil && x.Vin != nil {
+		return *x.Vin
+	}
+	return ""
+}
+
+func (x *UpdateInspectionDraftRequest) GetVinConfirmed() bool {
+	if x != nil && x.VinConfirmed != nil {
+		return *x.VinConfirmed
+	}
+	return false
+}
+
+func (x *UpdateInspectionDraftRequest) GetMileage() int32 {
+	if x != nil && x.Mileage != nil {
+		return *x.Mileage
+	}
+	return 0
+}
+
+func (x *UpdateInspectionDraftRequest) GetSummary() string {
+	if x != nil && x.Summary != nil {
+		return *x.Summary
+	}
+	return ""
+}
+
+func (x *UpdateInspectionDraftRequest) GetExclusions() []*ZoneState {
+	if x != nil {
+		return x.Exclusions
+	}
+	return nil
+}
+
+func (x *UpdateInspectionDraftRequest) GetExclusionsReplace() bool {
+	if x != nil {
+		return x.ExclusionsReplace
+	}
+	return false
+}
+
+type UpdateInspectionDraftResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	InspectionAct *InspectionAct         `protobuf:"bytes,1,opt,name=inspection_act,json=inspectionAct,proto3" json:"inspection_act,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateInspectionDraftResponse) Reset() {
+	*x = UpdateInspectionDraftResponse{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateInspectionDraftResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateInspectionDraftResponse) ProtoMessage() {}
+
+func (x *UpdateInspectionDraftResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateInspectionDraftResponse.ProtoReflect.Descriptor instead.
+func (*UpdateInspectionDraftResponse) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *UpdateInspectionDraftResponse) GetInspectionAct() *InspectionAct {
+	if x != nil {
+		return x.InspectionAct
+	}
+	return nil
+}
+
+// ----- CompleteInspectionAct -----
+type CompleteInspectionActRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	InspectionId  string                 `protobuf:"bytes,1,opt,name=inspection_id,json=inspectionId,proto3" json:"inspection_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CompleteInspectionActRequest) Reset() {
+	*x = CompleteInspectionActRequest{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompleteInspectionActRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompleteInspectionActRequest) ProtoMessage() {}
+
+func (x *CompleteInspectionActRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompleteInspectionActRequest.ProtoReflect.Descriptor instead.
+func (*CompleteInspectionActRequest) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *CompleteInspectionActRequest) GetInspectionId() string {
+	if x != nil {
+		return x.InspectionId
+	}
+	return ""
+}
+
+type CompleteInspectionActResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	InspectionAct *InspectionAct         `protobuf:"bytes,1,opt,name=inspection_act,json=inspectionAct,proto3" json:"inspection_act,omitempty"`
+	Subscription  *Subscription          `protobuf:"bytes,2,opt,name=subscription,proto3" json:"subscription,omitempty"` // post-update (status='inspection_done')
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CompleteInspectionActResponse) Reset() {
+	*x = CompleteInspectionActResponse{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompleteInspectionActResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompleteInspectionActResponse) ProtoMessage() {}
+
+func (x *CompleteInspectionActResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompleteInspectionActResponse.ProtoReflect.Descriptor instead.
+func (*CompleteInspectionActResponse) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *CompleteInspectionActResponse) GetInspectionAct() *InspectionAct {
+	if x != nil {
+		return x.InspectionAct
+	}
+	return nil
+}
+
+func (x *CompleteInspectionActResponse) GetSubscription() *Subscription {
+	if x != nil {
+		return x.Subscription
+	}
+	return nil
+}
+
+// ----- ActivateSubscription -----
+type ActivateSubscriptionRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	SubscriptionId string                 `protobuf:"bytes,1,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	// activated_by — admin user id (manager). Wired by BFF from JWT.
+	ActivatedBy   int64 `protobuf:"varint,2,opt,name=activated_by,json=activatedBy,proto3" json:"activated_by,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ActivateSubscriptionRequest) Reset() {
+	*x = ActivateSubscriptionRequest{}
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ActivateSubscriptionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ActivateSubscriptionRequest) ProtoMessage() {}
+
+func (x *ActivateSubscriptionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_subscriptions_v1_subscriptions_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ActivateSubscriptionRequest.ProtoReflect.Descriptor instead.
+func (*ActivateSubscriptionRequest) Descriptor() ([]byte, []int) {
+	return file_subscriptions_v1_subscriptions_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *ActivateSubscriptionRequest) GetSubscriptionId() string {
+	if x != nil {
+		return x.SubscriptionId
+	}
+	return ""
+}
+
+func (x *ActivateSubscriptionRequest) GetActivatedBy() int64 {
+	if x != nil {
+		return x.ActivatedBy
+	}
+	return 0
+}
+
 var File_subscriptions_v1_subscriptions_proto protoreflect.FileDescriptor
 
 const file_subscriptions_v1_subscriptions_proto_rawDesc = "" +
@@ -1487,7 +3388,186 @@ const file_subscriptions_v1_subscriptions_proto_rawDesc = "" +
 	"\x0e_inspection_idB\a\n" +
 	"\x05_kind\"E\n" +
 	"\x11ListMediaResponse\x120\n" +
-	"\x05media\x18\x01 \x03(\v2\x1a.cg.subscriptions.v1.MediaR\x05media*g\n" +
+	"\x05media\x18\x01 \x03(\v2\x1a.cg.subscriptions.v1.MediaR\x05media\"\xd7\x05\n" +
+	"\x05Claim\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
+	"\x0fsubscription_id\x18\x02 \x01(\tR\x0esubscriptionId\x122\n" +
+	"\x04kind\x18\x03 \x01(\x0e2\x1e.cg.subscriptions.v1.ClaimKindR\x04kind\x128\n" +
+	"\x06status\x18\x04 \x01(\x0e2 .cg.subscriptions.v1.ClaimStatusR\x06status\x121\n" +
+	"\apayload\x18\x05 \x01(\v2\x17.google.protobuf.StructR\apayload\x120\n" +
+	"\x14estimate_amount_tiin\x18\x06 \x01(\x03R\x12estimateAmountTiin\x122\n" +
+	"\x15franchise_amount_tiin\x18\a \x01(\x03R\x13franchiseAmountTiin\x12/\n" +
+	"\x11final_amount_tiin\x18\b \x01(\x03H\x00R\x0ffinalAmountTiin\x88\x01\x01\x12+\n" +
+	"\x0frepair_order_id\x18\t \x01(\x03H\x01R\rrepairOrderId\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"manager_id\x18\n" +
+	" \x01(\x03H\x02R\tmanagerId\x88\x01\x01\x12(\n" +
+	"\rmanager_notes\x18\v \x01(\tH\x03R\fmanagerNotes\x88\x01\x01\x12!\n" +
+	"\fclaim_number\x18\f \x01(\tR\vclaimNumber\x129\n" +
+	"\n" +
+	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\x14\n" +
+	"\x12_final_amount_tiinB\x12\n" +
+	"\x10_repair_order_idB\r\n" +
+	"\v_manager_idB\x10\n" +
+	"\x0e_manager_notes\"\x80\x02\n" +
+	"\x11CoverageBreakdown\x12.\n" +
+	"\x13coverage_limit_tiin\x18\x01 \x01(\x03R\x11coverageLimitTiin\x12(\n" +
+	"\x10used_amount_tiin\x18\x02 \x01(\x03R\x0eusedAmountTiin\x12%\n" +
+	"\x0eremaining_tiin\x18\x03 \x01(\x03R\rremainingTiin\x12&\n" +
+	"\x0fthis_claim_tiin\x18\x04 \x01(\x03R\rthisClaimTiin\x12!\n" +
+	"\fclaims_limit\x18\x05 \x01(\x05R\vclaimsLimit\x12\x1f\n" +
+	"\vused_claims\x18\x06 \x01(\x05R\n" +
+	"usedClaims\"\xc1\x02\n" +
+	"\x12SubmitClaimRequest\x12'\n" +
+	"\x0fsubscription_id\x18\x01 \x01(\tR\x0esubscriptionId\x122\n" +
+	"\x04kind\x18\x02 \x01(\x0e2\x1e.cg.subscriptions.v1.ClaimKindR\x04kind\x121\n" +
+	"\apayload\x18\x03 \x01(\v2\x17.google.protobuf.StructR\apayload\x12\x1b\n" +
+	"\tmedia_ids\x18\x04 \x03(\tR\bmediaIds\x120\n" +
+	"\x14estimate_amount_tiin\x18\x05 \x01(\x03R\x12estimateAmountTiin\x12(\n" +
+	"\rmanager_notes\x18\a \x01(\tH\x00R\fmanagerNotes\x88\x01\x01B\x10\n" +
+	"\x0e_manager_notesJ\x04\b\x06\x10\aR\n" +
+	"manager_id\"\x8d\x01\n" +
+	"\x13SubmitClaimResponse\x120\n" +
+	"\x05claim\x18\x01 \x01(\v2\x1a.cg.subscriptions.v1.ClaimR\x05claim\x12D\n" +
+	"\tbreakdown\x18\x02 \x01(\v2&.cg.subscriptions.v1.CoverageBreakdownR\tbreakdown\"~\n" +
+	"\x13ApproveClaimRequest\x12\x19\n" +
+	"\bclaim_id\x18\x01 \x01(\tR\aclaimId\x12(\n" +
+	"\rmanager_notes\x18\x03 \x01(\tH\x00R\fmanagerNotes\x88\x01\x01B\x10\n" +
+	"\x0e_manager_notesJ\x04\b\x02\x10\x03R\n" +
+	"manager_id\"H\n" +
+	"\x14ApproveClaimResponse\x120\n" +
+	"\x05claim\x18\x01 \x01(\v2\x1a.cg.subscriptions.v1.ClaimR\x05claim\"f\n" +
+	"\x12RejectClaimRequest\x12\x19\n" +
+	"\bclaim_id\x18\x01 \x01(\tR\aclaimId\x12#\n" +
+	"\rmanager_notes\x18\x03 \x01(\tR\fmanagerNotesJ\x04\b\x02\x10\x03R\n" +
+	"manager_id\"G\n" +
+	"\x13RejectClaimResponse\x120\n" +
+	"\x05claim\x18\x01 \x01(\v2\x1a.cg.subscriptions.v1.ClaimR\x05claim\",\n" +
+	"\x0fGetClaimRequest\x12\x19\n" +
+	"\bclaim_id\x18\x01 \x01(\tR\aclaimId\"\x83\x02\n" +
+	"\x11ListClaimsRequest\x12=\n" +
+	"\x06status\x18\x01 \x01(\x0e2 .cg.subscriptions.v1.ClaimStatusH\x00R\x06status\x88\x01\x01\x12,\n" +
+	"\x0fsubscription_id\x18\x02 \x01(\tH\x01R\x0esubscriptionId\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"manager_id\x18\x03 \x01(\x03H\x02R\tmanagerId\x88\x01\x01\x12\x12\n" +
+	"\x04page\x18\x04 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x05 \x01(\x05R\bpageSizeB\t\n" +
+	"\a_statusB\x12\n" +
+	"\x10_subscription_idB\r\n" +
+	"\v_manager_id\"^\n" +
+	"\x12ListClaimsResponse\x122\n" +
+	"\x06claims\x18\x01 \x03(\v2\x1a.cg.subscriptions.v1.ClaimR\x06claims\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"|\n" +
+	"\tZoneState\x12\x12\n" +
+	"\x04zone\x18\x01 \x01(\tR\x04zone\x12\x1a\n" +
+	"\bseverity\x18\x02 \x01(\tR\bseverity\x12\x12\n" +
+	"\x04note\x18\x03 \x01(\tR\x04note\x12\x1e\n" +
+	"\bmedia_id\x18\x04 \x01(\tH\x00R\amediaId\x88\x01\x01B\v\n" +
+	"\t_media_id\"\xee\x06\n" +
+	"\rInspectionAct\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
+	"\x0fsubscription_id\x18\x02 \x01(\tR\x0esubscriptionId\x12!\n" +
+	"\finspected_by\x18\x03 \x01(\x03R\vinspectedBy\x12B\n" +
+	"\finspected_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\vinspectedAt\x88\x01\x01\x12C\n" +
+	"\blocation\x18\x05 \x01(\x0e2'.cg.subscriptions.v1.InspectionLocationR\blocation\x12\x1d\n" +
+	"\aaddress\x18\x06 \x01(\tH\x01R\aaddress\x88\x01\x01\x12\x19\n" +
+	"\x05plate\x18\a \x01(\tH\x02R\x05plate\x88\x01\x01\x12\x1e\n" +
+	"\bcar_mark\x18\b \x01(\tH\x03R\acarMark\x88\x01\x01\x12 \n" +
+	"\tcar_model\x18\t \x01(\tH\x04R\bcarModel\x88\x01\x01\x12\x1e\n" +
+	"\bcar_year\x18\n" +
+	" \x01(\x05H\x05R\acarYear\x88\x01\x01\x12\x15\n" +
+	"\x03vin\x18\v \x01(\tH\x06R\x03vin\x88\x01\x01\x12#\n" +
+	"\rvin_confirmed\x18\f \x01(\bR\fvinConfirmed\x12\x1d\n" +
+	"\amileage\x18\r \x01(\x05H\aR\amileage\x88\x01\x01\x12\x1d\n" +
+	"\asummary\x18\x0e \x01(\tH\bR\asummary\x88\x01\x01\x12>\n" +
+	"\n" +
+	"exclusions\x18\x0f \x03(\v2\x1e.cg.subscriptions.v1.ZoneStateR\n" +
+	"exclusions\x12=\n" +
+	"\x06status\x18\x10 \x01(\x0e2%.cg.subscriptions.v1.InspectionStatusR\x06status\x129\n" +
+	"\n" +
+	"created_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\x0f\n" +
+	"\r_inspected_atB\n" +
+	"\n" +
+	"\b_addressB\b\n" +
+	"\x06_plateB\v\n" +
+	"\t_car_markB\f\n" +
+	"\n" +
+	"_car_modelB\v\n" +
+	"\t_car_yearB\x06\n" +
+	"\x04_vinB\n" +
+	"\n" +
+	"\b_mileageB\n" +
+	"\n" +
+	"\b_summary\"d\n" +
+	"\x16StartInspectionRequest\x12'\n" +
+	"\x0fsubscription_id\x18\x01 \x01(\tR\x0esubscriptionId\x12!\n" +
+	"\finspected_by\x18\x02 \x01(\x03R\vinspectedBy\"~\n" +
+	"\x17StartInspectionResponse\x12I\n" +
+	"\x0einspection_act\x18\x01 \x01(\v2\".cg.subscriptions.v1.InspectionActR\rinspectionAct\x12\x18\n" +
+	"\acreated\x18\x02 \x01(\bR\acreated\"\xc8\x02\n" +
+	"\x1cUploadInspectionMediaRequest\x12#\n" +
+	"\rinspection_id\x18\x01 \x01(\tR\finspectionId\x122\n" +
+	"\x04kind\x18\x02 \x01(\x0e2\x1e.cg.subscriptions.v1.MediaKindR\x04kind\x12\x1b\n" +
+	"\tview_code\x18\x03 \x01(\tR\bviewCode\x12\x1b\n" +
+	"\tfile_data\x18\x04 \x01(\fR\bfileData\x12\x1a\n" +
+	"\bfilename\x18\x05 \x01(\tR\bfilename\x12!\n" +
+	"\fcontent_type\x18\x06 \x01(\tR\vcontentType\x12\x17\n" +
+	"\x04zone\x18\a \x01(\tH\x00R\x04zone\x88\x01\x01\x12$\n" +
+	"\vuploaded_by\x18\b \x01(\x03H\x01R\n" +
+	"uploadedBy\x88\x01\x01B\a\n" +
+	"\x05_zoneB\x0e\n" +
+	"\f_uploaded_by\"Q\n" +
+	"\x1dUploadInspectionMediaResponse\x120\n" +
+	"\x05media\x18\x01 \x01(\v2\x1a.cg.subscriptions.v1.MediaR\x05media\"M\n" +
+	"\"GetInspectionBySubscriptionRequest\x12'\n" +
+	"\x0fsubscription_id\x18\x01 \x01(\tR\x0esubscriptionId\"p\n" +
+	"#GetInspectionBySubscriptionResponse\x12I\n" +
+	"\x0einspection_act\x18\x01 \x01(\v2\".cg.subscriptions.v1.InspectionActR\rinspectionAct\"\x94\x05\n" +
+	"\x1cUpdateInspectionDraftRequest\x12#\n" +
+	"\rinspection_id\x18\x01 \x01(\tR\finspectionId\x12H\n" +
+	"\blocation\x18\x02 \x01(\x0e2'.cg.subscriptions.v1.InspectionLocationH\x00R\blocation\x88\x01\x01\x12\x1d\n" +
+	"\aaddress\x18\x03 \x01(\tH\x01R\aaddress\x88\x01\x01\x12\x19\n" +
+	"\x05plate\x18\x04 \x01(\tH\x02R\x05plate\x88\x01\x01\x12\x1e\n" +
+	"\bcar_mark\x18\x05 \x01(\tH\x03R\acarMark\x88\x01\x01\x12 \n" +
+	"\tcar_model\x18\x06 \x01(\tH\x04R\bcarModel\x88\x01\x01\x12\x1e\n" +
+	"\bcar_year\x18\a \x01(\x05H\x05R\acarYear\x88\x01\x01\x12\x15\n" +
+	"\x03vin\x18\b \x01(\tH\x06R\x03vin\x88\x01\x01\x12(\n" +
+	"\rvin_confirmed\x18\t \x01(\bH\aR\fvinConfirmed\x88\x01\x01\x12\x1d\n" +
+	"\amileage\x18\n" +
+	" \x01(\x05H\bR\amileage\x88\x01\x01\x12\x1d\n" +
+	"\asummary\x18\v \x01(\tH\tR\asummary\x88\x01\x01\x12>\n" +
+	"\n" +
+	"exclusions\x18\f \x03(\v2\x1e.cg.subscriptions.v1.ZoneStateR\n" +
+	"exclusions\x12-\n" +
+	"\x12exclusions_replace\x18\r \x01(\bR\x11exclusionsReplaceB\v\n" +
+	"\t_locationB\n" +
+	"\n" +
+	"\b_addressB\b\n" +
+	"\x06_plateB\v\n" +
+	"\t_car_markB\f\n" +
+	"\n" +
+	"_car_modelB\v\n" +
+	"\t_car_yearB\x06\n" +
+	"\x04_vinB\x10\n" +
+	"\x0e_vin_confirmedB\n" +
+	"\n" +
+	"\b_mileageB\n" +
+	"\n" +
+	"\b_summary\"j\n" +
+	"\x1dUpdateInspectionDraftResponse\x12I\n" +
+	"\x0einspection_act\x18\x01 \x01(\v2\".cg.subscriptions.v1.InspectionActR\rinspectionAct\"C\n" +
+	"\x1cCompleteInspectionActRequest\x12#\n" +
+	"\rinspection_id\x18\x01 \x01(\tR\finspectionId\"\xb1\x01\n" +
+	"\x1dCompleteInspectionActResponse\x12I\n" +
+	"\x0einspection_act\x18\x01 \x01(\v2\".cg.subscriptions.v1.InspectionActR\rinspectionAct\x12E\n" +
+	"\fsubscription\x18\x02 \x01(\v2!.cg.subscriptions.v1.SubscriptionR\fsubscription\"i\n" +
+	"\x1bActivateSubscriptionRequest\x12'\n" +
+	"\x0fsubscription_id\x18\x01 \x01(\tR\x0esubscriptionId\x12!\n" +
+	"\factivated_by\x18\x02 \x01(\x03R\vactivatedBy*g\n" +
 	"\x06Family\x12\x16\n" +
 	"\x12FAMILY_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12FAMILY_BODY_SHIELD\x10\x01\x12\x16\n" +
@@ -1514,7 +3594,28 @@ const file_subscriptions_v1_subscriptions_proto_rawDesc = "" +
 	"\x19MEDIA_KIND_BASELINE_VIDEO\x10\x02\x12\x1b\n" +
 	"\x17MEDIA_KIND_DAMAGE_PHOTO\x10\x03\x12\x1b\n" +
 	"\x17MEDIA_KIND_DAMAGE_VIDEO\x10\x04\x12\x1d\n" +
-	"\x19MEDIA_KIND_CLAIM_EVIDENCE\x10\x052\xe4\x04\n" +
+	"\x19MEDIA_KIND_CLAIM_EVIDENCE\x10\x05*n\n" +
+	"\tClaimKind\x12\x1a\n" +
+	"\x16CLAIM_KIND_UNSPECIFIED\x10\x00\x12\x15\n" +
+	"\x11CLAIM_KIND_DAMAGE\x10\x01\x12\x1a\n" +
+	"\x16CLAIM_KIND_MAINTENANCE\x10\x02\x12\x12\n" +
+	"\x0eCLAIM_KIND_TOW\x10\x03*\xda\x01\n" +
+	"\vClaimStatus\x12\x1c\n" +
+	"\x18CLAIM_STATUS_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x16CLAIM_STATUS_SUBMITTED\x10\x01\x12\x1a\n" +
+	"\x16CLAIM_STATUS_IN_REVIEW\x10\x02\x12\x19\n" +
+	"\x15CLAIM_STATUS_APPROVED\x10\x03\x12\x19\n" +
+	"\x15CLAIM_STATUS_REJECTED\x10\x04\x12#\n" +
+	"\x1fCLAIM_STATUS_REPAIR_IN_PROGRESS\x10\x05\x12\x1a\n" +
+	"\x16CLAIM_STATUS_COMPLETED\x10\x06*s\n" +
+	"\x10InspectionStatus\x12!\n" +
+	"\x1dINSPECTION_STATUS_UNSPECIFIED\x10\x00\x12\x1b\n" +
+	"\x17INSPECTION_STATUS_DRAFT\x10\x01\x12\x1f\n" +
+	"\x1bINSPECTION_STATUS_SUBMITTED\x10\x02*x\n" +
+	"\x12InspectionLocation\x12#\n" +
+	"\x1fINSPECTION_LOCATION_UNSPECIFIED\x10\x00\x12\x1c\n" +
+	"\x18INSPECTION_LOCATION_SHOP\x10\x01\x12\x1f\n" +
+	"\x1bINSPECTION_LOCATION_ON_SITE\x10\x022\xa8\x0e\n" +
 	"\x14SubscriptionsService\x12c\n" +
 	"\fListProducts\x12(.cg.subscriptions.v1.ListProductsRequest\x1a).cg.subscriptions.v1.ListProductsResponse\x12R\n" +
 	"\n" +
@@ -1522,7 +3623,19 @@ const file_subscriptions_v1_subscriptions_proto_rawDesc = "" +
 	"\x11ListSubscriptions\x12-.cg.subscriptions.v1.ListSubscriptionsRequest\x1a..cg.subscriptions.v1.ListSubscriptionsResponse\x12a\n" +
 	"\x0fGetSubscription\x12+.cg.subscriptions.v1.GetSubscriptionRequest\x1a!.cg.subscriptions.v1.Subscription\x12`\n" +
 	"\vUploadMedia\x12'.cg.subscriptions.v1.UploadMediaRequest\x1a(.cg.subscriptions.v1.UploadMediaResponse\x12Z\n" +
-	"\tListMedia\x12%.cg.subscriptions.v1.ListMediaRequest\x1a&.cg.subscriptions.v1.ListMediaResponseBCZAgithub.com/4ubak/cg-proto/gen/go/subscriptions/v1;subscriptionsv1b\x06proto3"
+	"\tListMedia\x12%.cg.subscriptions.v1.ListMediaRequest\x1a&.cg.subscriptions.v1.ListMediaResponse\x12`\n" +
+	"\vSubmitClaim\x12'.cg.subscriptions.v1.SubmitClaimRequest\x1a(.cg.subscriptions.v1.SubmitClaimResponse\x12c\n" +
+	"\fApproveClaim\x12(.cg.subscriptions.v1.ApproveClaimRequest\x1a).cg.subscriptions.v1.ApproveClaimResponse\x12`\n" +
+	"\vRejectClaim\x12'.cg.subscriptions.v1.RejectClaimRequest\x1a(.cg.subscriptions.v1.RejectClaimResponse\x12L\n" +
+	"\bGetClaim\x12$.cg.subscriptions.v1.GetClaimRequest\x1a\x1a.cg.subscriptions.v1.Claim\x12]\n" +
+	"\n" +
+	"ListClaims\x12&.cg.subscriptions.v1.ListClaimsRequest\x1a'.cg.subscriptions.v1.ListClaimsResponse\x12l\n" +
+	"\x0fStartInspection\x12+.cg.subscriptions.v1.StartInspectionRequest\x1a,.cg.subscriptions.v1.StartInspectionResponse\x12~\n" +
+	"\x15UploadInspectionMedia\x121.cg.subscriptions.v1.UploadInspectionMediaRequest\x1a2.cg.subscriptions.v1.UploadInspectionMediaResponse\x12\x90\x01\n" +
+	"\x1bGetInspectionBySubscription\x127.cg.subscriptions.v1.GetInspectionBySubscriptionRequest\x1a8.cg.subscriptions.v1.GetInspectionBySubscriptionResponse\x12~\n" +
+	"\x15UpdateInspectionDraft\x121.cg.subscriptions.v1.UpdateInspectionDraftRequest\x1a2.cg.subscriptions.v1.UpdateInspectionDraftResponse\x12~\n" +
+	"\x15CompleteInspectionAct\x121.cg.subscriptions.v1.CompleteInspectionActRequest\x1a2.cg.subscriptions.v1.CompleteInspectionActResponse\x12k\n" +
+	"\x14ActivateSubscription\x120.cg.subscriptions.v1.ActivateSubscriptionRequest\x1a!.cg.subscriptions.v1.SubscriptionBCZAgithub.com/4ubak/cg-proto/gen/go/subscriptions/v1;subscriptionsv1b\x06proto3"
 
 var (
 	file_subscriptions_v1_subscriptions_proto_rawDescOnce sync.Once
@@ -1536,68 +3649,146 @@ func file_subscriptions_v1_subscriptions_proto_rawDescGZIP() []byte {
 	return file_subscriptions_v1_subscriptions_proto_rawDescData
 }
 
-var file_subscriptions_v1_subscriptions_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_subscriptions_v1_subscriptions_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_subscriptions_v1_subscriptions_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
+var file_subscriptions_v1_subscriptions_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
 var file_subscriptions_v1_subscriptions_proto_goTypes = []any{
-	(Family)(0),                       // 0: cg.subscriptions.v1.Family
-	(SubscriptionStatus)(0),           // 1: cg.subscriptions.v1.SubscriptionStatus
-	(PartsPolicy)(0),                  // 2: cg.subscriptions.v1.PartsPolicy
-	(MediaKind)(0),                    // 3: cg.subscriptions.v1.MediaKind
-	(*Product)(nil),                   // 4: cg.subscriptions.v1.Product
-	(*Subscription)(nil),              // 5: cg.subscriptions.v1.Subscription
-	(*ListProductsRequest)(nil),       // 6: cg.subscriptions.v1.ListProductsRequest
-	(*ListProductsResponse)(nil),      // 7: cg.subscriptions.v1.ListProductsResponse
-	(*GetProductRequest)(nil),         // 8: cg.subscriptions.v1.GetProductRequest
-	(*ListSubscriptionsRequest)(nil),  // 9: cg.subscriptions.v1.ListSubscriptionsRequest
-	(*ListSubscriptionsResponse)(nil), // 10: cg.subscriptions.v1.ListSubscriptionsResponse
-	(*GetSubscriptionRequest)(nil),    // 11: cg.subscriptions.v1.GetSubscriptionRequest
-	(*Media)(nil),                     // 12: cg.subscriptions.v1.Media
-	(*UploadMediaRequest)(nil),        // 13: cg.subscriptions.v1.UploadMediaRequest
-	(*UploadMediaResponse)(nil),       // 14: cg.subscriptions.v1.UploadMediaResponse
-	(*ListMediaRequest)(nil),          // 15: cg.subscriptions.v1.ListMediaRequest
-	(*ListMediaResponse)(nil),         // 16: cg.subscriptions.v1.ListMediaResponse
-	(*structpb.Struct)(nil),           // 17: google.protobuf.Struct
-	(*timestamppb.Timestamp)(nil),     // 18: google.protobuf.Timestamp
+	(Family)(0),                                 // 0: cg.subscriptions.v1.Family
+	(SubscriptionStatus)(0),                     // 1: cg.subscriptions.v1.SubscriptionStatus
+	(PartsPolicy)(0),                            // 2: cg.subscriptions.v1.PartsPolicy
+	(MediaKind)(0),                              // 3: cg.subscriptions.v1.MediaKind
+	(ClaimKind)(0),                              // 4: cg.subscriptions.v1.ClaimKind
+	(ClaimStatus)(0),                            // 5: cg.subscriptions.v1.ClaimStatus
+	(InspectionStatus)(0),                       // 6: cg.subscriptions.v1.InspectionStatus
+	(InspectionLocation)(0),                     // 7: cg.subscriptions.v1.InspectionLocation
+	(*Product)(nil),                             // 8: cg.subscriptions.v1.Product
+	(*Subscription)(nil),                        // 9: cg.subscriptions.v1.Subscription
+	(*ListProductsRequest)(nil),                 // 10: cg.subscriptions.v1.ListProductsRequest
+	(*ListProductsResponse)(nil),                // 11: cg.subscriptions.v1.ListProductsResponse
+	(*GetProductRequest)(nil),                   // 12: cg.subscriptions.v1.GetProductRequest
+	(*ListSubscriptionsRequest)(nil),            // 13: cg.subscriptions.v1.ListSubscriptionsRequest
+	(*ListSubscriptionsResponse)(nil),           // 14: cg.subscriptions.v1.ListSubscriptionsResponse
+	(*GetSubscriptionRequest)(nil),              // 15: cg.subscriptions.v1.GetSubscriptionRequest
+	(*Media)(nil),                               // 16: cg.subscriptions.v1.Media
+	(*UploadMediaRequest)(nil),                  // 17: cg.subscriptions.v1.UploadMediaRequest
+	(*UploadMediaResponse)(nil),                 // 18: cg.subscriptions.v1.UploadMediaResponse
+	(*ListMediaRequest)(nil),                    // 19: cg.subscriptions.v1.ListMediaRequest
+	(*ListMediaResponse)(nil),                   // 20: cg.subscriptions.v1.ListMediaResponse
+	(*Claim)(nil),                               // 21: cg.subscriptions.v1.Claim
+	(*CoverageBreakdown)(nil),                   // 22: cg.subscriptions.v1.CoverageBreakdown
+	(*SubmitClaimRequest)(nil),                  // 23: cg.subscriptions.v1.SubmitClaimRequest
+	(*SubmitClaimResponse)(nil),                 // 24: cg.subscriptions.v1.SubmitClaimResponse
+	(*ApproveClaimRequest)(nil),                 // 25: cg.subscriptions.v1.ApproveClaimRequest
+	(*ApproveClaimResponse)(nil),                // 26: cg.subscriptions.v1.ApproveClaimResponse
+	(*RejectClaimRequest)(nil),                  // 27: cg.subscriptions.v1.RejectClaimRequest
+	(*RejectClaimResponse)(nil),                 // 28: cg.subscriptions.v1.RejectClaimResponse
+	(*GetClaimRequest)(nil),                     // 29: cg.subscriptions.v1.GetClaimRequest
+	(*ListClaimsRequest)(nil),                   // 30: cg.subscriptions.v1.ListClaimsRequest
+	(*ListClaimsResponse)(nil),                  // 31: cg.subscriptions.v1.ListClaimsResponse
+	(*ZoneState)(nil),                           // 32: cg.subscriptions.v1.ZoneState
+	(*InspectionAct)(nil),                       // 33: cg.subscriptions.v1.InspectionAct
+	(*StartInspectionRequest)(nil),              // 34: cg.subscriptions.v1.StartInspectionRequest
+	(*StartInspectionResponse)(nil),             // 35: cg.subscriptions.v1.StartInspectionResponse
+	(*UploadInspectionMediaRequest)(nil),        // 36: cg.subscriptions.v1.UploadInspectionMediaRequest
+	(*UploadInspectionMediaResponse)(nil),       // 37: cg.subscriptions.v1.UploadInspectionMediaResponse
+	(*GetInspectionBySubscriptionRequest)(nil),  // 38: cg.subscriptions.v1.GetInspectionBySubscriptionRequest
+	(*GetInspectionBySubscriptionResponse)(nil), // 39: cg.subscriptions.v1.GetInspectionBySubscriptionResponse
+	(*UpdateInspectionDraftRequest)(nil),        // 40: cg.subscriptions.v1.UpdateInspectionDraftRequest
+	(*UpdateInspectionDraftResponse)(nil),       // 41: cg.subscriptions.v1.UpdateInspectionDraftResponse
+	(*CompleteInspectionActRequest)(nil),        // 42: cg.subscriptions.v1.CompleteInspectionActRequest
+	(*CompleteInspectionActResponse)(nil),       // 43: cg.subscriptions.v1.CompleteInspectionActResponse
+	(*ActivateSubscriptionRequest)(nil),         // 44: cg.subscriptions.v1.ActivateSubscriptionRequest
+	(*structpb.Struct)(nil),                     // 45: google.protobuf.Struct
+	(*timestamppb.Timestamp)(nil),               // 46: google.protobuf.Timestamp
 }
 var file_subscriptions_v1_subscriptions_proto_depIdxs = []int32{
 	0,  // 0: cg.subscriptions.v1.Product.family:type_name -> cg.subscriptions.v1.Family
-	17, // 1: cg.subscriptions.v1.Product.config:type_name -> google.protobuf.Struct
-	18, // 2: cg.subscriptions.v1.Product.created_at:type_name -> google.protobuf.Timestamp
-	18, // 3: cg.subscriptions.v1.Product.updated_at:type_name -> google.protobuf.Timestamp
-	4,  // 4: cg.subscriptions.v1.Subscription.product:type_name -> cg.subscriptions.v1.Product
+	45, // 1: cg.subscriptions.v1.Product.config:type_name -> google.protobuf.Struct
+	46, // 2: cg.subscriptions.v1.Product.created_at:type_name -> google.protobuf.Timestamp
+	46, // 3: cg.subscriptions.v1.Product.updated_at:type_name -> google.protobuf.Timestamp
+	8,  // 4: cg.subscriptions.v1.Subscription.product:type_name -> cg.subscriptions.v1.Product
 	1,  // 5: cg.subscriptions.v1.Subscription.status:type_name -> cg.subscriptions.v1.SubscriptionStatus
-	18, // 6: cg.subscriptions.v1.Subscription.activated_at:type_name -> google.protobuf.Timestamp
-	18, // 7: cg.subscriptions.v1.Subscription.expires_at:type_name -> google.protobuf.Timestamp
-	18, // 8: cg.subscriptions.v1.Subscription.created_at:type_name -> google.protobuf.Timestamp
-	18, // 9: cg.subscriptions.v1.Subscription.updated_at:type_name -> google.protobuf.Timestamp
+	46, // 6: cg.subscriptions.v1.Subscription.activated_at:type_name -> google.protobuf.Timestamp
+	46, // 7: cg.subscriptions.v1.Subscription.expires_at:type_name -> google.protobuf.Timestamp
+	46, // 8: cg.subscriptions.v1.Subscription.created_at:type_name -> google.protobuf.Timestamp
+	46, // 9: cg.subscriptions.v1.Subscription.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 10: cg.subscriptions.v1.ListProductsRequest.family:type_name -> cg.subscriptions.v1.Family
-	4,  // 11: cg.subscriptions.v1.ListProductsResponse.products:type_name -> cg.subscriptions.v1.Product
+	8,  // 11: cg.subscriptions.v1.ListProductsResponse.products:type_name -> cg.subscriptions.v1.Product
 	1,  // 12: cg.subscriptions.v1.ListSubscriptionsRequest.status:type_name -> cg.subscriptions.v1.SubscriptionStatus
 	0,  // 13: cg.subscriptions.v1.ListSubscriptionsRequest.family:type_name -> cg.subscriptions.v1.Family
-	5,  // 14: cg.subscriptions.v1.ListSubscriptionsResponse.subscriptions:type_name -> cg.subscriptions.v1.Subscription
+	9,  // 14: cg.subscriptions.v1.ListSubscriptionsResponse.subscriptions:type_name -> cg.subscriptions.v1.Subscription
 	3,  // 15: cg.subscriptions.v1.Media.kind:type_name -> cg.subscriptions.v1.MediaKind
-	18, // 16: cg.subscriptions.v1.Media.uploaded_at:type_name -> google.protobuf.Timestamp
+	46, // 16: cg.subscriptions.v1.Media.uploaded_at:type_name -> google.protobuf.Timestamp
 	3,  // 17: cg.subscriptions.v1.UploadMediaRequest.kind:type_name -> cg.subscriptions.v1.MediaKind
-	12, // 18: cg.subscriptions.v1.UploadMediaResponse.media:type_name -> cg.subscriptions.v1.Media
+	16, // 18: cg.subscriptions.v1.UploadMediaResponse.media:type_name -> cg.subscriptions.v1.Media
 	3,  // 19: cg.subscriptions.v1.ListMediaRequest.kind:type_name -> cg.subscriptions.v1.MediaKind
-	12, // 20: cg.subscriptions.v1.ListMediaResponse.media:type_name -> cg.subscriptions.v1.Media
-	6,  // 21: cg.subscriptions.v1.SubscriptionsService.ListProducts:input_type -> cg.subscriptions.v1.ListProductsRequest
-	8,  // 22: cg.subscriptions.v1.SubscriptionsService.GetProduct:input_type -> cg.subscriptions.v1.GetProductRequest
-	9,  // 23: cg.subscriptions.v1.SubscriptionsService.ListSubscriptions:input_type -> cg.subscriptions.v1.ListSubscriptionsRequest
-	11, // 24: cg.subscriptions.v1.SubscriptionsService.GetSubscription:input_type -> cg.subscriptions.v1.GetSubscriptionRequest
-	13, // 25: cg.subscriptions.v1.SubscriptionsService.UploadMedia:input_type -> cg.subscriptions.v1.UploadMediaRequest
-	15, // 26: cg.subscriptions.v1.SubscriptionsService.ListMedia:input_type -> cg.subscriptions.v1.ListMediaRequest
-	7,  // 27: cg.subscriptions.v1.SubscriptionsService.ListProducts:output_type -> cg.subscriptions.v1.ListProductsResponse
-	4,  // 28: cg.subscriptions.v1.SubscriptionsService.GetProduct:output_type -> cg.subscriptions.v1.Product
-	10, // 29: cg.subscriptions.v1.SubscriptionsService.ListSubscriptions:output_type -> cg.subscriptions.v1.ListSubscriptionsResponse
-	5,  // 30: cg.subscriptions.v1.SubscriptionsService.GetSubscription:output_type -> cg.subscriptions.v1.Subscription
-	14, // 31: cg.subscriptions.v1.SubscriptionsService.UploadMedia:output_type -> cg.subscriptions.v1.UploadMediaResponse
-	16, // 32: cg.subscriptions.v1.SubscriptionsService.ListMedia:output_type -> cg.subscriptions.v1.ListMediaResponse
-	27, // [27:33] is the sub-list for method output_type
-	21, // [21:27] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	16, // 20: cg.subscriptions.v1.ListMediaResponse.media:type_name -> cg.subscriptions.v1.Media
+	4,  // 21: cg.subscriptions.v1.Claim.kind:type_name -> cg.subscriptions.v1.ClaimKind
+	5,  // 22: cg.subscriptions.v1.Claim.status:type_name -> cg.subscriptions.v1.ClaimStatus
+	45, // 23: cg.subscriptions.v1.Claim.payload:type_name -> google.protobuf.Struct
+	46, // 24: cg.subscriptions.v1.Claim.created_at:type_name -> google.protobuf.Timestamp
+	46, // 25: cg.subscriptions.v1.Claim.updated_at:type_name -> google.protobuf.Timestamp
+	4,  // 26: cg.subscriptions.v1.SubmitClaimRequest.kind:type_name -> cg.subscriptions.v1.ClaimKind
+	45, // 27: cg.subscriptions.v1.SubmitClaimRequest.payload:type_name -> google.protobuf.Struct
+	21, // 28: cg.subscriptions.v1.SubmitClaimResponse.claim:type_name -> cg.subscriptions.v1.Claim
+	22, // 29: cg.subscriptions.v1.SubmitClaimResponse.breakdown:type_name -> cg.subscriptions.v1.CoverageBreakdown
+	21, // 30: cg.subscriptions.v1.ApproveClaimResponse.claim:type_name -> cg.subscriptions.v1.Claim
+	21, // 31: cg.subscriptions.v1.RejectClaimResponse.claim:type_name -> cg.subscriptions.v1.Claim
+	5,  // 32: cg.subscriptions.v1.ListClaimsRequest.status:type_name -> cg.subscriptions.v1.ClaimStatus
+	21, // 33: cg.subscriptions.v1.ListClaimsResponse.claims:type_name -> cg.subscriptions.v1.Claim
+	46, // 34: cg.subscriptions.v1.InspectionAct.inspected_at:type_name -> google.protobuf.Timestamp
+	7,  // 35: cg.subscriptions.v1.InspectionAct.location:type_name -> cg.subscriptions.v1.InspectionLocation
+	32, // 36: cg.subscriptions.v1.InspectionAct.exclusions:type_name -> cg.subscriptions.v1.ZoneState
+	6,  // 37: cg.subscriptions.v1.InspectionAct.status:type_name -> cg.subscriptions.v1.InspectionStatus
+	46, // 38: cg.subscriptions.v1.InspectionAct.created_at:type_name -> google.protobuf.Timestamp
+	46, // 39: cg.subscriptions.v1.InspectionAct.updated_at:type_name -> google.protobuf.Timestamp
+	33, // 40: cg.subscriptions.v1.StartInspectionResponse.inspection_act:type_name -> cg.subscriptions.v1.InspectionAct
+	3,  // 41: cg.subscriptions.v1.UploadInspectionMediaRequest.kind:type_name -> cg.subscriptions.v1.MediaKind
+	16, // 42: cg.subscriptions.v1.UploadInspectionMediaResponse.media:type_name -> cg.subscriptions.v1.Media
+	33, // 43: cg.subscriptions.v1.GetInspectionBySubscriptionResponse.inspection_act:type_name -> cg.subscriptions.v1.InspectionAct
+	7,  // 44: cg.subscriptions.v1.UpdateInspectionDraftRequest.location:type_name -> cg.subscriptions.v1.InspectionLocation
+	32, // 45: cg.subscriptions.v1.UpdateInspectionDraftRequest.exclusions:type_name -> cg.subscriptions.v1.ZoneState
+	33, // 46: cg.subscriptions.v1.UpdateInspectionDraftResponse.inspection_act:type_name -> cg.subscriptions.v1.InspectionAct
+	33, // 47: cg.subscriptions.v1.CompleteInspectionActResponse.inspection_act:type_name -> cg.subscriptions.v1.InspectionAct
+	9,  // 48: cg.subscriptions.v1.CompleteInspectionActResponse.subscription:type_name -> cg.subscriptions.v1.Subscription
+	10, // 49: cg.subscriptions.v1.SubscriptionsService.ListProducts:input_type -> cg.subscriptions.v1.ListProductsRequest
+	12, // 50: cg.subscriptions.v1.SubscriptionsService.GetProduct:input_type -> cg.subscriptions.v1.GetProductRequest
+	13, // 51: cg.subscriptions.v1.SubscriptionsService.ListSubscriptions:input_type -> cg.subscriptions.v1.ListSubscriptionsRequest
+	15, // 52: cg.subscriptions.v1.SubscriptionsService.GetSubscription:input_type -> cg.subscriptions.v1.GetSubscriptionRequest
+	17, // 53: cg.subscriptions.v1.SubscriptionsService.UploadMedia:input_type -> cg.subscriptions.v1.UploadMediaRequest
+	19, // 54: cg.subscriptions.v1.SubscriptionsService.ListMedia:input_type -> cg.subscriptions.v1.ListMediaRequest
+	23, // 55: cg.subscriptions.v1.SubscriptionsService.SubmitClaim:input_type -> cg.subscriptions.v1.SubmitClaimRequest
+	25, // 56: cg.subscriptions.v1.SubscriptionsService.ApproveClaim:input_type -> cg.subscriptions.v1.ApproveClaimRequest
+	27, // 57: cg.subscriptions.v1.SubscriptionsService.RejectClaim:input_type -> cg.subscriptions.v1.RejectClaimRequest
+	29, // 58: cg.subscriptions.v1.SubscriptionsService.GetClaim:input_type -> cg.subscriptions.v1.GetClaimRequest
+	30, // 59: cg.subscriptions.v1.SubscriptionsService.ListClaims:input_type -> cg.subscriptions.v1.ListClaimsRequest
+	34, // 60: cg.subscriptions.v1.SubscriptionsService.StartInspection:input_type -> cg.subscriptions.v1.StartInspectionRequest
+	36, // 61: cg.subscriptions.v1.SubscriptionsService.UploadInspectionMedia:input_type -> cg.subscriptions.v1.UploadInspectionMediaRequest
+	38, // 62: cg.subscriptions.v1.SubscriptionsService.GetInspectionBySubscription:input_type -> cg.subscriptions.v1.GetInspectionBySubscriptionRequest
+	40, // 63: cg.subscriptions.v1.SubscriptionsService.UpdateInspectionDraft:input_type -> cg.subscriptions.v1.UpdateInspectionDraftRequest
+	42, // 64: cg.subscriptions.v1.SubscriptionsService.CompleteInspectionAct:input_type -> cg.subscriptions.v1.CompleteInspectionActRequest
+	44, // 65: cg.subscriptions.v1.SubscriptionsService.ActivateSubscription:input_type -> cg.subscriptions.v1.ActivateSubscriptionRequest
+	11, // 66: cg.subscriptions.v1.SubscriptionsService.ListProducts:output_type -> cg.subscriptions.v1.ListProductsResponse
+	8,  // 67: cg.subscriptions.v1.SubscriptionsService.GetProduct:output_type -> cg.subscriptions.v1.Product
+	14, // 68: cg.subscriptions.v1.SubscriptionsService.ListSubscriptions:output_type -> cg.subscriptions.v1.ListSubscriptionsResponse
+	9,  // 69: cg.subscriptions.v1.SubscriptionsService.GetSubscription:output_type -> cg.subscriptions.v1.Subscription
+	18, // 70: cg.subscriptions.v1.SubscriptionsService.UploadMedia:output_type -> cg.subscriptions.v1.UploadMediaResponse
+	20, // 71: cg.subscriptions.v1.SubscriptionsService.ListMedia:output_type -> cg.subscriptions.v1.ListMediaResponse
+	24, // 72: cg.subscriptions.v1.SubscriptionsService.SubmitClaim:output_type -> cg.subscriptions.v1.SubmitClaimResponse
+	26, // 73: cg.subscriptions.v1.SubscriptionsService.ApproveClaim:output_type -> cg.subscriptions.v1.ApproveClaimResponse
+	28, // 74: cg.subscriptions.v1.SubscriptionsService.RejectClaim:output_type -> cg.subscriptions.v1.RejectClaimResponse
+	21, // 75: cg.subscriptions.v1.SubscriptionsService.GetClaim:output_type -> cg.subscriptions.v1.Claim
+	31, // 76: cg.subscriptions.v1.SubscriptionsService.ListClaims:output_type -> cg.subscriptions.v1.ListClaimsResponse
+	35, // 77: cg.subscriptions.v1.SubscriptionsService.StartInspection:output_type -> cg.subscriptions.v1.StartInspectionResponse
+	37, // 78: cg.subscriptions.v1.SubscriptionsService.UploadInspectionMedia:output_type -> cg.subscriptions.v1.UploadInspectionMediaResponse
+	39, // 79: cg.subscriptions.v1.SubscriptionsService.GetInspectionBySubscription:output_type -> cg.subscriptions.v1.GetInspectionBySubscriptionResponse
+	41, // 80: cg.subscriptions.v1.SubscriptionsService.UpdateInspectionDraft:output_type -> cg.subscriptions.v1.UpdateInspectionDraftResponse
+	43, // 81: cg.subscriptions.v1.SubscriptionsService.CompleteInspectionAct:output_type -> cg.subscriptions.v1.CompleteInspectionActResponse
+	9,  // 82: cg.subscriptions.v1.SubscriptionsService.ActivateSubscription:output_type -> cg.subscriptions.v1.Subscription
+	66, // [66:83] is the sub-list for method output_type
+	49, // [49:66] is the sub-list for method input_type
+	49, // [49:49] is the sub-list for extension type_name
+	49, // [49:49] is the sub-list for extension extendee
+	0,  // [0:49] is the sub-list for field type_name
 }
 
 func init() { file_subscriptions_v1_subscriptions_proto_init() }
@@ -1615,13 +3806,21 @@ func file_subscriptions_v1_subscriptions_proto_init() {
 	file_subscriptions_v1_subscriptions_proto_msgTypes[8].OneofWrappers = []any{}
 	file_subscriptions_v1_subscriptions_proto_msgTypes[9].OneofWrappers = []any{}
 	file_subscriptions_v1_subscriptions_proto_msgTypes[11].OneofWrappers = []any{}
+	file_subscriptions_v1_subscriptions_proto_msgTypes[13].OneofWrappers = []any{}
+	file_subscriptions_v1_subscriptions_proto_msgTypes[15].OneofWrappers = []any{}
+	file_subscriptions_v1_subscriptions_proto_msgTypes[17].OneofWrappers = []any{}
+	file_subscriptions_v1_subscriptions_proto_msgTypes[22].OneofWrappers = []any{}
+	file_subscriptions_v1_subscriptions_proto_msgTypes[24].OneofWrappers = []any{}
+	file_subscriptions_v1_subscriptions_proto_msgTypes[25].OneofWrappers = []any{}
+	file_subscriptions_v1_subscriptions_proto_msgTypes[28].OneofWrappers = []any{}
+	file_subscriptions_v1_subscriptions_proto_msgTypes[32].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_subscriptions_v1_subscriptions_proto_rawDesc), len(file_subscriptions_v1_subscriptions_proto_rawDesc)),
-			NumEnums:      4,
-			NumMessages:   13,
+			NumEnums:      8,
+			NumMessages:   37,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

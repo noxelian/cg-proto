@@ -19,12 +19,23 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SubscriptionsService_ListProducts_FullMethodName      = "/cg.subscriptions.v1.SubscriptionsService/ListProducts"
-	SubscriptionsService_GetProduct_FullMethodName        = "/cg.subscriptions.v1.SubscriptionsService/GetProduct"
-	SubscriptionsService_ListSubscriptions_FullMethodName = "/cg.subscriptions.v1.SubscriptionsService/ListSubscriptions"
-	SubscriptionsService_GetSubscription_FullMethodName   = "/cg.subscriptions.v1.SubscriptionsService/GetSubscription"
-	SubscriptionsService_UploadMedia_FullMethodName       = "/cg.subscriptions.v1.SubscriptionsService/UploadMedia"
-	SubscriptionsService_ListMedia_FullMethodName         = "/cg.subscriptions.v1.SubscriptionsService/ListMedia"
+	SubscriptionsService_ListProducts_FullMethodName                = "/cg.subscriptions.v1.SubscriptionsService/ListProducts"
+	SubscriptionsService_GetProduct_FullMethodName                  = "/cg.subscriptions.v1.SubscriptionsService/GetProduct"
+	SubscriptionsService_ListSubscriptions_FullMethodName           = "/cg.subscriptions.v1.SubscriptionsService/ListSubscriptions"
+	SubscriptionsService_GetSubscription_FullMethodName             = "/cg.subscriptions.v1.SubscriptionsService/GetSubscription"
+	SubscriptionsService_UploadMedia_FullMethodName                 = "/cg.subscriptions.v1.SubscriptionsService/UploadMedia"
+	SubscriptionsService_ListMedia_FullMethodName                   = "/cg.subscriptions.v1.SubscriptionsService/ListMedia"
+	SubscriptionsService_SubmitClaim_FullMethodName                 = "/cg.subscriptions.v1.SubscriptionsService/SubmitClaim"
+	SubscriptionsService_ApproveClaim_FullMethodName                = "/cg.subscriptions.v1.SubscriptionsService/ApproveClaim"
+	SubscriptionsService_RejectClaim_FullMethodName                 = "/cg.subscriptions.v1.SubscriptionsService/RejectClaim"
+	SubscriptionsService_GetClaim_FullMethodName                    = "/cg.subscriptions.v1.SubscriptionsService/GetClaim"
+	SubscriptionsService_ListClaims_FullMethodName                  = "/cg.subscriptions.v1.SubscriptionsService/ListClaims"
+	SubscriptionsService_StartInspection_FullMethodName             = "/cg.subscriptions.v1.SubscriptionsService/StartInspection"
+	SubscriptionsService_UploadInspectionMedia_FullMethodName       = "/cg.subscriptions.v1.SubscriptionsService/UploadInspectionMedia"
+	SubscriptionsService_GetInspectionBySubscription_FullMethodName = "/cg.subscriptions.v1.SubscriptionsService/GetInspectionBySubscription"
+	SubscriptionsService_UpdateInspectionDraft_FullMethodName       = "/cg.subscriptions.v1.SubscriptionsService/UpdateInspectionDraft"
+	SubscriptionsService_CompleteInspectionAct_FullMethodName       = "/cg.subscriptions.v1.SubscriptionsService/CompleteInspectionAct"
+	SubscriptionsService_ActivateSubscription_FullMethodName        = "/cg.subscriptions.v1.SubscriptionsService/ActivateSubscription"
 )
 
 // SubscriptionsServiceClient is the client API for SubscriptionsService service.
@@ -50,6 +61,70 @@ type SubscriptionsServiceClient interface {
 	// === Phase 58: Media RPC ===
 	UploadMedia(ctx context.Context, in *UploadMediaRequest, opts ...grpc.CallOption) (*UploadMediaResponse, error)
 	ListMedia(ctx context.Context, in *ListMediaRequest, opts ...grpc.CallOption) (*ListMediaResponse, error)
+	// SubmitClaim creates a new customer claim (manager-driven).
+	// Validation chain (D-04): subscription.status='active', under claims_limit
+	// and coverage_limit (<= boundary per QA-FIX-7), payload.zones not in
+	// inspection_act.exclusions. Race-safe via SELECT ... FOR UPDATE (D-05).
+	SubmitClaim(ctx context.Context, in *SubmitClaimRequest, opts ...grpc.CallOption) (*SubmitClaimResponse, error)
+	// ApproveClaim moves the claim to approved/repair_in_progress and triggers
+	// cg-workshop.CreateRepairOrder. Idempotent on retry per D-11. Approved-
+	// without-repair_order_id is a PENDING RETRY state (per ARCH-FIX-3).
+	ApproveClaim(ctx context.Context, in *ApproveClaimRequest, opts ...grpc.CallOption) (*ApproveClaimResponse, error)
+	RejectClaim(ctx context.Context, in *RejectClaimRequest, opts ...grpc.CallOption) (*RejectClaimResponse, error)
+	GetClaim(ctx context.Context, in *GetClaimRequest, opts ...grpc.CallOption) (*Claim, error)
+	ListClaims(ctx context.Context, in *ListClaimsRequest, opts ...grpc.CallOption) (*ListClaimsResponse, error)
+	// StartInspection creates (or returns existing) draft inspection_act for a
+	// subscription. Idempotent: second call with same subscription_id returns
+	// the same draft id (created=false).
+	//
+	// Validation: subscription.status MUST be in {pending_contact,
+	// inspection_scheduled, inspection_in_progress}. Error codes:
+	//   - NOT_FOUND: subscription not found
+	//   - FAILED_PRECONDITION: subscription already active/exhausted/expired
+	StartInspection(ctx context.Context, in *StartInspectionRequest, opts ...grpc.CallOption) (*StartInspectionResponse, error)
+	// UploadInspectionMedia is a thin alias of UploadMedia that REQUIRES
+	// inspection_id and validates view_code metadata for baseline_photo kind.
+	// Implemented as a wrapper over media.Service.Upload (Phase 58) with
+	// server-side metadata enrichment ({"view_code":"<code>"} -> metadata JSONB).
+	//
+	// Validation:
+	//   - kind MUST be MEDIA_KIND_BASELINE_PHOTO, BASELINE_VIDEO, or DAMAGE_PHOTO
+	//   - view_code REQUIRED when kind=BASELINE_PHOTO; allowed values:
+	//     front, rear, left, right, top, interior
+	//   - inspection_id MUST exist and act.status='draft'
+	UploadInspectionMedia(ctx context.Context, in *UploadInspectionMediaRequest, opts ...grpc.CallOption) (*UploadInspectionMediaResponse, error)
+	// GetInspectionBySubscription returns the most recent inspection_act for a
+	// subscription (draft OR submitted). Used by admin-web /admin/shield to
+	// resume an in-progress draft on page load. Returns NOT_FOUND if none.
+	GetInspectionBySubscription(ctx context.Context, in *GetInspectionBySubscriptionRequest, opts ...grpc.CallOption) (*GetInspectionBySubscriptionResponse, error)
+	// UpdateInspectionDraft applies a partial PATCH to a draft inspection_act
+	// (per Phase 62 C-07 PATCH semantics). Each field is "set if non-nil";
+	// exclusions replaces the entire JSONB array atomically.
+	// Returns NOT_FOUND if no draft exists, FAILED_PRECONDITION if already
+	// submitted, INVALID_ARGUMENT for invalid exclusions schema.
+	UpdateInspectionDraft(ctx context.Context, in *UpdateInspectionDraftRequest, opts ...grpc.CallOption) (*UpdateInspectionDraftResponse, error)
+	// CompleteInspectionAct transitions the act from draft -> submitted.
+	// Server-authoritative submit gate (per Phase 62 C-05):
+	//   - 6 distinct baseline_photo view_codes uploaded
+	//   - every damaged zone has a damage_photo (media_id linked)
+	//   - address present if location='on_site'
+	//   - mileage > 0
+	//   - vin_confirmed = true
+	//
+	// On success: act.status='submitted', subscription.status='inspection_done'.
+	// Failure returns FAILED_PRECONDITION with structured details ('missing' field).
+	CompleteInspectionAct(ctx context.Context, in *CompleteInspectionActRequest, opts ...grpc.CallOption) (*CompleteInspectionActResponse, error)
+	// ActivateSubscription is the FINAL step. Requires the subscription's
+	// most recent inspection_act in status='submitted'. On success:
+	//   - subscription.status='active'
+	//   - activated_at=NOW()
+	//   - expires_at=activated_at + 1 year
+	//   - CRM Deal MoveDealStage(SHIELD_STAGE_ACTIVE_ID) (best-effort)
+	//   - Kafka publish subscription.activated event (best-effort)
+	//   - SMS template shield_activated to phone (best-effort)
+	//
+	// Idempotent: returns updated Subscription if already active.
+	ActivateSubscription(ctx context.Context, in *ActivateSubscriptionRequest, opts ...grpc.CallOption) (*Subscription, error)
 }
 
 type subscriptionsServiceClient struct {
@@ -120,6 +195,116 @@ func (c *subscriptionsServiceClient) ListMedia(ctx context.Context, in *ListMedi
 	return out, nil
 }
 
+func (c *subscriptionsServiceClient) SubmitClaim(ctx context.Context, in *SubmitClaimRequest, opts ...grpc.CallOption) (*SubmitClaimResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SubmitClaimResponse)
+	err := c.cc.Invoke(ctx, SubscriptionsService_SubmitClaim_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionsServiceClient) ApproveClaim(ctx context.Context, in *ApproveClaimRequest, opts ...grpc.CallOption) (*ApproveClaimResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ApproveClaimResponse)
+	err := c.cc.Invoke(ctx, SubscriptionsService_ApproveClaim_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionsServiceClient) RejectClaim(ctx context.Context, in *RejectClaimRequest, opts ...grpc.CallOption) (*RejectClaimResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RejectClaimResponse)
+	err := c.cc.Invoke(ctx, SubscriptionsService_RejectClaim_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionsServiceClient) GetClaim(ctx context.Context, in *GetClaimRequest, opts ...grpc.CallOption) (*Claim, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Claim)
+	err := c.cc.Invoke(ctx, SubscriptionsService_GetClaim_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionsServiceClient) ListClaims(ctx context.Context, in *ListClaimsRequest, opts ...grpc.CallOption) (*ListClaimsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListClaimsResponse)
+	err := c.cc.Invoke(ctx, SubscriptionsService_ListClaims_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionsServiceClient) StartInspection(ctx context.Context, in *StartInspectionRequest, opts ...grpc.CallOption) (*StartInspectionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StartInspectionResponse)
+	err := c.cc.Invoke(ctx, SubscriptionsService_StartInspection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionsServiceClient) UploadInspectionMedia(ctx context.Context, in *UploadInspectionMediaRequest, opts ...grpc.CallOption) (*UploadInspectionMediaResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UploadInspectionMediaResponse)
+	err := c.cc.Invoke(ctx, SubscriptionsService_UploadInspectionMedia_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionsServiceClient) GetInspectionBySubscription(ctx context.Context, in *GetInspectionBySubscriptionRequest, opts ...grpc.CallOption) (*GetInspectionBySubscriptionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInspectionBySubscriptionResponse)
+	err := c.cc.Invoke(ctx, SubscriptionsService_GetInspectionBySubscription_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionsServiceClient) UpdateInspectionDraft(ctx context.Context, in *UpdateInspectionDraftRequest, opts ...grpc.CallOption) (*UpdateInspectionDraftResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateInspectionDraftResponse)
+	err := c.cc.Invoke(ctx, SubscriptionsService_UpdateInspectionDraft_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionsServiceClient) CompleteInspectionAct(ctx context.Context, in *CompleteInspectionActRequest, opts ...grpc.CallOption) (*CompleteInspectionActResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CompleteInspectionActResponse)
+	err := c.cc.Invoke(ctx, SubscriptionsService_CompleteInspectionAct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionsServiceClient) ActivateSubscription(ctx context.Context, in *ActivateSubscriptionRequest, opts ...grpc.CallOption) (*Subscription, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Subscription)
+	err := c.cc.Invoke(ctx, SubscriptionsService_ActivateSubscription_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SubscriptionsServiceServer is the server API for SubscriptionsService service.
 // All implementations must embed UnimplementedSubscriptionsServiceServer
 // for forward compatibility.
@@ -143,6 +328,70 @@ type SubscriptionsServiceServer interface {
 	// === Phase 58: Media RPC ===
 	UploadMedia(context.Context, *UploadMediaRequest) (*UploadMediaResponse, error)
 	ListMedia(context.Context, *ListMediaRequest) (*ListMediaResponse, error)
+	// SubmitClaim creates a new customer claim (manager-driven).
+	// Validation chain (D-04): subscription.status='active', under claims_limit
+	// and coverage_limit (<= boundary per QA-FIX-7), payload.zones not in
+	// inspection_act.exclusions. Race-safe via SELECT ... FOR UPDATE (D-05).
+	SubmitClaim(context.Context, *SubmitClaimRequest) (*SubmitClaimResponse, error)
+	// ApproveClaim moves the claim to approved/repair_in_progress and triggers
+	// cg-workshop.CreateRepairOrder. Idempotent on retry per D-11. Approved-
+	// without-repair_order_id is a PENDING RETRY state (per ARCH-FIX-3).
+	ApproveClaim(context.Context, *ApproveClaimRequest) (*ApproveClaimResponse, error)
+	RejectClaim(context.Context, *RejectClaimRequest) (*RejectClaimResponse, error)
+	GetClaim(context.Context, *GetClaimRequest) (*Claim, error)
+	ListClaims(context.Context, *ListClaimsRequest) (*ListClaimsResponse, error)
+	// StartInspection creates (or returns existing) draft inspection_act for a
+	// subscription. Idempotent: second call with same subscription_id returns
+	// the same draft id (created=false).
+	//
+	// Validation: subscription.status MUST be in {pending_contact,
+	// inspection_scheduled, inspection_in_progress}. Error codes:
+	//   - NOT_FOUND: subscription not found
+	//   - FAILED_PRECONDITION: subscription already active/exhausted/expired
+	StartInspection(context.Context, *StartInspectionRequest) (*StartInspectionResponse, error)
+	// UploadInspectionMedia is a thin alias of UploadMedia that REQUIRES
+	// inspection_id and validates view_code metadata for baseline_photo kind.
+	// Implemented as a wrapper over media.Service.Upload (Phase 58) with
+	// server-side metadata enrichment ({"view_code":"<code>"} -> metadata JSONB).
+	//
+	// Validation:
+	//   - kind MUST be MEDIA_KIND_BASELINE_PHOTO, BASELINE_VIDEO, or DAMAGE_PHOTO
+	//   - view_code REQUIRED when kind=BASELINE_PHOTO; allowed values:
+	//     front, rear, left, right, top, interior
+	//   - inspection_id MUST exist and act.status='draft'
+	UploadInspectionMedia(context.Context, *UploadInspectionMediaRequest) (*UploadInspectionMediaResponse, error)
+	// GetInspectionBySubscription returns the most recent inspection_act for a
+	// subscription (draft OR submitted). Used by admin-web /admin/shield to
+	// resume an in-progress draft on page load. Returns NOT_FOUND if none.
+	GetInspectionBySubscription(context.Context, *GetInspectionBySubscriptionRequest) (*GetInspectionBySubscriptionResponse, error)
+	// UpdateInspectionDraft applies a partial PATCH to a draft inspection_act
+	// (per Phase 62 C-07 PATCH semantics). Each field is "set if non-nil";
+	// exclusions replaces the entire JSONB array atomically.
+	// Returns NOT_FOUND if no draft exists, FAILED_PRECONDITION if already
+	// submitted, INVALID_ARGUMENT for invalid exclusions schema.
+	UpdateInspectionDraft(context.Context, *UpdateInspectionDraftRequest) (*UpdateInspectionDraftResponse, error)
+	// CompleteInspectionAct transitions the act from draft -> submitted.
+	// Server-authoritative submit gate (per Phase 62 C-05):
+	//   - 6 distinct baseline_photo view_codes uploaded
+	//   - every damaged zone has a damage_photo (media_id linked)
+	//   - address present if location='on_site'
+	//   - mileage > 0
+	//   - vin_confirmed = true
+	//
+	// On success: act.status='submitted', subscription.status='inspection_done'.
+	// Failure returns FAILED_PRECONDITION with structured details ('missing' field).
+	CompleteInspectionAct(context.Context, *CompleteInspectionActRequest) (*CompleteInspectionActResponse, error)
+	// ActivateSubscription is the FINAL step. Requires the subscription's
+	// most recent inspection_act in status='submitted'. On success:
+	//   - subscription.status='active'
+	//   - activated_at=NOW()
+	//   - expires_at=activated_at + 1 year
+	//   - CRM Deal MoveDealStage(SHIELD_STAGE_ACTIVE_ID) (best-effort)
+	//   - Kafka publish subscription.activated event (best-effort)
+	//   - SMS template shield_activated to phone (best-effort)
+	//
+	// Idempotent: returns updated Subscription if already active.
+	ActivateSubscription(context.Context, *ActivateSubscriptionRequest) (*Subscription, error)
 	mustEmbedUnimplementedSubscriptionsServiceServer()
 }
 
@@ -170,6 +419,39 @@ func (UnimplementedSubscriptionsServiceServer) UploadMedia(context.Context, *Upl
 }
 func (UnimplementedSubscriptionsServiceServer) ListMedia(context.Context, *ListMediaRequest) (*ListMediaResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMedia not implemented")
+}
+func (UnimplementedSubscriptionsServiceServer) SubmitClaim(context.Context, *SubmitClaimRequest) (*SubmitClaimResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SubmitClaim not implemented")
+}
+func (UnimplementedSubscriptionsServiceServer) ApproveClaim(context.Context, *ApproveClaimRequest) (*ApproveClaimResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ApproveClaim not implemented")
+}
+func (UnimplementedSubscriptionsServiceServer) RejectClaim(context.Context, *RejectClaimRequest) (*RejectClaimResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RejectClaim not implemented")
+}
+func (UnimplementedSubscriptionsServiceServer) GetClaim(context.Context, *GetClaimRequest) (*Claim, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetClaim not implemented")
+}
+func (UnimplementedSubscriptionsServiceServer) ListClaims(context.Context, *ListClaimsRequest) (*ListClaimsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListClaims not implemented")
+}
+func (UnimplementedSubscriptionsServiceServer) StartInspection(context.Context, *StartInspectionRequest) (*StartInspectionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method StartInspection not implemented")
+}
+func (UnimplementedSubscriptionsServiceServer) UploadInspectionMedia(context.Context, *UploadInspectionMediaRequest) (*UploadInspectionMediaResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UploadInspectionMedia not implemented")
+}
+func (UnimplementedSubscriptionsServiceServer) GetInspectionBySubscription(context.Context, *GetInspectionBySubscriptionRequest) (*GetInspectionBySubscriptionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetInspectionBySubscription not implemented")
+}
+func (UnimplementedSubscriptionsServiceServer) UpdateInspectionDraft(context.Context, *UpdateInspectionDraftRequest) (*UpdateInspectionDraftResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateInspectionDraft not implemented")
+}
+func (UnimplementedSubscriptionsServiceServer) CompleteInspectionAct(context.Context, *CompleteInspectionActRequest) (*CompleteInspectionActResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CompleteInspectionAct not implemented")
+}
+func (UnimplementedSubscriptionsServiceServer) ActivateSubscription(context.Context, *ActivateSubscriptionRequest) (*Subscription, error) {
+	return nil, status.Error(codes.Unimplemented, "method ActivateSubscription not implemented")
 }
 func (UnimplementedSubscriptionsServiceServer) mustEmbedUnimplementedSubscriptionsServiceServer() {}
 func (UnimplementedSubscriptionsServiceServer) testEmbeddedByValue()                              {}
@@ -300,6 +582,204 @@ func _SubscriptionsService_ListMedia_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SubscriptionsService_SubmitClaim_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubmitClaimRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionsServiceServer).SubmitClaim(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionsService_SubmitClaim_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionsServiceServer).SubmitClaim(ctx, req.(*SubmitClaimRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionsService_ApproveClaim_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApproveClaimRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionsServiceServer).ApproveClaim(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionsService_ApproveClaim_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionsServiceServer).ApproveClaim(ctx, req.(*ApproveClaimRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionsService_RejectClaim_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RejectClaimRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionsServiceServer).RejectClaim(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionsService_RejectClaim_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionsServiceServer).RejectClaim(ctx, req.(*RejectClaimRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionsService_GetClaim_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetClaimRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionsServiceServer).GetClaim(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionsService_GetClaim_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionsServiceServer).GetClaim(ctx, req.(*GetClaimRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionsService_ListClaims_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListClaimsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionsServiceServer).ListClaims(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionsService_ListClaims_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionsServiceServer).ListClaims(ctx, req.(*ListClaimsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionsService_StartInspection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartInspectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionsServiceServer).StartInspection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionsService_StartInspection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionsServiceServer).StartInspection(ctx, req.(*StartInspectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionsService_UploadInspectionMedia_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadInspectionMediaRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionsServiceServer).UploadInspectionMedia(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionsService_UploadInspectionMedia_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionsServiceServer).UploadInspectionMedia(ctx, req.(*UploadInspectionMediaRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionsService_GetInspectionBySubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInspectionBySubscriptionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionsServiceServer).GetInspectionBySubscription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionsService_GetInspectionBySubscription_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionsServiceServer).GetInspectionBySubscription(ctx, req.(*GetInspectionBySubscriptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionsService_UpdateInspectionDraft_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateInspectionDraftRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionsServiceServer).UpdateInspectionDraft(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionsService_UpdateInspectionDraft_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionsServiceServer).UpdateInspectionDraft(ctx, req.(*UpdateInspectionDraftRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionsService_CompleteInspectionAct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CompleteInspectionActRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionsServiceServer).CompleteInspectionAct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionsService_CompleteInspectionAct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionsServiceServer).CompleteInspectionAct(ctx, req.(*CompleteInspectionActRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionsService_ActivateSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ActivateSubscriptionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionsServiceServer).ActivateSubscription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubscriptionsService_ActivateSubscription_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionsServiceServer).ActivateSubscription(ctx, req.(*ActivateSubscriptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SubscriptionsService_ServiceDesc is the grpc.ServiceDesc for SubscriptionsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -330,6 +810,50 @@ var SubscriptionsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListMedia",
 			Handler:    _SubscriptionsService_ListMedia_Handler,
+		},
+		{
+			MethodName: "SubmitClaim",
+			Handler:    _SubscriptionsService_SubmitClaim_Handler,
+		},
+		{
+			MethodName: "ApproveClaim",
+			Handler:    _SubscriptionsService_ApproveClaim_Handler,
+		},
+		{
+			MethodName: "RejectClaim",
+			Handler:    _SubscriptionsService_RejectClaim_Handler,
+		},
+		{
+			MethodName: "GetClaim",
+			Handler:    _SubscriptionsService_GetClaim_Handler,
+		},
+		{
+			MethodName: "ListClaims",
+			Handler:    _SubscriptionsService_ListClaims_Handler,
+		},
+		{
+			MethodName: "StartInspection",
+			Handler:    _SubscriptionsService_StartInspection_Handler,
+		},
+		{
+			MethodName: "UploadInspectionMedia",
+			Handler:    _SubscriptionsService_UploadInspectionMedia_Handler,
+		},
+		{
+			MethodName: "GetInspectionBySubscription",
+			Handler:    _SubscriptionsService_GetInspectionBySubscription_Handler,
+		},
+		{
+			MethodName: "UpdateInspectionDraft",
+			Handler:    _SubscriptionsService_UpdateInspectionDraft_Handler,
+		},
+		{
+			MethodName: "CompleteInspectionAct",
+			Handler:    _SubscriptionsService_CompleteInspectionAct_Handler,
+		},
+		{
+			MethodName: "ActivateSubscription",
+			Handler:    _SubscriptionsService_ActivateSubscription_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
