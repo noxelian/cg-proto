@@ -773,6 +773,42 @@ message CreateExternalDealRequest {
   // key so clients cannot spoof origin. cg-crm rejects empty and
   // "manual" values.
   string source = 18;
+
+  // Optional Instagram identifiers for the contact. When set together
+  // with contact_phone, cg-crm forwards them to cg-users so the user
+  // row carries the IG handle and the AI can resolve the same person
+  // back by IG id later.
+  string instagram_id       = 19;
+  string instagram_username = 20;
+
+  // Optional auto-task created right after the deal is inserted. Used
+  // by integrations that have a hard-coded follow-up step (Instagram
+  // AI: "связаться и назначить осмотр" on new lead, "подтвердить
+  // запись" on a scheduled visit). Empty title disables the auto-task.
+  string auto_task_title = 21;
+  // Optional override for auto-task due_at. When unset (zero), cg-crm
+  // uses the deal's created_at as the deadline.
+  google.protobuf.Timestamp auto_task_due_at = 22;
+
+  // Optional conversation snapshot to persist alongside the deal. When
+  // non-empty, cg-crm writes each entry as a wa_messages row keyed to
+  // the resolved contact's phone so the existing WhatsApp chat block
+  // surfaces the AI dialog to the manager. Empty list = no-op.
+  repeated ExternalConversationMessage conversation = 23;
+}
+
+// One turn in an AI-driven conversation persisted into wa_messages so
+// managers can read the dialog inside the existing WhatsApp UI.
+message ExternalConversationMessage {
+  // Direction of the message. "inbound" = from the client to the AI;
+  // "outbound" = from the AI/manager to the client. Anything else is
+  // rejected (cg-crm treats it as a client error).
+  string direction = 1;
+  // Message body. Plain text only; no media support yet.
+  string text      = 2;
+  // When the message happened in the source channel. Required so the
+  // chat ordering matches reality. RFC3339.
+  google.protobuf.Timestamp ts = 3;
 }
 
 message CreateExternalDealResponse {

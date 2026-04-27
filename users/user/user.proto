@@ -141,6 +141,10 @@ message User {
   bool is_verified = 7;
   google.protobuf.Timestamp created_at = 8;
   google.protobuf.Timestamp updated_at = 9;
+  // Social-network identifiers stamped when a contact is created from
+  // an external integration (Instagram Direct AI today).
+  string instagram_id       = 10;
+  string instagram_username = 11;
 }
 
 message UserCounters {
@@ -224,6 +228,14 @@ message CreateUserResponse {
 // FindOrCreateByPhone (for sync service)
 message FindOrCreateByPhoneRequest {
   string phone = 1;
+  // Optional name to set on a freshly-created user (existing rows are
+  // not overwritten — manager-edited names should win).
+  string name = 2;
+  // Optional Instagram identifiers — when present they are written to
+  // the user row (both new and existing) so the contact card can show
+  // the IG handle and the AI can find the user back by IG id.
+  string instagram_id       = 3;
+  string instagram_username = 4;
 }
 
 message FindOrCreateByPhoneResponse {
