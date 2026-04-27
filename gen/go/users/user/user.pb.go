@@ -87,18 +87,22 @@ func (PlatformRole) EnumDescriptor() ([]byte, []int) {
 }
 
 type User struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Phone         string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	AvatarUrl     string                 `protobuf:"bytes,4,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`
-	Email         string                 `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
-	CityId        int64                  `protobuf:"varint,6,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
-	IsVerified    bool                   `protobuf:"varint,7,opt,name=is_verified,json=isVerified,proto3" json:"is_verified,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Phone      string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
+	Name       string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	AvatarUrl  string                 `protobuf:"bytes,4,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`
+	Email      string                 `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
+	CityId     int64                  `protobuf:"varint,6,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
+	IsVerified bool                   `protobuf:"varint,7,opt,name=is_verified,json=isVerified,proto3" json:"is_verified,omitempty"`
+	CreatedAt  *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt  *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// Social-network identifiers stamped when a contact is created from
+	// an external integration (Instagram Direct AI today).
+	InstagramId       string `protobuf:"bytes,10,opt,name=instagram_id,json=instagramId,proto3" json:"instagram_id,omitempty"`
+	InstagramUsername string `protobuf:"bytes,11,opt,name=instagram_username,json=instagramUsername,proto3" json:"instagram_username,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *User) Reset() {
@@ -192,6 +196,20 @@ func (x *User) GetUpdatedAt() *timestamppb.Timestamp {
 		return x.UpdatedAt
 	}
 	return nil
+}
+
+func (x *User) GetInstagramId() string {
+	if x != nil {
+		return x.InstagramId
+	}
+	return ""
+}
+
+func (x *User) GetInstagramUsername() string {
+	if x != nil {
+		return x.InstagramUsername
+	}
+	return ""
 }
 
 type UserCounters struct {
@@ -931,10 +949,18 @@ func (x *CreateUserResponse) GetUser() *User {
 
 // FindOrCreateByPhone (for sync service)
 type FindOrCreateByPhoneRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Phone         string                 `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Phone string                 `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
+	// Optional name to set on a freshly-created user (existing rows are
+	// not overwritten — manager-edited names should win).
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// Optional Instagram identifiers — when present they are written to
+	// the user row (both new and existing) so the contact card can show
+	// the IG handle and the AI can find the user back by IG id.
+	InstagramId       string `protobuf:"bytes,3,opt,name=instagram_id,json=instagramId,proto3" json:"instagram_id,omitempty"`
+	InstagramUsername string `protobuf:"bytes,4,opt,name=instagram_username,json=instagramUsername,proto3" json:"instagram_username,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *FindOrCreateByPhoneRequest) Reset() {
@@ -970,6 +996,27 @@ func (*FindOrCreateByPhoneRequest) Descriptor() ([]byte, []int) {
 func (x *FindOrCreateByPhoneRequest) GetPhone() string {
 	if x != nil {
 		return x.Phone
+	}
+	return ""
+}
+
+func (x *FindOrCreateByPhoneRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *FindOrCreateByPhoneRequest) GetInstagramId() string {
+	if x != nil {
+		return x.InstagramId
+	}
+	return ""
+}
+
+func (x *FindOrCreateByPhoneRequest) GetInstagramUsername() string {
+	if x != nil {
+		return x.InstagramUsername
 	}
 	return ""
 }
@@ -4330,7 +4377,7 @@ var File_users_user_user_proto protoreflect.FileDescriptor
 
 const file_users_user_user_proto_rawDesc = "" +
 	"\n" +
-	"\x15users/user/user.proto\x12\rusers.user.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa5\x02\n" +
+	"\x15users/user/user.proto\x12\rusers.user.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf7\x02\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x12\n" +
@@ -4344,7 +4391,10 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xa2\x01\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12!\n" +
+	"\finstagram_id\x18\n" +
+	" \x01(\tR\vinstagramId\x12-\n" +
+	"\x12instagram_username\x18\v \x01(\tR\x11instagramUsername\"\xa2\x01\n" +
 	"\fUserCounters\x12\x1b\n" +
 	"\tads_count\x18\x01 \x01(\x03R\badsCount\x12#\n" +
 	"\rreviews_count\x18\x02 \x01(\x03R\freviewsCount\x12'\n" +
@@ -4391,9 +4441,12 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x11CreateUserRequest\x12\x14\n" +
 	"\x05phone\x18\x01 \x01(\tR\x05phone\"=\n" +
 	"\x12CreateUserResponse\x12'\n" +
-	"\x04user\x18\x01 \x01(\v2\x13.users.user.v1.UserR\x04user\"2\n" +
+	"\x04user\x18\x01 \x01(\v2\x13.users.user.v1.UserR\x04user\"\x98\x01\n" +
 	"\x1aFindOrCreateByPhoneRequest\x12\x14\n" +
-	"\x05phone\x18\x01 \x01(\tR\x05phone\"`\n" +
+	"\x05phone\x18\x01 \x01(\tR\x05phone\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12!\n" +
+	"\finstagram_id\x18\x03 \x01(\tR\vinstagramId\x12-\n" +
+	"\x12instagram_username\x18\x04 \x01(\tR\x11instagramUsername\"`\n" +
 	"\x1bFindOrCreateByPhoneResponse\x12'\n" +
 	"\x04user\x18\x01 \x01(\v2\x13.users.user.v1.UserR\x04user\x12\x18\n" +
 	"\acreated\x18\x02 \x01(\bR\acreated\"\x88\x02\n" +
