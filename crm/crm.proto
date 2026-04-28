@@ -60,6 +60,10 @@ service CRMService {
   rpc MoveDealStage(MoveDealStageRequest)                   returns (MoveDealStageResponse);
   rpc CloseDeal(CloseDealRequest)                           returns (CloseDealResponse);
   rpc ReOpenDeal(ReOpenDealRequest)                         returns (ReOpenDealResponse);
+  // DeleteDeal hard-deletes a deal and every dependent row that the
+  // schema cascades on (tasks, activities, deal_stage_history, notes).
+  // Admin-only — enforced by the service via DataScopeResolver.
+  rpc DeleteDeal(DeleteDealRequest)                         returns (DeleteDealResponse);
   rpc GetDealActivities(GetDealActivitiesRequest)           returns (GetDealActivitiesResponse);
   rpc GetContactActivities(GetContactActivitiesRequest)     returns (GetContactActivitiesResponse);
 
@@ -970,6 +974,14 @@ message ReOpenDealRequest {
 
 message ReOpenDealResponse {
   DealProto deal = 1;
+}
+
+message DeleteDealRequest {
+  string organization_id = 1;
+  string deal_id         = 2;
+}
+
+message DeleteDealResponse {
 }
 
 // GetPipelineAggregatesRequest scopes the aggregate calculation to a single
