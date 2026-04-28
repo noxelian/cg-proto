@@ -1880,12 +1880,17 @@ message TelephonyGetCredentialsResponse {
 
 // ---------- telephony_pipeline_dids ----------
 message TelephonyPipelineDID {
-  string                      id              = 1;
-  string                      organization_id = 2;
-  string                      pipeline_id     = 3;
-  TelephonyProvider           provider        = 4;
-  string                      did             = 5;
-  google.protobuf.Timestamp   created_at      = 6;
+  string                      id                = 1;
+  string                      organization_id   = 2;
+  string                      pipeline_id       = 3;
+  TelephonyProvider           provider          = 4;
+  string                      did               = 5;
+  google.protobuf.Timestamp   created_at        = 6;
+  // Only one row per (provider, did) may have is_inbound_owner=TRUE.
+  // That row determines which pipeline an inbound call to this DID lands in.
+  // Other rows with is_inbound_owner=FALSE allow the same DID to be used
+  // as outbound CallerID from additional pipelines.
+  bool                        is_inbound_owner  = 7;
 }
 
 message UpsertTelephonyPipelineDIDRequest  { TelephonyPipelineDID did = 1; }
