@@ -90,6 +90,7 @@ const (
 	CRMService_ListWhatsAppTemplates_FullMethodName              = "/crm.v1.CRMService/ListWhatsAppTemplates"
 	CRMService_HandleWhatsAppWebhook_FullMethodName              = "/crm.v1.CRMService/HandleWhatsAppWebhook"
 	CRMService_MarkWhatsAppChatRead_FullMethodName               = "/crm.v1.CRMService/MarkWhatsAppChatRead"
+	CRMService_ListWhatsAppChannels_FullMethodName               = "/crm.v1.CRMService/ListWhatsAppChannels"
 	CRMService_SendWazzupMessage_FullMethodName                  = "/crm.v1.CRMService/SendWazzupMessage"
 	CRMService_ListWazzupMessages_FullMethodName                 = "/crm.v1.CRMService/ListWazzupMessages"
 	CRMService_ListWazzupConversations_FullMethodName            = "/crm.v1.CRMService/ListWazzupConversations"
@@ -271,6 +272,11 @@ type CRMServiceClient interface {
 	// messages and prevented badges from ever surfacing when a chat was open
 	// or polled. Now the frontend calls this explicitly on chat selection.
 	MarkWhatsAppChatRead(ctx context.Context, in *MarkWhatsAppChatReadRequest, opts ...grpc.CallOption) (*MarkWhatsAppChatReadResponse, error)
+	// ListWhatsAppChannels returns the WABA numbers (whatsapp_channels) the
+	// calling user is allowed to see — channels whose allowed_pipeline_ids
+	// intersect the user's pipeline_members. Used by the sidebar to render
+	// one tab per accessible WhatsApp number ("WhatsApp ××××").
+	ListWhatsAppChannels(ctx context.Context, in *ListWhatsAppChannelsRequest, opts ...grpc.CallOption) (*ListWhatsAppChannelsResponse, error)
 	// Wazzup24 messaging RPCs — separate provider mirroring the WhatsApp channel
 	// that's still connected to AmoCRM. Lets the new CRM surface the same chats
 	// without disrupting AmoCRM's existing Wazzup integration.
@@ -1047,6 +1053,16 @@ func (c *cRMServiceClient) MarkWhatsAppChatRead(ctx context.Context, in *MarkWha
 	return out, nil
 }
 
+func (c *cRMServiceClient) ListWhatsAppChannels(ctx context.Context, in *ListWhatsAppChannelsRequest, opts ...grpc.CallOption) (*ListWhatsAppChannelsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWhatsAppChannelsResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListWhatsAppChannels_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) SendWazzupMessage(ctx context.Context, in *SendWazzupMessageRequest, opts ...grpc.CallOption) (*SendWazzupMessageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SendWazzupMessageResponse)
@@ -1532,6 +1548,11 @@ type CRMServiceServer interface {
 	// messages and prevented badges from ever surfacing when a chat was open
 	// or polled. Now the frontend calls this explicitly on chat selection.
 	MarkWhatsAppChatRead(context.Context, *MarkWhatsAppChatReadRequest) (*MarkWhatsAppChatReadResponse, error)
+	// ListWhatsAppChannels returns the WABA numbers (whatsapp_channels) the
+	// calling user is allowed to see — channels whose allowed_pipeline_ids
+	// intersect the user's pipeline_members. Used by the sidebar to render
+	// one tab per accessible WhatsApp number ("WhatsApp ××××").
+	ListWhatsAppChannels(context.Context, *ListWhatsAppChannelsRequest) (*ListWhatsAppChannelsResponse, error)
 	// Wazzup24 messaging RPCs — separate provider mirroring the WhatsApp channel
 	// that's still connected to AmoCRM. Lets the new CRM surface the same chats
 	// without disrupting AmoCRM's existing Wazzup integration.
@@ -1798,6 +1819,9 @@ func (UnimplementedCRMServiceServer) HandleWhatsAppWebhook(context.Context, *Wha
 }
 func (UnimplementedCRMServiceServer) MarkWhatsAppChatRead(context.Context, *MarkWhatsAppChatReadRequest) (*MarkWhatsAppChatReadResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method MarkWhatsAppChatRead not implemented")
+}
+func (UnimplementedCRMServiceServer) ListWhatsAppChannels(context.Context, *ListWhatsAppChannelsRequest) (*ListWhatsAppChannelsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListWhatsAppChannels not implemented")
 }
 func (UnimplementedCRMServiceServer) SendWazzupMessage(context.Context, *SendWazzupMessageRequest) (*SendWazzupMessageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendWazzupMessage not implemented")
@@ -3200,6 +3224,24 @@ func _CRMService_MarkWhatsAppChatRead_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_ListWhatsAppChannels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWhatsAppChannelsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListWhatsAppChannels(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListWhatsAppChannels_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListWhatsAppChannels(ctx, req.(*ListWhatsAppChannelsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_SendWazzupMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SendWazzupMessageRequest)
 	if err := dec(in); err != nil {
@@ -4102,6 +4144,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MarkWhatsAppChatRead",
 			Handler:    _CRMService_MarkWhatsAppChatRead_Handler,
+		},
+		{
+			MethodName: "ListWhatsAppChannels",
+			Handler:    _CRMService_ListWhatsAppChannels_Handler,
 		},
 		{
 			MethodName: "SendWazzupMessage",

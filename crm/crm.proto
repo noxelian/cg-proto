@@ -153,6 +153,11 @@ service CRMService {
   // messages and prevented badges from ever surfacing when a chat was open
   // or polled. Now the frontend calls this explicitly on chat selection.
   rpc MarkWhatsAppChatRead(MarkWhatsAppChatReadRequest) returns (MarkWhatsAppChatReadResponse);
+  // ListWhatsAppChannels returns the WABA numbers (whatsapp_channels) the
+  // calling user is allowed to see — channels whose allowed_pipeline_ids
+  // intersect the user's pipeline_members. Used by the sidebar to render
+  // one tab per accessible WhatsApp number ("WhatsApp ××××").
+  rpc ListWhatsAppChannels(ListWhatsAppChannelsRequest) returns (ListWhatsAppChannelsResponse);
 
   // Wazzup24 messaging RPCs — separate provider mirroring the WhatsApp channel
   // that's still connected to AmoCRM. Lets the new CRM surface the same chats
@@ -1545,6 +1550,10 @@ message ListWhatsAppMessagesRequest {
   string phone           = 3;  // or filter by phone
   int32  limit           = 4;
   int32  offset          = 5;
+  // Optional WhatsApp channel filter — wa_messages.phone_number_id. When
+  // set, narrows results to chats received by / sent from that WABA number.
+  // Used by the sidebar's per-channel tab. Empty = no filter (legacy).
+  string phone_number_id = 6;
 }
 
 message ListWhatsAppMessagesResponse {
@@ -1571,6 +1580,9 @@ message ListWhatsAppConversationsRequest {
   // counterpart phone (formatting-tolerant); free text matches the most
   // recent wa_messages.body. Empty / whitespace is ignored.
   string search          = 4;
+  // Optional WhatsApp channel filter — wa_messages.phone_number_id. Empty
+  // returns the global inbox; non-empty narrows to one WABA number.
+  string phone_number_id = 5;
 }
 
 message ListWhatsAppConversationsResponse {
@@ -1584,6 +1596,25 @@ message MarkWhatsAppChatReadRequest {
 }
 
 message MarkWhatsAppChatReadResponse {}
+
+// WhatsAppChannelProto exposes one whatsapp_channels row to the frontend.
+// allowed_pipeline_ids drives "this user sees this tab if any of these
+// pipelines is in their pipeline_members" on the sidebar.
+message WhatsAppChannelProto {
+  string phone_number_id           = 1;  // Meta WABA phone_number_id (key)
+  string display_phone             = 2;  // raw digits, frontend formats last 4 as label
+  string organization_id           = 3;
+  string default_pipeline_id       = 4;
+  repeated string allowed_pipeline_ids = 5;
+}
+
+message ListWhatsAppChannelsRequest {
+  string organization_id = 1;
+}
+
+message ListWhatsAppChannelsResponse {
+  repeated WhatsAppChannelProto channels = 1;
+}
 
 // SendWhatsAppTemplate — send a pre-approved template message.
 message SendWhatsAppTemplateRequest {
