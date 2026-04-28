@@ -264,6 +264,8 @@ message UpdateOrganizationRequest {
   optional double longitude = 14;
   // Admin: set org status (active, suspended, closed)
   optional string status = 15;
+  // Replace org categories. Empty array = no change (matches car_make_ids convention).
+  repeated int64 category_ids = 16;
 }
 
 message UpdateOrganizationResponse {
