@@ -51,6 +51,7 @@ const (
 	CRMService_MoveDealStage_FullMethodName                      = "/crm.v1.CRMService/MoveDealStage"
 	CRMService_CloseDeal_FullMethodName                          = "/crm.v1.CRMService/CloseDeal"
 	CRMService_ReOpenDeal_FullMethodName                         = "/crm.v1.CRMService/ReOpenDeal"
+	CRMService_DeleteDeal_FullMethodName                         = "/crm.v1.CRMService/DeleteDeal"
 	CRMService_GetDealActivities_FullMethodName                  = "/crm.v1.CRMService/GetDealActivities"
 	CRMService_GetContactActivities_FullMethodName               = "/crm.v1.CRMService/GetContactActivities"
 	CRMService_GetPipelineAggregates_FullMethodName              = "/crm.v1.CRMService/GetPipelineAggregates"
@@ -189,6 +190,10 @@ type CRMServiceClient interface {
 	MoveDealStage(ctx context.Context, in *MoveDealStageRequest, opts ...grpc.CallOption) (*MoveDealStageResponse, error)
 	CloseDeal(ctx context.Context, in *CloseDealRequest, opts ...grpc.CallOption) (*CloseDealResponse, error)
 	ReOpenDeal(ctx context.Context, in *ReOpenDealRequest, opts ...grpc.CallOption) (*ReOpenDealResponse, error)
+	// DeleteDeal hard-deletes a deal and every dependent row that the
+	// schema cascades on (tasks, activities, deal_stage_history, notes).
+	// Admin-only — enforced by the service via DataScopeResolver.
+	DeleteDeal(ctx context.Context, in *DeleteDealRequest, opts ...grpc.CallOption) (*DeleteDealResponse, error)
 	GetDealActivities(ctx context.Context, in *GetDealActivitiesRequest, opts ...grpc.CallOption) (*GetDealActivitiesResponse, error)
 	GetContactActivities(ctx context.Context, in *GetContactActivitiesRequest, opts ...grpc.CallOption) (*GetContactActivitiesResponse, error)
 	// GetPipelineAggregates returns board-wide kanban KPIs for the given
@@ -657,6 +662,16 @@ func (c *cRMServiceClient) ReOpenDeal(ctx context.Context, in *ReOpenDealRequest
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ReOpenDealResponse)
 	err := c.cc.Invoke(ctx, CRMService_ReOpenDeal_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) DeleteDeal(ctx context.Context, in *DeleteDealRequest, opts ...grpc.CallOption) (*DeleteDealResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteDealResponse)
+	err := c.cc.Invoke(ctx, CRMService_DeleteDeal_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1465,6 +1480,10 @@ type CRMServiceServer interface {
 	MoveDealStage(context.Context, *MoveDealStageRequest) (*MoveDealStageResponse, error)
 	CloseDeal(context.Context, *CloseDealRequest) (*CloseDealResponse, error)
 	ReOpenDeal(context.Context, *ReOpenDealRequest) (*ReOpenDealResponse, error)
+	// DeleteDeal hard-deletes a deal and every dependent row that the
+	// schema cascades on (tasks, activities, deal_stage_history, notes).
+	// Admin-only — enforced by the service via DataScopeResolver.
+	DeleteDeal(context.Context, *DeleteDealRequest) (*DeleteDealResponse, error)
 	GetDealActivities(context.Context, *GetDealActivitiesRequest) (*GetDealActivitiesResponse, error)
 	GetContactActivities(context.Context, *GetContactActivitiesRequest) (*GetContactActivitiesResponse, error)
 	// GetPipelineAggregates returns board-wide kanban KPIs for the given
@@ -1702,6 +1721,9 @@ func (UnimplementedCRMServiceServer) CloseDeal(context.Context, *CloseDealReques
 }
 func (UnimplementedCRMServiceServer) ReOpenDeal(context.Context, *ReOpenDealRequest) (*ReOpenDealResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ReOpenDeal not implemented")
+}
+func (UnimplementedCRMServiceServer) DeleteDeal(context.Context, *DeleteDealRequest) (*DeleteDealResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteDeal not implemented")
 }
 func (UnimplementedCRMServiceServer) GetDealActivities(context.Context, *GetDealActivitiesRequest) (*GetDealActivitiesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetDealActivities not implemented")
@@ -2518,6 +2540,24 @@ func _CRMService_ReOpenDeal_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRMServiceServer).ReOpenDeal(ctx, req.(*ReOpenDealRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_DeleteDeal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteDealRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).DeleteDeal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_DeleteDeal_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).DeleteDeal(ctx, req.(*DeleteDealRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3988,6 +4028,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReOpenDeal",
 			Handler:    _CRMService_ReOpenDeal_Handler,
+		},
+		{
+			MethodName: "DeleteDeal",
+			Handler:    _CRMService_DeleteDeal_Handler,
 		},
 		{
 			MethodName: "GetDealActivities",
