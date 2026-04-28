@@ -13513,6 +13513,11 @@ type TelephonyPipelineDID struct {
 	Provider       TelephonyProvider      `protobuf:"varint,4,opt,name=provider,proto3,enum=crm.v1.TelephonyProvider" json:"provider,omitempty"`
 	Did            string                 `protobuf:"bytes,5,opt,name=did,proto3" json:"did,omitempty"`
 	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// Only one row per (provider, did) may have is_inbound_owner=TRUE.
+	// That row determines which pipeline an inbound call to this DID lands in.
+	// Other rows with is_inbound_owner=FALSE allow the same DID to be used
+	// as outbound CallerID from additional pipelines.
+	IsInboundOwner bool `protobuf:"varint,7,opt,name=is_inbound_owner,json=isInboundOwner,proto3" json:"is_inbound_owner,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -13587,6 +13592,13 @@ func (x *TelephonyPipelineDID) GetCreatedAt() *timestamppb.Timestamp {
 		return x.CreatedAt
 	}
 	return nil
+}
+
+func (x *TelephonyPipelineDID) GetIsInboundOwner() bool {
+	if x != nil {
+		return x.IsInboundOwner
+	}
+	return false
 }
 
 type UpsertTelephonyPipelineDIDRequest struct {
@@ -18067,7 +18079,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x1eTelephonyGetCredentialsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\"[\n" +
 	"\x1fTelephonyGetCredentialsResponse\x128\n" +
-	"\vcredentials\x18\x01 \x01(\v2\x16.crm.v1.SipCredentialsR\vcredentials\"\xf4\x01\n" +
+	"\vcredentials\x18\x01 \x01(\v2\x16.crm.v1.SipCredentialsR\vcredentials\"\x9e\x02\n" +
 	"\x14TelephonyPipelineDID\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x1f\n" +
@@ -18076,7 +18088,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\bprovider\x18\x04 \x01(\x0e2\x19.crm.v1.TelephonyProviderR\bprovider\x12\x10\n" +
 	"\x03did\x18\x05 \x01(\tR\x03did\x129\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"S\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12(\n" +
+	"\x10is_inbound_owner\x18\a \x01(\bR\x0eisInboundOwner\"S\n" +
 	"!UpsertTelephonyPipelineDIDRequest\x12.\n" +
 	"\x03did\x18\x01 \x01(\v2\x1c.crm.v1.TelephonyPipelineDIDR\x03did\"T\n" +
 	"\"UpsertTelephonyPipelineDIDResponse\x12.\n" +
