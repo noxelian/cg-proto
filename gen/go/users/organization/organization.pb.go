@@ -1241,7 +1241,9 @@ type UpdateOrganizationRequest struct {
 	Latitude       *float64               `protobuf:"fixed64,13,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
 	Longitude      *float64               `protobuf:"fixed64,14,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
 	// Admin: set org status (active, suspended, closed)
-	Status        *string `protobuf:"bytes,15,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	Status *string `protobuf:"bytes,15,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	// Replace org categories. Empty array = no change (matches car_make_ids convention).
+	CategoryIds   []int64 `protobuf:"varint,16,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1379,6 +1381,13 @@ func (x *UpdateOrganizationRequest) GetStatus() string {
 		return *x.Status
 	}
 	return ""
+}
+
+func (x *UpdateOrganizationRequest) GetCategoryIds() []int64 {
+	if x != nil {
+		return x.CategoryIds
+	}
+	return nil
 }
 
 type UpdateOrganizationResponse struct {
@@ -6377,7 +6386,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x16GetOrganizationRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\"b\n" +
 	"\x17GetOrganizationResponse\x12G\n" +
-	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"\xc4\x05\n" +
+	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"\xe7\x05\n" +
 	"\x19UpdateOrganizationRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
@@ -6396,7 +6405,8 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\blatitude\x18\r \x01(\x01H\tR\blatitude\x88\x01\x01\x12!\n" +
 	"\tlongitude\x18\x0e \x01(\x01H\n" +
 	"R\tlongitude\x88\x01\x01\x12\x1b\n" +
-	"\x06status\x18\x0f \x01(\tH\vR\x06status\x88\x01\x01B\a\n" +
+	"\x06status\x18\x0f \x01(\tH\vR\x06status\x88\x01\x01\x12!\n" +
+	"\fcategory_ids\x18\x10 \x03(\x03R\vcategoryIdsB\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\v\n" +
 	"\t_logo_urlB\n" +
