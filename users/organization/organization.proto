@@ -166,6 +166,9 @@ message Organization {
   optional string legal_address = 31;
   optional string contact_phone = 32;
   optional string contact_email = 33;
+  // Gallery of photo URLs (storefront, premises, work samples). logo_url is
+  // separate. Order is meaningful — first item is treated as the cover.
+  repeated string photos = 34;
 }
 
 message OrganizationSettings {
@@ -233,6 +236,8 @@ message CreateOrganizationRequest {
   optional double longitude = 13;
   // When set, create org owned by this user instead of the JWT caller (admin use).
   optional int64 owner_id = 14;
+  // Gallery of photo URLs.
+  repeated string photos = 15;
 }
 
 message CreateOrganizationResponse {
@@ -266,6 +271,8 @@ message UpdateOrganizationRequest {
   optional string status = 15;
   // Replace org categories. Empty array = no change (matches car_make_ids convention).
   repeated int64 category_ids = 16;
+  // Replace photo gallery. Empty array = no change (same convention as category_ids).
+  repeated string photos = 17;
 }
 
 message UpdateOrganizationResponse {

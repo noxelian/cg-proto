@@ -233,8 +233,11 @@ type Organization struct {
 	LegalAddress      *string `protobuf:"bytes,31,opt,name=legal_address,json=legalAddress,proto3,oneof" json:"legal_address,omitempty"`
 	ContactPhone      *string `protobuf:"bytes,32,opt,name=contact_phone,json=contactPhone,proto3,oneof" json:"contact_phone,omitempty"`
 	ContactEmail      *string `protobuf:"bytes,33,opt,name=contact_email,json=contactEmail,proto3,oneof" json:"contact_email,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	// Gallery of photo URLs (storefront, premises, work samples). logo_url is
+	// separate. Order is meaningful — first item is treated as the cover.
+	Photos        []string `protobuf:"bytes,34,rep,name=photos,proto3" json:"photos,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Organization) Reset() {
@@ -496,6 +499,13 @@ func (x *Organization) GetContactEmail() string {
 		return *x.ContactEmail
 	}
 	return ""
+}
+
+func (x *Organization) GetPhotos() []string {
+	if x != nil {
+		return x.Photos
+	}
+	return nil
 }
 
 type OrganizationSettings struct {
@@ -959,7 +969,9 @@ type CreateOrganizationRequest struct {
 	Latitude    *float64               `protobuf:"fixed64,12,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
 	Longitude   *float64               `protobuf:"fixed64,13,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
 	// When set, create org owned by this user instead of the JWT caller (admin use).
-	OwnerId       *int64 `protobuf:"varint,14,opt,name=owner_id,json=ownerId,proto3,oneof" json:"owner_id,omitempty"`
+	OwnerId *int64 `protobuf:"varint,14,opt,name=owner_id,json=ownerId,proto3,oneof" json:"owner_id,omitempty"`
+	// Gallery of photo URLs.
+	Photos        []string `protobuf:"bytes,15,rep,name=photos,proto3" json:"photos,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1090,6 +1102,13 @@ func (x *CreateOrganizationRequest) GetOwnerId() int64 {
 		return *x.OwnerId
 	}
 	return 0
+}
+
+func (x *CreateOrganizationRequest) GetPhotos() []string {
+	if x != nil {
+		return x.Photos
+	}
+	return nil
 }
 
 type CreateOrganizationResponse struct {
@@ -1243,7 +1262,9 @@ type UpdateOrganizationRequest struct {
 	// Admin: set org status (active, suspended, closed)
 	Status *string `protobuf:"bytes,15,opt,name=status,proto3,oneof" json:"status,omitempty"`
 	// Replace org categories. Empty array = no change (matches car_make_ids convention).
-	CategoryIds   []int64 `protobuf:"varint,16,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
+	CategoryIds []int64 `protobuf:"varint,16,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
+	// Replace photo gallery. Empty array = no change (same convention as category_ids).
+	Photos        []string `protobuf:"bytes,17,rep,name=photos,proto3" json:"photos,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1386,6 +1407,13 @@ func (x *UpdateOrganizationRequest) GetStatus() string {
 func (x *UpdateOrganizationRequest) GetCategoryIds() []int64 {
 	if x != nil {
 		return x.CategoryIds
+	}
+	return nil
+}
+
+func (x *UpdateOrganizationRequest) GetPhotos() []string {
+	if x != nil {
+		return x.Photos
 	}
 	return nil
 }
@@ -6259,7 +6287,7 @@ var File_users_organization_organization_proto protoreflect.FileDescriptor
 
 const file_users_organization_organization_proto_rawDesc = "" +
 	"\n" +
-	"%users/organization/organization.proto\x12\x15users.organization.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\x9b\n" +
+	"%users/organization/organization.proto\x12\x15users.organization.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xb3\n" +
 	"\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
@@ -6300,7 +6328,8 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x03bin\x18\x1e \x01(\tH\x05R\x03bin\x88\x01\x01\x12(\n" +
 	"\rlegal_address\x18\x1f \x01(\tH\x06R\flegalAddress\x88\x01\x01\x12(\n" +
 	"\rcontact_phone\x18  \x01(\tH\aR\fcontactPhone\x88\x01\x01\x12(\n" +
-	"\rcontact_email\x18! \x01(\tH\bR\fcontactEmail\x88\x01\x01B\f\n" +
+	"\rcontact_email\x18! \x01(\tH\bR\fcontactEmail\x88\x01\x01\x12\x16\n" +
+	"\x06photos\x18\" \x03(\tR\x06photosB\f\n" +
 	"\n" +
 	"_legacy_idB\v\n" +
 	"\t_latitudeB\f\n" +
@@ -6355,7 +6384,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"expires_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\xa6\x04\n" +
+	"expires_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\xbe\x04\n" +
 	"\x19CreateOrganizationRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12;\n" +
 	"\x04type\x18\x02 \x01(\x0e2'.users.organization.v1.OrganizationTypeR\x04type\x12 \n" +
@@ -6372,7 +6401,8 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\ayear_to\x18\v \x01(\x05H\x01R\x06yearTo\x88\x01\x01\x12\x1f\n" +
 	"\blatitude\x18\f \x01(\x01H\x02R\blatitude\x88\x01\x01\x12!\n" +
 	"\tlongitude\x18\r \x01(\x01H\x03R\tlongitude\x88\x01\x01\x12\x1e\n" +
-	"\bowner_id\x18\x0e \x01(\x03H\x04R\aownerId\x88\x01\x01B\f\n" +
+	"\bowner_id\x18\x0e \x01(\x03H\x04R\aownerId\x88\x01\x01\x12\x16\n" +
+	"\x06photos\x18\x0f \x03(\tR\x06photosB\f\n" +
 	"\n" +
 	"_year_fromB\n" +
 	"\n" +
@@ -6386,7 +6416,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x16GetOrganizationRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\"b\n" +
 	"\x17GetOrganizationResponse\x12G\n" +
-	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"\xe7\x05\n" +
+	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"\xff\x05\n" +
 	"\x19UpdateOrganizationRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
@@ -6406,7 +6436,8 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\tlongitude\x18\x0e \x01(\x01H\n" +
 	"R\tlongitude\x88\x01\x01\x12\x1b\n" +
 	"\x06status\x18\x0f \x01(\tH\vR\x06status\x88\x01\x01\x12!\n" +
-	"\fcategory_ids\x18\x10 \x03(\x03R\vcategoryIdsB\a\n" +
+	"\fcategory_ids\x18\x10 \x03(\x03R\vcategoryIds\x12\x16\n" +
+	"\x06photos\x18\x11 \x03(\tR\x06photosB\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\v\n" +
 	"\t_logo_urlB\n" +
