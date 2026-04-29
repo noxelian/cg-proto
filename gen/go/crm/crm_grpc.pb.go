@@ -63,6 +63,8 @@ const (
 	CRMService_ListLeads_FullMethodName                          = "/crm.v1.CRMService/ListLeads"
 	CRMService_ChangeLeadStatus_FullMethodName                   = "/crm.v1.CRMService/ChangeLeadStatus"
 	CRMService_ConvertLead_FullMethodName                        = "/crm.v1.CRMService/ConvertLead"
+	CRMService_EnsureDigitalLeadFromWA_FullMethodName            = "/crm.v1.CRMService/EnsureDigitalLeadFromWA"
+	CRMService_EnsureDigitalLeadFromMissedCall_FullMethodName    = "/crm.v1.CRMService/EnsureDigitalLeadFromMissedCall"
 	CRMService_CreateTask_FullMethodName                         = "/crm.v1.CRMService/CreateTask"
 	CRMService_GetTask_FullMethodName                            = "/crm.v1.CRMService/GetTask"
 	CRMService_ListTasks_FullMethodName                          = "/crm.v1.CRMService/ListTasks"
@@ -236,6 +238,14 @@ type CRMServiceClient interface {
 	ListLeads(ctx context.Context, in *ListLeadsRequest, opts ...grpc.CallOption) (*ListLeadsResponse, error)
 	ChangeLeadStatus(ctx context.Context, in *ChangeLeadStatusRequest, opts ...grpc.CallOption) (*ChangeLeadStatusResponse, error)
 	ConvertLead(ctx context.Context, in *ConvertLeadRequest, opts ...grpc.CallOption) (*ConvertLeadResponse, error)
+	// Digital lead intake — first-touch automation for the +7 747 094 1215
+	// ("1215") channel. Both RPCs are idempotent: they auto-create a deal in
+	// the "Ctogram digital" pipeline only when no open deal exists for the
+	// phone in any pipeline AND we have never sent an outbound WhatsApp to it.
+	// Reserved for system-side callers (BFF Stasis dispatcher, CRM webhook
+	// handler) — no JWT required, similar to ListPipelineMembersInternal.
+	EnsureDigitalLeadFromWA(ctx context.Context, in *EnsureDigitalLeadFromWARequest, opts ...grpc.CallOption) (*EnsureDigitalLeadResponse, error)
+	EnsureDigitalLeadFromMissedCall(ctx context.Context, in *EnsureDigitalLeadFromMissedCallRequest, opts ...grpc.CallOption) (*EnsureDigitalLeadResponse, error)
 	// Task RPCs (Phase 6 -- task management with RBAC)
 	CreateTask(ctx context.Context, in *CreateTaskRequest, opts ...grpc.CallOption) (*CreateTaskResponse, error)
 	GetTask(ctx context.Context, in *GetTaskRequest, opts ...grpc.CallOption) (*GetTaskResponse, error)
@@ -787,6 +797,26 @@ func (c *cRMServiceClient) ConvertLead(ctx context.Context, in *ConvertLeadReque
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ConvertLeadResponse)
 	err := c.cc.Invoke(ctx, CRMService_ConvertLead_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) EnsureDigitalLeadFromWA(ctx context.Context, in *EnsureDigitalLeadFromWARequest, opts ...grpc.CallOption) (*EnsureDigitalLeadResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EnsureDigitalLeadResponse)
+	err := c.cc.Invoke(ctx, CRMService_EnsureDigitalLeadFromWA_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) EnsureDigitalLeadFromMissedCall(ctx context.Context, in *EnsureDigitalLeadFromMissedCallRequest, opts ...grpc.CallOption) (*EnsureDigitalLeadResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EnsureDigitalLeadResponse)
+	err := c.cc.Invoke(ctx, CRMService_EnsureDigitalLeadFromMissedCall_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1540,6 +1570,14 @@ type CRMServiceServer interface {
 	ListLeads(context.Context, *ListLeadsRequest) (*ListLeadsResponse, error)
 	ChangeLeadStatus(context.Context, *ChangeLeadStatusRequest) (*ChangeLeadStatusResponse, error)
 	ConvertLead(context.Context, *ConvertLeadRequest) (*ConvertLeadResponse, error)
+	// Digital lead intake — first-touch automation for the +7 747 094 1215
+	// ("1215") channel. Both RPCs are idempotent: they auto-create a deal in
+	// the "Ctogram digital" pipeline only when no open deal exists for the
+	// phone in any pipeline AND we have never sent an outbound WhatsApp to it.
+	// Reserved for system-side callers (BFF Stasis dispatcher, CRM webhook
+	// handler) — no JWT required, similar to ListPipelineMembersInternal.
+	EnsureDigitalLeadFromWA(context.Context, *EnsureDigitalLeadFromWARequest) (*EnsureDigitalLeadResponse, error)
+	EnsureDigitalLeadFromMissedCall(context.Context, *EnsureDigitalLeadFromMissedCallRequest) (*EnsureDigitalLeadResponse, error)
 	// Task RPCs (Phase 6 -- task management with RBAC)
 	CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskResponse, error)
 	GetTask(context.Context, *GetTaskRequest) (*GetTaskResponse, error)
@@ -1776,6 +1814,12 @@ func (UnimplementedCRMServiceServer) ChangeLeadStatus(context.Context, *ChangeLe
 }
 func (UnimplementedCRMServiceServer) ConvertLead(context.Context, *ConvertLeadRequest) (*ConvertLeadResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ConvertLead not implemented")
+}
+func (UnimplementedCRMServiceServer) EnsureDigitalLeadFromWA(context.Context, *EnsureDigitalLeadFromWARequest) (*EnsureDigitalLeadResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method EnsureDigitalLeadFromWA not implemented")
+}
+func (UnimplementedCRMServiceServer) EnsureDigitalLeadFromMissedCall(context.Context, *EnsureDigitalLeadFromMissedCallRequest) (*EnsureDigitalLeadResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method EnsureDigitalLeadFromMissedCall not implemented")
 }
 func (UnimplementedCRMServiceServer) CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTask not implemented")
@@ -2778,6 +2822,42 @@ func _CRMService_ConvertLead_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRMServiceServer).ConvertLead(ctx, req.(*ConvertLeadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_EnsureDigitalLeadFromWA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EnsureDigitalLeadFromWARequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).EnsureDigitalLeadFromWA(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_EnsureDigitalLeadFromWA_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).EnsureDigitalLeadFromWA(ctx, req.(*EnsureDigitalLeadFromWARequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_EnsureDigitalLeadFromMissedCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EnsureDigitalLeadFromMissedCallRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).EnsureDigitalLeadFromMissedCall(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_EnsureDigitalLeadFromMissedCall_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).EnsureDigitalLeadFromMissedCall(ctx, req.(*EnsureDigitalLeadFromMissedCallRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4116,6 +4196,14 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConvertLead",
 			Handler:    _CRMService_ConvertLead_Handler,
+		},
+		{
+			MethodName: "EnsureDigitalLeadFromWA",
+			Handler:    _CRMService_EnsureDigitalLeadFromWA_Handler,
+		},
+		{
+			MethodName: "EnsureDigitalLeadFromMissedCall",
+			Handler:    _CRMService_EnsureDigitalLeadFromMissedCall_Handler,
 		},
 		{
 			MethodName: "CreateTask",

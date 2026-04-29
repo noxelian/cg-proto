@@ -110,6 +110,15 @@ service CRMService {
   rpc ChangeLeadStatus(ChangeLeadStatusRequest)             returns (ChangeLeadStatusResponse);
   rpc ConvertLead(ConvertLeadRequest)                       returns (ConvertLeadResponse);
 
+  // Digital lead intake — first-touch automation for the +7 747 094 1215
+  // ("1215") channel. Both RPCs are idempotent: they auto-create a deal in
+  // the "Ctogram digital" pipeline only when no open deal exists for the
+  // phone in any pipeline AND we have never sent an outbound WhatsApp to it.
+  // Reserved for system-side callers (BFF Stasis dispatcher, CRM webhook
+  // handler) — no JWT required, similar to ListPipelineMembersInternal.
+  rpc EnsureDigitalLeadFromWA(EnsureDigitalLeadFromWARequest)             returns (EnsureDigitalLeadResponse);
+  rpc EnsureDigitalLeadFromMissedCall(EnsureDigitalLeadFromMissedCallRequest) returns (EnsureDigitalLeadResponse);
+
   // Task RPCs (Phase 6 -- task management with RBAC)
   rpc CreateTask(CreateTaskRequest)                         returns (CreateTaskResponse);
   rpc GetTask(GetTaskRequest)                               returns (GetTaskResponse);
@@ -1076,6 +1085,45 @@ message CreateLeadRequest {
 
 message CreateLeadResponse {
   LeadProto lead = 1;
+}
+
+// Digital lead intake — see EnsureDigitalLeadFromWA / EnsureDigitalLeadFromMissedCall.
+
+// EnsureDigitalLeadFromWARequest is fired by the CRM webhook handler after
+// a WhatsApp inbound is persisted, when the receiving phone_number_id maps
+// to the "1215" channel.
+message EnsureDigitalLeadFromWARequest {
+  // Customer phone in E.164 (no leading +) — the message sender.
+  string phone           = 1;
+  // Meta WABA phone_number_id of the receiving channel. Used to confirm
+  // this inbound landed on the 1215 channel before any work is done.
+  string phone_number_id = 2;
+  // Customer's WhatsApp profile name (contacts[0].profile.name from the
+  // webhook payload). Empty when Meta didn't include it. Used as a fallback
+  // when cg-users has no name on the user record yet.
+  string profile_name    = 3;
+}
+
+// EnsureDigitalLeadFromMissedCallRequest is fired by the BFF Stasis
+// dispatcher when an inbound call on DID 7470941215 ends without a bridge
+// (answered_at is null on the persisted TelephonyCall).
+message EnsureDigitalLeadFromMissedCallRequest {
+  // CRM TelephonyCall.id (UUID string). Server-side resolves call details
+  // (src_num, dst_num, matched_entity) from this id so the BFF doesn't have
+  // to re-serialize the entire call payload.
+  string call_id = 1;
+}
+
+// EnsureDigitalLeadResponse is shared by both RPCs. created=false +
+// deal_id="" means a gate (existing deal or prior outbound) suppressed the
+// auto-create path; this is a successful no-op, not an error.
+message EnsureDigitalLeadResponse {
+  // UUID of the deal that was created. Empty when created=false.
+  string deal_id = 1;
+  // True only when this call inserted a new deal. False when gates
+  // suppressed creation OR when a concurrent caller already created the
+  // deal (advisory lock holder won the race).
+  bool   created = 2;
 }
 
 message GetLeadRequest {
