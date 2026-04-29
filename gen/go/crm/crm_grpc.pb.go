@@ -27,6 +27,7 @@ const (
 	CRMService_ListPipelineMembers_FullMethodName                = "/crm.v1.CRMService/ListPipelineMembers"
 	CRMService_AddPipelineMember_FullMethodName                  = "/crm.v1.CRMService/AddPipelineMember"
 	CRMService_RemovePipelineMember_FullMethodName               = "/crm.v1.CRMService/RemovePipelineMember"
+	CRMService_ListPipelineMembersInternal_FullMethodName        = "/crm.v1.CRMService/ListPipelineMembersInternal"
 	CRMService_CreateStage_FullMethodName                        = "/crm.v1.CRMService/CreateStage"
 	CRMService_UpdateStage_FullMethodName                        = "/crm.v1.CRMService/UpdateStage"
 	CRMService_DeleteStage_FullMethodName                        = "/crm.v1.CRMService/DeleteStage"
@@ -142,6 +143,10 @@ type CRMServiceClient interface {
 	ListPipelineMembers(ctx context.Context, in *ListPipelineMembersRequest, opts ...grpc.CallOption) (*ListPipelineMembersResponse, error)
 	AddPipelineMember(ctx context.Context, in *AddPipelineMemberRequest, opts ...grpc.CallOption) (*AddPipelineMemberResponse, error)
 	RemovePipelineMember(ctx context.Context, in *RemovePipelineMemberRequest, opts ...grpc.CallOption) (*RemovePipelineMemberResponse, error)
+	// ListPipelineMembersInternal returns the same payload as ListPipelineMembers
+	// but skips the JWT admin scope check. Reserved for system-side callers
+	// (cg-bff Stasis queue handler) where there is no end-user context.
+	ListPipelineMembersInternal(ctx context.Context, in *ListPipelineMembersRequest, opts ...grpc.CallOption) (*ListPipelineMembersResponse, error)
 	CreateStage(ctx context.Context, in *CreateStageRequest, opts ...grpc.CallOption) (*CreateStageResponse, error)
 	UpdateStage(ctx context.Context, in *UpdateStageRequest, opts ...grpc.CallOption) (*UpdateStageResponse, error)
 	DeleteStage(ctx context.Context, in *DeleteStageRequest, opts ...grpc.CallOption) (*DeleteStageResponse, error)
@@ -410,6 +415,16 @@ func (c *cRMServiceClient) RemovePipelineMember(ctx context.Context, in *RemoveP
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RemovePipelineMemberResponse)
 	err := c.cc.Invoke(ctx, CRMService_RemovePipelineMember_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ListPipelineMembersInternal(ctx context.Context, in *ListPipelineMembersRequest, opts ...grpc.CallOption) (*ListPipelineMembersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPipelineMembersResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListPipelineMembersInternal_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1432,6 +1447,10 @@ type CRMServiceServer interface {
 	ListPipelineMembers(context.Context, *ListPipelineMembersRequest) (*ListPipelineMembersResponse, error)
 	AddPipelineMember(context.Context, *AddPipelineMemberRequest) (*AddPipelineMemberResponse, error)
 	RemovePipelineMember(context.Context, *RemovePipelineMemberRequest) (*RemovePipelineMemberResponse, error)
+	// ListPipelineMembersInternal returns the same payload as ListPipelineMembers
+	// but skips the JWT admin scope check. Reserved for system-side callers
+	// (cg-bff Stasis queue handler) where there is no end-user context.
+	ListPipelineMembersInternal(context.Context, *ListPipelineMembersRequest) (*ListPipelineMembersResponse, error)
 	CreateStage(context.Context, *CreateStageRequest) (*CreateStageResponse, error)
 	UpdateStage(context.Context, *UpdateStageRequest) (*UpdateStageResponse, error)
 	DeleteStage(context.Context, *DeleteStageRequest) (*DeleteStageResponse, error)
@@ -1649,6 +1668,9 @@ func (UnimplementedCRMServiceServer) AddPipelineMember(context.Context, *AddPipe
 }
 func (UnimplementedCRMServiceServer) RemovePipelineMember(context.Context, *RemovePipelineMemberRequest) (*RemovePipelineMemberResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RemovePipelineMember not implemented")
+}
+func (UnimplementedCRMServiceServer) ListPipelineMembersInternal(context.Context, *ListPipelineMembersRequest) (*ListPipelineMembersResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPipelineMembersInternal not implemented")
 }
 func (UnimplementedCRMServiceServer) CreateStage(context.Context, *CreateStageRequest) (*CreateStageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateStage not implemented")
@@ -2108,6 +2130,24 @@ func _CRMService_RemovePipelineMember_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRMServiceServer).RemovePipelineMember(ctx, req.(*RemovePipelineMemberRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ListPipelineMembersInternal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPipelineMembersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListPipelineMembersInternal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListPipelineMembersInternal_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListPipelineMembersInternal(ctx, req.(*ListPipelineMembersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3932,6 +3972,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemovePipelineMember",
 			Handler:    _CRMService_RemovePipelineMember_Handler,
+		},
+		{
+			MethodName: "ListPipelineMembersInternal",
+			Handler:    _CRMService_ListPipelineMembersInternal_Handler,
 		},
 		{
 			MethodName: "CreateStage",

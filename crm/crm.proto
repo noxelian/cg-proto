@@ -18,6 +18,10 @@ service CRMService {
   rpc ListPipelineMembers(ListPipelineMembersRequest)     returns (ListPipelineMembersResponse);
   rpc AddPipelineMember(AddPipelineMemberRequest)         returns (AddPipelineMemberResponse);
   rpc RemovePipelineMember(RemovePipelineMemberRequest)   returns (RemovePipelineMemberResponse);
+  // ListPipelineMembersInternal returns the same payload as ListPipelineMembers
+  // but skips the JWT admin scope check. Reserved for system-side callers
+  // (cg-bff Stasis queue handler) where there is no end-user context.
+  rpc ListPipelineMembersInternal(ListPipelineMembersRequest) returns (ListPipelineMembersResponse);
   rpc CreateStage(CreateStageRequest)         returns (CreateStageResponse);
   rpc UpdateStage(UpdateStageRequest)         returns (UpdateStageResponse);
   rpc DeleteStage(DeleteStageRequest)         returns (DeleteStageResponse);
