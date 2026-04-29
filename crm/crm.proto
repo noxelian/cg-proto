@@ -1501,12 +1501,19 @@ message NoteProto {
   int64  author_id       = 5;
   google.protobuf.Timestamp created_at = 6;
   google.protobuf.Timestamp updated_at = 7;
+  // external_id is a stable cross-system identifier used to deduplicate notes
+  // imported from external CRMs (e.g. "amocrm:165243317"). NULL for native notes.
+  string external_id     = 8;
 }
 
 message CreateNoteRequest {
   string organization_id = 1;
   string deal_id         = 2;
   string body            = 3;
+  // external_id, when set, makes CreateNote idempotent: a second call with the
+  // same (deal_id, external_id) returns the existing note instead of inserting
+  // a duplicate. Used by the amocrm-sync parser to dedupe at the DB layer.
+  string external_id     = 4;
 }
 
 message CreateNoteResponse {

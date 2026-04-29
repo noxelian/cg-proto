@@ -10390,8 +10390,11 @@ type NoteProto struct {
 	AuthorId       int64                  `protobuf:"varint,5,opt,name=author_id,json=authorId,proto3" json:"author_id,omitempty"`
 	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt      *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// external_id is a stable cross-system identifier used to deduplicate notes
+	// imported from external CRMs (e.g. "amocrm:165243317"). NULL for native notes.
+	ExternalId    string `protobuf:"bytes,8,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *NoteProto) Reset() {
@@ -10473,13 +10476,24 @@ func (x *NoteProto) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *NoteProto) GetExternalId() string {
+	if x != nil {
+		return x.ExternalId
+	}
+	return ""
+}
+
 type CreateNoteRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	DealId         string                 `protobuf:"bytes,2,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
 	Body           string                 `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// external_id, when set, makes CreateNote idempotent: a second call with the
+	// same (deal_id, external_id) returns the existing note instead of inserting
+	// a duplicate. Used by the amocrm-sync parser to dedupe at the DB layer.
+	ExternalId    string `protobuf:"bytes,4,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateNoteRequest) Reset() {
@@ -10529,6 +10543,13 @@ func (x *CreateNoteRequest) GetDealId() string {
 func (x *CreateNoteRequest) GetBody() string {
 	if x != nil {
 		return x.Body
+	}
+	return ""
+}
+
+func (x *CreateNoteRequest) GetExternalId() string {
+	if x != nil {
+		return x.ExternalId
 	}
 	return ""
 }
@@ -17902,7 +17923,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x05count\x18\x02 \x01(\x03R\x05count\x12\x14\n" +
 	"\x05value\x18\x03 \x01(\x01R\x05value\"X\n" +
 	"\x1fGetDealSourcesBreakdownResponse\x125\n" +
-	"\x05items\x18\x01 \x03(\v2\x1f.crm.v1.DealSourceBreakdownItemR\x05items\"\x84\x02\n" +
+	"\x05items\x18\x01 \x03(\v2\x1f.crm.v1.DealSourceBreakdownItemR\x05items\"\xa5\x02\n" +
 	"\tNoteProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x17\n" +
@@ -17912,11 +17933,15 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"i\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1f\n" +
+	"\vexternal_id\x18\b \x01(\tR\n" +
+	"externalId\"\x8a\x01\n" +
 	"\x11CreateNoteRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\x12\n" +
-	"\x04body\x18\x03 \x01(\tR\x04body\";\n" +
+	"\x04body\x18\x03 \x01(\tR\x04body\x12\x1f\n" +
+	"\vexternal_id\x18\x04 \x01(\tR\n" +
+	"externalId\";\n" +
 	"\x12CreateNoteResponse\x12%\n" +
 	"\x04note\x18\x01 \x01(\v2\x11.crm.v1.NoteProtoR\x04note\"i\n" +
 	"\x11UpdateNoteRequest\x12'\n" +
