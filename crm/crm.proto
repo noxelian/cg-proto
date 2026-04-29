@@ -1124,6 +1124,14 @@ message EnsureDigitalLeadResponse {
   // suppressed creation OR when a concurrent caller already created the
   // deal (advisory lock holder won the race).
   bool   created = 2;
+  // matched_trunk distinguishes "this event belongs to the lead-intake
+  // channel, gate just suppressed creation" from "this event isn't on
+  // the lead-intake channel at all". The BFF Stasis dispatcher uses it
+  // to decide whether to run the legacy createMissedCallTask fallback —
+  // do NOT fallback when matched_trunk=true (we want clean replacement
+  // for the 1215 channel; running both would duplicate the follow-up
+  // task). Also true for WA inbound on a configured phone_number_id.
+  bool   matched_trunk = 3;
 }
 
 message GetLeadRequest {

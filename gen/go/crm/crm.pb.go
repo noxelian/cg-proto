@@ -6862,7 +6862,15 @@ type EnsureDigitalLeadResponse struct {
 	// True only when this call inserted a new deal. False when gates
 	// suppressed creation OR when a concurrent caller already created the
 	// deal (advisory lock holder won the race).
-	Created       bool `protobuf:"varint,2,opt,name=created,proto3" json:"created,omitempty"`
+	Created bool `protobuf:"varint,2,opt,name=created,proto3" json:"created,omitempty"`
+	// matched_trunk distinguishes "this event belongs to the lead-intake
+	// channel, gate just suppressed creation" from "this event isn't on
+	// the lead-intake channel at all". The BFF Stasis dispatcher uses it
+	// to decide whether to run the legacy createMissedCallTask fallback —
+	// do NOT fallback when matched_trunk=true (we want clean replacement
+	// for the 1215 channel; running both would duplicate the follow-up
+	// task). Also true for WA inbound on a configured phone_number_id.
+	MatchedTrunk  bool `protobuf:"varint,3,opt,name=matched_trunk,json=matchedTrunk,proto3" json:"matched_trunk,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6907,6 +6915,13 @@ func (x *EnsureDigitalLeadResponse) GetDealId() string {
 func (x *EnsureDigitalLeadResponse) GetCreated() bool {
 	if x != nil {
 		return x.Created
+	}
+	return false
+}
+
+func (x *EnsureDigitalLeadResponse) GetMatchedTrunk() bool {
+	if x != nil {
+		return x.MatchedTrunk
 	}
 	return false
 }
@@ -17797,10 +17812,11 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0fphone_number_id\x18\x02 \x01(\tR\rphoneNumberId\x12!\n" +
 	"\fprofile_name\x18\x03 \x01(\tR\vprofileName\"A\n" +
 	"&EnsureDigitalLeadFromMissedCallRequest\x12\x17\n" +
-	"\acall_id\x18\x01 \x01(\tR\x06callId\"N\n" +
+	"\acall_id\x18\x01 \x01(\tR\x06callId\"s\n" +
 	"\x19EnsureDigitalLeadResponse\x12\x17\n" +
 	"\adeal_id\x18\x01 \x01(\tR\x06dealId\x12\x18\n" +
-	"\acreated\x18\x02 \x01(\bR\acreated\"R\n" +
+	"\acreated\x18\x02 \x01(\bR\acreated\x12#\n" +
+	"\rmatched_trunk\x18\x03 \x01(\bR\fmatchedTrunk\"R\n" +
 	"\x0eGetLeadRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\alead_id\x18\x02 \x01(\tR\x06leadId\"8\n" +
