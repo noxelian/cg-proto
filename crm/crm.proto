@@ -2114,6 +2114,12 @@ message ListTelephonyCallsByOrgRequest {
   // are always returned when include_missed=true regardless of this filter.
   string          extension_filter = 5;
   bool            include_missed   = 6;  // when extension_filter is set, also include unanswered inbound calls
+  // pipeline_ids narrows the include_missed branch to calls whose
+  // pipeline_id is in this set. Used to scope missed-call visibility
+  // to a manager's pipeline_members membership. Empty = no narrowing
+  // (current behaviour preserved). Has no effect on the
+  // extension-ownership branch.
+  repeated string pipeline_ids     = 7;
 }
 message ListTelephonyCallsByOrgResponse {
   repeated TelephonyCall calls = 1;

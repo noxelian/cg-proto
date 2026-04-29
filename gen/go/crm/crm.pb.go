@@ -15405,8 +15405,14 @@ type ListTelephonyCallsByOrgRequest struct {
 	// are always returned when include_missed=true regardless of this filter.
 	ExtensionFilter string `protobuf:"bytes,5,opt,name=extension_filter,json=extensionFilter,proto3" json:"extension_filter,omitempty"`
 	IncludeMissed   bool   `protobuf:"varint,6,opt,name=include_missed,json=includeMissed,proto3" json:"include_missed,omitempty"` // when extension_filter is set, also include unanswered inbound calls
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// pipeline_ids narrows the include_missed branch to calls whose
+	// pipeline_id is in this set. Used to scope missed-call visibility
+	// to a manager's pipeline_members membership. Empty = no narrowing
+	// (current behaviour preserved). Has no effect on the
+	// extension-ownership branch.
+	PipelineIds   []string `protobuf:"bytes,7,rep,name=pipeline_ids,json=pipelineIds,proto3" json:"pipeline_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListTelephonyCallsByOrgRequest) Reset() {
@@ -15479,6 +15485,13 @@ func (x *ListTelephonyCallsByOrgRequest) GetIncludeMissed() bool {
 		return x.IncludeMissed
 	}
 	return false
+}
+
+func (x *ListTelephonyCallsByOrgRequest) GetPipelineIds() []string {
+	if x != nil {
+		return x.PipelineIds
+	}
+	return nil
 }
 
 type ListTelephonyCallsByOrgResponse struct {
@@ -18504,14 +18517,15 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x15answered_by_extension\x18\t \x01(\tR\x13answeredByExtension\"g\n" +
 	" UpdateTelephonyCallStateResponse\x12)\n" +
 	"\x04call\x18\x01 \x01(\v2\x15.crm.v1.TelephonyCallR\x04call\x12\x18\n" +
-	"\aupdated\x18\x02 \x01(\bR\aupdated\"\xec\x01\n" +
+	"\aupdated\x18\x02 \x01(\bR\aupdated\"\x8f\x02\n" +
 	"\x1eListTelephonyCallsByOrgRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x03 \x01(\x05R\x06offset\x12!\n" +
 	"\fstate_filter\x18\x04 \x03(\tR\vstateFilter\x12)\n" +
 	"\x10extension_filter\x18\x05 \x01(\tR\x0fextensionFilter\x12%\n" +
-	"\x0einclude_missed\x18\x06 \x01(\bR\rincludeMissed\"d\n" +
+	"\x0einclude_missed\x18\x06 \x01(\bR\rincludeMissed\x12!\n" +
+	"\fpipeline_ids\x18\a \x03(\tR\vpipelineIds\"d\n" +
 	"\x1fListTelephonyCallsByOrgResponse\x12+\n" +
 	"\x05calls\x18\x01 \x03(\v2\x15.crm.v1.TelephonyCallR\x05calls\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"t\n" +
