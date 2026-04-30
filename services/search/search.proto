@@ -215,6 +215,15 @@ message OrganizationDocument {
   // Geo coordinates
   double latitude = 16;
   double longitude = 17;
+
+  // Marketplace ranking fields (mirrored from cg-users.organizations).
+  // Used by the marketplace UI to surface "проверен", dealer/expert badges,
+  // and to drive the sort chain "expert_carmake,expert_category,dealer,popularity_desc".
+  bool is_reviewed = 18;
+  bool is_dealer = 19;
+  repeated int64 expert_for_carmake_ids = 20;
+  repeated int64 expert_for_category_ids = 21;
+  int64 popularity = 22;
 }
 
 // SearchOrganizations

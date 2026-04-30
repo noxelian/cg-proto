@@ -81,6 +81,13 @@ service OrganizationService {
   // RequestActivation transitions org status from trial -> pending_docs.
   rpc RequestActivation(RequestActivationRequest) returns (RequestActivationResponse);
 
+  // SetOrganizationMarketplaceFields lets platform admins/moderators edit the
+  // marketplace ranking flags (is_reviewed, is_dealer, expert_for_carmake_ids,
+  // expert_for_category_ids) on an organization. Each field is optional —
+  // omitted means "keep current value". After write, an org.organization.updated
+  // event is published so the search index picks up the change.
+  rpc SetOrganizationMarketplaceFields(SetOrganizationMarketplaceFieldsRequest) returns (SetOrganizationMarketplaceFieldsResponse);
+
   // Platform roles (CTOgram employee roles)
   // Deprecated: Use UserService.SetPlatformRoles instead.
   rpc SetPlatformRole(SetPlatformRoleRequest) returns (SetPlatformRoleResponse) {
@@ -458,6 +465,31 @@ message GetCategoriesRequest {
 
 message GetCategoriesResponse {
   repeated int64 category_ids = 1;
+}
+
+// =============================================
+// Marketplace Ranking Fields (admin-only)
+// =============================================
+
+// Wrapper around repeated int64 so we can distinguish "field omitted" from
+// "set to empty array". proto3 has no nullable repeated, so we wrap it.
+message Int64List {
+  repeated int64 values = 1;
+}
+
+message SetOrganizationMarketplaceFieldsRequest {
+  string organization_id = 1;
+
+  // Each field is optional. nil/unset = keep current value.
+  // For Int64List, an empty values array means "clear the list".
+  optional bool is_reviewed = 2;
+  optional bool is_dealer = 3;
+  optional Int64List expert_for_carmake_ids = 4;
+  optional Int64List expert_for_category_ids = 5;
+}
+
+message SetOrganizationMarketplaceFieldsResponse {
+  Organization organization = 1;
 }
 
 // =============================================
