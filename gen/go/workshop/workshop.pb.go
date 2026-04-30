@@ -3928,10 +3928,8 @@ type CreateRepairOrderRequest struct {
 	ModelId     int32 `protobuf:"varint,18,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`               // NSI car model ID
 	// Source of the order request (free string, open enum).
 	// Known values: "shield_claim" (cg-subscriptions claim approval),
-	//
-	//	"crm_deal"     (CRM deal → workshop conversion),
-	//	"manual"       (created manually in admin UI).
-	//
+	//               "crm_deal"     (CRM deal → workshop conversion),
+	//               "manual"       (created manually in admin UI).
 	// Unknown values are accepted; semantic validation is the caller's responsibility.
 	Source *string `protobuf:"bytes,19,opt,name=source,proto3,oneof" json:"source,omitempty"`
 	// External entity reference (e.g. claim_id UUID for source="shield_claim",

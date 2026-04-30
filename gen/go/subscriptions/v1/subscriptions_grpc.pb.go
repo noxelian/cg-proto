@@ -110,7 +110,6 @@ type SubscriptionsServiceClient interface {
 	//   - address present if location='on_site'
 	//   - mileage > 0
 	//   - vin_confirmed = true
-	//
 	// On success: act.status='submitted', subscription.status='inspection_done'.
 	// Failure returns FAILED_PRECONDITION with structured details ('missing' field).
 	CompleteInspectionAct(ctx context.Context, in *CompleteInspectionActRequest, opts ...grpc.CallOption) (*CompleteInspectionActResponse, error)
@@ -122,7 +121,6 @@ type SubscriptionsServiceClient interface {
 	//   - CRM Deal MoveDealStage(SHIELD_STAGE_ACTIVE_ID) (best-effort)
 	//   - Kafka publish subscription.activated event (best-effort)
 	//   - SMS template shield_activated to phone (best-effort)
-	//
 	// Idempotent: returns updated Subscription if already active.
 	ActivateSubscription(ctx context.Context, in *ActivateSubscriptionRequest, opts ...grpc.CallOption) (*Subscription, error)
 }
@@ -377,7 +375,6 @@ type SubscriptionsServiceServer interface {
 	//   - address present if location='on_site'
 	//   - mileage > 0
 	//   - vin_confirmed = true
-	//
 	// On success: act.status='submitted', subscription.status='inspection_done'.
 	// Failure returns FAILED_PRECONDITION with structured details ('missing' field).
 	CompleteInspectionAct(context.Context, *CompleteInspectionActRequest) (*CompleteInspectionActResponse, error)
@@ -389,7 +386,6 @@ type SubscriptionsServiceServer interface {
 	//   - CRM Deal MoveDealStage(SHIELD_STAGE_ACTIVE_ID) (best-effort)
 	//   - Kafka publish subscription.activated event (best-effort)
 	//   - SMS template shield_activated to phone (best-effort)
-	//
 	// Idempotent: returns updated Subscription if already active.
 	ActivateSubscription(context.Context, *ActivateSubscriptionRequest) (*Subscription, error)
 	mustEmbedUnimplementedSubscriptionsServiceServer()

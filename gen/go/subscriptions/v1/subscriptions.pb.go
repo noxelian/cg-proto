@@ -491,14 +491,12 @@ type Product struct {
 	PriceTiin     int64                  `protobuf:"varint,7,opt,name=price_tiin,json=priceTiin,proto3" json:"price_tiin,omitempty"`
 	LegacyPayType int32                  `protobuf:"varint,8,opt,name=legacy_pay_type,json=legacyPayType,proto3" json:"legacy_pay_type,omitempty"` // 15 для Body Shield (payment_request.type_id)
 	// Family-specific config as opaque JSONB. For body_shield:
-	//
-	//	coverage_limit_tiin (int64)
-	//	claims_limit (int32, -1 = UNLIMITED, e.g. Premium tariff)
-	//	franchise_tiin (int64)
-	//	parts_policy (string: "alt_used"|"oem_compat"|"oem")
-	//	priority (string)
-	//	extras (array<string>)
-	//
+	//   coverage_limit_tiin (int64)
+	//   claims_limit (int32, -1 = UNLIMITED, e.g. Premium tariff)
+	//   franchise_tiin (int64)
+	//   parts_policy (string: "alt_used"|"oem_compat"|"oem")
+	//   priority (string)
+	//   extras (array<string>)
 	// For maintenance/evacuation families — different schema, no proto breaking change.
 	Config        *structpb.Struct       `protobuf:"bytes,9,opt,name=config,proto3" json:"config,omitempty"`
 	IsActive      bool                   `protobuf:"varint,10,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
