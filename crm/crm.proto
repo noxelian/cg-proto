@@ -1719,9 +1719,20 @@ message WhatsAppWebhookResponse {
   bool ok = 1;
 }
 
-// ListWhatsAppTemplates — fetch approved templates from Meta WABA
+// ListWhatsAppTemplates — fetch approved templates from Meta WABA.
+// When deal_id or phone_number_id is set, the response is narrowed to
+// the WABA bound to that channel; otherwise it is the merged set across
+// every configured WABA (primary + secondary). deal_id wins over
+// phone_number_id when both are passed.
 message ListWhatsAppTemplatesRequest {
   string organization_id = 1;
+  // Resolves to the channel bound to deals.pipeline_id via
+  // whatsapp_channels.default_pipeline_id, then to that channel's WABA.
+  string deal_id         = 2;
+  // Direct WABA channel filter — wa_messages.phone_number_id. Use this
+  // from inbox views where the active conversation already exposes the
+  // PNID (deals don't carry it directly).
+  string phone_number_id = 3;
 }
 
 message ListWhatsAppTemplatesResponse {
@@ -1735,6 +1746,10 @@ message WhatsAppTemplate {
   string category = 4;  // "MARKETING", "UTILITY", "AUTHENTICATION"
   string body     = 5;  // body text with {{1}} placeholders
   repeated WhatsAppTemplateParam params = 6;
+  // Meta phone_number_id of the WABA this template belongs to. Empty
+  // for templates fetched without channel filtering or when only one
+  // WABA is configured. Lets the UI group/badge templates per number.
+  string phone_number_id = 7;
 }
 
 message WhatsAppTemplateParam {
