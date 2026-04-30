@@ -149,6 +149,7 @@ service CRMService {
   // admins can request their own stats instead of org-wide totals.
   rpc GetActivityStats(GetActivityStatsRequest)       returns (GetActivityStatsResponse);
   rpc GetDealSourcesBreakdown(GetDealSourcesBreakdownRequest) returns (GetDealSourcesBreakdownResponse);
+  rpc GetCloseReasonsBreakdown(GetCloseReasonsBreakdownRequest) returns (GetCloseReasonsBreakdownResponse);
 
   // Notes RPCs
   rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse);
@@ -1555,6 +1556,30 @@ message DealSourceBreakdownItem {
 
 message GetDealSourcesBreakdownResponse {
   repeated DealSourceBreakdownItem items = 1;
+}
+
+// GetCloseReasonsBreakdown — distribution of CLOSED deals (won/lost)
+// grouped by close_reason within a date range. Powers the dashboard
+// "Причины закрытия" block — admins can see what's killing pipelines.
+message GetCloseReasonsBreakdownRequest {
+  string organization_id = 1;
+  google.protobuf.Timestamp date_from = 2;
+  google.protobuf.Timestamp date_to   = 3;
+  int64  user_id         = 4;
+  string pipeline_id     = 5;
+  // Optional. "won" or "lost" to restrict to one outcome; empty = both.
+  string status          = 6;
+}
+
+message CloseReasonBreakdownItem {
+  string reason = 1;
+  string status = 2; // "won" | "lost"
+  int64  count  = 3;
+  double value  = 4; // sum of deal.amount across this bucket
+}
+
+message GetCloseReasonsBreakdownResponse {
+  repeated CloseReasonBreakdownItem items = 1;
 }
 
 // ==================== Notes ====================
