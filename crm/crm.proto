@@ -928,6 +928,11 @@ message UpdateDealRequest {
   int64  assigned_to     = 6;
   google.protobuf.Timestamp expected_close = 7;
   int64  vehicle_id      = 8; // 0 to clear, >0 to set
+  // source is the deal's origin tag. Most callers leave this empty —
+  // source is set at creation time and rarely needs to change. When
+  // non-empty, the deal's source column is replaced and a field_update
+  // activity is logged. Empty preserves the existing source.
+  string source          = 9;
 }
 
 message UpdateDealResponse {
