@@ -1342,10 +1342,18 @@ type OrganizationDocument struct {
 	// Working hours
 	WorkingHours string `protobuf:"bytes,15,opt,name=working_hours,json=workingHours,proto3" json:"working_hours,omitempty"` // e.g., "09:00-18:00"
 	// Geo coordinates
-	Latitude      float64 `protobuf:"fixed64,16,opt,name=latitude,proto3" json:"latitude,omitempty"`
-	Longitude     float64 `protobuf:"fixed64,17,opt,name=longitude,proto3" json:"longitude,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Latitude  float64 `protobuf:"fixed64,16,opt,name=latitude,proto3" json:"latitude,omitempty"`
+	Longitude float64 `protobuf:"fixed64,17,opt,name=longitude,proto3" json:"longitude,omitempty"`
+	// Marketplace ranking fields (mirrored from cg-users.organizations).
+	// Used by the marketplace UI to surface "проверен", dealer/expert badges,
+	// and to drive the sort chain "expert_carmake,expert_category,dealer,popularity_desc".
+	IsReviewed           bool    `protobuf:"varint,18,opt,name=is_reviewed,json=isReviewed,proto3" json:"is_reviewed,omitempty"`
+	IsDealer             bool    `protobuf:"varint,19,opt,name=is_dealer,json=isDealer,proto3" json:"is_dealer,omitempty"`
+	ExpertForCarmakeIds  []int64 `protobuf:"varint,20,rep,packed,name=expert_for_carmake_ids,json=expertForCarmakeIds,proto3" json:"expert_for_carmake_ids,omitempty"`
+	ExpertForCategoryIds []int64 `protobuf:"varint,21,rep,packed,name=expert_for_category_ids,json=expertForCategoryIds,proto3" json:"expert_for_category_ids,omitempty"`
+	Popularity           int64   `protobuf:"varint,22,opt,name=popularity,proto3" json:"popularity,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *OrganizationDocument) Reset() {
@@ -1493,6 +1501,41 @@ func (x *OrganizationDocument) GetLatitude() float64 {
 func (x *OrganizationDocument) GetLongitude() float64 {
 	if x != nil {
 		return x.Longitude
+	}
+	return 0
+}
+
+func (x *OrganizationDocument) GetIsReviewed() bool {
+	if x != nil {
+		return x.IsReviewed
+	}
+	return false
+}
+
+func (x *OrganizationDocument) GetIsDealer() bool {
+	if x != nil {
+		return x.IsDealer
+	}
+	return false
+}
+
+func (x *OrganizationDocument) GetExpertForCarmakeIds() []int64 {
+	if x != nil {
+		return x.ExpertForCarmakeIds
+	}
+	return nil
+}
+
+func (x *OrganizationDocument) GetExpertForCategoryIds() []int64 {
+	if x != nil {
+		return x.ExpertForCategoryIds
+	}
+	return nil
+}
+
+func (x *OrganizationDocument) GetPopularity() int64 {
+	if x != nil {
+		return x.Popularity
 	}
 	return 0
 }
@@ -1836,7 +1879,7 @@ const file_services_search_search_proto_rawDesc = "" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\"3\n" +
 	"\x17DeleteFromIndexResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x8f\x04\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xd9\x05\n" +
 	"\x14OrganizationDocument\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x128\n" +
@@ -1855,7 +1898,15 @@ const file_services_search_search_proto_rawDesc = "" +
 	"\tis_active\x18\x0e \x01(\bR\bisActive\x12#\n" +
 	"\rworking_hours\x18\x0f \x01(\tR\fworkingHours\x12\x1a\n" +
 	"\blatitude\x18\x10 \x01(\x01R\blatitude\x12\x1c\n" +
-	"\tlongitude\x18\x11 \x01(\x01R\tlongitude\"\x8c\x03\n" +
+	"\tlongitude\x18\x11 \x01(\x01R\tlongitude\x12\x1f\n" +
+	"\vis_reviewed\x18\x12 \x01(\bR\n" +
+	"isReviewed\x12\x1b\n" +
+	"\tis_dealer\x18\x13 \x01(\bR\bisDealer\x123\n" +
+	"\x16expert_for_carmake_ids\x18\x14 \x03(\x03R\x13expertForCarmakeIds\x125\n" +
+	"\x17expert_for_category_ids\x18\x15 \x03(\x03R\x14expertForCategoryIds\x12\x1e\n" +
+	"\n" +
+	"popularity\x18\x16 \x01(\x03R\n" +
+	"popularity\"\x8c\x03\n" +
 	"\x1aSearchOrganizationsRequest\x12\x14\n" +
 	"\x05query\x18\x01 \x01(\tR\x05query\x128\n" +
 	"\x04type\x18\x02 \x01(\x0e2$.services.search.v1.OrganizationTypeR\x04type\x12\x17\n" +

@@ -19,44 +19,45 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OrganizationService_CreateOrganization_FullMethodName              = "/users.organization.v1.OrganizationService/CreateOrganization"
-	OrganizationService_GetOrganization_FullMethodName                 = "/users.organization.v1.OrganizationService/GetOrganization"
-	OrganizationService_UpdateOrganization_FullMethodName              = "/users.organization.v1.OrganizationService/UpdateOrganization"
-	OrganizationService_DeleteOrganization_FullMethodName              = "/users.organization.v1.OrganizationService/DeleteOrganization"
-	OrganizationService_GetMyOrganizations_FullMethodName              = "/users.organization.v1.OrganizationService/GetMyOrganizations"
-	OrganizationService_UpsertByLegacyID_FullMethodName                = "/users.organization.v1.OrganizationService/UpsertByLegacyID"
-	OrganizationService_SetCategories_FullMethodName                   = "/users.organization.v1.OrganizationService/SetCategories"
-	OrganizationService_GetCategories_FullMethodName                   = "/users.organization.v1.OrganizationService/GetCategories"
-	OrganizationService_AddMember_FullMethodName                       = "/users.organization.v1.OrganizationService/AddMember"
-	OrganizationService_FireMember_FullMethodName                      = "/users.organization.v1.OrganizationService/FireMember"
-	OrganizationService_UpdateMemberRole_FullMethodName                = "/users.organization.v1.OrganizationService/UpdateMemberRole"
-	OrganizationService_GetMembers_FullMethodName                      = "/users.organization.v1.OrganizationService/GetMembers"
-	OrganizationService_GetMember_FullMethodName                       = "/users.organization.v1.OrganizationService/GetMember"
-	OrganizationService_CreateInviteCode_FullMethodName                = "/users.organization.v1.OrganizationService/CreateInviteCode"
-	OrganizationService_UseInviteCode_FullMethodName                   = "/users.organization.v1.OrganizationService/UseInviteCode"
-	OrganizationService_GetInviteCodes_FullMethodName                  = "/users.organization.v1.OrganizationService/GetInviteCodes"
-	OrganizationService_DeactivateInviteCode_FullMethodName            = "/users.organization.v1.OrganizationService/DeactivateInviteCode"
-	OrganizationService_CheckPermission_FullMethodName                 = "/users.organization.v1.OrganizationService/CheckPermission"
-	OrganizationService_GetRoles_FullMethodName                        = "/users.organization.v1.OrganizationService/GetRoles"
-	OrganizationService_CreateRole_FullMethodName                      = "/users.organization.v1.OrganizationService/CreateRole"
-	OrganizationService_UpdateRoleInfo_FullMethodName                  = "/users.organization.v1.OrganizationService/UpdateRoleInfo"
-	OrganizationService_DeleteRole_FullMethodName                      = "/users.organization.v1.OrganizationService/DeleteRole"
-	OrganizationService_SetRolePermissions_FullMethodName              = "/users.organization.v1.OrganizationService/SetRolePermissions"
-	OrganizationService_SetMemberPermissionOverride_FullMethodName     = "/users.organization.v1.OrganizationService/SetMemberPermissionOverride"
-	OrganizationService_RemoveMemberPermissionOverride_FullMethodName  = "/users.organization.v1.OrganizationService/RemoveMemberPermissionOverride"
-	OrganizationService_GetMemberPermissionOverrides_FullMethodName    = "/users.organization.v1.OrganizationService/GetMemberPermissionOverrides"
-	OrganizationService_GetOrgProfile_FullMethodName                   = "/users.organization.v1.OrganizationService/GetOrgProfile"
-	OrganizationService_UpdateOrgProfile_FullMethodName                = "/users.organization.v1.OrganizationService/UpdateOrgProfile"
-	OrganizationService_GetOrganizationSubscriptionInfo_FullMethodName = "/users.organization.v1.OrganizationService/GetOrganizationSubscriptionInfo"
-	OrganizationService_ListUserOrganizations_FullMethodName           = "/users.organization.v1.OrganizationService/ListUserOrganizations"
-	OrganizationService_CreateDraftOrganization_FullMethodName         = "/users.organization.v1.OrganizationService/CreateDraftOrganization"
-	OrganizationService_UpdateOrganizationInfo_FullMethodName          = "/users.organization.v1.OrganizationService/UpdateOrganizationInfo"
-	OrganizationService_RequestActivation_FullMethodName               = "/users.organization.v1.OrganizationService/RequestActivation"
-	OrganizationService_SetPlatformRole_FullMethodName                 = "/users.organization.v1.OrganizationService/SetPlatformRole"
-	OrganizationService_GetPlatformRole_FullMethodName                 = "/users.organization.v1.OrganizationService/GetPlatformRole"
-	OrganizationService_SetPlatformOrgAccess_FullMethodName            = "/users.organization.v1.OrganizationService/SetPlatformOrgAccess"
-	OrganizationService_GetPlatformOrgAccess_FullMethodName            = "/users.organization.v1.OrganizationService/GetPlatformOrgAccess"
-	OrganizationService_CheckPlatformRole_FullMethodName               = "/users.organization.v1.OrganizationService/CheckPlatformRole"
+	OrganizationService_CreateOrganization_FullMethodName               = "/users.organization.v1.OrganizationService/CreateOrganization"
+	OrganizationService_GetOrganization_FullMethodName                  = "/users.organization.v1.OrganizationService/GetOrganization"
+	OrganizationService_UpdateOrganization_FullMethodName               = "/users.organization.v1.OrganizationService/UpdateOrganization"
+	OrganizationService_DeleteOrganization_FullMethodName               = "/users.organization.v1.OrganizationService/DeleteOrganization"
+	OrganizationService_GetMyOrganizations_FullMethodName               = "/users.organization.v1.OrganizationService/GetMyOrganizations"
+	OrganizationService_UpsertByLegacyID_FullMethodName                 = "/users.organization.v1.OrganizationService/UpsertByLegacyID"
+	OrganizationService_SetCategories_FullMethodName                    = "/users.organization.v1.OrganizationService/SetCategories"
+	OrganizationService_GetCategories_FullMethodName                    = "/users.organization.v1.OrganizationService/GetCategories"
+	OrganizationService_AddMember_FullMethodName                        = "/users.organization.v1.OrganizationService/AddMember"
+	OrganizationService_FireMember_FullMethodName                       = "/users.organization.v1.OrganizationService/FireMember"
+	OrganizationService_UpdateMemberRole_FullMethodName                 = "/users.organization.v1.OrganizationService/UpdateMemberRole"
+	OrganizationService_GetMembers_FullMethodName                       = "/users.organization.v1.OrganizationService/GetMembers"
+	OrganizationService_GetMember_FullMethodName                        = "/users.organization.v1.OrganizationService/GetMember"
+	OrganizationService_CreateInviteCode_FullMethodName                 = "/users.organization.v1.OrganizationService/CreateInviteCode"
+	OrganizationService_UseInviteCode_FullMethodName                    = "/users.organization.v1.OrganizationService/UseInviteCode"
+	OrganizationService_GetInviteCodes_FullMethodName                   = "/users.organization.v1.OrganizationService/GetInviteCodes"
+	OrganizationService_DeactivateInviteCode_FullMethodName             = "/users.organization.v1.OrganizationService/DeactivateInviteCode"
+	OrganizationService_CheckPermission_FullMethodName                  = "/users.organization.v1.OrganizationService/CheckPermission"
+	OrganizationService_GetRoles_FullMethodName                         = "/users.organization.v1.OrganizationService/GetRoles"
+	OrganizationService_CreateRole_FullMethodName                       = "/users.organization.v1.OrganizationService/CreateRole"
+	OrganizationService_UpdateRoleInfo_FullMethodName                   = "/users.organization.v1.OrganizationService/UpdateRoleInfo"
+	OrganizationService_DeleteRole_FullMethodName                       = "/users.organization.v1.OrganizationService/DeleteRole"
+	OrganizationService_SetRolePermissions_FullMethodName               = "/users.organization.v1.OrganizationService/SetRolePermissions"
+	OrganizationService_SetMemberPermissionOverride_FullMethodName      = "/users.organization.v1.OrganizationService/SetMemberPermissionOverride"
+	OrganizationService_RemoveMemberPermissionOverride_FullMethodName   = "/users.organization.v1.OrganizationService/RemoveMemberPermissionOverride"
+	OrganizationService_GetMemberPermissionOverrides_FullMethodName     = "/users.organization.v1.OrganizationService/GetMemberPermissionOverrides"
+	OrganizationService_GetOrgProfile_FullMethodName                    = "/users.organization.v1.OrganizationService/GetOrgProfile"
+	OrganizationService_UpdateOrgProfile_FullMethodName                 = "/users.organization.v1.OrganizationService/UpdateOrgProfile"
+	OrganizationService_GetOrganizationSubscriptionInfo_FullMethodName  = "/users.organization.v1.OrganizationService/GetOrganizationSubscriptionInfo"
+	OrganizationService_ListUserOrganizations_FullMethodName            = "/users.organization.v1.OrganizationService/ListUserOrganizations"
+	OrganizationService_CreateDraftOrganization_FullMethodName          = "/users.organization.v1.OrganizationService/CreateDraftOrganization"
+	OrganizationService_UpdateOrganizationInfo_FullMethodName           = "/users.organization.v1.OrganizationService/UpdateOrganizationInfo"
+	OrganizationService_RequestActivation_FullMethodName                = "/users.organization.v1.OrganizationService/RequestActivation"
+	OrganizationService_SetOrganizationMarketplaceFields_FullMethodName = "/users.organization.v1.OrganizationService/SetOrganizationMarketplaceFields"
+	OrganizationService_SetPlatformRole_FullMethodName                  = "/users.organization.v1.OrganizationService/SetPlatformRole"
+	OrganizationService_GetPlatformRole_FullMethodName                  = "/users.organization.v1.OrganizationService/GetPlatformRole"
+	OrganizationService_SetPlatformOrgAccess_FullMethodName             = "/users.organization.v1.OrganizationService/SetPlatformOrgAccess"
+	OrganizationService_GetPlatformOrgAccess_FullMethodName             = "/users.organization.v1.OrganizationService/GetPlatformOrgAccess"
+	OrganizationService_CheckPlatformRole_FullMethodName                = "/users.organization.v1.OrganizationService/CheckPlatformRole"
 )
 
 // OrganizationServiceClient is the client API for OrganizationService service.
@@ -116,6 +117,12 @@ type OrganizationServiceClient interface {
 	UpdateOrganizationInfo(ctx context.Context, in *UpdateOrganizationInfoRequest, opts ...grpc.CallOption) (*UpdateOrganizationInfoResponse, error)
 	// RequestActivation transitions org status from trial -> pending_docs.
 	RequestActivation(ctx context.Context, in *RequestActivationRequest, opts ...grpc.CallOption) (*RequestActivationResponse, error)
+	// SetOrganizationMarketplaceFields lets platform admins/moderators edit the
+	// marketplace ranking flags (is_reviewed, is_dealer, expert_for_carmake_ids,
+	// expert_for_category_ids) on an organization. Each field is optional —
+	// omitted means "keep current value". After write, an org.organization.updated
+	// event is published so the search index picks up the change.
+	SetOrganizationMarketplaceFields(ctx context.Context, in *SetOrganizationMarketplaceFieldsRequest, opts ...grpc.CallOption) (*SetOrganizationMarketplaceFieldsResponse, error)
 	// Deprecated: Do not use.
 	// Platform roles (CTOgram employee roles)
 	// Deprecated: Use UserService.SetPlatformRoles instead.
@@ -472,6 +479,16 @@ func (c *organizationServiceClient) RequestActivation(ctx context.Context, in *R
 	return out, nil
 }
 
+func (c *organizationServiceClient) SetOrganizationMarketplaceFields(ctx context.Context, in *SetOrganizationMarketplaceFieldsRequest, opts ...grpc.CallOption) (*SetOrganizationMarketplaceFieldsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetOrganizationMarketplaceFieldsResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_SetOrganizationMarketplaceFields_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Deprecated: Do not use.
 func (c *organizationServiceClient) SetPlatformRole(ctx context.Context, in *SetPlatformRoleRequest, opts ...grpc.CallOption) (*SetPlatformRoleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -584,6 +601,12 @@ type OrganizationServiceServer interface {
 	UpdateOrganizationInfo(context.Context, *UpdateOrganizationInfoRequest) (*UpdateOrganizationInfoResponse, error)
 	// RequestActivation transitions org status from trial -> pending_docs.
 	RequestActivation(context.Context, *RequestActivationRequest) (*RequestActivationResponse, error)
+	// SetOrganizationMarketplaceFields lets platform admins/moderators edit the
+	// marketplace ranking flags (is_reviewed, is_dealer, expert_for_carmake_ids,
+	// expert_for_category_ids) on an organization. Each field is optional —
+	// omitted means "keep current value". After write, an org.organization.updated
+	// event is published so the search index picks up the change.
+	SetOrganizationMarketplaceFields(context.Context, *SetOrganizationMarketplaceFieldsRequest) (*SetOrganizationMarketplaceFieldsResponse, error)
 	// Deprecated: Do not use.
 	// Platform roles (CTOgram employee roles)
 	// Deprecated: Use UserService.SetPlatformRoles instead.
@@ -708,6 +731,9 @@ func (UnimplementedOrganizationServiceServer) UpdateOrganizationInfo(context.Con
 }
 func (UnimplementedOrganizationServiceServer) RequestActivation(context.Context, *RequestActivationRequest) (*RequestActivationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RequestActivation not implemented")
+}
+func (UnimplementedOrganizationServiceServer) SetOrganizationMarketplaceFields(context.Context, *SetOrganizationMarketplaceFieldsRequest) (*SetOrganizationMarketplaceFieldsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetOrganizationMarketplaceFields not implemented")
 }
 func (UnimplementedOrganizationServiceServer) SetPlatformRole(context.Context, *SetPlatformRoleRequest) (*SetPlatformRoleResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetPlatformRole not implemented")
@@ -1339,6 +1365,24 @@ func _OrganizationService_RequestActivation_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationService_SetOrganizationMarketplaceFields_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetOrganizationMarketplaceFieldsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).SetOrganizationMarketplaceFields(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_SetOrganizationMarketplaceFields_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).SetOrganizationMarketplaceFields(ctx, req.(*SetOrganizationMarketplaceFieldsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrganizationService_SetPlatformRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetPlatformRoleRequest)
 	if err := dec(in); err != nil {
@@ -1567,6 +1611,10 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RequestActivation",
 			Handler:    _OrganizationService_RequestActivation_Handler,
+		},
+		{
+			MethodName: "SetOrganizationMarketplaceFields",
+			Handler:    _OrganizationService_SetOrganizationMarketplaceFields_Handler,
 		},
 		{
 			MethodName: "SetPlatformRole",
