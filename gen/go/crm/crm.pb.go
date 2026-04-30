@@ -4525,7 +4525,29 @@ type CreateExternalDealRequest struct {
 	// non-empty, cg-crm writes each entry as a wa_messages row keyed to
 	// the resolved contact's phone so the existing WhatsApp chat block
 	// surfaces the AI dialog to the manager. Empty list = no-op.
-	Conversation  []*ExternalConversationMessage `protobuf:"bytes,23,rep,name=conversation,proto3" json:"conversation,omitempty"`
+	Conversation []*ExternalConversationMessage `protobuf:"bytes,23,rep,name=conversation,proto3" json:"conversation,omitempty"`
+	// Optional cap stage UUID enabling contact-scoped merge. When set and
+	// the (source, external_id) lookup misses, cg-crm falls back to a
+	// contact-scope lookup: the most-recent open deal owned by the same
+	// contact in the same pipeline whose current stage's position is
+	// <= position(merge_cap_stage_id). On hit, the existing deal is
+	// resubmitted instead of a fresh deal being inserted (so a new ZN for
+	// a client whose previous deal is still in early stages collapses
+	// onto that deal). Unset (or stage not found) → contact-scope path is
+	// skipped and the call falls through to a fresh-create.
+	//
+	// Use case: admin-panel ЗН routed into AUTOBODY merges into the
+	// client's existing deal up to and including "Расчёт и смета" only;
+	// anything past that point gets its own new card.
+	MergeCapStageId string `protobuf:"bytes,24,opt,name=merge_cap_stage_id,json=mergeCapStageId,proto3" json:"merge_cap_stage_id,omitempty"`
+	// Optional pre-resolved deal UUID. When set, cg-crm short-circuits
+	// both lookup paths (source/external_id and contact-scope) and
+	// resubmits this exact deal (after validating it belongs to
+	// organization_id). Used by callers that already know the target
+	// deal's UUID — e.g. admin-panel ZN edits, where the order_work row
+	// carries cg_crm_deal_id from a previous /external/deals call.
+	// Empty → fall through to lookup paths.
+	DealId        string `protobuf:"bytes,25,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4719,6 +4741,20 @@ func (x *CreateExternalDealRequest) GetConversation() []*ExternalConversationMes
 		return x.Conversation
 	}
 	return nil
+}
+
+func (x *CreateExternalDealRequest) GetMergeCapStageId() string {
+	if x != nil {
+		return x.MergeCapStageId
+	}
+	return ""
+}
+
+func (x *CreateExternalDealRequest) GetDealId() string {
+	if x != nil {
+		return x.DealId
+	}
+	return ""
 }
 
 // One turn in an AI-driven conversation persisted into wa_messages so
@@ -17883,7 +17919,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\bmodel_id\x18\x04 \x01(\x03R\amodelId\x12#\n" +
 	"\rgeneration_id\x18\x05 \x01(\x03R\fgenerationId\x12\x12\n" +
 	"\x04year\x18\x06 \x01(\x05R\x04year\x12\x14\n" +
-	"\x05color\x18\a \x01(\tR\x05color\"\x80\b\n" +
+	"\x05color\x18\a \x01(\tR\x05color\"\xc6\b\n" +
 	"\x19CreateExternalDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -17912,7 +17948,9 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x12instagram_username\x18\x14 \x01(\tR\x11instagramUsername\x12&\n" +
 	"\x0fauto_task_title\x18\x15 \x01(\tR\rautoTaskTitle\x12C\n" +
 	"\x10auto_task_due_at\x18\x16 \x01(\v2\x1a.google.protobuf.TimestampR\rautoTaskDueAt\x12G\n" +
-	"\fconversation\x18\x17 \x03(\v2#.crm.v1.ExternalConversationMessageR\fconversation\x1a?\n" +
+	"\fconversation\x18\x17 \x03(\v2#.crm.v1.ExternalConversationMessageR\fconversation\x12+\n" +
+	"\x12merge_cap_stage_id\x18\x18 \x01(\tR\x0fmergeCapStageId\x12\x17\n" +
+	"\adeal_id\x18\x19 \x01(\tR\x06dealId\x1a?\n" +
 	"\x11CustomFieldsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"{\n" +
