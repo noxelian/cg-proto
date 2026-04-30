@@ -5205,8 +5205,13 @@ type UpdateDealRequest struct {
 	AssignedTo     int64                  `protobuf:"varint,6,opt,name=assigned_to,json=assignedTo,proto3" json:"assigned_to,omitempty"`
 	ExpectedClose  *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=expected_close,json=expectedClose,proto3" json:"expected_close,omitempty"`
 	VehicleId      int64                  `protobuf:"varint,8,opt,name=vehicle_id,json=vehicleId,proto3" json:"vehicle_id,omitempty"` // 0 to clear, >0 to set
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// source is the deal's origin tag. Most callers leave this empty —
+	// source is set at creation time and rarely needs to change. When
+	// non-empty, the deal's source column is replaced and a field_update
+	// activity is logged. Empty preserves the existing source.
+	Source        string `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateDealRequest) Reset() {
@@ -5293,6 +5298,13 @@ func (x *UpdateDealRequest) GetVehicleId() int64 {
 		return x.VehicleId
 	}
 	return 0
+}
+
+func (x *UpdateDealRequest) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
 }
 
 type UpdateDealResponse struct {
@@ -18099,7 +18111,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x10task_filter_mode\x18\x0f \x01(\tR\x0etaskFilterMode\"R\n" +
 	"\x11ListDealsResponse\x12'\n" +
 	"\x05deals\x18\x01 \x03(\v2\x11.crm.v1.DealProtoR\x05deals\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x03R\x05total\"\x99\x02\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\xb1\x02\n" +
 	"\x11UpdateDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x14\n" +
@@ -18110,7 +18122,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"assignedTo\x12A\n" +
 	"\x0eexpected_close\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\rexpectedClose\x12\x1d\n" +
 	"\n" +
-	"vehicle_id\x18\b \x01(\x03R\tvehicleId\";\n" +
+	"vehicle_id\x18\b \x01(\x03R\tvehicleId\x12\x16\n" +
+	"\x06source\x18\t \x01(\tR\x06source\";\n" +
 	"\x12UpdateDealResponse\x12%\n" +
 	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xab\x04\n" +
 	"\x11ImportDealRequest\x12'\n" +
