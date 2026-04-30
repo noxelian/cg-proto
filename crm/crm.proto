@@ -269,6 +269,12 @@ message Stage {
   bool requires_assignee = 13;
   // True -> deal.amount_tiin must be > 0 to leave this stage (or close as won).
   bool requires_amount   = 14;
+  // True -> moving a deal INTO this stage skips every exit-requirement
+  // check on the source stage (built-in flags + stage-scoped required
+  // custom fields). Lets admins flag "catch-all" stages like "Недозвон"
+  // where the manager must be able to drop a deal in from anywhere
+  // without first satisfying the prior stage's gates.
+  bool bypass_requirements = 15;
 }
 
 message CreatePipelineRequest {
@@ -369,6 +375,8 @@ message CreateStageRequest {
   bool   requires_user     = 9;
   bool   requires_assignee = 10;
   bool   requires_amount   = 11;
+  // See Stage.bypass_requirements for semantics.
+  bool   bypass_requirements = 12;
 }
 
 message CreateStageResponse {
@@ -388,6 +396,8 @@ message UpdateStageRequest {
   bool   requires_user     = 9;
   bool   requires_assignee = 10;
   bool   requires_amount   = 11;
+  // See Stage.bypass_requirements for semantics.
+  bool   bypass_requirements = 12;
 }
 
 message UpdateStageResponse {
