@@ -194,6 +194,7 @@ service CRMService {
   // Phase 9 — Stasis event persistence, CallerID lookup, reconciliation (D-06, D-14, D-24)
   rpc CreateTelephonyCall(CreateTelephonyCallRequest)               returns (CreateTelephonyCallResponse);
   rpc UpdateTelephonyCallState(UpdateTelephonyCallStateRequest)     returns (UpdateTelephonyCallStateResponse);
+  rpc UpdateTelephonyCallMatchedEntity(UpdateTelephonyCallMatchedEntityRequest) returns (UpdateTelephonyCallMatchedEntityResponse);
   rpc ListTelephonyCallsByOrg(ListTelephonyCallsByOrgRequest)       returns (ListTelephonyCallsByOrgResponse);
   rpc ListOrphanedTelephonyCalls(ListOrphanedTelephonyCallsRequest) returns (ListOrphanedTelephonyCallsResponse);
   rpc LookupEntityByPhone(LookupEntityByPhoneRequest)               returns (LookupEntityByPhoneResponse);
@@ -2174,6 +2175,22 @@ message UpdateTelephonyCallStateRequest {
 message UpdateTelephonyCallStateResponse {
   TelephonyCall call    = 1;
   bool          updated = 2;  // false if WHERE state=expected_state matched 0 rows (Pitfall 3 — not an error)
+}
+
+// UpdateTelephonyCallMatchedEntity persists a matched_entity onto an
+// existing call row, identified by id. Used by cg-bff after
+// LookupEntityByPhone resolves the caller, on both inbound and outbound
+// flows. The previous "re-issue CreateTelephonyCall" trick relied on
+// idempotency that doesn't exist when the row already has a primary
+// key — pkey conflicts left matched_entity NULL and the popup / call
+// history showed only the raw phone number.
+message UpdateTelephonyCallMatchedEntityRequest {
+  string        organization_id = 1;
+  string        call_id         = 2;
+  MatchedEntity matched_entity  = 3; // entity_type='none' clears the row
+}
+message UpdateTelephonyCallMatchedEntityResponse {
+  bool updated = 1; // false when no row matched the (org_id, call_id) pair
 }
 
 message ListTelephonyCallsByOrgRequest {
