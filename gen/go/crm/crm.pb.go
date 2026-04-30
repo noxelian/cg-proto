@@ -323,8 +323,14 @@ type Stage struct {
 	RequiresAssignee bool `protobuf:"varint,13,opt,name=requires_assignee,json=requiresAssignee,proto3" json:"requires_assignee,omitempty"`
 	// True -> deal.amount_tiin must be > 0 to leave this stage (or close as won).
 	RequiresAmount bool `protobuf:"varint,14,opt,name=requires_amount,json=requiresAmount,proto3" json:"requires_amount,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// True -> moving a deal INTO this stage skips every exit-requirement
+	// check on the source stage (built-in flags + stage-scoped required
+	// custom fields). Lets admins flag "catch-all" stages like "Недозвон"
+	// where the manager must be able to drop a deal in from anywhere
+	// without first satisfying the prior stage's gates.
+	BypassRequirements bool `protobuf:"varint,15,opt,name=bypass_requirements,json=bypassRequirements,proto3" json:"bypass_requirements,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *Stage) Reset() {
@@ -451,6 +457,13 @@ func (x *Stage) GetRequiresAssignee() bool {
 func (x *Stage) GetRequiresAmount() bool {
 	if x != nil {
 		return x.RequiresAmount
+	}
+	return false
+}
+
+func (x *Stage) GetBypassRequirements() bool {
+	if x != nil {
+		return x.BypassRequirements
 	}
 	return false
 }
@@ -1347,8 +1360,10 @@ type CreateStageRequest struct {
 	RequiresUser     bool `protobuf:"varint,9,opt,name=requires_user,json=requiresUser,proto3" json:"requires_user,omitempty"`
 	RequiresAssignee bool `protobuf:"varint,10,opt,name=requires_assignee,json=requiresAssignee,proto3" json:"requires_assignee,omitempty"`
 	RequiresAmount   bool `protobuf:"varint,11,opt,name=requires_amount,json=requiresAmount,proto3" json:"requires_amount,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// See Stage.bypass_requirements for semantics.
+	BypassRequirements bool `protobuf:"varint,12,opt,name=bypass_requirements,json=bypassRequirements,proto3" json:"bypass_requirements,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *CreateStageRequest) Reset() {
@@ -1458,6 +1473,13 @@ func (x *CreateStageRequest) GetRequiresAmount() bool {
 	return false
 }
 
+func (x *CreateStageRequest) GetBypassRequirements() bool {
+	if x != nil {
+		return x.BypassRequirements
+	}
+	return false
+}
+
 type CreateStageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Stage         *Stage                 `protobuf:"bytes,1,opt,name=stage,proto3" json:"stage,omitempty"`
@@ -1516,8 +1538,10 @@ type UpdateStageRequest struct {
 	RequiresUser     bool `protobuf:"varint,9,opt,name=requires_user,json=requiresUser,proto3" json:"requires_user,omitempty"`
 	RequiresAssignee bool `protobuf:"varint,10,opt,name=requires_assignee,json=requiresAssignee,proto3" json:"requires_assignee,omitempty"`
 	RequiresAmount   bool `protobuf:"varint,11,opt,name=requires_amount,json=requiresAmount,proto3" json:"requires_amount,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// See Stage.bypass_requirements for semantics.
+	BypassRequirements bool `protobuf:"varint,12,opt,name=bypass_requirements,json=bypassRequirements,proto3" json:"bypass_requirements,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *UpdateStageRequest) Reset() {
@@ -1623,6 +1647,13 @@ func (x *UpdateStageRequest) GetRequiresAssignee() bool {
 func (x *UpdateStageRequest) GetRequiresAmount() bool {
 	if x != nil {
 		return x.RequiresAmount
+	}
+	return false
+}
+
+func (x *UpdateStageRequest) GetBypassRequirements() bool {
+	if x != nil {
+		return x.BypassRequirements
 	}
 	return false
 }
@@ -17302,7 +17333,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12%\n" +
 	"\x06stages\x18\n" +
-	" \x03(\v2\r.crm.v1.StageR\x06stages\"\x85\x04\n" +
+	" \x03(\v2\r.crm.v1.StageR\x06stages\"\xb6\x04\n" +
 	"\x05Stage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -17322,7 +17353,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\rrequires_task\x18\v \x01(\bR\frequiresTask\x12#\n" +
 	"\rrequires_user\x18\f \x01(\bR\frequiresUser\x12+\n" +
 	"\x11requires_assignee\x18\r \x01(\bR\x10requiresAssignee\x12'\n" +
-	"\x0frequires_amount\x18\x0e \x01(\bR\x0erequiresAmount\"v\n" +
+	"\x0frequires_amount\x18\x0e \x01(\bR\x0erequiresAmount\x12/\n" +
+	"\x13bypass_requirements\x18\x0f \x01(\bR\x12bypassRequirements\"v\n" +
 	"\x15CreatePipelineRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -17376,7 +17408,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x16ArchivePipelineRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"\x19\n" +
-	"\x17ArchivePipelineResponse\"\x99\x03\n" +
+	"\x17ArchivePipelineResponse\"\xca\x03\n" +
 	"\x12CreateStageRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -17391,9 +17423,10 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\rrequires_user\x18\t \x01(\bR\frequiresUser\x12+\n" +
 	"\x11requires_assignee\x18\n" +
 	" \x01(\bR\x10requiresAssignee\x12'\n" +
-	"\x0frequires_amount\x18\v \x01(\bR\x0erequiresAmount\":\n" +
+	"\x0frequires_amount\x18\v \x01(\bR\x0erequiresAmount\x12/\n" +
+	"\x13bypass_requirements\x18\f \x01(\bR\x12bypassRequirements\":\n" +
 	"\x13CreateStageResponse\x12#\n" +
-	"\x05stage\x18\x01 \x01(\v2\r.crm.v1.StageR\x05stage\"\x88\x03\n" +
+	"\x05stage\x18\x01 \x01(\v2\r.crm.v1.StageR\x05stage\"\xb9\x03\n" +
 	"\x12UpdateStageRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x12\n" +
@@ -17407,7 +17440,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\rrequires_user\x18\t \x01(\bR\frequiresUser\x12+\n" +
 	"\x11requires_assignee\x18\n" +
 	" \x01(\bR\x10requiresAssignee\x12'\n" +
-	"\x0frequires_amount\x18\v \x01(\bR\x0erequiresAmount\":\n" +
+	"\x0frequires_amount\x18\v \x01(\bR\x0erequiresAmount\x12/\n" +
+	"\x13bypass_requirements\x18\f \x01(\bR\x12bypassRequirements\":\n" +
 	"\x13UpdateStageResponse\x12#\n" +
 	"\x05stage\x18\x01 \x01(\v2\r.crm.v1.StageR\x05stage\"n\n" +
 	"\x12DeleteStageRequest\x12'\n" +
