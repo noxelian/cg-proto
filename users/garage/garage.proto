@@ -65,6 +65,8 @@ message Car {
   repeated CarPhoto photos = 12;
   google.protobuf.Timestamp created_at = 13;
   google.protobuf.Timestamp updated_at = 14;
+  // Engine displacement in cubic centimeters (1.6L = 1600). 0 = unknown.
+  int32 engine_volume_cc = 15;
 }
 
 message CarPhoto {
@@ -128,6 +130,7 @@ message CreateCarRequest {
   string color = 7;
   int32 mileage = 8;
   bool is_primary = 9;
+  int32 engine_volume_cc = 10;
 }
 
 message CreateCarResponse {
@@ -166,6 +169,7 @@ message UpdateCarRequest {
   optional string color = 8;
   optional int32 mileage = 9;
   optional bool is_primary = 10;
+  optional int32 engine_volume_cc = 11;
 }
 
 message UpdateCarResponse {
@@ -183,11 +187,12 @@ message FindOrCreateCarRequest {
   int64  user_id       = 1;
   string license_plate = 2;  // primary lookup key
   string vin           = 3;  // fallback lookup key (if license_plate empty)
-  int32  mark_id       = 4;
-  int32  model_id      = 5;
-  int32  generation_id = 6;
-  int32  year          = 7;
-  string color         = 8;
+  int32  mark_id          = 4;
+  int32  model_id         = 5;
+  int32  generation_id    = 6;
+  int32  year             = 7;
+  string color            = 8;
+  int32  engine_volume_cc = 9;
 }
 
 message FindOrCreateCarResponse {

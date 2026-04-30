@@ -23,23 +23,25 @@ const (
 )
 
 type Car struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	MarkId        int32                  `protobuf:"varint,3,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
-	ModelId       int32                  `protobuf:"varint,4,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
-	GenerationId  int32                  `protobuf:"varint,5,opt,name=generation_id,json=generationId,proto3" json:"generation_id,omitempty"`
-	Year          int32                  `protobuf:"varint,6,opt,name=year,proto3" json:"year,omitempty"`
-	Vin           string                 `protobuf:"bytes,7,opt,name=vin,proto3" json:"vin,omitempty"`
-	LicensePlate  string                 `protobuf:"bytes,8,opt,name=license_plate,json=licensePlate,proto3" json:"license_plate,omitempty"`
-	Color         string                 `protobuf:"bytes,9,opt,name=color,proto3" json:"color,omitempty"`
-	Mileage       int32                  `protobuf:"varint,10,opt,name=mileage,proto3" json:"mileage,omitempty"`
-	IsPrimary     bool                   `protobuf:"varint,11,opt,name=is_primary,json=isPrimary,proto3" json:"is_primary,omitempty"`
-	Photos        []*CarPhoto            `protobuf:"bytes,12,rep,name=photos,proto3" json:"photos,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Id           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId       int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	MarkId       int32                  `protobuf:"varint,3,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	ModelId      int32                  `protobuf:"varint,4,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	GenerationId int32                  `protobuf:"varint,5,opt,name=generation_id,json=generationId,proto3" json:"generation_id,omitempty"`
+	Year         int32                  `protobuf:"varint,6,opt,name=year,proto3" json:"year,omitempty"`
+	Vin          string                 `protobuf:"bytes,7,opt,name=vin,proto3" json:"vin,omitempty"`
+	LicensePlate string                 `protobuf:"bytes,8,opt,name=license_plate,json=licensePlate,proto3" json:"license_plate,omitempty"`
+	Color        string                 `protobuf:"bytes,9,opt,name=color,proto3" json:"color,omitempty"`
+	Mileage      int32                  `protobuf:"varint,10,opt,name=mileage,proto3" json:"mileage,omitempty"`
+	IsPrimary    bool                   `protobuf:"varint,11,opt,name=is_primary,json=isPrimary,proto3" json:"is_primary,omitempty"`
+	Photos       []*CarPhoto            `protobuf:"bytes,12,rep,name=photos,proto3" json:"photos,omitempty"`
+	CreatedAt    *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt    *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// Engine displacement in cubic centimeters (1.6L = 1600). 0 = unknown.
+	EngineVolumeCc int32 `protobuf:"varint,15,opt,name=engine_volume_cc,json=engineVolumeCc,proto3" json:"engine_volume_cc,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Car) Reset() {
@@ -168,6 +170,13 @@ func (x *Car) GetUpdatedAt() *timestamppb.Timestamp {
 		return x.UpdatedAt
 	}
 	return nil
+}
+
+func (x *Car) GetEngineVolumeCc() int32 {
+	if x != nil {
+		return x.EngineVolumeCc
+	}
+	return 0
 }
 
 type CarPhoto struct {
@@ -611,18 +620,19 @@ func (x *Reminder) GetUpdatedAt() *timestamppb.Timestamp {
 }
 
 type CreateCarRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	MarkId        int32                  `protobuf:"varint,1,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
-	ModelId       int32                  `protobuf:"varint,2,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
-	GenerationId  int32                  `protobuf:"varint,3,opt,name=generation_id,json=generationId,proto3" json:"generation_id,omitempty"`
-	Year          int32                  `protobuf:"varint,4,opt,name=year,proto3" json:"year,omitempty"`
-	Vin           string                 `protobuf:"bytes,5,opt,name=vin,proto3" json:"vin,omitempty"`
-	LicensePlate  string                 `protobuf:"bytes,6,opt,name=license_plate,json=licensePlate,proto3" json:"license_plate,omitempty"`
-	Color         string                 `protobuf:"bytes,7,opt,name=color,proto3" json:"color,omitempty"`
-	Mileage       int32                  `protobuf:"varint,8,opt,name=mileage,proto3" json:"mileage,omitempty"`
-	IsPrimary     bool                   `protobuf:"varint,9,opt,name=is_primary,json=isPrimary,proto3" json:"is_primary,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	MarkId         int32                  `protobuf:"varint,1,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	ModelId        int32                  `protobuf:"varint,2,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	GenerationId   int32                  `protobuf:"varint,3,opt,name=generation_id,json=generationId,proto3" json:"generation_id,omitempty"`
+	Year           int32                  `protobuf:"varint,4,opt,name=year,proto3" json:"year,omitempty"`
+	Vin            string                 `protobuf:"bytes,5,opt,name=vin,proto3" json:"vin,omitempty"`
+	LicensePlate   string                 `protobuf:"bytes,6,opt,name=license_plate,json=licensePlate,proto3" json:"license_plate,omitempty"`
+	Color          string                 `protobuf:"bytes,7,opt,name=color,proto3" json:"color,omitempty"`
+	Mileage        int32                  `protobuf:"varint,8,opt,name=mileage,proto3" json:"mileage,omitempty"`
+	IsPrimary      bool                   `protobuf:"varint,9,opt,name=is_primary,json=isPrimary,proto3" json:"is_primary,omitempty"`
+	EngineVolumeCc int32                  `protobuf:"varint,10,opt,name=engine_volume_cc,json=engineVolumeCc,proto3" json:"engine_volume_cc,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *CreateCarRequest) Reset() {
@@ -716,6 +726,13 @@ func (x *CreateCarRequest) GetIsPrimary() bool {
 		return x.IsPrimary
 	}
 	return false
+}
+
+func (x *CreateCarRequest) GetEngineVolumeCc() int32 {
+	if x != nil {
+		return x.EngineVolumeCc
+	}
+	return 0
 }
 
 type CreateCarResponse struct {
@@ -965,19 +982,20 @@ func (x *ListCarsResponse) GetTotal() int32 {
 }
 
 type UpdateCarRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	CarId         int64                  `protobuf:"varint,1,opt,name=car_id,json=carId,proto3" json:"car_id,omitempty"`
-	MarkId        *int32                 `protobuf:"varint,2,opt,name=mark_id,json=markId,proto3,oneof" json:"mark_id,omitempty"`
-	ModelId       *int32                 `protobuf:"varint,3,opt,name=model_id,json=modelId,proto3,oneof" json:"model_id,omitempty"`
-	GenerationId  *int32                 `protobuf:"varint,4,opt,name=generation_id,json=generationId,proto3,oneof" json:"generation_id,omitempty"`
-	Year          *int32                 `protobuf:"varint,5,opt,name=year,proto3,oneof" json:"year,omitempty"`
-	Vin           *string                `protobuf:"bytes,6,opt,name=vin,proto3,oneof" json:"vin,omitempty"`
-	LicensePlate  *string                `protobuf:"bytes,7,opt,name=license_plate,json=licensePlate,proto3,oneof" json:"license_plate,omitempty"`
-	Color         *string                `protobuf:"bytes,8,opt,name=color,proto3,oneof" json:"color,omitempty"`
-	Mileage       *int32                 `protobuf:"varint,9,opt,name=mileage,proto3,oneof" json:"mileage,omitempty"`
-	IsPrimary     *bool                  `protobuf:"varint,10,opt,name=is_primary,json=isPrimary,proto3,oneof" json:"is_primary,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	CarId          int64                  `protobuf:"varint,1,opt,name=car_id,json=carId,proto3" json:"car_id,omitempty"`
+	MarkId         *int32                 `protobuf:"varint,2,opt,name=mark_id,json=markId,proto3,oneof" json:"mark_id,omitempty"`
+	ModelId        *int32                 `protobuf:"varint,3,opt,name=model_id,json=modelId,proto3,oneof" json:"model_id,omitempty"`
+	GenerationId   *int32                 `protobuf:"varint,4,opt,name=generation_id,json=generationId,proto3,oneof" json:"generation_id,omitempty"`
+	Year           *int32                 `protobuf:"varint,5,opt,name=year,proto3,oneof" json:"year,omitempty"`
+	Vin            *string                `protobuf:"bytes,6,opt,name=vin,proto3,oneof" json:"vin,omitempty"`
+	LicensePlate   *string                `protobuf:"bytes,7,opt,name=license_plate,json=licensePlate,proto3,oneof" json:"license_plate,omitempty"`
+	Color          *string                `protobuf:"bytes,8,opt,name=color,proto3,oneof" json:"color,omitempty"`
+	Mileage        *int32                 `protobuf:"varint,9,opt,name=mileage,proto3,oneof" json:"mileage,omitempty"`
+	IsPrimary      *bool                  `protobuf:"varint,10,opt,name=is_primary,json=isPrimary,proto3,oneof" json:"is_primary,omitempty"`
+	EngineVolumeCc *int32                 `protobuf:"varint,11,opt,name=engine_volume_cc,json=engineVolumeCc,proto3,oneof" json:"engine_volume_cc,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *UpdateCarRequest) Reset() {
@@ -1078,6 +1096,13 @@ func (x *UpdateCarRequest) GetIsPrimary() bool {
 		return *x.IsPrimary
 	}
 	return false
+}
+
+func (x *UpdateCarRequest) GetEngineVolumeCc() int32 {
+	if x != nil && x.EngineVolumeCc != nil {
+		return *x.EngineVolumeCc
+	}
+	return 0
 }
 
 type UpdateCarResponse struct {
@@ -1206,17 +1231,18 @@ func (*DeleteCarResponse) Descriptor() ([]byte, []int) {
 
 // FindOrCreateCar — idempotent lookup/create by license_plate or VIN
 type FindOrCreateCarRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	LicensePlate  string                 `protobuf:"bytes,2,opt,name=license_plate,json=licensePlate,proto3" json:"license_plate,omitempty"` // primary lookup key
-	Vin           string                 `protobuf:"bytes,3,opt,name=vin,proto3" json:"vin,omitempty"`                                       // fallback lookup key (if license_plate empty)
-	MarkId        int32                  `protobuf:"varint,4,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
-	ModelId       int32                  `protobuf:"varint,5,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
-	GenerationId  int32                  `protobuf:"varint,6,opt,name=generation_id,json=generationId,proto3" json:"generation_id,omitempty"`
-	Year          int32                  `protobuf:"varint,7,opt,name=year,proto3" json:"year,omitempty"`
-	Color         string                 `protobuf:"bytes,8,opt,name=color,proto3" json:"color,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	LicensePlate   string                 `protobuf:"bytes,2,opt,name=license_plate,json=licensePlate,proto3" json:"license_plate,omitempty"` // primary lookup key
+	Vin            string                 `protobuf:"bytes,3,opt,name=vin,proto3" json:"vin,omitempty"`                                       // fallback lookup key (if license_plate empty)
+	MarkId         int32                  `protobuf:"varint,4,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	ModelId        int32                  `protobuf:"varint,5,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	GenerationId   int32                  `protobuf:"varint,6,opt,name=generation_id,json=generationId,proto3" json:"generation_id,omitempty"`
+	Year           int32                  `protobuf:"varint,7,opt,name=year,proto3" json:"year,omitempty"`
+	Color          string                 `protobuf:"bytes,8,opt,name=color,proto3" json:"color,omitempty"`
+	EngineVolumeCc int32                  `protobuf:"varint,9,opt,name=engine_volume_cc,json=engineVolumeCc,proto3" json:"engine_volume_cc,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *FindOrCreateCarRequest) Reset() {
@@ -1303,6 +1329,13 @@ func (x *FindOrCreateCarRequest) GetColor() string {
 		return x.Color
 	}
 	return ""
+}
+
+func (x *FindOrCreateCarRequest) GetEngineVolumeCc() int32 {
+	if x != nil {
+		return x.EngineVolumeCc
+	}
+	return 0
 }
 
 type FindOrCreateCarResponse struct {
@@ -3513,7 +3546,7 @@ var File_users_garage_garage_proto protoreflect.FileDescriptor
 
 const file_users_garage_garage_proto_rawDesc = "" +
 	"\n" +
-	"\x19users/garage/garage.proto\x12\x0fusers.garage.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xca\x03\n" +
+	"\x19users/garage/garage.proto\x12\x0fusers.garage.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf4\x03\n" +
 	"\x03Car\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x17\n" +
@@ -3532,7 +3565,8 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xbc\x01\n" +
+	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12(\n" +
+	"\x10engine_volume_cc\x18\x0f \x01(\x05R\x0eengineVolumeCc\"\xbc\x01\n" +
 	"\bCarPhoto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x15\n" +
 	"\x06car_id\x18\x02 \x01(\x03R\x05carId\x12\x10\n" +
@@ -3585,7 +3619,7 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"created_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x85\x02\n" +
+	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xaf\x02\n" +
 	"\x10CreateCarRequest\x12\x17\n" +
 	"\amark_id\x18\x01 \x01(\x05R\x06markId\x12\x19\n" +
 	"\bmodel_id\x18\x02 \x01(\x05R\amodelId\x12#\n" +
@@ -3596,7 +3630,9 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\x05color\x18\a \x01(\tR\x05color\x12\x18\n" +
 	"\amileage\x18\b \x01(\x05R\amileage\x12\x1d\n" +
 	"\n" +
-	"is_primary\x18\t \x01(\bR\tisPrimary\";\n" +
+	"is_primary\x18\t \x01(\bR\tisPrimary\x12(\n" +
+	"\x10engine_volume_cc\x18\n" +
+	" \x01(\x05R\x0eengineVolumeCc\";\n" +
 	"\x11CreateCarResponse\x12&\n" +
 	"\x03car\x18\x01 \x01(\v2\x14.users.garage.v1.CarR\x03car\"&\n" +
 	"\rGetCarRequest\x12\x15\n" +
@@ -3609,7 +3645,7 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\"R\n" +
 	"\x10ListCarsResponse\x12(\n" +
 	"\x04cars\x18\x01 \x03(\v2\x14.users.garage.v1.CarR\x04cars\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"\xbc\x03\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\x80\x04\n" +
 	"\x10UpdateCarRequest\x12\x15\n" +
 	"\x06car_id\x18\x01 \x01(\x03R\x05carId\x12\x1c\n" +
 	"\amark_id\x18\x02 \x01(\x05H\x00R\x06markId\x88\x01\x01\x12\x1e\n" +
@@ -3622,7 +3658,8 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\amileage\x18\t \x01(\x05H\aR\amileage\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"is_primary\x18\n" +
-	" \x01(\bH\bR\tisPrimary\x88\x01\x01B\n" +
+	" \x01(\bH\bR\tisPrimary\x88\x01\x01\x12-\n" +
+	"\x10engine_volume_cc\x18\v \x01(\x05H\tR\x0eengineVolumeCc\x88\x01\x01B\n" +
 	"\n" +
 	"\b_mark_idB\v\n" +
 	"\t_model_idB\x10\n" +
@@ -3633,12 +3670,13 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\x06_colorB\n" +
 	"\n" +
 	"\b_mileageB\r\n" +
-	"\v_is_primary\";\n" +
+	"\v_is_primaryB\x13\n" +
+	"\x11_engine_volume_cc\";\n" +
 	"\x11UpdateCarResponse\x12&\n" +
 	"\x03car\x18\x01 \x01(\v2\x14.users.garage.v1.CarR\x03car\")\n" +
 	"\x10DeleteCarRequest\x12\x15\n" +
 	"\x06car_id\x18\x01 \x01(\x03R\x05carId\"\x13\n" +
-	"\x11DeleteCarResponse\"\xeb\x01\n" +
+	"\x11DeleteCarResponse\"\x95\x02\n" +
 	"\x16FindOrCreateCarRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12#\n" +
 	"\rlicense_plate\x18\x02 \x01(\tR\flicensePlate\x12\x10\n" +
@@ -3647,7 +3685,8 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\bmodel_id\x18\x05 \x01(\x05R\amodelId\x12#\n" +
 	"\rgeneration_id\x18\x06 \x01(\x05R\fgenerationId\x12\x12\n" +
 	"\x04year\x18\a \x01(\x05R\x04year\x12\x14\n" +
-	"\x05color\x18\b \x01(\tR\x05color\"[\n" +
+	"\x05color\x18\b \x01(\tR\x05color\x12(\n" +
+	"\x10engine_volume_cc\x18\t \x01(\x05R\x0eengineVolumeCc\"[\n" +
 	"\x17FindOrCreateCarResponse\x12&\n" +
 	"\x03car\x18\x01 \x01(\v2\x14.users.garage.v1.CarR\x03car\x12\x18\n" +
 	"\acreated\x18\x02 \x01(\bR\acreated\"{\n" +
