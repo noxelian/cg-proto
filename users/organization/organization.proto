@@ -169,6 +169,14 @@ message Organization {
   // Gallery of photo URLs (storefront, premises, work samples). logo_url is
   // separate. Order is meaningful — first item is treated as the cover.
   repeated string photos = 34;
+
+  // Marketplace ranking — populated by the review domain (popularity) and the
+  // legacy backfill (is_dealer, expert_for_*). Used by the search/sort chain
+  // "expert_carmake,expert_category,dealer,popularity_desc".
+  int64 popularity = 35;
+  bool is_dealer = 36;
+  repeated int64 expert_for_carmake_ids = 37;
+  repeated int64 expert_for_category_ids = 38;
 }
 
 message OrganizationSettings {

@@ -62,6 +62,9 @@ enum RequestStatus {
   REQUEST_STATUS_MODERATION = 1;
   REQUEST_STATUS_PUBLISHED = 2;
   REQUEST_STATUS_DELETED = 3;
+  // Closed by the customer after picking an organization and (for repair)
+  // leaving a review, or after parts/workshop receipt confirmation.
+  REQUEST_STATUS_CLOSED = 4;
 }
 
 message Request {

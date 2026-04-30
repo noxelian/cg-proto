@@ -1,0 +1,203 @@
+syntax = "proto3";
+
+// Customer reviews on organizations and the score recalculated from them.
+// Implementation lives in cg-users/services/organization/internal/domain/review.
+//
+// Eligibility — only users with a completed request/order with the org may
+// post a review. The check is enforced server-side; clients pass `request_id`
+// and the server validates against bid/order/workshop state.
+//
+// Replies — the org owner may post one reply per top-level review. Replies have
+// rate=null and don't affect the org's rating/popularity.
+//
+// Score — every create/update/soft-delete recalculates the org's
+// rating/raters_count/popularity, then publishes `org.review.created` to Kafka
+// so cg-services/request can transition matching repair requests to CLOSED.
+package users.organization.v1;
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/users/organization;organizationv1";
+
+import "google/protobuf/timestamp.proto";
+
+service ReviewService {
+  // Create a top-level customer review. Requires eligibility (completed
+  // request/order with the org). Returns ReviewAlreadyExists for duplicates.
+  rpc CreateReview(CreateReviewRequest) returns (CreateReviewResponse);
+
+  // Reply to a top-level review. Owner-only. One reply per review.
+  rpc ReplyReview(ReplyReviewRequest) returns (ReplyReviewResponse);
+
+  // Update — author within 24h, or moderator any time. Text frozen after
+  // owner reply. Rate change triggers score recalc.
+  rpc UpdateReview(UpdateReviewRequest) returns (UpdateReviewResponse);
+
+  // SoftDelete — author or moderator. Top-level deletion triggers score recalc.
+  rpc DeleteReview(DeleteReviewRequest) returns (DeleteReviewResponse);
+
+  // List top-level reviews for an org plus their replies (no N+1).
+  rpc ListReviews(ListReviewsRequest) returns (ListReviewsResponse);
+
+  // Get a single review by id.
+  rpc GetReview(GetReviewRequest) returns (GetReviewResponse);
+
+  // MarkRead clears is_new on all top-level reviews of the org. Caller must
+  // be an active member.
+  rpc MarkReviewsRead(MarkReviewsReadRequest) returns (MarkReviewsReadResponse);
+
+  // CountUnread returns top-level unread reviews for the org.
+  rpc CountUnreadReviews(CountUnreadReviewsRequest) returns (CountUnreadReviewsResponse);
+
+  // RateDistribution returns count + percentage per rate value (5..1).
+  rpc GetRateDistribution(GetRateDistributionRequest) returns (GetRateDistributionResponse);
+}
+
+// Review represents a customer review or an owner reply.
+//
+// Top-level review: rate ∈ [1..5], reply_to_id == "".
+// Owner reply:      rate == 0,     reply_to_id != "".
+message Review {
+  string id = 1;
+  string organization_id = 2;
+  int64 author_user_id = 3;
+  string author_name = 4;
+  // Empty string for top-level reviews.
+  string reply_to_id = 5;
+
+  // 0 means "no rating" (used for replies). For top-level reviews must be 1..5.
+  int32 rate = 6;
+  string text = 7;
+
+  // Optional context — captured from the legacy ad_comment schema.
+  string work = 8;          // free-text "what was done"
+  string car = 9;           // free-text car description
+  optional int64 car_id = 10;
+  optional int64 order_amount = 11;
+  // Linked completed request that authorized this review. Empty for legacy
+  // imports and owner replies.
+  string request_id = 12;
+
+  // Up to 5 photo URLs, ordered.
+  repeated string photos = 13;
+
+  bool is_new = 14;
+  optional int64 legacy_id = 15;
+  google.protobuf.Timestamp created_at = 16;
+  google.protobuf.Timestamp updated_at = 17;
+}
+
+message CreateReviewRequest {
+  string organization_id = 1;
+  int64 author_user_id = 2;
+  string author_name = 3;
+  // Required — must reference a completed request/order with this org.
+  string request_id = 4;
+  int32 rate = 5;            // 1..5
+  string text = 6;
+  string work = 7;
+  string car = 8;
+  optional int64 car_id = 9;
+  optional int64 order_amount = 10;
+  repeated string photos = 11;
+}
+
+message CreateReviewResponse {
+  Review review = 1;
+}
+
+message ReplyReviewRequest {
+  string reply_to_id = 1;    // top-level review id
+  int64 author_user_id = 2;  // must be the org owner
+  string author_name = 3;
+  string text = 4;
+  repeated string photos = 5;
+}
+
+message ReplyReviewResponse {
+  Review review = 1;
+}
+
+message UpdateReviewRequest {
+  string id = 1;
+  int64 caller_user_id = 2;
+  bool is_moderator = 3;     // bypass author/edit-window check
+  optional int32 rate = 4;   // 1..5; only allowed for top-level reviews
+  optional string text = 5;
+  // Replace photos with this list. Empty list clears photos.
+  // Use absence (not the field) to indicate "no change".
+  PhotoListPatch photos = 6;
+}
+
+// PhotoListPatch wraps repeated string so absence is distinguishable from
+// "set to empty" — proto3 cannot express that for repeated fields directly.
+message PhotoListPatch {
+  repeated string values = 1;
+}
+
+message UpdateReviewResponse {
+  Review review = 1;
+}
+
+message DeleteReviewRequest {
+  string id = 1;
+  int64 caller_user_id = 2;
+  bool is_moderator = 3;
+}
+
+message DeleteReviewResponse {}
+
+message ListReviewsRequest {
+  string organization_id = 1;
+  // Filters
+  int64 author_user_id = 2;
+  bool include_replies = 3;
+  int32 min_rate = 4;        // 0 = no bound
+  int32 max_rate = 5;        // 0 = no bound
+  // Pagination
+  int32 page = 6;
+  int32 limit = 7;           // <=100
+}
+
+message ListReviewsResponse {
+  // Top-level reviews ordered by created_at desc.
+  repeated Review reviews = 1;
+  // Replies for the listed reviews, in any order. Caller groups by reply_to_id.
+  repeated Review replies = 2;
+  int32 total = 3;
+}
+
+message GetReviewRequest {
+  string id = 1;
+}
+
+message GetReviewResponse {
+  Review review = 1;
+}
+
+message MarkReviewsReadRequest {
+  string organization_id = 1;
+  int64 caller_user_id = 2;
+}
+
+message MarkReviewsReadResponse {}
+
+message CountUnreadReviewsRequest {
+  string organization_id = 1;
+}
+
+message CountUnreadReviewsResponse {
+  int64 count = 1;
+}
+
+message GetRateDistributionRequest {
+  string organization_id = 1;
+}
+
+message RateBucket {
+  int32 rate = 1;            // 1..5
+  int64 count = 2;
+  double percentage = 3;     // 0..1
+}
+
+message GetRateDistributionResponse {
+  repeated RateBucket buckets = 1; // ordered by rate desc
+}
