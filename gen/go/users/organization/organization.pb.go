@@ -235,9 +235,16 @@ type Organization struct {
 	ContactEmail      *string `protobuf:"bytes,33,opt,name=contact_email,json=contactEmail,proto3,oneof" json:"contact_email,omitempty"`
 	// Gallery of photo URLs (storefront, premises, work samples). logo_url is
 	// separate. Order is meaningful — first item is treated as the cover.
-	Photos        []string `protobuf:"bytes,34,rep,name=photos,proto3" json:"photos,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Photos []string `protobuf:"bytes,34,rep,name=photos,proto3" json:"photos,omitempty"`
+	// Marketplace ranking — populated by the review domain (popularity) and the
+	// legacy backfill (is_dealer, expert_for_*). Used by the search/sort chain
+	// "expert_carmake,expert_category,dealer,popularity_desc".
+	Popularity           int64   `protobuf:"varint,35,opt,name=popularity,proto3" json:"popularity,omitempty"`
+	IsDealer             bool    `protobuf:"varint,36,opt,name=is_dealer,json=isDealer,proto3" json:"is_dealer,omitempty"`
+	ExpertForCarmakeIds  []int64 `protobuf:"varint,37,rep,packed,name=expert_for_carmake_ids,json=expertForCarmakeIds,proto3" json:"expert_for_carmake_ids,omitempty"`
+	ExpertForCategoryIds []int64 `protobuf:"varint,38,rep,packed,name=expert_for_category_ids,json=expertForCategoryIds,proto3" json:"expert_for_category_ids,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *Organization) Reset() {
@@ -504,6 +511,34 @@ func (x *Organization) GetContactEmail() string {
 func (x *Organization) GetPhotos() []string {
 	if x != nil {
 		return x.Photos
+	}
+	return nil
+}
+
+func (x *Organization) GetPopularity() int64 {
+	if x != nil {
+		return x.Popularity
+	}
+	return 0
+}
+
+func (x *Organization) GetIsDealer() bool {
+	if x != nil {
+		return x.IsDealer
+	}
+	return false
+}
+
+func (x *Organization) GetExpertForCarmakeIds() []int64 {
+	if x != nil {
+		return x.ExpertForCarmakeIds
+	}
+	return nil
+}
+
+func (x *Organization) GetExpertForCategoryIds() []int64 {
+	if x != nil {
+		return x.ExpertForCategoryIds
 	}
 	return nil
 }
@@ -6287,8 +6322,7 @@ var File_users_organization_organization_proto protoreflect.FileDescriptor
 
 const file_users_organization_organization_proto_rawDesc = "" +
 	"\n" +
-	"%users/organization/organization.proto\x12\x15users.organization.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xb3\n" +
-	"\n" +
+	"%users/organization/organization.proto\x12\x15users.organization.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xdc\v\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12;\n" +
@@ -6329,7 +6363,13 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\rlegal_address\x18\x1f \x01(\tH\x06R\flegalAddress\x88\x01\x01\x12(\n" +
 	"\rcontact_phone\x18  \x01(\tH\aR\fcontactPhone\x88\x01\x01\x12(\n" +
 	"\rcontact_email\x18! \x01(\tH\bR\fcontactEmail\x88\x01\x01\x12\x16\n" +
-	"\x06photos\x18\" \x03(\tR\x06photosB\f\n" +
+	"\x06photos\x18\" \x03(\tR\x06photos\x12\x1e\n" +
+	"\n" +
+	"popularity\x18# \x01(\x03R\n" +
+	"popularity\x12\x1b\n" +
+	"\tis_dealer\x18$ \x01(\bR\bisDealer\x123\n" +
+	"\x16expert_for_carmake_ids\x18% \x03(\x03R\x13expertForCarmakeIds\x125\n" +
+	"\x17expert_for_category_ids\x18& \x03(\x03R\x14expertForCategoryIdsB\f\n" +
 	"\n" +
 	"_legacy_idB\v\n" +
 	"\t_latitudeB\f\n" +

@@ -78,6 +78,9 @@ const (
 	RequestStatus_REQUEST_STATUS_MODERATION  RequestStatus = 1
 	RequestStatus_REQUEST_STATUS_PUBLISHED   RequestStatus = 2
 	RequestStatus_REQUEST_STATUS_DELETED     RequestStatus = 3
+	// Closed by the customer after picking an organization and (for repair)
+	// leaving a review, or after parts/workshop receipt confirmation.
+	RequestStatus_REQUEST_STATUS_CLOSED RequestStatus = 4
 )
 
 // Enum value maps for RequestStatus.
@@ -87,12 +90,14 @@ var (
 		1: "REQUEST_STATUS_MODERATION",
 		2: "REQUEST_STATUS_PUBLISHED",
 		3: "REQUEST_STATUS_DELETED",
+		4: "REQUEST_STATUS_CLOSED",
 	}
 	RequestStatus_value = map[string]int32{
 		"REQUEST_STATUS_UNSPECIFIED": 0,
 		"REQUEST_STATUS_MODERATION":  1,
 		"REQUEST_STATUS_PUBLISHED":   2,
 		"REQUEST_STATUS_DELETED":     3,
+		"REQUEST_STATUS_CLOSED":      4,
 	}
 )
 
@@ -2240,12 +2245,13 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\vRequestType\x12\x1c\n" +
 	"\x18REQUEST_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13REQUEST_TYPE_REPAIR\x10\x01\x12\x16\n" +
-	"\x12REQUEST_TYPE_PARTS\x10\x02*\x88\x01\n" +
+	"\x12REQUEST_TYPE_PARTS\x10\x02*\xa3\x01\n" +
 	"\rRequestStatus\x12\x1e\n" +
 	"\x1aREQUEST_STATUS_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19REQUEST_STATUS_MODERATION\x10\x01\x12\x1c\n" +
 	"\x18REQUEST_STATUS_PUBLISHED\x10\x02\x12\x1a\n" +
-	"\x16REQUEST_STATUS_DELETED\x10\x032\x86\f\n" +
+	"\x16REQUEST_STATUS_DELETED\x10\x03\x12\x19\n" +
+	"\x15REQUEST_STATUS_CLOSED\x10\x042\x86\f\n" +
 	"\x0eRequestService\x12f\n" +
 	"\rCreateRequest\x12).services.request.v1.CreateRequestRequest\x1a*.services.request.v1.CreateRequestResponse\x12]\n" +
 	"\n" +
