@@ -85,6 +85,7 @@ const (
 	CRMService_GetStageStats_FullMethodName                      = "/crm.v1.CRMService/GetStageStats"
 	CRMService_GetActivityStats_FullMethodName                   = "/crm.v1.CRMService/GetActivityStats"
 	CRMService_GetDealSourcesBreakdown_FullMethodName            = "/crm.v1.CRMService/GetDealSourcesBreakdown"
+	CRMService_GetCloseReasonsBreakdown_FullMethodName           = "/crm.v1.CRMService/GetCloseReasonsBreakdown"
 	CRMService_CreateNote_FullMethodName                         = "/crm.v1.CRMService/CreateNote"
 	CRMService_UpdateNote_FullMethodName                         = "/crm.v1.CRMService/UpdateNote"
 	CRMService_SendWhatsAppMessage_FullMethodName                = "/crm.v1.CRMService/SendWhatsAppMessage"
@@ -273,6 +274,7 @@ type CRMServiceClient interface {
 	// admins can request their own stats instead of org-wide totals.
 	GetActivityStats(ctx context.Context, in *GetActivityStatsRequest, opts ...grpc.CallOption) (*GetActivityStatsResponse, error)
 	GetDealSourcesBreakdown(ctx context.Context, in *GetDealSourcesBreakdownRequest, opts ...grpc.CallOption) (*GetDealSourcesBreakdownResponse, error)
+	GetCloseReasonsBreakdown(ctx context.Context, in *GetCloseReasonsBreakdownRequest, opts ...grpc.CallOption) (*GetCloseReasonsBreakdownResponse, error)
 	// Notes RPCs
 	CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error)
 	UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error)
@@ -1023,6 +1025,16 @@ func (c *cRMServiceClient) GetDealSourcesBreakdown(ctx context.Context, in *GetD
 	return out, nil
 }
 
+func (c *cRMServiceClient) GetCloseReasonsBreakdown(ctx context.Context, in *GetCloseReasonsBreakdownRequest, opts ...grpc.CallOption) (*GetCloseReasonsBreakdownResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCloseReasonsBreakdownResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetCloseReasonsBreakdown_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateNoteResponse)
@@ -1605,6 +1617,7 @@ type CRMServiceServer interface {
 	// admins can request their own stats instead of org-wide totals.
 	GetActivityStats(context.Context, *GetActivityStatsRequest) (*GetActivityStatsResponse, error)
 	GetDealSourcesBreakdown(context.Context, *GetDealSourcesBreakdownRequest) (*GetDealSourcesBreakdownResponse, error)
+	GetCloseReasonsBreakdown(context.Context, *GetCloseReasonsBreakdownRequest) (*GetCloseReasonsBreakdownResponse, error)
 	// Notes RPCs
 	CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error)
 	UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error)
@@ -1880,6 +1893,9 @@ func (UnimplementedCRMServiceServer) GetActivityStats(context.Context, *GetActiv
 }
 func (UnimplementedCRMServiceServer) GetDealSourcesBreakdown(context.Context, *GetDealSourcesBreakdownRequest) (*GetDealSourcesBreakdownResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetDealSourcesBreakdown not implemented")
+}
+func (UnimplementedCRMServiceServer) GetCloseReasonsBreakdown(context.Context, *GetCloseReasonsBreakdownRequest) (*GetCloseReasonsBreakdownResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCloseReasonsBreakdown not implemented")
 }
 func (UnimplementedCRMServiceServer) CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateNote not implemented")
@@ -3222,6 +3238,24 @@ func _CRMService_GetDealSourcesBreakdown_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_GetCloseReasonsBreakdown_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCloseReasonsBreakdownRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetCloseReasonsBreakdown(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetCloseReasonsBreakdown_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetCloseReasonsBreakdown(ctx, req.(*GetCloseReasonsBreakdownRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_CreateNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateNoteRequest)
 	if err := dec(in); err != nil {
@@ -4284,6 +4318,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDealSourcesBreakdown",
 			Handler:    _CRMService_GetDealSourcesBreakdown_Handler,
+		},
+		{
+			MethodName: "GetCloseReasonsBreakdown",
+			Handler:    _CRMService_GetCloseReasonsBreakdown_Handler,
 		},
 		{
 			MethodName: "CreateNote",
