@@ -12015,12 +12015,23 @@ func (x *WhatsAppWebhookResponse) GetOk() bool {
 	return false
 }
 
-// ListWhatsAppTemplates — fetch approved templates from Meta WABA
+// ListWhatsAppTemplates — fetch approved templates from Meta WABA.
+// When deal_id or phone_number_id is set, the response is narrowed to
+// the WABA bound to that channel; otherwise it is the merged set across
+// every configured WABA (primary + secondary). deal_id wins over
+// phone_number_id when both are passed.
 type ListWhatsAppTemplatesRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Resolves to the channel bound to deals.pipeline_id via
+	// whatsapp_channels.default_pipeline_id, then to that channel's WABA.
+	DealId string `protobuf:"bytes,2,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
+	// Direct WABA channel filter — wa_messages.phone_number_id. Use this
+	// from inbox views where the active conversation already exposes the
+	// PNID (deals don't carry it directly).
+	PhoneNumberId string `protobuf:"bytes,3,opt,name=phone_number_id,json=phoneNumberId,proto3" json:"phone_number_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListWhatsAppTemplatesRequest) Reset() {
@@ -12056,6 +12067,20 @@ func (*ListWhatsAppTemplatesRequest) Descriptor() ([]byte, []int) {
 func (x *ListWhatsAppTemplatesRequest) GetOrganizationId() string {
 	if x != nil {
 		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *ListWhatsAppTemplatesRequest) GetDealId() string {
+	if x != nil {
+		return x.DealId
+	}
+	return ""
+}
+
+func (x *ListWhatsAppTemplatesRequest) GetPhoneNumberId() string {
+	if x != nil {
+		return x.PhoneNumberId
 	}
 	return ""
 }
@@ -12105,13 +12130,17 @@ func (x *ListWhatsAppTemplatesResponse) GetTemplates() []*WhatsAppTemplate {
 }
 
 type WhatsAppTemplate struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
-	Name          string                   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Language      string                   `protobuf:"bytes,2,opt,name=language,proto3" json:"language,omitempty"` // e.g. "ru", "en_US"
-	Status        string                   `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`     // "APPROVED", "PENDING", etc.
-	Category      string                   `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"` // "MARKETING", "UTILITY", "AUTHENTICATION"
-	Body          string                   `protobuf:"bytes,5,opt,name=body,proto3" json:"body,omitempty"`         // body text with {{1}} placeholders
-	Params        []*WhatsAppTemplateParam `protobuf:"bytes,6,rep,name=params,proto3" json:"params,omitempty"`
+	state    protoimpl.MessageState   `protogen:"open.v1"`
+	Name     string                   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Language string                   `protobuf:"bytes,2,opt,name=language,proto3" json:"language,omitempty"` // e.g. "ru", "en_US"
+	Status   string                   `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`     // "APPROVED", "PENDING", etc.
+	Category string                   `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"` // "MARKETING", "UTILITY", "AUTHENTICATION"
+	Body     string                   `protobuf:"bytes,5,opt,name=body,proto3" json:"body,omitempty"`         // body text with {{1}} placeholders
+	Params   []*WhatsAppTemplateParam `protobuf:"bytes,6,rep,name=params,proto3" json:"params,omitempty"`
+	// Meta phone_number_id of the WABA this template belongs to. Empty
+	// for templates fetched without channel filtering or when only one
+	// WABA is configured. Lets the UI group/badge templates per number.
+	PhoneNumberId string `protobuf:"bytes,7,opt,name=phone_number_id,json=phoneNumberId,proto3" json:"phone_number_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -12186,6 +12215,13 @@ func (x *WhatsAppTemplate) GetParams() []*WhatsAppTemplateParam {
 		return x.Params
 	}
 	return nil
+}
+
+func (x *WhatsAppTemplate) GetPhoneNumberId() string {
+	if x != nil {
+		return x.PhoneNumberId
+	}
+	return ""
 }
 
 type WhatsAppTemplateParam struct {
@@ -18247,18 +18283,21 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x16WhatsAppWebhookRequest\x12\x19\n" +
 	"\braw_body\x18\x01 \x01(\fR\arawBody\")\n" +
 	"\x17WhatsAppWebhookResponse\x12\x0e\n" +
-	"\x02ok\x18\x01 \x01(\bR\x02ok\"G\n" +
+	"\x02ok\x18\x01 \x01(\bR\x02ok\"\x88\x01\n" +
 	"\x1cListWhatsAppTemplatesRequest\x12'\n" +
-	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\"W\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
+	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12&\n" +
+	"\x0fphone_number_id\x18\x03 \x01(\tR\rphoneNumberId\"W\n" +
 	"\x1dListWhatsAppTemplatesResponse\x126\n" +
-	"\ttemplates\x18\x01 \x03(\v2\x18.crm.v1.WhatsAppTemplateR\ttemplates\"\xc1\x01\n" +
+	"\ttemplates\x18\x01 \x03(\v2\x18.crm.v1.WhatsAppTemplateR\ttemplates\"\xe9\x01\n" +
 	"\x10WhatsAppTemplate\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
 	"\blanguage\x18\x02 \x01(\tR\blanguage\x12\x16\n" +
 	"\x06status\x18\x03 \x01(\tR\x06status\x12\x1a\n" +
 	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x12\n" +
 	"\x04body\x18\x05 \x01(\tR\x04body\x125\n" +
-	"\x06params\x18\x06 \x03(\v2\x1d.crm.v1.WhatsAppTemplateParamR\x06params\"G\n" +
+	"\x06params\x18\x06 \x03(\v2\x1d.crm.v1.WhatsAppTemplateParamR\x06params\x12&\n" +
+	"\x0fphone_number_id\x18\a \x01(\tR\rphoneNumberId\"G\n" +
 	"\x15WhatsAppTemplateParam\x12\x14\n" +
 	"\x05index\x18\x01 \x01(\x05R\x05index\x12\x18\n" +
 	"\aexample\x18\x02 \x01(\tR\aexample\"\xa8\x03\n" +
