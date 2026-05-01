@@ -239,6 +239,16 @@ service CRMService {
 
   // Transcription pipeline — write recording transcript from the transcriber worker
   rpc UpdateTelephonyRecordingTranscript(UpdateTelephonyRecordingTranscriptRequest) returns (UpdateTelephonyRecordingTranscriptResponse);
+
+  // ResolveWAChannelUsers resolves which user_ids have access to a WhatsApp
+  // channel identified by phone_number_id within an org. Used by the BFF
+  // webhook handler to scope BroadcastToUsers instead of BroadcastAll, so
+  // managers without channel access never receive inbound-message toasts.
+  //
+  // When is_org_wide = true the channel has no pipeline restriction
+  // (allowed_pipeline_ids is empty/NULL) — the BFF should broadcast to
+  // all org members rather than the returned (empty) user_ids slice.
+  rpc ResolveWAChannelUsers(ResolveWAChannelUsersRequest) returns (ResolveWAChannelUsersResponse);
 }
 
 message Pipeline {
@@ -2414,4 +2424,20 @@ message UpdateTelephonyRecordingTranscriptRequest {
 
 message UpdateTelephonyRecordingTranscriptResponse {
   TelephonyRecording recording = 1;
+}
+
+// ResolveWAChannelUsers — request/response for the scoped-broadcast RPC.
+message ResolveWAChannelUsersRequest {
+  string phone_number_id  = 1;
+  string organization_id  = 2;
+}
+
+message ResolveWAChannelUsersResponse {
+  // user_ids contains the user IDs of pipeline_members rows whose pipeline
+  // is listed in the channel's allowed_pipeline_ids. Empty when is_org_wide.
+  repeated int64 user_ids  = 1;
+  // is_org_wide is true when allowed_pipeline_ids is empty/NULL — the channel
+  // is accessible to every member of the org, so the BFF should broadcast
+  // to all org members rather than the returned (empty) user_ids list.
+  bool is_org_wide         = 2;
 }

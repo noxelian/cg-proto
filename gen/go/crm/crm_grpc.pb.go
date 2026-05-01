@@ -132,6 +132,7 @@ const (
 	CRMService_CreateTelephonyRecording_FullMethodName           = "/crm.v1.CRMService/CreateTelephonyRecording"
 	CRMService_GetTelephonyCallRecording_FullMethodName          = "/crm.v1.CRMService/GetTelephonyCallRecording"
 	CRMService_UpdateTelephonyRecordingTranscript_FullMethodName = "/crm.v1.CRMService/UpdateTelephonyRecordingTranscript"
+	CRMService_ResolveWAChannelUsers_FullMethodName              = "/crm.v1.CRMService/ResolveWAChannelUsers"
 )
 
 // CRMServiceClient is the client API for CRMService service.
@@ -353,6 +354,15 @@ type CRMServiceClient interface {
 	GetTelephonyCallRecording(ctx context.Context, in *GetTelephonyCallRecordingRequest, opts ...grpc.CallOption) (*GetTelephonyCallRecordingResponse, error)
 	// Transcription pipeline — write recording transcript from the transcriber worker
 	UpdateTelephonyRecordingTranscript(ctx context.Context, in *UpdateTelephonyRecordingTranscriptRequest, opts ...grpc.CallOption) (*UpdateTelephonyRecordingTranscriptResponse, error)
+	// ResolveWAChannelUsers resolves which user_ids have access to a WhatsApp
+	// channel identified by phone_number_id within an org. Used by the BFF
+	// webhook handler to scope BroadcastToUsers instead of BroadcastAll, so
+	// managers without channel access never receive inbound-message toasts.
+	//
+	// When is_org_wide = true the channel has no pipeline restriction
+	// (allowed_pipeline_ids is empty/NULL) — the BFF should broadcast to
+	// all org members rather than the returned (empty) user_ids slice.
+	ResolveWAChannelUsers(ctx context.Context, in *ResolveWAChannelUsersRequest, opts ...grpc.CallOption) (*ResolveWAChannelUsersResponse, error)
 }
 
 type cRMServiceClient struct {
@@ -1505,6 +1515,16 @@ func (c *cRMServiceClient) UpdateTelephonyRecordingTranscript(ctx context.Contex
 	return out, nil
 }
 
+func (c *cRMServiceClient) ResolveWAChannelUsers(ctx context.Context, in *ResolveWAChannelUsersRequest, opts ...grpc.CallOption) (*ResolveWAChannelUsersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResolveWAChannelUsersResponse)
+	err := c.cc.Invoke(ctx, CRMService_ResolveWAChannelUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CRMServiceServer is the server API for CRMService service.
 // All implementations must embed UnimplementedCRMServiceServer
 // for forward compatibility.
@@ -1724,6 +1744,15 @@ type CRMServiceServer interface {
 	GetTelephonyCallRecording(context.Context, *GetTelephonyCallRecordingRequest) (*GetTelephonyCallRecordingResponse, error)
 	// Transcription pipeline — write recording transcript from the transcriber worker
 	UpdateTelephonyRecordingTranscript(context.Context, *UpdateTelephonyRecordingTranscriptRequest) (*UpdateTelephonyRecordingTranscriptResponse, error)
+	// ResolveWAChannelUsers resolves which user_ids have access to a WhatsApp
+	// channel identified by phone_number_id within an org. Used by the BFF
+	// webhook handler to scope BroadcastToUsers instead of BroadcastAll, so
+	// managers without channel access never receive inbound-message toasts.
+	//
+	// When is_org_wide = true the channel has no pipeline restriction
+	// (allowed_pipeline_ids is empty/NULL) — the BFF should broadcast to
+	// all org members rather than the returned (empty) user_ids slice.
+	ResolveWAChannelUsers(context.Context, *ResolveWAChannelUsersRequest) (*ResolveWAChannelUsersResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
 
@@ -2072,6 +2101,9 @@ func (UnimplementedCRMServiceServer) GetTelephonyCallRecording(context.Context, 
 }
 func (UnimplementedCRMServiceServer) UpdateTelephonyRecordingTranscript(context.Context, *UpdateTelephonyRecordingTranscriptRequest) (*UpdateTelephonyRecordingTranscriptResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTelephonyRecordingTranscript not implemented")
+}
+func (UnimplementedCRMServiceServer) ResolveWAChannelUsers(context.Context, *ResolveWAChannelUsersRequest) (*ResolveWAChannelUsersResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResolveWAChannelUsers not implemented")
 }
 func (UnimplementedCRMServiceServer) mustEmbedUnimplementedCRMServiceServer() {}
 func (UnimplementedCRMServiceServer) testEmbeddedByValue()                    {}
@@ -4128,6 +4160,24 @@ func _CRMService_UpdateTelephonyRecordingTranscript_Handler(srv interface{}, ctx
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_ResolveWAChannelUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResolveWAChannelUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ResolveWAChannelUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ResolveWAChannelUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ResolveWAChannelUsers(ctx, req.(*ResolveWAChannelUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CRMService_ServiceDesc is the grpc.ServiceDesc for CRMService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -4586,6 +4636,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateTelephonyRecordingTranscript",
 			Handler:    _CRMService_UpdateTelephonyRecordingTranscript_Handler,
+		},
+		{
+			MethodName: "ResolveWAChannelUsers",
+			Handler:    _CRMService_ResolveWAChannelUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
