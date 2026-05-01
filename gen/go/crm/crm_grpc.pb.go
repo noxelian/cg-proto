@@ -50,6 +50,7 @@ const (
 	CRMService_ListDeals_FullMethodName                          = "/crm.v1.CRMService/ListDeals"
 	CRMService_UpdateDeal_FullMethodName                         = "/crm.v1.CRMService/UpdateDeal"
 	CRMService_MoveDealStage_FullMethodName                      = "/crm.v1.CRMService/MoveDealStage"
+	CRMService_MoveDealPipeline_FullMethodName                   = "/crm.v1.CRMService/MoveDealPipeline"
 	CRMService_CloseDeal_FullMethodName                          = "/crm.v1.CRMService/CloseDeal"
 	CRMService_ReOpenDeal_FullMethodName                         = "/crm.v1.CRMService/ReOpenDeal"
 	CRMService_DeleteDeal_FullMethodName                         = "/crm.v1.CRMService/DeleteDeal"
@@ -197,6 +198,13 @@ type CRMServiceClient interface {
 	ListDeals(ctx context.Context, in *ListDealsRequest, opts ...grpc.CallOption) (*ListDealsResponse, error)
 	UpdateDeal(ctx context.Context, in *UpdateDealRequest, opts ...grpc.CallOption) (*UpdateDealResponse, error)
 	MoveDealStage(ctx context.Context, in *MoveDealStageRequest, opts ...grpc.CallOption) (*MoveDealStageResponse, error)
+	// MoveDealPipeline transfers a deal to a different pipeline. The
+	// destination stage must belong to the target pipeline and must not
+	// be terminal. Stage exit-requirements are intentionally NOT enforced
+	// here: the move semantics is "this deal does not belong in the
+	// current pipeline", so blocking on CFs that only make sense in the
+	// wrong pipeline would be a UX trap.
+	MoveDealPipeline(ctx context.Context, in *MoveDealPipelineRequest, opts ...grpc.CallOption) (*MoveDealPipelineResponse, error)
 	CloseDeal(ctx context.Context, in *CloseDealRequest, opts ...grpc.CallOption) (*CloseDealResponse, error)
 	ReOpenDeal(ctx context.Context, in *ReOpenDealRequest, opts ...grpc.CallOption) (*ReOpenDealResponse, error)
 	// DeleteDeal hard-deletes a deal and every dependent row that the
@@ -671,6 +679,16 @@ func (c *cRMServiceClient) MoveDealStage(ctx context.Context, in *MoveDealStageR
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MoveDealStageResponse)
 	err := c.cc.Invoke(ctx, CRMService_MoveDealStage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) MoveDealPipeline(ctx context.Context, in *MoveDealPipelineRequest, opts ...grpc.CallOption) (*MoveDealPipelineResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MoveDealPipelineResponse)
+	err := c.cc.Invoke(ctx, CRMService_MoveDealPipeline_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1551,6 +1569,13 @@ type CRMServiceServer interface {
 	ListDeals(context.Context, *ListDealsRequest) (*ListDealsResponse, error)
 	UpdateDeal(context.Context, *UpdateDealRequest) (*UpdateDealResponse, error)
 	MoveDealStage(context.Context, *MoveDealStageRequest) (*MoveDealStageResponse, error)
+	// MoveDealPipeline transfers a deal to a different pipeline. The
+	// destination stage must belong to the target pipeline and must not
+	// be terminal. Stage exit-requirements are intentionally NOT enforced
+	// here: the move semantics is "this deal does not belong in the
+	// current pipeline", so blocking on CFs that only make sense in the
+	// wrong pipeline would be a UX trap.
+	MoveDealPipeline(context.Context, *MoveDealPipelineRequest) (*MoveDealPipelineResponse, error)
 	CloseDeal(context.Context, *CloseDealRequest) (*CloseDealResponse, error)
 	ReOpenDeal(context.Context, *ReOpenDealRequest) (*ReOpenDealResponse, error)
 	// DeleteDeal hard-deletes a deal and every dependent row that the
@@ -1801,6 +1826,9 @@ func (UnimplementedCRMServiceServer) UpdateDeal(context.Context, *UpdateDealRequ
 }
 func (UnimplementedCRMServiceServer) MoveDealStage(context.Context, *MoveDealStageRequest) (*MoveDealStageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method MoveDealStage not implemented")
+}
+func (UnimplementedCRMServiceServer) MoveDealPipeline(context.Context, *MoveDealPipelineRequest) (*MoveDealPipelineResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MoveDealPipeline not implemented")
 }
 func (UnimplementedCRMServiceServer) CloseDeal(context.Context, *CloseDealRequest) (*CloseDealResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CloseDeal not implemented")
@@ -2620,6 +2648,24 @@ func _CRMService_MoveDealStage_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRMServiceServer).MoveDealStage(ctx, req.(*MoveDealStageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_MoveDealPipeline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MoveDealPipelineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).MoveDealPipeline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_MoveDealPipeline_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).MoveDealPipeline(ctx, req.(*MoveDealPipelineRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4212,6 +4258,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MoveDealStage",
 			Handler:    _CRMService_MoveDealStage_Handler,
+		},
+		{
+			MethodName: "MoveDealPipeline",
+			Handler:    _CRMService_MoveDealPipeline_Handler,
 		},
 		{
 			MethodName: "CloseDeal",

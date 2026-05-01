@@ -62,6 +62,13 @@ service CRMService {
   rpc ListDeals(ListDealsRequest)                           returns (ListDealsResponse);
   rpc UpdateDeal(UpdateDealRequest)                         returns (UpdateDealResponse);
   rpc MoveDealStage(MoveDealStageRequest)                   returns (MoveDealStageResponse);
+  // MoveDealPipeline transfers a deal to a different pipeline. The
+  // destination stage must belong to the target pipeline and must not
+  // be terminal. Stage exit-requirements are intentionally NOT enforced
+  // here: the move semantics is "this deal does not belong in the
+  // current pipeline", so blocking on CFs that only make sense in the
+  // wrong pipeline would be a UX trap.
+  rpc MoveDealPipeline(MoveDealPipelineRequest)             returns (MoveDealPipelineResponse);
   rpc CloseDeal(CloseDealRequest)                           returns (CloseDealResponse);
   rpc ReOpenDeal(ReOpenDealRequest)                         returns (ReOpenDealResponse);
   // DeleteDeal hard-deletes a deal and every dependent row that the
@@ -1006,6 +1013,17 @@ message MoveDealStageRequest {
 }
 
 message MoveDealStageResponse {
+  DealProto deal = 1;
+}
+
+message MoveDealPipelineRequest {
+  string organization_id = 1;
+  string deal_id         = 2;
+  string pipeline_id     = 3;
+  string stage_id        = 4;
+}
+
+message MoveDealPipelineResponse {
   DealProto deal = 1;
 }
 
