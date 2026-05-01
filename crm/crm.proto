@@ -2440,4 +2440,8 @@ message ResolveWAChannelUsersResponse {
   // is accessible to every member of the org, so the BFF should broadcast
   // to all org members rather than the returned (empty) user_ids list.
   bool is_org_wide         = 2;
+  // organization_id is the UUID of the org that owns this channel.
+  // Populated even when organization_id was omitted in the request so the BFF
+  // can route Broadcast/BroadcastToUsers to the correct org WS room.
+  string organization_id   = 3;
 }

@@ -17844,9 +17844,13 @@ type ResolveWAChannelUsersResponse struct {
 	// is_org_wide is true when allowed_pipeline_ids is empty/NULL — the channel
 	// is accessible to every member of the org, so the BFF should broadcast
 	// to all org members rather than the returned (empty) user_ids list.
-	IsOrgWide     bool `protobuf:"varint,2,opt,name=is_org_wide,json=isOrgWide,proto3" json:"is_org_wide,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	IsOrgWide bool `protobuf:"varint,2,opt,name=is_org_wide,json=isOrgWide,proto3" json:"is_org_wide,omitempty"`
+	// organization_id is the UUID of the org that owns this channel.
+	// Populated even when organization_id was omitted in the request so the BFF
+	// can route Broadcast/BroadcastToUsers to the correct org WS room.
+	OrganizationId string `protobuf:"bytes,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *ResolveWAChannelUsersResponse) Reset() {
@@ -17891,6 +17895,13 @@ func (x *ResolveWAChannelUsersResponse) GetIsOrgWide() bool {
 		return x.IsOrgWide
 	}
 	return false
+}
+
+func (x *ResolveWAChannelUsersResponse) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
 }
 
 var File_crm_crm_proto protoreflect.FileDescriptor
@@ -19352,10 +19363,11 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\trecording\x18\x01 \x01(\v2\x1a.crm.v1.TelephonyRecordingR\trecording\"o\n" +
 	"\x1cResolveWAChannelUsersRequest\x12&\n" +
 	"\x0fphone_number_id\x18\x01 \x01(\tR\rphoneNumberId\x12'\n" +
-	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\"Z\n" +
+	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\"\x83\x01\n" +
 	"\x1dResolveWAChannelUsersResponse\x12\x19\n" +
 	"\buser_ids\x18\x01 \x03(\x03R\auserIds\x12\x1e\n" +
-	"\vis_org_wide\x18\x02 \x01(\bR\tisOrgWide*w\n" +
+	"\vis_org_wide\x18\x02 \x01(\bR\tisOrgWide\x12'\n" +
+	"\x0forganization_id\x18\x03 \x01(\tR\x0eorganizationId*w\n" +
 	"\x11TelephonyProvider\x12\"\n" +
 	"\x1eTELEPHONY_PROVIDER_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19TELEPHONY_PROVIDER_SIPUNI\x10\x01\x12\x1f\n" +
