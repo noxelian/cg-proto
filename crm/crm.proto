@@ -133,6 +133,16 @@ service CRMService {
   rpc UpdateTaskStatus(UpdateTaskStatusRequest)             returns (UpdateTaskStatusResponse);
   rpc UpdateTask(UpdateTaskRequest)                         returns (UpdateTaskResponse);
 
+  // Tag RPCs — free-form labels for deals (AmoCRM-style). Tags are
+  // organization-wide and optionally pipeline-scoped. Any user with
+  // crm.deals.manage may create tags. Hex color is set per tag.
+  rpc CreateTag(CreateTagRequest)             returns (CreateTagResponse);
+  rpc ListTags(ListTagsRequest)               returns (ListTagsResponse);
+  rpc UpdateTag(UpdateTagRequest)             returns (UpdateTagResponse);
+  rpc DeleteTag(DeleteTagRequest)             returns (DeleteTagResponse);
+  // SetDealTags replaces the deal's tag set with the provided list. Idempotent.
+  rpc SetDealTags(SetDealTagsRequest)         returns (SetDealTagsResponse);
+
   // Custom Field RPCs (Phase 7 -- custom field definitions per org/entity)
   rpc CreateCustomFieldDefinition(CreateCustomFieldDefinitionRequest) returns (CreateCustomFieldDefinitionResponse);
   rpc GetCustomFieldDefinition(GetCustomFieldDefinitionRequest)       returns (GetCustomFieldDefinitionResponse);
@@ -689,6 +699,10 @@ message DealProto {
   // Free-form long description set at creation and replaced on
   // external-deal resubmit. Rendered as the deal-card "Описание" block.
   string description      = 29;
+
+  // Tags assigned to the deal (AmoCRM-style chips). Organization-wide,
+  // optionally pipeline-scoped. Order is by tag name.
+  repeated TagProto tags  = 30;
 }
 
 message DealStageHistoryProto {
@@ -929,6 +943,10 @@ message ListDealsRequest {
   google.protobuf.Timestamp task_due_to   = 13;
   repeated string task_status             = 14; // pending|in_progress|done|cancelled
   string task_filter_mode                 = 15; // "any" (default) | "none"
+
+  // Tag filter — when non-empty, only deals carrying ALL listed tag IDs
+  // are returned (AND semantics, mirrors AmoCRM filter). Empty = no filter.
+  repeated string tag_ids                 = 16;
 }
 
 message ListDealsResponse {
@@ -2444,4 +2462,79 @@ message ResolveWAChannelUsersResponse {
   // Populated even when organization_id was omitted in the request so the BFF
   // can route Broadcast/BroadcastToUsers to the correct org WS room.
   string organization_id   = 3;
+}
+
+// ============================================================
+// TAGS — free-form labels for deals (AmoCRM-style)
+// ============================================================
+
+message TagProto {
+  string id              = 1;
+  string organization_id = 2;
+  // pipeline_id — optional. Empty means the tag is visible across all
+  // pipelines in the org; non-empty restricts visibility to that pipeline.
+  string pipeline_id     = 3;
+  string name            = 4;
+  // color — hex string, e.g. "#3b82f6". Empty = default neutral chip.
+  string color           = 5;
+  int64  created_by      = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message CreateTagRequest {
+  string organization_id = 1;
+  string pipeline_id     = 2; // optional, see TagProto.pipeline_id
+  string name            = 3;
+  string color           = 4;
+}
+message CreateTagResponse {
+  TagProto tag = 1;
+}
+
+message ListTagsRequest {
+  string organization_id = 1;
+  // pipeline_id — when non-empty, returns tags whose pipeline_id matches
+  // OR is empty (org-wide). When empty, returns ALL tags in the org.
+  string pipeline_id     = 2;
+  // search — substring match (ILIKE) on tag name. Empty = no filter.
+  string search          = 3;
+}
+message ListTagsResponse {
+  repeated TagProto tags = 1;
+}
+
+message UpdateTagRequest {
+  string organization_id = 1;
+  string id              = 2;
+  string name            = 3; // empty = preserve
+  string color           = 4; // empty = preserve
+  // pipeline_id — pointer-style: send "(unset)" string to leave as-is,
+  // empty string to clear (org-wide), non-empty UUID to scope to a pipeline.
+  // To keep the proto simple we use the convention "send what you want it
+  // to become" — service treats empty as "make org-wide".
+  string pipeline_id     = 5;
+  // pipeline_id_set — when true, pipeline_id is applied; when false,
+  // pipeline_id is preserved. Mirrors how UpdateDeal handles partial
+  // updates without optionals.
+  bool   pipeline_id_set = 6;
+}
+message UpdateTagResponse {
+  TagProto tag = 1;
+}
+
+message DeleteTagRequest {
+  string organization_id = 1;
+  string id              = 2;
+}
+message DeleteTagResponse {}
+
+message SetDealTagsRequest {
+  string organization_id = 1;
+  string deal_id         = 2;
+  // tag_ids replaces the current set. Empty list clears all tags.
+  repeated string tag_ids = 3;
+}
+message SetDealTagsResponse {
+  repeated TagProto tags = 1; // resulting tag set on the deal
 }

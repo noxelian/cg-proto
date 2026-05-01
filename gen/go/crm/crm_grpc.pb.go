@@ -71,6 +71,11 @@ const (
 	CRMService_ListTasks_FullMethodName                          = "/crm.v1.CRMService/ListTasks"
 	CRMService_UpdateTaskStatus_FullMethodName                   = "/crm.v1.CRMService/UpdateTaskStatus"
 	CRMService_UpdateTask_FullMethodName                         = "/crm.v1.CRMService/UpdateTask"
+	CRMService_CreateTag_FullMethodName                          = "/crm.v1.CRMService/CreateTag"
+	CRMService_ListTags_FullMethodName                           = "/crm.v1.CRMService/ListTags"
+	CRMService_UpdateTag_FullMethodName                          = "/crm.v1.CRMService/UpdateTag"
+	CRMService_DeleteTag_FullMethodName                          = "/crm.v1.CRMService/DeleteTag"
+	CRMService_SetDealTags_FullMethodName                        = "/crm.v1.CRMService/SetDealTags"
 	CRMService_CreateCustomFieldDefinition_FullMethodName        = "/crm.v1.CRMService/CreateCustomFieldDefinition"
 	CRMService_GetCustomFieldDefinition_FullMethodName           = "/crm.v1.CRMService/GetCustomFieldDefinition"
 	CRMService_ListCustomFieldDefinitions_FullMethodName         = "/crm.v1.CRMService/ListCustomFieldDefinitions"
@@ -263,6 +268,15 @@ type CRMServiceClient interface {
 	ListTasks(ctx context.Context, in *ListTasksRequest, opts ...grpc.CallOption) (*ListTasksResponse, error)
 	UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusRequest, opts ...grpc.CallOption) (*UpdateTaskStatusResponse, error)
 	UpdateTask(ctx context.Context, in *UpdateTaskRequest, opts ...grpc.CallOption) (*UpdateTaskResponse, error)
+	// Tag RPCs — free-form labels for deals (AmoCRM-style). Tags are
+	// organization-wide and optionally pipeline-scoped. Any user with
+	// crm.deals.manage may create tags. Hex color is set per tag.
+	CreateTag(ctx context.Context, in *CreateTagRequest, opts ...grpc.CallOption) (*CreateTagResponse, error)
+	ListTags(ctx context.Context, in *ListTagsRequest, opts ...grpc.CallOption) (*ListTagsResponse, error)
+	UpdateTag(ctx context.Context, in *UpdateTagRequest, opts ...grpc.CallOption) (*UpdateTagResponse, error)
+	DeleteTag(ctx context.Context, in *DeleteTagRequest, opts ...grpc.CallOption) (*DeleteTagResponse, error)
+	// SetDealTags replaces the deal's tag set with the provided list. Idempotent.
+	SetDealTags(ctx context.Context, in *SetDealTagsRequest, opts ...grpc.CallOption) (*SetDealTagsResponse, error)
 	// Custom Field RPCs (Phase 7 -- custom field definitions per org/entity)
 	CreateCustomFieldDefinition(ctx context.Context, in *CreateCustomFieldDefinitionRequest, opts ...grpc.CallOption) (*CreateCustomFieldDefinitionResponse, error)
 	GetCustomFieldDefinition(ctx context.Context, in *GetCustomFieldDefinitionRequest, opts ...grpc.CallOption) (*GetCustomFieldDefinitionResponse, error)
@@ -899,6 +913,56 @@ func (c *cRMServiceClient) UpdateTask(ctx context.Context, in *UpdateTaskRequest
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateTaskResponse)
 	err := c.cc.Invoke(ctx, CRMService_UpdateTask_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) CreateTag(ctx context.Context, in *CreateTagRequest, opts ...grpc.CallOption) (*CreateTagResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateTagResponse)
+	err := c.cc.Invoke(ctx, CRMService_CreateTag_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ListTags(ctx context.Context, in *ListTagsRequest, opts ...grpc.CallOption) (*ListTagsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTagsResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListTags_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) UpdateTag(ctx context.Context, in *UpdateTagRequest, opts ...grpc.CallOption) (*UpdateTagResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateTagResponse)
+	err := c.cc.Invoke(ctx, CRMService_UpdateTag_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) DeleteTag(ctx context.Context, in *DeleteTagRequest, opts ...grpc.CallOption) (*DeleteTagResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteTagResponse)
+	err := c.cc.Invoke(ctx, CRMService_DeleteTag_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) SetDealTags(ctx context.Context, in *SetDealTagsRequest, opts ...grpc.CallOption) (*SetDealTagsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetDealTagsResponse)
+	err := c.cc.Invoke(ctx, CRMService_SetDealTags_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1653,6 +1717,15 @@ type CRMServiceServer interface {
 	ListTasks(context.Context, *ListTasksRequest) (*ListTasksResponse, error)
 	UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusResponse, error)
 	UpdateTask(context.Context, *UpdateTaskRequest) (*UpdateTaskResponse, error)
+	// Tag RPCs — free-form labels for deals (AmoCRM-style). Tags are
+	// organization-wide and optionally pipeline-scoped. Any user with
+	// crm.deals.manage may create tags. Hex color is set per tag.
+	CreateTag(context.Context, *CreateTagRequest) (*CreateTagResponse, error)
+	ListTags(context.Context, *ListTagsRequest) (*ListTagsResponse, error)
+	UpdateTag(context.Context, *UpdateTagRequest) (*UpdateTagResponse, error)
+	DeleteTag(context.Context, *DeleteTagRequest) (*DeleteTagResponse, error)
+	// SetDealTags replaces the deal's tag set with the provided list. Idempotent.
+	SetDealTags(context.Context, *SetDealTagsRequest) (*SetDealTagsResponse, error)
 	// Custom Field RPCs (Phase 7 -- custom field definitions per org/entity)
 	CreateCustomFieldDefinition(context.Context, *CreateCustomFieldDefinitionRequest) (*CreateCustomFieldDefinitionResponse, error)
 	GetCustomFieldDefinition(context.Context, *GetCustomFieldDefinitionRequest) (*GetCustomFieldDefinitionResponse, error)
@@ -1918,6 +1991,21 @@ func (UnimplementedCRMServiceServer) UpdateTaskStatus(context.Context, *UpdateTa
 }
 func (UnimplementedCRMServiceServer) UpdateTask(context.Context, *UpdateTaskRequest) (*UpdateTaskResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTask not implemented")
+}
+func (UnimplementedCRMServiceServer) CreateTag(context.Context, *CreateTagRequest) (*CreateTagResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateTag not implemented")
+}
+func (UnimplementedCRMServiceServer) ListTags(context.Context, *ListTagsRequest) (*ListTagsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTags not implemented")
+}
+func (UnimplementedCRMServiceServer) UpdateTag(context.Context, *UpdateTagRequest) (*UpdateTagResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateTag not implemented")
+}
+func (UnimplementedCRMServiceServer) DeleteTag(context.Context, *DeleteTagRequest) (*DeleteTagResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteTag not implemented")
+}
+func (UnimplementedCRMServiceServer) SetDealTags(context.Context, *SetDealTagsRequest) (*SetDealTagsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetDealTags not implemented")
 }
 func (UnimplementedCRMServiceServer) CreateCustomFieldDefinition(context.Context, *CreateCustomFieldDefinitionRequest) (*CreateCustomFieldDefinitionResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateCustomFieldDefinition not implemented")
@@ -3058,6 +3146,96 @@ func _CRMService_UpdateTask_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRMServiceServer).UpdateTask(ctx, req.(*UpdateTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_CreateTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).CreateTag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_CreateTag_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).CreateTag(ctx, req.(*CreateTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ListTags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTagsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListTags(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListTags_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListTags(ctx, req.(*ListTagsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_UpdateTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).UpdateTag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_UpdateTag_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).UpdateTag(ctx, req.(*UpdateTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_DeleteTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).DeleteTag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_DeleteTag_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).DeleteTag(ctx, req.(*DeleteTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_SetDealTags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetDealTagsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).SetDealTags(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_SetDealTags_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).SetDealTags(ctx, req.(*SetDealTagsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4392,6 +4570,26 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateTask",
 			Handler:    _CRMService_UpdateTask_Handler,
+		},
+		{
+			MethodName: "CreateTag",
+			Handler:    _CRMService_CreateTag_Handler,
+		},
+		{
+			MethodName: "ListTags",
+			Handler:    _CRMService_ListTags_Handler,
+		},
+		{
+			MethodName: "UpdateTag",
+			Handler:    _CRMService_UpdateTag_Handler,
+		},
+		{
+			MethodName: "DeleteTag",
+			Handler:    _CRMService_DeleteTag_Handler,
+		},
+		{
+			MethodName: "SetDealTags",
+			Handler:    _CRMService_SetDealTags_Handler,
 		},
 		{
 			MethodName: "CreateCustomFieldDefinition",
