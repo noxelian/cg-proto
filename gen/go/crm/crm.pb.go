@@ -4557,9 +4557,19 @@ type CreateExternalDealRequest struct {
 	// deal's UUID — e.g. admin-panel ZN edits, where the order_work row
 	// carries cg_crm_deal_id from a previous /external/deals call.
 	// Empty → fall through to lookup paths.
-	DealId        string `protobuf:"bytes,25,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	DealId string `protobuf:"bytes,25,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
+	// Legacy AmoCRM lead identifier. When non-empty AND deal_id/external_id are
+	// empty, cg-crm tries to find an existing deal whose
+	// custom_fields->>'external_id' matches "amocrm:<lead_id>" — used for
+	// bridging fa-ai-core (which has only the AmoCRM lead_id from
+	// chat_sessions_v2.lead_id) to deals already imported by amocrm-sync.
+	// When no match is found, the new deal is created with
+	// custom_fields["external_id"]="amocrm:<lead_id>" so a subsequent
+	// amocrm-sync ImportDeal cycle finds it and merges into the same row
+	// instead of creating a duplicate.
+	LegacyAmocrmLeadId string `protobuf:"bytes,26,opt,name=legacy_amocrm_lead_id,json=legacyAmocrmLeadId,proto3" json:"legacy_amocrm_lead_id,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *CreateExternalDealRequest) Reset() {
@@ -4763,6 +4773,13 @@ func (x *CreateExternalDealRequest) GetMergeCapStageId() string {
 func (x *CreateExternalDealRequest) GetDealId() string {
 	if x != nil {
 		return x.DealId
+	}
+	return ""
+}
+
+func (x *CreateExternalDealRequest) GetLegacyAmocrmLeadId() string {
+	if x != nil {
+		return x.LegacyAmocrmLeadId
 	}
 	return ""
 }
@@ -18985,7 +19002,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\bmodel_id\x18\x04 \x01(\x03R\amodelId\x12#\n" +
 	"\rgeneration_id\x18\x05 \x01(\x03R\fgenerationId\x12\x12\n" +
 	"\x04year\x18\x06 \x01(\x05R\x04year\x12\x14\n" +
-	"\x05color\x18\a \x01(\tR\x05color\"\xc6\b\n" +
+	"\x05color\x18\a \x01(\tR\x05color\"\xf9\b\n" +
 	"\x19CreateExternalDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -19016,7 +19033,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x10auto_task_due_at\x18\x16 \x01(\v2\x1a.google.protobuf.TimestampR\rautoTaskDueAt\x12G\n" +
 	"\fconversation\x18\x17 \x03(\v2#.crm.v1.ExternalConversationMessageR\fconversation\x12+\n" +
 	"\x12merge_cap_stage_id\x18\x18 \x01(\tR\x0fmergeCapStageId\x12\x17\n" +
-	"\adeal_id\x18\x19 \x01(\tR\x06dealId\x1a?\n" +
+	"\adeal_id\x18\x19 \x01(\tR\x06dealId\x121\n" +
+	"\x15legacy_amocrm_lead_id\x18\x1a \x01(\tR\x12legacyAmocrmLeadId\x1a?\n" +
 	"\x11CustomFieldsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe3\x01\n" +

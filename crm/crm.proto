@@ -884,6 +884,17 @@ message CreateExternalDealRequest {
   // carries cg_crm_deal_id from a previous /external/deals call.
   // Empty → fall through to lookup paths.
   string deal_id = 25;
+
+  // Legacy AmoCRM lead identifier. When non-empty AND deal_id/external_id are
+  // empty, cg-crm tries to find an existing deal whose
+  // custom_fields->>'external_id' matches "amocrm:<lead_id>" — used for
+  // bridging fa-ai-core (which has only the AmoCRM lead_id from
+  // chat_sessions_v2.lead_id) to deals already imported by amocrm-sync.
+  // When no match is found, the new deal is created with
+  // custom_fields["external_id"]="amocrm:<lead_id>" so a subsequent
+  // amocrm-sync ImportDeal cycle finds it and merges into the same row
+  // instead of creating a duplicate.
+  string legacy_amocrm_lead_id = 26;
 }
 
 // One turn in an AI-driven conversation persisted into wa_messages so
