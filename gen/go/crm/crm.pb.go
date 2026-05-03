@@ -4775,11 +4775,29 @@ type ExternalConversationMessage struct {
 	// "outbound" = from the AI/manager to the client. Anything else is
 	// rejected (cg-crm treats it as a client error).
 	Direction string `protobuf:"bytes,1,opt,name=direction,proto3" json:"direction,omitempty"`
-	// Message body. Plain text only; no media support yet.
+	// Message body. May be empty when content_type != "text" and the
+	// message is purely a media attachment.
 	Text string `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`
 	// When the message happened in the source channel. Required so the
 	// chat ordering matches reality. RFC3339.
-	Ts            *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=ts,proto3" json:"ts,omitempty"`
+	Ts *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=ts,proto3" json:"ts,omitempty"`
+	// Message kind — one of {text, image, video, audio, document, voice}.
+	// Empty defaults to "text" for backward compatibility with callers
+	// predating media support. Anything else is rejected (cg-crm treats
+	// it as a client error so a typo doesn't silently render as text).
+	ContentType string `protobuf:"bytes,4,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	// Direct URL to the media payload when content_type != "text". cg-crm
+	// does NOT proxy or download — it just stores the URL on the
+	// wa_messages row and the chat UI fetches it client-side. Must be
+	// empty when content_type == "text". Capped at 2048 bytes.
+	MediaUrl string `protobuf:"bytes,5,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`
+	// Caller-provided idempotency key for this single conversation turn.
+	// When non-empty, cg-crm uses (organization_id, external_msg_id) as a
+	// UNIQUE constraint on wa_messages so retries from the caller (e.g.
+	// network timeouts on CreateExternalDeal) don't duplicate dialog
+	// turns. Recommended format: "<source>:<session_id>:<index>", e.g.
+	// "fa-ai:autobody:abc123:7". Empty disables dedup for this turn.
+	ExternalMsgId string `protobuf:"bytes,6,opt,name=external_msg_id,json=externalMsgId,proto3" json:"external_msg_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4833,6 +4851,27 @@ func (x *ExternalConversationMessage) GetTs() *timestamppb.Timestamp {
 		return x.Ts
 	}
 	return nil
+}
+
+func (x *ExternalConversationMessage) GetContentType() string {
+	if x != nil {
+		return x.ContentType
+	}
+	return ""
+}
+
+func (x *ExternalConversationMessage) GetMediaUrl() string {
+	if x != nil {
+		return x.MediaUrl
+	}
+	return ""
+}
+
+func (x *ExternalConversationMessage) GetExternalMsgId() string {
+	if x != nil {
+		return x.ExternalMsgId
+	}
+	return ""
 }
 
 type CreateExternalDealResponse struct {
@@ -18980,11 +19019,14 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\adeal_id\x18\x19 \x01(\tR\x06dealId\x1a?\n" +
 	"\x11CustomFieldsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"{\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe3\x01\n" +
 	"\x1bExternalConversationMessage\x12\x1c\n" +
 	"\tdirection\x18\x01 \x01(\tR\tdirection\x12\x12\n" +
 	"\x04text\x18\x02 \x01(\tR\x04text\x12*\n" +
-	"\x02ts\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x02ts\"f\n" +
+	"\x02ts\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x02ts\x12!\n" +
+	"\fcontent_type\x18\x04 \x01(\tR\vcontentType\x12\x1b\n" +
+	"\tmedia_url\x18\x05 \x01(\tR\bmediaUrl\x12&\n" +
+	"\x0fexternal_msg_id\x18\x06 \x01(\tR\rexternalMsgId\"f\n" +
 	"\x1aCreateExternalDealResponse\x12%\n" +
 	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\x12!\n" +
 	"\fwas_existing\x18\x02 \x01(\bR\vwasExisting\"I\n" +

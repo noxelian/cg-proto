@@ -893,11 +893,29 @@ message ExternalConversationMessage {
   // "outbound" = from the AI/manager to the client. Anything else is
   // rejected (cg-crm treats it as a client error).
   string direction = 1;
-  // Message body. Plain text only; no media support yet.
+  // Message body. May be empty when content_type != "text" and the
+  // message is purely a media attachment.
   string text      = 2;
   // When the message happened in the source channel. Required so the
   // chat ordering matches reality. RFC3339.
   google.protobuf.Timestamp ts = 3;
+  // Message kind — one of {text, image, video, audio, document, voice}.
+  // Empty defaults to "text" for backward compatibility with callers
+  // predating media support. Anything else is rejected (cg-crm treats
+  // it as a client error so a typo doesn't silently render as text).
+  string content_type = 4;
+  // Direct URL to the media payload when content_type != "text". cg-crm
+  // does NOT proxy or download — it just stores the URL on the
+  // wa_messages row and the chat UI fetches it client-side. Must be
+  // empty when content_type == "text". Capped at 2048 bytes.
+  string media_url = 5;
+  // Caller-provided idempotency key for this single conversation turn.
+  // When non-empty, cg-crm uses (organization_id, external_msg_id) as a
+  // UNIQUE constraint on wa_messages so retries from the caller (e.g.
+  // network timeouts on CreateExternalDeal) don't duplicate dialog
+  // turns. Recommended format: "<source>:<session_id>:<index>", e.g.
+  // "fa-ai:autobody:abc123:7". Empty disables dedup for this turn.
+  string external_msg_id = 6;
 }
 
 message CreateExternalDealResponse {
