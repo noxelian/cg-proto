@@ -1036,6 +1036,20 @@ message UpdateDealRequest {
   // non-empty, the deal's source column is replaced and a field_update
   // activity is logged. Empty preserves the existing source.
   string source          = 9;
+
+  // external_url is the deep-link rendered as "Открыть в админке" on
+  // the deal detail. Originally populated by /external/deals
+  // integrations (admin_panel, partner sites); managers may now also
+  // edit it directly through the deal-info section. The field is a
+  // tri-state controlled by external_url_set:
+  //   external_url_set=false → preserve existing value (legacy path).
+  //   external_url_set=true, external_url=""   → clear the field.
+  //   external_url_set=true, external_url="http..." → set the field.
+  // Older clients that only send external_url (no _set flag) still
+  // work as before because the server falls back to "non-empty replaces,
+  // empty preserves" when _set is false.
+  string external_url      = 10;
+  bool   external_url_set  = 11;
 }
 
 message UpdateDealResponse {

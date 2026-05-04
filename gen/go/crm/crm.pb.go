@@ -5336,9 +5336,24 @@ type UpdateDealRequest struct {
 	// source is set at creation time and rarely needs to change. When
 	// non-empty, the deal's source column is replaced and a field_update
 	// activity is logged. Empty preserves the existing source.
-	Source        string `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Source string `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"`
+	// external_url is the deep-link rendered as "Открыть в админке" on
+	// the deal detail. Originally populated by /external/deals
+	// integrations (admin_panel, partner sites); managers may now also
+	// edit it directly through the deal-info section. The field is a
+	// tri-state controlled by external_url_set:
+	//
+	//	external_url_set=false → preserve existing value (legacy path).
+	//	external_url_set=true, external_url=""   → clear the field.
+	//	external_url_set=true, external_url="http..." → set the field.
+	//
+	// Older clients that only send external_url (no _set flag) still
+	// work as before because the server falls back to "non-empty replaces,
+	// empty preserves" when _set is false.
+	ExternalUrl    string `protobuf:"bytes,10,opt,name=external_url,json=externalUrl,proto3" json:"external_url,omitempty"`
+	ExternalUrlSet bool   `protobuf:"varint,11,opt,name=external_url_set,json=externalUrlSet,proto3" json:"external_url_set,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *UpdateDealRequest) Reset() {
@@ -5432,6 +5447,20 @@ func (x *UpdateDealRequest) GetSource() string {
 		return x.Source
 	}
 	return ""
+}
+
+func (x *UpdateDealRequest) GetExternalUrl() string {
+	if x != nil {
+		return x.ExternalUrl
+	}
+	return ""
+}
+
+func (x *UpdateDealRequest) GetExternalUrlSet() bool {
+	if x != nil {
+		return x.ExternalUrlSet
+	}
+	return false
 }
 
 type UpdateDealResponse struct {
@@ -19275,7 +19304,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\atag_ids\x18\x10 \x03(\tR\x06tagIds\"R\n" +
 	"\x11ListDealsResponse\x12'\n" +
 	"\x05deals\x18\x01 \x03(\v2\x11.crm.v1.DealProtoR\x05deals\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x03R\x05total\"\xb1\x02\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\xfe\x02\n" +
 	"\x11UpdateDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x14\n" +
@@ -19287,7 +19316,10 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0eexpected_close\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\rexpectedClose\x12\x1d\n" +
 	"\n" +
 	"vehicle_id\x18\b \x01(\x03R\tvehicleId\x12\x16\n" +
-	"\x06source\x18\t \x01(\tR\x06source\";\n" +
+	"\x06source\x18\t \x01(\tR\x06source\x12!\n" +
+	"\fexternal_url\x18\n" +
+	" \x01(\tR\vexternalUrl\x12(\n" +
+	"\x10external_url_set\x18\v \x01(\bR\x0eexternalUrlSet\";\n" +
 	"\x12UpdateDealResponse\x12%\n" +
 	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xab\x04\n" +
 	"\x11ImportDealRequest\x12'\n" +
