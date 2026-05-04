@@ -23,8 +23,12 @@ service WarehouseService {
   rpc CreateItem(CreateItemRequest) returns (CreateItemResponse);
   rpc GetItem(GetItemRequest) returns (GetItemResponse);
   rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse);
+  rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse);
   rpc ListItems(ListItemsRequest) returns (ListItemsResponse);
   rpc SearchItems(SearchItemsRequest) returns (SearchItemsResponse);
+
+  // Find-or-create storage location by code (idempotent for bulk import).
+  rpc UpsertStorageLocation(UpsertStorageLocationRequest) returns (UpsertStorageLocationResponse);
 
   // --- Stock Movements ---
   rpc ReceiveStock(ReceiveStockRequest) returns (ReceiveStockResponse);
@@ -148,6 +152,21 @@ message WarehouseItem {
   repeated CarCompatibility car_compatibility = 19;
   // Photos (URLs from file service)
   repeated string photos = 20;
+  // Origin: original / duplicate / unknown.
+  ItemOrigin origin = 21;
+  // Production year of the part (0 = unspecified).
+  int32 year = 22;
+  // Storage location code denormalised for read paths.
+  string storage_location_code = 23;
+  // Soft-delete marker: non-null when item is logically deleted.
+  google.protobuf.Timestamp deleted_at = 24;
+}
+
+enum ItemOrigin {
+  ITEM_ORIGIN_UNSPECIFIED = 0;
+  ITEM_ORIGIN_ORIGINAL    = 1;
+  ITEM_ORIGIN_DUPLICATE   = 2;
+  ITEM_ORIGIN_UNKNOWN     = 3;
 }
 
 message CarCompatibility {
@@ -315,6 +334,13 @@ message CreateItemRequest {
   repeated CarCompatibilityInput car_compatibility = 14;
   // Photos (URLs from file service)
   repeated string photos = 15;
+  // Original / duplicate / unknown.
+  ItemOrigin origin = 16;
+  // Production year (0 = unspecified).
+  int32 year = 17;
+  // Storage location code; service upserts and resolves to storage_location_id
+  // when storage_location_id == 0. Useful for bulk import without prior CRUD.
+  string storage_location_code = 18;
 }
 
 message CarCompatibilityInput {
@@ -346,10 +372,48 @@ message UpdateItemRequest {
   int64 sell_price = 7;
   int64 storage_location_id = 8;
   ItemCondition condition = 9;
+  // Brand replaces existing value when update_brand=true (or when string is non-empty).
+  string brand = 10;
+  // Origin: maps to is_original/duplicate/unknown enum.
+  ItemOrigin origin = 11;
+  // Production year (0 = leave as-is when update_year=false).
+  int32 year = 12;
+  // Storage location: pass code to upsert by code (alternative to storage_location_id).
+  string storage_location_code = 13;
+  // Photos: replace-semantics. update_photos=true triggers full replace
+  // (empty array = clear). When update_photos=false, photos field is ignored.
+  bool update_photos = 14;
+  repeated string photos = 15;
+  // Car compatibility: replace-semantics. update_car_compatibility=true
+  // triggers full replace; false = ignore.
+  bool update_car_compatibility = 16;
+  repeated CarCompatibilityInput car_compatibility = 17;
 }
 
 message UpdateItemResponse {
   WarehouseItem item = 1;
+}
+
+message DeleteItemRequest {
+  int64 id = 1;
+  // If false, refuse delete when item has active reservations.
+  bool force = 2;
+}
+
+message DeleteItemResponse {
+  WarehouseItem item = 1;
+}
+
+message UpsertStorageLocationRequest {
+  int64 warehouse_id = 1;
+  string code = 2;
+  string name = 3;
+}
+
+message UpsertStorageLocationResponse {
+  StorageLocation location = 1;
+  // True when a new row was created, false when an existing row was returned.
+  bool created = 2;
 }
 
 message ListItemsRequest {

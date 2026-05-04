@@ -30,8 +30,10 @@ const (
 	WarehouseService_CreateItem_FullMethodName             = "/warehouse.warehouse.v1.WarehouseService/CreateItem"
 	WarehouseService_GetItem_FullMethodName                = "/warehouse.warehouse.v1.WarehouseService/GetItem"
 	WarehouseService_UpdateItem_FullMethodName             = "/warehouse.warehouse.v1.WarehouseService/UpdateItem"
+	WarehouseService_DeleteItem_FullMethodName             = "/warehouse.warehouse.v1.WarehouseService/DeleteItem"
 	WarehouseService_ListItems_FullMethodName              = "/warehouse.warehouse.v1.WarehouseService/ListItems"
 	WarehouseService_SearchItems_FullMethodName            = "/warehouse.warehouse.v1.WarehouseService/SearchItems"
+	WarehouseService_UpsertStorageLocation_FullMethodName  = "/warehouse.warehouse.v1.WarehouseService/UpsertStorageLocation"
 	WarehouseService_ReceiveStock_FullMethodName           = "/warehouse.warehouse.v1.WarehouseService/ReceiveStock"
 	WarehouseService_WriteOffStock_FullMethodName          = "/warehouse.warehouse.v1.WarehouseService/WriteOffStock"
 	WarehouseService_TransferStock_FullMethodName          = "/warehouse.warehouse.v1.WarehouseService/TransferStock"
@@ -70,8 +72,11 @@ type WarehouseServiceClient interface {
 	CreateItem(ctx context.Context, in *CreateItemRequest, opts ...grpc.CallOption) (*CreateItemResponse, error)
 	GetItem(ctx context.Context, in *GetItemRequest, opts ...grpc.CallOption) (*GetItemResponse, error)
 	UpdateItem(ctx context.Context, in *UpdateItemRequest, opts ...grpc.CallOption) (*UpdateItemResponse, error)
+	DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DeleteItemResponse, error)
 	ListItems(ctx context.Context, in *ListItemsRequest, opts ...grpc.CallOption) (*ListItemsResponse, error)
 	SearchItems(ctx context.Context, in *SearchItemsRequest, opts ...grpc.CallOption) (*SearchItemsResponse, error)
+	// Find-or-create storage location by code (idempotent for bulk import).
+	UpsertStorageLocation(ctx context.Context, in *UpsertStorageLocationRequest, opts ...grpc.CallOption) (*UpsertStorageLocationResponse, error)
 	// --- Stock Movements ---
 	ReceiveStock(ctx context.Context, in *ReceiveStockRequest, opts ...grpc.CallOption) (*ReceiveStockResponse, error)
 	WriteOffStock(ctx context.Context, in *WriteOffStockRequest, opts ...grpc.CallOption) (*WriteOffStockResponse, error)
@@ -215,6 +220,16 @@ func (c *warehouseServiceClient) UpdateItem(ctx context.Context, in *UpdateItemR
 	return out, nil
 }
 
+func (c *warehouseServiceClient) DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DeleteItemResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteItemResponse)
+	err := c.cc.Invoke(ctx, WarehouseService_DeleteItem_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *warehouseServiceClient) ListItems(ctx context.Context, in *ListItemsRequest, opts ...grpc.CallOption) (*ListItemsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListItemsResponse)
@@ -229,6 +244,16 @@ func (c *warehouseServiceClient) SearchItems(ctx context.Context, in *SearchItem
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SearchItemsResponse)
 	err := c.cc.Invoke(ctx, WarehouseService_SearchItems_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *warehouseServiceClient) UpsertStorageLocation(ctx context.Context, in *UpsertStorageLocationRequest, opts ...grpc.CallOption) (*UpsertStorageLocationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpsertStorageLocationResponse)
+	err := c.cc.Invoke(ctx, WarehouseService_UpsertStorageLocation_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -433,8 +458,11 @@ type WarehouseServiceServer interface {
 	CreateItem(context.Context, *CreateItemRequest) (*CreateItemResponse, error)
 	GetItem(context.Context, *GetItemRequest) (*GetItemResponse, error)
 	UpdateItem(context.Context, *UpdateItemRequest) (*UpdateItemResponse, error)
+	DeleteItem(context.Context, *DeleteItemRequest) (*DeleteItemResponse, error)
 	ListItems(context.Context, *ListItemsRequest) (*ListItemsResponse, error)
 	SearchItems(context.Context, *SearchItemsRequest) (*SearchItemsResponse, error)
+	// Find-or-create storage location by code (idempotent for bulk import).
+	UpsertStorageLocation(context.Context, *UpsertStorageLocationRequest) (*UpsertStorageLocationResponse, error)
 	// --- Stock Movements ---
 	ReceiveStock(context.Context, *ReceiveStockRequest) (*ReceiveStockResponse, error)
 	WriteOffStock(context.Context, *WriteOffStockRequest) (*WriteOffStockResponse, error)
@@ -501,11 +529,17 @@ func (UnimplementedWarehouseServiceServer) GetItem(context.Context, *GetItemRequ
 func (UnimplementedWarehouseServiceServer) UpdateItem(context.Context, *UpdateItemRequest) (*UpdateItemResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateItem not implemented")
 }
+func (UnimplementedWarehouseServiceServer) DeleteItem(context.Context, *DeleteItemRequest) (*DeleteItemResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteItem not implemented")
+}
 func (UnimplementedWarehouseServiceServer) ListItems(context.Context, *ListItemsRequest) (*ListItemsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListItems not implemented")
 }
 func (UnimplementedWarehouseServiceServer) SearchItems(context.Context, *SearchItemsRequest) (*SearchItemsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SearchItems not implemented")
+}
+func (UnimplementedWarehouseServiceServer) UpsertStorageLocation(context.Context, *UpsertStorageLocationRequest) (*UpsertStorageLocationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpsertStorageLocation not implemented")
 }
 func (UnimplementedWarehouseServiceServer) ReceiveStock(context.Context, *ReceiveStockRequest) (*ReceiveStockResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ReceiveStock not implemented")
@@ -780,6 +814,24 @@ func _WarehouseService_UpdateItem_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WarehouseService_DeleteItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WarehouseServiceServer).DeleteItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WarehouseService_DeleteItem_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WarehouseServiceServer).DeleteItem(ctx, req.(*DeleteItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _WarehouseService_ListItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListItemsRequest)
 	if err := dec(in); err != nil {
@@ -812,6 +864,24 @@ func _WarehouseService_SearchItems_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WarehouseServiceServer).SearchItems(ctx, req.(*SearchItemsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WarehouseService_UpsertStorageLocation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertStorageLocationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WarehouseServiceServer).UpsertStorageLocation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WarehouseService_UpsertStorageLocation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WarehouseServiceServer).UpsertStorageLocation(ctx, req.(*UpsertStorageLocationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1192,12 +1262,20 @@ var WarehouseService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _WarehouseService_UpdateItem_Handler,
 		},
 		{
+			MethodName: "DeleteItem",
+			Handler:    _WarehouseService_DeleteItem_Handler,
+		},
+		{
 			MethodName: "ListItems",
 			Handler:    _WarehouseService_ListItems_Handler,
 		},
 		{
 			MethodName: "SearchItems",
 			Handler:    _WarehouseService_SearchItems_Handler,
+		},
+		{
+			MethodName: "UpsertStorageLocation",
+			Handler:    _WarehouseService_UpsertStorageLocation_Handler,
 		},
 		{
 			MethodName: "ReceiveStock",
