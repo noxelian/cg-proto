@@ -1601,6 +1601,10 @@ message GetDealVolumeResponse {
 message GetStageStatsRequest {
   string organization_id = 1;
   string pipeline_id     = 2;
+  // assigned_to (0 = no filter) scopes the per-stage counts to a single
+  // manager. Mirrors GetPipelineAggregatesRequest.assigned_to so the kanban
+  // column "{N} без задач" badge matches the strip when ?assigned_to=me.
+  int64  assigned_to     = 3;
 }
 
 message StageStatProto {

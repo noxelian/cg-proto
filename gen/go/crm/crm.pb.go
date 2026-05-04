@@ -10320,8 +10320,12 @@ type GetStageStatsRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	PipelineId     string                 `protobuf:"bytes,2,opt,name=pipeline_id,json=pipelineId,proto3" json:"pipeline_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// assigned_to (0 = no filter) scopes the per-stage counts to a single
+	// manager. Mirrors GetPipelineAggregatesRequest.assigned_to so the kanban
+	// column "{N} без задач" badge matches the strip when ?assigned_to=me.
+	AssignedTo    int64 `protobuf:"varint,3,opt,name=assigned_to,json=assignedTo,proto3" json:"assigned_to,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetStageStatsRequest) Reset() {
@@ -10366,6 +10370,13 @@ func (x *GetStageStatsRequest) GetPipelineId() string {
 		return x.PipelineId
 	}
 	return ""
+}
+
+func (x *GetStageStatsRequest) GetAssignedTo() int64 {
+	if x != nil {
+		return x.AssignedTo
+	}
+	return 0
 }
 
 type StageStatProto struct {
@@ -19535,11 +19546,13 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\vtotal_count\x18\a \x01(\x03R\n" +
 	"totalCount\x12\x1f\n" +
 	"\vtotal_value\x18\b \x01(\x01R\n" +
-	"totalValue\"`\n" +
+	"totalValue\"\x81\x01\n" +
 	"\x14GetStageStatsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
-	"pipelineId\"\x89\x01\n" +
+	"pipelineId\x12\x1f\n" +
+	"\vassigned_to\x18\x03 \x01(\x03R\n" +
+	"assignedTo\"\x89\x01\n" +
 	"\x0eStageStatProto\x12\x19\n" +
 	"\bstage_id\x18\x01 \x01(\tR\astageId\x12\x1f\n" +
 	"\vtotal_deals\x18\x02 \x01(\x03R\n" +
