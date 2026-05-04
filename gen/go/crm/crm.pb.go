@@ -18730,10 +18730,11 @@ func (x *SetDealTagsResponse) GetTags() []*TagProto {
 // shows "manager X marked notes as seen") but the indicator clear is
 // global — any manager's click clears the dot/border for everyone.
 type AcknowledgeExternalNotesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DealId        string                 `protobuf:"bytes,1,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	DealId         string                 `protobuf:"bytes,2,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *AcknowledgeExternalNotesRequest) Reset() {
@@ -18764,6 +18765,13 @@ func (x *AcknowledgeExternalNotesRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AcknowledgeExternalNotesRequest.ProtoReflect.Descriptor instead.
 func (*AcknowledgeExternalNotesRequest) Descriptor() ([]byte, []int) {
 	return file_crm_crm_proto_rawDescGZIP(), []int{277}
+}
+
+func (x *AcknowledgeExternalNotesRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
 }
 
 func (x *AcknowledgeExternalNotesRequest) GetDealId() string {
@@ -20346,9 +20354,10 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\x17\n" +
 	"\atag_ids\x18\x03 \x03(\tR\x06tagIds\";\n" +
 	"\x13SetDealTagsResponse\x12$\n" +
-	"\x04tags\x18\x01 \x03(\v2\x10.crm.v1.TagProtoR\x04tags\":\n" +
-	"\x1fAcknowledgeExternalNotesRequest\x12\x17\n" +
-	"\adeal_id\x18\x01 \x01(\tR\x06dealId\"I\n" +
+	"\x04tags\x18\x01 \x03(\v2\x10.crm.v1.TagProtoR\x04tags\"c\n" +
+	"\x1fAcknowledgeExternalNotesRequest\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
+	"\adeal_id\x18\x02 \x01(\tR\x06dealId\"I\n" +
 	" AcknowledgeExternalNotesResponse\x12%\n" +
 	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal*w\n" +
 	"\x11TelephonyProvider\x12\"\n" +

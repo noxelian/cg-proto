@@ -2628,7 +2628,8 @@ message SetDealTagsResponse {
 // shows "manager X marked notes as seen") but the indicator clear is
 // global — any manager's click clears the dot/border for everyone.
 message AcknowledgeExternalNotesRequest {
-  string deal_id = 1;
+  string organization_id = 1;
+  string deal_id          = 2;
 }
 
 message AcknowledgeExternalNotesResponse {
