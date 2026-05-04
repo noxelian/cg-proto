@@ -54,6 +54,7 @@ const (
 	CRMService_CloseDeal_FullMethodName                          = "/crm.v1.CRMService/CloseDeal"
 	CRMService_ReOpenDeal_FullMethodName                         = "/crm.v1.CRMService/ReOpenDeal"
 	CRMService_DeleteDeal_FullMethodName                         = "/crm.v1.CRMService/DeleteDeal"
+	CRMService_AcknowledgeExternalNotes_FullMethodName           = "/crm.v1.CRMService/AcknowledgeExternalNotes"
 	CRMService_GetDealActivities_FullMethodName                  = "/crm.v1.CRMService/GetDealActivities"
 	CRMService_GetContactActivities_FullMethodName               = "/crm.v1.CRMService/GetContactActivities"
 	CRMService_GetPipelineAggregates_FullMethodName              = "/crm.v1.CRMService/GetPipelineAggregates"
@@ -217,6 +218,12 @@ type CRMServiceClient interface {
 	// schema cascades on (tasks, activities, deal_stage_history, notes).
 	// Admin-only — enforced by the service via DataScopeResolver.
 	DeleteDeal(ctx context.Context, in *DeleteDealRequest, opts ...grpc.CallOption) (*DeleteDealResponse, error)
+	// AcknowledgeExternalNotes stamps notes_acknowledged_at = NOW() on the
+	// deal so subsequent has_unacked_notes computations return false until
+	// the next external_deal_note_appended activity lands. Used by the
+	// kanban "Просмотрено" button — clears the blue indicator for ALL
+	// managers viewing the same deal (any-manager-clears semantics).
+	AcknowledgeExternalNotes(ctx context.Context, in *AcknowledgeExternalNotesRequest, opts ...grpc.CallOption) (*AcknowledgeExternalNotesResponse, error)
 	GetDealActivities(ctx context.Context, in *GetDealActivitiesRequest, opts ...grpc.CallOption) (*GetDealActivitiesResponse, error)
 	GetContactActivities(ctx context.Context, in *GetContactActivitiesRequest, opts ...grpc.CallOption) (*GetContactActivitiesResponse, error)
 	// GetPipelineAggregates returns board-wide kanban KPIs for the given
@@ -743,6 +750,16 @@ func (c *cRMServiceClient) DeleteDeal(ctx context.Context, in *DeleteDealRequest
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteDealResponse)
 	err := c.cc.Invoke(ctx, CRMService_DeleteDeal_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) AcknowledgeExternalNotes(ctx context.Context, in *AcknowledgeExternalNotesRequest, opts ...grpc.CallOption) (*AcknowledgeExternalNotesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AcknowledgeExternalNotesResponse)
+	err := c.cc.Invoke(ctx, CRMService_AcknowledgeExternalNotes_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1666,6 +1683,12 @@ type CRMServiceServer interface {
 	// schema cascades on (tasks, activities, deal_stage_history, notes).
 	// Admin-only — enforced by the service via DataScopeResolver.
 	DeleteDeal(context.Context, *DeleteDealRequest) (*DeleteDealResponse, error)
+	// AcknowledgeExternalNotes stamps notes_acknowledged_at = NOW() on the
+	// deal so subsequent has_unacked_notes computations return false until
+	// the next external_deal_note_appended activity lands. Used by the
+	// kanban "Просмотрено" button — clears the blue indicator for ALL
+	// managers viewing the same deal (any-manager-clears semantics).
+	AcknowledgeExternalNotes(context.Context, *AcknowledgeExternalNotesRequest) (*AcknowledgeExternalNotesResponse, error)
 	GetDealActivities(context.Context, *GetDealActivitiesRequest) (*GetDealActivitiesResponse, error)
 	GetContactActivities(context.Context, *GetContactActivitiesRequest) (*GetContactActivitiesResponse, error)
 	// GetPipelineAggregates returns board-wide kanban KPIs for the given
@@ -1940,6 +1963,9 @@ func (UnimplementedCRMServiceServer) ReOpenDeal(context.Context, *ReOpenDealRequ
 }
 func (UnimplementedCRMServiceServer) DeleteDeal(context.Context, *DeleteDealRequest) (*DeleteDealResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteDeal not implemented")
+}
+func (UnimplementedCRMServiceServer) AcknowledgeExternalNotes(context.Context, *AcknowledgeExternalNotesRequest) (*AcknowledgeExternalNotesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AcknowledgeExternalNotes not implemented")
 }
 func (UnimplementedCRMServiceServer) GetDealActivities(context.Context, *GetDealActivitiesRequest) (*GetDealActivitiesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetDealActivities not implemented")
@@ -2840,6 +2866,24 @@ func _CRMService_DeleteDeal_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRMServiceServer).DeleteDeal(ctx, req.(*DeleteDealRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_AcknowledgeExternalNotes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AcknowledgeExternalNotesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).AcknowledgeExternalNotes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_AcknowledgeExternalNotes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).AcknowledgeExternalNotes(ctx, req.(*AcknowledgeExternalNotesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4502,6 +4546,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteDeal",
 			Handler:    _CRMService_DeleteDeal_Handler,
+		},
+		{
+			MethodName: "AcknowledgeExternalNotes",
+			Handler:    _CRMService_AcknowledgeExternalNotes_Handler,
 		},
 		{
 			MethodName: "GetDealActivities",

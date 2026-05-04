@@ -75,6 +75,12 @@ service CRMService {
   // schema cascades on (tasks, activities, deal_stage_history, notes).
   // Admin-only — enforced by the service via DataScopeResolver.
   rpc DeleteDeal(DeleteDealRequest)                         returns (DeleteDealResponse);
+  // AcknowledgeExternalNotes stamps notes_acknowledged_at = NOW() on the
+  // deal so subsequent has_unacked_notes computations return false until
+  // the next external_deal_note_appended activity lands. Used by the
+  // kanban "Просмотрено" button — clears the blue indicator for ALL
+  // managers viewing the same deal (any-manager-clears semantics).
+  rpc AcknowledgeExternalNotes(AcknowledgeExternalNotesRequest) returns (AcknowledgeExternalNotesResponse);
   rpc GetDealActivities(GetDealActivitiesRequest)           returns (GetDealActivitiesResponse);
   rpc GetContactActivities(GetContactActivitiesRequest)     returns (GetContactActivitiesResponse);
 
@@ -703,6 +709,15 @@ message DealProto {
   // Tags assigned to the deal (AmoCRM-style chips). Organization-wide,
   // optionally pipeline-scoped. Order is by tag name.
   repeated TagProto tags  = 30;
+
+  // True when at least one external_deal_note_appended activity exists
+  // on this deal whose created_at is later than
+  // notes_acknowledged_at (or notes_acknowledged_at is NULL). Drives the
+  // blue "новое уведомление" indicator on the kanban card and the
+  // pipeline-name dot. Cleared by AcknowledgeExternalNotes; re-asserted
+  // automatically the next time an /external/deals call lands a fresh
+  // append-note on this deal.
+  bool has_unacked_notes = 31;
 }
 
 message DealStageHistoryProto {
@@ -2605,4 +2620,18 @@ message SetDealTagsRequest {
 }
 message SetDealTagsResponse {
   repeated TagProto tags = 1; // resulting tag set on the deal
+}
+
+// AcknowledgeExternalNotesRequest carries the deal whose external-note
+// indicator should be cleared. The service resolves the caller's
+// user_id from the JWT and stamps it on the activity row (so the feed
+// shows "manager X marked notes as seen") but the indicator clear is
+// global — any manager's click clears the dot/border for everyone.
+message AcknowledgeExternalNotesRequest {
+  string deal_id = 1;
+}
+
+message AcknowledgeExternalNotesResponse {
+  // Echoed for response shape consistency with other deal RPCs.
+  DealProto deal = 1;
 }
