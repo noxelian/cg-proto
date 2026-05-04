@@ -895,6 +895,30 @@ message CreateExternalDealRequest {
   // amocrm-sync ImportDeal cycle finds it and merges into the same row
   // instead of creating a duplicate.
   string legacy_amocrm_lead_id = 26;
+
+  // Append-note-only mode. When true and an open deal exists for this
+  // contact in (organization_id, pipeline_id) on ANY stage with
+  // status='open', cg-crm SKIPS the standard merge (title/description/
+  // custom_fields/stage are NOT touched) and instead writes a single
+  // note onto the existing deal carrying note_body (or, if note_body is
+  // empty, title) plus an activity 'external_deal_note_appended'. This
+  // lets channels that fan-in many heterogeneous events for one contact
+  // (e.g. cg_api: "хочет подписку", "пожаловался на запчасти", paid
+  // car wash, ...) accumulate a chronological log inside one card
+  // instead of spawning a new deal per event.
+  //
+  // When true and NO open deal exists, cg-crm falls back to standard
+  // create — the first event is what seeds the deal title/description.
+  //
+  // Default false preserves existing behaviour for admin_panel and
+  // other pre-existing callers.
+  bool append_note_only = 27;
+
+  // Body of the note appended in append_note_only mode. Free-form text
+  // (markdown supported by the deal-detail UI). Ignored when
+  // append_note_only is false. When append_note_only is true and this
+  // field is empty, cg-crm falls back to title as the note body.
+  string note_body = 28;
 }
 
 // One turn in an AI-driven conversation persisted into wa_messages so

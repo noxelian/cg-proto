@@ -4568,8 +4568,30 @@ type CreateExternalDealRequest struct {
 	// amocrm-sync ImportDeal cycle finds it and merges into the same row
 	// instead of creating a duplicate.
 	LegacyAmocrmLeadId string `protobuf:"bytes,26,opt,name=legacy_amocrm_lead_id,json=legacyAmocrmLeadId,proto3" json:"legacy_amocrm_lead_id,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	// Append-note-only mode. When true and an open deal exists for this
+	// contact in (organization_id, pipeline_id) on ANY stage with
+	// status='open', cg-crm SKIPS the standard merge (title/description/
+	// custom_fields/stage are NOT touched) and instead writes a single
+	// note onto the existing deal carrying note_body (or, if note_body is
+	// empty, title) plus an activity 'external_deal_note_appended'. This
+	// lets channels that fan-in many heterogeneous events for one contact
+	// (e.g. cg_api: "хочет подписку", "пожаловался на запчасти", paid
+	// car wash, ...) accumulate a chronological log inside one card
+	// instead of spawning a new deal per event.
+	//
+	// When true and NO open deal exists, cg-crm falls back to standard
+	// create — the first event is what seeds the deal title/description.
+	//
+	// Default false preserves existing behaviour for admin_panel and
+	// other pre-existing callers.
+	AppendNoteOnly bool `protobuf:"varint,27,opt,name=append_note_only,json=appendNoteOnly,proto3" json:"append_note_only,omitempty"`
+	// Body of the note appended in append_note_only mode. Free-form text
+	// (markdown supported by the deal-detail UI). Ignored when
+	// append_note_only is false. When append_note_only is true and this
+	// field is empty, cg-crm falls back to title as the note body.
+	NoteBody      string `protobuf:"bytes,28,opt,name=note_body,json=noteBody,proto3" json:"note_body,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateExternalDealRequest) Reset() {
@@ -4780,6 +4802,20 @@ func (x *CreateExternalDealRequest) GetDealId() string {
 func (x *CreateExternalDealRequest) GetLegacyAmocrmLeadId() string {
 	if x != nil {
 		return x.LegacyAmocrmLeadId
+	}
+	return ""
+}
+
+func (x *CreateExternalDealRequest) GetAppendNoteOnly() bool {
+	if x != nil {
+		return x.AppendNoteOnly
+	}
+	return false
+}
+
+func (x *CreateExternalDealRequest) GetNoteBody() string {
+	if x != nil {
+		return x.NoteBody
 	}
 	return ""
 }
@@ -19045,7 +19081,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\bmodel_id\x18\x04 \x01(\x03R\amodelId\x12#\n" +
 	"\rgeneration_id\x18\x05 \x01(\x03R\fgenerationId\x12\x12\n" +
 	"\x04year\x18\x06 \x01(\x05R\x04year\x12\x14\n" +
-	"\x05color\x18\a \x01(\tR\x05color\"\xf9\b\n" +
+	"\x05color\x18\a \x01(\tR\x05color\"\xc0\t\n" +
 	"\x19CreateExternalDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -19077,7 +19113,9 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\fconversation\x18\x17 \x03(\v2#.crm.v1.ExternalConversationMessageR\fconversation\x12+\n" +
 	"\x12merge_cap_stage_id\x18\x18 \x01(\tR\x0fmergeCapStageId\x12\x17\n" +
 	"\adeal_id\x18\x19 \x01(\tR\x06dealId\x121\n" +
-	"\x15legacy_amocrm_lead_id\x18\x1a \x01(\tR\x12legacyAmocrmLeadId\x1a?\n" +
+	"\x15legacy_amocrm_lead_id\x18\x1a \x01(\tR\x12legacyAmocrmLeadId\x12(\n" +
+	"\x10append_note_only\x18\x1b \x01(\bR\x0eappendNoteOnly\x12\x1b\n" +
+	"\tnote_body\x18\x1c \x01(\tR\bnoteBody\x1a?\n" +
 	"\x11CustomFieldsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe3\x01\n" +
