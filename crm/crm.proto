@@ -2291,6 +2291,17 @@ message ListTelephonyCallsByOrgRequest {
   // (current behaviour preserved). Has no effect on the
   // extension-ownership branch.
   repeated string pipeline_ids     = 7;
+  // date_from/date_to bound the result set by created_at on the SQL side.
+  // Both bounds are inclusive on the FROM end and exclusive on the TO end
+  // (created_at >= date_from AND created_at < date_to). Empty = no bound.
+  // Pushing the date filter into SQL replaces the legacy "LIMIT 10000 +
+  // BFF in-memory filter" pattern so totals/ counts are honest for the
+  // requested period instead of org-wide.
+  google.protobuf.Timestamp date_from = 8;
+  google.protobuf.Timestamp date_to   = 9;
+  // directions narrows results to specific call directions.
+  // Allowed values: "inbound", "outbound". Empty = both.
+  repeated string directions = 10;
 }
 message ListTelephonyCallsByOrgResponse {
   repeated TelephonyCall calls = 1;
