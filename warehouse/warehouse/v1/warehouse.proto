@@ -423,6 +423,11 @@ message ListItemsRequest {
   bool low_stock_only = 4;
   int32 page = 5;
   int32 page_size = 6;
+  // Free-text search across name, oem_number, brand, storage_location_code,
+  // description (case-insensitive substring match). Empty = no filter.
+  string search = 7;
+  // Filter by origin (original / duplicate / unknown). Empty = no filter.
+  ItemOrigin origin = 8;
 }
 
 message ListItemsResponse {
