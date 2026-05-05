@@ -2484,6 +2484,13 @@ message GetTelephonyDialplanDataResponse {
 
 // ── Phase 16: Recording pipeline ────────────────────────────────────
 
+message TranscriptSegment {
+  string speaker  = 1; // "manager" | "client"
+  int32  start_ms = 2;
+  int32  end_ms   = 3;
+  string text     = 4;
+}
+
 message TelephonyRecording {
   string id              = 1;
   string organization_id = 2;
@@ -2501,6 +2508,7 @@ message TelephonyRecording {
   string transcription_engine = 11;  // e.g. "openai-whisper-1"
   string transcribed_at       = 12;
   string transcript_error     = 13;  // populated when transcript_status == "failed"
+  repeated TranscriptSegment transcript_segments = 14;
 }
 
 message CreateTelephonyRecordingRequest {
@@ -2535,6 +2543,7 @@ message UpdateTelephonyRecordingTranscriptRequest {
   string transcript_language  = 5;
   string transcription_engine = 6;
   string transcript_error     = 7;  // present when status == failed
+  repeated TranscriptSegment transcript_segments = 8;
 }
 
 message UpdateTelephonyRecordingTranscriptResponse {
