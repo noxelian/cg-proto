@@ -1,0 +1,116 @@
+syntax = "proto3";
+
+package parser.debtly.v1;
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/parser/debtly;debtlyv1";
+
+import "google/protobuf/timestamp.proto";
+
+// DebtlyService wraps the external Debtly verification platform
+// (https://debtly.ubots.kz). One CreateCheck call triggers all 5 services
+// (name, arrests, debts, alimony, insurance class) on Debtly's side; results
+// arrive asynchronously via HandleWebhookEvent and are stored as opaque JSON
+// in the cg-parser/debtly database.
+service DebtlyService {
+  // CreateCheck registers a new IIN check, calls the external Debtly API
+  // synchronously to trigger result delivery, and returns the persisted row.
+  // If the upstream call fails the row is still stored with status=FAILED.
+  rpc CreateCheck(CreateCheckRequest) returns (CreateCheckResponse);
+
+  // GetCheck returns one check + all its webhook events.
+  rpc GetCheck(GetCheckRequest) returns (GetCheckResponse);
+
+  // ListChecks returns recent checks, optionally filtered by IIN.
+  rpc ListChecks(ListChecksRequest) returns (ListChecksResponse);
+
+  // HandleWebhookEvent stores one async callback received from Debtly.
+  // The bff-admin's public /webhooks/debtly endpoint forwards every payload
+  // here unchanged; the service makes a best-effort attempt to link it to a
+  // pending Check by IIN extracted from the payload.
+  rpc HandleWebhookEvent(HandleWebhookEventRequest) returns (HandleWebhookEventResponse);
+}
+
+// CheckStatus tracks the lifecycle of a Debtly check.
+enum CheckStatus {
+  CHECK_STATUS_UNSPECIFIED = 0;
+  // PENDING — request accepted, Debtly POST acknowledged, awaiting webhooks.
+  CHECK_STATUS_PENDING = 1;
+  // RECEIVED — at least one webhook payload has been stored.
+  CHECK_STATUS_RECEIVED = 2;
+  // FAILED — outbound POST to Debtly failed; no webhook is expected.
+  CHECK_STATUS_FAILED = 3;
+}
+
+// Check is a single IIN verification request.
+message Check {
+  string id = 1;
+  string iin = 2;
+  CheckStatus status = 3;
+  // WebhookURL is the public callback URL we registered with Debtly when
+  // creating the check. Stored for audit because the service may rotate the
+  // public endpoint over time.
+  string webhook_url = 4;
+  // RequestError is non-empty only when status=FAILED.
+  string request_error = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  google.protobuf.Timestamp last_event_at = 8;
+  int32 event_count = 9;
+}
+
+// WebhookEvent is one async payload Debtly POSTed back. Debtly's exact schema
+// is intentionally not modeled — payload is the raw JSON body.
+message WebhookEvent {
+  string id = 1;
+  string check_id = 2;
+  // Type is a best-effort label extracted from the payload (e.g. "name",
+  // "debts"). Empty when the payload doesn't expose a recognisable field.
+  string type = 3;
+  // Payload is the raw JSON body Debtly sent, byte-for-byte.
+  bytes payload = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
+message CreateCheckRequest {
+  string iin = 1;
+}
+
+message CreateCheckResponse {
+  Check check = 1;
+}
+
+message GetCheckRequest {
+  string id = 1;
+}
+
+message GetCheckResponse {
+  Check check = 1;
+  repeated WebhookEvent events = 2;
+}
+
+message ListChecksRequest {
+  // Optional. When set, returns only checks for this IIN.
+  string iin = 1;
+  // Page size, 1..200; defaults to 50 when zero.
+  int32 limit = 2;
+  // Offset for pagination.
+  int32 offset = 3;
+}
+
+message ListChecksResponse {
+  repeated Check items = 1;
+}
+
+message HandleWebhookEventRequest {
+  // Payload is the raw JSON body Debtly POSTed to bff-admin's
+  // /webhooks/debtly endpoint, forwarded unchanged.
+  bytes payload = 1;
+}
+
+message HandleWebhookEventResponse {
+  // Linked is true when the event was attached to an existing Check; false
+  // means the event is stored standalone (e.g. IIN missing or no pending row).
+  bool linked = 1;
+  // CheckId is the parent check's UUID when Linked=true, empty otherwise.
+  string check_id = 2;
+}
