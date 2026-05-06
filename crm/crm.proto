@@ -298,7 +298,8 @@ message Pipeline {
   int64  created_by      = 7;
   google.protobuf.Timestamp created_at = 8;
   google.protobuf.Timestamp updated_at = 9;
-  repeated Stage stages  = 10;
+  repeated Stage  stages  = 10;
+  repeated string sources = 11; // per-pipeline deal source options
 }
 
 message Stage {
@@ -401,10 +402,11 @@ message RemovePipelineMemberResponse {
 }
 
 message UpdatePipelineRequest {
-  string organization_id = 1;
-  string id              = 2;
-  string name            = 3;
-  string description     = 4;
+  string organization_id  = 1;
+  string id               = 2;
+  string name             = 3;
+  string description      = 4;
+  repeated string sources = 5; // replaces the full sources list for this pipeline
 }
 
 message UpdatePipelineResponse {
