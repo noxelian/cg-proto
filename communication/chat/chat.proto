@@ -16,24 +16,33 @@ service ChatService {
   rpc MarkAsRead(MarkAsReadRequest) returns (MarkAsReadResponse);
 }
 
-// Chat represents a conversation between buyer and seller/org.
+enum ChatContextType {
+  CHAT_CONTEXT_TYPE_UNSPECIFIED = 0;
+  CHAT_CONTEXT_TYPE_ORGANIZATION = 1;
+  CHAT_CONTEXT_TYPE_REQUEST = 2;
+  CHAT_CONTEXT_TYPE_PARTS_ORDER = 3;
+  CHAT_CONTEXT_TYPE_WORKSHOP_ORDER = 4;
+  CHAT_CONTEXT_TYPE_SUPPORT = 5;
+}
+
+// Chat represents a conversation between a mobile user and a seller/org/support.
 // caller_role and caller_unread_count are populated by the server based on
 // the authenticated caller's identity relative to this chat.
 message Chat {
   string id = 1;
-  int64 ad_id = 2;
-  int64 buyer_id = 3;
-  int64 seller_id = 4;
-  // FIX: was int64 — seller organization is identified by UUID string
-  string seller_org_id = 5;
-  Message last_message = 6;
-  int32 unread_count = 7;
-  google.protobuf.Timestamp created_at = 8;
-  google.protobuf.Timestamp updated_at = 9;
+  ChatContextType context_type = 2;
+  string context_id = 3;
+  int64 buyer_id = 4;
+  int64 seller_id = 5;
+  string seller_org_id = 6;
+  Message last_message = 7;
+  int32 unread_count = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
   // caller_role is "buyer" or "seller", computed from caller identity.
-  string caller_role = 10;
+  string caller_role = 11;
   // caller_unread_count is the unread count for the caller's role.
-  int32 caller_unread_count = 11;
+  int32 caller_unread_count = 12;
 }
 
 message Message {
@@ -47,11 +56,12 @@ message Message {
 }
 
 message CreateChatRequest {
-  int64 ad_id = 1;
-  int64 buyer_id = 2;
-  int64 seller_id = 3;
+  ChatContextType context_type = 1;
+  string context_id = 2;
+  int64 buyer_id = 3;
+  int64 seller_id = 4;
   // seller_org_id is the UUID of the seller organization (empty for individual sellers).
-  string seller_org_id = 4;
+  string seller_org_id = 5;
 }
 
 message CreateChatResponse {
@@ -159,4 +169,3 @@ message AdminGetChatMessagesResponse {
   repeated Message messages = 1;
   bool has_more = 2;
 }
-

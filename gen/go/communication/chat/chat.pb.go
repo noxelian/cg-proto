@@ -22,25 +22,83 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Chat represents a conversation between buyer and seller/org.
+type ChatContextType int32
+
+const (
+	ChatContextType_CHAT_CONTEXT_TYPE_UNSPECIFIED    ChatContextType = 0
+	ChatContextType_CHAT_CONTEXT_TYPE_ORGANIZATION   ChatContextType = 1
+	ChatContextType_CHAT_CONTEXT_TYPE_REQUEST        ChatContextType = 2
+	ChatContextType_CHAT_CONTEXT_TYPE_PARTS_ORDER    ChatContextType = 3
+	ChatContextType_CHAT_CONTEXT_TYPE_WORKSHOP_ORDER ChatContextType = 4
+	ChatContextType_CHAT_CONTEXT_TYPE_SUPPORT        ChatContextType = 5
+)
+
+// Enum value maps for ChatContextType.
+var (
+	ChatContextType_name = map[int32]string{
+		0: "CHAT_CONTEXT_TYPE_UNSPECIFIED",
+		1: "CHAT_CONTEXT_TYPE_ORGANIZATION",
+		2: "CHAT_CONTEXT_TYPE_REQUEST",
+		3: "CHAT_CONTEXT_TYPE_PARTS_ORDER",
+		4: "CHAT_CONTEXT_TYPE_WORKSHOP_ORDER",
+		5: "CHAT_CONTEXT_TYPE_SUPPORT",
+	}
+	ChatContextType_value = map[string]int32{
+		"CHAT_CONTEXT_TYPE_UNSPECIFIED":    0,
+		"CHAT_CONTEXT_TYPE_ORGANIZATION":   1,
+		"CHAT_CONTEXT_TYPE_REQUEST":        2,
+		"CHAT_CONTEXT_TYPE_PARTS_ORDER":    3,
+		"CHAT_CONTEXT_TYPE_WORKSHOP_ORDER": 4,
+		"CHAT_CONTEXT_TYPE_SUPPORT":        5,
+	}
+)
+
+func (x ChatContextType) Enum() *ChatContextType {
+	p := new(ChatContextType)
+	*p = x
+	return p
+}
+
+func (x ChatContextType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ChatContextType) Descriptor() protoreflect.EnumDescriptor {
+	return file_communication_chat_chat_proto_enumTypes[0].Descriptor()
+}
+
+func (ChatContextType) Type() protoreflect.EnumType {
+	return &file_communication_chat_chat_proto_enumTypes[0]
+}
+
+func (x ChatContextType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ChatContextType.Descriptor instead.
+func (ChatContextType) EnumDescriptor() ([]byte, []int) {
+	return file_communication_chat_chat_proto_rawDescGZIP(), []int{0}
+}
+
+// Chat represents a conversation between a mobile user and a seller/org/support.
 // caller_role and caller_unread_count are populated by the server based on
 // the authenticated caller's identity relative to this chat.
 type Chat struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Id       string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	AdId     int64                  `protobuf:"varint,2,opt,name=ad_id,json=adId,proto3" json:"ad_id,omitempty"`
-	BuyerId  int64                  `protobuf:"varint,3,opt,name=buyer_id,json=buyerId,proto3" json:"buyer_id,omitempty"`
-	SellerId int64                  `protobuf:"varint,4,opt,name=seller_id,json=sellerId,proto3" json:"seller_id,omitempty"`
-	// FIX: was int64 — seller organization is identified by UUID string
-	SellerOrgId string                 `protobuf:"bytes,5,opt,name=seller_org_id,json=sellerOrgId,proto3" json:"seller_org_id,omitempty"`
-	LastMessage *Message               `protobuf:"bytes,6,opt,name=last_message,json=lastMessage,proto3" json:"last_message,omitempty"`
-	UnreadCount int32                  `protobuf:"varint,7,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"`
-	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt   *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Id          string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ContextType ChatContextType        `protobuf:"varint,2,opt,name=context_type,json=contextType,proto3,enum=communication.chat.v1.ChatContextType" json:"context_type,omitempty"`
+	ContextId   string                 `protobuf:"bytes,3,opt,name=context_id,json=contextId,proto3" json:"context_id,omitempty"`
+	BuyerId     int64                  `protobuf:"varint,4,opt,name=buyer_id,json=buyerId,proto3" json:"buyer_id,omitempty"`
+	SellerId    int64                  `protobuf:"varint,5,opt,name=seller_id,json=sellerId,proto3" json:"seller_id,omitempty"`
+	SellerOrgId string                 `protobuf:"bytes,6,opt,name=seller_org_id,json=sellerOrgId,proto3" json:"seller_org_id,omitempty"`
+	LastMessage *Message               `protobuf:"bytes,7,opt,name=last_message,json=lastMessage,proto3" json:"last_message,omitempty"`
+	UnreadCount int32                  `protobuf:"varint,8,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"`
+	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt   *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// caller_role is "buyer" or "seller", computed from caller identity.
-	CallerRole string `protobuf:"bytes,10,opt,name=caller_role,json=callerRole,proto3" json:"caller_role,omitempty"`
+	CallerRole string `protobuf:"bytes,11,opt,name=caller_role,json=callerRole,proto3" json:"caller_role,omitempty"`
 	// caller_unread_count is the unread count for the caller's role.
-	CallerUnreadCount int32 `protobuf:"varint,11,opt,name=caller_unread_count,json=callerUnreadCount,proto3" json:"caller_unread_count,omitempty"`
+	CallerUnreadCount int32 `protobuf:"varint,12,opt,name=caller_unread_count,json=callerUnreadCount,proto3" json:"caller_unread_count,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -82,11 +140,18 @@ func (x *Chat) GetId() string {
 	return ""
 }
 
-func (x *Chat) GetAdId() int64 {
+func (x *Chat) GetContextType() ChatContextType {
 	if x != nil {
-		return x.AdId
+		return x.ContextType
 	}
-	return 0
+	return ChatContextType_CHAT_CONTEXT_TYPE_UNSPECIFIED
+}
+
+func (x *Chat) GetContextId() string {
+	if x != nil {
+		return x.ContextId
+	}
+	return ""
 }
 
 func (x *Chat) GetBuyerId() int64 {
@@ -245,12 +310,13 @@ func (x *Message) GetCreatedAt() *timestamppb.Timestamp {
 }
 
 type CreateChatRequest struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	AdId     int64                  `protobuf:"varint,1,opt,name=ad_id,json=adId,proto3" json:"ad_id,omitempty"`
-	BuyerId  int64                  `protobuf:"varint,2,opt,name=buyer_id,json=buyerId,proto3" json:"buyer_id,omitempty"`
-	SellerId int64                  `protobuf:"varint,3,opt,name=seller_id,json=sellerId,proto3" json:"seller_id,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	ContextType ChatContextType        `protobuf:"varint,1,opt,name=context_type,json=contextType,proto3,enum=communication.chat.v1.ChatContextType" json:"context_type,omitempty"`
+	ContextId   string                 `protobuf:"bytes,2,opt,name=context_id,json=contextId,proto3" json:"context_id,omitempty"`
+	BuyerId     int64                  `protobuf:"varint,3,opt,name=buyer_id,json=buyerId,proto3" json:"buyer_id,omitempty"`
+	SellerId    int64                  `protobuf:"varint,4,opt,name=seller_id,json=sellerId,proto3" json:"seller_id,omitempty"`
 	// seller_org_id is the UUID of the seller organization (empty for individual sellers).
-	SellerOrgId   string `protobuf:"bytes,4,opt,name=seller_org_id,json=sellerOrgId,proto3" json:"seller_org_id,omitempty"`
+	SellerOrgId   string `protobuf:"bytes,5,opt,name=seller_org_id,json=sellerOrgId,proto3" json:"seller_org_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -285,11 +351,18 @@ func (*CreateChatRequest) Descriptor() ([]byte, []int) {
 	return file_communication_chat_chat_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *CreateChatRequest) GetAdId() int64 {
+func (x *CreateChatRequest) GetContextType() ChatContextType {
 	if x != nil {
-		return x.AdId
+		return x.ContextType
 	}
-	return 0
+	return ChatContextType_CHAT_CONTEXT_TYPE_UNSPECIFIED
+}
+
+func (x *CreateChatRequest) GetContextId() string {
+	if x != nil {
+		return x.ContextId
+	}
+	return ""
 }
 
 func (x *CreateChatRequest) GetBuyerId() int64 {
@@ -1246,23 +1319,25 @@ var File_communication_chat_chat_proto protoreflect.FileDescriptor
 
 const file_communication_chat_chat_proto_rawDesc = "" +
 	"\n" +
-	"\x1dcommunication/chat/chat.proto\x12\x15communication.chat.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb4\x03\n" +
+	"\x1dcommunication/chat/chat.proto\x12\x15communication.chat.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x89\x04\n" +
 	"\x04Chat\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x13\n" +
-	"\x05ad_id\x18\x02 \x01(\x03R\x04adId\x12\x19\n" +
-	"\bbuyer_id\x18\x03 \x01(\x03R\abuyerId\x12\x1b\n" +
-	"\tseller_id\x18\x04 \x01(\x03R\bsellerId\x12\"\n" +
-	"\rseller_org_id\x18\x05 \x01(\tR\vsellerOrgId\x12A\n" +
-	"\flast_message\x18\x06 \x01(\v2\x1e.communication.chat.v1.MessageR\vlastMessage\x12!\n" +
-	"\funread_count\x18\a \x01(\x05R\vunreadCount\x129\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12I\n" +
+	"\fcontext_type\x18\x02 \x01(\x0e2&.communication.chat.v1.ChatContextTypeR\vcontextType\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"context_id\x18\x03 \x01(\tR\tcontextId\x12\x19\n" +
+	"\bbuyer_id\x18\x04 \x01(\x03R\abuyerId\x12\x1b\n" +
+	"\tseller_id\x18\x05 \x01(\x03R\bsellerId\x12\"\n" +
+	"\rseller_org_id\x18\x06 \x01(\tR\vsellerOrgId\x12A\n" +
+	"\flast_message\x18\a \x01(\v2\x1e.communication.chat.v1.MessageR\vlastMessage\x12!\n" +
+	"\funread_count\x18\b \x01(\x05R\vunreadCount\x129\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1f\n" +
-	"\vcaller_role\x18\n" +
-	" \x01(\tR\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1f\n" +
+	"\vcaller_role\x18\v \x01(\tR\n" +
 	"callerRole\x12.\n" +
-	"\x13caller_unread_count\x18\v \x01(\x05R\x11callerUnreadCount\"\xe0\x01\n" +
+	"\x13caller_unread_count\x18\f \x01(\x05R\x11callerUnreadCount\"\xe0\x01\n" +
 	"\aMessage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\achat_id\x18\x02 \x01(\tR\x06chatId\x12\x1b\n" +
@@ -1271,12 +1346,14 @@ const file_communication_chat_chat_proto_rawDesc = "" +
 	"\fmessage_type\x18\x05 \x01(\tR\vmessageType\x12\x17\n" +
 	"\ais_read\x18\x06 \x01(\bR\x06isRead\x129\n" +
 	"\n" +
-	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x84\x01\n" +
-	"\x11CreateChatRequest\x12\x13\n" +
-	"\x05ad_id\x18\x01 \x01(\x03R\x04adId\x12\x19\n" +
-	"\bbuyer_id\x18\x02 \x01(\x03R\abuyerId\x12\x1b\n" +
-	"\tseller_id\x18\x03 \x01(\x03R\bsellerId\x12\"\n" +
-	"\rseller_org_id\x18\x04 \x01(\tR\vsellerOrgId\"E\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xd9\x01\n" +
+	"\x11CreateChatRequest\x12I\n" +
+	"\fcontext_type\x18\x01 \x01(\x0e2&.communication.chat.v1.ChatContextTypeR\vcontextType\x12\x1d\n" +
+	"\n" +
+	"context_id\x18\x02 \x01(\tR\tcontextId\x12\x19\n" +
+	"\bbuyer_id\x18\x03 \x01(\x03R\abuyerId\x12\x1b\n" +
+	"\tseller_id\x18\x04 \x01(\x03R\bsellerId\x12\"\n" +
+	"\rseller_org_id\x18\x05 \x01(\tR\vsellerOrgId\"E\n" +
 	"\x12CreateChatResponse\x12/\n" +
 	"\x04chat\x18\x01 \x01(\v2\x1b.communication.chat.v1.ChatR\x04chat\")\n" +
 	"\x0eGetChatRequest\x12\x17\n" +
@@ -1333,7 +1410,14 @@ const file_communication_chat_chat_proto_rawDesc = "" +
 	"\x05limit\x18\x03 \x01(\x05R\x05limit\"u\n" +
 	"\x1cAdminGetChatMessagesResponse\x12:\n" +
 	"\bmessages\x18\x01 \x03(\v2\x1e.communication.chat.v1.MessageR\bmessages\x12\x19\n" +
-	"\bhas_more\x18\x02 \x01(\bR\ahasMore2\xc8\x05\n" +
+	"\bhas_more\x18\x02 \x01(\bR\ahasMore*\xdf\x01\n" +
+	"\x0fChatContextType\x12!\n" +
+	"\x1dCHAT_CONTEXT_TYPE_UNSPECIFIED\x10\x00\x12\"\n" +
+	"\x1eCHAT_CONTEXT_TYPE_ORGANIZATION\x10\x01\x12\x1d\n" +
+	"\x19CHAT_CONTEXT_TYPE_REQUEST\x10\x02\x12!\n" +
+	"\x1dCHAT_CONTEXT_TYPE_PARTS_ORDER\x10\x03\x12$\n" +
+	" CHAT_CONTEXT_TYPE_WORKSHOP_ORDER\x10\x04\x12\x1d\n" +
+	"\x19CHAT_CONTEXT_TYPE_SUPPORT\x10\x052\xc8\x05\n" +
 	"\vChatService\x12a\n" +
 	"\n" +
 	"CreateChat\x12(.communication.chat.v1.CreateChatRequest\x1a).communication.chat.v1.CreateChatResponse\x12X\n" +
@@ -1360,66 +1444,70 @@ func file_communication_chat_chat_proto_rawDescGZIP() []byte {
 	return file_communication_chat_chat_proto_rawDescData
 }
 
+var file_communication_chat_chat_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_communication_chat_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_communication_chat_chat_proto_goTypes = []any{
-	(*Chat)(nil),                         // 0: communication.chat.v1.Chat
-	(*Message)(nil),                      // 1: communication.chat.v1.Message
-	(*CreateChatRequest)(nil),            // 2: communication.chat.v1.CreateChatRequest
-	(*CreateChatResponse)(nil),           // 3: communication.chat.v1.CreateChatResponse
-	(*GetChatRequest)(nil),               // 4: communication.chat.v1.GetChatRequest
-	(*GetChatResponse)(nil),              // 5: communication.chat.v1.GetChatResponse
-	(*GetUserChatsRequest)(nil),          // 6: communication.chat.v1.GetUserChatsRequest
-	(*GetUserChatsResponse)(nil),         // 7: communication.chat.v1.GetUserChatsResponse
-	(*GetOrgChatsRequest)(nil),           // 8: communication.chat.v1.GetOrgChatsRequest
-	(*GetOrgChatsResponse)(nil),          // 9: communication.chat.v1.GetOrgChatsResponse
-	(*SendMessageRequest)(nil),           // 10: communication.chat.v1.SendMessageRequest
-	(*SendMessageResponse)(nil),          // 11: communication.chat.v1.SendMessageResponse
-	(*GetMessagesRequest)(nil),           // 12: communication.chat.v1.GetMessagesRequest
-	(*GetMessagesResponse)(nil),          // 13: communication.chat.v1.GetMessagesResponse
-	(*MarkAsReadRequest)(nil),            // 14: communication.chat.v1.MarkAsReadRequest
-	(*MarkAsReadResponse)(nil),           // 15: communication.chat.v1.MarkAsReadResponse
-	(*AdminGetUserChatsRequest)(nil),     // 16: communication.chat.v1.AdminGetUserChatsRequest
-	(*AdminGetUserChatsResponse)(nil),    // 17: communication.chat.v1.AdminGetUserChatsResponse
-	(*AdminGetChatMessagesRequest)(nil),  // 18: communication.chat.v1.AdminGetChatMessagesRequest
-	(*AdminGetChatMessagesResponse)(nil), // 19: communication.chat.v1.AdminGetChatMessagesResponse
-	(*timestamppb.Timestamp)(nil),        // 20: google.protobuf.Timestamp
+	(ChatContextType)(0),                 // 0: communication.chat.v1.ChatContextType
+	(*Chat)(nil),                         // 1: communication.chat.v1.Chat
+	(*Message)(nil),                      // 2: communication.chat.v1.Message
+	(*CreateChatRequest)(nil),            // 3: communication.chat.v1.CreateChatRequest
+	(*CreateChatResponse)(nil),           // 4: communication.chat.v1.CreateChatResponse
+	(*GetChatRequest)(nil),               // 5: communication.chat.v1.GetChatRequest
+	(*GetChatResponse)(nil),              // 6: communication.chat.v1.GetChatResponse
+	(*GetUserChatsRequest)(nil),          // 7: communication.chat.v1.GetUserChatsRequest
+	(*GetUserChatsResponse)(nil),         // 8: communication.chat.v1.GetUserChatsResponse
+	(*GetOrgChatsRequest)(nil),           // 9: communication.chat.v1.GetOrgChatsRequest
+	(*GetOrgChatsResponse)(nil),          // 10: communication.chat.v1.GetOrgChatsResponse
+	(*SendMessageRequest)(nil),           // 11: communication.chat.v1.SendMessageRequest
+	(*SendMessageResponse)(nil),          // 12: communication.chat.v1.SendMessageResponse
+	(*GetMessagesRequest)(nil),           // 13: communication.chat.v1.GetMessagesRequest
+	(*GetMessagesResponse)(nil),          // 14: communication.chat.v1.GetMessagesResponse
+	(*MarkAsReadRequest)(nil),            // 15: communication.chat.v1.MarkAsReadRequest
+	(*MarkAsReadResponse)(nil),           // 16: communication.chat.v1.MarkAsReadResponse
+	(*AdminGetUserChatsRequest)(nil),     // 17: communication.chat.v1.AdminGetUserChatsRequest
+	(*AdminGetUserChatsResponse)(nil),    // 18: communication.chat.v1.AdminGetUserChatsResponse
+	(*AdminGetChatMessagesRequest)(nil),  // 19: communication.chat.v1.AdminGetChatMessagesRequest
+	(*AdminGetChatMessagesResponse)(nil), // 20: communication.chat.v1.AdminGetChatMessagesResponse
+	(*timestamppb.Timestamp)(nil),        // 21: google.protobuf.Timestamp
 }
 var file_communication_chat_chat_proto_depIdxs = []int32{
-	1,  // 0: communication.chat.v1.Chat.last_message:type_name -> communication.chat.v1.Message
-	20, // 1: communication.chat.v1.Chat.created_at:type_name -> google.protobuf.Timestamp
-	20, // 2: communication.chat.v1.Chat.updated_at:type_name -> google.protobuf.Timestamp
-	20, // 3: communication.chat.v1.Message.created_at:type_name -> google.protobuf.Timestamp
-	0,  // 4: communication.chat.v1.CreateChatResponse.chat:type_name -> communication.chat.v1.Chat
-	0,  // 5: communication.chat.v1.GetChatResponse.chat:type_name -> communication.chat.v1.Chat
-	0,  // 6: communication.chat.v1.GetUserChatsResponse.chats:type_name -> communication.chat.v1.Chat
-	0,  // 7: communication.chat.v1.GetOrgChatsResponse.chats:type_name -> communication.chat.v1.Chat
-	1,  // 8: communication.chat.v1.SendMessageResponse.message:type_name -> communication.chat.v1.Message
-	1,  // 9: communication.chat.v1.GetMessagesResponse.messages:type_name -> communication.chat.v1.Message
-	0,  // 10: communication.chat.v1.AdminGetUserChatsResponse.chats:type_name -> communication.chat.v1.Chat
-	1,  // 11: communication.chat.v1.AdminGetChatMessagesResponse.messages:type_name -> communication.chat.v1.Message
-	2,  // 12: communication.chat.v1.ChatService.CreateChat:input_type -> communication.chat.v1.CreateChatRequest
-	4,  // 13: communication.chat.v1.ChatService.GetChat:input_type -> communication.chat.v1.GetChatRequest
-	6,  // 14: communication.chat.v1.ChatService.GetUserChats:input_type -> communication.chat.v1.GetUserChatsRequest
-	8,  // 15: communication.chat.v1.ChatService.GetOrgChats:input_type -> communication.chat.v1.GetOrgChatsRequest
-	10, // 16: communication.chat.v1.ChatService.SendMessage:input_type -> communication.chat.v1.SendMessageRequest
-	12, // 17: communication.chat.v1.ChatService.GetMessages:input_type -> communication.chat.v1.GetMessagesRequest
-	14, // 18: communication.chat.v1.ChatService.MarkAsRead:input_type -> communication.chat.v1.MarkAsReadRequest
-	16, // 19: communication.chat.v1.AdminChatService.AdminGetUserChats:input_type -> communication.chat.v1.AdminGetUserChatsRequest
-	18, // 20: communication.chat.v1.AdminChatService.AdminGetChatMessages:input_type -> communication.chat.v1.AdminGetChatMessagesRequest
-	3,  // 21: communication.chat.v1.ChatService.CreateChat:output_type -> communication.chat.v1.CreateChatResponse
-	5,  // 22: communication.chat.v1.ChatService.GetChat:output_type -> communication.chat.v1.GetChatResponse
-	7,  // 23: communication.chat.v1.ChatService.GetUserChats:output_type -> communication.chat.v1.GetUserChatsResponse
-	9,  // 24: communication.chat.v1.ChatService.GetOrgChats:output_type -> communication.chat.v1.GetOrgChatsResponse
-	11, // 25: communication.chat.v1.ChatService.SendMessage:output_type -> communication.chat.v1.SendMessageResponse
-	13, // 26: communication.chat.v1.ChatService.GetMessages:output_type -> communication.chat.v1.GetMessagesResponse
-	15, // 27: communication.chat.v1.ChatService.MarkAsRead:output_type -> communication.chat.v1.MarkAsReadResponse
-	17, // 28: communication.chat.v1.AdminChatService.AdminGetUserChats:output_type -> communication.chat.v1.AdminGetUserChatsResponse
-	19, // 29: communication.chat.v1.AdminChatService.AdminGetChatMessages:output_type -> communication.chat.v1.AdminGetChatMessagesResponse
-	21, // [21:30] is the sub-list for method output_type
-	12, // [12:21] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	0,  // 0: communication.chat.v1.Chat.context_type:type_name -> communication.chat.v1.ChatContextType
+	2,  // 1: communication.chat.v1.Chat.last_message:type_name -> communication.chat.v1.Message
+	21, // 2: communication.chat.v1.Chat.created_at:type_name -> google.protobuf.Timestamp
+	21, // 3: communication.chat.v1.Chat.updated_at:type_name -> google.protobuf.Timestamp
+	21, // 4: communication.chat.v1.Message.created_at:type_name -> google.protobuf.Timestamp
+	0,  // 5: communication.chat.v1.CreateChatRequest.context_type:type_name -> communication.chat.v1.ChatContextType
+	1,  // 6: communication.chat.v1.CreateChatResponse.chat:type_name -> communication.chat.v1.Chat
+	1,  // 7: communication.chat.v1.GetChatResponse.chat:type_name -> communication.chat.v1.Chat
+	1,  // 8: communication.chat.v1.GetUserChatsResponse.chats:type_name -> communication.chat.v1.Chat
+	1,  // 9: communication.chat.v1.GetOrgChatsResponse.chats:type_name -> communication.chat.v1.Chat
+	2,  // 10: communication.chat.v1.SendMessageResponse.message:type_name -> communication.chat.v1.Message
+	2,  // 11: communication.chat.v1.GetMessagesResponse.messages:type_name -> communication.chat.v1.Message
+	1,  // 12: communication.chat.v1.AdminGetUserChatsResponse.chats:type_name -> communication.chat.v1.Chat
+	2,  // 13: communication.chat.v1.AdminGetChatMessagesResponse.messages:type_name -> communication.chat.v1.Message
+	3,  // 14: communication.chat.v1.ChatService.CreateChat:input_type -> communication.chat.v1.CreateChatRequest
+	5,  // 15: communication.chat.v1.ChatService.GetChat:input_type -> communication.chat.v1.GetChatRequest
+	7,  // 16: communication.chat.v1.ChatService.GetUserChats:input_type -> communication.chat.v1.GetUserChatsRequest
+	9,  // 17: communication.chat.v1.ChatService.GetOrgChats:input_type -> communication.chat.v1.GetOrgChatsRequest
+	11, // 18: communication.chat.v1.ChatService.SendMessage:input_type -> communication.chat.v1.SendMessageRequest
+	13, // 19: communication.chat.v1.ChatService.GetMessages:input_type -> communication.chat.v1.GetMessagesRequest
+	15, // 20: communication.chat.v1.ChatService.MarkAsRead:input_type -> communication.chat.v1.MarkAsReadRequest
+	17, // 21: communication.chat.v1.AdminChatService.AdminGetUserChats:input_type -> communication.chat.v1.AdminGetUserChatsRequest
+	19, // 22: communication.chat.v1.AdminChatService.AdminGetChatMessages:input_type -> communication.chat.v1.AdminGetChatMessagesRequest
+	4,  // 23: communication.chat.v1.ChatService.CreateChat:output_type -> communication.chat.v1.CreateChatResponse
+	6,  // 24: communication.chat.v1.ChatService.GetChat:output_type -> communication.chat.v1.GetChatResponse
+	8,  // 25: communication.chat.v1.ChatService.GetUserChats:output_type -> communication.chat.v1.GetUserChatsResponse
+	10, // 26: communication.chat.v1.ChatService.GetOrgChats:output_type -> communication.chat.v1.GetOrgChatsResponse
+	12, // 27: communication.chat.v1.ChatService.SendMessage:output_type -> communication.chat.v1.SendMessageResponse
+	14, // 28: communication.chat.v1.ChatService.GetMessages:output_type -> communication.chat.v1.GetMessagesResponse
+	16, // 29: communication.chat.v1.ChatService.MarkAsRead:output_type -> communication.chat.v1.MarkAsReadResponse
+	18, // 30: communication.chat.v1.AdminChatService.AdminGetUserChats:output_type -> communication.chat.v1.AdminGetUserChatsResponse
+	20, // 31: communication.chat.v1.AdminChatService.AdminGetChatMessages:output_type -> communication.chat.v1.AdminGetChatMessagesResponse
+	23, // [23:32] is the sub-list for method output_type
+	14, // [14:23] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_communication_chat_chat_proto_init() }
@@ -1432,13 +1520,14 @@ func file_communication_chat_chat_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_communication_chat_chat_proto_rawDesc), len(file_communication_chat_chat_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   2,
 		},
 		GoTypes:           file_communication_chat_chat_proto_goTypes,
 		DependencyIndexes: file_communication_chat_chat_proto_depIdxs,
+		EnumInfos:         file_communication_chat_chat_proto_enumTypes,
 		MessageInfos:      file_communication_chat_chat_proto_msgTypes,
 	}.Build()
 	File_communication_chat_chat_proto = out.File
