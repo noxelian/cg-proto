@@ -129,6 +129,7 @@ enum PlatformRole {
   PLATFORM_ROLE_SALES_MANAGER = 5;     // Sales manager
   PLATFORM_ROLE_RECRUITER = 6;         // Recruiter
   PLATFORM_ROLE_AUTOBODY_MANAGER = 7;  // Autobody manager
+  PLATFORM_ROLE_HEAD_OF_SALES = 8;     // Head of sales — pipeline-scoped analytics viewer (read-only on foreign deals)
 }
 
 message User {

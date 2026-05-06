@@ -33,6 +33,7 @@ const (
 	PlatformRole_PLATFORM_ROLE_SALES_MANAGER    PlatformRole = 5 // Sales manager
 	PlatformRole_PLATFORM_ROLE_RECRUITER        PlatformRole = 6 // Recruiter
 	PlatformRole_PLATFORM_ROLE_AUTOBODY_MANAGER PlatformRole = 7 // Autobody manager
+	PlatformRole_PLATFORM_ROLE_HEAD_OF_SALES    PlatformRole = 8 // Head of sales — pipeline-scoped analytics viewer (read-only on foreign deals)
 )
 
 // Enum value maps for PlatformRole.
@@ -46,6 +47,7 @@ var (
 		5: "PLATFORM_ROLE_SALES_MANAGER",
 		6: "PLATFORM_ROLE_RECRUITER",
 		7: "PLATFORM_ROLE_AUTOBODY_MANAGER",
+		8: "PLATFORM_ROLE_HEAD_OF_SALES",
 	}
 	PlatformRole_value = map[string]int32{
 		"PLATFORM_ROLE_UNSPECIFIED":      0,
@@ -56,6 +58,7 @@ var (
 		"PLATFORM_ROLE_SALES_MANAGER":    5,
 		"PLATFORM_ROLE_RECRUITER":        6,
 		"PLATFORM_ROLE_AUTOBODY_MANAGER": 7,
+		"PLATFORM_ROLE_HEAD_OF_SALES":    8,
 	}
 )
 
@@ -4681,7 +4684,7 @@ const file_users_user_user_proto_rawDesc = "" +
 	"is_primary\x18\t \x01(\bR\tisPrimary\x129\n" +
 	"\n" +
 	"created_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt*\x85\x02\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt*\xa6\x02\n" +
 	"\fPlatformRole\x12\x1d\n" +
 	"\x19PLATFORM_ROLE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16PLATFORM_ROLE_MECHANIC\x10\x01\x12\x1e\n" +
@@ -4690,7 +4693,8 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x13PLATFORM_ROLE_ADMIN\x10\x04\x12\x1f\n" +
 	"\x1bPLATFORM_ROLE_SALES_MANAGER\x10\x05\x12\x1b\n" +
 	"\x17PLATFORM_ROLE_RECRUITER\x10\x06\x12\"\n" +
-	"\x1ePLATFORM_ROLE_AUTOBODY_MANAGER\x10\a2\xbe\x18\n" +
+	"\x1ePLATFORM_ROLE_AUTOBODY_MANAGER\x10\a\x12\x1f\n" +
+	"\x1bPLATFORM_ROLE_HEAD_OF_SALES\x10\b2\xbe\x18\n" +
 	"\vUserService\x12Q\n" +
 	"\n" +
 	"GetProfile\x12 .users.user.v1.GetProfileRequest\x1a!.users.user.v1.GetProfileResponse\x12Z\n" +
