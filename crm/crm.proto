@@ -1649,6 +1649,12 @@ message GetDealVolumeResponse {
   double lost_value  = 6;
   int64  total_count = 7;
   double total_value = 8;
+  // Count of distinct deals whose assigned_to changed (or was first set)
+  // within [date_from, date_to). Driven by field_update activities so it
+  // captures both initial assignment at deal creation and subsequent
+  // reassignments. When user_id filter is set, counts only assignments
+  // TO that user; otherwise org-wide / pipeline-wide.
+  int64  assigned_count = 9;
 }
 
 message GetStageStatsRequest {

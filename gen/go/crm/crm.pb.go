@@ -10297,15 +10297,21 @@ func (x *GetDealVolumeRequest) GetPipelineId() string {
 }
 
 type GetDealVolumeResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	OpenCount     int64                  `protobuf:"varint,1,opt,name=open_count,json=openCount,proto3" json:"open_count,omitempty"`
-	OpenValue     float64                `protobuf:"fixed64,2,opt,name=open_value,json=openValue,proto3" json:"open_value,omitempty"`
-	WonCount      int64                  `protobuf:"varint,3,opt,name=won_count,json=wonCount,proto3" json:"won_count,omitempty"`
-	WonValue      float64                `protobuf:"fixed64,4,opt,name=won_value,json=wonValue,proto3" json:"won_value,omitempty"`
-	LostCount     int64                  `protobuf:"varint,5,opt,name=lost_count,json=lostCount,proto3" json:"lost_count,omitempty"`
-	LostValue     float64                `protobuf:"fixed64,6,opt,name=lost_value,json=lostValue,proto3" json:"lost_value,omitempty"`
-	TotalCount    int64                  `protobuf:"varint,7,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
-	TotalValue    float64                `protobuf:"fixed64,8,opt,name=total_value,json=totalValue,proto3" json:"total_value,omitempty"`
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	OpenCount  int64                  `protobuf:"varint,1,opt,name=open_count,json=openCount,proto3" json:"open_count,omitempty"`
+	OpenValue  float64                `protobuf:"fixed64,2,opt,name=open_value,json=openValue,proto3" json:"open_value,omitempty"`
+	WonCount   int64                  `protobuf:"varint,3,opt,name=won_count,json=wonCount,proto3" json:"won_count,omitempty"`
+	WonValue   float64                `protobuf:"fixed64,4,opt,name=won_value,json=wonValue,proto3" json:"won_value,omitempty"`
+	LostCount  int64                  `protobuf:"varint,5,opt,name=lost_count,json=lostCount,proto3" json:"lost_count,omitempty"`
+	LostValue  float64                `protobuf:"fixed64,6,opt,name=lost_value,json=lostValue,proto3" json:"lost_value,omitempty"`
+	TotalCount int64                  `protobuf:"varint,7,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	TotalValue float64                `protobuf:"fixed64,8,opt,name=total_value,json=totalValue,proto3" json:"total_value,omitempty"`
+	// Count of distinct deals whose assigned_to changed (or was first set)
+	// within [date_from, date_to). Driven by field_update activities so it
+	// captures both initial assignment at deal creation and subsequent
+	// reassignments. When user_id filter is set, counts only assignments
+	// TO that user; otherwise org-wide / pipeline-wide.
+	AssignedCount int64 `protobuf:"varint,9,opt,name=assigned_count,json=assignedCount,proto3" json:"assigned_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -10392,6 +10398,13 @@ func (x *GetDealVolumeResponse) GetTotalCount() int64 {
 func (x *GetDealVolumeResponse) GetTotalValue() float64 {
 	if x != nil {
 		return x.TotalValue
+	}
+	return 0
+}
+
+func (x *GetDealVolumeResponse) GetAssignedCount() int64 {
+	if x != nil {
+		return x.AssignedCount
 	}
 	return 0
 }
@@ -19803,7 +19816,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\adate_to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x06dateTo\x12\x17\n" +
 	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1f\n" +
 	"\vpipeline_id\x18\x05 \x01(\tR\n" +
-	"pipelineId\"\x8f\x02\n" +
+	"pipelineId\"\xb6\x02\n" +
 	"\x15GetDealVolumeResponse\x12\x1d\n" +
 	"\n" +
 	"open_count\x18\x01 \x01(\x03R\topenCount\x12\x1d\n" +
@@ -19818,7 +19831,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\vtotal_count\x18\a \x01(\x03R\n" +
 	"totalCount\x12\x1f\n" +
 	"\vtotal_value\x18\b \x01(\x01R\n" +
-	"totalValue\"\x81\x01\n" +
+	"totalValue\x12%\n" +
+	"\x0eassigned_count\x18\t \x01(\x03R\rassignedCount\"\x81\x01\n" +
 	"\x14GetStageStatsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
