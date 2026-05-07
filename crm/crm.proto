@@ -298,7 +298,9 @@ message Pipeline {
   int64  created_by      = 7;
   google.protobuf.Timestamp created_at = 8;
   google.protobuf.Timestamp updated_at = 9;
-  repeated Stage stages  = 10;
+  repeated Stage   stages  = 10;
+  // Per-pipeline deal source options. Empty = no source selector shown in UI.
+  repeated string sources = 11;
 }
 
 message Stage {
@@ -401,10 +403,13 @@ message RemovePipelineMemberResponse {
 }
 
 message UpdatePipelineRequest {
-  string organization_id = 1;
-  string id              = 2;
-  string name            = 3;
-  string description     = 4;
+  string organization_id  = 1;
+  string id               = 2;
+  string name             = 3;
+  string description      = 4;
+  // When set, replaces the pipeline's sources list entirely.
+  // Send an empty list to clear all sources.
+  repeated string sources = 5;
 }
 
 message UpdatePipelineResponse {

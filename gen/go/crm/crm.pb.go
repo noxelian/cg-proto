@@ -194,8 +194,10 @@ type Pipeline struct {
 	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt      *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Stages         []*Stage               `protobuf:"bytes,10,rep,name=stages,proto3" json:"stages,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Per-pipeline deal source options. Empty = no source selector shown in UI.
+	Sources       []string `protobuf:"bytes,11,rep,name=sources,proto3" json:"sources,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Pipeline) Reset() {
@@ -294,6 +296,13 @@ func (x *Pipeline) GetUpdatedAt() *timestamppb.Timestamp {
 func (x *Pipeline) GetStages() []*Stage {
 	if x != nil {
 		return x.Stages
+	}
+	return nil
+}
+
+func (x *Pipeline) GetSources() []string {
+	if x != nil {
+		return x.Sources
 	}
 	return nil
 }
@@ -1152,8 +1161,11 @@ type UpdatePipelineRequest struct {
 	Id             string                 `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 	Name           string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Description    string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// When set, replaces the pipeline's sources list entirely.
+	// Send an empty list to clear all sources.
+	Sources       []string `protobuf:"bytes,5,rep,name=sources,proto3" json:"sources,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdatePipelineRequest) Reset() {
@@ -1212,6 +1224,13 @@ func (x *UpdatePipelineRequest) GetDescription() string {
 		return x.Description
 	}
 	return ""
+}
+
+func (x *UpdatePipelineRequest) GetSources() []string {
+	if x != nil {
+		return x.Sources
+	}
+	return nil
 }
 
 type UpdatePipelineResponse struct {
@@ -19977,7 +19996,7 @@ var File_crm_crm_proto protoreflect.FileDescriptor
 
 const file_crm_crm_proto_rawDesc = "" +
 	"\n" +
-	"\rcrm/crm.proto\x12\x06crm.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xf5\x02\n" +
+	"\rcrm/crm.proto\x12\x06crm.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/protobuf/struct.proto\"\x8f\x03\n" +
 	"\bPipeline\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x12\n" +
@@ -19994,7 +20013,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12%\n" +
 	"\x06stages\x18\n" +
-	" \x03(\v2\r.crm.v1.StageR\x06stages\"\xb6\x04\n" +
+	" \x03(\v2\r.crm.v1.StageR\x06stages\x12\x18\n" +
+	"\asources\x18\v \x03(\tR\asources\"\xb6\x04\n" +
 	"\x05Stage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -20058,12 +20078,13 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
 	"pipelineId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\"\x1e\n" +
-	"\x1cRemovePipelineMemberResponse\"\x86\x01\n" +
+	"\x1cRemovePipelineMemberResponse\"\xa0\x01\n" +
 	"\x15UpdatePipelineRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x04 \x01(\tR\vdescription\"F\n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x18\n" +
+	"\asources\x18\x05 \x03(\tR\asources\"F\n" +
 	"\x16UpdatePipelineResponse\x12,\n" +
 	"\bpipeline\x18\x01 \x01(\v2\x10.crm.v1.PipelineR\bpipeline\"Q\n" +
 	"\x16ArchivePipelineRequest\x12'\n" +
