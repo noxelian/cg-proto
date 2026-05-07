@@ -19,38 +19,39 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserService_GetProfile_FullMethodName               = "/users.user.v1.UserService/GetProfile"
-	UserService_UpdateProfile_FullMethodName            = "/users.user.v1.UserService/UpdateProfile"
-	UserService_GetUserByID_FullMethodName              = "/users.user.v1.UserService/GetUserByID"
-	UserService_GetUserByPhone_FullMethodName           = "/users.user.v1.UserService/GetUserByPhone"
-	UserService_CreateUser_FullMethodName               = "/users.user.v1.UserService/CreateUser"
-	UserService_GetUsersByIDs_FullMethodName            = "/users.user.v1.UserService/GetUsersByIDs"
-	UserService_GetUsersByPhones_FullMethodName         = "/users.user.v1.UserService/GetUsersByPhones"
-	UserService_FindOrCreateByPhone_FullMethodName      = "/users.user.v1.UserService/FindOrCreateByPhone"
-	UserService_GetSettings_FullMethodName              = "/users.user.v1.UserService/GetSettings"
-	UserService_UpdateSettings_FullMethodName           = "/users.user.v1.UserService/UpdateSettings"
-	UserService_RegisterDevice_FullMethodName           = "/users.user.v1.UserService/RegisterDevice"
-	UserService_UnregisterDevice_FullMethodName         = "/users.user.v1.UserService/UnregisterDevice"
-	UserService_GetDevices_FullMethodName               = "/users.user.v1.UserService/GetDevices"
-	UserService_DeleteAccount_FullMethodName            = "/users.user.v1.UserService/DeleteAccount"
-	UserService_ListUsers_FullMethodName                = "/users.user.v1.UserService/ListUsers"
-	UserService_SetPlatformRoles_FullMethodName         = "/users.user.v1.UserService/SetPlatformRoles"
-	UserService_GetPlatformRoles_FullMethodName         = "/users.user.v1.UserService/GetPlatformRoles"
-	UserService_CheckPlatformRoles_FullMethodName       = "/users.user.v1.UserService/CheckPlatformRoles"
-	UserService_SetPlatformOrgAccess_FullMethodName     = "/users.user.v1.UserService/SetPlatformOrgAccess"
-	UserService_GetPlatformOrgAccess_FullMethodName     = "/users.user.v1.UserService/GetPlatformOrgAccess"
-	UserService_ListUsersByPlatformRoles_FullMethodName = "/users.user.v1.UserService/ListUsersByPlatformRoles"
-	UserService_ListPhones_FullMethodName               = "/users.user.v1.UserService/ListPhones"
-	UserService_AddPhone_FullMethodName                 = "/users.user.v1.UserService/AddPhone"
-	UserService_RemovePhone_FullMethodName              = "/users.user.v1.UserService/RemovePhone"
-	UserService_SetPrimaryPhone_FullMethodName          = "/users.user.v1.UserService/SetPrimaryPhone"
-	UserService_RelabelPhone_FullMethodName             = "/users.user.v1.UserService/RelabelPhone"
-	UserService_ListPlatformRoleDefs_FullMethodName     = "/users.user.v1.UserService/ListPlatformRoleDefs"
-	UserService_GetPlatformRoleDef_FullMethodName       = "/users.user.v1.UserService/GetPlatformRoleDef"
-	UserService_CreatePlatformRoleDef_FullMethodName    = "/users.user.v1.UserService/CreatePlatformRoleDef"
-	UserService_UpdatePlatformRoleDef_FullMethodName    = "/users.user.v1.UserService/UpdatePlatformRoleDef"
-	UserService_DeletePlatformRoleDef_FullMethodName    = "/users.user.v1.UserService/DeletePlatformRoleDef"
-	UserService_ListModules_FullMethodName              = "/users.user.v1.UserService/ListModules"
+	UserService_GetProfile_FullMethodName                = "/users.user.v1.UserService/GetProfile"
+	UserService_UpdateProfile_FullMethodName             = "/users.user.v1.UserService/UpdateProfile"
+	UserService_GetUserByID_FullMethodName               = "/users.user.v1.UserService/GetUserByID"
+	UserService_GetUserByPhone_FullMethodName            = "/users.user.v1.UserService/GetUserByPhone"
+	UserService_CreateUser_FullMethodName                = "/users.user.v1.UserService/CreateUser"
+	UserService_GetUsersByIDs_FullMethodName             = "/users.user.v1.UserService/GetUsersByIDs"
+	UserService_GetUsersByPhones_FullMethodName          = "/users.user.v1.UserService/GetUsersByPhones"
+	UserService_FindOrCreateByPhone_FullMethodName       = "/users.user.v1.UserService/FindOrCreateByPhone"
+	UserService_FindOrCreateByInstagramID_FullMethodName = "/users.user.v1.UserService/FindOrCreateByInstagramID"
+	UserService_GetSettings_FullMethodName               = "/users.user.v1.UserService/GetSettings"
+	UserService_UpdateSettings_FullMethodName            = "/users.user.v1.UserService/UpdateSettings"
+	UserService_RegisterDevice_FullMethodName            = "/users.user.v1.UserService/RegisterDevice"
+	UserService_UnregisterDevice_FullMethodName          = "/users.user.v1.UserService/UnregisterDevice"
+	UserService_GetDevices_FullMethodName                = "/users.user.v1.UserService/GetDevices"
+	UserService_DeleteAccount_FullMethodName             = "/users.user.v1.UserService/DeleteAccount"
+	UserService_ListUsers_FullMethodName                 = "/users.user.v1.UserService/ListUsers"
+	UserService_SetPlatformRoles_FullMethodName          = "/users.user.v1.UserService/SetPlatformRoles"
+	UserService_GetPlatformRoles_FullMethodName          = "/users.user.v1.UserService/GetPlatformRoles"
+	UserService_CheckPlatformRoles_FullMethodName        = "/users.user.v1.UserService/CheckPlatformRoles"
+	UserService_SetPlatformOrgAccess_FullMethodName      = "/users.user.v1.UserService/SetPlatformOrgAccess"
+	UserService_GetPlatformOrgAccess_FullMethodName      = "/users.user.v1.UserService/GetPlatformOrgAccess"
+	UserService_ListUsersByPlatformRoles_FullMethodName  = "/users.user.v1.UserService/ListUsersByPlatformRoles"
+	UserService_ListPhones_FullMethodName                = "/users.user.v1.UserService/ListPhones"
+	UserService_AddPhone_FullMethodName                  = "/users.user.v1.UserService/AddPhone"
+	UserService_RemovePhone_FullMethodName               = "/users.user.v1.UserService/RemovePhone"
+	UserService_SetPrimaryPhone_FullMethodName           = "/users.user.v1.UserService/SetPrimaryPhone"
+	UserService_RelabelPhone_FullMethodName              = "/users.user.v1.UserService/RelabelPhone"
+	UserService_ListPlatformRoleDefs_FullMethodName      = "/users.user.v1.UserService/ListPlatformRoleDefs"
+	UserService_GetPlatformRoleDef_FullMethodName        = "/users.user.v1.UserService/GetPlatformRoleDef"
+	UserService_CreatePlatformRoleDef_FullMethodName     = "/users.user.v1.UserService/CreatePlatformRoleDef"
+	UserService_UpdatePlatformRoleDef_FullMethodName     = "/users.user.v1.UserService/UpdatePlatformRoleDef"
+	UserService_DeletePlatformRoleDef_FullMethodName     = "/users.user.v1.UserService/DeletePlatformRoleDef"
+	UserService_ListModules_FullMethodName               = "/users.user.v1.UserService/ListModules"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -76,6 +77,10 @@ type UserServiceClient interface {
 	GetUsersByPhones(ctx context.Context, in *GetUsersByPhonesRequest, opts ...grpc.CallOption) (*GetUsersByPhonesResponse, error)
 	// FindOrCreateByPhone atomically finds user by phone or creates minimal record (for sync service)
 	FindOrCreateByPhone(ctx context.Context, in *FindOrCreateByPhoneRequest, opts ...grpc.CallOption) (*FindOrCreateByPhoneResponse, error)
+	// FindOrCreateByInstagramID atomically finds user by instagram_id or creates minimal record.
+	// Used by Instagram Direct AI to resolve the same contact across sessions.
+	// If instagram_username is non-empty, it is always written (preserves a previously-stored handle).
+	FindOrCreateByInstagramID(ctx context.Context, in *FindOrCreateByInstagramIDRequest, opts ...grpc.CallOption) (*FindOrCreateByInstagramIDResponse, error)
 	// GetSettings returns user notification settings
 	GetSettings(ctx context.Context, in *GetSettingsRequest, opts ...grpc.CallOption) (*GetSettingsResponse, error)
 	// UpdateSettings updates user notification settings
@@ -210,6 +215,16 @@ func (c *userServiceClient) FindOrCreateByPhone(ctx context.Context, in *FindOrC
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(FindOrCreateByPhoneResponse)
 	err := c.cc.Invoke(ctx, UserService_FindOrCreateByPhone_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) FindOrCreateByInstagramID(ctx context.Context, in *FindOrCreateByInstagramIDRequest, opts ...grpc.CallOption) (*FindOrCreateByInstagramIDResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FindOrCreateByInstagramIDResponse)
+	err := c.cc.Invoke(ctx, UserService_FindOrCreateByInstagramID_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -479,6 +494,10 @@ type UserServiceServer interface {
 	GetUsersByPhones(context.Context, *GetUsersByPhonesRequest) (*GetUsersByPhonesResponse, error)
 	// FindOrCreateByPhone atomically finds user by phone or creates minimal record (for sync service)
 	FindOrCreateByPhone(context.Context, *FindOrCreateByPhoneRequest) (*FindOrCreateByPhoneResponse, error)
+	// FindOrCreateByInstagramID atomically finds user by instagram_id or creates minimal record.
+	// Used by Instagram Direct AI to resolve the same contact across sessions.
+	// If instagram_username is non-empty, it is always written (preserves a previously-stored handle).
+	FindOrCreateByInstagramID(context.Context, *FindOrCreateByInstagramIDRequest) (*FindOrCreateByInstagramIDResponse, error)
 	// GetSettings returns user notification settings
 	GetSettings(context.Context, *GetSettingsRequest) (*GetSettingsResponse, error)
 	// UpdateSettings updates user notification settings
@@ -562,6 +581,9 @@ func (UnimplementedUserServiceServer) GetUsersByPhones(context.Context, *GetUser
 }
 func (UnimplementedUserServiceServer) FindOrCreateByPhone(context.Context, *FindOrCreateByPhoneRequest) (*FindOrCreateByPhoneResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method FindOrCreateByPhone not implemented")
+}
+func (UnimplementedUserServiceServer) FindOrCreateByInstagramID(context.Context, *FindOrCreateByInstagramIDRequest) (*FindOrCreateByInstagramIDResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method FindOrCreateByInstagramID not implemented")
 }
 func (UnimplementedUserServiceServer) GetSettings(context.Context, *GetSettingsRequest) (*GetSettingsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSettings not implemented")
@@ -796,6 +818,24 @@ func _UserService_FindOrCreateByPhone_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).FindOrCreateByPhone(ctx, req.(*FindOrCreateByPhoneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_FindOrCreateByInstagramID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindOrCreateByInstagramIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).FindOrCreateByInstagramID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_FindOrCreateByInstagramID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).FindOrCreateByInstagramID(ctx, req.(*FindOrCreateByInstagramIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1270,6 +1310,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindOrCreateByPhone",
 			Handler:    _UserService_FindOrCreateByPhone_Handler,
+		},
+		{
+			MethodName: "FindOrCreateByInstagramID",
+			Handler:    _UserService_FindOrCreateByInstagramID_Handler,
 		},
 		{
 			MethodName: "GetSettings",

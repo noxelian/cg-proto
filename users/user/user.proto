@@ -33,6 +33,11 @@ service UserService {
 
   // FindOrCreateByPhone atomically finds user by phone or creates minimal record (for sync service)
   rpc FindOrCreateByPhone(FindOrCreateByPhoneRequest) returns (FindOrCreateByPhoneResponse);
+
+  // FindOrCreateByInstagramID atomically finds user by instagram_id or creates minimal record.
+  // Used by Instagram Direct AI to resolve the same contact across sessions.
+  // If instagram_username is non-empty, it is always written (preserves a previously-stored handle).
+  rpc FindOrCreateByInstagramID(FindOrCreateByInstagramIDRequest) returns (FindOrCreateByInstagramIDResponse);
   
   // GetSettings returns user notification settings
   rpc GetSettings(GetSettingsRequest) returns (GetSettingsResponse);
@@ -224,6 +229,21 @@ message CreateUserRequest {
 
 message CreateUserResponse {
   User user = 1;
+}
+
+// FindOrCreateByInstagramID (for Instagram Direct AI integration)
+message FindOrCreateByInstagramIDRequest {
+  // instagram_id is required (platform-stable numeric ID or IGSID).
+  string instagram_id       = 1;
+  // instagram_username is optional; when non-empty it is persisted/updated.
+  string instagram_username = 2;
+  // name is optional; only applied to newly-created rows (existing names are preserved).
+  string name               = 3;
+}
+
+message FindOrCreateByInstagramIDResponse {
+  User user    = 1;
+  bool created = 2;
 }
 
 // FindOrCreateByPhone (for sync service)

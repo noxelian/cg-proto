@@ -97,6 +97,9 @@ message BidPart {
   string condition = 7;        // new, used, refurbished
   string availability = 8;     // in_stock, on_order, unavailable
   string status = 9;           // pending, purchased
+  // Source warehouse the supplier ships this position from. UUID of cg-warehouse.warehouses.id.
+  // Empty string means legacy/unspecified (warehouse write-off skipped).
+  string warehouse_id = 10;
 }
 
 // CreateBid
@@ -127,6 +130,8 @@ message CreateBidPartRequest {
   int64 price = 4;
   string condition = 5;
   string availability = 6;
+  // UUID of cg-warehouse.warehouses.id the supplier will ship from.
+  string warehouse_id = 7;
 }
 
 message CreateBidResponse {
