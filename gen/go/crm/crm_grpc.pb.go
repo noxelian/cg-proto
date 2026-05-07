@@ -95,6 +95,7 @@ const (
 	CRMService_GetCloseReasonsBreakdown_FullMethodName           = "/crm.v1.CRMService/GetCloseReasonsBreakdown"
 	CRMService_CreateNote_FullMethodName                         = "/crm.v1.CRMService/CreateNote"
 	CRMService_UpdateNote_FullMethodName                         = "/crm.v1.CRMService/UpdateNote"
+	CRMService_ListNotes_FullMethodName                          = "/crm.v1.CRMService/ListNotes"
 	CRMService_SendWhatsAppMessage_FullMethodName                = "/crm.v1.CRMService/SendWhatsAppMessage"
 	CRMService_SendWhatsAppTemplate_FullMethodName               = "/crm.v1.CRMService/SendWhatsAppTemplate"
 	CRMService_ListWhatsAppMessages_FullMethodName               = "/crm.v1.CRMService/ListWhatsAppMessages"
@@ -141,6 +142,9 @@ const (
 	CRMService_ResolveWAChannelUsers_FullMethodName              = "/crm.v1.CRMService/ResolveWAChannelUsers"
 	CRMService_GetMyNotificationPreferences_FullMethodName       = "/crm.v1.CRMService/GetMyNotificationPreferences"
 	CRMService_UpdateMyNotificationPreferences_FullMethodName    = "/crm.v1.CRMService/UpdateMyNotificationPreferences"
+	CRMService_CreateWazzupUserExtension_FullMethodName          = "/crm.v1.CRMService/CreateWazzupUserExtension"
+	CRMService_ListWazzupUserExtensions_FullMethodName           = "/crm.v1.CRMService/ListWazzupUserExtensions"
+	CRMService_DeleteWazzupUserExtension_FullMethodName          = "/crm.v1.CRMService/DeleteWazzupUserExtension"
 )
 
 // CRMServiceClient is the client API for CRMService service.
@@ -311,6 +315,11 @@ type CRMServiceClient interface {
 	// Notes RPCs
 	CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error)
 	UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error)
+	// Phase 70 D-14: ListNotes returns deal notes with an `authors` side-channel
+	// mapping note.author_id (BIGINT cg-users user_id) → display name. Added in
+	// Phase 70 (no prior ListNotes RPC existed; deal-card UI previously embedded
+	// notes via GetDealActivities which conflates many event types).
+	ListNotes(ctx context.Context, in *ListNotesRequest, opts ...grpc.CallOption) (*ListNotesResponse, error)
 	// WhatsApp messaging RPCs
 	SendWhatsAppMessage(ctx context.Context, in *SendWhatsAppMessageRequest, opts ...grpc.CallOption) (*SendWhatsAppMessageResponse, error)
 	SendWhatsAppTemplate(ctx context.Context, in *SendWhatsAppTemplateRequest, opts ...grpc.CallOption) (*SendWhatsAppTemplateResponse, error)
@@ -392,6 +401,14 @@ type CRMServiceClient interface {
 	// the cg-bff WS broadcaster filter and by the cg-crm-web settings page.
 	GetMyNotificationPreferences(ctx context.Context, in *GetMyNotificationPreferencesRequest, opts ...grpc.CallOption) (*GetMyNotificationPreferencesResponse, error)
 	UpdateMyNotificationPreferences(ctx context.Context, in *UpdateMyNotificationPreferencesRequest, opts ...grpc.CallOption) (*UpdateMyNotificationPreferencesResponse, error)
+	// Phase 70 D-06: admin CRUD for wazzup_user_extensions — maps Wazzup webhook
+	// authorId (the manager identity Wazzup webhooks carry) to a cg-users user_id
+	// so the echo path (manager sends from Wazzup web/desktop, NOT through cg-crm)
+	// can stamp wazzup_messages.sender_user_id at ingest time.
+	// Mirrors telephony_user_extensions admin pattern.
+	CreateWazzupUserExtension(ctx context.Context, in *CreateWazzupUserExtensionRequest, opts ...grpc.CallOption) (*CreateWazzupUserExtensionResponse, error)
+	ListWazzupUserExtensions(ctx context.Context, in *ListWazzupUserExtensionsRequest, opts ...grpc.CallOption) (*ListWazzupUserExtensionsResponse, error)
+	DeleteWazzupUserExtension(ctx context.Context, in *DeleteWazzupUserExtensionRequest, opts ...grpc.CallOption) (*DeleteWazzupUserExtensionResponse, error)
 }
 
 type cRMServiceClient struct {
@@ -1174,6 +1191,16 @@ func (c *cRMServiceClient) UpdateNote(ctx context.Context, in *UpdateNoteRequest
 	return out, nil
 }
 
+func (c *cRMServiceClient) ListNotes(ctx context.Context, in *ListNotesRequest, opts ...grpc.CallOption) (*ListNotesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListNotesResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListNotes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) SendWhatsAppMessage(ctx context.Context, in *SendWhatsAppMessageRequest, opts ...grpc.CallOption) (*SendWhatsAppMessageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SendWhatsAppMessageResponse)
@@ -1634,6 +1661,36 @@ func (c *cRMServiceClient) UpdateMyNotificationPreferences(ctx context.Context, 
 	return out, nil
 }
 
+func (c *cRMServiceClient) CreateWazzupUserExtension(ctx context.Context, in *CreateWazzupUserExtensionRequest, opts ...grpc.CallOption) (*CreateWazzupUserExtensionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateWazzupUserExtensionResponse)
+	err := c.cc.Invoke(ctx, CRMService_CreateWazzupUserExtension_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ListWazzupUserExtensions(ctx context.Context, in *ListWazzupUserExtensionsRequest, opts ...grpc.CallOption) (*ListWazzupUserExtensionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWazzupUserExtensionsResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListWazzupUserExtensions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) DeleteWazzupUserExtension(ctx context.Context, in *DeleteWazzupUserExtensionRequest, opts ...grpc.CallOption) (*DeleteWazzupUserExtensionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteWazzupUserExtensionResponse)
+	err := c.cc.Invoke(ctx, CRMService_DeleteWazzupUserExtension_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CRMServiceServer is the server API for CRMService service.
 // All implementations must embed UnimplementedCRMServiceServer
 // for forward compatibility.
@@ -1802,6 +1859,11 @@ type CRMServiceServer interface {
 	// Notes RPCs
 	CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error)
 	UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error)
+	// Phase 70 D-14: ListNotes returns deal notes with an `authors` side-channel
+	// mapping note.author_id (BIGINT cg-users user_id) → display name. Added in
+	// Phase 70 (no prior ListNotes RPC existed; deal-card UI previously embedded
+	// notes via GetDealActivities which conflates many event types).
+	ListNotes(context.Context, *ListNotesRequest) (*ListNotesResponse, error)
 	// WhatsApp messaging RPCs
 	SendWhatsAppMessage(context.Context, *SendWhatsAppMessageRequest) (*SendWhatsAppMessageResponse, error)
 	SendWhatsAppTemplate(context.Context, *SendWhatsAppTemplateRequest) (*SendWhatsAppTemplateResponse, error)
@@ -1883,6 +1945,14 @@ type CRMServiceServer interface {
 	// the cg-bff WS broadcaster filter and by the cg-crm-web settings page.
 	GetMyNotificationPreferences(context.Context, *GetMyNotificationPreferencesRequest) (*GetMyNotificationPreferencesResponse, error)
 	UpdateMyNotificationPreferences(context.Context, *UpdateMyNotificationPreferencesRequest) (*UpdateMyNotificationPreferencesResponse, error)
+	// Phase 70 D-06: admin CRUD for wazzup_user_extensions — maps Wazzup webhook
+	// authorId (the manager identity Wazzup webhooks carry) to a cg-users user_id
+	// so the echo path (manager sends from Wazzup web/desktop, NOT through cg-crm)
+	// can stamp wazzup_messages.sender_user_id at ingest time.
+	// Mirrors telephony_user_extensions admin pattern.
+	CreateWazzupUserExtension(context.Context, *CreateWazzupUserExtensionRequest) (*CreateWazzupUserExtensionResponse, error)
+	ListWazzupUserExtensions(context.Context, *ListWazzupUserExtensionsRequest) (*ListWazzupUserExtensionsResponse, error)
+	DeleteWazzupUserExtension(context.Context, *DeleteWazzupUserExtensionRequest) (*DeleteWazzupUserExtensionResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
 
@@ -2121,6 +2191,9 @@ func (UnimplementedCRMServiceServer) CreateNote(context.Context, *CreateNoteRequ
 func (UnimplementedCRMServiceServer) UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateNote not implemented")
 }
+func (UnimplementedCRMServiceServer) ListNotes(context.Context, *ListNotesRequest) (*ListNotesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListNotes not implemented")
+}
 func (UnimplementedCRMServiceServer) SendWhatsAppMessage(context.Context, *SendWhatsAppMessageRequest) (*SendWhatsAppMessageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendWhatsAppMessage not implemented")
 }
@@ -2258,6 +2331,15 @@ func (UnimplementedCRMServiceServer) GetMyNotificationPreferences(context.Contex
 }
 func (UnimplementedCRMServiceServer) UpdateMyNotificationPreferences(context.Context, *UpdateMyNotificationPreferencesRequest) (*UpdateMyNotificationPreferencesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateMyNotificationPreferences not implemented")
+}
+func (UnimplementedCRMServiceServer) CreateWazzupUserExtension(context.Context, *CreateWazzupUserExtensionRequest) (*CreateWazzupUserExtensionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateWazzupUserExtension not implemented")
+}
+func (UnimplementedCRMServiceServer) ListWazzupUserExtensions(context.Context, *ListWazzupUserExtensionsRequest) (*ListWazzupUserExtensionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListWazzupUserExtensions not implemented")
+}
+func (UnimplementedCRMServiceServer) DeleteWazzupUserExtension(context.Context, *DeleteWazzupUserExtensionRequest) (*DeleteWazzupUserExtensionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteWazzupUserExtension not implemented")
 }
 func (UnimplementedCRMServiceServer) mustEmbedUnimplementedCRMServiceServer() {}
 func (UnimplementedCRMServiceServer) testEmbeddedByValue()                    {}
@@ -3648,6 +3730,24 @@ func _CRMService_UpdateNote_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_ListNotes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListNotesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListNotes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListNotes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListNotes(ctx, req.(*ListNotesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_SendWhatsAppMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SendWhatsAppMessageRequest)
 	if err := dec(in); err != nil {
@@ -4476,6 +4576,60 @@ func _CRMService_UpdateMyNotificationPreferences_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_CreateWazzupUserExtension_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateWazzupUserExtensionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).CreateWazzupUserExtension(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_CreateWazzupUserExtension_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).CreateWazzupUserExtension(ctx, req.(*CreateWazzupUserExtensionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ListWazzupUserExtensions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWazzupUserExtensionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListWazzupUserExtensions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListWazzupUserExtensions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListWazzupUserExtensions(ctx, req.(*ListWazzupUserExtensionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_DeleteWazzupUserExtension_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteWazzupUserExtensionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).DeleteWazzupUserExtension(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_DeleteWazzupUserExtension_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).DeleteWazzupUserExtension(ctx, req.(*DeleteWazzupUserExtensionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CRMService_ServiceDesc is the grpc.ServiceDesc for CRMService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -4788,6 +4942,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CRMService_UpdateNote_Handler,
 		},
 		{
+			MethodName: "ListNotes",
+			Handler:    _CRMService_ListNotes_Handler,
+		},
+		{
 			MethodName: "SendWhatsAppMessage",
 			Handler:    _CRMService_SendWhatsAppMessage_Handler,
 		},
@@ -4970,6 +5128,18 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateMyNotificationPreferences",
 			Handler:    _CRMService_UpdateMyNotificationPreferences_Handler,
+		},
+		{
+			MethodName: "CreateWazzupUserExtension",
+			Handler:    _CRMService_CreateWazzupUserExtension_Handler,
+		},
+		{
+			MethodName: "ListWazzupUserExtensions",
+			Handler:    _CRMService_ListWazzupUserExtensions_Handler,
+		},
+		{
+			MethodName: "DeleteWazzupUserExtension",
+			Handler:    _CRMService_DeleteWazzupUserExtension_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

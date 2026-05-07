@@ -177,6 +177,11 @@ service CRMService {
   // Notes RPCs
   rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse);
   rpc UpdateNote(UpdateNoteRequest) returns (UpdateNoteResponse);
+  // Phase 70 D-14: ListNotes returns deal notes with an `authors` side-channel
+  // mapping note.author_id (BIGINT cg-users user_id) → display name. Added in
+  // Phase 70 (no prior ListNotes RPC existed; deal-card UI previously embedded
+  // notes via GetDealActivities which conflates many event types).
+  rpc ListNotes(ListNotesRequest) returns (ListNotesResponse);
 
   // WhatsApp messaging RPCs
   rpc SendWhatsAppMessage(SendWhatsAppMessageRequest)     returns (SendWhatsAppMessageResponse);
@@ -272,6 +277,15 @@ service CRMService {
   // the cg-bff WS broadcaster filter and by the cg-crm-web settings page.
   rpc GetMyNotificationPreferences(GetMyNotificationPreferencesRequest) returns (GetMyNotificationPreferencesResponse);
   rpc UpdateMyNotificationPreferences(UpdateMyNotificationPreferencesRequest) returns (UpdateMyNotificationPreferencesResponse);
+
+  // Phase 70 D-06: admin CRUD for wazzup_user_extensions — maps Wazzup webhook
+  // authorId (the manager identity Wazzup webhooks carry) to a cg-users user_id
+  // so the echo path (manager sends from Wazzup web/desktop, NOT through cg-crm)
+  // can stamp wazzup_messages.sender_user_id at ingest time.
+  // Mirrors telephony_user_extensions admin pattern.
+  rpc CreateWazzupUserExtension(CreateWazzupUserExtensionRequest) returns (CreateWazzupUserExtensionResponse);
+  rpc ListWazzupUserExtensions(ListWazzupUserExtensionsRequest)   returns (ListWazzupUserExtensionsResponse);
+  rpc DeleteWazzupUserExtension(DeleteWazzupUserExtensionRequest) returns (DeleteWazzupUserExtensionResponse);
 }
 
 message Pipeline {
@@ -1818,6 +1832,11 @@ message WAMessageProto {
   // to 5 numbers matches). 0 when nobody in the phone book owns the
   // number — same sentinel convention as WAConversationProto.contact_user_id.
   int64  matched_user_id = 13;
+
+  // Phase 70: outbound sender attribution. Resolved from JWT or explicit
+  // override at write time (see SendWhatsAppMessageRequest.sender_user_id).
+  int64  sender_user_id  = 14;  // 0 when unresolved
+  string sender_kind     = 15;  // human|ai_bot|automation|integration
 }
 
 message SendWhatsAppMessageRequest {
@@ -1827,6 +1846,13 @@ message SendWhatsAppMessageRequest {
   string text            = 4;
   string media_url       = 5;  // optional — URL of uploaded media file
   string content_type    = 6;  // optional — "image", "video", "audio", "document"
+
+  // Phase 70: optional sender attribution override.
+  // Default (both unset): cg-crm derives sender from JWT (sender_kind='human').
+  // Override (service callers cg-ai/cg-jobs/cg-workshop): sender_kind = ai_bot|automation|integration.
+  // User JWTs cannot set sender_kind — cg-crm rejects with PermissionDenied.
+  int64  sender_user_id  = 7;  // 0 sentinel = unset
+  string sender_kind     = 8;  // "" = unset; one of human|ai_bot|automation|integration
 }
 
 message SendWhatsAppMessageResponse {
@@ -1847,6 +1873,10 @@ message ListWhatsAppMessagesRequest {
 
 message ListWhatsAppMessagesResponse {
   repeated WAMessageProto messages = 1;
+  // Phase 70: distinct sender_user_ids on this page resolved to display names.
+  // Side-channel keyed by user_id; client matches each row's sender_user_id
+  // (when non-zero) to render the display name.
+  repeated AuthorInfo authors = 2;
 }
 
 message WAConversationProto {
@@ -1913,6 +1943,13 @@ message SendWhatsAppTemplateRequest {
   string template_name   = 4;
   string lang_code       = 5;
   repeated string params = 6;
+
+  // Phase 70: optional sender attribution override.
+  // Default (both unset): cg-crm derives sender from JWT (sender_kind='human').
+  // Override (service callers cg-ai/cg-jobs/cg-workshop): sender_kind = ai_bot|automation|integration.
+  // User JWTs cannot set sender_kind — cg-crm rejects with PermissionDenied.
+  int64  sender_user_id  = 7;
+  string sender_kind     = 8;
 }
 
 message SendWhatsAppTemplateResponse {
@@ -1985,12 +2022,24 @@ message WazzupMessageProto {
   // cg-users user_id whose phone book contains chat_id. 0 when no
   // user in the phone book owns the number.
   int64  matched_user_id = 13;
+
+  // Phase 70: outbound sender attribution. Resolved from JWT or wazzup_user_extensions
+  // mapping (echo path). 0 when unresolved — frontend falls back to author_name.
+  int64  sender_user_id  = 14;
+  string sender_kind     = 15;  // human|ai_bot|automation|integration
 }
 
 message SendWazzupMessageRequest {
   string organization_id = 1;
   string chat_id         = 2;  // destination phone (with or without '+')
   string text            = 3;
+
+  // Phase 70: optional sender attribution override.
+  // Default (both unset): cg-crm derives sender from JWT (sender_kind='human').
+  // Override (service callers cg-ai/cg-jobs/cg-workshop): sender_kind = ai_bot|automation|integration.
+  // User JWTs cannot set sender_kind — cg-crm rejects with PermissionDenied.
+  int64  sender_user_id  = 4;
+  string sender_kind     = 5;
 }
 
 message SendWazzupMessageResponse {
@@ -2006,6 +2055,8 @@ message ListWazzupMessagesRequest {
 
 message ListWazzupMessagesResponse {
   repeated WazzupMessageProto messages = 1;
+  // Phase 70: distinct sender_user_ids on this page resolved to display names.
+  repeated AuthorInfo authors = 2;
 }
 
 message WazzupConversationProto {
@@ -2122,6 +2173,17 @@ message TelephonyCall {
   // outbound: same as src_num (the initiating manager's extension). Used for
   // per-manager call-history filtering.
   string                      answered_by_extension    = 21;
+
+  // --- Phase 70 additions (D-09, D-10, D-13) ---
+  // sender_user_id: outbound initiator (the manager who placed the call).
+  // Resolved from JWT or explicit override at TelephonyOriginate. 0 when unresolved.
+  int64                       sender_user_id           = 22;
+  // sender_kind: taxonomy for outbound caller. one of human|ai_bot|automation|integration.
+  string                      sender_kind              = 23;
+  // answered_by_user_id: resolved from telephony_user_extensions at read time
+  // (D-10/D-13) by joining (organization_id, provider, answered_by_extension).
+  // 0 when unresolved.
+  int64                       answered_by_user_id      = 24;
 }
 
 message TelephonyOriginateRequest {
@@ -2132,6 +2194,13 @@ message TelephonyOriginateRequest {
   optional string contact_id      = 5;
   optional string deal_id         = 6;
   optional string lead_id         = 7;
+
+  // Phase 70: optional sender attribution override.
+  // Default (both unset): cg-crm derives sender from JWT (sender_kind='human').
+  // Override (service callers cg-ai/cg-jobs/cg-workshop): sender_kind = ai_bot|automation|integration.
+  // User JWTs cannot set sender_kind — cg-crm rejects with PermissionDenied.
+  int64  sender_user_id = 8;
+  string sender_kind    = 9;
 }
 
 message TelephonyOriginateResponse {
@@ -2157,6 +2226,9 @@ message TelephonyListCallsRequest {
 message TelephonyListCallsResponse {
   repeated TelephonyCall calls       = 1;
   string                 next_cursor = 2;
+  // Phase 70: distinct user_ids referenced on this page (sender_user_id +
+  // answered_by_user_id) resolved to display names. Side-channel keyed by user_id.
+  repeated AuthorInfo    authors     = 3;
 }
 
 // SIP + WebRTC ephemeral credentials for softphone clients
@@ -2707,3 +2779,74 @@ message UpdateMyNotificationPreferencesRequest {
 message UpdateMyNotificationPreferencesResponse {
   NotificationPreferences preferences = 1;
 }
+
+// ==================== Phase 70: Authorship Attribution ====================
+
+// AuthorInfo is a side-channel author display payload returned alongside list
+// responses (WhatsApp messages, Wazzup messages, telephony calls, notes) to
+// avoid per-row payload duplication. Keyed by user_id; client matches each
+// row's sender_user_id / answered_by_user_id / created_by (when non-zero) to
+// render the display name. Phase 70 D-12/D-13/D-14.
+message AuthorInfo {
+  int64  user_id = 1;
+  string name    = 2;
+  string phone   = 3;  // optional, useful for tooltip
+}
+
+// ---------- Phase 70 D-14: Notes list ----------
+// ListNotes returns notes for a given deal with an `authors` side-channel
+// resolving created_by + edited_by user_ids to display names. Added in Phase
+// 70 to support D-14 ("Added by: {name}") on note cards. Prior to Phase 70
+// notes were surfaced via GetDealActivities (which conflates many event types).
+message ListNotesRequest {
+  string organization_id = 1;
+  string deal_id         = 2;
+  int32  limit           = 3;
+  int32  offset          = 4;
+}
+
+message ListNotesResponse {
+  repeated NoteProto  notes   = 1;
+  // Distinct created_by + edited_by user_ids on this page resolved to display names.
+  repeated AuthorInfo authors = 2;
+}
+
+// ---------- Phase 70 D-06: wazzup_user_extensions admin CRUD ----------
+
+// WazzupUserExtension maps a Wazzup webhook authorId to a cg-users user_id
+// within an organization. Mirrors TelephonyUserExtension shape exactly.
+// channel_id may be empty (org-wide mapping — same Wazzup login on every channel).
+message WazzupUserExtension {
+  string id              = 1;  // UUID
+  string organization_id = 2;
+  int64  user_id         = 3;
+  string channel_id      = 4;  // "" means org-wide mapping (NULL in DB)
+  string wazzup_user_id  = 5;
+  string created_at      = 6;  // RFC3339
+}
+
+message CreateWazzupUserExtensionRequest {
+  string organization_id = 1;
+  int64  user_id         = 2;
+  string channel_id      = 3;  // "" → org-wide
+  string wazzup_user_id  = 4;
+}
+
+message CreateWazzupUserExtensionResponse {
+  WazzupUserExtension extension = 1;
+}
+
+message ListWazzupUserExtensionsRequest {
+  string organization_id = 1;
+}
+
+message ListWazzupUserExtensionsResponse {
+  repeated WazzupUserExtension extensions = 1;
+}
+
+message DeleteWazzupUserExtensionRequest {
+  string organization_id = 1;
+  string id              = 2;
+}
+
+message DeleteWazzupUserExtensionResponse {}
