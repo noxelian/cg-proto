@@ -269,16 +269,19 @@ func (x *Bid) GetUpdatedAt() *timestamppb.Timestamp {
 }
 
 type BidPart struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	BidId         int64                  `protobuf:"varint,2,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
-	PartName      string                 `protobuf:"bytes,3,opt,name=part_name,json=partName,proto3" json:"part_name,omitempty"`
-	PartNumber    string                 `protobuf:"bytes,4,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
-	Quantity      int32                  `protobuf:"varint,5,opt,name=quantity,proto3" json:"quantity,omitempty"`
-	Price         int64                  `protobuf:"varint,6,opt,name=price,proto3" json:"price,omitempty"`
-	Condition     string                 `protobuf:"bytes,7,opt,name=condition,proto3" json:"condition,omitempty"`       // new, used, refurbished
-	Availability  string                 `protobuf:"bytes,8,opt,name=availability,proto3" json:"availability,omitempty"` // in_stock, on_order, unavailable
-	Status        string                 `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`             // pending, purchased
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Id           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BidId        int64                  `protobuf:"varint,2,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
+	PartName     string                 `protobuf:"bytes,3,opt,name=part_name,json=partName,proto3" json:"part_name,omitempty"`
+	PartNumber   string                 `protobuf:"bytes,4,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
+	Quantity     int32                  `protobuf:"varint,5,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	Price        int64                  `protobuf:"varint,6,opt,name=price,proto3" json:"price,omitempty"`
+	Condition    string                 `protobuf:"bytes,7,opt,name=condition,proto3" json:"condition,omitempty"`       // new, used, refurbished
+	Availability string                 `protobuf:"bytes,8,opt,name=availability,proto3" json:"availability,omitempty"` // in_stock, on_order, unavailable
+	Status       string                 `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`             // pending, purchased
+	// Source warehouse the supplier ships this position from. UUID of cg-warehouse.warehouses.id.
+	// Empty string means legacy/unspecified (warehouse write-off skipped).
+	WarehouseId   string `protobuf:"bytes,10,opt,name=warehouse_id,json=warehouseId,proto3" json:"warehouse_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -372,6 +375,13 @@ func (x *BidPart) GetAvailability() string {
 func (x *BidPart) GetStatus() string {
 	if x != nil {
 		return x.Status
+	}
+	return ""
+}
+
+func (x *BidPart) GetWarehouseId() string {
+	if x != nil {
+		return x.WarehouseId
 	}
 	return ""
 }
@@ -497,13 +507,15 @@ func (x *CreateBidRequest) GetSkipPaymentCheck() bool {
 }
 
 type CreateBidPartRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	PartName      string                 `protobuf:"bytes,1,opt,name=part_name,json=partName,proto3" json:"part_name,omitempty"`
-	PartNumber    string                 `protobuf:"bytes,2,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
-	Quantity      int32                  `protobuf:"varint,3,opt,name=quantity,proto3" json:"quantity,omitempty"`
-	Price         int64                  `protobuf:"varint,4,opt,name=price,proto3" json:"price,omitempty"`
-	Condition     string                 `protobuf:"bytes,5,opt,name=condition,proto3" json:"condition,omitempty"`
-	Availability  string                 `protobuf:"bytes,6,opt,name=availability,proto3" json:"availability,omitempty"`
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	PartName     string                 `protobuf:"bytes,1,opt,name=part_name,json=partName,proto3" json:"part_name,omitempty"`
+	PartNumber   string                 `protobuf:"bytes,2,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
+	Quantity     int32                  `protobuf:"varint,3,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	Price        int64                  `protobuf:"varint,4,opt,name=price,proto3" json:"price,omitempty"`
+	Condition    string                 `protobuf:"bytes,5,opt,name=condition,proto3" json:"condition,omitempty"`
+	Availability string                 `protobuf:"bytes,6,opt,name=availability,proto3" json:"availability,omitempty"`
+	// UUID of cg-warehouse.warehouses.id the supplier will ship from.
+	WarehouseId   string `protobuf:"bytes,7,opt,name=warehouse_id,json=warehouseId,proto3" json:"warehouse_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -576,6 +588,13 @@ func (x *CreateBidPartRequest) GetCondition() string {
 func (x *CreateBidPartRequest) GetAvailability() string {
 	if x != nil {
 		return x.Availability
+	}
+	return ""
+}
+
+func (x *CreateBidPartRequest) GetWarehouseId() string {
+	if x != nil {
+		return x.WarehouseId
 	}
 	return ""
 }
@@ -2243,7 +2262,7 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\b\n" +
 	"\x06_priceB\v\n" +
-	"\t_duration\"\xfa\x01\n" +
+	"\t_duration\"\x9d\x02\n" +
 	"\aBidPart\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x15\n" +
 	"\x06bid_id\x18\x02 \x01(\x03R\x05bidId\x12\x1b\n" +
@@ -2254,7 +2273,9 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\x05price\x18\x06 \x01(\x03R\x05price\x12\x1c\n" +
 	"\tcondition\x18\a \x01(\tR\tcondition\x12\"\n" +
 	"\favailability\x18\b \x01(\tR\favailability\x12\x16\n" +
-	"\x06status\x18\t \x01(\tR\x06status\"\x9c\x03\n" +
+	"\x06status\x18\t \x01(\tR\x06status\x12!\n" +
+	"\fwarehouse_id\x18\n" +
+	" \x01(\tR\vwarehouseId\"\x9c\x03\n" +
 	"\x10CreateBidRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12,\n" +
@@ -2269,7 +2290,7 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\x12skip_payment_check\x18\n" +
 	" \x01(\bR\x10skipPaymentCheckB\b\n" +
 	"\x06_priceB\v\n" +
-	"\t_duration\"\xc8\x01\n" +
+	"\t_duration\"\xeb\x01\n" +
 	"\x14CreateBidPartRequest\x12\x1b\n" +
 	"\tpart_name\x18\x01 \x01(\tR\bpartName\x12\x1f\n" +
 	"\vpart_number\x18\x02 \x01(\tR\n" +
@@ -2277,7 +2298,8 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\bquantity\x18\x03 \x01(\x05R\bquantity\x12\x14\n" +
 	"\x05price\x18\x04 \x01(\x03R\x05price\x12\x1c\n" +
 	"\tcondition\x18\x05 \x01(\tR\tcondition\x12\"\n" +
-	"\favailability\x18\x06 \x01(\tR\favailability\";\n" +
+	"\favailability\x18\x06 \x01(\tR\favailability\x12!\n" +
+	"\fwarehouse_id\x18\a \x01(\tR\vwarehouseId\";\n" +
 	"\x11CreateBidResponse\x12&\n" +
 	"\x03bid\x18\x01 \x01(\v2\x14.services.bid.v1.BidR\x03bid\"&\n" +
 	"\rGetBidRequest\x12\x15\n" +
