@@ -24,6 +24,14 @@ service PaymentService {
 
   // === Admin ===
   rpc GetPaymentAuditLog(GetPaymentAuditLogRequest) returns (GetPaymentAuditLogResponse);
+
+  // MarkPaidB2B records an offline (invoice/cash) payment made on behalf
+  // of a legal-entity buyer. Creates a succeeded transaction without
+  // calling a provider; emits payment.events with canonical_event_type
+  // = payment.success so cg-orders cart consumer treats it identically
+  // to B2C online payments. Caller must hold the
+  // `payments:admin_mark_paid` permission (enforced at the handler).
+  rpc MarkPaidB2B(MarkPaidB2BRequest) returns (MarkPaidB2BResponse);
 }
 
 // =============================================
@@ -214,4 +222,34 @@ message GetPaymentAuditLogRequest {
 message GetPaymentAuditLogResponse {
   repeated AuditLogEntry entries = 1;
   int32 total = 2;
+}
+
+// =============================================
+// B2B Mark-Paid (admin-driven offline payments)
+// =============================================
+
+message MarkPaidB2BRequest {
+  // entity_type + entity_id identify the payable resource (e.g.
+  // "marketplace_order"+order_id). Mirrors CreateTransactionRequest so
+  // downstream consumers see the same envelope as B2C events.
+  string entity_type = 1;
+  int64 entity_id = 2;
+  string organization_id = 3;
+  // user_id of the buyer (the legal entity's contact), 0 if not bound.
+  int64 user_id = 4;
+  int64 amount = 5;          // tiyn
+  string currency = 6;       // default KZT
+  string idempotency_key = 7; // typically "{checkout_id}" or "b2b:{order_id}"
+  // payment_method = "invoice" | "cash"
+  string payment_method = 8;
+  string invoice_number = 9;  // optional, required when payment_method=invoice
+  string notes = 10;          // free-form audit note
+}
+
+message MarkPaidB2BResponse {
+  Transaction transaction = 1;
+  // idempotent=true when the request matched an existing succeeded
+  // transaction (replay). The caller can use this to suppress duplicate
+  // side effects on its own side.
+  bool idempotent = 2;
 }

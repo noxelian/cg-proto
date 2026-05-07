@@ -26,6 +26,7 @@ const (
 	PaymentService_HandleIokaWebhook_FullMethodName   = "/payments.payment.v1.PaymentService/HandleIokaWebhook"
 	PaymentService_HandleKaspiCheckPay_FullMethodName = "/payments.payment.v1.PaymentService/HandleKaspiCheckPay"
 	PaymentService_GetPaymentAuditLog_FullMethodName  = "/payments.payment.v1.PaymentService/GetPaymentAuditLog"
+	PaymentService_MarkPaidB2B_FullMethodName         = "/payments.payment.v1.PaymentService/MarkPaidB2B"
 )
 
 // PaymentServiceClient is the client API for PaymentService service.
@@ -47,6 +48,13 @@ type PaymentServiceClient interface {
 	HandleKaspiCheckPay(ctx context.Context, in *HandleKaspiCheckPayRequest, opts ...grpc.CallOption) (*HandleKaspiCheckPayResponse, error)
 	// === Admin ===
 	GetPaymentAuditLog(ctx context.Context, in *GetPaymentAuditLogRequest, opts ...grpc.CallOption) (*GetPaymentAuditLogResponse, error)
+	// MarkPaidB2B records an offline (invoice/cash) payment made on behalf
+	// of a legal-entity buyer. Creates a succeeded transaction without
+	// calling a provider; emits payment.events with canonical_event_type
+	// = payment.success so cg-orders cart consumer treats it identically
+	// to B2C online payments. Caller must hold the
+	// `payments:admin_mark_paid` permission (enforced at the handler).
+	MarkPaidB2B(ctx context.Context, in *MarkPaidB2BRequest, opts ...grpc.CallOption) (*MarkPaidB2BResponse, error)
 }
 
 type paymentServiceClient struct {
@@ -127,6 +135,16 @@ func (c *paymentServiceClient) GetPaymentAuditLog(ctx context.Context, in *GetPa
 	return out, nil
 }
 
+func (c *paymentServiceClient) MarkPaidB2B(ctx context.Context, in *MarkPaidB2BRequest, opts ...grpc.CallOption) (*MarkPaidB2BResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MarkPaidB2BResponse)
+	err := c.cc.Invoke(ctx, PaymentService_MarkPaidB2B_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PaymentServiceServer is the server API for PaymentService service.
 // All implementations must embed UnimplementedPaymentServiceServer
 // for forward compatibility.
@@ -146,6 +164,13 @@ type PaymentServiceServer interface {
 	HandleKaspiCheckPay(context.Context, *HandleKaspiCheckPayRequest) (*HandleKaspiCheckPayResponse, error)
 	// === Admin ===
 	GetPaymentAuditLog(context.Context, *GetPaymentAuditLogRequest) (*GetPaymentAuditLogResponse, error)
+	// MarkPaidB2B records an offline (invoice/cash) payment made on behalf
+	// of a legal-entity buyer. Creates a succeeded transaction without
+	// calling a provider; emits payment.events with canonical_event_type
+	// = payment.success so cg-orders cart consumer treats it identically
+	// to B2C online payments. Caller must hold the
+	// `payments:admin_mark_paid` permission (enforced at the handler).
+	MarkPaidB2B(context.Context, *MarkPaidB2BRequest) (*MarkPaidB2BResponse, error)
 	mustEmbedUnimplementedPaymentServiceServer()
 }
 
@@ -176,6 +201,9 @@ func (UnimplementedPaymentServiceServer) HandleKaspiCheckPay(context.Context, *H
 }
 func (UnimplementedPaymentServiceServer) GetPaymentAuditLog(context.Context, *GetPaymentAuditLogRequest) (*GetPaymentAuditLogResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPaymentAuditLog not implemented")
+}
+func (UnimplementedPaymentServiceServer) MarkPaidB2B(context.Context, *MarkPaidB2BRequest) (*MarkPaidB2BResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MarkPaidB2B not implemented")
 }
 func (UnimplementedPaymentServiceServer) mustEmbedUnimplementedPaymentServiceServer() {}
 func (UnimplementedPaymentServiceServer) testEmbeddedByValue()                        {}
@@ -324,6 +352,24 @@ func _PaymentService_GetPaymentAuditLog_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PaymentService_MarkPaidB2B_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MarkPaidB2BRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).MarkPaidB2B(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_MarkPaidB2B_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).MarkPaidB2B(ctx, req.(*MarkPaidB2BRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PaymentService_ServiceDesc is the grpc.ServiceDesc for PaymentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -358,6 +404,10 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPaymentAuditLog",
 			Handler:    _PaymentService_GetPaymentAuditLog_Handler,
+		},
+		{
+			MethodName: "MarkPaidB2B",
+			Handler:    _PaymentService_MarkPaidB2B_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

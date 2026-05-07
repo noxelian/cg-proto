@@ -1486,6 +1486,182 @@ func (x *GetPaymentAuditLogResponse) GetTotal() int32 {
 	return 0
 }
 
+type MarkPaidB2BRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// entity_type + entity_id identify the payable resource (e.g.
+	// "marketplace_order"+order_id). Mirrors CreateTransactionRequest so
+	// downstream consumers see the same envelope as B2C events.
+	EntityType     string `protobuf:"bytes,1,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
+	EntityId       int64  `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
+	OrganizationId string `protobuf:"bytes,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	// user_id of the buyer (the legal entity's contact), 0 if not bound.
+	UserId         int64  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Amount         int64  `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`                                      // tiyn
+	Currency       string `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`                                   // default KZT
+	IdempotencyKey string `protobuf:"bytes,7,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"` // typically "{checkout_id}" or "b2b:{order_id}"
+	// payment_method = "invoice" | "cash"
+	PaymentMethod string `protobuf:"bytes,8,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
+	InvoiceNumber string `protobuf:"bytes,9,opt,name=invoice_number,json=invoiceNumber,proto3" json:"invoice_number,omitempty"` // optional, required when payment_method=invoice
+	Notes         string `protobuf:"bytes,10,opt,name=notes,proto3" json:"notes,omitempty"`                                     // free-form audit note
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MarkPaidB2BRequest) Reset() {
+	*x = MarkPaidB2BRequest{}
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MarkPaidB2BRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MarkPaidB2BRequest) ProtoMessage() {}
+
+func (x *MarkPaidB2BRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MarkPaidB2BRequest.ProtoReflect.Descriptor instead.
+func (*MarkPaidB2BRequest) Descriptor() ([]byte, []int) {
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *MarkPaidB2BRequest) GetEntityType() string {
+	if x != nil {
+		return x.EntityType
+	}
+	return ""
+}
+
+func (x *MarkPaidB2BRequest) GetEntityId() int64 {
+	if x != nil {
+		return x.EntityId
+	}
+	return 0
+}
+
+func (x *MarkPaidB2BRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *MarkPaidB2BRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *MarkPaidB2BRequest) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *MarkPaidB2BRequest) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *MarkPaidB2BRequest) GetIdempotencyKey() string {
+	if x != nil {
+		return x.IdempotencyKey
+	}
+	return ""
+}
+
+func (x *MarkPaidB2BRequest) GetPaymentMethod() string {
+	if x != nil {
+		return x.PaymentMethod
+	}
+	return ""
+}
+
+func (x *MarkPaidB2BRequest) GetInvoiceNumber() string {
+	if x != nil {
+		return x.InvoiceNumber
+	}
+	return ""
+}
+
+func (x *MarkPaidB2BRequest) GetNotes() string {
+	if x != nil {
+		return x.Notes
+	}
+	return ""
+}
+
+type MarkPaidB2BResponse struct {
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Transaction *Transaction           `protobuf:"bytes,1,opt,name=transaction,proto3" json:"transaction,omitempty"`
+	// idempotent=true when the request matched an existing succeeded
+	// transaction (replay). The caller can use this to suppress duplicate
+	// side effects on its own side.
+	Idempotent    bool `protobuf:"varint,2,opt,name=idempotent,proto3" json:"idempotent,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MarkPaidB2BResponse) Reset() {
+	*x = MarkPaidB2BResponse{}
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MarkPaidB2BResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MarkPaidB2BResponse) ProtoMessage() {}
+
+func (x *MarkPaidB2BResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MarkPaidB2BResponse.ProtoReflect.Descriptor instead.
+func (*MarkPaidB2BResponse) Descriptor() ([]byte, []int) {
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *MarkPaidB2BResponse) GetTransaction() *Transaction {
+	if x != nil {
+		return x.Transaction
+	}
+	return nil
+}
+
+func (x *MarkPaidB2BResponse) GetIdempotent() bool {
+	if x != nil {
+		return x.Idempotent
+	}
+	return false
+}
+
 var File_payments_payment_v1_payment_proto protoreflect.FileDescriptor
 
 const file_payments_payment_v1_payment_proto_rawDesc = "" +
@@ -1607,7 +1783,25 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"p\n" +
 	"\x1aGetPaymentAuditLogResponse\x12<\n" +
 	"\aentries\x18\x01 \x03(\v2\".payments.payment.v1.AuditLogEntryR\aentries\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total*\x87\x02\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xd5\x02\n" +
+	"\x12MarkPaidB2BRequest\x12\x1f\n" +
+	"\ventity_type\x18\x01 \x01(\tR\n" +
+	"entityType\x12\x1b\n" +
+	"\tentity_id\x18\x02 \x01(\x03R\bentityId\x12'\n" +
+	"\x0forganization_id\x18\x03 \x01(\tR\x0eorganizationId\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x16\n" +
+	"\x06amount\x18\x05 \x01(\x03R\x06amount\x12\x1a\n" +
+	"\bcurrency\x18\x06 \x01(\tR\bcurrency\x12'\n" +
+	"\x0fidempotency_key\x18\a \x01(\tR\x0eidempotencyKey\x12%\n" +
+	"\x0epayment_method\x18\b \x01(\tR\rpaymentMethod\x12%\n" +
+	"\x0einvoice_number\x18\t \x01(\tR\rinvoiceNumber\x12\x14\n" +
+	"\x05notes\x18\n" +
+	" \x01(\tR\x05notes\"y\n" +
+	"\x13MarkPaidB2BResponse\x12B\n" +
+	"\vtransaction\x18\x01 \x01(\v2 .payments.payment.v1.TransactionR\vtransaction\x12\x1e\n" +
+	"\n" +
+	"idempotent\x18\x02 \x01(\bR\n" +
+	"idempotent*\x87\x02\n" +
 	"\x11TransactionStatus\x12\"\n" +
 	"\x1eTRANSACTION_STATUS_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aTRANSACTION_STATUS_PENDING\x10\x01\x12!\n" +
@@ -1631,7 +1825,7 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x13PAYMENT_METHOD_CARD\x10\x01\x12\x1c\n" +
 	"\x18PAYMENT_METHOD_APPLE_PAY\x10\x02\x12\x1d\n" +
 	"\x19PAYMENT_METHOD_GOOGLE_PAY\x10\x03\x12\x18\n" +
-	"\x14PAYMENT_METHOD_KASPI\x10\x042\xb0\x06\n" +
+	"\x14PAYMENT_METHOD_KASPI\x10\x042\x92\a\n" +
 	"\x0ePaymentService\x12r\n" +
 	"\x11CreateTransaction\x12-.payments.payment.v1.CreateTransactionRequest\x1a..payments.payment.v1.CreateTransactionResponse\x12o\n" +
 	"\x10ListTransactions\x12,.payments.payment.v1.ListTransactionsRequest\x1a-.payments.payment.v1.ListTransactionsResponse\x12i\n" +
@@ -1639,7 +1833,8 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x0eInitiateRefund\x12*.payments.payment.v1.InitiateRefundRequest\x1a+.payments.payment.v1.InitiateRefundResponse\x12r\n" +
 	"\x11HandleIokaWebhook\x12-.payments.payment.v1.HandleIokaWebhookRequest\x1a..payments.payment.v1.HandleIokaWebhookResponse\x12x\n" +
 	"\x13HandleKaspiCheckPay\x12/.payments.payment.v1.HandleKaspiCheckPayRequest\x1a0.payments.payment.v1.HandleKaspiCheckPayResponse\x12u\n" +
-	"\x12GetPaymentAuditLog\x12..payments.payment.v1.GetPaymentAuditLogRequest\x1a/.payments.payment.v1.GetPaymentAuditLogResponseB=Z;github.com/4ubak/cg-proto/gen/go/payments/payment;paymentv1b\x06proto3"
+	"\x12GetPaymentAuditLog\x12..payments.payment.v1.GetPaymentAuditLogRequest\x1a/.payments.payment.v1.GetPaymentAuditLogResponse\x12`\n" +
+	"\vMarkPaidB2B\x12'.payments.payment.v1.MarkPaidB2BRequest\x1a(.payments.payment.v1.MarkPaidB2BResponseB=Z;github.com/4ubak/cg-proto/gen/go/payments/payment;paymentv1b\x06proto3"
 
 var (
 	file_payments_payment_v1_payment_proto_rawDescOnce sync.Once
@@ -1654,7 +1849,7 @@ func file_payments_payment_v1_payment_proto_rawDescGZIP() []byte {
 }
 
 var file_payments_payment_v1_payment_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_payments_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_payments_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_payments_payment_v1_payment_proto_goTypes = []any{
 	(TransactionStatus)(0),              // 0: payments.payment.v1.TransactionStatus
 	(TransactionType)(0),                // 1: payments.payment.v1.TransactionType
@@ -1677,19 +1872,21 @@ var file_payments_payment_v1_payment_proto_goTypes = []any{
 	(*HandleKaspiCheckPayResponse)(nil), // 18: payments.payment.v1.HandleKaspiCheckPayResponse
 	(*GetPaymentAuditLogRequest)(nil),   // 19: payments.payment.v1.GetPaymentAuditLogRequest
 	(*GetPaymentAuditLogResponse)(nil),  // 20: payments.payment.v1.GetPaymentAuditLogResponse
-	nil,                                 // 21: payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
-	(*timestamppb.Timestamp)(nil),       // 22: google.protobuf.Timestamp
+	(*MarkPaidB2BRequest)(nil),          // 21: payments.payment.v1.MarkPaidB2BRequest
+	(*MarkPaidB2BResponse)(nil),         // 22: payments.payment.v1.MarkPaidB2BResponse
+	nil,                                 // 23: payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
+	(*timestamppb.Timestamp)(nil),       // 24: google.protobuf.Timestamp
 }
 var file_payments_payment_v1_payment_proto_depIdxs = []int32{
 	2,  // 0: payments.payment.v1.Transaction.provider:type_name -> payments.payment.v1.PaymentProvider
 	3,  // 1: payments.payment.v1.Transaction.payment_method:type_name -> payments.payment.v1.PaymentMethod
 	0,  // 2: payments.payment.v1.Transaction.status:type_name -> payments.payment.v1.TransactionStatus
 	1,  // 3: payments.payment.v1.Transaction.type:type_name -> payments.payment.v1.TransactionType
-	22, // 4: payments.payment.v1.Transaction.paid_at:type_name -> google.protobuf.Timestamp
-	22, // 5: payments.payment.v1.Transaction.created_at:type_name -> google.protobuf.Timestamp
-	22, // 6: payments.payment.v1.Transaction.updated_at:type_name -> google.protobuf.Timestamp
-	22, // 7: payments.payment.v1.Refund.created_at:type_name -> google.protobuf.Timestamp
-	22, // 8: payments.payment.v1.AuditLogEntry.created_at:type_name -> google.protobuf.Timestamp
+	24, // 4: payments.payment.v1.Transaction.paid_at:type_name -> google.protobuf.Timestamp
+	24, // 5: payments.payment.v1.Transaction.created_at:type_name -> google.protobuf.Timestamp
+	24, // 6: payments.payment.v1.Transaction.updated_at:type_name -> google.protobuf.Timestamp
+	24, // 7: payments.payment.v1.Refund.created_at:type_name -> google.protobuf.Timestamp
+	24, // 8: payments.payment.v1.AuditLogEntry.created_at:type_name -> google.protobuf.Timestamp
 	2,  // 9: payments.payment.v1.CreateTransactionRequest.provider:type_name -> payments.payment.v1.PaymentProvider
 	3,  // 10: payments.payment.v1.CreateTransactionRequest.payment_method:type_name -> payments.payment.v1.PaymentMethod
 	4,  // 11: payments.payment.v1.CreateTransactionResponse.transaction:type_name -> payments.payment.v1.Transaction
@@ -1697,27 +1894,30 @@ var file_payments_payment_v1_payment_proto_depIdxs = []int32{
 	4,  // 13: payments.payment.v1.ListTransactionsResponse.transactions:type_name -> payments.payment.v1.Transaction
 	4,  // 14: payments.payment.v1.GetTransactionResponse.transaction:type_name -> payments.payment.v1.Transaction
 	5,  // 15: payments.payment.v1.InitiateRefundResponse.refund:type_name -> payments.payment.v1.Refund
-	21, // 16: payments.payment.v1.HandleIokaWebhookRequest.headers:type_name -> payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
+	23, // 16: payments.payment.v1.HandleIokaWebhookRequest.headers:type_name -> payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
 	6,  // 17: payments.payment.v1.GetPaymentAuditLogResponse.entries:type_name -> payments.payment.v1.AuditLogEntry
-	7,  // 18: payments.payment.v1.PaymentService.CreateTransaction:input_type -> payments.payment.v1.CreateTransactionRequest
-	9,  // 19: payments.payment.v1.PaymentService.ListTransactions:input_type -> payments.payment.v1.ListTransactionsRequest
-	11, // 20: payments.payment.v1.PaymentService.GetTransaction:input_type -> payments.payment.v1.GetTransactionRequest
-	13, // 21: payments.payment.v1.PaymentService.InitiateRefund:input_type -> payments.payment.v1.InitiateRefundRequest
-	15, // 22: payments.payment.v1.PaymentService.HandleIokaWebhook:input_type -> payments.payment.v1.HandleIokaWebhookRequest
-	17, // 23: payments.payment.v1.PaymentService.HandleKaspiCheckPay:input_type -> payments.payment.v1.HandleKaspiCheckPayRequest
-	19, // 24: payments.payment.v1.PaymentService.GetPaymentAuditLog:input_type -> payments.payment.v1.GetPaymentAuditLogRequest
-	8,  // 25: payments.payment.v1.PaymentService.CreateTransaction:output_type -> payments.payment.v1.CreateTransactionResponse
-	10, // 26: payments.payment.v1.PaymentService.ListTransactions:output_type -> payments.payment.v1.ListTransactionsResponse
-	12, // 27: payments.payment.v1.PaymentService.GetTransaction:output_type -> payments.payment.v1.GetTransactionResponse
-	14, // 28: payments.payment.v1.PaymentService.InitiateRefund:output_type -> payments.payment.v1.InitiateRefundResponse
-	16, // 29: payments.payment.v1.PaymentService.HandleIokaWebhook:output_type -> payments.payment.v1.HandleIokaWebhookResponse
-	18, // 30: payments.payment.v1.PaymentService.HandleKaspiCheckPay:output_type -> payments.payment.v1.HandleKaspiCheckPayResponse
-	20, // 31: payments.payment.v1.PaymentService.GetPaymentAuditLog:output_type -> payments.payment.v1.GetPaymentAuditLogResponse
-	25, // [25:32] is the sub-list for method output_type
-	18, // [18:25] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	4,  // 18: payments.payment.v1.MarkPaidB2BResponse.transaction:type_name -> payments.payment.v1.Transaction
+	7,  // 19: payments.payment.v1.PaymentService.CreateTransaction:input_type -> payments.payment.v1.CreateTransactionRequest
+	9,  // 20: payments.payment.v1.PaymentService.ListTransactions:input_type -> payments.payment.v1.ListTransactionsRequest
+	11, // 21: payments.payment.v1.PaymentService.GetTransaction:input_type -> payments.payment.v1.GetTransactionRequest
+	13, // 22: payments.payment.v1.PaymentService.InitiateRefund:input_type -> payments.payment.v1.InitiateRefundRequest
+	15, // 23: payments.payment.v1.PaymentService.HandleIokaWebhook:input_type -> payments.payment.v1.HandleIokaWebhookRequest
+	17, // 24: payments.payment.v1.PaymentService.HandleKaspiCheckPay:input_type -> payments.payment.v1.HandleKaspiCheckPayRequest
+	19, // 25: payments.payment.v1.PaymentService.GetPaymentAuditLog:input_type -> payments.payment.v1.GetPaymentAuditLogRequest
+	21, // 26: payments.payment.v1.PaymentService.MarkPaidB2B:input_type -> payments.payment.v1.MarkPaidB2BRequest
+	8,  // 27: payments.payment.v1.PaymentService.CreateTransaction:output_type -> payments.payment.v1.CreateTransactionResponse
+	10, // 28: payments.payment.v1.PaymentService.ListTransactions:output_type -> payments.payment.v1.ListTransactionsResponse
+	12, // 29: payments.payment.v1.PaymentService.GetTransaction:output_type -> payments.payment.v1.GetTransactionResponse
+	14, // 30: payments.payment.v1.PaymentService.InitiateRefund:output_type -> payments.payment.v1.InitiateRefundResponse
+	16, // 31: payments.payment.v1.PaymentService.HandleIokaWebhook:output_type -> payments.payment.v1.HandleIokaWebhookResponse
+	18, // 32: payments.payment.v1.PaymentService.HandleKaspiCheckPay:output_type -> payments.payment.v1.HandleKaspiCheckPayResponse
+	20, // 33: payments.payment.v1.PaymentService.GetPaymentAuditLog:output_type -> payments.payment.v1.GetPaymentAuditLogResponse
+	22, // 34: payments.payment.v1.PaymentService.MarkPaidB2B:output_type -> payments.payment.v1.MarkPaidB2BResponse
+	27, // [27:35] is the sub-list for method output_type
+	19, // [19:27] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_payments_payment_v1_payment_proto_init() }
@@ -1731,7 +1931,7 @@ func file_payments_payment_v1_payment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_payments_payment_v1_payment_proto_rawDesc), len(file_payments_payment_v1_payment_proto_rawDesc)),
 			NumEnums:      4,
-			NumMessages:   18,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
