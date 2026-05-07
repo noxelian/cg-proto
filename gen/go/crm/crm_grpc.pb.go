@@ -139,6 +139,8 @@ const (
 	CRMService_GetTelephonyCallRecording_FullMethodName          = "/crm.v1.CRMService/GetTelephonyCallRecording"
 	CRMService_UpdateTelephonyRecordingTranscript_FullMethodName = "/crm.v1.CRMService/UpdateTelephonyRecordingTranscript"
 	CRMService_ResolveWAChannelUsers_FullMethodName              = "/crm.v1.CRMService/ResolveWAChannelUsers"
+	CRMService_GetMyNotificationPreferences_FullMethodName       = "/crm.v1.CRMService/GetMyNotificationPreferences"
+	CRMService_UpdateMyNotificationPreferences_FullMethodName    = "/crm.v1.CRMService/UpdateMyNotificationPreferences"
 )
 
 // CRMServiceClient is the client API for CRMService service.
@@ -384,6 +386,12 @@ type CRMServiceClient interface {
 	// (allowed_pipeline_ids is empty/NULL) — the BFF should broadcast to
 	// all org members rather than the returned (empty) user_ids slice.
 	ResolveWAChannelUsers(ctx context.Context, in *ResolveWAChannelUsersRequest, opts ...grpc.CallOption) (*ResolveWAChannelUsersResponse, error)
+	// Per-manager notification preferences for the new-deal alert. One row
+	// per user, scoped by JWT user_id (no org dimension — a manager hears the
+	// same chime regardless of which org context they're viewing). Used by
+	// the cg-bff WS broadcaster filter and by the cg-crm-web settings page.
+	GetMyNotificationPreferences(ctx context.Context, in *GetMyNotificationPreferencesRequest, opts ...grpc.CallOption) (*GetMyNotificationPreferencesResponse, error)
+	UpdateMyNotificationPreferences(ctx context.Context, in *UpdateMyNotificationPreferencesRequest, opts ...grpc.CallOption) (*UpdateMyNotificationPreferencesResponse, error)
 }
 
 type cRMServiceClient struct {
@@ -1606,6 +1614,26 @@ func (c *cRMServiceClient) ResolveWAChannelUsers(ctx context.Context, in *Resolv
 	return out, nil
 }
 
+func (c *cRMServiceClient) GetMyNotificationPreferences(ctx context.Context, in *GetMyNotificationPreferencesRequest, opts ...grpc.CallOption) (*GetMyNotificationPreferencesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMyNotificationPreferencesResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetMyNotificationPreferences_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) UpdateMyNotificationPreferences(ctx context.Context, in *UpdateMyNotificationPreferencesRequest, opts ...grpc.CallOption) (*UpdateMyNotificationPreferencesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateMyNotificationPreferencesResponse)
+	err := c.cc.Invoke(ctx, CRMService_UpdateMyNotificationPreferences_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CRMServiceServer is the server API for CRMService service.
 // All implementations must embed UnimplementedCRMServiceServer
 // for forward compatibility.
@@ -1849,6 +1877,12 @@ type CRMServiceServer interface {
 	// (allowed_pipeline_ids is empty/NULL) — the BFF should broadcast to
 	// all org members rather than the returned (empty) user_ids slice.
 	ResolveWAChannelUsers(context.Context, *ResolveWAChannelUsersRequest) (*ResolveWAChannelUsersResponse, error)
+	// Per-manager notification preferences for the new-deal alert. One row
+	// per user, scoped by JWT user_id (no org dimension — a manager hears the
+	// same chime regardless of which org context they're viewing). Used by
+	// the cg-bff WS broadcaster filter and by the cg-crm-web settings page.
+	GetMyNotificationPreferences(context.Context, *GetMyNotificationPreferencesRequest) (*GetMyNotificationPreferencesResponse, error)
+	UpdateMyNotificationPreferences(context.Context, *UpdateMyNotificationPreferencesRequest) (*UpdateMyNotificationPreferencesResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
 
@@ -2218,6 +2252,12 @@ func (UnimplementedCRMServiceServer) UpdateTelephonyRecordingTranscript(context.
 }
 func (UnimplementedCRMServiceServer) ResolveWAChannelUsers(context.Context, *ResolveWAChannelUsersRequest) (*ResolveWAChannelUsersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResolveWAChannelUsers not implemented")
+}
+func (UnimplementedCRMServiceServer) GetMyNotificationPreferences(context.Context, *GetMyNotificationPreferencesRequest) (*GetMyNotificationPreferencesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMyNotificationPreferences not implemented")
+}
+func (UnimplementedCRMServiceServer) UpdateMyNotificationPreferences(context.Context, *UpdateMyNotificationPreferencesRequest) (*UpdateMyNotificationPreferencesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateMyNotificationPreferences not implemented")
 }
 func (UnimplementedCRMServiceServer) mustEmbedUnimplementedCRMServiceServer() {}
 func (UnimplementedCRMServiceServer) testEmbeddedByValue()                    {}
@@ -4400,6 +4440,42 @@ func _CRMService_ResolveWAChannelUsers_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_GetMyNotificationPreferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMyNotificationPreferencesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetMyNotificationPreferences(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetMyNotificationPreferences_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetMyNotificationPreferences(ctx, req.(*GetMyNotificationPreferencesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_UpdateMyNotificationPreferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMyNotificationPreferencesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).UpdateMyNotificationPreferences(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_UpdateMyNotificationPreferences_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).UpdateMyNotificationPreferences(ctx, req.(*UpdateMyNotificationPreferencesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CRMService_ServiceDesc is the grpc.ServiceDesc for CRMService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -4886,6 +4962,14 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResolveWAChannelUsers",
 			Handler:    _CRMService_ResolveWAChannelUsers_Handler,
+		},
+		{
+			MethodName: "GetMyNotificationPreferences",
+			Handler:    _CRMService_GetMyNotificationPreferences_Handler,
+		},
+		{
+			MethodName: "UpdateMyNotificationPreferences",
+			Handler:    _CRMService_UpdateMyNotificationPreferences_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

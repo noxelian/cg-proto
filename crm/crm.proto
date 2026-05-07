@@ -265,6 +265,13 @@ service CRMService {
   // (allowed_pipeline_ids is empty/NULL) — the BFF should broadcast to
   // all org members rather than the returned (empty) user_ids slice.
   rpc ResolveWAChannelUsers(ResolveWAChannelUsersRequest) returns (ResolveWAChannelUsersResponse);
+
+  // Per-manager notification preferences for the new-deal alert. One row
+  // per user, scoped by JWT user_id (no org dimension — a manager hears the
+  // same chime regardless of which org context they're viewing). Used by
+  // the cg-bff WS broadcaster filter and by the cg-crm-web settings page.
+  rpc GetMyNotificationPreferences(GetMyNotificationPreferencesRequest) returns (GetMyNotificationPreferencesResponse);
+  rpc UpdateMyNotificationPreferences(UpdateMyNotificationPreferencesRequest) returns (UpdateMyNotificationPreferencesResponse);
 }
 
 message Pipeline {
@@ -2664,4 +2671,39 @@ message AcknowledgeExternalNotesRequest {
 message AcknowledgeExternalNotesResponse {
   // Echoed for response shape consistency with other deal RPCs.
   DealProto deal = 1;
+}
+
+// NotificationPreferences is the per-user toggle bundle that gates the
+// new-deal sound chime + browser notification. all_pipelines = true means
+// "alert me about every pipeline I have access to" (the default after
+// signup). When false, only pipelines listed in pipeline_ids are alerted;
+// an empty pipeline_ids with all_pipelines = false effectively mutes
+// alerts (manager opted out of every funnel).
+message NotificationPreferences {
+  bool   sound_enabled         = 1;
+  bool   desktop_alerts_enabled = 2;
+  bool   all_pipelines         = 3;
+  repeated string pipeline_ids = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+message GetMyNotificationPreferencesRequest {}
+
+message GetMyNotificationPreferencesResponse {
+  NotificationPreferences preferences = 1;
+}
+
+// UpdateMyNotificationPreferencesRequest carries the full desired state.
+// The handler replaces the row wholesale (upsert) — partial updates are
+// not supported because the field set is small and clients always know
+// the full state from the settings page.
+message UpdateMyNotificationPreferencesRequest {
+  bool   sound_enabled          = 1;
+  bool   desktop_alerts_enabled = 2;
+  bool   all_pipelines          = 3;
+  repeated string pipeline_ids  = 4;
+}
+
+message UpdateMyNotificationPreferencesResponse {
+  NotificationPreferences preferences = 1;
 }
