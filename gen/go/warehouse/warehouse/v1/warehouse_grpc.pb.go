@@ -52,6 +52,7 @@ const (
 	WarehouseService_ConfirmWriteOff_FullMethodName        = "/warehouse.warehouse.v1.WarehouseService/ConfirmWriteOff"
 	WarehouseService_ListReservations_FullMethodName       = "/warehouse.warehouse.v1.WarehouseService/ListReservations"
 	WarehouseService_SearchAvailableParts_FullMethodName   = "/warehouse.warehouse.v1.WarehouseService/SearchAvailableParts"
+	WarehouseService_CheckStockAvailability_FullMethodName = "/warehouse.warehouse.v1.WarehouseService/CheckStockAvailability"
 )
 
 // WarehouseServiceClient is the client API for WarehouseService service.
@@ -100,6 +101,11 @@ type WarehouseServiceClient interface {
 	ListReservations(ctx context.Context, in *ListReservationsRequest, opts ...grpc.CallOption) (*ListReservationsResponse, error)
 	// --- Search for cg-parts-provider integration ---
 	SearchAvailableParts(ctx context.Context, in *SearchAvailablePartsRequest, opts ...grpc.CallOption) (*SearchAvailablePartsResponse, error)
+	// --- Phase 71: marketplace pre-flight stock availability check ---
+	// Used by cart checkout to validate stock across multiple sellers before
+	// initiating payment. Returns the set of items whose available quantity
+	// is below the requested quantity (empty list = all items available).
+	CheckStockAvailability(ctx context.Context, in *CheckStockAvailabilityRequest, opts ...grpc.CallOption) (*CheckStockAvailabilityResponse, error)
 }
 
 type warehouseServiceClient struct {
@@ -440,6 +446,16 @@ func (c *warehouseServiceClient) SearchAvailableParts(ctx context.Context, in *S
 	return out, nil
 }
 
+func (c *warehouseServiceClient) CheckStockAvailability(ctx context.Context, in *CheckStockAvailabilityRequest, opts ...grpc.CallOption) (*CheckStockAvailabilityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckStockAvailabilityResponse)
+	err := c.cc.Invoke(ctx, WarehouseService_CheckStockAvailability_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WarehouseServiceServer is the server API for WarehouseService service.
 // All implementations must embed UnimplementedWarehouseServiceServer
 // for forward compatibility.
@@ -486,6 +502,11 @@ type WarehouseServiceServer interface {
 	ListReservations(context.Context, *ListReservationsRequest) (*ListReservationsResponse, error)
 	// --- Search for cg-parts-provider integration ---
 	SearchAvailableParts(context.Context, *SearchAvailablePartsRequest) (*SearchAvailablePartsResponse, error)
+	// --- Phase 71: marketplace pre-flight stock availability check ---
+	// Used by cart checkout to validate stock across multiple sellers before
+	// initiating payment. Returns the set of items whose available quantity
+	// is below the requested quantity (empty list = all items available).
+	CheckStockAvailability(context.Context, *CheckStockAvailabilityRequest) (*CheckStockAvailabilityResponse, error)
 	mustEmbedUnimplementedWarehouseServiceServer()
 }
 
@@ -594,6 +615,9 @@ func (UnimplementedWarehouseServiceServer) ListReservations(context.Context, *Li
 }
 func (UnimplementedWarehouseServiceServer) SearchAvailableParts(context.Context, *SearchAvailablePartsRequest) (*SearchAvailablePartsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SearchAvailableParts not implemented")
+}
+func (UnimplementedWarehouseServiceServer) CheckStockAvailability(context.Context, *CheckStockAvailabilityRequest) (*CheckStockAvailabilityResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckStockAvailability not implemented")
 }
 func (UnimplementedWarehouseServiceServer) mustEmbedUnimplementedWarehouseServiceServer() {}
 func (UnimplementedWarehouseServiceServer) testEmbeddedByValue()                          {}
@@ -1210,6 +1234,24 @@ func _WarehouseService_SearchAvailableParts_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WarehouseService_CheckStockAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckStockAvailabilityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WarehouseServiceServer).CheckStockAvailability(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WarehouseService_CheckStockAvailability_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WarehouseServiceServer).CheckStockAvailability(ctx, req.(*CheckStockAvailabilityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WarehouseService_ServiceDesc is the grpc.ServiceDesc for WarehouseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1348,6 +1390,10 @@ var WarehouseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SearchAvailableParts",
 			Handler:    _WarehouseService_SearchAvailableParts_Handler,
+		},
+		{
+			MethodName: "CheckStockAvailability",
+			Handler:    _WarehouseService_CheckStockAvailability_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

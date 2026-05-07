@@ -910,8 +910,13 @@ type StockMovement struct {
 	Reason          string                 `protobuf:"bytes,10,opt,name=reason,proto3" json:"reason,omitempty"`
 	PerformedBy     int64                  `protobuf:"varint,11,opt,name=performed_by,json=performedBy,proto3" json:"performed_by,omitempty"`
 	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Phase 71: marketplace audit — generic origin tagging for cross-domain write-offs
+	// (e.g. entity_type='marketplace_order', entity_id='42'; entity_type='subscription_claim').
+	// Empty string means legacy/repair_order-only path.
+	EntityType    string `protobuf:"bytes,13,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
+	EntityId      string `protobuf:"bytes,14,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *StockMovement) Reset() {
@@ -1026,6 +1031,20 @@ func (x *StockMovement) GetCreatedAt() *timestamppb.Timestamp {
 		return x.CreatedAt
 	}
 	return nil
+}
+
+func (x *StockMovement) GetEntityType() string {
+	if x != nil {
+		return x.EntityType
+	}
+	return ""
+}
+
+func (x *StockMovement) GetEntityId() string {
+	if x != nil {
+		return x.EntityId
+	}
+	return ""
 }
 
 type InventoryCheck struct {
@@ -3486,8 +3505,15 @@ type WriteOffStockRequest struct {
 	RepairOrderId int64                  `protobuf:"varint,2,opt,name=repair_order_id,json=repairOrderId,proto3" json:"repair_order_id,omitempty"`
 	Reason        string                 `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
 	Items         []*WriteOffStockItem   `protobuf:"bytes,4,rep,name=items,proto3" json:"items,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// Phase 71: marketplace cart write-off origin. When entity_type='marketplace_order',
+	// entity_id holds the cg-orders.orders.id (as string). marketplace_order_id is a
+	// typed convenience for the same value when the caller has it as int64.
+	// All three fields are optional; empty values fall back to repair_order_id audit.
+	MarketplaceOrderId int64  `protobuf:"varint,5,opt,name=marketplace_order_id,json=marketplaceOrderId,proto3" json:"marketplace_order_id,omitempty"`
+	EntityType         string `protobuf:"bytes,6,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
+	EntityId           string `protobuf:"bytes,7,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *WriteOffStockRequest) Reset() {
@@ -3546,6 +3572,27 @@ func (x *WriteOffStockRequest) GetItems() []*WriteOffStockItem {
 		return x.Items
 	}
 	return nil
+}
+
+func (x *WriteOffStockRequest) GetMarketplaceOrderId() int64 {
+	if x != nil {
+		return x.MarketplaceOrderId
+	}
+	return 0
+}
+
+func (x *WriteOffStockRequest) GetEntityType() string {
+	if x != nil {
+		return x.EntityType
+	}
+	return ""
+}
+
+func (x *WriteOffStockRequest) GetEntityId() string {
+	if x != nil {
+		return x.EntityId
+	}
+	return ""
 }
 
 type WriteOffStockResponse struct {
@@ -5532,6 +5579,216 @@ func (x *AvailablePart) GetStorageLocation() string {
 	return ""
 }
 
+type CheckStockAvailabilityRequest struct {
+	state         protoimpl.MessageState                `protogen:"open.v1"`
+	Items         []*CheckStockAvailabilityRequest_Item `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckStockAvailabilityRequest) Reset() {
+	*x = CheckStockAvailabilityRequest{}
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[80]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckStockAvailabilityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckStockAvailabilityRequest) ProtoMessage() {}
+
+func (x *CheckStockAvailabilityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[80]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckStockAvailabilityRequest.ProtoReflect.Descriptor instead.
+func (*CheckStockAvailabilityRequest) Descriptor() ([]byte, []int) {
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{80}
+}
+
+func (x *CheckStockAvailabilityRequest) GetItems() []*CheckStockAvailabilityRequest_Item {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+type CheckStockInsufficient struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	WarehouseItemId int64                  `protobuf:"varint,1,opt,name=warehouse_item_id,json=warehouseItemId,proto3" json:"warehouse_item_id,omitempty"`
+	Available       int32                  `protobuf:"varint,2,opt,name=available,proto3" json:"available,omitempty"`
+	Requested       int32                  `protobuf:"varint,3,opt,name=requested,proto3" json:"requested,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *CheckStockInsufficient) Reset() {
+	*x = CheckStockInsufficient{}
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[81]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckStockInsufficient) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckStockInsufficient) ProtoMessage() {}
+
+func (x *CheckStockInsufficient) ProtoReflect() protoreflect.Message {
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[81]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckStockInsufficient.ProtoReflect.Descriptor instead.
+func (*CheckStockInsufficient) Descriptor() ([]byte, []int) {
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{81}
+}
+
+func (x *CheckStockInsufficient) GetWarehouseItemId() int64 {
+	if x != nil {
+		return x.WarehouseItemId
+	}
+	return 0
+}
+
+func (x *CheckStockInsufficient) GetAvailable() int32 {
+	if x != nil {
+		return x.Available
+	}
+	return 0
+}
+
+func (x *CheckStockInsufficient) GetRequested() int32 {
+	if x != nil {
+		return x.Requested
+	}
+	return 0
+}
+
+type CheckStockAvailabilityResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Empty = all items have sufficient stock. Non-empty = list of items
+	// whose available quantity is below the requested quantity.
+	Insufficient  []*CheckStockInsufficient `protobuf:"bytes,1,rep,name=insufficient,proto3" json:"insufficient,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckStockAvailabilityResponse) Reset() {
+	*x = CheckStockAvailabilityResponse{}
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[82]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckStockAvailabilityResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckStockAvailabilityResponse) ProtoMessage() {}
+
+func (x *CheckStockAvailabilityResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[82]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckStockAvailabilityResponse.ProtoReflect.Descriptor instead.
+func (*CheckStockAvailabilityResponse) Descriptor() ([]byte, []int) {
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{82}
+}
+
+func (x *CheckStockAvailabilityResponse) GetInsufficient() []*CheckStockInsufficient {
+	if x != nil {
+		return x.Insufficient
+	}
+	return nil
+}
+
+type CheckStockAvailabilityRequest_Item struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	WarehouseId     int64                  `protobuf:"varint,1,opt,name=warehouse_id,json=warehouseId,proto3" json:"warehouse_id,omitempty"`
+	WarehouseItemId int64                  `protobuf:"varint,2,opt,name=warehouse_item_id,json=warehouseItemId,proto3" json:"warehouse_item_id,omitempty"`
+	Qty             int32                  `protobuf:"varint,3,opt,name=qty,proto3" json:"qty,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *CheckStockAvailabilityRequest_Item) Reset() {
+	*x = CheckStockAvailabilityRequest_Item{}
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[83]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckStockAvailabilityRequest_Item) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckStockAvailabilityRequest_Item) ProtoMessage() {}
+
+func (x *CheckStockAvailabilityRequest_Item) ProtoReflect() protoreflect.Message {
+	mi := &file_warehouse_warehouse_v1_warehouse_proto_msgTypes[83]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckStockAvailabilityRequest_Item.ProtoReflect.Descriptor instead.
+func (*CheckStockAvailabilityRequest_Item) Descriptor() ([]byte, []int) {
+	return file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP(), []int{80, 0}
+}
+
+func (x *CheckStockAvailabilityRequest_Item) GetWarehouseId() int64 {
+	if x != nil {
+		return x.WarehouseId
+	}
+	return 0
+}
+
+func (x *CheckStockAvailabilityRequest_Item) GetWarehouseItemId() int64 {
+	if x != nil {
+		return x.WarehouseItemId
+	}
+	return 0
+}
+
+func (x *CheckStockAvailabilityRequest_Item) GetQty() int32 {
+	if x != nil {
+		return x.Qty
+	}
+	return 0
+}
+
 var File_warehouse_warehouse_v1_warehouse_proto protoreflect.FileDescriptor
 
 const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
@@ -5597,7 +5854,7 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	"\ayear_to\x18\x05 \x01(\x05R\x06yearTo\x12\x1b\n" +
 	"\tmark_name\x18\x06 \x01(\tR\bmarkName\x12\x1d\n" +
 	"\n" +
-	"model_name\x18\a \x01(\tR\tmodelName\"\xdf\x03\n" +
+	"model_name\x18\a \x01(\tR\tmodelName\"\x9d\x04\n" +
 	"\rStockMovement\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12*\n" +
 	"\x11warehouse_item_id\x18\x02 \x01(\x03R\x0fwarehouseItemId\x128\n" +
@@ -5612,7 +5869,10 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	" \x01(\tR\x06reason\x12!\n" +
 	"\fperformed_by\x18\v \x01(\x03R\vperformedBy\x129\n" +
 	"\n" +
-	"created_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xa6\x02\n" +
+	"created_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x1f\n" +
+	"\ventity_type\x18\r \x01(\tR\n" +
+	"entityType\x12\x1b\n" +
+	"\tentity_id\x18\x0e \x01(\tR\bentityId\"\xa6\x02\n" +
 	"\x0eInventoryCheck\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
 	"\fwarehouse_id\x18\x02 \x01(\x03R\vwarehouseId\x12D\n" +
@@ -5801,12 +6061,16 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	"\tmovements\x18\x01 \x03(\v2%.warehouse.warehouse.v1.StockMovementR\tmovements\"[\n" +
 	"\x11WriteOffStockItem\x12*\n" +
 	"\x11warehouse_item_id\x18\x01 \x01(\x03R\x0fwarehouseItemId\x12\x1a\n" +
-	"\bquantity\x18\x02 \x01(\x05R\bquantity\"\xba\x01\n" +
+	"\bquantity\x18\x02 \x01(\x05R\bquantity\"\xaa\x02\n" +
 	"\x14WriteOffStockRequest\x12!\n" +
 	"\fwarehouse_id\x18\x01 \x01(\x03R\vwarehouseId\x12&\n" +
 	"\x0frepair_order_id\x18\x02 \x01(\x03R\rrepairOrderId\x12\x16\n" +
 	"\x06reason\x18\x03 \x01(\tR\x06reason\x12?\n" +
-	"\x05items\x18\x04 \x03(\v2).warehouse.warehouse.v1.WriteOffStockItemR\x05items\"\\\n" +
+	"\x05items\x18\x04 \x03(\v2).warehouse.warehouse.v1.WriteOffStockItemR\x05items\x120\n" +
+	"\x14marketplace_order_id\x18\x05 \x01(\x03R\x12marketplaceOrderId\x12\x1f\n" +
+	"\ventity_type\x18\x06 \x01(\tR\n" +
+	"entityType\x12\x1b\n" +
+	"\tentity_id\x18\a \x01(\tR\bentityId\"\\\n" +
 	"\x15WriteOffStockResponse\x12C\n" +
 	"\tmovements\x18\x01 \x03(\v2%.warehouse.warehouse.v1.StockMovementR\tmovements\"[\n" +
 	"\x11TransferStockItem\x12*\n" +
@@ -5936,7 +6200,19 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	"\x0ewarehouse_name\x18\t \x01(\tR\rwarehouseName\x12!\n" +
 	"\fwarehouse_id\x18\n" +
 	" \x01(\x03R\vwarehouseId\x12)\n" +
-	"\x10storage_location\x18\v \x01(\tR\x0fstorageLocation*h\n" +
+	"\x10storage_location\x18\v \x01(\tR\x0fstorageLocation\"\xda\x01\n" +
+	"\x1dCheckStockAvailabilityRequest\x12P\n" +
+	"\x05items\x18\x01 \x03(\v2:.warehouse.warehouse.v1.CheckStockAvailabilityRequest.ItemR\x05items\x1ag\n" +
+	"\x04Item\x12!\n" +
+	"\fwarehouse_id\x18\x01 \x01(\x03R\vwarehouseId\x12*\n" +
+	"\x11warehouse_item_id\x18\x02 \x01(\x03R\x0fwarehouseItemId\x12\x10\n" +
+	"\x03qty\x18\x03 \x01(\x05R\x03qty\"\x80\x01\n" +
+	"\x16CheckStockInsufficient\x12*\n" +
+	"\x11warehouse_item_id\x18\x01 \x01(\x03R\x0fwarehouseItemId\x12\x1c\n" +
+	"\tavailable\x18\x02 \x01(\x05R\tavailable\x12\x1c\n" +
+	"\trequested\x18\x03 \x01(\x05R\trequested\"t\n" +
+	"\x1eCheckStockAvailabilityResponse\x12R\n" +
+	"\finsufficient\x18\x01 \x03(\v2..warehouse.warehouse.v1.CheckStockInsufficientR\finsufficient*h\n" +
 	"\rWarehouseType\x12\x1e\n" +
 	"\x1aWAREHOUSE_TYPE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16WAREHOUSE_TYPE_CENTRAL\x10\x01\x12\x1b\n" +
@@ -5972,7 +6248,7 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	"\x17ITEM_ORIGIN_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14ITEM_ORIGIN_ORIGINAL\x10\x01\x12\x19\n" +
 	"\x15ITEM_ORIGIN_DUPLICATE\x10\x02\x12\x17\n" +
-	"\x13ITEM_ORIGIN_UNKNOWN\x10\x032\xbf\x1e\n" +
+	"\x13ITEM_ORIGIN_UNKNOWN\x10\x032\xc9\x1f\n" +
 	"\x10WarehouseService\x12r\n" +
 	"\x0fCreateWarehouse\x12..warehouse.warehouse.v1.CreateWarehouseRequest\x1a/.warehouse.warehouse.v1.CreateWarehouseResponse\x12i\n" +
 	"\fGetWarehouse\x12+.warehouse.warehouse.v1.GetWarehouseRequest\x1a,.warehouse.warehouse.v1.GetWarehouseResponse\x12r\n" +
@@ -6010,7 +6286,8 @@ const file_warehouse_warehouse_v1_warehouse_proto_rawDesc = "" +
 	"\x12ReleaseReservation\x121.warehouse.warehouse.v1.ReleaseReservationRequest\x1a2.warehouse.warehouse.v1.ReleaseReservationResponse\x12r\n" +
 	"\x0fConfirmWriteOff\x12..warehouse.warehouse.v1.ConfirmWriteOffRequest\x1a/.warehouse.warehouse.v1.ConfirmWriteOffResponse\x12u\n" +
 	"\x10ListReservations\x12/.warehouse.warehouse.v1.ListReservationsRequest\x1a0.warehouse.warehouse.v1.ListReservationsResponse\x12\x81\x01\n" +
-	"\x14SearchAvailableParts\x123.warehouse.warehouse.v1.SearchAvailablePartsRequest\x1a4.warehouse.warehouse.v1.SearchAvailablePartsResponseBEZCgithub.com/4ubak/cg-proto/gen/go/warehouse/warehouse/v1;warehousev1b\x06proto3"
+	"\x14SearchAvailableParts\x123.warehouse.warehouse.v1.SearchAvailablePartsRequest\x1a4.warehouse.warehouse.v1.SearchAvailablePartsResponse\x12\x87\x01\n" +
+	"\x16CheckStockAvailability\x125.warehouse.warehouse.v1.CheckStockAvailabilityRequest\x1a6.warehouse.warehouse.v1.CheckStockAvailabilityResponseBEZCgithub.com/4ubak/cg-proto/gen/go/warehouse/warehouse/v1;warehousev1b\x06proto3"
 
 var (
 	file_warehouse_warehouse_v1_warehouse_proto_rawDescOnce sync.Once
@@ -6025,117 +6302,121 @@ func file_warehouse_warehouse_v1_warehouse_proto_rawDescGZIP() []byte {
 }
 
 var file_warehouse_warehouse_v1_warehouse_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
-var file_warehouse_warehouse_v1_warehouse_proto_msgTypes = make([]protoimpl.MessageInfo, 80)
+var file_warehouse_warehouse_v1_warehouse_proto_msgTypes = make([]protoimpl.MessageInfo, 84)
 var file_warehouse_warehouse_v1_warehouse_proto_goTypes = []any{
-	(WarehouseType)(0),                     // 0: warehouse.warehouse.v1.WarehouseType
-	(ItemCondition)(0),                     // 1: warehouse.warehouse.v1.ItemCondition
-	(ItemUnit)(0),                          // 2: warehouse.warehouse.v1.ItemUnit
-	(MovementType)(0),                      // 3: warehouse.warehouse.v1.MovementType
-	(ReservationStatus)(0),                 // 4: warehouse.warehouse.v1.ReservationStatus
-	(InventoryCheckStatus)(0),              // 5: warehouse.warehouse.v1.InventoryCheckStatus
-	(ItemOrigin)(0),                        // 6: warehouse.warehouse.v1.ItemOrigin
-	(*Warehouse)(nil),                      // 7: warehouse.warehouse.v1.Warehouse
-	(*StorageLocation)(nil),                // 8: warehouse.warehouse.v1.StorageLocation
-	(*WarehouseItem)(nil),                  // 9: warehouse.warehouse.v1.WarehouseItem
-	(*CarCompatibility)(nil),               // 10: warehouse.warehouse.v1.CarCompatibility
-	(*StockMovement)(nil),                  // 11: warehouse.warehouse.v1.StockMovement
-	(*InventoryCheck)(nil),                 // 12: warehouse.warehouse.v1.InventoryCheck
-	(*InventoryCheckItem)(nil),             // 13: warehouse.warehouse.v1.InventoryCheckItem
-	(*Reservation)(nil),                    // 14: warehouse.warehouse.v1.Reservation
-	(*CreateWarehouseRequest)(nil),         // 15: warehouse.warehouse.v1.CreateWarehouseRequest
-	(*CreateWarehouseResponse)(nil),        // 16: warehouse.warehouse.v1.CreateWarehouseResponse
-	(*GetWarehouseRequest)(nil),            // 17: warehouse.warehouse.v1.GetWarehouseRequest
-	(*GetWarehouseResponse)(nil),           // 18: warehouse.warehouse.v1.GetWarehouseResponse
-	(*UpdateWarehouseRequest)(nil),         // 19: warehouse.warehouse.v1.UpdateWarehouseRequest
-	(*UpdateWarehouseResponse)(nil),        // 20: warehouse.warehouse.v1.UpdateWarehouseResponse
-	(*ListWarehousesRequest)(nil),          // 21: warehouse.warehouse.v1.ListWarehousesRequest
-	(*ListWarehousesResponse)(nil),         // 22: warehouse.warehouse.v1.ListWarehousesResponse
-	(*CreateStorageLocationRequest)(nil),   // 23: warehouse.warehouse.v1.CreateStorageLocationRequest
-	(*CreateStorageLocationResponse)(nil),  // 24: warehouse.warehouse.v1.CreateStorageLocationResponse
-	(*UpdateStorageLocationRequest)(nil),   // 25: warehouse.warehouse.v1.UpdateStorageLocationRequest
-	(*UpdateStorageLocationResponse)(nil),  // 26: warehouse.warehouse.v1.UpdateStorageLocationResponse
-	(*ListStorageLocationsRequest)(nil),    // 27: warehouse.warehouse.v1.ListStorageLocationsRequest
-	(*ListStorageLocationsResponse)(nil),   // 28: warehouse.warehouse.v1.ListStorageLocationsResponse
-	(*DeleteStorageLocationRequest)(nil),   // 29: warehouse.warehouse.v1.DeleteStorageLocationRequest
-	(*DeleteStorageLocationResponse)(nil),  // 30: warehouse.warehouse.v1.DeleteStorageLocationResponse
-	(*CreateItemRequest)(nil),              // 31: warehouse.warehouse.v1.CreateItemRequest
-	(*CarCompatibilityInput)(nil),          // 32: warehouse.warehouse.v1.CarCompatibilityInput
-	(*CreateItemResponse)(nil),             // 33: warehouse.warehouse.v1.CreateItemResponse
-	(*GetItemRequest)(nil),                 // 34: warehouse.warehouse.v1.GetItemRequest
-	(*GetItemResponse)(nil),                // 35: warehouse.warehouse.v1.GetItemResponse
-	(*UpdateItemRequest)(nil),              // 36: warehouse.warehouse.v1.UpdateItemRequest
-	(*UpdateItemResponse)(nil),             // 37: warehouse.warehouse.v1.UpdateItemResponse
-	(*DeleteItemRequest)(nil),              // 38: warehouse.warehouse.v1.DeleteItemRequest
-	(*DeleteItemResponse)(nil),             // 39: warehouse.warehouse.v1.DeleteItemResponse
-	(*UpsertStorageLocationRequest)(nil),   // 40: warehouse.warehouse.v1.UpsertStorageLocationRequest
-	(*UpsertStorageLocationResponse)(nil),  // 41: warehouse.warehouse.v1.UpsertStorageLocationResponse
-	(*ListItemsRequest)(nil),               // 42: warehouse.warehouse.v1.ListItemsRequest
-	(*ListItemsResponse)(nil),              // 43: warehouse.warehouse.v1.ListItemsResponse
-	(*SearchItemsRequest)(nil),             // 44: warehouse.warehouse.v1.SearchItemsRequest
-	(*SearchItemsResponse)(nil),            // 45: warehouse.warehouse.v1.SearchItemsResponse
-	(*ReceiveStockItem)(nil),               // 46: warehouse.warehouse.v1.ReceiveStockItem
-	(*ReceiveStockRequest)(nil),            // 47: warehouse.warehouse.v1.ReceiveStockRequest
-	(*ReceiveStockResponse)(nil),           // 48: warehouse.warehouse.v1.ReceiveStockResponse
-	(*WriteOffStockItem)(nil),              // 49: warehouse.warehouse.v1.WriteOffStockItem
-	(*WriteOffStockRequest)(nil),           // 50: warehouse.warehouse.v1.WriteOffStockRequest
-	(*WriteOffStockResponse)(nil),          // 51: warehouse.warehouse.v1.WriteOffStockResponse
-	(*TransferStockItem)(nil),              // 52: warehouse.warehouse.v1.TransferStockItem
-	(*TransferStockRequest)(nil),           // 53: warehouse.warehouse.v1.TransferStockRequest
-	(*TransferStockResponse)(nil),          // 54: warehouse.warehouse.v1.TransferStockResponse
-	(*ReturnToSupplierItem)(nil),           // 55: warehouse.warehouse.v1.ReturnToSupplierItem
-	(*ReturnToSupplierRequest)(nil),        // 56: warehouse.warehouse.v1.ReturnToSupplierRequest
-	(*ReturnToSupplierResponse)(nil),       // 57: warehouse.warehouse.v1.ReturnToSupplierResponse
-	(*ListStockMovementsRequest)(nil),      // 58: warehouse.warehouse.v1.ListStockMovementsRequest
-	(*ListStockMovementsResponse)(nil),     // 59: warehouse.warehouse.v1.ListStockMovementsResponse
-	(*GenerateBarcodeRequest)(nil),         // 60: warehouse.warehouse.v1.GenerateBarcodeRequest
-	(*GenerateBarcodeResponse)(nil),        // 61: warehouse.warehouse.v1.GenerateBarcodeResponse
-	(*GenerateQRRequest)(nil),              // 62: warehouse.warehouse.v1.GenerateQRRequest
-	(*GenerateQRResponse)(nil),             // 63: warehouse.warehouse.v1.GenerateQRResponse
-	(*GenerateLabelRequest)(nil),           // 64: warehouse.warehouse.v1.GenerateLabelRequest
-	(*GenerateLabelResponse)(nil),          // 65: warehouse.warehouse.v1.GenerateLabelResponse
-	(*StartInventoryCheckRequest)(nil),     // 66: warehouse.warehouse.v1.StartInventoryCheckRequest
-	(*StartInventoryCheckResponse)(nil),    // 67: warehouse.warehouse.v1.StartInventoryCheckResponse
-	(*RecordActualQuantityRequest)(nil),    // 68: warehouse.warehouse.v1.RecordActualQuantityRequest
-	(*RecordActualQuantityResponse)(nil),   // 69: warehouse.warehouse.v1.RecordActualQuantityResponse
-	(*CompleteInventoryCheckRequest)(nil),  // 70: warehouse.warehouse.v1.CompleteInventoryCheckRequest
-	(*CompleteInventoryCheckResponse)(nil), // 71: warehouse.warehouse.v1.CompleteInventoryCheckResponse
-	(*GetInventoryCheckRequest)(nil),       // 72: warehouse.warehouse.v1.GetInventoryCheckRequest
-	(*GetInventoryCheckResponse)(nil),      // 73: warehouse.warehouse.v1.GetInventoryCheckResponse
-	(*GetDiscrepanciesRequest)(nil),        // 74: warehouse.warehouse.v1.GetDiscrepanciesRequest
-	(*GetDiscrepanciesResponse)(nil),       // 75: warehouse.warehouse.v1.GetDiscrepanciesResponse
-	(*ReserveForRepairOrderRequest)(nil),   // 76: warehouse.warehouse.v1.ReserveForRepairOrderRequest
-	(*ReserveForRepairOrderResponse)(nil),  // 77: warehouse.warehouse.v1.ReserveForRepairOrderResponse
-	(*ReleaseReservationRequest)(nil),      // 78: warehouse.warehouse.v1.ReleaseReservationRequest
-	(*ReleaseReservationResponse)(nil),     // 79: warehouse.warehouse.v1.ReleaseReservationResponse
-	(*ConfirmWriteOffRequest)(nil),         // 80: warehouse.warehouse.v1.ConfirmWriteOffRequest
-	(*ConfirmWriteOffResponse)(nil),        // 81: warehouse.warehouse.v1.ConfirmWriteOffResponse
-	(*ListReservationsRequest)(nil),        // 82: warehouse.warehouse.v1.ListReservationsRequest
-	(*ListReservationsResponse)(nil),       // 83: warehouse.warehouse.v1.ListReservationsResponse
-	(*SearchAvailablePartsRequest)(nil),    // 84: warehouse.warehouse.v1.SearchAvailablePartsRequest
-	(*SearchAvailablePartsResponse)(nil),   // 85: warehouse.warehouse.v1.SearchAvailablePartsResponse
-	(*AvailablePart)(nil),                  // 86: warehouse.warehouse.v1.AvailablePart
-	(*timestamppb.Timestamp)(nil),          // 87: google.protobuf.Timestamp
+	(WarehouseType)(0),                         // 0: warehouse.warehouse.v1.WarehouseType
+	(ItemCondition)(0),                         // 1: warehouse.warehouse.v1.ItemCondition
+	(ItemUnit)(0),                              // 2: warehouse.warehouse.v1.ItemUnit
+	(MovementType)(0),                          // 3: warehouse.warehouse.v1.MovementType
+	(ReservationStatus)(0),                     // 4: warehouse.warehouse.v1.ReservationStatus
+	(InventoryCheckStatus)(0),                  // 5: warehouse.warehouse.v1.InventoryCheckStatus
+	(ItemOrigin)(0),                            // 6: warehouse.warehouse.v1.ItemOrigin
+	(*Warehouse)(nil),                          // 7: warehouse.warehouse.v1.Warehouse
+	(*StorageLocation)(nil),                    // 8: warehouse.warehouse.v1.StorageLocation
+	(*WarehouseItem)(nil),                      // 9: warehouse.warehouse.v1.WarehouseItem
+	(*CarCompatibility)(nil),                   // 10: warehouse.warehouse.v1.CarCompatibility
+	(*StockMovement)(nil),                      // 11: warehouse.warehouse.v1.StockMovement
+	(*InventoryCheck)(nil),                     // 12: warehouse.warehouse.v1.InventoryCheck
+	(*InventoryCheckItem)(nil),                 // 13: warehouse.warehouse.v1.InventoryCheckItem
+	(*Reservation)(nil),                        // 14: warehouse.warehouse.v1.Reservation
+	(*CreateWarehouseRequest)(nil),             // 15: warehouse.warehouse.v1.CreateWarehouseRequest
+	(*CreateWarehouseResponse)(nil),            // 16: warehouse.warehouse.v1.CreateWarehouseResponse
+	(*GetWarehouseRequest)(nil),                // 17: warehouse.warehouse.v1.GetWarehouseRequest
+	(*GetWarehouseResponse)(nil),               // 18: warehouse.warehouse.v1.GetWarehouseResponse
+	(*UpdateWarehouseRequest)(nil),             // 19: warehouse.warehouse.v1.UpdateWarehouseRequest
+	(*UpdateWarehouseResponse)(nil),            // 20: warehouse.warehouse.v1.UpdateWarehouseResponse
+	(*ListWarehousesRequest)(nil),              // 21: warehouse.warehouse.v1.ListWarehousesRequest
+	(*ListWarehousesResponse)(nil),             // 22: warehouse.warehouse.v1.ListWarehousesResponse
+	(*CreateStorageLocationRequest)(nil),       // 23: warehouse.warehouse.v1.CreateStorageLocationRequest
+	(*CreateStorageLocationResponse)(nil),      // 24: warehouse.warehouse.v1.CreateStorageLocationResponse
+	(*UpdateStorageLocationRequest)(nil),       // 25: warehouse.warehouse.v1.UpdateStorageLocationRequest
+	(*UpdateStorageLocationResponse)(nil),      // 26: warehouse.warehouse.v1.UpdateStorageLocationResponse
+	(*ListStorageLocationsRequest)(nil),        // 27: warehouse.warehouse.v1.ListStorageLocationsRequest
+	(*ListStorageLocationsResponse)(nil),       // 28: warehouse.warehouse.v1.ListStorageLocationsResponse
+	(*DeleteStorageLocationRequest)(nil),       // 29: warehouse.warehouse.v1.DeleteStorageLocationRequest
+	(*DeleteStorageLocationResponse)(nil),      // 30: warehouse.warehouse.v1.DeleteStorageLocationResponse
+	(*CreateItemRequest)(nil),                  // 31: warehouse.warehouse.v1.CreateItemRequest
+	(*CarCompatibilityInput)(nil),              // 32: warehouse.warehouse.v1.CarCompatibilityInput
+	(*CreateItemResponse)(nil),                 // 33: warehouse.warehouse.v1.CreateItemResponse
+	(*GetItemRequest)(nil),                     // 34: warehouse.warehouse.v1.GetItemRequest
+	(*GetItemResponse)(nil),                    // 35: warehouse.warehouse.v1.GetItemResponse
+	(*UpdateItemRequest)(nil),                  // 36: warehouse.warehouse.v1.UpdateItemRequest
+	(*UpdateItemResponse)(nil),                 // 37: warehouse.warehouse.v1.UpdateItemResponse
+	(*DeleteItemRequest)(nil),                  // 38: warehouse.warehouse.v1.DeleteItemRequest
+	(*DeleteItemResponse)(nil),                 // 39: warehouse.warehouse.v1.DeleteItemResponse
+	(*UpsertStorageLocationRequest)(nil),       // 40: warehouse.warehouse.v1.UpsertStorageLocationRequest
+	(*UpsertStorageLocationResponse)(nil),      // 41: warehouse.warehouse.v1.UpsertStorageLocationResponse
+	(*ListItemsRequest)(nil),                   // 42: warehouse.warehouse.v1.ListItemsRequest
+	(*ListItemsResponse)(nil),                  // 43: warehouse.warehouse.v1.ListItemsResponse
+	(*SearchItemsRequest)(nil),                 // 44: warehouse.warehouse.v1.SearchItemsRequest
+	(*SearchItemsResponse)(nil),                // 45: warehouse.warehouse.v1.SearchItemsResponse
+	(*ReceiveStockItem)(nil),                   // 46: warehouse.warehouse.v1.ReceiveStockItem
+	(*ReceiveStockRequest)(nil),                // 47: warehouse.warehouse.v1.ReceiveStockRequest
+	(*ReceiveStockResponse)(nil),               // 48: warehouse.warehouse.v1.ReceiveStockResponse
+	(*WriteOffStockItem)(nil),                  // 49: warehouse.warehouse.v1.WriteOffStockItem
+	(*WriteOffStockRequest)(nil),               // 50: warehouse.warehouse.v1.WriteOffStockRequest
+	(*WriteOffStockResponse)(nil),              // 51: warehouse.warehouse.v1.WriteOffStockResponse
+	(*TransferStockItem)(nil),                  // 52: warehouse.warehouse.v1.TransferStockItem
+	(*TransferStockRequest)(nil),               // 53: warehouse.warehouse.v1.TransferStockRequest
+	(*TransferStockResponse)(nil),              // 54: warehouse.warehouse.v1.TransferStockResponse
+	(*ReturnToSupplierItem)(nil),               // 55: warehouse.warehouse.v1.ReturnToSupplierItem
+	(*ReturnToSupplierRequest)(nil),            // 56: warehouse.warehouse.v1.ReturnToSupplierRequest
+	(*ReturnToSupplierResponse)(nil),           // 57: warehouse.warehouse.v1.ReturnToSupplierResponse
+	(*ListStockMovementsRequest)(nil),          // 58: warehouse.warehouse.v1.ListStockMovementsRequest
+	(*ListStockMovementsResponse)(nil),         // 59: warehouse.warehouse.v1.ListStockMovementsResponse
+	(*GenerateBarcodeRequest)(nil),             // 60: warehouse.warehouse.v1.GenerateBarcodeRequest
+	(*GenerateBarcodeResponse)(nil),            // 61: warehouse.warehouse.v1.GenerateBarcodeResponse
+	(*GenerateQRRequest)(nil),                  // 62: warehouse.warehouse.v1.GenerateQRRequest
+	(*GenerateQRResponse)(nil),                 // 63: warehouse.warehouse.v1.GenerateQRResponse
+	(*GenerateLabelRequest)(nil),               // 64: warehouse.warehouse.v1.GenerateLabelRequest
+	(*GenerateLabelResponse)(nil),              // 65: warehouse.warehouse.v1.GenerateLabelResponse
+	(*StartInventoryCheckRequest)(nil),         // 66: warehouse.warehouse.v1.StartInventoryCheckRequest
+	(*StartInventoryCheckResponse)(nil),        // 67: warehouse.warehouse.v1.StartInventoryCheckResponse
+	(*RecordActualQuantityRequest)(nil),        // 68: warehouse.warehouse.v1.RecordActualQuantityRequest
+	(*RecordActualQuantityResponse)(nil),       // 69: warehouse.warehouse.v1.RecordActualQuantityResponse
+	(*CompleteInventoryCheckRequest)(nil),      // 70: warehouse.warehouse.v1.CompleteInventoryCheckRequest
+	(*CompleteInventoryCheckResponse)(nil),     // 71: warehouse.warehouse.v1.CompleteInventoryCheckResponse
+	(*GetInventoryCheckRequest)(nil),           // 72: warehouse.warehouse.v1.GetInventoryCheckRequest
+	(*GetInventoryCheckResponse)(nil),          // 73: warehouse.warehouse.v1.GetInventoryCheckResponse
+	(*GetDiscrepanciesRequest)(nil),            // 74: warehouse.warehouse.v1.GetDiscrepanciesRequest
+	(*GetDiscrepanciesResponse)(nil),           // 75: warehouse.warehouse.v1.GetDiscrepanciesResponse
+	(*ReserveForRepairOrderRequest)(nil),       // 76: warehouse.warehouse.v1.ReserveForRepairOrderRequest
+	(*ReserveForRepairOrderResponse)(nil),      // 77: warehouse.warehouse.v1.ReserveForRepairOrderResponse
+	(*ReleaseReservationRequest)(nil),          // 78: warehouse.warehouse.v1.ReleaseReservationRequest
+	(*ReleaseReservationResponse)(nil),         // 79: warehouse.warehouse.v1.ReleaseReservationResponse
+	(*ConfirmWriteOffRequest)(nil),             // 80: warehouse.warehouse.v1.ConfirmWriteOffRequest
+	(*ConfirmWriteOffResponse)(nil),            // 81: warehouse.warehouse.v1.ConfirmWriteOffResponse
+	(*ListReservationsRequest)(nil),            // 82: warehouse.warehouse.v1.ListReservationsRequest
+	(*ListReservationsResponse)(nil),           // 83: warehouse.warehouse.v1.ListReservationsResponse
+	(*SearchAvailablePartsRequest)(nil),        // 84: warehouse.warehouse.v1.SearchAvailablePartsRequest
+	(*SearchAvailablePartsResponse)(nil),       // 85: warehouse.warehouse.v1.SearchAvailablePartsResponse
+	(*AvailablePart)(nil),                      // 86: warehouse.warehouse.v1.AvailablePart
+	(*CheckStockAvailabilityRequest)(nil),      // 87: warehouse.warehouse.v1.CheckStockAvailabilityRequest
+	(*CheckStockInsufficient)(nil),             // 88: warehouse.warehouse.v1.CheckStockInsufficient
+	(*CheckStockAvailabilityResponse)(nil),     // 89: warehouse.warehouse.v1.CheckStockAvailabilityResponse
+	(*CheckStockAvailabilityRequest_Item)(nil), // 90: warehouse.warehouse.v1.CheckStockAvailabilityRequest.Item
+	(*timestamppb.Timestamp)(nil),              // 91: google.protobuf.Timestamp
 }
 var file_warehouse_warehouse_v1_warehouse_proto_depIdxs = []int32{
 	0,   // 0: warehouse.warehouse.v1.Warehouse.type:type_name -> warehouse.warehouse.v1.WarehouseType
-	87,  // 1: warehouse.warehouse.v1.Warehouse.created_at:type_name -> google.protobuf.Timestamp
-	87,  // 2: warehouse.warehouse.v1.Warehouse.updated_at:type_name -> google.protobuf.Timestamp
-	87,  // 3: warehouse.warehouse.v1.StorageLocation.created_at:type_name -> google.protobuf.Timestamp
+	91,  // 1: warehouse.warehouse.v1.Warehouse.created_at:type_name -> google.protobuf.Timestamp
+	91,  // 2: warehouse.warehouse.v1.Warehouse.updated_at:type_name -> google.protobuf.Timestamp
+	91,  // 3: warehouse.warehouse.v1.StorageLocation.created_at:type_name -> google.protobuf.Timestamp
 	2,   // 4: warehouse.warehouse.v1.WarehouseItem.unit:type_name -> warehouse.warehouse.v1.ItemUnit
 	1,   // 5: warehouse.warehouse.v1.WarehouseItem.condition:type_name -> warehouse.warehouse.v1.ItemCondition
-	87,  // 6: warehouse.warehouse.v1.WarehouseItem.created_at:type_name -> google.protobuf.Timestamp
-	87,  // 7: warehouse.warehouse.v1.WarehouseItem.updated_at:type_name -> google.protobuf.Timestamp
+	91,  // 6: warehouse.warehouse.v1.WarehouseItem.created_at:type_name -> google.protobuf.Timestamp
+	91,  // 7: warehouse.warehouse.v1.WarehouseItem.updated_at:type_name -> google.protobuf.Timestamp
 	10,  // 8: warehouse.warehouse.v1.WarehouseItem.car_compatibility:type_name -> warehouse.warehouse.v1.CarCompatibility
 	6,   // 9: warehouse.warehouse.v1.WarehouseItem.origin:type_name -> warehouse.warehouse.v1.ItemOrigin
-	87,  // 10: warehouse.warehouse.v1.WarehouseItem.deleted_at:type_name -> google.protobuf.Timestamp
+	91,  // 10: warehouse.warehouse.v1.WarehouseItem.deleted_at:type_name -> google.protobuf.Timestamp
 	3,   // 11: warehouse.warehouse.v1.StockMovement.type:type_name -> warehouse.warehouse.v1.MovementType
-	87,  // 12: warehouse.warehouse.v1.StockMovement.created_at:type_name -> google.protobuf.Timestamp
+	91,  // 12: warehouse.warehouse.v1.StockMovement.created_at:type_name -> google.protobuf.Timestamp
 	5,   // 13: warehouse.warehouse.v1.InventoryCheck.status:type_name -> warehouse.warehouse.v1.InventoryCheckStatus
-	87,  // 14: warehouse.warehouse.v1.InventoryCheck.started_at:type_name -> google.protobuf.Timestamp
-	87,  // 15: warehouse.warehouse.v1.InventoryCheck.completed_at:type_name -> google.protobuf.Timestamp
+	91,  // 14: warehouse.warehouse.v1.InventoryCheck.started_at:type_name -> google.protobuf.Timestamp
+	91,  // 15: warehouse.warehouse.v1.InventoryCheck.completed_at:type_name -> google.protobuf.Timestamp
 	4,   // 16: warehouse.warehouse.v1.Reservation.status:type_name -> warehouse.warehouse.v1.ReservationStatus
-	87,  // 17: warehouse.warehouse.v1.Reservation.created_at:type_name -> google.protobuf.Timestamp
-	87,  // 18: warehouse.warehouse.v1.Reservation.updated_at:type_name -> google.protobuf.Timestamp
+	91,  // 17: warehouse.warehouse.v1.Reservation.created_at:type_name -> google.protobuf.Timestamp
+	91,  // 18: warehouse.warehouse.v1.Reservation.updated_at:type_name -> google.protobuf.Timestamp
 	0,   // 19: warehouse.warehouse.v1.CreateWarehouseRequest.type:type_name -> warehouse.warehouse.v1.WarehouseType
 	7,   // 20: warehouse.warehouse.v1.CreateWarehouseResponse.warehouse:type_name -> warehouse.warehouse.v1.Warehouse
 	7,   // 21: warehouse.warehouse.v1.GetWarehouseResponse.warehouse:type_name -> warehouse.warehouse.v1.Warehouse
@@ -6185,77 +6466,81 @@ var file_warehouse_warehouse_v1_warehouse_proto_depIdxs = []int32{
 	14,  // 65: warehouse.warehouse.v1.ListReservationsResponse.reservations:type_name -> warehouse.warehouse.v1.Reservation
 	86,  // 66: warehouse.warehouse.v1.SearchAvailablePartsResponse.parts:type_name -> warehouse.warehouse.v1.AvailablePart
 	1,   // 67: warehouse.warehouse.v1.AvailablePart.condition:type_name -> warehouse.warehouse.v1.ItemCondition
-	15,  // 68: warehouse.warehouse.v1.WarehouseService.CreateWarehouse:input_type -> warehouse.warehouse.v1.CreateWarehouseRequest
-	17,  // 69: warehouse.warehouse.v1.WarehouseService.GetWarehouse:input_type -> warehouse.warehouse.v1.GetWarehouseRequest
-	19,  // 70: warehouse.warehouse.v1.WarehouseService.UpdateWarehouse:input_type -> warehouse.warehouse.v1.UpdateWarehouseRequest
-	21,  // 71: warehouse.warehouse.v1.WarehouseService.ListWarehouses:input_type -> warehouse.warehouse.v1.ListWarehousesRequest
-	23,  // 72: warehouse.warehouse.v1.WarehouseService.CreateStorageLocation:input_type -> warehouse.warehouse.v1.CreateStorageLocationRequest
-	25,  // 73: warehouse.warehouse.v1.WarehouseService.UpdateStorageLocation:input_type -> warehouse.warehouse.v1.UpdateStorageLocationRequest
-	27,  // 74: warehouse.warehouse.v1.WarehouseService.ListStorageLocations:input_type -> warehouse.warehouse.v1.ListStorageLocationsRequest
-	29,  // 75: warehouse.warehouse.v1.WarehouseService.DeleteStorageLocation:input_type -> warehouse.warehouse.v1.DeleteStorageLocationRequest
-	31,  // 76: warehouse.warehouse.v1.WarehouseService.CreateItem:input_type -> warehouse.warehouse.v1.CreateItemRequest
-	34,  // 77: warehouse.warehouse.v1.WarehouseService.GetItem:input_type -> warehouse.warehouse.v1.GetItemRequest
-	36,  // 78: warehouse.warehouse.v1.WarehouseService.UpdateItem:input_type -> warehouse.warehouse.v1.UpdateItemRequest
-	38,  // 79: warehouse.warehouse.v1.WarehouseService.DeleteItem:input_type -> warehouse.warehouse.v1.DeleteItemRequest
-	42,  // 80: warehouse.warehouse.v1.WarehouseService.ListItems:input_type -> warehouse.warehouse.v1.ListItemsRequest
-	44,  // 81: warehouse.warehouse.v1.WarehouseService.SearchItems:input_type -> warehouse.warehouse.v1.SearchItemsRequest
-	40,  // 82: warehouse.warehouse.v1.WarehouseService.UpsertStorageLocation:input_type -> warehouse.warehouse.v1.UpsertStorageLocationRequest
-	47,  // 83: warehouse.warehouse.v1.WarehouseService.ReceiveStock:input_type -> warehouse.warehouse.v1.ReceiveStockRequest
-	50,  // 84: warehouse.warehouse.v1.WarehouseService.WriteOffStock:input_type -> warehouse.warehouse.v1.WriteOffStockRequest
-	53,  // 85: warehouse.warehouse.v1.WarehouseService.TransferStock:input_type -> warehouse.warehouse.v1.TransferStockRequest
-	56,  // 86: warehouse.warehouse.v1.WarehouseService.ReturnToSupplier:input_type -> warehouse.warehouse.v1.ReturnToSupplierRequest
-	58,  // 87: warehouse.warehouse.v1.WarehouseService.ListStockMovements:input_type -> warehouse.warehouse.v1.ListStockMovementsRequest
-	60,  // 88: warehouse.warehouse.v1.WarehouseService.GenerateBarcode:input_type -> warehouse.warehouse.v1.GenerateBarcodeRequest
-	62,  // 89: warehouse.warehouse.v1.WarehouseService.GenerateQR:input_type -> warehouse.warehouse.v1.GenerateQRRequest
-	64,  // 90: warehouse.warehouse.v1.WarehouseService.GenerateLabel:input_type -> warehouse.warehouse.v1.GenerateLabelRequest
-	66,  // 91: warehouse.warehouse.v1.WarehouseService.StartInventoryCheck:input_type -> warehouse.warehouse.v1.StartInventoryCheckRequest
-	68,  // 92: warehouse.warehouse.v1.WarehouseService.RecordActualQuantity:input_type -> warehouse.warehouse.v1.RecordActualQuantityRequest
-	70,  // 93: warehouse.warehouse.v1.WarehouseService.CompleteInventoryCheck:input_type -> warehouse.warehouse.v1.CompleteInventoryCheckRequest
-	72,  // 94: warehouse.warehouse.v1.WarehouseService.GetInventoryCheck:input_type -> warehouse.warehouse.v1.GetInventoryCheckRequest
-	74,  // 95: warehouse.warehouse.v1.WarehouseService.GetDiscrepancies:input_type -> warehouse.warehouse.v1.GetDiscrepanciesRequest
-	76,  // 96: warehouse.warehouse.v1.WarehouseService.ReserveForRepairOrder:input_type -> warehouse.warehouse.v1.ReserveForRepairOrderRequest
-	78,  // 97: warehouse.warehouse.v1.WarehouseService.ReleaseReservation:input_type -> warehouse.warehouse.v1.ReleaseReservationRequest
-	80,  // 98: warehouse.warehouse.v1.WarehouseService.ConfirmWriteOff:input_type -> warehouse.warehouse.v1.ConfirmWriteOffRequest
-	82,  // 99: warehouse.warehouse.v1.WarehouseService.ListReservations:input_type -> warehouse.warehouse.v1.ListReservationsRequest
-	84,  // 100: warehouse.warehouse.v1.WarehouseService.SearchAvailableParts:input_type -> warehouse.warehouse.v1.SearchAvailablePartsRequest
-	16,  // 101: warehouse.warehouse.v1.WarehouseService.CreateWarehouse:output_type -> warehouse.warehouse.v1.CreateWarehouseResponse
-	18,  // 102: warehouse.warehouse.v1.WarehouseService.GetWarehouse:output_type -> warehouse.warehouse.v1.GetWarehouseResponse
-	20,  // 103: warehouse.warehouse.v1.WarehouseService.UpdateWarehouse:output_type -> warehouse.warehouse.v1.UpdateWarehouseResponse
-	22,  // 104: warehouse.warehouse.v1.WarehouseService.ListWarehouses:output_type -> warehouse.warehouse.v1.ListWarehousesResponse
-	24,  // 105: warehouse.warehouse.v1.WarehouseService.CreateStorageLocation:output_type -> warehouse.warehouse.v1.CreateStorageLocationResponse
-	26,  // 106: warehouse.warehouse.v1.WarehouseService.UpdateStorageLocation:output_type -> warehouse.warehouse.v1.UpdateStorageLocationResponse
-	28,  // 107: warehouse.warehouse.v1.WarehouseService.ListStorageLocations:output_type -> warehouse.warehouse.v1.ListStorageLocationsResponse
-	30,  // 108: warehouse.warehouse.v1.WarehouseService.DeleteStorageLocation:output_type -> warehouse.warehouse.v1.DeleteStorageLocationResponse
-	33,  // 109: warehouse.warehouse.v1.WarehouseService.CreateItem:output_type -> warehouse.warehouse.v1.CreateItemResponse
-	35,  // 110: warehouse.warehouse.v1.WarehouseService.GetItem:output_type -> warehouse.warehouse.v1.GetItemResponse
-	37,  // 111: warehouse.warehouse.v1.WarehouseService.UpdateItem:output_type -> warehouse.warehouse.v1.UpdateItemResponse
-	39,  // 112: warehouse.warehouse.v1.WarehouseService.DeleteItem:output_type -> warehouse.warehouse.v1.DeleteItemResponse
-	43,  // 113: warehouse.warehouse.v1.WarehouseService.ListItems:output_type -> warehouse.warehouse.v1.ListItemsResponse
-	45,  // 114: warehouse.warehouse.v1.WarehouseService.SearchItems:output_type -> warehouse.warehouse.v1.SearchItemsResponse
-	41,  // 115: warehouse.warehouse.v1.WarehouseService.UpsertStorageLocation:output_type -> warehouse.warehouse.v1.UpsertStorageLocationResponse
-	48,  // 116: warehouse.warehouse.v1.WarehouseService.ReceiveStock:output_type -> warehouse.warehouse.v1.ReceiveStockResponse
-	51,  // 117: warehouse.warehouse.v1.WarehouseService.WriteOffStock:output_type -> warehouse.warehouse.v1.WriteOffStockResponse
-	54,  // 118: warehouse.warehouse.v1.WarehouseService.TransferStock:output_type -> warehouse.warehouse.v1.TransferStockResponse
-	57,  // 119: warehouse.warehouse.v1.WarehouseService.ReturnToSupplier:output_type -> warehouse.warehouse.v1.ReturnToSupplierResponse
-	59,  // 120: warehouse.warehouse.v1.WarehouseService.ListStockMovements:output_type -> warehouse.warehouse.v1.ListStockMovementsResponse
-	61,  // 121: warehouse.warehouse.v1.WarehouseService.GenerateBarcode:output_type -> warehouse.warehouse.v1.GenerateBarcodeResponse
-	63,  // 122: warehouse.warehouse.v1.WarehouseService.GenerateQR:output_type -> warehouse.warehouse.v1.GenerateQRResponse
-	65,  // 123: warehouse.warehouse.v1.WarehouseService.GenerateLabel:output_type -> warehouse.warehouse.v1.GenerateLabelResponse
-	67,  // 124: warehouse.warehouse.v1.WarehouseService.StartInventoryCheck:output_type -> warehouse.warehouse.v1.StartInventoryCheckResponse
-	69,  // 125: warehouse.warehouse.v1.WarehouseService.RecordActualQuantity:output_type -> warehouse.warehouse.v1.RecordActualQuantityResponse
-	71,  // 126: warehouse.warehouse.v1.WarehouseService.CompleteInventoryCheck:output_type -> warehouse.warehouse.v1.CompleteInventoryCheckResponse
-	73,  // 127: warehouse.warehouse.v1.WarehouseService.GetInventoryCheck:output_type -> warehouse.warehouse.v1.GetInventoryCheckResponse
-	75,  // 128: warehouse.warehouse.v1.WarehouseService.GetDiscrepancies:output_type -> warehouse.warehouse.v1.GetDiscrepanciesResponse
-	77,  // 129: warehouse.warehouse.v1.WarehouseService.ReserveForRepairOrder:output_type -> warehouse.warehouse.v1.ReserveForRepairOrderResponse
-	79,  // 130: warehouse.warehouse.v1.WarehouseService.ReleaseReservation:output_type -> warehouse.warehouse.v1.ReleaseReservationResponse
-	81,  // 131: warehouse.warehouse.v1.WarehouseService.ConfirmWriteOff:output_type -> warehouse.warehouse.v1.ConfirmWriteOffResponse
-	83,  // 132: warehouse.warehouse.v1.WarehouseService.ListReservations:output_type -> warehouse.warehouse.v1.ListReservationsResponse
-	85,  // 133: warehouse.warehouse.v1.WarehouseService.SearchAvailableParts:output_type -> warehouse.warehouse.v1.SearchAvailablePartsResponse
-	101, // [101:134] is the sub-list for method output_type
-	68,  // [68:101] is the sub-list for method input_type
-	68,  // [68:68] is the sub-list for extension type_name
-	68,  // [68:68] is the sub-list for extension extendee
-	0,   // [0:68] is the sub-list for field type_name
+	90,  // 68: warehouse.warehouse.v1.CheckStockAvailabilityRequest.items:type_name -> warehouse.warehouse.v1.CheckStockAvailabilityRequest.Item
+	88,  // 69: warehouse.warehouse.v1.CheckStockAvailabilityResponse.insufficient:type_name -> warehouse.warehouse.v1.CheckStockInsufficient
+	15,  // 70: warehouse.warehouse.v1.WarehouseService.CreateWarehouse:input_type -> warehouse.warehouse.v1.CreateWarehouseRequest
+	17,  // 71: warehouse.warehouse.v1.WarehouseService.GetWarehouse:input_type -> warehouse.warehouse.v1.GetWarehouseRequest
+	19,  // 72: warehouse.warehouse.v1.WarehouseService.UpdateWarehouse:input_type -> warehouse.warehouse.v1.UpdateWarehouseRequest
+	21,  // 73: warehouse.warehouse.v1.WarehouseService.ListWarehouses:input_type -> warehouse.warehouse.v1.ListWarehousesRequest
+	23,  // 74: warehouse.warehouse.v1.WarehouseService.CreateStorageLocation:input_type -> warehouse.warehouse.v1.CreateStorageLocationRequest
+	25,  // 75: warehouse.warehouse.v1.WarehouseService.UpdateStorageLocation:input_type -> warehouse.warehouse.v1.UpdateStorageLocationRequest
+	27,  // 76: warehouse.warehouse.v1.WarehouseService.ListStorageLocations:input_type -> warehouse.warehouse.v1.ListStorageLocationsRequest
+	29,  // 77: warehouse.warehouse.v1.WarehouseService.DeleteStorageLocation:input_type -> warehouse.warehouse.v1.DeleteStorageLocationRequest
+	31,  // 78: warehouse.warehouse.v1.WarehouseService.CreateItem:input_type -> warehouse.warehouse.v1.CreateItemRequest
+	34,  // 79: warehouse.warehouse.v1.WarehouseService.GetItem:input_type -> warehouse.warehouse.v1.GetItemRequest
+	36,  // 80: warehouse.warehouse.v1.WarehouseService.UpdateItem:input_type -> warehouse.warehouse.v1.UpdateItemRequest
+	38,  // 81: warehouse.warehouse.v1.WarehouseService.DeleteItem:input_type -> warehouse.warehouse.v1.DeleteItemRequest
+	42,  // 82: warehouse.warehouse.v1.WarehouseService.ListItems:input_type -> warehouse.warehouse.v1.ListItemsRequest
+	44,  // 83: warehouse.warehouse.v1.WarehouseService.SearchItems:input_type -> warehouse.warehouse.v1.SearchItemsRequest
+	40,  // 84: warehouse.warehouse.v1.WarehouseService.UpsertStorageLocation:input_type -> warehouse.warehouse.v1.UpsertStorageLocationRequest
+	47,  // 85: warehouse.warehouse.v1.WarehouseService.ReceiveStock:input_type -> warehouse.warehouse.v1.ReceiveStockRequest
+	50,  // 86: warehouse.warehouse.v1.WarehouseService.WriteOffStock:input_type -> warehouse.warehouse.v1.WriteOffStockRequest
+	53,  // 87: warehouse.warehouse.v1.WarehouseService.TransferStock:input_type -> warehouse.warehouse.v1.TransferStockRequest
+	56,  // 88: warehouse.warehouse.v1.WarehouseService.ReturnToSupplier:input_type -> warehouse.warehouse.v1.ReturnToSupplierRequest
+	58,  // 89: warehouse.warehouse.v1.WarehouseService.ListStockMovements:input_type -> warehouse.warehouse.v1.ListStockMovementsRequest
+	60,  // 90: warehouse.warehouse.v1.WarehouseService.GenerateBarcode:input_type -> warehouse.warehouse.v1.GenerateBarcodeRequest
+	62,  // 91: warehouse.warehouse.v1.WarehouseService.GenerateQR:input_type -> warehouse.warehouse.v1.GenerateQRRequest
+	64,  // 92: warehouse.warehouse.v1.WarehouseService.GenerateLabel:input_type -> warehouse.warehouse.v1.GenerateLabelRequest
+	66,  // 93: warehouse.warehouse.v1.WarehouseService.StartInventoryCheck:input_type -> warehouse.warehouse.v1.StartInventoryCheckRequest
+	68,  // 94: warehouse.warehouse.v1.WarehouseService.RecordActualQuantity:input_type -> warehouse.warehouse.v1.RecordActualQuantityRequest
+	70,  // 95: warehouse.warehouse.v1.WarehouseService.CompleteInventoryCheck:input_type -> warehouse.warehouse.v1.CompleteInventoryCheckRequest
+	72,  // 96: warehouse.warehouse.v1.WarehouseService.GetInventoryCheck:input_type -> warehouse.warehouse.v1.GetInventoryCheckRequest
+	74,  // 97: warehouse.warehouse.v1.WarehouseService.GetDiscrepancies:input_type -> warehouse.warehouse.v1.GetDiscrepanciesRequest
+	76,  // 98: warehouse.warehouse.v1.WarehouseService.ReserveForRepairOrder:input_type -> warehouse.warehouse.v1.ReserveForRepairOrderRequest
+	78,  // 99: warehouse.warehouse.v1.WarehouseService.ReleaseReservation:input_type -> warehouse.warehouse.v1.ReleaseReservationRequest
+	80,  // 100: warehouse.warehouse.v1.WarehouseService.ConfirmWriteOff:input_type -> warehouse.warehouse.v1.ConfirmWriteOffRequest
+	82,  // 101: warehouse.warehouse.v1.WarehouseService.ListReservations:input_type -> warehouse.warehouse.v1.ListReservationsRequest
+	84,  // 102: warehouse.warehouse.v1.WarehouseService.SearchAvailableParts:input_type -> warehouse.warehouse.v1.SearchAvailablePartsRequest
+	87,  // 103: warehouse.warehouse.v1.WarehouseService.CheckStockAvailability:input_type -> warehouse.warehouse.v1.CheckStockAvailabilityRequest
+	16,  // 104: warehouse.warehouse.v1.WarehouseService.CreateWarehouse:output_type -> warehouse.warehouse.v1.CreateWarehouseResponse
+	18,  // 105: warehouse.warehouse.v1.WarehouseService.GetWarehouse:output_type -> warehouse.warehouse.v1.GetWarehouseResponse
+	20,  // 106: warehouse.warehouse.v1.WarehouseService.UpdateWarehouse:output_type -> warehouse.warehouse.v1.UpdateWarehouseResponse
+	22,  // 107: warehouse.warehouse.v1.WarehouseService.ListWarehouses:output_type -> warehouse.warehouse.v1.ListWarehousesResponse
+	24,  // 108: warehouse.warehouse.v1.WarehouseService.CreateStorageLocation:output_type -> warehouse.warehouse.v1.CreateStorageLocationResponse
+	26,  // 109: warehouse.warehouse.v1.WarehouseService.UpdateStorageLocation:output_type -> warehouse.warehouse.v1.UpdateStorageLocationResponse
+	28,  // 110: warehouse.warehouse.v1.WarehouseService.ListStorageLocations:output_type -> warehouse.warehouse.v1.ListStorageLocationsResponse
+	30,  // 111: warehouse.warehouse.v1.WarehouseService.DeleteStorageLocation:output_type -> warehouse.warehouse.v1.DeleteStorageLocationResponse
+	33,  // 112: warehouse.warehouse.v1.WarehouseService.CreateItem:output_type -> warehouse.warehouse.v1.CreateItemResponse
+	35,  // 113: warehouse.warehouse.v1.WarehouseService.GetItem:output_type -> warehouse.warehouse.v1.GetItemResponse
+	37,  // 114: warehouse.warehouse.v1.WarehouseService.UpdateItem:output_type -> warehouse.warehouse.v1.UpdateItemResponse
+	39,  // 115: warehouse.warehouse.v1.WarehouseService.DeleteItem:output_type -> warehouse.warehouse.v1.DeleteItemResponse
+	43,  // 116: warehouse.warehouse.v1.WarehouseService.ListItems:output_type -> warehouse.warehouse.v1.ListItemsResponse
+	45,  // 117: warehouse.warehouse.v1.WarehouseService.SearchItems:output_type -> warehouse.warehouse.v1.SearchItemsResponse
+	41,  // 118: warehouse.warehouse.v1.WarehouseService.UpsertStorageLocation:output_type -> warehouse.warehouse.v1.UpsertStorageLocationResponse
+	48,  // 119: warehouse.warehouse.v1.WarehouseService.ReceiveStock:output_type -> warehouse.warehouse.v1.ReceiveStockResponse
+	51,  // 120: warehouse.warehouse.v1.WarehouseService.WriteOffStock:output_type -> warehouse.warehouse.v1.WriteOffStockResponse
+	54,  // 121: warehouse.warehouse.v1.WarehouseService.TransferStock:output_type -> warehouse.warehouse.v1.TransferStockResponse
+	57,  // 122: warehouse.warehouse.v1.WarehouseService.ReturnToSupplier:output_type -> warehouse.warehouse.v1.ReturnToSupplierResponse
+	59,  // 123: warehouse.warehouse.v1.WarehouseService.ListStockMovements:output_type -> warehouse.warehouse.v1.ListStockMovementsResponse
+	61,  // 124: warehouse.warehouse.v1.WarehouseService.GenerateBarcode:output_type -> warehouse.warehouse.v1.GenerateBarcodeResponse
+	63,  // 125: warehouse.warehouse.v1.WarehouseService.GenerateQR:output_type -> warehouse.warehouse.v1.GenerateQRResponse
+	65,  // 126: warehouse.warehouse.v1.WarehouseService.GenerateLabel:output_type -> warehouse.warehouse.v1.GenerateLabelResponse
+	67,  // 127: warehouse.warehouse.v1.WarehouseService.StartInventoryCheck:output_type -> warehouse.warehouse.v1.StartInventoryCheckResponse
+	69,  // 128: warehouse.warehouse.v1.WarehouseService.RecordActualQuantity:output_type -> warehouse.warehouse.v1.RecordActualQuantityResponse
+	71,  // 129: warehouse.warehouse.v1.WarehouseService.CompleteInventoryCheck:output_type -> warehouse.warehouse.v1.CompleteInventoryCheckResponse
+	73,  // 130: warehouse.warehouse.v1.WarehouseService.GetInventoryCheck:output_type -> warehouse.warehouse.v1.GetInventoryCheckResponse
+	75,  // 131: warehouse.warehouse.v1.WarehouseService.GetDiscrepancies:output_type -> warehouse.warehouse.v1.GetDiscrepanciesResponse
+	77,  // 132: warehouse.warehouse.v1.WarehouseService.ReserveForRepairOrder:output_type -> warehouse.warehouse.v1.ReserveForRepairOrderResponse
+	79,  // 133: warehouse.warehouse.v1.WarehouseService.ReleaseReservation:output_type -> warehouse.warehouse.v1.ReleaseReservationResponse
+	81,  // 134: warehouse.warehouse.v1.WarehouseService.ConfirmWriteOff:output_type -> warehouse.warehouse.v1.ConfirmWriteOffResponse
+	83,  // 135: warehouse.warehouse.v1.WarehouseService.ListReservations:output_type -> warehouse.warehouse.v1.ListReservationsResponse
+	85,  // 136: warehouse.warehouse.v1.WarehouseService.SearchAvailableParts:output_type -> warehouse.warehouse.v1.SearchAvailablePartsResponse
+	89,  // 137: warehouse.warehouse.v1.WarehouseService.CheckStockAvailability:output_type -> warehouse.warehouse.v1.CheckStockAvailabilityResponse
+	104, // [104:138] is the sub-list for method output_type
+	70,  // [70:104] is the sub-list for method input_type
+	70,  // [70:70] is the sub-list for extension type_name
+	70,  // [70:70] is the sub-list for extension extendee
+	0,   // [0:70] is the sub-list for field type_name
 }
 
 func init() { file_warehouse_warehouse_v1_warehouse_proto_init() }
@@ -6269,7 +6554,7 @@ func file_warehouse_warehouse_v1_warehouse_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_warehouse_warehouse_v1_warehouse_proto_rawDesc), len(file_warehouse_warehouse_v1_warehouse_proto_rawDesc)),
 			NumEnums:      7,
-			NumMessages:   80,
+			NumMessages:   84,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

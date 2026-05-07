@@ -57,6 +57,12 @@ service WarehouseService {
 
   // --- Search for cg-parts-provider integration ---
   rpc SearchAvailableParts(SearchAvailablePartsRequest) returns (SearchAvailablePartsResponse);
+
+  // --- Phase 71: marketplace pre-flight stock availability check ---
+  // Used by cart checkout to validate stock across multiple sellers before
+  // initiating payment. Returns the set of items whose available quantity
+  // is below the requested quantity (empty list = all items available).
+  rpc CheckStockAvailability(CheckStockAvailabilityRequest) returns (CheckStockAvailabilityResponse);
 }
 
 // ============================================================
@@ -192,6 +198,11 @@ message StockMovement {
   string reason = 10;
   int64 performed_by = 11;
   google.protobuf.Timestamp created_at = 12;
+  // Phase 71: marketplace audit — generic origin tagging for cross-domain write-offs
+  // (e.g. entity_type='marketplace_order', entity_id='42'; entity_type='subscription_claim').
+  // Empty string means legacy/repair_order-only path.
+  string entity_type = 13;
+  string entity_id   = 14;
 }
 
 message InventoryCheck {
@@ -481,6 +492,13 @@ message WriteOffStockRequest {
   int64 repair_order_id = 2;
   string reason = 3;
   repeated WriteOffStockItem items = 4;
+  // Phase 71: marketplace cart write-off origin. When entity_type='marketplace_order',
+  // entity_id holds the cg-orders.orders.id (as string). marketplace_order_id is a
+  // typed convenience for the same value when the caller has it as int64.
+  // All three fields are optional; empty values fall back to repair_order_id audit.
+  int64  marketplace_order_id = 5;
+  string entity_type          = 6;
+  string entity_id            = 7;
 }
 
 message WriteOffStockResponse {
@@ -691,4 +709,29 @@ message AvailablePart {
   string warehouse_name = 9;
   int64 warehouse_id = 10;
   string storage_location = 11;
+}
+
+// ============================================================
+// Phase 71: marketplace stock availability pre-check
+// ============================================================
+
+message CheckStockAvailabilityRequest {
+  message Item {
+    int64 warehouse_id      = 1;
+    int64 warehouse_item_id = 2;
+    int32 qty               = 3;
+  }
+  repeated Item items = 1;
+}
+
+message CheckStockInsufficient {
+  int64 warehouse_item_id = 1;
+  int32 available         = 2;
+  int32 requested         = 3;
+}
+
+message CheckStockAvailabilityResponse {
+  // Empty = all items have sufficient stock. Non-empty = list of items
+  // whose available quantity is below the requested quantity.
+  repeated CheckStockInsufficient insufficient = 1;
 }
