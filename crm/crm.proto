@@ -13,6 +13,11 @@ service CRMService {
   rpc ListPipelines(ListPipelinesRequest)     returns (ListPipelinesResponse);
   rpc UpdatePipeline(UpdatePipelineRequest)   returns (UpdatePipelineResponse);
   rpc ArchivePipeline(ArchivePipelineRequest) returns (ArchivePipelineResponse);
+  // AddPipelineSource appends a deal-source string to pipelines.sources if
+  // not already present. Lighter permission than UpdatePipeline (manager
+  // scope=crm.deals.manage) so managers can create sources from the deal
+  // form without admin access to pipeline settings.
+  rpc AddPipelineSource(AddPipelineSourceRequest) returns (AddPipelineSourceResponse);
   // Pipeline-level membership management. Admins (scope=all) manage who
   // can see a pipeline; managers see only pipelines they're members of.
   rpc ListPipelineMembers(ListPipelineMembersRequest)     returns (ListPipelineMembersResponse);
@@ -413,6 +418,19 @@ message UpdatePipelineRequest {
 }
 
 message UpdatePipelineResponse {
+  Pipeline pipeline = 1;
+}
+
+message AddPipelineSourceRequest {
+  string organization_id = 1;
+  string id              = 2;
+  // The source string to append. Trimmed server-side; empty/whitespace-
+  // only is rejected. Idempotent — if `source` already exists in the
+  // pipeline's list it returns the unmodified pipeline.
+  string source          = 3;
+}
+
+message AddPipelineSourceResponse {
   Pipeline pipeline = 1;
 }
 

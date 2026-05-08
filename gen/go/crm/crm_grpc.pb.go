@@ -24,6 +24,7 @@ const (
 	CRMService_ListPipelines_FullMethodName                      = "/crm.v1.CRMService/ListPipelines"
 	CRMService_UpdatePipeline_FullMethodName                     = "/crm.v1.CRMService/UpdatePipeline"
 	CRMService_ArchivePipeline_FullMethodName                    = "/crm.v1.CRMService/ArchivePipeline"
+	CRMService_AddPipelineSource_FullMethodName                  = "/crm.v1.CRMService/AddPipelineSource"
 	CRMService_ListPipelineMembers_FullMethodName                = "/crm.v1.CRMService/ListPipelineMembers"
 	CRMService_AddPipelineMember_FullMethodName                  = "/crm.v1.CRMService/AddPipelineMember"
 	CRMService_RemovePipelineMember_FullMethodName               = "/crm.v1.CRMService/RemovePipelineMember"
@@ -156,6 +157,11 @@ type CRMServiceClient interface {
 	ListPipelines(ctx context.Context, in *ListPipelinesRequest, opts ...grpc.CallOption) (*ListPipelinesResponse, error)
 	UpdatePipeline(ctx context.Context, in *UpdatePipelineRequest, opts ...grpc.CallOption) (*UpdatePipelineResponse, error)
 	ArchivePipeline(ctx context.Context, in *ArchivePipelineRequest, opts ...grpc.CallOption) (*ArchivePipelineResponse, error)
+	// AddPipelineSource appends a deal-source string to pipelines.sources if
+	// not already present. Lighter permission than UpdatePipeline (manager
+	// scope=crm.deals.manage) so managers can create sources from the deal
+	// form without admin access to pipeline settings.
+	AddPipelineSource(ctx context.Context, in *AddPipelineSourceRequest, opts ...grpc.CallOption) (*AddPipelineSourceResponse, error)
 	// Pipeline-level membership management. Admins (scope=all) manage who
 	// can see a pipeline; managers see only pipelines they're members of.
 	ListPipelineMembers(ctx context.Context, in *ListPipelineMembersRequest, opts ...grpc.CallOption) (*ListPipelineMembersResponse, error)
@@ -463,6 +469,16 @@ func (c *cRMServiceClient) ArchivePipeline(ctx context.Context, in *ArchivePipel
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ArchivePipelineResponse)
 	err := c.cc.Invoke(ctx, CRMService_ArchivePipeline_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) AddPipelineSource(ctx context.Context, in *AddPipelineSourceRequest, opts ...grpc.CallOption) (*AddPipelineSourceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddPipelineSourceResponse)
+	err := c.cc.Invoke(ctx, CRMService_AddPipelineSource_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1700,6 +1716,11 @@ type CRMServiceServer interface {
 	ListPipelines(context.Context, *ListPipelinesRequest) (*ListPipelinesResponse, error)
 	UpdatePipeline(context.Context, *UpdatePipelineRequest) (*UpdatePipelineResponse, error)
 	ArchivePipeline(context.Context, *ArchivePipelineRequest) (*ArchivePipelineResponse, error)
+	// AddPipelineSource appends a deal-source string to pipelines.sources if
+	// not already present. Lighter permission than UpdatePipeline (manager
+	// scope=crm.deals.manage) so managers can create sources from the deal
+	// form without admin access to pipeline settings.
+	AddPipelineSource(context.Context, *AddPipelineSourceRequest) (*AddPipelineSourceResponse, error)
 	// Pipeline-level membership management. Admins (scope=all) manage who
 	// can see a pipeline; managers see only pipelines they're members of.
 	ListPipelineMembers(context.Context, *ListPipelineMembersRequest) (*ListPipelineMembersResponse, error)
@@ -1977,6 +1998,9 @@ func (UnimplementedCRMServiceServer) UpdatePipeline(context.Context, *UpdatePipe
 }
 func (UnimplementedCRMServiceServer) ArchivePipeline(context.Context, *ArchivePipelineRequest) (*ArchivePipelineResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ArchivePipeline not implemented")
+}
+func (UnimplementedCRMServiceServer) AddPipelineSource(context.Context, *AddPipelineSourceRequest) (*AddPipelineSourceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddPipelineSource not implemented")
 }
 func (UnimplementedCRMServiceServer) ListPipelineMembers(context.Context, *ListPipelineMembersRequest) (*ListPipelineMembersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPipelineMembers not implemented")
@@ -2448,6 +2472,24 @@ func _CRMService_ArchivePipeline_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRMServiceServer).ArchivePipeline(ctx, req.(*ArchivePipelineRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_AddPipelineSource_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddPipelineSourceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).AddPipelineSource(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_AddPipelineSource_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).AddPipelineSource(ctx, req.(*AddPipelineSourceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4656,6 +4698,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ArchivePipeline",
 			Handler:    _CRMService_ArchivePipeline_Handler,
+		},
+		{
+			MethodName: "AddPipelineSource",
+			Handler:    _CRMService_AddPipelineSource_Handler,
 		},
 		{
 			MethodName: "ListPipelineMembers",
