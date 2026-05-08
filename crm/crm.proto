@@ -1059,6 +1059,27 @@ message ListDealsRequest {
   // Tag filter — when non-empty, only deals carrying ALL listed tag IDs
   // are returned (AND semantics, mirrors AmoCRM filter). Empty = no filter.
   repeated string tag_ids                 = 16;
+
+  // Closure-event filter mode — used by Dashboard drilldown into kanban
+  // for "closed in period" (Успешно/Отказы) cards. Mirrors the analytics
+  // SQL semantics in analytics.GetDealVolume which counts deals by
+  // deal_stage_history.changed_at to a stage with terminal_type IN
+  // ('won','lost'). When closed_at_from/to is set, the cg-crm repo
+  // SKIPS the regular created_at filter (date_from/date_to) — the two
+  // modes are mutually exclusive by design (different date columns,
+  // different semantics).
+  google.protobuf.Timestamp closed_at_from = 17;
+  google.protobuf.Timestamp closed_at_to   = 18;
+  // closed_status — empty = both terminals (won + lost), "won" / "lost"
+  // narrow to a single terminal. Validated at the bff edge.
+  string closed_status                     = 19;
+
+  // Assignment-event filter mode — mirrors analytics.CountAssignedDeals
+  // which counts assignment activities by activities.created_at. When
+  // assigned_at_from/to is set, the cg-crm repo SKIPS the regular
+  // created_at filter (same reason as closed_at_*).
+  google.protobuf.Timestamp assigned_at_from = 20;
+  google.protobuf.Timestamp assigned_at_to   = 21;
 }
 
 message ListDealsResponse {
