@@ -511,8 +511,14 @@ type Part struct {
 	UserCityId          int32                  `protobuf:"varint,25,opt,name=user_city_id,json=userCityId,proto3" json:"user_city_id,omitempty"`
 	DeliveryProbability int32                  `protobuf:"varint,26,opt,name=delivery_probability,json=deliveryProbability,proto3" json:"delivery_probability,omitempty"`
 	Installment         *Installment           `protobuf:"bytes,27,opt,name=installment,proto3" json:"installment,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	// warehouse_id is the numeric string representation of warehouses.id (int64).
+	// Non-empty only for parts from the internal warehouse provider.
+	WarehouseId string `protobuf:"bytes,28,opt,name=warehouse_id,json=warehouseId,proto3" json:"warehouse_id,omitempty"`
+	// seller_org_id is the UUID string of the organization that owns the warehouse.
+	// Non-empty only for parts from the internal warehouse provider.
+	SellerOrgId   string `protobuf:"bytes,29,opt,name=seller_org_id,json=sellerOrgId,proto3" json:"seller_org_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Part) Reset() {
@@ -732,6 +738,20 @@ func (x *Part) GetInstallment() *Installment {
 		return x.Installment
 	}
 	return nil
+}
+
+func (x *Part) GetWarehouseId() string {
+	if x != nil {
+		return x.WarehouseId
+	}
+	return ""
+}
+
+func (x *Part) GetSellerOrgId() string {
+	if x != nil {
+		return x.SellerOrgId
+	}
+	return ""
 }
 
 // Installment holds installment payment details.
@@ -2715,7 +2735,7 @@ const file_parts_provider_v1_provider_proto_rawDesc = "" +
 	"\vstatus_code\x18\x05 \x01(\x05R\n" +
 	"statusCode\x12\x1f\n" +
 	"\vduration_ms\x18\x06 \x01(\x03R\n" +
-	"durationMs\"\xd3\x06\n" +
+	"durationMs\"\x9a\a\n" +
 	"\x04Part\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x10\n" +
 	"\x03oem\x18\x02 \x01(\tR\x03oem\x12\x19\n" +
@@ -2748,7 +2768,9 @@ const file_parts_provider_v1_provider_proto_rawDesc = "" +
 	"\fuser_city_id\x18\x19 \x01(\x05R\n" +
 	"userCityId\x121\n" +
 	"\x14delivery_probability\x18\x1a \x01(\x05R\x13deliveryProbability\x12@\n" +
-	"\vinstallment\x18\x1b \x01(\v2\x1e.parts.provider.v1.InstallmentR\vinstallment\"O\n" +
+	"\vinstallment\x18\x1b \x01(\v2\x1e.parts.provider.v1.InstallmentR\vinstallment\x12!\n" +
+	"\fwarehouse_id\x18\x1c \x01(\tR\vwarehouseId\x12\"\n" +
+	"\rseller_org_id\x18\x1d \x01(\tR\vsellerOrgId\"O\n" +
 	"\vInstallment\x12\x12\n" +
 	"\x04text\x18\x01 \x01(\tR\x04text\x12\x14\n" +
 	"\x05price\x18\x02 \x01(\x05R\x05price\x12\x16\n" +

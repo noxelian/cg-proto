@@ -95,6 +95,12 @@ message Part {
   int32 user_city_id = 25;
   int32 delivery_probability = 26;
   Installment installment = 27;
+  // warehouse_id is the numeric string representation of warehouses.id (int64).
+  // Non-empty only for parts from the internal warehouse provider.
+  string warehouse_id  = 28;
+  // seller_org_id is the UUID string of the organization that owns the warehouse.
+  // Non-empty only for parts from the internal warehouse provider.
+  string seller_org_id = 29;
 }
 
 // Installment holds installment payment details.
