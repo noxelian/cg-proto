@@ -1085,6 +1085,17 @@ message ListDealsRequest {
   // Dashboard close-reasons widget drilldown into kanban (click bar/legend
   // → /kanban?close_reason=<text>). Empty = no filter.
   string close_reason                        = 22;
+
+  // Multi-select source filter — OR semantics across deals.source values.
+  // Powers /kanban mega-filter combobox «Источник» section (system sources
+  // like manual/lead/whatsapp/instagram/wazzup/telegram/ads + per-pipeline
+  // pipelines.sources entries). Empty/nil = no filter.
+  repeated string sources                    = 23;
+
+  // Multi-select city filter — OR semantics across deals.custom_fields->>'city'.
+  // Powers /kanban mega-filter combobox «Город» section (CITY_OPTIONS, 19 cities).
+  // Empty/nil = no filter.
+  repeated string cities                     = 24;
 }
 
 message ListDealsResponse {

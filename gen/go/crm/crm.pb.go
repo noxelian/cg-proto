@@ -5272,7 +5272,16 @@ type ListDealsRequest struct {
 	// Close-reason filter — exact-match text on deals.close_reason. Used by
 	// Dashboard close-reasons widget drilldown into kanban (click bar/legend
 	// → /kanban?close_reason=<text>). Empty = no filter.
-	CloseReason   string `protobuf:"bytes,22,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"`
+	CloseReason string `protobuf:"bytes,22,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"`
+	// Multi-select source filter — OR semantics across deals.source values.
+	// Powers /kanban mega-filter combobox «Источник» section (system sources
+	// like manual/lead/whatsapp/instagram/wazzup/telegram/ads + per-pipeline
+	// pipelines.sources entries). Empty/nil = no filter.
+	Sources []string `protobuf:"bytes,23,rep,name=sources,proto3" json:"sources,omitempty"`
+	// Multi-select city filter — OR semantics across deals.custom_fields->>'city'.
+	// Powers /kanban mega-filter combobox «Город» section (CITY_OPTIONS, 19 cities).
+	// Empty/nil = no filter.
+	Cities        []string `protobuf:"bytes,24,rep,name=cities,proto3" json:"cities,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5459,6 +5468,20 @@ func (x *ListDealsRequest) GetCloseReason() string {
 		return x.CloseReason
 	}
 	return ""
+}
+
+func (x *ListDealsRequest) GetSources() []string {
+	if x != nil {
+		return x.Sources
+	}
+	return nil
+}
+
+func (x *ListDealsRequest) GetCities() []string {
+	if x != nil {
+		return x.Cities
+	}
+	return nil
 }
 
 type ListDealsResponse struct {
@@ -20597,7 +20620,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"8\n" +
 	"\x0fGetDealResponse\x12%\n" +
-	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xb0\a\n" +
+	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xe2\a\n" +
 	"\x10ListDealsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -20625,7 +20648,9 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\rclosed_status\x18\x13 \x01(\tR\fclosedStatus\x12D\n" +
 	"\x10assigned_at_from\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x0eassignedAtFrom\x12@\n" +
 	"\x0eassigned_at_to\x18\x15 \x01(\v2\x1a.google.protobuf.TimestampR\fassignedAtTo\x12!\n" +
-	"\fclose_reason\x18\x16 \x01(\tR\vcloseReason\"R\n" +
+	"\fclose_reason\x18\x16 \x01(\tR\vcloseReason\x12\x18\n" +
+	"\asources\x18\x17 \x03(\tR\asources\x12\x16\n" +
+	"\x06cities\x18\x18 \x03(\tR\x06cities\"R\n" +
 	"\x11ListDealsResponse\x12'\n" +
 	"\x05deals\x18\x01 \x03(\v2\x11.crm.v1.DealProtoR\x05deals\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\"\xfe\x02\n" +
