@@ -1080,6 +1080,11 @@ message ListDealsRequest {
   // created_at filter (same reason as closed_at_*).
   google.protobuf.Timestamp assigned_at_from = 20;
   google.protobuf.Timestamp assigned_at_to   = 21;
+
+  // Close-reason filter — exact-match text on deals.close_reason. Used by
+  // Dashboard close-reasons widget drilldown into kanban (click bar/legend
+  // → /kanban?close_reason=<text>). Empty = no filter.
+  string close_reason                        = 22;
 }
 
 message ListDealsResponse {

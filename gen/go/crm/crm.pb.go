@@ -5269,8 +5269,12 @@ type ListDealsRequest struct {
 	// created_at filter (same reason as closed_at_*).
 	AssignedAtFrom *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=assigned_at_from,json=assignedAtFrom,proto3" json:"assigned_at_from,omitempty"`
 	AssignedAtTo   *timestamppb.Timestamp `protobuf:"bytes,21,opt,name=assigned_at_to,json=assignedAtTo,proto3" json:"assigned_at_to,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Close-reason filter — exact-match text on deals.close_reason. Used by
+	// Dashboard close-reasons widget drilldown into kanban (click bar/legend
+	// → /kanban?close_reason=<text>). Empty = no filter.
+	CloseReason   string `protobuf:"bytes,22,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListDealsRequest) Reset() {
@@ -5448,6 +5452,13 @@ func (x *ListDealsRequest) GetAssignedAtTo() *timestamppb.Timestamp {
 		return x.AssignedAtTo
 	}
 	return nil
+}
+
+func (x *ListDealsRequest) GetCloseReason() string {
+	if x != nil {
+		return x.CloseReason
+	}
+	return ""
 }
 
 type ListDealsResponse struct {
@@ -20586,7 +20597,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"8\n" +
 	"\x0fGetDealResponse\x12%\n" +
-	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\x8d\a\n" +
+	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xb0\a\n" +
 	"\x10ListDealsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -20613,7 +20624,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"closedAtTo\x12#\n" +
 	"\rclosed_status\x18\x13 \x01(\tR\fclosedStatus\x12D\n" +
 	"\x10assigned_at_from\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\x0eassignedAtFrom\x12@\n" +
-	"\x0eassigned_at_to\x18\x15 \x01(\v2\x1a.google.protobuf.TimestampR\fassignedAtTo\"R\n" +
+	"\x0eassigned_at_to\x18\x15 \x01(\v2\x1a.google.protobuf.TimestampR\fassignedAtTo\x12!\n" +
+	"\fclose_reason\x18\x16 \x01(\tR\vcloseReason\"R\n" +
 	"\x11ListDealsResponse\x12'\n" +
 	"\x05deals\x18\x01 \x03(\v2\x11.crm.v1.DealProtoR\x05deals\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\"\xfe\x02\n" +
