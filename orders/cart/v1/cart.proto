@@ -46,6 +46,10 @@ service CartService {
   // ProcessPaymentSuccess is called when payment is confirmed.
   // Creates marketplace orders per supplier and clears the cart.
   rpc ProcessPaymentSuccess(ProcessPaymentSuccessRequest) returns (ProcessPaymentSuccessResponse);
+
+  // ListAllCarts returns a paginated list of all carts across all buyers.
+  // Requires platform admin or support role. Used by the admin cart manager UI.
+  rpc ListAllCarts(ListAllCartsRequest) returns (ListAllCartsResponse);
 }
 
 // =============================================
@@ -365,4 +369,48 @@ message ProcessPaymentSuccessRequest {
 message ProcessPaymentSuccessResponse {
   // created_order_ids maps seller_org_id → order_id for each created order.
   map<string, int64> created_order_ids = 1;
+}
+
+// --- ListAllCarts ---
+
+message ListAllCartsRequest {
+  // status filters by cart status: "active" | "awaiting_payment" | "expired" | "" (all)
+  string status = 1;
+  // seller_org_id filters carts that contain at least one item from this seller (optional UUID).
+  string seller_org_id = 2;
+  // buyer_user_id filters carts owned by a specific buyer (optional).
+  int64 buyer_user_id = 3;
+  // request_id filters carts linked to a specific request UUID (optional).
+  string request_id = 4;
+  // created_from filters carts created on or after this timestamp (optional).
+  google.protobuf.Timestamp created_from = 5;
+  // created_to filters carts created before or on this timestamp (optional).
+  google.protobuf.Timestamp created_to = 6;
+  // page is 1-based page number. Defaults to 1 when zero.
+  int32 page = 7;
+  // page_size is the number of results per page. Max 100, default 25.
+  int32 page_size = 8;
+}
+
+message ListAllCartsResponse {
+  repeated CartAdminSummaryItem carts = 1;
+  int32 total = 2;
+  bool has_more = 3;
+}
+
+// CartAdminSummaryItem is a flat read-only view of a cart for admin list display.
+message CartAdminSummaryItem {
+  int64 id = 1;
+  string status = 2;
+  int64 buyer_user_id = 3;
+  // request_id is optional — a cart can be standalone (not linked to a request).
+  string request_id = 4;
+  int32 item_count = 5;
+  // grand_total is the sum of unit_price * quantity across all items, in tiyn (minor units).
+  int64 grand_total = 6;
+  string currency = 7;
+  int32 supplier_count = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+  google.protobuf.Timestamp expires_at = 11;
 }

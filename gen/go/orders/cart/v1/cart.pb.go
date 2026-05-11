@@ -2118,6 +2118,301 @@ func (x *ProcessPaymentSuccessResponse) GetCreatedOrderIds() map[string]int64 {
 	return nil
 }
 
+type ListAllCartsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// status filters by cart status: "active" | "awaiting_payment" | "expired" | "" (all)
+	Status string `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
+	// seller_org_id filters carts that contain at least one item from this seller (optional UUID).
+	SellerOrgId string `protobuf:"bytes,2,opt,name=seller_org_id,json=sellerOrgId,proto3" json:"seller_org_id,omitempty"`
+	// buyer_user_id filters carts owned by a specific buyer (optional).
+	BuyerUserId int64 `protobuf:"varint,3,opt,name=buyer_user_id,json=buyerUserId,proto3" json:"buyer_user_id,omitempty"`
+	// request_id filters carts linked to a specific request UUID (optional).
+	RequestId string `protobuf:"bytes,4,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	// created_from filters carts created on or after this timestamp (optional).
+	CreatedFrom *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_from,json=createdFrom,proto3" json:"created_from,omitempty"`
+	// created_to filters carts created before or on this timestamp (optional).
+	CreatedTo *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_to,json=createdTo,proto3" json:"created_to,omitempty"`
+	// page is 1-based page number. Defaults to 1 when zero.
+	Page int32 `protobuf:"varint,7,opt,name=page,proto3" json:"page,omitempty"`
+	// page_size is the number of results per page. Max 100, default 25.
+	PageSize      int32 `protobuf:"varint,8,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListAllCartsRequest) Reset() {
+	*x = ListAllCartsRequest{}
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListAllCartsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAllCartsRequest) ProtoMessage() {}
+
+func (x *ListAllCartsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAllCartsRequest.ProtoReflect.Descriptor instead.
+func (*ListAllCartsRequest) Descriptor() ([]byte, []int) {
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *ListAllCartsRequest) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *ListAllCartsRequest) GetSellerOrgId() string {
+	if x != nil {
+		return x.SellerOrgId
+	}
+	return ""
+}
+
+func (x *ListAllCartsRequest) GetBuyerUserId() int64 {
+	if x != nil {
+		return x.BuyerUserId
+	}
+	return 0
+}
+
+func (x *ListAllCartsRequest) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *ListAllCartsRequest) GetCreatedFrom() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedFrom
+	}
+	return nil
+}
+
+func (x *ListAllCartsRequest) GetCreatedTo() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedTo
+	}
+	return nil
+}
+
+func (x *ListAllCartsRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListAllCartsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+type ListAllCartsResponse struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Carts         []*CartAdminSummaryItem `protobuf:"bytes,1,rep,name=carts,proto3" json:"carts,omitempty"`
+	Total         int32                   `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	HasMore       bool                    `protobuf:"varint,3,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListAllCartsResponse) Reset() {
+	*x = ListAllCartsResponse{}
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListAllCartsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAllCartsResponse) ProtoMessage() {}
+
+func (x *ListAllCartsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAllCartsResponse.ProtoReflect.Descriptor instead.
+func (*ListAllCartsResponse) Descriptor() ([]byte, []int) {
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *ListAllCartsResponse) GetCarts() []*CartAdminSummaryItem {
+	if x != nil {
+		return x.Carts
+	}
+	return nil
+}
+
+func (x *ListAllCartsResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *ListAllCartsResponse) GetHasMore() bool {
+	if x != nil {
+		return x.HasMore
+	}
+	return false
+}
+
+// CartAdminSummaryItem is a flat read-only view of a cart for admin list display.
+type CartAdminSummaryItem struct {
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Id          int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status      string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	BuyerUserId int64                  `protobuf:"varint,3,opt,name=buyer_user_id,json=buyerUserId,proto3" json:"buyer_user_id,omitempty"`
+	// request_id is optional — a cart can be standalone (not linked to a request).
+	RequestId string `protobuf:"bytes,4,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	ItemCount int32  `protobuf:"varint,5,opt,name=item_count,json=itemCount,proto3" json:"item_count,omitempty"`
+	// grand_total is the sum of unit_price * quantity across all items, in tiyn (minor units).
+	GrandTotal    int64                  `protobuf:"varint,6,opt,name=grand_total,json=grandTotal,proto3" json:"grand_total,omitempty"`
+	Currency      string                 `protobuf:"bytes,7,opt,name=currency,proto3" json:"currency,omitempty"`
+	SupplierCount int32                  `protobuf:"varint,8,opt,name=supplier_count,json=supplierCount,proto3" json:"supplier_count,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CartAdminSummaryItem) Reset() {
+	*x = CartAdminSummaryItem{}
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CartAdminSummaryItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CartAdminSummaryItem) ProtoMessage() {}
+
+func (x *CartAdminSummaryItem) ProtoReflect() protoreflect.Message {
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CartAdminSummaryItem.ProtoReflect.Descriptor instead.
+func (*CartAdminSummaryItem) Descriptor() ([]byte, []int) {
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *CartAdminSummaryItem) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *CartAdminSummaryItem) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *CartAdminSummaryItem) GetBuyerUserId() int64 {
+	if x != nil {
+		return x.BuyerUserId
+	}
+	return 0
+}
+
+func (x *CartAdminSummaryItem) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *CartAdminSummaryItem) GetItemCount() int32 {
+	if x != nil {
+		return x.ItemCount
+	}
+	return 0
+}
+
+func (x *CartAdminSummaryItem) GetGrandTotal() int64 {
+	if x != nil {
+		return x.GrandTotal
+	}
+	return 0
+}
+
+func (x *CartAdminSummaryItem) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *CartAdminSummaryItem) GetSupplierCount() int32 {
+	if x != nil {
+		return x.SupplierCount
+	}
+	return 0
+}
+
+func (x *CartAdminSummaryItem) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *CartAdminSummaryItem) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *CartAdminSummaryItem) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
+}
+
 var File_orders_cart_v1_cart_proto protoreflect.FileDescriptor
 
 const file_orders_cart_v1_cart_proto_rawDesc = "" +
@@ -2294,7 +2589,41 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\x11created_order_ids\x18\x01 \x03(\v2B.orders.cart.v1.ProcessPaymentSuccessResponse.CreatedOrderIdsEntryR\x0fcreatedOrderIds\x1aB\n" +
 	"\x14CreatedOrderIdsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x03R\x05value:\x028\x01*}\n" +
+	"\x05value\x18\x02 \x01(\x03R\x05value:\x028\x01\"\xbf\x02\n" +
+	"\x13ListAllCartsRequest\x12\x16\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\x12\"\n" +
+	"\rseller_org_id\x18\x02 \x01(\tR\vsellerOrgId\x12\"\n" +
+	"\rbuyer_user_id\x18\x03 \x01(\x03R\vbuyerUserId\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x04 \x01(\tR\trequestId\x12=\n" +
+	"\fcreated_from\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\vcreatedFrom\x129\n" +
+	"\n" +
+	"created_to\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedTo\x12\x12\n" +
+	"\x04page\x18\a \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\b \x01(\x05R\bpageSize\"\x83\x01\n" +
+	"\x14ListAllCartsResponse\x12:\n" +
+	"\x05carts\x18\x01 \x03(\v2$.orders.cart.v1.CartAdminSummaryItemR\x05carts\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\x12\x19\n" +
+	"\bhas_more\x18\x03 \x01(\bR\ahasMore\"\xb5\x03\n" +
+	"\x14CartAdminSummaryItem\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\x12\"\n" +
+	"\rbuyer_user_id\x18\x03 \x01(\x03R\vbuyerUserId\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x04 \x01(\tR\trequestId\x12\x1d\n" +
+	"\n" +
+	"item_count\x18\x05 \x01(\x05R\titemCount\x12\x1f\n" +
+	"\vgrand_total\x18\x06 \x01(\x03R\n" +
+	"grandTotal\x12\x1a\n" +
+	"\bcurrency\x18\a \x01(\tR\bcurrency\x12%\n" +
+	"\x0esupplier_count\x18\b \x01(\x05R\rsupplierCount\x129\n" +
+	"\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x129\n" +
+	"\n" +
+	"expires_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt*}\n" +
 	"\x12CartItemSourceType\x12%\n" +
 	"!CART_ITEM_SOURCE_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19CART_ITEM_SOURCE_TYPE_BID\x10\x01\x12!\n" +
@@ -2308,7 +2637,7 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\x10CartDeliveryType\x12\"\n" +
 	"\x1eCART_DELIVERY_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19CART_DELIVERY_TYPE_PICKUP\x10\x01\x12\x1f\n" +
-	"\x1bCART_DELIVERY_TYPE_DELIVERY\x10\x022\x97\b\n" +
+	"\x1bCART_DELIVERY_TYPE_DELIVERY\x10\x022\xf2\b\n" +
 	"\vCartService\x12J\n" +
 	"\aGetCart\x12\x1e.orders.cart.v1.GetCartRequest\x1a\x1f.orders.cart.v1.GetCartResponse\x12J\n" +
 	"\aAddItem\x12\x1e.orders.cart.v1.AddItemRequest\x1a\x1f.orders.cart.v1.AddItemResponse\x12k\n" +
@@ -2321,7 +2650,8 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\x11SetDeliveryOption\x12(.orders.cart.v1.SetDeliveryOptionRequest\x1a).orders.cart.v1.SetDeliveryOptionResponse\x12M\n" +
 	"\bCheckout\x12\x1f.orders.cart.v1.CheckoutRequest\x1a .orders.cart.v1.CheckoutResponse\x12_\n" +
 	"\x0eGetCartSummary\x12%.orders.cart.v1.GetCartSummaryRequest\x1a&.orders.cart.v1.GetCartSummaryResponse\x12t\n" +
-	"\x15ProcessPaymentSuccess\x12,.orders.cart.v1.ProcessPaymentSuccessRequest\x1a-.orders.cart.v1.ProcessPaymentSuccessResponseB5Z3github.com/4ubak/cg-proto/gen/go/orders/cart;cartv1b\x06proto3"
+	"\x15ProcessPaymentSuccess\x12,.orders.cart.v1.ProcessPaymentSuccessRequest\x1a-.orders.cart.v1.ProcessPaymentSuccessResponse\x12Y\n" +
+	"\fListAllCarts\x12#.orders.cart.v1.ListAllCartsRequest\x1a$.orders.cart.v1.ListAllCartsResponseB5Z3github.com/4ubak/cg-proto/gen/go/orders/cart;cartv1b\x06proto3"
 
 var (
 	file_orders_cart_v1_cart_proto_rawDescOnce sync.Once
@@ -2336,7 +2666,7 @@ func file_orders_cart_v1_cart_proto_rawDescGZIP() []byte {
 }
 
 var file_orders_cart_v1_cart_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_orders_cart_v1_cart_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
+var file_orders_cart_v1_cart_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
 var file_orders_cart_v1_cart_proto_goTypes = []any{
 	(CartItemSourceType)(0),               // 0: orders.cart.v1.CartItemSourceType
 	(CartStatus)(0),                       // 1: orders.cart.v1.CartStatus
@@ -2369,17 +2699,20 @@ var file_orders_cart_v1_cart_proto_goTypes = []any{
 	(*GetCartSummaryResponse)(nil),        // 28: orders.cart.v1.GetCartSummaryResponse
 	(*ProcessPaymentSuccessRequest)(nil),  // 29: orders.cart.v1.ProcessPaymentSuccessRequest
 	(*ProcessPaymentSuccessResponse)(nil), // 30: orders.cart.v1.ProcessPaymentSuccessResponse
-	nil,                                   // 31: orders.cart.v1.ProcessPaymentSuccessResponse.CreatedOrderIdsEntry
-	(*timestamppb.Timestamp)(nil),         // 32: google.protobuf.Timestamp
+	(*ListAllCartsRequest)(nil),           // 31: orders.cart.v1.ListAllCartsRequest
+	(*ListAllCartsResponse)(nil),          // 32: orders.cart.v1.ListAllCartsResponse
+	(*CartAdminSummaryItem)(nil),          // 33: orders.cart.v1.CartAdminSummaryItem
+	nil,                                   // 34: orders.cart.v1.ProcessPaymentSuccessResponse.CreatedOrderIdsEntry
+	(*timestamppb.Timestamp)(nil),         // 35: google.protobuf.Timestamp
 }
 var file_orders_cart_v1_cart_proto_depIdxs = []int32{
 	1,  // 0: orders.cart.v1.Cart.status:type_name -> orders.cart.v1.CartStatus
-	32, // 1: orders.cart.v1.Cart.expires_at:type_name -> google.protobuf.Timestamp
-	32, // 2: orders.cart.v1.Cart.created_at:type_name -> google.protobuf.Timestamp
-	32, // 3: orders.cart.v1.Cart.updated_at:type_name -> google.protobuf.Timestamp
+	35, // 1: orders.cart.v1.Cart.expires_at:type_name -> google.protobuf.Timestamp
+	35, // 2: orders.cart.v1.Cart.created_at:type_name -> google.protobuf.Timestamp
+	35, // 3: orders.cart.v1.Cart.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 4: orders.cart.v1.CartItem.source_type:type_name -> orders.cart.v1.CartItemSourceType
 	2,  // 5: orders.cart.v1.CartItem.delivery_type:type_name -> orders.cart.v1.CartDeliveryType
-	32, // 6: orders.cart.v1.CartItem.added_at:type_name -> google.protobuf.Timestamp
+	35, // 6: orders.cart.v1.CartItem.added_at:type_name -> google.protobuf.Timestamp
 	4,  // 7: orders.cart.v1.SupplierGroup.items:type_name -> orders.cart.v1.CartItem
 	2,  // 8: orders.cart.v1.SupplierGroup.delivery_type:type_name -> orders.cart.v1.CartDeliveryType
 	5,  // 9: orders.cart.v1.CartSummary.supplier_groups:type_name -> orders.cart.v1.SupplierGroup
@@ -2401,34 +2734,42 @@ var file_orders_cart_v1_cart_proto_depIdxs = []int32{
 	5,  // 25: orders.cart.v1.SetDeliveryOptionResponse.supplier_group:type_name -> orders.cart.v1.SupplierGroup
 	3,  // 26: orders.cart.v1.SetDeliveryOptionResponse.cart:type_name -> orders.cart.v1.Cart
 	7,  // 27: orders.cart.v1.CheckoutResponse.supplier_breakdowns:type_name -> orders.cart.v1.SupplierCheckoutBreakdown
-	31, // 28: orders.cart.v1.ProcessPaymentSuccessResponse.created_order_ids:type_name -> orders.cart.v1.ProcessPaymentSuccessResponse.CreatedOrderIdsEntry
-	8,  // 29: orders.cart.v1.CartService.GetCart:input_type -> orders.cart.v1.GetCartRequest
-	10, // 30: orders.cart.v1.CartService.AddItem:input_type -> orders.cart.v1.AddItemRequest
-	12, // 31: orders.cart.v1.CartService.UpdateItemQuantity:input_type -> orders.cart.v1.UpdateItemQuantityRequest
-	14, // 32: orders.cart.v1.CartService.RemoveItem:input_type -> orders.cart.v1.RemoveItemRequest
-	16, // 33: orders.cart.v1.CartService.ClearCart:input_type -> orders.cart.v1.ClearCartRequest
-	18, // 34: orders.cart.v1.CartService.RefreshPrices:input_type -> orders.cart.v1.RefreshPricesRequest
-	21, // 35: orders.cart.v1.CartService.ConfirmPriceChanges:input_type -> orders.cart.v1.ConfirmPriceChangesRequest
-	23, // 36: orders.cart.v1.CartService.SetDeliveryOption:input_type -> orders.cart.v1.SetDeliveryOptionRequest
-	25, // 37: orders.cart.v1.CartService.Checkout:input_type -> orders.cart.v1.CheckoutRequest
-	27, // 38: orders.cart.v1.CartService.GetCartSummary:input_type -> orders.cart.v1.GetCartSummaryRequest
-	29, // 39: orders.cart.v1.CartService.ProcessPaymentSuccess:input_type -> orders.cart.v1.ProcessPaymentSuccessRequest
-	9,  // 40: orders.cart.v1.CartService.GetCart:output_type -> orders.cart.v1.GetCartResponse
-	11, // 41: orders.cart.v1.CartService.AddItem:output_type -> orders.cart.v1.AddItemResponse
-	13, // 42: orders.cart.v1.CartService.UpdateItemQuantity:output_type -> orders.cart.v1.UpdateItemQuantityResponse
-	15, // 43: orders.cart.v1.CartService.RemoveItem:output_type -> orders.cart.v1.RemoveItemResponse
-	17, // 44: orders.cart.v1.CartService.ClearCart:output_type -> orders.cart.v1.ClearCartResponse
-	20, // 45: orders.cart.v1.CartService.RefreshPrices:output_type -> orders.cart.v1.RefreshPricesResponse
-	22, // 46: orders.cart.v1.CartService.ConfirmPriceChanges:output_type -> orders.cart.v1.ConfirmPriceChangesResponse
-	24, // 47: orders.cart.v1.CartService.SetDeliveryOption:output_type -> orders.cart.v1.SetDeliveryOptionResponse
-	26, // 48: orders.cart.v1.CartService.Checkout:output_type -> orders.cart.v1.CheckoutResponse
-	28, // 49: orders.cart.v1.CartService.GetCartSummary:output_type -> orders.cart.v1.GetCartSummaryResponse
-	30, // 50: orders.cart.v1.CartService.ProcessPaymentSuccess:output_type -> orders.cart.v1.ProcessPaymentSuccessResponse
-	40, // [40:51] is the sub-list for method output_type
-	29, // [29:40] is the sub-list for method input_type
-	29, // [29:29] is the sub-list for extension type_name
-	29, // [29:29] is the sub-list for extension extendee
-	0,  // [0:29] is the sub-list for field type_name
+	34, // 28: orders.cart.v1.ProcessPaymentSuccessResponse.created_order_ids:type_name -> orders.cart.v1.ProcessPaymentSuccessResponse.CreatedOrderIdsEntry
+	35, // 29: orders.cart.v1.ListAllCartsRequest.created_from:type_name -> google.protobuf.Timestamp
+	35, // 30: orders.cart.v1.ListAllCartsRequest.created_to:type_name -> google.protobuf.Timestamp
+	33, // 31: orders.cart.v1.ListAllCartsResponse.carts:type_name -> orders.cart.v1.CartAdminSummaryItem
+	35, // 32: orders.cart.v1.CartAdminSummaryItem.created_at:type_name -> google.protobuf.Timestamp
+	35, // 33: orders.cart.v1.CartAdminSummaryItem.updated_at:type_name -> google.protobuf.Timestamp
+	35, // 34: orders.cart.v1.CartAdminSummaryItem.expires_at:type_name -> google.protobuf.Timestamp
+	8,  // 35: orders.cart.v1.CartService.GetCart:input_type -> orders.cart.v1.GetCartRequest
+	10, // 36: orders.cart.v1.CartService.AddItem:input_type -> orders.cart.v1.AddItemRequest
+	12, // 37: orders.cart.v1.CartService.UpdateItemQuantity:input_type -> orders.cart.v1.UpdateItemQuantityRequest
+	14, // 38: orders.cart.v1.CartService.RemoveItem:input_type -> orders.cart.v1.RemoveItemRequest
+	16, // 39: orders.cart.v1.CartService.ClearCart:input_type -> orders.cart.v1.ClearCartRequest
+	18, // 40: orders.cart.v1.CartService.RefreshPrices:input_type -> orders.cart.v1.RefreshPricesRequest
+	21, // 41: orders.cart.v1.CartService.ConfirmPriceChanges:input_type -> orders.cart.v1.ConfirmPriceChangesRequest
+	23, // 42: orders.cart.v1.CartService.SetDeliveryOption:input_type -> orders.cart.v1.SetDeliveryOptionRequest
+	25, // 43: orders.cart.v1.CartService.Checkout:input_type -> orders.cart.v1.CheckoutRequest
+	27, // 44: orders.cart.v1.CartService.GetCartSummary:input_type -> orders.cart.v1.GetCartSummaryRequest
+	29, // 45: orders.cart.v1.CartService.ProcessPaymentSuccess:input_type -> orders.cart.v1.ProcessPaymentSuccessRequest
+	31, // 46: orders.cart.v1.CartService.ListAllCarts:input_type -> orders.cart.v1.ListAllCartsRequest
+	9,  // 47: orders.cart.v1.CartService.GetCart:output_type -> orders.cart.v1.GetCartResponse
+	11, // 48: orders.cart.v1.CartService.AddItem:output_type -> orders.cart.v1.AddItemResponse
+	13, // 49: orders.cart.v1.CartService.UpdateItemQuantity:output_type -> orders.cart.v1.UpdateItemQuantityResponse
+	15, // 50: orders.cart.v1.CartService.RemoveItem:output_type -> orders.cart.v1.RemoveItemResponse
+	17, // 51: orders.cart.v1.CartService.ClearCart:output_type -> orders.cart.v1.ClearCartResponse
+	20, // 52: orders.cart.v1.CartService.RefreshPrices:output_type -> orders.cart.v1.RefreshPricesResponse
+	22, // 53: orders.cart.v1.CartService.ConfirmPriceChanges:output_type -> orders.cart.v1.ConfirmPriceChangesResponse
+	24, // 54: orders.cart.v1.CartService.SetDeliveryOption:output_type -> orders.cart.v1.SetDeliveryOptionResponse
+	26, // 55: orders.cart.v1.CartService.Checkout:output_type -> orders.cart.v1.CheckoutResponse
+	28, // 56: orders.cart.v1.CartService.GetCartSummary:output_type -> orders.cart.v1.GetCartSummaryResponse
+	30, // 57: orders.cart.v1.CartService.ProcessPaymentSuccess:output_type -> orders.cart.v1.ProcessPaymentSuccessResponse
+	32, // 58: orders.cart.v1.CartService.ListAllCarts:output_type -> orders.cart.v1.ListAllCartsResponse
+	47, // [47:59] is the sub-list for method output_type
+	35, // [35:47] is the sub-list for method input_type
+	35, // [35:35] is the sub-list for extension type_name
+	35, // [35:35] is the sub-list for extension extendee
+	0,  // [0:35] is the sub-list for field type_name
 }
 
 func init() { file_orders_cart_v1_cart_proto_init() }
@@ -2442,7 +2783,7 @@ func file_orders_cart_v1_cart_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_orders_cart_v1_cart_proto_rawDesc), len(file_orders_cart_v1_cart_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   29,
+			NumMessages:   32,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

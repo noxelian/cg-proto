@@ -30,6 +30,7 @@ const (
 	CartService_Checkout_FullMethodName              = "/orders.cart.v1.CartService/Checkout"
 	CartService_GetCartSummary_FullMethodName        = "/orders.cart.v1.CartService/GetCartSummary"
 	CartService_ProcessPaymentSuccess_FullMethodName = "/orders.cart.v1.CartService/ProcessPaymentSuccess"
+	CartService_ListAllCarts_FullMethodName          = "/orders.cart.v1.CartService/ListAllCarts"
 )
 
 // CartServiceClient is the client API for CartService service.
@@ -66,6 +67,9 @@ type CartServiceClient interface {
 	// ProcessPaymentSuccess is called when payment is confirmed.
 	// Creates marketplace orders per supplier and clears the cart.
 	ProcessPaymentSuccess(ctx context.Context, in *ProcessPaymentSuccessRequest, opts ...grpc.CallOption) (*ProcessPaymentSuccessResponse, error)
+	// ListAllCarts returns a paginated list of all carts across all buyers.
+	// Requires platform admin or support role. Used by the admin cart manager UI.
+	ListAllCarts(ctx context.Context, in *ListAllCartsRequest, opts ...grpc.CallOption) (*ListAllCartsResponse, error)
 }
 
 type cartServiceClient struct {
@@ -186,6 +190,16 @@ func (c *cartServiceClient) ProcessPaymentSuccess(ctx context.Context, in *Proce
 	return out, nil
 }
 
+func (c *cartServiceClient) ListAllCarts(ctx context.Context, in *ListAllCartsRequest, opts ...grpc.CallOption) (*ListAllCartsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAllCartsResponse)
+	err := c.cc.Invoke(ctx, CartService_ListAllCarts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CartServiceServer is the server API for CartService service.
 // All implementations must embed UnimplementedCartServiceServer
 // for forward compatibility.
@@ -220,6 +234,9 @@ type CartServiceServer interface {
 	// ProcessPaymentSuccess is called when payment is confirmed.
 	// Creates marketplace orders per supplier and clears the cart.
 	ProcessPaymentSuccess(context.Context, *ProcessPaymentSuccessRequest) (*ProcessPaymentSuccessResponse, error)
+	// ListAllCarts returns a paginated list of all carts across all buyers.
+	// Requires platform admin or support role. Used by the admin cart manager UI.
+	ListAllCarts(context.Context, *ListAllCartsRequest) (*ListAllCartsResponse, error)
 	mustEmbedUnimplementedCartServiceServer()
 }
 
@@ -262,6 +279,9 @@ func (UnimplementedCartServiceServer) GetCartSummary(context.Context, *GetCartSu
 }
 func (UnimplementedCartServiceServer) ProcessPaymentSuccess(context.Context, *ProcessPaymentSuccessRequest) (*ProcessPaymentSuccessResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessPaymentSuccess not implemented")
+}
+func (UnimplementedCartServiceServer) ListAllCarts(context.Context, *ListAllCartsRequest) (*ListAllCartsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListAllCarts not implemented")
 }
 func (UnimplementedCartServiceServer) mustEmbedUnimplementedCartServiceServer() {}
 func (UnimplementedCartServiceServer) testEmbeddedByValue()                     {}
@@ -482,6 +502,24 @@ func _CartService_ProcessPaymentSuccess_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CartService_ListAllCarts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAllCartsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CartServiceServer).ListAllCarts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CartService_ListAllCarts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CartServiceServer).ListAllCarts(ctx, req.(*ListAllCartsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CartService_ServiceDesc is the grpc.ServiceDesc for CartService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -532,6 +570,10 @@ var CartService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ProcessPaymentSuccess",
 			Handler:    _CartService_ProcessPaymentSuccess_Handler,
+		},
+		{
+			MethodName: "ListAllCarts",
+			Handler:    _CartService_ListAllCarts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
