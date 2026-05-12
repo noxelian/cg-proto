@@ -19,13 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ChatService_CreateChat_FullMethodName   = "/communication.chat.v1.ChatService/CreateChat"
-	ChatService_GetChat_FullMethodName      = "/communication.chat.v1.ChatService/GetChat"
-	ChatService_GetUserChats_FullMethodName = "/communication.chat.v1.ChatService/GetUserChats"
-	ChatService_GetOrgChats_FullMethodName  = "/communication.chat.v1.ChatService/GetOrgChats"
-	ChatService_SendMessage_FullMethodName  = "/communication.chat.v1.ChatService/SendMessage"
-	ChatService_GetMessages_FullMethodName  = "/communication.chat.v1.ChatService/GetMessages"
-	ChatService_MarkAsRead_FullMethodName   = "/communication.chat.v1.ChatService/MarkAsRead"
+	ChatService_CreateChat_FullMethodName    = "/communication.chat.v1.ChatService/CreateChat"
+	ChatService_GetChat_FullMethodName       = "/communication.chat.v1.ChatService/GetChat"
+	ChatService_GetUserChats_FullMethodName  = "/communication.chat.v1.ChatService/GetUserChats"
+	ChatService_GetOrgChats_FullMethodName   = "/communication.chat.v1.ChatService/GetOrgChats"
+	ChatService_SendMessage_FullMethodName   = "/communication.chat.v1.ChatService/SendMessage"
+	ChatService_GetMessages_FullMethodName   = "/communication.chat.v1.ChatService/GetMessages"
+	ChatService_MarkAsRead_FullMethodName    = "/communication.chat.v1.ChatService/MarkAsRead"
+	ChatService_DeleteMessage_FullMethodName = "/communication.chat.v1.ChatService/DeleteMessage"
 )
 
 // ChatServiceClient is the client API for ChatService service.
@@ -39,6 +40,11 @@ type ChatServiceClient interface {
 	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*SendMessageResponse, error)
 	GetMessages(ctx context.Context, in *GetMessagesRequest, opts ...grpc.CallOption) (*GetMessagesResponse, error)
 	MarkAsRead(ctx context.Context, in *MarkAsReadRequest, opts ...grpc.CallOption) (*MarkAsReadResponse, error)
+	// DeleteMessage performs a soft-delete of a single message.
+	// Returns NOT_FOUND if message_id does not exist in the chat.
+	// Returns PERMISSION_DENIED if requester_user_id != message.sender_id.
+	// Soft-delete: sets messages.deleted_at = now(), never physical removal.
+	DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error)
 }
 
 type chatServiceClient struct {
@@ -119,6 +125,16 @@ func (c *chatServiceClient) MarkAsRead(ctx context.Context, in *MarkAsReadReques
 	return out, nil
 }
 
+func (c *chatServiceClient) DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteMessageResponse)
+	err := c.cc.Invoke(ctx, ChatService_DeleteMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChatServiceServer is the server API for ChatService service.
 // All implementations must embed UnimplementedChatServiceServer
 // for forward compatibility.
@@ -130,6 +146,11 @@ type ChatServiceServer interface {
 	SendMessage(context.Context, *SendMessageRequest) (*SendMessageResponse, error)
 	GetMessages(context.Context, *GetMessagesRequest) (*GetMessagesResponse, error)
 	MarkAsRead(context.Context, *MarkAsReadRequest) (*MarkAsReadResponse, error)
+	// DeleteMessage performs a soft-delete of a single message.
+	// Returns NOT_FOUND if message_id does not exist in the chat.
+	// Returns PERMISSION_DENIED if requester_user_id != message.sender_id.
+	// Soft-delete: sets messages.deleted_at = now(), never physical removal.
+	DeleteMessage(context.Context, *DeleteMessageRequest) (*DeleteMessageResponse, error)
 	mustEmbedUnimplementedChatServiceServer()
 }
 
@@ -160,6 +181,9 @@ func (UnimplementedChatServiceServer) GetMessages(context.Context, *GetMessagesR
 }
 func (UnimplementedChatServiceServer) MarkAsRead(context.Context, *MarkAsReadRequest) (*MarkAsReadResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method MarkAsRead not implemented")
+}
+func (UnimplementedChatServiceServer) DeleteMessage(context.Context, *DeleteMessageRequest) (*DeleteMessageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteMessage not implemented")
 }
 func (UnimplementedChatServiceServer) mustEmbedUnimplementedChatServiceServer() {}
 func (UnimplementedChatServiceServer) testEmbeddedByValue()                     {}
@@ -308,6 +332,24 @@ func _ChatService_MarkAsRead_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatService_DeleteMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServiceServer).DeleteMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatService_DeleteMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServiceServer).DeleteMessage(ctx, req.(*DeleteMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ChatService_ServiceDesc is the grpc.ServiceDesc for ChatService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -342,6 +384,10 @@ var ChatService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MarkAsRead",
 			Handler:    _ChatService_MarkAsRead_Handler,
+		},
+		{
+			MethodName: "DeleteMessage",
+			Handler:    _ChatService_DeleteMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

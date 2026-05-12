@@ -63,6 +63,12 @@ service WarehouseService {
   // initiating payment. Returns the set of items whose available quantity
   // is below the requested quantity (empty list = all items available).
   rpc CheckStockAvailability(CheckStockAvailabilityRequest) returns (CheckStockAvailabilityResponse);
+
+  // ReturnMarketplaceStock is the inverse of WriteOffStock for marketplace orders.
+  // Called by the cancel-saga in cg-orders when a marketplace order is cancelled
+  // after stock was already written off.  Per-line idempotency via idempotency_key
+  // prevents double-return when the saga is retried.
+  rpc ReturnMarketplaceStock(ReturnMarketplaceStockRequest) returns (ReturnMarketplaceStockResponse);
 }
 
 // ============================================================
@@ -734,4 +740,35 @@ message CheckStockAvailabilityResponse {
   // Empty = all items have sufficient stock. Non-empty = list of items
   // whose available quantity is below the requested quantity.
   repeated CheckStockInsufficient insufficient = 1;
+}
+
+// ============================================================
+// D3: ReturnMarketplaceStock
+// ============================================================
+
+// ReturnStockItem describes a single line to return to stock.
+// idempotency_key must be unique per (warehouse_id, warehouse_item_id) pair —
+// recommended format: 'return:<marketplace_order_id>:<warehouse_item_id>'.
+// Duplicate idempotency_key → the line is skipped; its key is listed in
+// ReturnMarketplaceStockResponse.failed_idempotency_keys.
+message ReturnStockItem {
+  int64  warehouse_id      = 1;
+  int64  warehouse_item_id = 2;
+  int32  qty               = 3;
+  // idempotency_key format: 'return:<order_id>:<warehouse_item_id>'
+  string idempotency_key   = 4;
+}
+
+message ReturnMarketplaceStockRequest {
+  // marketplace_order_id is the cg-orders.orders.id for audit purposes.
+  string marketplace_order_id = 1;
+  repeated ReturnStockItem items = 2;
+}
+
+message ReturnMarketplaceStockResponse {
+  // items_returned is the number of lines actually processed (duplicates excluded).
+  int32 items_returned = 1;
+  // failed_idempotency_keys lists keys that were already used (duplicate return).
+  // Non-fatal: the saga can log and continue.
+  repeated string failed_idempotency_keys = 2;
 }

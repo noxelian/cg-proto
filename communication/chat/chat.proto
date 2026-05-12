@@ -14,6 +14,11 @@ service ChatService {
   rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
   rpc GetMessages(GetMessagesRequest) returns (GetMessagesResponse);
   rpc MarkAsRead(MarkAsReadRequest) returns (MarkAsReadResponse);
+  // DeleteMessage performs a soft-delete of a single message.
+  // Returns NOT_FOUND if message_id does not exist in the chat.
+  // Returns PERMISSION_DENIED if requester_user_id != message.sender_id.
+  // Soft-delete: sets messages.deleted_at = now(), never physical removal.
+  rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse);
 }
 
 enum ChatContextType {
@@ -136,6 +141,23 @@ message MarkAsReadRequest {
 message MarkAsReadResponse {
   int32 marked_count = 1;
 }
+
+
+// ============================================================
+// B1: DeleteMessage
+// ============================================================
+
+// DeleteMessageRequest identifies the message to soft-delete.
+// requester_user_id is used for authorship verification:
+//   PERMISSION_DENIED when requester_user_id != Message.sender_id.
+message DeleteMessageRequest {
+  string chat_id           = 1;
+  string message_id        = 2;
+  int64  requester_user_id = 3;
+}
+
+// DeleteMessageResponse is intentionally empty (maps to HTTP 204 on the BFF side).
+message DeleteMessageResponse {}
 
 // AdminChatService provides admin-only RPCs for chat moderation.
 // All methods require a valid JWT with platform role "admin" or "support"

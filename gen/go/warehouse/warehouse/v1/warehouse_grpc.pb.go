@@ -53,6 +53,7 @@ const (
 	WarehouseService_ListReservations_FullMethodName       = "/warehouse.warehouse.v1.WarehouseService/ListReservations"
 	WarehouseService_SearchAvailableParts_FullMethodName   = "/warehouse.warehouse.v1.WarehouseService/SearchAvailableParts"
 	WarehouseService_CheckStockAvailability_FullMethodName = "/warehouse.warehouse.v1.WarehouseService/CheckStockAvailability"
+	WarehouseService_ReturnMarketplaceStock_FullMethodName = "/warehouse.warehouse.v1.WarehouseService/ReturnMarketplaceStock"
 )
 
 // WarehouseServiceClient is the client API for WarehouseService service.
@@ -106,6 +107,11 @@ type WarehouseServiceClient interface {
 	// initiating payment. Returns the set of items whose available quantity
 	// is below the requested quantity (empty list = all items available).
 	CheckStockAvailability(ctx context.Context, in *CheckStockAvailabilityRequest, opts ...grpc.CallOption) (*CheckStockAvailabilityResponse, error)
+	// ReturnMarketplaceStock is the inverse of WriteOffStock for marketplace orders.
+	// Called by the cancel-saga in cg-orders when a marketplace order is cancelled
+	// after stock was already written off.  Per-line idempotency via idempotency_key
+	// prevents double-return when the saga is retried.
+	ReturnMarketplaceStock(ctx context.Context, in *ReturnMarketplaceStockRequest, opts ...grpc.CallOption) (*ReturnMarketplaceStockResponse, error)
 }
 
 type warehouseServiceClient struct {
@@ -456,6 +462,16 @@ func (c *warehouseServiceClient) CheckStockAvailability(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *warehouseServiceClient) ReturnMarketplaceStock(ctx context.Context, in *ReturnMarketplaceStockRequest, opts ...grpc.CallOption) (*ReturnMarketplaceStockResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReturnMarketplaceStockResponse)
+	err := c.cc.Invoke(ctx, WarehouseService_ReturnMarketplaceStock_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WarehouseServiceServer is the server API for WarehouseService service.
 // All implementations must embed UnimplementedWarehouseServiceServer
 // for forward compatibility.
@@ -507,6 +523,11 @@ type WarehouseServiceServer interface {
 	// initiating payment. Returns the set of items whose available quantity
 	// is below the requested quantity (empty list = all items available).
 	CheckStockAvailability(context.Context, *CheckStockAvailabilityRequest) (*CheckStockAvailabilityResponse, error)
+	// ReturnMarketplaceStock is the inverse of WriteOffStock for marketplace orders.
+	// Called by the cancel-saga in cg-orders when a marketplace order is cancelled
+	// after stock was already written off.  Per-line idempotency via idempotency_key
+	// prevents double-return when the saga is retried.
+	ReturnMarketplaceStock(context.Context, *ReturnMarketplaceStockRequest) (*ReturnMarketplaceStockResponse, error)
 	mustEmbedUnimplementedWarehouseServiceServer()
 }
 
@@ -618,6 +639,9 @@ func (UnimplementedWarehouseServiceServer) SearchAvailableParts(context.Context,
 }
 func (UnimplementedWarehouseServiceServer) CheckStockAvailability(context.Context, *CheckStockAvailabilityRequest) (*CheckStockAvailabilityResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CheckStockAvailability not implemented")
+}
+func (UnimplementedWarehouseServiceServer) ReturnMarketplaceStock(context.Context, *ReturnMarketplaceStockRequest) (*ReturnMarketplaceStockResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReturnMarketplaceStock not implemented")
 }
 func (UnimplementedWarehouseServiceServer) mustEmbedUnimplementedWarehouseServiceServer() {}
 func (UnimplementedWarehouseServiceServer) testEmbeddedByValue()                          {}
@@ -1252,6 +1276,24 @@ func _WarehouseService_CheckStockAvailability_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WarehouseService_ReturnMarketplaceStock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReturnMarketplaceStockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WarehouseServiceServer).ReturnMarketplaceStock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WarehouseService_ReturnMarketplaceStock_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WarehouseServiceServer).ReturnMarketplaceStock(ctx, req.(*ReturnMarketplaceStockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WarehouseService_ServiceDesc is the grpc.ServiceDesc for WarehouseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1394,6 +1436,10 @@ var WarehouseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckStockAvailability",
 			Handler:    _WarehouseService_CheckStockAvailability_Handler,
+		},
+		{
+			MethodName: "ReturnMarketplaceStock",
+			Handler:    _WarehouseService_ReturnMarketplaceStock_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -11824,6 +11824,202 @@ func (x *GetWarrantyOrdersResponse) GetOrders() []*RepairOrder {
 	return nil
 }
 
+type ClientReview struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Rate          int32                  `protobuf:"varint,1,opt,name=rate,proto3" json:"rate,omitempty"`                                  // 1-5 stars
+	Text          string                 `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`                                   // free-text review body
+	Work          string                 `protobuf:"bytes,3,opt,name=work,proto3" json:"work,omitempty"`                                   // description of work performed (client's words)
+	Car           string                 `protobuf:"bytes,4,opt,name=car,proto3" json:"car,omitempty"`                                     // car description (client's words)
+	OrderAmount   int64                  `protobuf:"varint,5,opt,name=order_amount,json=orderAmount,proto3" json:"order_amount,omitempty"` // actual amount paid, in tiyins
+	Photos        []string               `protobuf:"bytes,6,rep,name=photos,proto3" json:"photos,omitempty"`                               // photo URLs, max 20
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClientReview) Reset() {
+	*x = ClientReview{}
+	mi := &file_workshop_workshop_proto_msgTypes[176]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClientReview) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClientReview) ProtoMessage() {}
+
+func (x *ClientReview) ProtoReflect() protoreflect.Message {
+	mi := &file_workshop_workshop_proto_msgTypes[176]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClientReview.ProtoReflect.Descriptor instead.
+func (*ClientReview) Descriptor() ([]byte, []int) {
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{176}
+}
+
+func (x *ClientReview) GetRate() int32 {
+	if x != nil {
+		return x.Rate
+	}
+	return 0
+}
+
+func (x *ClientReview) GetText() string {
+	if x != nil {
+		return x.Text
+	}
+	return ""
+}
+
+func (x *ClientReview) GetWork() string {
+	if x != nil {
+		return x.Work
+	}
+	return ""
+}
+
+func (x *ClientReview) GetCar() string {
+	if x != nil {
+		return x.Car
+	}
+	return ""
+}
+
+func (x *ClientReview) GetOrderAmount() int64 {
+	if x != nil {
+		return x.OrderAmount
+	}
+	return 0
+}
+
+func (x *ClientReview) GetPhotos() []string {
+	if x != nil {
+		return x.Photos
+	}
+	return nil
+}
+
+type ConfirmOrderCompletionByClientRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepairOrderId int64                  `protobuf:"varint,1,opt,name=repair_order_id,json=repairOrderId,proto3" json:"repair_order_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Review        *ClientReview          `protobuf:"bytes,3,opt,name=review,proto3,oneof" json:"review,omitempty"` // if present, a review is created for the workshop org
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmOrderCompletionByClientRequest) Reset() {
+	*x = ConfirmOrderCompletionByClientRequest{}
+	mi := &file_workshop_workshop_proto_msgTypes[177]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmOrderCompletionByClientRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmOrderCompletionByClientRequest) ProtoMessage() {}
+
+func (x *ConfirmOrderCompletionByClientRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_workshop_workshop_proto_msgTypes[177]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmOrderCompletionByClientRequest.ProtoReflect.Descriptor instead.
+func (*ConfirmOrderCompletionByClientRequest) Descriptor() ([]byte, []int) {
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{177}
+}
+
+func (x *ConfirmOrderCompletionByClientRequest) GetRepairOrderId() int64 {
+	if x != nil {
+		return x.RepairOrderId
+	}
+	return 0
+}
+
+func (x *ConfirmOrderCompletionByClientRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ConfirmOrderCompletionByClientRequest) GetReview() *ClientReview {
+	if x != nil {
+		return x.Review
+	}
+	return nil
+}
+
+type ConfirmOrderCompletionByClientResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepairOrder   *RepairOrder           `protobuf:"bytes,1,opt,name=repair_order,json=repairOrder,proto3" json:"repair_order,omitempty"`
+	ReviewId      string                 `protobuf:"bytes,2,opt,name=review_id,json=reviewId,proto3" json:"review_id,omitempty"` // non-empty when a review was created
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmOrderCompletionByClientResponse) Reset() {
+	*x = ConfirmOrderCompletionByClientResponse{}
+	mi := &file_workshop_workshop_proto_msgTypes[178]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmOrderCompletionByClientResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmOrderCompletionByClientResponse) ProtoMessage() {}
+
+func (x *ConfirmOrderCompletionByClientResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_workshop_workshop_proto_msgTypes[178]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmOrderCompletionByClientResponse.ProtoReflect.Descriptor instead.
+func (*ConfirmOrderCompletionByClientResponse) Descriptor() ([]byte, []int) {
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{178}
+}
+
+func (x *ConfirmOrderCompletionByClientResponse) GetRepairOrder() *RepairOrder {
+	if x != nil {
+		return x.RepairOrder
+	}
+	return nil
+}
+
+func (x *ConfirmOrderCompletionByClientResponse) GetReviewId() string {
+	if x != nil {
+		return x.ReviewId
+	}
+	return ""
+}
+
 type SendForApprovalRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	OrderId       int64                  `protobuf:"varint,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
@@ -11833,7 +12029,7 @@ type SendForApprovalRequest struct {
 
 func (x *SendForApprovalRequest) Reset() {
 	*x = SendForApprovalRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[176]
+	mi := &file_workshop_workshop_proto_msgTypes[179]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11845,7 +12041,7 @@ func (x *SendForApprovalRequest) String() string {
 func (*SendForApprovalRequest) ProtoMessage() {}
 
 func (x *SendForApprovalRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[176]
+	mi := &file_workshop_workshop_proto_msgTypes[179]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11858,7 +12054,7 @@ func (x *SendForApprovalRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendForApprovalRequest.ProtoReflect.Descriptor instead.
 func (*SendForApprovalRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{176}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{179}
 }
 
 func (x *SendForApprovalRequest) GetOrderId() int64 {
@@ -11877,7 +12073,7 @@ type SendForApprovalResponse struct {
 
 func (x *SendForApprovalResponse) Reset() {
 	*x = SendForApprovalResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[177]
+	mi := &file_workshop_workshop_proto_msgTypes[180]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11889,7 +12085,7 @@ func (x *SendForApprovalResponse) String() string {
 func (*SendForApprovalResponse) ProtoMessage() {}
 
 func (x *SendForApprovalResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[177]
+	mi := &file_workshop_workshop_proto_msgTypes[180]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11902,7 +12098,7 @@ func (x *SendForApprovalResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendForApprovalResponse.ProtoReflect.Descriptor instead.
 func (*SendForApprovalResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{177}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{180}
 }
 
 func (x *SendForApprovalResponse) GetOrder() *RepairOrder {
@@ -11921,7 +12117,7 @@ type GetClientEstimateRequest struct {
 
 func (x *GetClientEstimateRequest) Reset() {
 	*x = GetClientEstimateRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[178]
+	mi := &file_workshop_workshop_proto_msgTypes[181]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11933,7 +12129,7 @@ func (x *GetClientEstimateRequest) String() string {
 func (*GetClientEstimateRequest) ProtoMessage() {}
 
 func (x *GetClientEstimateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[178]
+	mi := &file_workshop_workshop_proto_msgTypes[181]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11946,7 +12142,7 @@ func (x *GetClientEstimateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientEstimateRequest.ProtoReflect.Descriptor instead.
 func (*GetClientEstimateRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{178}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{181}
 }
 
 func (x *GetClientEstimateRequest) GetOrderId() int64 {
@@ -11967,7 +12163,7 @@ type EstimateLineItem struct {
 
 func (x *EstimateLineItem) Reset() {
 	*x = EstimateLineItem{}
-	mi := &file_workshop_workshop_proto_msgTypes[179]
+	mi := &file_workshop_workshop_proto_msgTypes[182]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11979,7 +12175,7 @@ func (x *EstimateLineItem) String() string {
 func (*EstimateLineItem) ProtoMessage() {}
 
 func (x *EstimateLineItem) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[179]
+	mi := &file_workshop_workshop_proto_msgTypes[182]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11992,7 +12188,7 @@ func (x *EstimateLineItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EstimateLineItem.ProtoReflect.Descriptor instead.
 func (*EstimateLineItem) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{179}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{182}
 }
 
 func (x *EstimateLineItem) GetName() string {
@@ -12034,7 +12230,7 @@ type GetClientEstimateResponse struct {
 
 func (x *GetClientEstimateResponse) Reset() {
 	*x = GetClientEstimateResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[180]
+	mi := &file_workshop_workshop_proto_msgTypes[183]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12046,7 +12242,7 @@ func (x *GetClientEstimateResponse) String() string {
 func (*GetClientEstimateResponse) ProtoMessage() {}
 
 func (x *GetClientEstimateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[180]
+	mi := &file_workshop_workshop_proto_msgTypes[183]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12059,7 +12255,7 @@ func (x *GetClientEstimateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClientEstimateResponse.ProtoReflect.Descriptor instead.
 func (*GetClientEstimateResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{180}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{183}
 }
 
 func (x *GetClientEstimateResponse) GetOrderId() int64 {
@@ -12141,7 +12337,7 @@ type ApproveEstimateRequest struct {
 
 func (x *ApproveEstimateRequest) Reset() {
 	*x = ApproveEstimateRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[181]
+	mi := &file_workshop_workshop_proto_msgTypes[184]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12153,7 +12349,7 @@ func (x *ApproveEstimateRequest) String() string {
 func (*ApproveEstimateRequest) ProtoMessage() {}
 
 func (x *ApproveEstimateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[181]
+	mi := &file_workshop_workshop_proto_msgTypes[184]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12166,7 +12362,7 @@ func (x *ApproveEstimateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApproveEstimateRequest.ProtoReflect.Descriptor instead.
 func (*ApproveEstimateRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{181}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{184}
 }
 
 func (x *ApproveEstimateRequest) GetOrderId() int64 {
@@ -12185,7 +12381,7 @@ type ApproveEstimateResponse struct {
 
 func (x *ApproveEstimateResponse) Reset() {
 	*x = ApproveEstimateResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[182]
+	mi := &file_workshop_workshop_proto_msgTypes[185]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12197,7 +12393,7 @@ func (x *ApproveEstimateResponse) String() string {
 func (*ApproveEstimateResponse) ProtoMessage() {}
 
 func (x *ApproveEstimateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[182]
+	mi := &file_workshop_workshop_proto_msgTypes[185]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12210,7 +12406,7 @@ func (x *ApproveEstimateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApproveEstimateResponse.ProtoReflect.Descriptor instead.
 func (*ApproveEstimateResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{182}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{185}
 }
 
 func (x *ApproveEstimateResponse) GetOrder() *RepairOrder {
@@ -12230,7 +12426,7 @@ type RejectEstimateRequest struct {
 
 func (x *RejectEstimateRequest) Reset() {
 	*x = RejectEstimateRequest{}
-	mi := &file_workshop_workshop_proto_msgTypes[183]
+	mi := &file_workshop_workshop_proto_msgTypes[186]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12242,7 +12438,7 @@ func (x *RejectEstimateRequest) String() string {
 func (*RejectEstimateRequest) ProtoMessage() {}
 
 func (x *RejectEstimateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[183]
+	mi := &file_workshop_workshop_proto_msgTypes[186]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12255,7 +12451,7 @@ func (x *RejectEstimateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RejectEstimateRequest.ProtoReflect.Descriptor instead.
 func (*RejectEstimateRequest) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{183}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{186}
 }
 
 func (x *RejectEstimateRequest) GetOrderId() int64 {
@@ -12281,7 +12477,7 @@ type RejectEstimateResponse struct {
 
 func (x *RejectEstimateResponse) Reset() {
 	*x = RejectEstimateResponse{}
-	mi := &file_workshop_workshop_proto_msgTypes[184]
+	mi := &file_workshop_workshop_proto_msgTypes[187]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12293,7 +12489,7 @@ func (x *RejectEstimateResponse) String() string {
 func (*RejectEstimateResponse) ProtoMessage() {}
 
 func (x *RejectEstimateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_workshop_workshop_proto_msgTypes[184]
+	mi := &file_workshop_workshop_proto_msgTypes[187]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12306,7 +12502,7 @@ func (x *RejectEstimateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RejectEstimateResponse.ProtoReflect.Descriptor instead.
 func (*RejectEstimateResponse) Descriptor() ([]byte, []int) {
-	return file_workshop_workshop_proto_rawDescGZIP(), []int{184}
+	return file_workshop_workshop_proto_rawDescGZIP(), []int{187}
 }
 
 func (x *RejectEstimateResponse) GetOrder() *RepairOrder {
@@ -13281,7 +13477,22 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\x18GetWarrantyOrdersRequest\x12&\n" +
 	"\x0fparent_order_id\x18\x01 \x01(\x03R\rparentOrderId\"M\n" +
 	"\x19GetWarrantyOrdersResponse\x120\n" +
-	"\x06orders\x18\x01 \x03(\v2\x18.workshop.v1.RepairOrderR\x06orders\"3\n" +
+	"\x06orders\x18\x01 \x03(\v2\x18.workshop.v1.RepairOrderR\x06orders\"\x97\x01\n" +
+	"\fClientReview\x12\x12\n" +
+	"\x04rate\x18\x01 \x01(\x05R\x04rate\x12\x12\n" +
+	"\x04text\x18\x02 \x01(\tR\x04text\x12\x12\n" +
+	"\x04work\x18\x03 \x01(\tR\x04work\x12\x10\n" +
+	"\x03car\x18\x04 \x01(\tR\x03car\x12!\n" +
+	"\forder_amount\x18\x05 \x01(\x03R\vorderAmount\x12\x16\n" +
+	"\x06photos\x18\x06 \x03(\tR\x06photos\"\xab\x01\n" +
+	"%ConfirmOrderCompletionByClientRequest\x12&\n" +
+	"\x0frepair_order_id\x18\x01 \x01(\x03R\rrepairOrderId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x126\n" +
+	"\x06review\x18\x03 \x01(\v2\x19.workshop.v1.ClientReviewH\x00R\x06review\x88\x01\x01B\t\n" +
+	"\a_review\"\x82\x01\n" +
+	"&ConfirmOrderCompletionByClientResponse\x12;\n" +
+	"\frepair_order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\vrepairOrder\x12\x1b\n" +
+	"\treview_id\x18\x02 \x01(\tR\breviewId\"3\n" +
 	"\x16SendForApprovalRequest\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\"I\n" +
 	"\x17SendForApprovalResponse\x12.\n" +
@@ -13383,7 +13594,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\vPaymentType\x12\x1c\n" +
 	"\x18PAYMENT_TYPE_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14PAYMENT_TYPE_PREPAID\x10\x01\x12\x19\n" +
-	"\x15PAYMENT_TYPE_POSTPAID\x10\x022\x949\n" +
+	"\x15PAYMENT_TYPE_POSTPAID\x10\x022\xa0:\n" +
 	"\x0fWorkshopService\x12Y\n" +
 	"\x0eCreateWorkshop\x12\".workshop.v1.CreateWorkshopRequest\x1a#.workshop.v1.CreateWorkshopResponse\x12P\n" +
 	"\vGetWorkshop\x12\x1f.workshop.v1.GetWorkshopRequest\x1a .workshop.v1.GetWorkshopResponse\x12Y\n" +
@@ -13467,7 +13678,8 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\x0eMarkPaidManual\x12\".workshop.v1.MarkPaidManualRequest\x1a#.workshop.v1.MarkPaidManualResponse\x12V\n" +
 	"\rCancelPayment\x12!.workshop.v1.CancelPaymentRequest\x1a\".workshop.v1.CancelPaymentResponse\x12b\n" +
 	"\x11GetPaymentHistory\x12%.workshop.v1.GetPaymentHistoryRequest\x1a&.workshop.v1.GetPaymentHistoryResponse\x12b\n" +
-	"\x11GetWarrantyOrders\x12%.workshop.v1.GetWarrantyOrdersRequest\x1a&.workshop.v1.GetWarrantyOrdersResponseB6Z4github.com/4ubak/cg-proto/gen/go/workshop;workshopv1b\x06proto3"
+	"\x11GetWarrantyOrders\x12%.workshop.v1.GetWarrantyOrdersRequest\x1a&.workshop.v1.GetWarrantyOrdersResponse\x12\x89\x01\n" +
+	"\x1eConfirmOrderCompletionByClient\x122.workshop.v1.ConfirmOrderCompletionByClientRequest\x1a3.workshop.v1.ConfirmOrderCompletionByClientResponseB6Z4github.com/4ubak/cg-proto/gen/go/workshop;workshopv1b\x06proto3"
 
 var (
 	file_workshop_workshop_proto_rawDescOnce sync.Once
@@ -13482,267 +13694,270 @@ func file_workshop_workshop_proto_rawDescGZIP() []byte {
 }
 
 var file_workshop_workshop_proto_enumTypes = make([]protoimpl.EnumInfo, 11)
-var file_workshop_workshop_proto_msgTypes = make([]protoimpl.MessageInfo, 186)
+var file_workshop_workshop_proto_msgTypes = make([]protoimpl.MessageInfo, 189)
 var file_workshop_workshop_proto_goTypes = []any{
-	(RepairStatus)(0),                         // 0: workshop.v1.RepairStatus
-	(MasterRole)(0),                           // 1: workshop.v1.MasterRole
-	(FixSalaryType)(0),                        // 2: workshop.v1.FixSalaryType
-	(OutsourceStatus)(0),                      // 3: workshop.v1.OutsourceStatus
-	(PhotoAlbum)(0),                           // 4: workshop.v1.PhotoAlbum
-	(CommentType)(0),                          // 5: workshop.v1.CommentType
-	(MaterialUnit)(0),                         // 6: workshop.v1.MaterialUnit
-	(MaterialTransactionType)(0),              // 7: workshop.v1.MaterialTransactionType
-	(PaymentStatus)(0),                        // 8: workshop.v1.PaymentStatus
-	(PaymentMethod)(0),                        // 9: workshop.v1.PaymentMethod
-	(PaymentType)(0),                          // 10: workshop.v1.PaymentType
-	(*Workshop)(nil),                          // 11: workshop.v1.Workshop
-	(*RepairOrder)(nil),                       // 12: workshop.v1.RepairOrder
-	(*MasterSummary)(nil),                     // 13: workshop.v1.MasterSummary
-	(*PricingBreakdown)(nil),                  // 14: workshop.v1.PricingBreakdown
-	(*RepairOrderPayment)(nil),                // 15: workshop.v1.RepairOrderPayment
-	(*CarWork)(nil),                           // 16: workshop.v1.CarWork
-	(*Master)(nil),                            // 17: workshop.v1.Master
-	(*Client)(nil),                            // 18: workshop.v1.Client
-	(*RepairPhoto)(nil),                       // 19: workshop.v1.RepairPhoto
-	(*RepairComment)(nil),                     // 20: workshop.v1.RepairComment
-	(*StatusHistoryEntry)(nil),                // 21: workshop.v1.StatusHistoryEntry
-	(*QCChecklist)(nil),                       // 22: workshop.v1.QCChecklist
-	(*QCItem)(nil),                            // 23: workshop.v1.QCItem
-	(*OutsourceRequest)(nil),                  // 24: workshop.v1.OutsourceRequest
-	(*SalaryBreakdown)(nil),                   // 25: workshop.v1.SalaryBreakdown
-	(*SalaryAdjustment)(nil),                  // 26: workshop.v1.SalaryAdjustment
-	(*CompletedWork)(nil),                     // 27: workshop.v1.CompletedWork
-	(*MasterHourRate)(nil),                    // 28: workshop.v1.MasterHourRate
-	(*MasterFixSalary)(nil),                   // 29: workshop.v1.MasterFixSalary
-	(*Material)(nil),                          // 30: workshop.v1.Material
-	(*MaterialStock)(nil),                     // 31: workshop.v1.MaterialStock
-	(*MaterialTransaction)(nil),               // 32: workshop.v1.MaterialTransaction
-	(*KanbanColumn)(nil),                      // 33: workshop.v1.KanbanColumn
-	(*OutsourceKanbanColumn)(nil),             // 34: workshop.v1.OutsourceKanbanColumn
-	(*CreateWorkshopRequest)(nil),             // 35: workshop.v1.CreateWorkshopRequest
-	(*CreateWorkshopResponse)(nil),            // 36: workshop.v1.CreateWorkshopResponse
-	(*GetWorkshopRequest)(nil),                // 37: workshop.v1.GetWorkshopRequest
-	(*GetWorkshopResponse)(nil),               // 38: workshop.v1.GetWorkshopResponse
-	(*UpdateWorkshopRequest)(nil),             // 39: workshop.v1.UpdateWorkshopRequest
-	(*UpdateWorkshopResponse)(nil),            // 40: workshop.v1.UpdateWorkshopResponse
-	(*ListWorkshopsRequest)(nil),              // 41: workshop.v1.ListWorkshopsRequest
-	(*ListWorkshopsResponse)(nil),             // 42: workshop.v1.ListWorkshopsResponse
-	(*ListWorkshopOrgIDsRequest)(nil),         // 43: workshop.v1.ListWorkshopOrgIDsRequest
-	(*ListWorkshopOrgIDsResponse)(nil),        // 44: workshop.v1.ListWorkshopOrgIDsResponse
-	(*CreateRepairOrderRequest)(nil),          // 45: workshop.v1.CreateRepairOrderRequest
-	(*CreateRepairOrderResponse)(nil),         // 46: workshop.v1.CreateRepairOrderResponse
-	(*GetRepairOrderRequest)(nil),             // 47: workshop.v1.GetRepairOrderRequest
-	(*GetRepairOrderResponse)(nil),            // 48: workshop.v1.GetRepairOrderResponse
-	(*UpdateRepairOrderRequest)(nil),          // 49: workshop.v1.UpdateRepairOrderRequest
-	(*UpdateRepairOrderResponse)(nil),         // 50: workshop.v1.UpdateRepairOrderResponse
-	(*UpdateRepairOrderStatusRequest)(nil),    // 51: workshop.v1.UpdateRepairOrderStatusRequest
-	(*UpdateRepairOrderStatusResponse)(nil),   // 52: workshop.v1.UpdateRepairOrderStatusResponse
-	(*ListRepairOrdersRequest)(nil),           // 53: workshop.v1.ListRepairOrdersRequest
-	(*ListRepairOrdersResponse)(nil),          // 54: workshop.v1.ListRepairOrdersResponse
-	(*GetKanbanRequest)(nil),                  // 55: workshop.v1.GetKanbanRequest
-	(*GetKanbanResponse)(nil),                 // 56: workshop.v1.GetKanbanResponse
-	(*CreateCarWorkRequest)(nil),              // 57: workshop.v1.CreateCarWorkRequest
-	(*CreateCarWorkResponse)(nil),             // 58: workshop.v1.CreateCarWorkResponse
-	(*UpdateCarWorkRequest)(nil),              // 59: workshop.v1.UpdateCarWorkRequest
-	(*UpdateCarWorkResponse)(nil),             // 60: workshop.v1.UpdateCarWorkResponse
-	(*DeleteCarWorkRequest)(nil),              // 61: workshop.v1.DeleteCarWorkRequest
-	(*DeleteCarWorkResponse)(nil),             // 62: workshop.v1.DeleteCarWorkResponse
-	(*ListCarWorksRequest)(nil),               // 63: workshop.v1.ListCarWorksRequest
-	(*ListCarWorksResponse)(nil),              // 64: workshop.v1.ListCarWorksResponse
-	(*MarkCarWorkDoneRequest)(nil),            // 65: workshop.v1.MarkCarWorkDoneRequest
-	(*MarkCarWorkDoneResponse)(nil),           // 66: workshop.v1.MarkCarWorkDoneResponse
-	(*ClockInRequest)(nil),                    // 67: workshop.v1.ClockInRequest
-	(*ClockInResponse)(nil),                   // 68: workshop.v1.ClockInResponse
-	(*ClockOutRequest)(nil),                   // 69: workshop.v1.ClockOutRequest
-	(*ClockOutResponse)(nil),                  // 70: workshop.v1.ClockOutResponse
-	(*CreateMasterRequest)(nil),               // 71: workshop.v1.CreateMasterRequest
-	(*CreateMasterResponse)(nil),              // 72: workshop.v1.CreateMasterResponse
-	(*GetMasterRequest)(nil),                  // 73: workshop.v1.GetMasterRequest
-	(*GetMasterResponse)(nil),                 // 74: workshop.v1.GetMasterResponse
-	(*UpdateMasterRequest)(nil),               // 75: workshop.v1.UpdateMasterRequest
-	(*UpdateMasterResponse)(nil),              // 76: workshop.v1.UpdateMasterResponse
-	(*FireMasterRequest)(nil),                 // 77: workshop.v1.FireMasterRequest
-	(*FireMasterResponse)(nil),                // 78: workshop.v1.FireMasterResponse
-	(*ListMastersRequest)(nil),                // 79: workshop.v1.ListMastersRequest
-	(*ListMastersResponse)(nil),               // 80: workshop.v1.ListMastersResponse
-	(*CalculateSalaryRequest)(nil),            // 81: workshop.v1.CalculateSalaryRequest
-	(*CalculateSalaryResponse)(nil),           // 82: workshop.v1.CalculateSalaryResponse
-	(*GetSalaryBreakdownRequest)(nil),         // 83: workshop.v1.GetSalaryBreakdownRequest
-	(*GetSalaryBreakdownResponse)(nil),        // 84: workshop.v1.GetSalaryBreakdownResponse
-	(*CreateBonusRequest)(nil),                // 85: workshop.v1.CreateBonusRequest
-	(*CreateBonusResponse)(nil),               // 86: workshop.v1.CreateBonusResponse
-	(*CreateFineRequest)(nil),                 // 87: workshop.v1.CreateFineRequest
-	(*CreateFineResponse)(nil),                // 88: workshop.v1.CreateFineResponse
-	(*CreateAdvanceRequest)(nil),              // 89: workshop.v1.CreateAdvanceRequest
-	(*CreateAdvanceResponse)(nil),             // 90: workshop.v1.CreateAdvanceResponse
-	(*DeleteBonusRequest)(nil),                // 91: workshop.v1.DeleteBonusRequest
-	(*DeleteBonusResponse)(nil),               // 92: workshop.v1.DeleteBonusResponse
-	(*DeleteFineRequest)(nil),                 // 93: workshop.v1.DeleteFineRequest
-	(*DeleteFineResponse)(nil),                // 94: workshop.v1.DeleteFineResponse
-	(*SetMasterHourRateRequest)(nil),          // 95: workshop.v1.SetMasterHourRateRequest
-	(*SetMasterHourRateResponse)(nil),         // 96: workshop.v1.SetMasterHourRateResponse
-	(*SetMasterFixSalaryRequest)(nil),         // 97: workshop.v1.SetMasterFixSalaryRequest
-	(*SetMasterFixSalaryResponse)(nil),        // 98: workshop.v1.SetMasterFixSalaryResponse
-	(*GetMasterRateHistoryRequest)(nil),       // 99: workshop.v1.GetMasterRateHistoryRequest
-	(*GetMasterRateHistoryResponse)(nil),      // 100: workshop.v1.GetMasterRateHistoryResponse
-	(*PublishOutsourceRequest)(nil),           // 101: workshop.v1.PublishOutsourceRequest
-	(*PublishOutsourceResponse)(nil),          // 102: workshop.v1.PublishOutsourceResponse
-	(*AcceptOutsourceRequest)(nil),            // 103: workshop.v1.AcceptOutsourceRequest
-	(*AcceptOutsourceResponse)(nil),           // 104: workshop.v1.AcceptOutsourceResponse
-	(*ListOutsourceRequestsRequest)(nil),      // 105: workshop.v1.ListOutsourceRequestsRequest
-	(*ListOutsourceRequestsResponse)(nil),     // 106: workshop.v1.ListOutsourceRequestsResponse
-	(*GetOutsourceKanbanRequest)(nil),         // 107: workshop.v1.GetOutsourceKanbanRequest
-	(*GetOutsourceKanbanResponse)(nil),        // 108: workshop.v1.GetOutsourceKanbanResponse
-	(*UpdateOutsourceStatusRequest)(nil),      // 109: workshop.v1.UpdateOutsourceStatusRequest
-	(*UpdateOutsourceStatusResponse)(nil),     // 110: workshop.v1.UpdateOutsourceStatusResponse
-	(*GetWorkshopStatsRequest)(nil),           // 111: workshop.v1.GetWorkshopStatsRequest
-	(*GetWorkshopStatsResponse)(nil),          // 112: workshop.v1.GetWorkshopStatsResponse
-	(*GetMasterPerformanceRequest)(nil),       // 113: workshop.v1.GetMasterPerformanceRequest
-	(*GetMasterPerformanceResponse)(nil),      // 114: workshop.v1.GetMasterPerformanceResponse
-	(*MasterPerformanceEntry)(nil),            // 115: workshop.v1.MasterPerformanceEntry
-	(*GetDailyReportRequest)(nil),             // 116: workshop.v1.GetDailyReportRequest
-	(*DailyReportEntry)(nil),                  // 117: workshop.v1.DailyReportEntry
-	(*GetDailyReportResponse)(nil),            // 118: workshop.v1.GetDailyReportResponse
-	(*StatusCount)(nil),                       // 119: workshop.v1.StatusCount
-	(*AddCommentRequest)(nil),                 // 120: workshop.v1.AddCommentRequest
-	(*AddCommentResponse)(nil),                // 121: workshop.v1.AddCommentResponse
-	(*ListCommentsRequest)(nil),               // 122: workshop.v1.ListCommentsRequest
-	(*ListCommentsResponse)(nil),              // 123: workshop.v1.ListCommentsResponse
-	(*UploadPhotoRequest)(nil),                // 124: workshop.v1.UploadPhotoRequest
-	(*UploadPhotoResponse)(nil),               // 125: workshop.v1.UploadPhotoResponse
-	(*ListPhotosRequest)(nil),                 // 126: workshop.v1.ListPhotosRequest
-	(*ListPhotosResponse)(nil),                // 127: workshop.v1.ListPhotosResponse
-	(*DeletePhotoRequest)(nil),                // 128: workshop.v1.DeletePhotoRequest
-	(*DeletePhotoResponse)(nil),               // 129: workshop.v1.DeletePhotoResponse
-	(*GetQCChecklistRequest)(nil),             // 130: workshop.v1.GetQCChecklistRequest
-	(*GetQCChecklistResponse)(nil),            // 131: workshop.v1.GetQCChecklistResponse
-	(*SubmitQCChecklistRequest)(nil),          // 132: workshop.v1.SubmitQCChecklistRequest
-	(*SubmitQCChecklistResponse)(nil),         // 133: workshop.v1.SubmitQCChecklistResponse
-	(*RejectQCItemRequest)(nil),               // 134: workshop.v1.RejectQCItemRequest
-	(*RejectQCItemResponse)(nil),              // 135: workshop.v1.RejectQCItemResponse
-	(*ListStatusHistoryRequest)(nil),          // 136: workshop.v1.ListStatusHistoryRequest
-	(*ListStatusHistoryResponse)(nil),         // 137: workshop.v1.ListStatusHistoryResponse
-	(*CreateMaterialRequest)(nil),             // 138: workshop.v1.CreateMaterialRequest
-	(*CreateMaterialResponse)(nil),            // 139: workshop.v1.CreateMaterialResponse
-	(*UpdateMaterialRequest)(nil),             // 140: workshop.v1.UpdateMaterialRequest
-	(*UpdateMaterialResponse)(nil),            // 141: workshop.v1.UpdateMaterialResponse
-	(*ListMaterialsRequest)(nil),              // 142: workshop.v1.ListMaterialsRequest
-	(*ListMaterialsResponse)(nil),             // 143: workshop.v1.ListMaterialsResponse
-	(*AddMaterialStockRequest)(nil),           // 144: workshop.v1.AddMaterialStockRequest
-	(*AddMaterialStockResponse)(nil),          // 145: workshop.v1.AddMaterialStockResponse
-	(*WriteOffMaterialRequest)(nil),           // 146: workshop.v1.WriteOffMaterialRequest
-	(*WriteOffMaterialResponse)(nil),          // 147: workshop.v1.WriteOffMaterialResponse
-	(*GetMaterialStockRequest)(nil),           // 148: workshop.v1.GetMaterialStockRequest
-	(*GetMaterialStockResponse)(nil),          // 149: workshop.v1.GetMaterialStockResponse
-	(*ListMaterialTransactionsRequest)(nil),   // 150: workshop.v1.ListMaterialTransactionsRequest
-	(*ListMaterialTransactionsResponse)(nil),  // 151: workshop.v1.ListMaterialTransactionsResponse
-	(*GetMasterMaterialExpensesRequest)(nil),  // 152: workshop.v1.GetMasterMaterialExpensesRequest
-	(*GetMasterMaterialExpensesResponse)(nil), // 153: workshop.v1.GetMasterMaterialExpensesResponse
-	(*GetClientOrderStatusRequest)(nil),       // 154: workshop.v1.GetClientOrderStatusRequest
-	(*GetClientOrderStatusResponse)(nil),      // 155: workshop.v1.GetClientOrderStatusResponse
-	(*GetClientOrderPhotosRequest)(nil),       // 156: workshop.v1.GetClientOrderPhotosRequest
-	(*GetClientOrderPhotosResponse)(nil),      // 157: workshop.v1.GetClientOrderPhotosResponse
-	(*GetClientOrderTimelineRequest)(nil),     // 158: workshop.v1.GetClientOrderTimelineRequest
-	(*GetClientOrderTimelineResponse)(nil),    // 159: workshop.v1.GetClientOrderTimelineResponse
-	(*TimelineEntry)(nil),                     // 160: workshop.v1.TimelineEntry
-	(*CreateOrderFromCRMRequest)(nil),         // 161: workshop.v1.CreateOrderFromCRMRequest
-	(*CreateOrderFromCRMResponse)(nil),        // 162: workshop.v1.CreateOrderFromCRMResponse
-	(*SyncCRMDealsRequest)(nil),               // 163: workshop.v1.SyncCRMDealsRequest
-	(*SyncCRMDealsResponse)(nil),              // 164: workshop.v1.SyncCRMDealsResponse
-	(*GetCRMSyncStatusRequest)(nil),           // 165: workshop.v1.GetCRMSyncStatusRequest
-	(*GetCRMSyncStatusResponse)(nil),          // 166: workshop.v1.GetCRMSyncStatusResponse
-	(*SetMasterTelegramRequest)(nil),          // 167: workshop.v1.SetMasterTelegramRequest
-	(*SetMasterTelegramResponse)(nil),         // 168: workshop.v1.SetMasterTelegramResponse
-	(*GetMasterByTelegramRequest)(nil),        // 169: workshop.v1.GetMasterByTelegramRequest
-	(*GetMasterByTelegramResponse)(nil),       // 170: workshop.v1.GetMasterByTelegramResponse
-	(*SetDiscountRequest)(nil),                // 171: workshop.v1.SetDiscountRequest
-	(*SetDiscountResponse)(nil),               // 172: workshop.v1.SetDiscountResponse
-	(*SetMarkupRequest)(nil),                  // 173: workshop.v1.SetMarkupRequest
-	(*SetMarkupResponse)(nil),                 // 174: workshop.v1.SetMarkupResponse
-	(*SetWorkshopMarkupRequest)(nil),          // 175: workshop.v1.SetWorkshopMarkupRequest
-	(*SetWorkshopMarkupResponse)(nil),         // 176: workshop.v1.SetWorkshopMarkupResponse
-	(*GetPricingBreakdownRequest)(nil),        // 177: workshop.v1.GetPricingBreakdownRequest
-	(*GetPricingBreakdownResponse)(nil),       // 178: workshop.v1.GetPricingBreakdownResponse
-	(*MarkPaidManualRequest)(nil),             // 179: workshop.v1.MarkPaidManualRequest
-	(*MarkPaidManualResponse)(nil),            // 180: workshop.v1.MarkPaidManualResponse
-	(*CancelPaymentRequest)(nil),              // 181: workshop.v1.CancelPaymentRequest
-	(*CancelPaymentResponse)(nil),             // 182: workshop.v1.CancelPaymentResponse
-	(*GetPaymentHistoryRequest)(nil),          // 183: workshop.v1.GetPaymentHistoryRequest
-	(*GetPaymentHistoryResponse)(nil),         // 184: workshop.v1.GetPaymentHistoryResponse
-	(*GetWarrantyOrdersRequest)(nil),          // 185: workshop.v1.GetWarrantyOrdersRequest
-	(*GetWarrantyOrdersResponse)(nil),         // 186: workshop.v1.GetWarrantyOrdersResponse
-	(*SendForApprovalRequest)(nil),            // 187: workshop.v1.SendForApprovalRequest
-	(*SendForApprovalResponse)(nil),           // 188: workshop.v1.SendForApprovalResponse
-	(*GetClientEstimateRequest)(nil),          // 189: workshop.v1.GetClientEstimateRequest
-	(*EstimateLineItem)(nil),                  // 190: workshop.v1.EstimateLineItem
-	(*GetClientEstimateResponse)(nil),         // 191: workshop.v1.GetClientEstimateResponse
-	(*ApproveEstimateRequest)(nil),            // 192: workshop.v1.ApproveEstimateRequest
-	(*ApproveEstimateResponse)(nil),           // 193: workshop.v1.ApproveEstimateResponse
-	(*RejectEstimateRequest)(nil),             // 194: workshop.v1.RejectEstimateRequest
-	(*RejectEstimateResponse)(nil),            // 195: workshop.v1.RejectEstimateResponse
-	nil,                                       // 196: workshop.v1.CreateOrderFromCRMRequest.CrmMetadataEntry
-	(*timestamppb.Timestamp)(nil),             // 197: google.protobuf.Timestamp
+	(RepairStatus)(0),                              // 0: workshop.v1.RepairStatus
+	(MasterRole)(0),                                // 1: workshop.v1.MasterRole
+	(FixSalaryType)(0),                             // 2: workshop.v1.FixSalaryType
+	(OutsourceStatus)(0),                           // 3: workshop.v1.OutsourceStatus
+	(PhotoAlbum)(0),                                // 4: workshop.v1.PhotoAlbum
+	(CommentType)(0),                               // 5: workshop.v1.CommentType
+	(MaterialUnit)(0),                              // 6: workshop.v1.MaterialUnit
+	(MaterialTransactionType)(0),                   // 7: workshop.v1.MaterialTransactionType
+	(PaymentStatus)(0),                             // 8: workshop.v1.PaymentStatus
+	(PaymentMethod)(0),                             // 9: workshop.v1.PaymentMethod
+	(PaymentType)(0),                               // 10: workshop.v1.PaymentType
+	(*Workshop)(nil),                               // 11: workshop.v1.Workshop
+	(*RepairOrder)(nil),                            // 12: workshop.v1.RepairOrder
+	(*MasterSummary)(nil),                          // 13: workshop.v1.MasterSummary
+	(*PricingBreakdown)(nil),                       // 14: workshop.v1.PricingBreakdown
+	(*RepairOrderPayment)(nil),                     // 15: workshop.v1.RepairOrderPayment
+	(*CarWork)(nil),                                // 16: workshop.v1.CarWork
+	(*Master)(nil),                                 // 17: workshop.v1.Master
+	(*Client)(nil),                                 // 18: workshop.v1.Client
+	(*RepairPhoto)(nil),                            // 19: workshop.v1.RepairPhoto
+	(*RepairComment)(nil),                          // 20: workshop.v1.RepairComment
+	(*StatusHistoryEntry)(nil),                     // 21: workshop.v1.StatusHistoryEntry
+	(*QCChecklist)(nil),                            // 22: workshop.v1.QCChecklist
+	(*QCItem)(nil),                                 // 23: workshop.v1.QCItem
+	(*OutsourceRequest)(nil),                       // 24: workshop.v1.OutsourceRequest
+	(*SalaryBreakdown)(nil),                        // 25: workshop.v1.SalaryBreakdown
+	(*SalaryAdjustment)(nil),                       // 26: workshop.v1.SalaryAdjustment
+	(*CompletedWork)(nil),                          // 27: workshop.v1.CompletedWork
+	(*MasterHourRate)(nil),                         // 28: workshop.v1.MasterHourRate
+	(*MasterFixSalary)(nil),                        // 29: workshop.v1.MasterFixSalary
+	(*Material)(nil),                               // 30: workshop.v1.Material
+	(*MaterialStock)(nil),                          // 31: workshop.v1.MaterialStock
+	(*MaterialTransaction)(nil),                    // 32: workshop.v1.MaterialTransaction
+	(*KanbanColumn)(nil),                           // 33: workshop.v1.KanbanColumn
+	(*OutsourceKanbanColumn)(nil),                  // 34: workshop.v1.OutsourceKanbanColumn
+	(*CreateWorkshopRequest)(nil),                  // 35: workshop.v1.CreateWorkshopRequest
+	(*CreateWorkshopResponse)(nil),                 // 36: workshop.v1.CreateWorkshopResponse
+	(*GetWorkshopRequest)(nil),                     // 37: workshop.v1.GetWorkshopRequest
+	(*GetWorkshopResponse)(nil),                    // 38: workshop.v1.GetWorkshopResponse
+	(*UpdateWorkshopRequest)(nil),                  // 39: workshop.v1.UpdateWorkshopRequest
+	(*UpdateWorkshopResponse)(nil),                 // 40: workshop.v1.UpdateWorkshopResponse
+	(*ListWorkshopsRequest)(nil),                   // 41: workshop.v1.ListWorkshopsRequest
+	(*ListWorkshopsResponse)(nil),                  // 42: workshop.v1.ListWorkshopsResponse
+	(*ListWorkshopOrgIDsRequest)(nil),              // 43: workshop.v1.ListWorkshopOrgIDsRequest
+	(*ListWorkshopOrgIDsResponse)(nil),             // 44: workshop.v1.ListWorkshopOrgIDsResponse
+	(*CreateRepairOrderRequest)(nil),               // 45: workshop.v1.CreateRepairOrderRequest
+	(*CreateRepairOrderResponse)(nil),              // 46: workshop.v1.CreateRepairOrderResponse
+	(*GetRepairOrderRequest)(nil),                  // 47: workshop.v1.GetRepairOrderRequest
+	(*GetRepairOrderResponse)(nil),                 // 48: workshop.v1.GetRepairOrderResponse
+	(*UpdateRepairOrderRequest)(nil),               // 49: workshop.v1.UpdateRepairOrderRequest
+	(*UpdateRepairOrderResponse)(nil),              // 50: workshop.v1.UpdateRepairOrderResponse
+	(*UpdateRepairOrderStatusRequest)(nil),         // 51: workshop.v1.UpdateRepairOrderStatusRequest
+	(*UpdateRepairOrderStatusResponse)(nil),        // 52: workshop.v1.UpdateRepairOrderStatusResponse
+	(*ListRepairOrdersRequest)(nil),                // 53: workshop.v1.ListRepairOrdersRequest
+	(*ListRepairOrdersResponse)(nil),               // 54: workshop.v1.ListRepairOrdersResponse
+	(*GetKanbanRequest)(nil),                       // 55: workshop.v1.GetKanbanRequest
+	(*GetKanbanResponse)(nil),                      // 56: workshop.v1.GetKanbanResponse
+	(*CreateCarWorkRequest)(nil),                   // 57: workshop.v1.CreateCarWorkRequest
+	(*CreateCarWorkResponse)(nil),                  // 58: workshop.v1.CreateCarWorkResponse
+	(*UpdateCarWorkRequest)(nil),                   // 59: workshop.v1.UpdateCarWorkRequest
+	(*UpdateCarWorkResponse)(nil),                  // 60: workshop.v1.UpdateCarWorkResponse
+	(*DeleteCarWorkRequest)(nil),                   // 61: workshop.v1.DeleteCarWorkRequest
+	(*DeleteCarWorkResponse)(nil),                  // 62: workshop.v1.DeleteCarWorkResponse
+	(*ListCarWorksRequest)(nil),                    // 63: workshop.v1.ListCarWorksRequest
+	(*ListCarWorksResponse)(nil),                   // 64: workshop.v1.ListCarWorksResponse
+	(*MarkCarWorkDoneRequest)(nil),                 // 65: workshop.v1.MarkCarWorkDoneRequest
+	(*MarkCarWorkDoneResponse)(nil),                // 66: workshop.v1.MarkCarWorkDoneResponse
+	(*ClockInRequest)(nil),                         // 67: workshop.v1.ClockInRequest
+	(*ClockInResponse)(nil),                        // 68: workshop.v1.ClockInResponse
+	(*ClockOutRequest)(nil),                        // 69: workshop.v1.ClockOutRequest
+	(*ClockOutResponse)(nil),                       // 70: workshop.v1.ClockOutResponse
+	(*CreateMasterRequest)(nil),                    // 71: workshop.v1.CreateMasterRequest
+	(*CreateMasterResponse)(nil),                   // 72: workshop.v1.CreateMasterResponse
+	(*GetMasterRequest)(nil),                       // 73: workshop.v1.GetMasterRequest
+	(*GetMasterResponse)(nil),                      // 74: workshop.v1.GetMasterResponse
+	(*UpdateMasterRequest)(nil),                    // 75: workshop.v1.UpdateMasterRequest
+	(*UpdateMasterResponse)(nil),                   // 76: workshop.v1.UpdateMasterResponse
+	(*FireMasterRequest)(nil),                      // 77: workshop.v1.FireMasterRequest
+	(*FireMasterResponse)(nil),                     // 78: workshop.v1.FireMasterResponse
+	(*ListMastersRequest)(nil),                     // 79: workshop.v1.ListMastersRequest
+	(*ListMastersResponse)(nil),                    // 80: workshop.v1.ListMastersResponse
+	(*CalculateSalaryRequest)(nil),                 // 81: workshop.v1.CalculateSalaryRequest
+	(*CalculateSalaryResponse)(nil),                // 82: workshop.v1.CalculateSalaryResponse
+	(*GetSalaryBreakdownRequest)(nil),              // 83: workshop.v1.GetSalaryBreakdownRequest
+	(*GetSalaryBreakdownResponse)(nil),             // 84: workshop.v1.GetSalaryBreakdownResponse
+	(*CreateBonusRequest)(nil),                     // 85: workshop.v1.CreateBonusRequest
+	(*CreateBonusResponse)(nil),                    // 86: workshop.v1.CreateBonusResponse
+	(*CreateFineRequest)(nil),                      // 87: workshop.v1.CreateFineRequest
+	(*CreateFineResponse)(nil),                     // 88: workshop.v1.CreateFineResponse
+	(*CreateAdvanceRequest)(nil),                   // 89: workshop.v1.CreateAdvanceRequest
+	(*CreateAdvanceResponse)(nil),                  // 90: workshop.v1.CreateAdvanceResponse
+	(*DeleteBonusRequest)(nil),                     // 91: workshop.v1.DeleteBonusRequest
+	(*DeleteBonusResponse)(nil),                    // 92: workshop.v1.DeleteBonusResponse
+	(*DeleteFineRequest)(nil),                      // 93: workshop.v1.DeleteFineRequest
+	(*DeleteFineResponse)(nil),                     // 94: workshop.v1.DeleteFineResponse
+	(*SetMasterHourRateRequest)(nil),               // 95: workshop.v1.SetMasterHourRateRequest
+	(*SetMasterHourRateResponse)(nil),              // 96: workshop.v1.SetMasterHourRateResponse
+	(*SetMasterFixSalaryRequest)(nil),              // 97: workshop.v1.SetMasterFixSalaryRequest
+	(*SetMasterFixSalaryResponse)(nil),             // 98: workshop.v1.SetMasterFixSalaryResponse
+	(*GetMasterRateHistoryRequest)(nil),            // 99: workshop.v1.GetMasterRateHistoryRequest
+	(*GetMasterRateHistoryResponse)(nil),           // 100: workshop.v1.GetMasterRateHistoryResponse
+	(*PublishOutsourceRequest)(nil),                // 101: workshop.v1.PublishOutsourceRequest
+	(*PublishOutsourceResponse)(nil),               // 102: workshop.v1.PublishOutsourceResponse
+	(*AcceptOutsourceRequest)(nil),                 // 103: workshop.v1.AcceptOutsourceRequest
+	(*AcceptOutsourceResponse)(nil),                // 104: workshop.v1.AcceptOutsourceResponse
+	(*ListOutsourceRequestsRequest)(nil),           // 105: workshop.v1.ListOutsourceRequestsRequest
+	(*ListOutsourceRequestsResponse)(nil),          // 106: workshop.v1.ListOutsourceRequestsResponse
+	(*GetOutsourceKanbanRequest)(nil),              // 107: workshop.v1.GetOutsourceKanbanRequest
+	(*GetOutsourceKanbanResponse)(nil),             // 108: workshop.v1.GetOutsourceKanbanResponse
+	(*UpdateOutsourceStatusRequest)(nil),           // 109: workshop.v1.UpdateOutsourceStatusRequest
+	(*UpdateOutsourceStatusResponse)(nil),          // 110: workshop.v1.UpdateOutsourceStatusResponse
+	(*GetWorkshopStatsRequest)(nil),                // 111: workshop.v1.GetWorkshopStatsRequest
+	(*GetWorkshopStatsResponse)(nil),               // 112: workshop.v1.GetWorkshopStatsResponse
+	(*GetMasterPerformanceRequest)(nil),            // 113: workshop.v1.GetMasterPerformanceRequest
+	(*GetMasterPerformanceResponse)(nil),           // 114: workshop.v1.GetMasterPerformanceResponse
+	(*MasterPerformanceEntry)(nil),                 // 115: workshop.v1.MasterPerformanceEntry
+	(*GetDailyReportRequest)(nil),                  // 116: workshop.v1.GetDailyReportRequest
+	(*DailyReportEntry)(nil),                       // 117: workshop.v1.DailyReportEntry
+	(*GetDailyReportResponse)(nil),                 // 118: workshop.v1.GetDailyReportResponse
+	(*StatusCount)(nil),                            // 119: workshop.v1.StatusCount
+	(*AddCommentRequest)(nil),                      // 120: workshop.v1.AddCommentRequest
+	(*AddCommentResponse)(nil),                     // 121: workshop.v1.AddCommentResponse
+	(*ListCommentsRequest)(nil),                    // 122: workshop.v1.ListCommentsRequest
+	(*ListCommentsResponse)(nil),                   // 123: workshop.v1.ListCommentsResponse
+	(*UploadPhotoRequest)(nil),                     // 124: workshop.v1.UploadPhotoRequest
+	(*UploadPhotoResponse)(nil),                    // 125: workshop.v1.UploadPhotoResponse
+	(*ListPhotosRequest)(nil),                      // 126: workshop.v1.ListPhotosRequest
+	(*ListPhotosResponse)(nil),                     // 127: workshop.v1.ListPhotosResponse
+	(*DeletePhotoRequest)(nil),                     // 128: workshop.v1.DeletePhotoRequest
+	(*DeletePhotoResponse)(nil),                    // 129: workshop.v1.DeletePhotoResponse
+	(*GetQCChecklistRequest)(nil),                  // 130: workshop.v1.GetQCChecklistRequest
+	(*GetQCChecklistResponse)(nil),                 // 131: workshop.v1.GetQCChecklistResponse
+	(*SubmitQCChecklistRequest)(nil),               // 132: workshop.v1.SubmitQCChecklistRequest
+	(*SubmitQCChecklistResponse)(nil),              // 133: workshop.v1.SubmitQCChecklistResponse
+	(*RejectQCItemRequest)(nil),                    // 134: workshop.v1.RejectQCItemRequest
+	(*RejectQCItemResponse)(nil),                   // 135: workshop.v1.RejectQCItemResponse
+	(*ListStatusHistoryRequest)(nil),               // 136: workshop.v1.ListStatusHistoryRequest
+	(*ListStatusHistoryResponse)(nil),              // 137: workshop.v1.ListStatusHistoryResponse
+	(*CreateMaterialRequest)(nil),                  // 138: workshop.v1.CreateMaterialRequest
+	(*CreateMaterialResponse)(nil),                 // 139: workshop.v1.CreateMaterialResponse
+	(*UpdateMaterialRequest)(nil),                  // 140: workshop.v1.UpdateMaterialRequest
+	(*UpdateMaterialResponse)(nil),                 // 141: workshop.v1.UpdateMaterialResponse
+	(*ListMaterialsRequest)(nil),                   // 142: workshop.v1.ListMaterialsRequest
+	(*ListMaterialsResponse)(nil),                  // 143: workshop.v1.ListMaterialsResponse
+	(*AddMaterialStockRequest)(nil),                // 144: workshop.v1.AddMaterialStockRequest
+	(*AddMaterialStockResponse)(nil),               // 145: workshop.v1.AddMaterialStockResponse
+	(*WriteOffMaterialRequest)(nil),                // 146: workshop.v1.WriteOffMaterialRequest
+	(*WriteOffMaterialResponse)(nil),               // 147: workshop.v1.WriteOffMaterialResponse
+	(*GetMaterialStockRequest)(nil),                // 148: workshop.v1.GetMaterialStockRequest
+	(*GetMaterialStockResponse)(nil),               // 149: workshop.v1.GetMaterialStockResponse
+	(*ListMaterialTransactionsRequest)(nil),        // 150: workshop.v1.ListMaterialTransactionsRequest
+	(*ListMaterialTransactionsResponse)(nil),       // 151: workshop.v1.ListMaterialTransactionsResponse
+	(*GetMasterMaterialExpensesRequest)(nil),       // 152: workshop.v1.GetMasterMaterialExpensesRequest
+	(*GetMasterMaterialExpensesResponse)(nil),      // 153: workshop.v1.GetMasterMaterialExpensesResponse
+	(*GetClientOrderStatusRequest)(nil),            // 154: workshop.v1.GetClientOrderStatusRequest
+	(*GetClientOrderStatusResponse)(nil),           // 155: workshop.v1.GetClientOrderStatusResponse
+	(*GetClientOrderPhotosRequest)(nil),            // 156: workshop.v1.GetClientOrderPhotosRequest
+	(*GetClientOrderPhotosResponse)(nil),           // 157: workshop.v1.GetClientOrderPhotosResponse
+	(*GetClientOrderTimelineRequest)(nil),          // 158: workshop.v1.GetClientOrderTimelineRequest
+	(*GetClientOrderTimelineResponse)(nil),         // 159: workshop.v1.GetClientOrderTimelineResponse
+	(*TimelineEntry)(nil),                          // 160: workshop.v1.TimelineEntry
+	(*CreateOrderFromCRMRequest)(nil),              // 161: workshop.v1.CreateOrderFromCRMRequest
+	(*CreateOrderFromCRMResponse)(nil),             // 162: workshop.v1.CreateOrderFromCRMResponse
+	(*SyncCRMDealsRequest)(nil),                    // 163: workshop.v1.SyncCRMDealsRequest
+	(*SyncCRMDealsResponse)(nil),                   // 164: workshop.v1.SyncCRMDealsResponse
+	(*GetCRMSyncStatusRequest)(nil),                // 165: workshop.v1.GetCRMSyncStatusRequest
+	(*GetCRMSyncStatusResponse)(nil),               // 166: workshop.v1.GetCRMSyncStatusResponse
+	(*SetMasterTelegramRequest)(nil),               // 167: workshop.v1.SetMasterTelegramRequest
+	(*SetMasterTelegramResponse)(nil),              // 168: workshop.v1.SetMasterTelegramResponse
+	(*GetMasterByTelegramRequest)(nil),             // 169: workshop.v1.GetMasterByTelegramRequest
+	(*GetMasterByTelegramResponse)(nil),            // 170: workshop.v1.GetMasterByTelegramResponse
+	(*SetDiscountRequest)(nil),                     // 171: workshop.v1.SetDiscountRequest
+	(*SetDiscountResponse)(nil),                    // 172: workshop.v1.SetDiscountResponse
+	(*SetMarkupRequest)(nil),                       // 173: workshop.v1.SetMarkupRequest
+	(*SetMarkupResponse)(nil),                      // 174: workshop.v1.SetMarkupResponse
+	(*SetWorkshopMarkupRequest)(nil),               // 175: workshop.v1.SetWorkshopMarkupRequest
+	(*SetWorkshopMarkupResponse)(nil),              // 176: workshop.v1.SetWorkshopMarkupResponse
+	(*GetPricingBreakdownRequest)(nil),             // 177: workshop.v1.GetPricingBreakdownRequest
+	(*GetPricingBreakdownResponse)(nil),            // 178: workshop.v1.GetPricingBreakdownResponse
+	(*MarkPaidManualRequest)(nil),                  // 179: workshop.v1.MarkPaidManualRequest
+	(*MarkPaidManualResponse)(nil),                 // 180: workshop.v1.MarkPaidManualResponse
+	(*CancelPaymentRequest)(nil),                   // 181: workshop.v1.CancelPaymentRequest
+	(*CancelPaymentResponse)(nil),                  // 182: workshop.v1.CancelPaymentResponse
+	(*GetPaymentHistoryRequest)(nil),               // 183: workshop.v1.GetPaymentHistoryRequest
+	(*GetPaymentHistoryResponse)(nil),              // 184: workshop.v1.GetPaymentHistoryResponse
+	(*GetWarrantyOrdersRequest)(nil),               // 185: workshop.v1.GetWarrantyOrdersRequest
+	(*GetWarrantyOrdersResponse)(nil),              // 186: workshop.v1.GetWarrantyOrdersResponse
+	(*ClientReview)(nil),                           // 187: workshop.v1.ClientReview
+	(*ConfirmOrderCompletionByClientRequest)(nil),  // 188: workshop.v1.ConfirmOrderCompletionByClientRequest
+	(*ConfirmOrderCompletionByClientResponse)(nil), // 189: workshop.v1.ConfirmOrderCompletionByClientResponse
+	(*SendForApprovalRequest)(nil),                 // 190: workshop.v1.SendForApprovalRequest
+	(*SendForApprovalResponse)(nil),                // 191: workshop.v1.SendForApprovalResponse
+	(*GetClientEstimateRequest)(nil),               // 192: workshop.v1.GetClientEstimateRequest
+	(*EstimateLineItem)(nil),                       // 193: workshop.v1.EstimateLineItem
+	(*GetClientEstimateResponse)(nil),              // 194: workshop.v1.GetClientEstimateResponse
+	(*ApproveEstimateRequest)(nil),                 // 195: workshop.v1.ApproveEstimateRequest
+	(*ApproveEstimateResponse)(nil),                // 196: workshop.v1.ApproveEstimateResponse
+	(*RejectEstimateRequest)(nil),                  // 197: workshop.v1.RejectEstimateRequest
+	(*RejectEstimateResponse)(nil),                 // 198: workshop.v1.RejectEstimateResponse
+	nil,                                            // 199: workshop.v1.CreateOrderFromCRMRequest.CrmMetadataEntry
+	(*timestamppb.Timestamp)(nil),                  // 200: google.protobuf.Timestamp
 }
 var file_workshop_workshop_proto_depIdxs = []int32{
-	197, // 0: workshop.v1.Workshop.created_at:type_name -> google.protobuf.Timestamp
-	197, // 1: workshop.v1.Workshop.updated_at:type_name -> google.protobuf.Timestamp
+	200, // 0: workshop.v1.Workshop.created_at:type_name -> google.protobuf.Timestamp
+	200, // 1: workshop.v1.Workshop.updated_at:type_name -> google.protobuf.Timestamp
 	0,   // 2: workshop.v1.RepairOrder.status:type_name -> workshop.v1.RepairStatus
-	197, // 3: workshop.v1.RepairOrder.intake_date:type_name -> google.protobuf.Timestamp
-	197, // 4: workshop.v1.RepairOrder.promised_date:type_name -> google.protobuf.Timestamp
-	197, // 5: workshop.v1.RepairOrder.completion_date:type_name -> google.protobuf.Timestamp
+	200, // 3: workshop.v1.RepairOrder.intake_date:type_name -> google.protobuf.Timestamp
+	200, // 4: workshop.v1.RepairOrder.promised_date:type_name -> google.protobuf.Timestamp
+	200, // 5: workshop.v1.RepairOrder.completion_date:type_name -> google.protobuf.Timestamp
 	16,  // 6: workshop.v1.RepairOrder.works:type_name -> workshop.v1.CarWork
 	13,  // 7: workshop.v1.RepairOrder.masters:type_name -> workshop.v1.MasterSummary
-	197, // 8: workshop.v1.RepairOrder.created_at:type_name -> google.protobuf.Timestamp
-	197, // 9: workshop.v1.RepairOrder.updated_at:type_name -> google.protobuf.Timestamp
+	200, // 8: workshop.v1.RepairOrder.created_at:type_name -> google.protobuf.Timestamp
+	200, // 9: workshop.v1.RepairOrder.updated_at:type_name -> google.protobuf.Timestamp
 	8,   // 10: workshop.v1.RepairOrder.payment_status:type_name -> workshop.v1.PaymentStatus
 	10,  // 11: workshop.v1.RepairOrder.payment_type:type_name -> workshop.v1.PaymentType
 	1,   // 12: workshop.v1.MasterSummary.role:type_name -> workshop.v1.MasterRole
 	9,   // 13: workshop.v1.RepairOrderPayment.method:type_name -> workshop.v1.PaymentMethod
-	197, // 14: workshop.v1.RepairOrderPayment.cancelled_at:type_name -> google.protobuf.Timestamp
-	197, // 15: workshop.v1.RepairOrderPayment.created_at:type_name -> google.protobuf.Timestamp
-	197, // 16: workshop.v1.CarWork.clock_in_at:type_name -> google.protobuf.Timestamp
-	197, // 17: workshop.v1.CarWork.clock_out_at:type_name -> google.protobuf.Timestamp
-	197, // 18: workshop.v1.CarWork.done_at:type_name -> google.protobuf.Timestamp
-	197, // 19: workshop.v1.CarWork.created_at:type_name -> google.protobuf.Timestamp
-	197, // 20: workshop.v1.CarWork.updated_at:type_name -> google.protobuf.Timestamp
+	200, // 14: workshop.v1.RepairOrderPayment.cancelled_at:type_name -> google.protobuf.Timestamp
+	200, // 15: workshop.v1.RepairOrderPayment.created_at:type_name -> google.protobuf.Timestamp
+	200, // 16: workshop.v1.CarWork.clock_in_at:type_name -> google.protobuf.Timestamp
+	200, // 17: workshop.v1.CarWork.clock_out_at:type_name -> google.protobuf.Timestamp
+	200, // 18: workshop.v1.CarWork.done_at:type_name -> google.protobuf.Timestamp
+	200, // 19: workshop.v1.CarWork.created_at:type_name -> google.protobuf.Timestamp
+	200, // 20: workshop.v1.CarWork.updated_at:type_name -> google.protobuf.Timestamp
 	1,   // 21: workshop.v1.Master.role:type_name -> workshop.v1.MasterRole
 	2,   // 22: workshop.v1.Master.fix_salary_type:type_name -> workshop.v1.FixSalaryType
-	197, // 23: workshop.v1.Master.hired_at:type_name -> google.protobuf.Timestamp
-	197, // 24: workshop.v1.Master.fired_at:type_name -> google.protobuf.Timestamp
-	197, // 25: workshop.v1.Master.created_at:type_name -> google.protobuf.Timestamp
-	197, // 26: workshop.v1.Master.updated_at:type_name -> google.protobuf.Timestamp
-	197, // 27: workshop.v1.Client.created_at:type_name -> google.protobuf.Timestamp
-	197, // 28: workshop.v1.Client.updated_at:type_name -> google.protobuf.Timestamp
+	200, // 23: workshop.v1.Master.hired_at:type_name -> google.protobuf.Timestamp
+	200, // 24: workshop.v1.Master.fired_at:type_name -> google.protobuf.Timestamp
+	200, // 25: workshop.v1.Master.created_at:type_name -> google.protobuf.Timestamp
+	200, // 26: workshop.v1.Master.updated_at:type_name -> google.protobuf.Timestamp
+	200, // 27: workshop.v1.Client.created_at:type_name -> google.protobuf.Timestamp
+	200, // 28: workshop.v1.Client.updated_at:type_name -> google.protobuf.Timestamp
 	4,   // 29: workshop.v1.RepairPhoto.album:type_name -> workshop.v1.PhotoAlbum
 	0,   // 30: workshop.v1.RepairPhoto.stage_at_upload:type_name -> workshop.v1.RepairStatus
-	197, // 31: workshop.v1.RepairPhoto.created_at:type_name -> google.protobuf.Timestamp
+	200, // 31: workshop.v1.RepairPhoto.created_at:type_name -> google.protobuf.Timestamp
 	5,   // 32: workshop.v1.RepairComment.type:type_name -> workshop.v1.CommentType
-	197, // 33: workshop.v1.RepairComment.created_at:type_name -> google.protobuf.Timestamp
+	200, // 33: workshop.v1.RepairComment.created_at:type_name -> google.protobuf.Timestamp
 	0,   // 34: workshop.v1.StatusHistoryEntry.old_status:type_name -> workshop.v1.RepairStatus
 	0,   // 35: workshop.v1.StatusHistoryEntry.new_status:type_name -> workshop.v1.RepairStatus
-	197, // 36: workshop.v1.StatusHistoryEntry.created_at:type_name -> google.protobuf.Timestamp
+	200, // 36: workshop.v1.StatusHistoryEntry.created_at:type_name -> google.protobuf.Timestamp
 	23,  // 37: workshop.v1.QCChecklist.items:type_name -> workshop.v1.QCItem
-	197, // 38: workshop.v1.QCChecklist.completed_at:type_name -> google.protobuf.Timestamp
-	197, // 39: workshop.v1.QCChecklist.created_at:type_name -> google.protobuf.Timestamp
+	200, // 38: workshop.v1.QCChecklist.completed_at:type_name -> google.protobuf.Timestamp
+	200, // 39: workshop.v1.QCChecklist.created_at:type_name -> google.protobuf.Timestamp
 	3,   // 40: workshop.v1.OutsourceRequest.status:type_name -> workshop.v1.OutsourceStatus
-	197, // 41: workshop.v1.OutsourceRequest.created_at:type_name -> google.protobuf.Timestamp
-	197, // 42: workshop.v1.OutsourceRequest.updated_at:type_name -> google.protobuf.Timestamp
+	200, // 41: workshop.v1.OutsourceRequest.created_at:type_name -> google.protobuf.Timestamp
+	200, // 42: workshop.v1.OutsourceRequest.updated_at:type_name -> google.protobuf.Timestamp
 	2,   // 43: workshop.v1.SalaryBreakdown.fix_salary_type:type_name -> workshop.v1.FixSalaryType
 	26,  // 44: workshop.v1.SalaryBreakdown.adjustments:type_name -> workshop.v1.SalaryAdjustment
 	27,  // 45: workshop.v1.SalaryBreakdown.completed_works:type_name -> workshop.v1.CompletedWork
-	197, // 46: workshop.v1.SalaryAdjustment.created_at:type_name -> google.protobuf.Timestamp
-	197, // 47: workshop.v1.CompletedWork.done_at:type_name -> google.protobuf.Timestamp
-	197, // 48: workshop.v1.MasterHourRate.effective_from:type_name -> google.protobuf.Timestamp
-	197, // 49: workshop.v1.MasterHourRate.created_at:type_name -> google.protobuf.Timestamp
-	197, // 50: workshop.v1.MasterFixSalary.effective_from:type_name -> google.protobuf.Timestamp
-	197, // 51: workshop.v1.MasterFixSalary.created_at:type_name -> google.protobuf.Timestamp
+	200, // 46: workshop.v1.SalaryAdjustment.created_at:type_name -> google.protobuf.Timestamp
+	200, // 47: workshop.v1.CompletedWork.done_at:type_name -> google.protobuf.Timestamp
+	200, // 48: workshop.v1.MasterHourRate.effective_from:type_name -> google.protobuf.Timestamp
+	200, // 49: workshop.v1.MasterHourRate.created_at:type_name -> google.protobuf.Timestamp
+	200, // 50: workshop.v1.MasterFixSalary.effective_from:type_name -> google.protobuf.Timestamp
+	200, // 51: workshop.v1.MasterFixSalary.created_at:type_name -> google.protobuf.Timestamp
 	6,   // 52: workshop.v1.Material.unit:type_name -> workshop.v1.MaterialUnit
-	197, // 53: workshop.v1.Material.created_at:type_name -> google.protobuf.Timestamp
-	197, // 54: workshop.v1.Material.updated_at:type_name -> google.protobuf.Timestamp
-	197, // 55: workshop.v1.MaterialStock.updated_at:type_name -> google.protobuf.Timestamp
+	200, // 53: workshop.v1.Material.created_at:type_name -> google.protobuf.Timestamp
+	200, // 54: workshop.v1.Material.updated_at:type_name -> google.protobuf.Timestamp
+	200, // 55: workshop.v1.MaterialStock.updated_at:type_name -> google.protobuf.Timestamp
 	30,  // 56: workshop.v1.MaterialStock.material:type_name -> workshop.v1.Material
 	7,   // 57: workshop.v1.MaterialTransaction.type:type_name -> workshop.v1.MaterialTransactionType
-	197, // 58: workshop.v1.MaterialTransaction.created_at:type_name -> google.protobuf.Timestamp
+	200, // 58: workshop.v1.MaterialTransaction.created_at:type_name -> google.protobuf.Timestamp
 	0,   // 59: workshop.v1.KanbanColumn.status:type_name -> workshop.v1.RepairStatus
 	12,  // 60: workshop.v1.KanbanColumn.orders:type_name -> workshop.v1.RepairOrder
 	3,   // 61: workshop.v1.OutsourceKanbanColumn.status:type_name -> workshop.v1.OutsourceStatus
@@ -13751,7 +13966,7 @@ var file_workshop_workshop_proto_depIdxs = []int32{
 	11,  // 64: workshop.v1.GetWorkshopResponse.workshop:type_name -> workshop.v1.Workshop
 	11,  // 65: workshop.v1.UpdateWorkshopResponse.workshop:type_name -> workshop.v1.Workshop
 	11,  // 66: workshop.v1.ListWorkshopsResponse.workshops:type_name -> workshop.v1.Workshop
-	197, // 67: workshop.v1.CreateRepairOrderRequest.promised_date:type_name -> google.protobuf.Timestamp
+	200, // 67: workshop.v1.CreateRepairOrderRequest.promised_date:type_name -> google.protobuf.Timestamp
 	10,  // 68: workshop.v1.CreateRepairOrderRequest.payment_type:type_name -> workshop.v1.PaymentType
 	12,  // 69: workshop.v1.CreateRepairOrderResponse.order:type_name -> workshop.v1.RepairOrder
 	12,  // 70: workshop.v1.GetRepairOrderResponse.order:type_name -> workshop.v1.RepairOrder
@@ -13782,9 +13997,9 @@ var file_workshop_workshop_proto_depIdxs = []int32{
 	26,  // 95: workshop.v1.CreateBonusResponse.bonus:type_name -> workshop.v1.SalaryAdjustment
 	26,  // 96: workshop.v1.CreateFineResponse.fine:type_name -> workshop.v1.SalaryAdjustment
 	26,  // 97: workshop.v1.CreateAdvanceResponse.advance:type_name -> workshop.v1.SalaryAdjustment
-	197, // 98: workshop.v1.SetMasterHourRateRequest.effective_from:type_name -> google.protobuf.Timestamp
+	200, // 98: workshop.v1.SetMasterHourRateRequest.effective_from:type_name -> google.protobuf.Timestamp
 	28,  // 99: workshop.v1.SetMasterHourRateResponse.rate:type_name -> workshop.v1.MasterHourRate
-	197, // 100: workshop.v1.SetMasterFixSalaryRequest.effective_from:type_name -> google.protobuf.Timestamp
+	200, // 100: workshop.v1.SetMasterFixSalaryRequest.effective_from:type_name -> google.protobuf.Timestamp
 	29,  // 101: workshop.v1.SetMasterFixSalaryResponse.rate:type_name -> workshop.v1.MasterFixSalary
 	28,  // 102: workshop.v1.GetMasterRateHistoryResponse.hour_rates:type_name -> workshop.v1.MasterHourRate
 	29,  // 103: workshop.v1.GetMasterRateHistoryResponse.fix_salaries:type_name -> workshop.v1.MasterFixSalary
@@ -13795,13 +14010,13 @@ var file_workshop_workshop_proto_depIdxs = []int32{
 	34,  // 108: workshop.v1.GetOutsourceKanbanResponse.columns:type_name -> workshop.v1.OutsourceKanbanColumn
 	3,   // 109: workshop.v1.UpdateOutsourceStatusRequest.new_status:type_name -> workshop.v1.OutsourceStatus
 	24,  // 110: workshop.v1.UpdateOutsourceStatusResponse.request:type_name -> workshop.v1.OutsourceRequest
-	197, // 111: workshop.v1.GetWorkshopStatsRequest.from:type_name -> google.protobuf.Timestamp
-	197, // 112: workshop.v1.GetWorkshopStatsRequest.to:type_name -> google.protobuf.Timestamp
+	200, // 111: workshop.v1.GetWorkshopStatsRequest.from:type_name -> google.protobuf.Timestamp
+	200, // 112: workshop.v1.GetWorkshopStatsRequest.to:type_name -> google.protobuf.Timestamp
 	115, // 113: workshop.v1.GetMasterPerformanceResponse.entries:type_name -> workshop.v1.MasterPerformanceEntry
-	197, // 114: workshop.v1.GetDailyReportRequest.date:type_name -> google.protobuf.Timestamp
-	197, // 115: workshop.v1.GetDailyReportRequest.start_date:type_name -> google.protobuf.Timestamp
-	197, // 116: workshop.v1.GetDailyReportRequest.end_date:type_name -> google.protobuf.Timestamp
-	197, // 117: workshop.v1.DailyReportEntry.date:type_name -> google.protobuf.Timestamp
+	200, // 114: workshop.v1.GetDailyReportRequest.date:type_name -> google.protobuf.Timestamp
+	200, // 115: workshop.v1.GetDailyReportRequest.start_date:type_name -> google.protobuf.Timestamp
+	200, // 116: workshop.v1.GetDailyReportRequest.end_date:type_name -> google.protobuf.Timestamp
+	200, // 117: workshop.v1.DailyReportEntry.date:type_name -> google.protobuf.Timestamp
 	119, // 118: workshop.v1.DailyReportEntry.status_breakdown:type_name -> workshop.v1.StatusCount
 	119, // 119: workshop.v1.GetDailyReportResponse.status_breakdown:type_name -> workshop.v1.StatusCount
 	117, // 120: workshop.v1.GetDailyReportResponse.entries:type_name -> workshop.v1.DailyReportEntry
@@ -13831,18 +14046,18 @@ var file_workshop_workshop_proto_depIdxs = []int32{
 	31,  // 144: workshop.v1.WriteOffMaterialResponse.stock:type_name -> workshop.v1.MaterialStock
 	31,  // 145: workshop.v1.GetMaterialStockResponse.items:type_name -> workshop.v1.MaterialStock
 	7,   // 146: workshop.v1.ListMaterialTransactionsRequest.type:type_name -> workshop.v1.MaterialTransactionType
-	197, // 147: workshop.v1.ListMaterialTransactionsRequest.from:type_name -> google.protobuf.Timestamp
-	197, // 148: workshop.v1.ListMaterialTransactionsRequest.to:type_name -> google.protobuf.Timestamp
+	200, // 147: workshop.v1.ListMaterialTransactionsRequest.from:type_name -> google.protobuf.Timestamp
+	200, // 148: workshop.v1.ListMaterialTransactionsRequest.to:type_name -> google.protobuf.Timestamp
 	32,  // 149: workshop.v1.ListMaterialTransactionsResponse.transactions:type_name -> workshop.v1.MaterialTransaction
 	32,  // 150: workshop.v1.GetMasterMaterialExpensesResponse.transactions:type_name -> workshop.v1.MaterialTransaction
 	12,  // 151: workshop.v1.GetClientOrderStatusResponse.order:type_name -> workshop.v1.RepairOrder
 	4,   // 152: workshop.v1.GetClientOrderPhotosRequest.album:type_name -> workshop.v1.PhotoAlbum
 	19,  // 153: workshop.v1.GetClientOrderPhotosResponse.photos:type_name -> workshop.v1.RepairPhoto
 	160, // 154: workshop.v1.GetClientOrderTimelineResponse.entries:type_name -> workshop.v1.TimelineEntry
-	197, // 155: workshop.v1.TimelineEntry.timestamp:type_name -> google.protobuf.Timestamp
-	196, // 156: workshop.v1.CreateOrderFromCRMRequest.crm_metadata:type_name -> workshop.v1.CreateOrderFromCRMRequest.CrmMetadataEntry
+	200, // 155: workshop.v1.TimelineEntry.timestamp:type_name -> google.protobuf.Timestamp
+	199, // 156: workshop.v1.CreateOrderFromCRMRequest.crm_metadata:type_name -> workshop.v1.CreateOrderFromCRMRequest.CrmMetadataEntry
 	12,  // 157: workshop.v1.CreateOrderFromCRMResponse.order:type_name -> workshop.v1.RepairOrder
-	197, // 158: workshop.v1.GetCRMSyncStatusResponse.last_sync_at:type_name -> google.protobuf.Timestamp
+	200, // 158: workshop.v1.GetCRMSyncStatusResponse.last_sync_at:type_name -> google.protobuf.Timestamp
 	17,  // 159: workshop.v1.SetMasterTelegramResponse.master:type_name -> workshop.v1.Master
 	17,  // 160: workshop.v1.GetMasterByTelegramResponse.master:type_name -> workshop.v1.Master
 	12,  // 161: workshop.v1.SetDiscountResponse.order:type_name -> workshop.v1.RepairOrder
@@ -13856,172 +14071,176 @@ var file_workshop_workshop_proto_depIdxs = []int32{
 	12,  // 169: workshop.v1.CancelPaymentResponse.repair_order:type_name -> workshop.v1.RepairOrder
 	15,  // 170: workshop.v1.GetPaymentHistoryResponse.payments:type_name -> workshop.v1.RepairOrderPayment
 	12,  // 171: workshop.v1.GetWarrantyOrdersResponse.orders:type_name -> workshop.v1.RepairOrder
-	12,  // 172: workshop.v1.SendForApprovalResponse.order:type_name -> workshop.v1.RepairOrder
-	190, // 173: workshop.v1.GetClientEstimateResponse.items:type_name -> workshop.v1.EstimateLineItem
-	0,   // 174: workshop.v1.GetClientEstimateResponse.status:type_name -> workshop.v1.RepairStatus
-	12,  // 175: workshop.v1.ApproveEstimateResponse.order:type_name -> workshop.v1.RepairOrder
-	12,  // 176: workshop.v1.RejectEstimateResponse.order:type_name -> workshop.v1.RepairOrder
-	35,  // 177: workshop.v1.WorkshopService.CreateWorkshop:input_type -> workshop.v1.CreateWorkshopRequest
-	37,  // 178: workshop.v1.WorkshopService.GetWorkshop:input_type -> workshop.v1.GetWorkshopRequest
-	39,  // 179: workshop.v1.WorkshopService.UpdateWorkshop:input_type -> workshop.v1.UpdateWorkshopRequest
-	41,  // 180: workshop.v1.WorkshopService.ListWorkshops:input_type -> workshop.v1.ListWorkshopsRequest
-	43,  // 181: workshop.v1.WorkshopService.ListWorkshopOrgIDs:input_type -> workshop.v1.ListWorkshopOrgIDsRequest
-	45,  // 182: workshop.v1.WorkshopService.CreateRepairOrder:input_type -> workshop.v1.CreateRepairOrderRequest
-	47,  // 183: workshop.v1.WorkshopService.GetRepairOrder:input_type -> workshop.v1.GetRepairOrderRequest
-	49,  // 184: workshop.v1.WorkshopService.UpdateRepairOrder:input_type -> workshop.v1.UpdateRepairOrderRequest
-	51,  // 185: workshop.v1.WorkshopService.UpdateRepairOrderStatus:input_type -> workshop.v1.UpdateRepairOrderStatusRequest
-	53,  // 186: workshop.v1.WorkshopService.ListRepairOrders:input_type -> workshop.v1.ListRepairOrdersRequest
-	55,  // 187: workshop.v1.WorkshopService.GetKanban:input_type -> workshop.v1.GetKanbanRequest
-	57,  // 188: workshop.v1.WorkshopService.CreateCarWork:input_type -> workshop.v1.CreateCarWorkRequest
-	59,  // 189: workshop.v1.WorkshopService.UpdateCarWork:input_type -> workshop.v1.UpdateCarWorkRequest
-	61,  // 190: workshop.v1.WorkshopService.DeleteCarWork:input_type -> workshop.v1.DeleteCarWorkRequest
-	63,  // 191: workshop.v1.WorkshopService.ListCarWorks:input_type -> workshop.v1.ListCarWorksRequest
-	65,  // 192: workshop.v1.WorkshopService.MarkCarWorkDone:input_type -> workshop.v1.MarkCarWorkDoneRequest
-	67,  // 193: workshop.v1.WorkshopService.ClockIn:input_type -> workshop.v1.ClockInRequest
-	69,  // 194: workshop.v1.WorkshopService.ClockOut:input_type -> workshop.v1.ClockOutRequest
-	71,  // 195: workshop.v1.WorkshopService.CreateMaster:input_type -> workshop.v1.CreateMasterRequest
-	73,  // 196: workshop.v1.WorkshopService.GetMaster:input_type -> workshop.v1.GetMasterRequest
-	75,  // 197: workshop.v1.WorkshopService.UpdateMaster:input_type -> workshop.v1.UpdateMasterRequest
-	77,  // 198: workshop.v1.WorkshopService.FireMaster:input_type -> workshop.v1.FireMasterRequest
-	79,  // 199: workshop.v1.WorkshopService.ListMasters:input_type -> workshop.v1.ListMastersRequest
-	95,  // 200: workshop.v1.WorkshopService.SetMasterHourRate:input_type -> workshop.v1.SetMasterHourRateRequest
-	97,  // 201: workshop.v1.WorkshopService.SetMasterFixSalary:input_type -> workshop.v1.SetMasterFixSalaryRequest
-	99,  // 202: workshop.v1.WorkshopService.GetMasterRateHistory:input_type -> workshop.v1.GetMasterRateHistoryRequest
-	81,  // 203: workshop.v1.WorkshopService.CalculateSalary:input_type -> workshop.v1.CalculateSalaryRequest
-	83,  // 204: workshop.v1.WorkshopService.GetSalaryBreakdown:input_type -> workshop.v1.GetSalaryBreakdownRequest
-	85,  // 205: workshop.v1.WorkshopService.CreateBonus:input_type -> workshop.v1.CreateBonusRequest
-	87,  // 206: workshop.v1.WorkshopService.CreateFine:input_type -> workshop.v1.CreateFineRequest
-	89,  // 207: workshop.v1.WorkshopService.CreateAdvance:input_type -> workshop.v1.CreateAdvanceRequest
-	91,  // 208: workshop.v1.WorkshopService.DeleteBonus:input_type -> workshop.v1.DeleteBonusRequest
-	93,  // 209: workshop.v1.WorkshopService.DeleteFine:input_type -> workshop.v1.DeleteFineRequest
-	101, // 210: workshop.v1.WorkshopService.PublishOutsource:input_type -> workshop.v1.PublishOutsourceRequest
-	103, // 211: workshop.v1.WorkshopService.AcceptOutsource:input_type -> workshop.v1.AcceptOutsourceRequest
-	105, // 212: workshop.v1.WorkshopService.ListOutsourceRequests:input_type -> workshop.v1.ListOutsourceRequestsRequest
-	107, // 213: workshop.v1.WorkshopService.GetOutsourceKanban:input_type -> workshop.v1.GetOutsourceKanbanRequest
-	109, // 214: workshop.v1.WorkshopService.UpdateOutsourceStatus:input_type -> workshop.v1.UpdateOutsourceStatusRequest
-	111, // 215: workshop.v1.WorkshopService.GetWorkshopStats:input_type -> workshop.v1.GetWorkshopStatsRequest
-	113, // 216: workshop.v1.WorkshopService.GetMasterPerformance:input_type -> workshop.v1.GetMasterPerformanceRequest
-	116, // 217: workshop.v1.WorkshopService.GetDailyReport:input_type -> workshop.v1.GetDailyReportRequest
-	120, // 218: workshop.v1.WorkshopService.AddComment:input_type -> workshop.v1.AddCommentRequest
-	122, // 219: workshop.v1.WorkshopService.ListComments:input_type -> workshop.v1.ListCommentsRequest
-	124, // 220: workshop.v1.WorkshopService.UploadPhoto:input_type -> workshop.v1.UploadPhotoRequest
-	126, // 221: workshop.v1.WorkshopService.ListPhotos:input_type -> workshop.v1.ListPhotosRequest
-	128, // 222: workshop.v1.WorkshopService.DeletePhoto:input_type -> workshop.v1.DeletePhotoRequest
-	130, // 223: workshop.v1.WorkshopService.GetQCChecklist:input_type -> workshop.v1.GetQCChecklistRequest
-	132, // 224: workshop.v1.WorkshopService.SubmitQCChecklist:input_type -> workshop.v1.SubmitQCChecklistRequest
-	134, // 225: workshop.v1.WorkshopService.RejectQCItem:input_type -> workshop.v1.RejectQCItemRequest
-	136, // 226: workshop.v1.WorkshopService.ListStatusHistory:input_type -> workshop.v1.ListStatusHistoryRequest
-	138, // 227: workshop.v1.WorkshopService.CreateMaterial:input_type -> workshop.v1.CreateMaterialRequest
-	140, // 228: workshop.v1.WorkshopService.UpdateMaterial:input_type -> workshop.v1.UpdateMaterialRequest
-	142, // 229: workshop.v1.WorkshopService.ListMaterials:input_type -> workshop.v1.ListMaterialsRequest
-	144, // 230: workshop.v1.WorkshopService.AddMaterialStock:input_type -> workshop.v1.AddMaterialStockRequest
-	146, // 231: workshop.v1.WorkshopService.WriteOffMaterial:input_type -> workshop.v1.WriteOffMaterialRequest
-	148, // 232: workshop.v1.WorkshopService.GetMaterialStock:input_type -> workshop.v1.GetMaterialStockRequest
-	150, // 233: workshop.v1.WorkshopService.ListMaterialTransactions:input_type -> workshop.v1.ListMaterialTransactionsRequest
-	152, // 234: workshop.v1.WorkshopService.GetMasterMaterialExpenses:input_type -> workshop.v1.GetMasterMaterialExpensesRequest
-	154, // 235: workshop.v1.WorkshopService.GetClientOrderStatus:input_type -> workshop.v1.GetClientOrderStatusRequest
-	156, // 236: workshop.v1.WorkshopService.GetClientOrderPhotos:input_type -> workshop.v1.GetClientOrderPhotosRequest
-	158, // 237: workshop.v1.WorkshopService.GetClientOrderTimeline:input_type -> workshop.v1.GetClientOrderTimelineRequest
-	189, // 238: workshop.v1.WorkshopService.GetClientEstimate:input_type -> workshop.v1.GetClientEstimateRequest
-	187, // 239: workshop.v1.WorkshopService.SendForApproval:input_type -> workshop.v1.SendForApprovalRequest
-	192, // 240: workshop.v1.WorkshopService.ApproveEstimate:input_type -> workshop.v1.ApproveEstimateRequest
-	194, // 241: workshop.v1.WorkshopService.RejectEstimate:input_type -> workshop.v1.RejectEstimateRequest
-	161, // 242: workshop.v1.WorkshopService.CreateOrderFromCRM:input_type -> workshop.v1.CreateOrderFromCRMRequest
-	163, // 243: workshop.v1.WorkshopService.SyncCRMDeals:input_type -> workshop.v1.SyncCRMDealsRequest
-	165, // 244: workshop.v1.WorkshopService.GetCRMSyncStatus:input_type -> workshop.v1.GetCRMSyncStatusRequest
-	167, // 245: workshop.v1.WorkshopService.SetMasterTelegram:input_type -> workshop.v1.SetMasterTelegramRequest
-	169, // 246: workshop.v1.WorkshopService.GetMasterByTelegram:input_type -> workshop.v1.GetMasterByTelegramRequest
-	171, // 247: workshop.v1.WorkshopService.SetDiscount:input_type -> workshop.v1.SetDiscountRequest
-	173, // 248: workshop.v1.WorkshopService.SetMarkup:input_type -> workshop.v1.SetMarkupRequest
-	175, // 249: workshop.v1.WorkshopService.SetWorkshopMarkup:input_type -> workshop.v1.SetWorkshopMarkupRequest
-	177, // 250: workshop.v1.WorkshopService.GetPricingBreakdown:input_type -> workshop.v1.GetPricingBreakdownRequest
-	179, // 251: workshop.v1.WorkshopService.MarkPaidManual:input_type -> workshop.v1.MarkPaidManualRequest
-	181, // 252: workshop.v1.WorkshopService.CancelPayment:input_type -> workshop.v1.CancelPaymentRequest
-	183, // 253: workshop.v1.WorkshopService.GetPaymentHistory:input_type -> workshop.v1.GetPaymentHistoryRequest
-	185, // 254: workshop.v1.WorkshopService.GetWarrantyOrders:input_type -> workshop.v1.GetWarrantyOrdersRequest
-	36,  // 255: workshop.v1.WorkshopService.CreateWorkshop:output_type -> workshop.v1.CreateWorkshopResponse
-	38,  // 256: workshop.v1.WorkshopService.GetWorkshop:output_type -> workshop.v1.GetWorkshopResponse
-	40,  // 257: workshop.v1.WorkshopService.UpdateWorkshop:output_type -> workshop.v1.UpdateWorkshopResponse
-	42,  // 258: workshop.v1.WorkshopService.ListWorkshops:output_type -> workshop.v1.ListWorkshopsResponse
-	44,  // 259: workshop.v1.WorkshopService.ListWorkshopOrgIDs:output_type -> workshop.v1.ListWorkshopOrgIDsResponse
-	46,  // 260: workshop.v1.WorkshopService.CreateRepairOrder:output_type -> workshop.v1.CreateRepairOrderResponse
-	48,  // 261: workshop.v1.WorkshopService.GetRepairOrder:output_type -> workshop.v1.GetRepairOrderResponse
-	50,  // 262: workshop.v1.WorkshopService.UpdateRepairOrder:output_type -> workshop.v1.UpdateRepairOrderResponse
-	52,  // 263: workshop.v1.WorkshopService.UpdateRepairOrderStatus:output_type -> workshop.v1.UpdateRepairOrderStatusResponse
-	54,  // 264: workshop.v1.WorkshopService.ListRepairOrders:output_type -> workshop.v1.ListRepairOrdersResponse
-	56,  // 265: workshop.v1.WorkshopService.GetKanban:output_type -> workshop.v1.GetKanbanResponse
-	58,  // 266: workshop.v1.WorkshopService.CreateCarWork:output_type -> workshop.v1.CreateCarWorkResponse
-	60,  // 267: workshop.v1.WorkshopService.UpdateCarWork:output_type -> workshop.v1.UpdateCarWorkResponse
-	62,  // 268: workshop.v1.WorkshopService.DeleteCarWork:output_type -> workshop.v1.DeleteCarWorkResponse
-	64,  // 269: workshop.v1.WorkshopService.ListCarWorks:output_type -> workshop.v1.ListCarWorksResponse
-	66,  // 270: workshop.v1.WorkshopService.MarkCarWorkDone:output_type -> workshop.v1.MarkCarWorkDoneResponse
-	68,  // 271: workshop.v1.WorkshopService.ClockIn:output_type -> workshop.v1.ClockInResponse
-	70,  // 272: workshop.v1.WorkshopService.ClockOut:output_type -> workshop.v1.ClockOutResponse
-	72,  // 273: workshop.v1.WorkshopService.CreateMaster:output_type -> workshop.v1.CreateMasterResponse
-	74,  // 274: workshop.v1.WorkshopService.GetMaster:output_type -> workshop.v1.GetMasterResponse
-	76,  // 275: workshop.v1.WorkshopService.UpdateMaster:output_type -> workshop.v1.UpdateMasterResponse
-	78,  // 276: workshop.v1.WorkshopService.FireMaster:output_type -> workshop.v1.FireMasterResponse
-	80,  // 277: workshop.v1.WorkshopService.ListMasters:output_type -> workshop.v1.ListMastersResponse
-	96,  // 278: workshop.v1.WorkshopService.SetMasterHourRate:output_type -> workshop.v1.SetMasterHourRateResponse
-	98,  // 279: workshop.v1.WorkshopService.SetMasterFixSalary:output_type -> workshop.v1.SetMasterFixSalaryResponse
-	100, // 280: workshop.v1.WorkshopService.GetMasterRateHistory:output_type -> workshop.v1.GetMasterRateHistoryResponse
-	82,  // 281: workshop.v1.WorkshopService.CalculateSalary:output_type -> workshop.v1.CalculateSalaryResponse
-	84,  // 282: workshop.v1.WorkshopService.GetSalaryBreakdown:output_type -> workshop.v1.GetSalaryBreakdownResponse
-	86,  // 283: workshop.v1.WorkshopService.CreateBonus:output_type -> workshop.v1.CreateBonusResponse
-	88,  // 284: workshop.v1.WorkshopService.CreateFine:output_type -> workshop.v1.CreateFineResponse
-	90,  // 285: workshop.v1.WorkshopService.CreateAdvance:output_type -> workshop.v1.CreateAdvanceResponse
-	92,  // 286: workshop.v1.WorkshopService.DeleteBonus:output_type -> workshop.v1.DeleteBonusResponse
-	94,  // 287: workshop.v1.WorkshopService.DeleteFine:output_type -> workshop.v1.DeleteFineResponse
-	102, // 288: workshop.v1.WorkshopService.PublishOutsource:output_type -> workshop.v1.PublishOutsourceResponse
-	104, // 289: workshop.v1.WorkshopService.AcceptOutsource:output_type -> workshop.v1.AcceptOutsourceResponse
-	106, // 290: workshop.v1.WorkshopService.ListOutsourceRequests:output_type -> workshop.v1.ListOutsourceRequestsResponse
-	108, // 291: workshop.v1.WorkshopService.GetOutsourceKanban:output_type -> workshop.v1.GetOutsourceKanbanResponse
-	110, // 292: workshop.v1.WorkshopService.UpdateOutsourceStatus:output_type -> workshop.v1.UpdateOutsourceStatusResponse
-	112, // 293: workshop.v1.WorkshopService.GetWorkshopStats:output_type -> workshop.v1.GetWorkshopStatsResponse
-	114, // 294: workshop.v1.WorkshopService.GetMasterPerformance:output_type -> workshop.v1.GetMasterPerformanceResponse
-	118, // 295: workshop.v1.WorkshopService.GetDailyReport:output_type -> workshop.v1.GetDailyReportResponse
-	121, // 296: workshop.v1.WorkshopService.AddComment:output_type -> workshop.v1.AddCommentResponse
-	123, // 297: workshop.v1.WorkshopService.ListComments:output_type -> workshop.v1.ListCommentsResponse
-	125, // 298: workshop.v1.WorkshopService.UploadPhoto:output_type -> workshop.v1.UploadPhotoResponse
-	127, // 299: workshop.v1.WorkshopService.ListPhotos:output_type -> workshop.v1.ListPhotosResponse
-	129, // 300: workshop.v1.WorkshopService.DeletePhoto:output_type -> workshop.v1.DeletePhotoResponse
-	131, // 301: workshop.v1.WorkshopService.GetQCChecklist:output_type -> workshop.v1.GetQCChecklistResponse
-	133, // 302: workshop.v1.WorkshopService.SubmitQCChecklist:output_type -> workshop.v1.SubmitQCChecklistResponse
-	135, // 303: workshop.v1.WorkshopService.RejectQCItem:output_type -> workshop.v1.RejectQCItemResponse
-	137, // 304: workshop.v1.WorkshopService.ListStatusHistory:output_type -> workshop.v1.ListStatusHistoryResponse
-	139, // 305: workshop.v1.WorkshopService.CreateMaterial:output_type -> workshop.v1.CreateMaterialResponse
-	141, // 306: workshop.v1.WorkshopService.UpdateMaterial:output_type -> workshop.v1.UpdateMaterialResponse
-	143, // 307: workshop.v1.WorkshopService.ListMaterials:output_type -> workshop.v1.ListMaterialsResponse
-	145, // 308: workshop.v1.WorkshopService.AddMaterialStock:output_type -> workshop.v1.AddMaterialStockResponse
-	147, // 309: workshop.v1.WorkshopService.WriteOffMaterial:output_type -> workshop.v1.WriteOffMaterialResponse
-	149, // 310: workshop.v1.WorkshopService.GetMaterialStock:output_type -> workshop.v1.GetMaterialStockResponse
-	151, // 311: workshop.v1.WorkshopService.ListMaterialTransactions:output_type -> workshop.v1.ListMaterialTransactionsResponse
-	153, // 312: workshop.v1.WorkshopService.GetMasterMaterialExpenses:output_type -> workshop.v1.GetMasterMaterialExpensesResponse
-	155, // 313: workshop.v1.WorkshopService.GetClientOrderStatus:output_type -> workshop.v1.GetClientOrderStatusResponse
-	157, // 314: workshop.v1.WorkshopService.GetClientOrderPhotos:output_type -> workshop.v1.GetClientOrderPhotosResponse
-	159, // 315: workshop.v1.WorkshopService.GetClientOrderTimeline:output_type -> workshop.v1.GetClientOrderTimelineResponse
-	191, // 316: workshop.v1.WorkshopService.GetClientEstimate:output_type -> workshop.v1.GetClientEstimateResponse
-	188, // 317: workshop.v1.WorkshopService.SendForApproval:output_type -> workshop.v1.SendForApprovalResponse
-	193, // 318: workshop.v1.WorkshopService.ApproveEstimate:output_type -> workshop.v1.ApproveEstimateResponse
-	195, // 319: workshop.v1.WorkshopService.RejectEstimate:output_type -> workshop.v1.RejectEstimateResponse
-	162, // 320: workshop.v1.WorkshopService.CreateOrderFromCRM:output_type -> workshop.v1.CreateOrderFromCRMResponse
-	164, // 321: workshop.v1.WorkshopService.SyncCRMDeals:output_type -> workshop.v1.SyncCRMDealsResponse
-	166, // 322: workshop.v1.WorkshopService.GetCRMSyncStatus:output_type -> workshop.v1.GetCRMSyncStatusResponse
-	168, // 323: workshop.v1.WorkshopService.SetMasterTelegram:output_type -> workshop.v1.SetMasterTelegramResponse
-	170, // 324: workshop.v1.WorkshopService.GetMasterByTelegram:output_type -> workshop.v1.GetMasterByTelegramResponse
-	172, // 325: workshop.v1.WorkshopService.SetDiscount:output_type -> workshop.v1.SetDiscountResponse
-	174, // 326: workshop.v1.WorkshopService.SetMarkup:output_type -> workshop.v1.SetMarkupResponse
-	176, // 327: workshop.v1.WorkshopService.SetWorkshopMarkup:output_type -> workshop.v1.SetWorkshopMarkupResponse
-	178, // 328: workshop.v1.WorkshopService.GetPricingBreakdown:output_type -> workshop.v1.GetPricingBreakdownResponse
-	180, // 329: workshop.v1.WorkshopService.MarkPaidManual:output_type -> workshop.v1.MarkPaidManualResponse
-	182, // 330: workshop.v1.WorkshopService.CancelPayment:output_type -> workshop.v1.CancelPaymentResponse
-	184, // 331: workshop.v1.WorkshopService.GetPaymentHistory:output_type -> workshop.v1.GetPaymentHistoryResponse
-	186, // 332: workshop.v1.WorkshopService.GetWarrantyOrders:output_type -> workshop.v1.GetWarrantyOrdersResponse
-	255, // [255:333] is the sub-list for method output_type
-	177, // [177:255] is the sub-list for method input_type
-	177, // [177:177] is the sub-list for extension type_name
-	177, // [177:177] is the sub-list for extension extendee
-	0,   // [0:177] is the sub-list for field type_name
+	187, // 172: workshop.v1.ConfirmOrderCompletionByClientRequest.review:type_name -> workshop.v1.ClientReview
+	12,  // 173: workshop.v1.ConfirmOrderCompletionByClientResponse.repair_order:type_name -> workshop.v1.RepairOrder
+	12,  // 174: workshop.v1.SendForApprovalResponse.order:type_name -> workshop.v1.RepairOrder
+	193, // 175: workshop.v1.GetClientEstimateResponse.items:type_name -> workshop.v1.EstimateLineItem
+	0,   // 176: workshop.v1.GetClientEstimateResponse.status:type_name -> workshop.v1.RepairStatus
+	12,  // 177: workshop.v1.ApproveEstimateResponse.order:type_name -> workshop.v1.RepairOrder
+	12,  // 178: workshop.v1.RejectEstimateResponse.order:type_name -> workshop.v1.RepairOrder
+	35,  // 179: workshop.v1.WorkshopService.CreateWorkshop:input_type -> workshop.v1.CreateWorkshopRequest
+	37,  // 180: workshop.v1.WorkshopService.GetWorkshop:input_type -> workshop.v1.GetWorkshopRequest
+	39,  // 181: workshop.v1.WorkshopService.UpdateWorkshop:input_type -> workshop.v1.UpdateWorkshopRequest
+	41,  // 182: workshop.v1.WorkshopService.ListWorkshops:input_type -> workshop.v1.ListWorkshopsRequest
+	43,  // 183: workshop.v1.WorkshopService.ListWorkshopOrgIDs:input_type -> workshop.v1.ListWorkshopOrgIDsRequest
+	45,  // 184: workshop.v1.WorkshopService.CreateRepairOrder:input_type -> workshop.v1.CreateRepairOrderRequest
+	47,  // 185: workshop.v1.WorkshopService.GetRepairOrder:input_type -> workshop.v1.GetRepairOrderRequest
+	49,  // 186: workshop.v1.WorkshopService.UpdateRepairOrder:input_type -> workshop.v1.UpdateRepairOrderRequest
+	51,  // 187: workshop.v1.WorkshopService.UpdateRepairOrderStatus:input_type -> workshop.v1.UpdateRepairOrderStatusRequest
+	53,  // 188: workshop.v1.WorkshopService.ListRepairOrders:input_type -> workshop.v1.ListRepairOrdersRequest
+	55,  // 189: workshop.v1.WorkshopService.GetKanban:input_type -> workshop.v1.GetKanbanRequest
+	57,  // 190: workshop.v1.WorkshopService.CreateCarWork:input_type -> workshop.v1.CreateCarWorkRequest
+	59,  // 191: workshop.v1.WorkshopService.UpdateCarWork:input_type -> workshop.v1.UpdateCarWorkRequest
+	61,  // 192: workshop.v1.WorkshopService.DeleteCarWork:input_type -> workshop.v1.DeleteCarWorkRequest
+	63,  // 193: workshop.v1.WorkshopService.ListCarWorks:input_type -> workshop.v1.ListCarWorksRequest
+	65,  // 194: workshop.v1.WorkshopService.MarkCarWorkDone:input_type -> workshop.v1.MarkCarWorkDoneRequest
+	67,  // 195: workshop.v1.WorkshopService.ClockIn:input_type -> workshop.v1.ClockInRequest
+	69,  // 196: workshop.v1.WorkshopService.ClockOut:input_type -> workshop.v1.ClockOutRequest
+	71,  // 197: workshop.v1.WorkshopService.CreateMaster:input_type -> workshop.v1.CreateMasterRequest
+	73,  // 198: workshop.v1.WorkshopService.GetMaster:input_type -> workshop.v1.GetMasterRequest
+	75,  // 199: workshop.v1.WorkshopService.UpdateMaster:input_type -> workshop.v1.UpdateMasterRequest
+	77,  // 200: workshop.v1.WorkshopService.FireMaster:input_type -> workshop.v1.FireMasterRequest
+	79,  // 201: workshop.v1.WorkshopService.ListMasters:input_type -> workshop.v1.ListMastersRequest
+	95,  // 202: workshop.v1.WorkshopService.SetMasterHourRate:input_type -> workshop.v1.SetMasterHourRateRequest
+	97,  // 203: workshop.v1.WorkshopService.SetMasterFixSalary:input_type -> workshop.v1.SetMasterFixSalaryRequest
+	99,  // 204: workshop.v1.WorkshopService.GetMasterRateHistory:input_type -> workshop.v1.GetMasterRateHistoryRequest
+	81,  // 205: workshop.v1.WorkshopService.CalculateSalary:input_type -> workshop.v1.CalculateSalaryRequest
+	83,  // 206: workshop.v1.WorkshopService.GetSalaryBreakdown:input_type -> workshop.v1.GetSalaryBreakdownRequest
+	85,  // 207: workshop.v1.WorkshopService.CreateBonus:input_type -> workshop.v1.CreateBonusRequest
+	87,  // 208: workshop.v1.WorkshopService.CreateFine:input_type -> workshop.v1.CreateFineRequest
+	89,  // 209: workshop.v1.WorkshopService.CreateAdvance:input_type -> workshop.v1.CreateAdvanceRequest
+	91,  // 210: workshop.v1.WorkshopService.DeleteBonus:input_type -> workshop.v1.DeleteBonusRequest
+	93,  // 211: workshop.v1.WorkshopService.DeleteFine:input_type -> workshop.v1.DeleteFineRequest
+	101, // 212: workshop.v1.WorkshopService.PublishOutsource:input_type -> workshop.v1.PublishOutsourceRequest
+	103, // 213: workshop.v1.WorkshopService.AcceptOutsource:input_type -> workshop.v1.AcceptOutsourceRequest
+	105, // 214: workshop.v1.WorkshopService.ListOutsourceRequests:input_type -> workshop.v1.ListOutsourceRequestsRequest
+	107, // 215: workshop.v1.WorkshopService.GetOutsourceKanban:input_type -> workshop.v1.GetOutsourceKanbanRequest
+	109, // 216: workshop.v1.WorkshopService.UpdateOutsourceStatus:input_type -> workshop.v1.UpdateOutsourceStatusRequest
+	111, // 217: workshop.v1.WorkshopService.GetWorkshopStats:input_type -> workshop.v1.GetWorkshopStatsRequest
+	113, // 218: workshop.v1.WorkshopService.GetMasterPerformance:input_type -> workshop.v1.GetMasterPerformanceRequest
+	116, // 219: workshop.v1.WorkshopService.GetDailyReport:input_type -> workshop.v1.GetDailyReportRequest
+	120, // 220: workshop.v1.WorkshopService.AddComment:input_type -> workshop.v1.AddCommentRequest
+	122, // 221: workshop.v1.WorkshopService.ListComments:input_type -> workshop.v1.ListCommentsRequest
+	124, // 222: workshop.v1.WorkshopService.UploadPhoto:input_type -> workshop.v1.UploadPhotoRequest
+	126, // 223: workshop.v1.WorkshopService.ListPhotos:input_type -> workshop.v1.ListPhotosRequest
+	128, // 224: workshop.v1.WorkshopService.DeletePhoto:input_type -> workshop.v1.DeletePhotoRequest
+	130, // 225: workshop.v1.WorkshopService.GetQCChecklist:input_type -> workshop.v1.GetQCChecklistRequest
+	132, // 226: workshop.v1.WorkshopService.SubmitQCChecklist:input_type -> workshop.v1.SubmitQCChecklistRequest
+	134, // 227: workshop.v1.WorkshopService.RejectQCItem:input_type -> workshop.v1.RejectQCItemRequest
+	136, // 228: workshop.v1.WorkshopService.ListStatusHistory:input_type -> workshop.v1.ListStatusHistoryRequest
+	138, // 229: workshop.v1.WorkshopService.CreateMaterial:input_type -> workshop.v1.CreateMaterialRequest
+	140, // 230: workshop.v1.WorkshopService.UpdateMaterial:input_type -> workshop.v1.UpdateMaterialRequest
+	142, // 231: workshop.v1.WorkshopService.ListMaterials:input_type -> workshop.v1.ListMaterialsRequest
+	144, // 232: workshop.v1.WorkshopService.AddMaterialStock:input_type -> workshop.v1.AddMaterialStockRequest
+	146, // 233: workshop.v1.WorkshopService.WriteOffMaterial:input_type -> workshop.v1.WriteOffMaterialRequest
+	148, // 234: workshop.v1.WorkshopService.GetMaterialStock:input_type -> workshop.v1.GetMaterialStockRequest
+	150, // 235: workshop.v1.WorkshopService.ListMaterialTransactions:input_type -> workshop.v1.ListMaterialTransactionsRequest
+	152, // 236: workshop.v1.WorkshopService.GetMasterMaterialExpenses:input_type -> workshop.v1.GetMasterMaterialExpensesRequest
+	154, // 237: workshop.v1.WorkshopService.GetClientOrderStatus:input_type -> workshop.v1.GetClientOrderStatusRequest
+	156, // 238: workshop.v1.WorkshopService.GetClientOrderPhotos:input_type -> workshop.v1.GetClientOrderPhotosRequest
+	158, // 239: workshop.v1.WorkshopService.GetClientOrderTimeline:input_type -> workshop.v1.GetClientOrderTimelineRequest
+	192, // 240: workshop.v1.WorkshopService.GetClientEstimate:input_type -> workshop.v1.GetClientEstimateRequest
+	190, // 241: workshop.v1.WorkshopService.SendForApproval:input_type -> workshop.v1.SendForApprovalRequest
+	195, // 242: workshop.v1.WorkshopService.ApproveEstimate:input_type -> workshop.v1.ApproveEstimateRequest
+	197, // 243: workshop.v1.WorkshopService.RejectEstimate:input_type -> workshop.v1.RejectEstimateRequest
+	161, // 244: workshop.v1.WorkshopService.CreateOrderFromCRM:input_type -> workshop.v1.CreateOrderFromCRMRequest
+	163, // 245: workshop.v1.WorkshopService.SyncCRMDeals:input_type -> workshop.v1.SyncCRMDealsRequest
+	165, // 246: workshop.v1.WorkshopService.GetCRMSyncStatus:input_type -> workshop.v1.GetCRMSyncStatusRequest
+	167, // 247: workshop.v1.WorkshopService.SetMasterTelegram:input_type -> workshop.v1.SetMasterTelegramRequest
+	169, // 248: workshop.v1.WorkshopService.GetMasterByTelegram:input_type -> workshop.v1.GetMasterByTelegramRequest
+	171, // 249: workshop.v1.WorkshopService.SetDiscount:input_type -> workshop.v1.SetDiscountRequest
+	173, // 250: workshop.v1.WorkshopService.SetMarkup:input_type -> workshop.v1.SetMarkupRequest
+	175, // 251: workshop.v1.WorkshopService.SetWorkshopMarkup:input_type -> workshop.v1.SetWorkshopMarkupRequest
+	177, // 252: workshop.v1.WorkshopService.GetPricingBreakdown:input_type -> workshop.v1.GetPricingBreakdownRequest
+	179, // 253: workshop.v1.WorkshopService.MarkPaidManual:input_type -> workshop.v1.MarkPaidManualRequest
+	181, // 254: workshop.v1.WorkshopService.CancelPayment:input_type -> workshop.v1.CancelPaymentRequest
+	183, // 255: workshop.v1.WorkshopService.GetPaymentHistory:input_type -> workshop.v1.GetPaymentHistoryRequest
+	185, // 256: workshop.v1.WorkshopService.GetWarrantyOrders:input_type -> workshop.v1.GetWarrantyOrdersRequest
+	188, // 257: workshop.v1.WorkshopService.ConfirmOrderCompletionByClient:input_type -> workshop.v1.ConfirmOrderCompletionByClientRequest
+	36,  // 258: workshop.v1.WorkshopService.CreateWorkshop:output_type -> workshop.v1.CreateWorkshopResponse
+	38,  // 259: workshop.v1.WorkshopService.GetWorkshop:output_type -> workshop.v1.GetWorkshopResponse
+	40,  // 260: workshop.v1.WorkshopService.UpdateWorkshop:output_type -> workshop.v1.UpdateWorkshopResponse
+	42,  // 261: workshop.v1.WorkshopService.ListWorkshops:output_type -> workshop.v1.ListWorkshopsResponse
+	44,  // 262: workshop.v1.WorkshopService.ListWorkshopOrgIDs:output_type -> workshop.v1.ListWorkshopOrgIDsResponse
+	46,  // 263: workshop.v1.WorkshopService.CreateRepairOrder:output_type -> workshop.v1.CreateRepairOrderResponse
+	48,  // 264: workshop.v1.WorkshopService.GetRepairOrder:output_type -> workshop.v1.GetRepairOrderResponse
+	50,  // 265: workshop.v1.WorkshopService.UpdateRepairOrder:output_type -> workshop.v1.UpdateRepairOrderResponse
+	52,  // 266: workshop.v1.WorkshopService.UpdateRepairOrderStatus:output_type -> workshop.v1.UpdateRepairOrderStatusResponse
+	54,  // 267: workshop.v1.WorkshopService.ListRepairOrders:output_type -> workshop.v1.ListRepairOrdersResponse
+	56,  // 268: workshop.v1.WorkshopService.GetKanban:output_type -> workshop.v1.GetKanbanResponse
+	58,  // 269: workshop.v1.WorkshopService.CreateCarWork:output_type -> workshop.v1.CreateCarWorkResponse
+	60,  // 270: workshop.v1.WorkshopService.UpdateCarWork:output_type -> workshop.v1.UpdateCarWorkResponse
+	62,  // 271: workshop.v1.WorkshopService.DeleteCarWork:output_type -> workshop.v1.DeleteCarWorkResponse
+	64,  // 272: workshop.v1.WorkshopService.ListCarWorks:output_type -> workshop.v1.ListCarWorksResponse
+	66,  // 273: workshop.v1.WorkshopService.MarkCarWorkDone:output_type -> workshop.v1.MarkCarWorkDoneResponse
+	68,  // 274: workshop.v1.WorkshopService.ClockIn:output_type -> workshop.v1.ClockInResponse
+	70,  // 275: workshop.v1.WorkshopService.ClockOut:output_type -> workshop.v1.ClockOutResponse
+	72,  // 276: workshop.v1.WorkshopService.CreateMaster:output_type -> workshop.v1.CreateMasterResponse
+	74,  // 277: workshop.v1.WorkshopService.GetMaster:output_type -> workshop.v1.GetMasterResponse
+	76,  // 278: workshop.v1.WorkshopService.UpdateMaster:output_type -> workshop.v1.UpdateMasterResponse
+	78,  // 279: workshop.v1.WorkshopService.FireMaster:output_type -> workshop.v1.FireMasterResponse
+	80,  // 280: workshop.v1.WorkshopService.ListMasters:output_type -> workshop.v1.ListMastersResponse
+	96,  // 281: workshop.v1.WorkshopService.SetMasterHourRate:output_type -> workshop.v1.SetMasterHourRateResponse
+	98,  // 282: workshop.v1.WorkshopService.SetMasterFixSalary:output_type -> workshop.v1.SetMasterFixSalaryResponse
+	100, // 283: workshop.v1.WorkshopService.GetMasterRateHistory:output_type -> workshop.v1.GetMasterRateHistoryResponse
+	82,  // 284: workshop.v1.WorkshopService.CalculateSalary:output_type -> workshop.v1.CalculateSalaryResponse
+	84,  // 285: workshop.v1.WorkshopService.GetSalaryBreakdown:output_type -> workshop.v1.GetSalaryBreakdownResponse
+	86,  // 286: workshop.v1.WorkshopService.CreateBonus:output_type -> workshop.v1.CreateBonusResponse
+	88,  // 287: workshop.v1.WorkshopService.CreateFine:output_type -> workshop.v1.CreateFineResponse
+	90,  // 288: workshop.v1.WorkshopService.CreateAdvance:output_type -> workshop.v1.CreateAdvanceResponse
+	92,  // 289: workshop.v1.WorkshopService.DeleteBonus:output_type -> workshop.v1.DeleteBonusResponse
+	94,  // 290: workshop.v1.WorkshopService.DeleteFine:output_type -> workshop.v1.DeleteFineResponse
+	102, // 291: workshop.v1.WorkshopService.PublishOutsource:output_type -> workshop.v1.PublishOutsourceResponse
+	104, // 292: workshop.v1.WorkshopService.AcceptOutsource:output_type -> workshop.v1.AcceptOutsourceResponse
+	106, // 293: workshop.v1.WorkshopService.ListOutsourceRequests:output_type -> workshop.v1.ListOutsourceRequestsResponse
+	108, // 294: workshop.v1.WorkshopService.GetOutsourceKanban:output_type -> workshop.v1.GetOutsourceKanbanResponse
+	110, // 295: workshop.v1.WorkshopService.UpdateOutsourceStatus:output_type -> workshop.v1.UpdateOutsourceStatusResponse
+	112, // 296: workshop.v1.WorkshopService.GetWorkshopStats:output_type -> workshop.v1.GetWorkshopStatsResponse
+	114, // 297: workshop.v1.WorkshopService.GetMasterPerformance:output_type -> workshop.v1.GetMasterPerformanceResponse
+	118, // 298: workshop.v1.WorkshopService.GetDailyReport:output_type -> workshop.v1.GetDailyReportResponse
+	121, // 299: workshop.v1.WorkshopService.AddComment:output_type -> workshop.v1.AddCommentResponse
+	123, // 300: workshop.v1.WorkshopService.ListComments:output_type -> workshop.v1.ListCommentsResponse
+	125, // 301: workshop.v1.WorkshopService.UploadPhoto:output_type -> workshop.v1.UploadPhotoResponse
+	127, // 302: workshop.v1.WorkshopService.ListPhotos:output_type -> workshop.v1.ListPhotosResponse
+	129, // 303: workshop.v1.WorkshopService.DeletePhoto:output_type -> workshop.v1.DeletePhotoResponse
+	131, // 304: workshop.v1.WorkshopService.GetQCChecklist:output_type -> workshop.v1.GetQCChecklistResponse
+	133, // 305: workshop.v1.WorkshopService.SubmitQCChecklist:output_type -> workshop.v1.SubmitQCChecklistResponse
+	135, // 306: workshop.v1.WorkshopService.RejectQCItem:output_type -> workshop.v1.RejectQCItemResponse
+	137, // 307: workshop.v1.WorkshopService.ListStatusHistory:output_type -> workshop.v1.ListStatusHistoryResponse
+	139, // 308: workshop.v1.WorkshopService.CreateMaterial:output_type -> workshop.v1.CreateMaterialResponse
+	141, // 309: workshop.v1.WorkshopService.UpdateMaterial:output_type -> workshop.v1.UpdateMaterialResponse
+	143, // 310: workshop.v1.WorkshopService.ListMaterials:output_type -> workshop.v1.ListMaterialsResponse
+	145, // 311: workshop.v1.WorkshopService.AddMaterialStock:output_type -> workshop.v1.AddMaterialStockResponse
+	147, // 312: workshop.v1.WorkshopService.WriteOffMaterial:output_type -> workshop.v1.WriteOffMaterialResponse
+	149, // 313: workshop.v1.WorkshopService.GetMaterialStock:output_type -> workshop.v1.GetMaterialStockResponse
+	151, // 314: workshop.v1.WorkshopService.ListMaterialTransactions:output_type -> workshop.v1.ListMaterialTransactionsResponse
+	153, // 315: workshop.v1.WorkshopService.GetMasterMaterialExpenses:output_type -> workshop.v1.GetMasterMaterialExpensesResponse
+	155, // 316: workshop.v1.WorkshopService.GetClientOrderStatus:output_type -> workshop.v1.GetClientOrderStatusResponse
+	157, // 317: workshop.v1.WorkshopService.GetClientOrderPhotos:output_type -> workshop.v1.GetClientOrderPhotosResponse
+	159, // 318: workshop.v1.WorkshopService.GetClientOrderTimeline:output_type -> workshop.v1.GetClientOrderTimelineResponse
+	194, // 319: workshop.v1.WorkshopService.GetClientEstimate:output_type -> workshop.v1.GetClientEstimateResponse
+	191, // 320: workshop.v1.WorkshopService.SendForApproval:output_type -> workshop.v1.SendForApprovalResponse
+	196, // 321: workshop.v1.WorkshopService.ApproveEstimate:output_type -> workshop.v1.ApproveEstimateResponse
+	198, // 322: workshop.v1.WorkshopService.RejectEstimate:output_type -> workshop.v1.RejectEstimateResponse
+	162, // 323: workshop.v1.WorkshopService.CreateOrderFromCRM:output_type -> workshop.v1.CreateOrderFromCRMResponse
+	164, // 324: workshop.v1.WorkshopService.SyncCRMDeals:output_type -> workshop.v1.SyncCRMDealsResponse
+	166, // 325: workshop.v1.WorkshopService.GetCRMSyncStatus:output_type -> workshop.v1.GetCRMSyncStatusResponse
+	168, // 326: workshop.v1.WorkshopService.SetMasterTelegram:output_type -> workshop.v1.SetMasterTelegramResponse
+	170, // 327: workshop.v1.WorkshopService.GetMasterByTelegram:output_type -> workshop.v1.GetMasterByTelegramResponse
+	172, // 328: workshop.v1.WorkshopService.SetDiscount:output_type -> workshop.v1.SetDiscountResponse
+	174, // 329: workshop.v1.WorkshopService.SetMarkup:output_type -> workshop.v1.SetMarkupResponse
+	176, // 330: workshop.v1.WorkshopService.SetWorkshopMarkup:output_type -> workshop.v1.SetWorkshopMarkupResponse
+	178, // 331: workshop.v1.WorkshopService.GetPricingBreakdown:output_type -> workshop.v1.GetPricingBreakdownResponse
+	180, // 332: workshop.v1.WorkshopService.MarkPaidManual:output_type -> workshop.v1.MarkPaidManualResponse
+	182, // 333: workshop.v1.WorkshopService.CancelPayment:output_type -> workshop.v1.CancelPaymentResponse
+	184, // 334: workshop.v1.WorkshopService.GetPaymentHistory:output_type -> workshop.v1.GetPaymentHistoryResponse
+	186, // 335: workshop.v1.WorkshopService.GetWarrantyOrders:output_type -> workshop.v1.GetWarrantyOrdersResponse
+	189, // 336: workshop.v1.WorkshopService.ConfirmOrderCompletionByClient:output_type -> workshop.v1.ConfirmOrderCompletionByClientResponse
+	258, // [258:337] is the sub-list for method output_type
+	179, // [179:258] is the sub-list for method input_type
+	179, // [179:179] is the sub-list for extension type_name
+	179, // [179:179] is the sub-list for extension extendee
+	0,   // [0:179] is the sub-list for field type_name
 }
 
 func init() { file_workshop_workshop_proto_init() }
@@ -14036,13 +14255,14 @@ func file_workshop_workshop_proto_init() {
 	file_workshop_workshop_proto_msgTypes[48].OneofWrappers = []any{}
 	file_workshop_workshop_proto_msgTypes[64].OneofWrappers = []any{}
 	file_workshop_workshop_proto_msgTypes[129].OneofWrappers = []any{}
+	file_workshop_workshop_proto_msgTypes[177].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_workshop_workshop_proto_rawDesc), len(file_workshop_workshop_proto_rawDesc)),
 			NumEnums:      11,
-			NumMessages:   186,
+			NumMessages:   189,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

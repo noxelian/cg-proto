@@ -126,6 +126,11 @@ service WorkshopService {
 
   // --- Warranty ---
   rpc GetWarrantyOrders(GetWarrantyOrdersRequest) returns (GetWarrantyOrdersResponse);
+
+  // --- Client completion confirmation ---
+  // Called by the mobile client after the workshop marks the order as DELIVERED.
+  // Transitions the order to CLOSED_BY_CLIENT and optionally creates a review.
+  rpc ConfirmOrderCompletionByClient(ConfirmOrderCompletionByClientRequest) returns (ConfirmOrderCompletionByClientResponse);
 }
 
 // =============================================================================
@@ -1447,6 +1452,30 @@ message GetWarrantyOrdersRequest {
 
 message GetWarrantyOrdersResponse {
   repeated RepairOrder orders = 1;
+}
+
+// =============================================================================
+// Client Completion Confirmation RPCs
+// =============================================================================
+
+message ClientReview {
+  int32 rate             = 1;  // 1-5 stars
+  string text            = 2;  // free-text review body
+  string work            = 3;  // description of work performed (client's words)
+  string car             = 4;  // car description (client's words)
+  int64 order_amount     = 5;  // actual amount paid, in tiyins
+  repeated string photos = 6;  // photo URLs, max 20
+}
+
+message ConfirmOrderCompletionByClientRequest {
+  int64 repair_order_id  = 1;
+  int64 user_id          = 2;
+  optional ClientReview review = 3;  // if present, a review is created for the workshop org
+}
+
+message ConfirmOrderCompletionByClientResponse {
+  RepairOrder repair_order = 1;
+  string review_id         = 2;  // non-empty when a review was created
 }
 
 // =============================================================================

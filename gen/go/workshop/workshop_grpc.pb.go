@@ -19,84 +19,85 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	WorkshopService_CreateWorkshop_FullMethodName            = "/workshop.v1.WorkshopService/CreateWorkshop"
-	WorkshopService_GetWorkshop_FullMethodName               = "/workshop.v1.WorkshopService/GetWorkshop"
-	WorkshopService_UpdateWorkshop_FullMethodName            = "/workshop.v1.WorkshopService/UpdateWorkshop"
-	WorkshopService_ListWorkshops_FullMethodName             = "/workshop.v1.WorkshopService/ListWorkshops"
-	WorkshopService_ListWorkshopOrgIDs_FullMethodName        = "/workshop.v1.WorkshopService/ListWorkshopOrgIDs"
-	WorkshopService_CreateRepairOrder_FullMethodName         = "/workshop.v1.WorkshopService/CreateRepairOrder"
-	WorkshopService_GetRepairOrder_FullMethodName            = "/workshop.v1.WorkshopService/GetRepairOrder"
-	WorkshopService_UpdateRepairOrder_FullMethodName         = "/workshop.v1.WorkshopService/UpdateRepairOrder"
-	WorkshopService_UpdateRepairOrderStatus_FullMethodName   = "/workshop.v1.WorkshopService/UpdateRepairOrderStatus"
-	WorkshopService_ListRepairOrders_FullMethodName          = "/workshop.v1.WorkshopService/ListRepairOrders"
-	WorkshopService_GetKanban_FullMethodName                 = "/workshop.v1.WorkshopService/GetKanban"
-	WorkshopService_CreateCarWork_FullMethodName             = "/workshop.v1.WorkshopService/CreateCarWork"
-	WorkshopService_UpdateCarWork_FullMethodName             = "/workshop.v1.WorkshopService/UpdateCarWork"
-	WorkshopService_DeleteCarWork_FullMethodName             = "/workshop.v1.WorkshopService/DeleteCarWork"
-	WorkshopService_ListCarWorks_FullMethodName              = "/workshop.v1.WorkshopService/ListCarWorks"
-	WorkshopService_MarkCarWorkDone_FullMethodName           = "/workshop.v1.WorkshopService/MarkCarWorkDone"
-	WorkshopService_ClockIn_FullMethodName                   = "/workshop.v1.WorkshopService/ClockIn"
-	WorkshopService_ClockOut_FullMethodName                  = "/workshop.v1.WorkshopService/ClockOut"
-	WorkshopService_CreateMaster_FullMethodName              = "/workshop.v1.WorkshopService/CreateMaster"
-	WorkshopService_GetMaster_FullMethodName                 = "/workshop.v1.WorkshopService/GetMaster"
-	WorkshopService_UpdateMaster_FullMethodName              = "/workshop.v1.WorkshopService/UpdateMaster"
-	WorkshopService_FireMaster_FullMethodName                = "/workshop.v1.WorkshopService/FireMaster"
-	WorkshopService_ListMasters_FullMethodName               = "/workshop.v1.WorkshopService/ListMasters"
-	WorkshopService_SetMasterHourRate_FullMethodName         = "/workshop.v1.WorkshopService/SetMasterHourRate"
-	WorkshopService_SetMasterFixSalary_FullMethodName        = "/workshop.v1.WorkshopService/SetMasterFixSalary"
-	WorkshopService_GetMasterRateHistory_FullMethodName      = "/workshop.v1.WorkshopService/GetMasterRateHistory"
-	WorkshopService_CalculateSalary_FullMethodName           = "/workshop.v1.WorkshopService/CalculateSalary"
-	WorkshopService_GetSalaryBreakdown_FullMethodName        = "/workshop.v1.WorkshopService/GetSalaryBreakdown"
-	WorkshopService_CreateBonus_FullMethodName               = "/workshop.v1.WorkshopService/CreateBonus"
-	WorkshopService_CreateFine_FullMethodName                = "/workshop.v1.WorkshopService/CreateFine"
-	WorkshopService_CreateAdvance_FullMethodName             = "/workshop.v1.WorkshopService/CreateAdvance"
-	WorkshopService_DeleteBonus_FullMethodName               = "/workshop.v1.WorkshopService/DeleteBonus"
-	WorkshopService_DeleteFine_FullMethodName                = "/workshop.v1.WorkshopService/DeleteFine"
-	WorkshopService_PublishOutsource_FullMethodName          = "/workshop.v1.WorkshopService/PublishOutsource"
-	WorkshopService_AcceptOutsource_FullMethodName           = "/workshop.v1.WorkshopService/AcceptOutsource"
-	WorkshopService_ListOutsourceRequests_FullMethodName     = "/workshop.v1.WorkshopService/ListOutsourceRequests"
-	WorkshopService_GetOutsourceKanban_FullMethodName        = "/workshop.v1.WorkshopService/GetOutsourceKanban"
-	WorkshopService_UpdateOutsourceStatus_FullMethodName     = "/workshop.v1.WorkshopService/UpdateOutsourceStatus"
-	WorkshopService_GetWorkshopStats_FullMethodName          = "/workshop.v1.WorkshopService/GetWorkshopStats"
-	WorkshopService_GetMasterPerformance_FullMethodName      = "/workshop.v1.WorkshopService/GetMasterPerformance"
-	WorkshopService_GetDailyReport_FullMethodName            = "/workshop.v1.WorkshopService/GetDailyReport"
-	WorkshopService_AddComment_FullMethodName                = "/workshop.v1.WorkshopService/AddComment"
-	WorkshopService_ListComments_FullMethodName              = "/workshop.v1.WorkshopService/ListComments"
-	WorkshopService_UploadPhoto_FullMethodName               = "/workshop.v1.WorkshopService/UploadPhoto"
-	WorkshopService_ListPhotos_FullMethodName                = "/workshop.v1.WorkshopService/ListPhotos"
-	WorkshopService_DeletePhoto_FullMethodName               = "/workshop.v1.WorkshopService/DeletePhoto"
-	WorkshopService_GetQCChecklist_FullMethodName            = "/workshop.v1.WorkshopService/GetQCChecklist"
-	WorkshopService_SubmitQCChecklist_FullMethodName         = "/workshop.v1.WorkshopService/SubmitQCChecklist"
-	WorkshopService_RejectQCItem_FullMethodName              = "/workshop.v1.WorkshopService/RejectQCItem"
-	WorkshopService_ListStatusHistory_FullMethodName         = "/workshop.v1.WorkshopService/ListStatusHistory"
-	WorkshopService_CreateMaterial_FullMethodName            = "/workshop.v1.WorkshopService/CreateMaterial"
-	WorkshopService_UpdateMaterial_FullMethodName            = "/workshop.v1.WorkshopService/UpdateMaterial"
-	WorkshopService_ListMaterials_FullMethodName             = "/workshop.v1.WorkshopService/ListMaterials"
-	WorkshopService_AddMaterialStock_FullMethodName          = "/workshop.v1.WorkshopService/AddMaterialStock"
-	WorkshopService_WriteOffMaterial_FullMethodName          = "/workshop.v1.WorkshopService/WriteOffMaterial"
-	WorkshopService_GetMaterialStock_FullMethodName          = "/workshop.v1.WorkshopService/GetMaterialStock"
-	WorkshopService_ListMaterialTransactions_FullMethodName  = "/workshop.v1.WorkshopService/ListMaterialTransactions"
-	WorkshopService_GetMasterMaterialExpenses_FullMethodName = "/workshop.v1.WorkshopService/GetMasterMaterialExpenses"
-	WorkshopService_GetClientOrderStatus_FullMethodName      = "/workshop.v1.WorkshopService/GetClientOrderStatus"
-	WorkshopService_GetClientOrderPhotos_FullMethodName      = "/workshop.v1.WorkshopService/GetClientOrderPhotos"
-	WorkshopService_GetClientOrderTimeline_FullMethodName    = "/workshop.v1.WorkshopService/GetClientOrderTimeline"
-	WorkshopService_GetClientEstimate_FullMethodName         = "/workshop.v1.WorkshopService/GetClientEstimate"
-	WorkshopService_SendForApproval_FullMethodName           = "/workshop.v1.WorkshopService/SendForApproval"
-	WorkshopService_ApproveEstimate_FullMethodName           = "/workshop.v1.WorkshopService/ApproveEstimate"
-	WorkshopService_RejectEstimate_FullMethodName            = "/workshop.v1.WorkshopService/RejectEstimate"
-	WorkshopService_CreateOrderFromCRM_FullMethodName        = "/workshop.v1.WorkshopService/CreateOrderFromCRM"
-	WorkshopService_SyncCRMDeals_FullMethodName              = "/workshop.v1.WorkshopService/SyncCRMDeals"
-	WorkshopService_GetCRMSyncStatus_FullMethodName          = "/workshop.v1.WorkshopService/GetCRMSyncStatus"
-	WorkshopService_SetMasterTelegram_FullMethodName         = "/workshop.v1.WorkshopService/SetMasterTelegram"
-	WorkshopService_GetMasterByTelegram_FullMethodName       = "/workshop.v1.WorkshopService/GetMasterByTelegram"
-	WorkshopService_SetDiscount_FullMethodName               = "/workshop.v1.WorkshopService/SetDiscount"
-	WorkshopService_SetMarkup_FullMethodName                 = "/workshop.v1.WorkshopService/SetMarkup"
-	WorkshopService_SetWorkshopMarkup_FullMethodName         = "/workshop.v1.WorkshopService/SetWorkshopMarkup"
-	WorkshopService_GetPricingBreakdown_FullMethodName       = "/workshop.v1.WorkshopService/GetPricingBreakdown"
-	WorkshopService_MarkPaidManual_FullMethodName            = "/workshop.v1.WorkshopService/MarkPaidManual"
-	WorkshopService_CancelPayment_FullMethodName             = "/workshop.v1.WorkshopService/CancelPayment"
-	WorkshopService_GetPaymentHistory_FullMethodName         = "/workshop.v1.WorkshopService/GetPaymentHistory"
-	WorkshopService_GetWarrantyOrders_FullMethodName         = "/workshop.v1.WorkshopService/GetWarrantyOrders"
+	WorkshopService_CreateWorkshop_FullMethodName                 = "/workshop.v1.WorkshopService/CreateWorkshop"
+	WorkshopService_GetWorkshop_FullMethodName                    = "/workshop.v1.WorkshopService/GetWorkshop"
+	WorkshopService_UpdateWorkshop_FullMethodName                 = "/workshop.v1.WorkshopService/UpdateWorkshop"
+	WorkshopService_ListWorkshops_FullMethodName                  = "/workshop.v1.WorkshopService/ListWorkshops"
+	WorkshopService_ListWorkshopOrgIDs_FullMethodName             = "/workshop.v1.WorkshopService/ListWorkshopOrgIDs"
+	WorkshopService_CreateRepairOrder_FullMethodName              = "/workshop.v1.WorkshopService/CreateRepairOrder"
+	WorkshopService_GetRepairOrder_FullMethodName                 = "/workshop.v1.WorkshopService/GetRepairOrder"
+	WorkshopService_UpdateRepairOrder_FullMethodName              = "/workshop.v1.WorkshopService/UpdateRepairOrder"
+	WorkshopService_UpdateRepairOrderStatus_FullMethodName        = "/workshop.v1.WorkshopService/UpdateRepairOrderStatus"
+	WorkshopService_ListRepairOrders_FullMethodName               = "/workshop.v1.WorkshopService/ListRepairOrders"
+	WorkshopService_GetKanban_FullMethodName                      = "/workshop.v1.WorkshopService/GetKanban"
+	WorkshopService_CreateCarWork_FullMethodName                  = "/workshop.v1.WorkshopService/CreateCarWork"
+	WorkshopService_UpdateCarWork_FullMethodName                  = "/workshop.v1.WorkshopService/UpdateCarWork"
+	WorkshopService_DeleteCarWork_FullMethodName                  = "/workshop.v1.WorkshopService/DeleteCarWork"
+	WorkshopService_ListCarWorks_FullMethodName                   = "/workshop.v1.WorkshopService/ListCarWorks"
+	WorkshopService_MarkCarWorkDone_FullMethodName                = "/workshop.v1.WorkshopService/MarkCarWorkDone"
+	WorkshopService_ClockIn_FullMethodName                        = "/workshop.v1.WorkshopService/ClockIn"
+	WorkshopService_ClockOut_FullMethodName                       = "/workshop.v1.WorkshopService/ClockOut"
+	WorkshopService_CreateMaster_FullMethodName                   = "/workshop.v1.WorkshopService/CreateMaster"
+	WorkshopService_GetMaster_FullMethodName                      = "/workshop.v1.WorkshopService/GetMaster"
+	WorkshopService_UpdateMaster_FullMethodName                   = "/workshop.v1.WorkshopService/UpdateMaster"
+	WorkshopService_FireMaster_FullMethodName                     = "/workshop.v1.WorkshopService/FireMaster"
+	WorkshopService_ListMasters_FullMethodName                    = "/workshop.v1.WorkshopService/ListMasters"
+	WorkshopService_SetMasterHourRate_FullMethodName              = "/workshop.v1.WorkshopService/SetMasterHourRate"
+	WorkshopService_SetMasterFixSalary_FullMethodName             = "/workshop.v1.WorkshopService/SetMasterFixSalary"
+	WorkshopService_GetMasterRateHistory_FullMethodName           = "/workshop.v1.WorkshopService/GetMasterRateHistory"
+	WorkshopService_CalculateSalary_FullMethodName                = "/workshop.v1.WorkshopService/CalculateSalary"
+	WorkshopService_GetSalaryBreakdown_FullMethodName             = "/workshop.v1.WorkshopService/GetSalaryBreakdown"
+	WorkshopService_CreateBonus_FullMethodName                    = "/workshop.v1.WorkshopService/CreateBonus"
+	WorkshopService_CreateFine_FullMethodName                     = "/workshop.v1.WorkshopService/CreateFine"
+	WorkshopService_CreateAdvance_FullMethodName                  = "/workshop.v1.WorkshopService/CreateAdvance"
+	WorkshopService_DeleteBonus_FullMethodName                    = "/workshop.v1.WorkshopService/DeleteBonus"
+	WorkshopService_DeleteFine_FullMethodName                     = "/workshop.v1.WorkshopService/DeleteFine"
+	WorkshopService_PublishOutsource_FullMethodName               = "/workshop.v1.WorkshopService/PublishOutsource"
+	WorkshopService_AcceptOutsource_FullMethodName                = "/workshop.v1.WorkshopService/AcceptOutsource"
+	WorkshopService_ListOutsourceRequests_FullMethodName          = "/workshop.v1.WorkshopService/ListOutsourceRequests"
+	WorkshopService_GetOutsourceKanban_FullMethodName             = "/workshop.v1.WorkshopService/GetOutsourceKanban"
+	WorkshopService_UpdateOutsourceStatus_FullMethodName          = "/workshop.v1.WorkshopService/UpdateOutsourceStatus"
+	WorkshopService_GetWorkshopStats_FullMethodName               = "/workshop.v1.WorkshopService/GetWorkshopStats"
+	WorkshopService_GetMasterPerformance_FullMethodName           = "/workshop.v1.WorkshopService/GetMasterPerformance"
+	WorkshopService_GetDailyReport_FullMethodName                 = "/workshop.v1.WorkshopService/GetDailyReport"
+	WorkshopService_AddComment_FullMethodName                     = "/workshop.v1.WorkshopService/AddComment"
+	WorkshopService_ListComments_FullMethodName                   = "/workshop.v1.WorkshopService/ListComments"
+	WorkshopService_UploadPhoto_FullMethodName                    = "/workshop.v1.WorkshopService/UploadPhoto"
+	WorkshopService_ListPhotos_FullMethodName                     = "/workshop.v1.WorkshopService/ListPhotos"
+	WorkshopService_DeletePhoto_FullMethodName                    = "/workshop.v1.WorkshopService/DeletePhoto"
+	WorkshopService_GetQCChecklist_FullMethodName                 = "/workshop.v1.WorkshopService/GetQCChecklist"
+	WorkshopService_SubmitQCChecklist_FullMethodName              = "/workshop.v1.WorkshopService/SubmitQCChecklist"
+	WorkshopService_RejectQCItem_FullMethodName                   = "/workshop.v1.WorkshopService/RejectQCItem"
+	WorkshopService_ListStatusHistory_FullMethodName              = "/workshop.v1.WorkshopService/ListStatusHistory"
+	WorkshopService_CreateMaterial_FullMethodName                 = "/workshop.v1.WorkshopService/CreateMaterial"
+	WorkshopService_UpdateMaterial_FullMethodName                 = "/workshop.v1.WorkshopService/UpdateMaterial"
+	WorkshopService_ListMaterials_FullMethodName                  = "/workshop.v1.WorkshopService/ListMaterials"
+	WorkshopService_AddMaterialStock_FullMethodName               = "/workshop.v1.WorkshopService/AddMaterialStock"
+	WorkshopService_WriteOffMaterial_FullMethodName               = "/workshop.v1.WorkshopService/WriteOffMaterial"
+	WorkshopService_GetMaterialStock_FullMethodName               = "/workshop.v1.WorkshopService/GetMaterialStock"
+	WorkshopService_ListMaterialTransactions_FullMethodName       = "/workshop.v1.WorkshopService/ListMaterialTransactions"
+	WorkshopService_GetMasterMaterialExpenses_FullMethodName      = "/workshop.v1.WorkshopService/GetMasterMaterialExpenses"
+	WorkshopService_GetClientOrderStatus_FullMethodName           = "/workshop.v1.WorkshopService/GetClientOrderStatus"
+	WorkshopService_GetClientOrderPhotos_FullMethodName           = "/workshop.v1.WorkshopService/GetClientOrderPhotos"
+	WorkshopService_GetClientOrderTimeline_FullMethodName         = "/workshop.v1.WorkshopService/GetClientOrderTimeline"
+	WorkshopService_GetClientEstimate_FullMethodName              = "/workshop.v1.WorkshopService/GetClientEstimate"
+	WorkshopService_SendForApproval_FullMethodName                = "/workshop.v1.WorkshopService/SendForApproval"
+	WorkshopService_ApproveEstimate_FullMethodName                = "/workshop.v1.WorkshopService/ApproveEstimate"
+	WorkshopService_RejectEstimate_FullMethodName                 = "/workshop.v1.WorkshopService/RejectEstimate"
+	WorkshopService_CreateOrderFromCRM_FullMethodName             = "/workshop.v1.WorkshopService/CreateOrderFromCRM"
+	WorkshopService_SyncCRMDeals_FullMethodName                   = "/workshop.v1.WorkshopService/SyncCRMDeals"
+	WorkshopService_GetCRMSyncStatus_FullMethodName               = "/workshop.v1.WorkshopService/GetCRMSyncStatus"
+	WorkshopService_SetMasterTelegram_FullMethodName              = "/workshop.v1.WorkshopService/SetMasterTelegram"
+	WorkshopService_GetMasterByTelegram_FullMethodName            = "/workshop.v1.WorkshopService/GetMasterByTelegram"
+	WorkshopService_SetDiscount_FullMethodName                    = "/workshop.v1.WorkshopService/SetDiscount"
+	WorkshopService_SetMarkup_FullMethodName                      = "/workshop.v1.WorkshopService/SetMarkup"
+	WorkshopService_SetWorkshopMarkup_FullMethodName              = "/workshop.v1.WorkshopService/SetWorkshopMarkup"
+	WorkshopService_GetPricingBreakdown_FullMethodName            = "/workshop.v1.WorkshopService/GetPricingBreakdown"
+	WorkshopService_MarkPaidManual_FullMethodName                 = "/workshop.v1.WorkshopService/MarkPaidManual"
+	WorkshopService_CancelPayment_FullMethodName                  = "/workshop.v1.WorkshopService/CancelPayment"
+	WorkshopService_GetPaymentHistory_FullMethodName              = "/workshop.v1.WorkshopService/GetPaymentHistory"
+	WorkshopService_GetWarrantyOrders_FullMethodName              = "/workshop.v1.WorkshopService/GetWarrantyOrders"
+	WorkshopService_ConfirmOrderCompletionByClient_FullMethodName = "/workshop.v1.WorkshopService/ConfirmOrderCompletionByClient"
 )
 
 // WorkshopServiceClient is the client API for WorkshopService service.
@@ -200,6 +201,10 @@ type WorkshopServiceClient interface {
 	GetPaymentHistory(ctx context.Context, in *GetPaymentHistoryRequest, opts ...grpc.CallOption) (*GetPaymentHistoryResponse, error)
 	// --- Warranty ---
 	GetWarrantyOrders(ctx context.Context, in *GetWarrantyOrdersRequest, opts ...grpc.CallOption) (*GetWarrantyOrdersResponse, error)
+	// --- Client completion confirmation ---
+	// Called by the mobile client after the workshop marks the order as DELIVERED.
+	// Transitions the order to CLOSED_BY_CLIENT and optionally creates a review.
+	ConfirmOrderCompletionByClient(ctx context.Context, in *ConfirmOrderCompletionByClientRequest, opts ...grpc.CallOption) (*ConfirmOrderCompletionByClientResponse, error)
 }
 
 type workshopServiceClient struct {
@@ -990,6 +995,16 @@ func (c *workshopServiceClient) GetWarrantyOrders(ctx context.Context, in *GetWa
 	return out, nil
 }
 
+func (c *workshopServiceClient) ConfirmOrderCompletionByClient(ctx context.Context, in *ConfirmOrderCompletionByClientRequest, opts ...grpc.CallOption) (*ConfirmOrderCompletionByClientResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConfirmOrderCompletionByClientResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_ConfirmOrderCompletionByClient_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkshopServiceServer is the server API for WorkshopService service.
 // All implementations must embed UnimplementedWorkshopServiceServer
 // for forward compatibility.
@@ -1091,6 +1106,10 @@ type WorkshopServiceServer interface {
 	GetPaymentHistory(context.Context, *GetPaymentHistoryRequest) (*GetPaymentHistoryResponse, error)
 	// --- Warranty ---
 	GetWarrantyOrders(context.Context, *GetWarrantyOrdersRequest) (*GetWarrantyOrdersResponse, error)
+	// --- Client completion confirmation ---
+	// Called by the mobile client after the workshop marks the order as DELIVERED.
+	// Transitions the order to CLOSED_BY_CLIENT and optionally creates a review.
+	ConfirmOrderCompletionByClient(context.Context, *ConfirmOrderCompletionByClientRequest) (*ConfirmOrderCompletionByClientResponse, error)
 	mustEmbedUnimplementedWorkshopServiceServer()
 }
 
@@ -1334,6 +1353,9 @@ func (UnimplementedWorkshopServiceServer) GetPaymentHistory(context.Context, *Ge
 }
 func (UnimplementedWorkshopServiceServer) GetWarrantyOrders(context.Context, *GetWarrantyOrdersRequest) (*GetWarrantyOrdersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetWarrantyOrders not implemented")
+}
+func (UnimplementedWorkshopServiceServer) ConfirmOrderCompletionByClient(context.Context, *ConfirmOrderCompletionByClientRequest) (*ConfirmOrderCompletionByClientResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ConfirmOrderCompletionByClient not implemented")
 }
 func (UnimplementedWorkshopServiceServer) mustEmbedUnimplementedWorkshopServiceServer() {}
 func (UnimplementedWorkshopServiceServer) testEmbeddedByValue()                         {}
@@ -2760,6 +2782,24 @@ func _WorkshopService_GetWarrantyOrders_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkshopService_ConfirmOrderCompletionByClient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfirmOrderCompletionByClientRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).ConfirmOrderCompletionByClient(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_ConfirmOrderCompletionByClient_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).ConfirmOrderCompletionByClient(ctx, req.(*ConfirmOrderCompletionByClientRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WorkshopService_ServiceDesc is the grpc.ServiceDesc for WorkshopService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3078,6 +3118,10 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetWarrantyOrders",
 			Handler:    _WorkshopService_GetWarrantyOrders_Handler,
+		},
+		{
+			MethodName: "ConfirmOrderCompletionByClient",
+			Handler:    _WorkshopService_ConfirmOrderCompletionByClient_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
