@@ -1776,8 +1776,14 @@ type CheckoutRequest struct {
 	BuyerUserId int64                  `protobuf:"varint,1,opt,name=buyer_user_id,json=buyerUserId,proto3" json:"buyer_user_id,omitempty"`
 	// idempotency_key prevents duplicate payment sessions on retry.
 	IdempotencyKey string `protobuf:"bytes,2,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// skip_external_payment: when true, the cart transitions to awaiting_payment
+	// but cg-orders does NOT call cg-payments CreateTransaction.
+	// The caller (e.g. bff-admin admin-as-buyer path) is responsible for calling
+	// cg-payments MarkPaidB2B with the returned checkout_id to produce a
+	// succeeded transaction and trigger the cart→orders saga. (Plan 71-08)
+	SkipExternalPayment bool `protobuf:"varint,3,opt,name=skip_external_payment,json=skipExternalPayment,proto3" json:"skip_external_payment,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *CheckoutRequest) Reset() {
@@ -1824,17 +1830,33 @@ func (x *CheckoutRequest) GetIdempotencyKey() string {
 	return ""
 }
 
+func (x *CheckoutRequest) GetSkipExternalPayment() bool {
+	if x != nil {
+		return x.SkipExternalPayment
+	}
+	return false
+}
+
 // CheckoutResponse returns payment intent details. No orders are created yet.
 type CheckoutResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// payment_url is the redirect URL to the payment gateway.
+	// Empty when skip_external_payment=true.
 	PaymentUrl string `protobuf:"bytes,1,opt,name=payment_url,json=paymentUrl,proto3" json:"payment_url,omitempty"`
 	// payment_id is the internal payment record ID (from cg-payments).
+	// Empty when skip_external_payment=true.
 	PaymentId          string                       `protobuf:"bytes,2,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
 	SupplierBreakdowns []*SupplierCheckoutBreakdown `protobuf:"bytes,3,rep,name=supplier_breakdowns,json=supplierBreakdowns,proto3" json:"supplier_breakdowns,omitempty"`
 	// grand_total is the total amount that will be charged in minor currency units (tenge).
-	GrandTotal    int64  `protobuf:"varint,4,opt,name=grand_total,json=grandTotal,proto3" json:"grand_total,omitempty"`
-	Currency      string `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`
+	GrandTotal int64  `protobuf:"varint,4,opt,name=grand_total,json=grandTotal,proto3" json:"grand_total,omitempty"`
+	Currency   string `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`
+	// cart_id is the internal cart identifier. Always populated.
+	// Required by admin-as-buyer callers that need to pass it to MarkPaidB2B.
+	CartId int64 `protobuf:"varint,6,opt,name=cart_id,json=cartId,proto3" json:"cart_id,omitempty"`
+	// checkout_id is the stable idempotency key for this checkout session.
+	// Format: "cart-checkout:<cart_id>:<unix_ms>".
+	// Pass as idempotency_key to MarkPaidB2B (Plan 71-08).
+	CheckoutId    string `protobuf:"bytes,7,opt,name=checkout_id,json=checkoutId,proto3" json:"checkout_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1900,6 +1922,20 @@ func (x *CheckoutResponse) GetGrandTotal() int64 {
 func (x *CheckoutResponse) GetCurrency() string {
 	if x != nil {
 		return x.Currency
+	}
+	return ""
+}
+
+func (x *CheckoutResponse) GetCartId() int64 {
+	if x != nil {
+		return x.CartId
+	}
+	return 0
+}
+
+func (x *CheckoutResponse) GetCheckoutId() string {
+	if x != nil {
+		return x.CheckoutId
 	}
 	return ""
 }
@@ -2559,10 +2595,11 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\x10delivery_city_id\x18\x04 \x01(\x03R\x0edeliveryCityId\"\x8b\x01\n" +
 	"\x19SetDeliveryOptionResponse\x12D\n" +
 	"\x0esupplier_group\x18\x01 \x01(\v2\x1d.orders.cart.v1.SupplierGroupR\rsupplierGroup\x12(\n" +
-	"\x04cart\x18\x02 \x01(\v2\x14.orders.cart.v1.CartR\x04cart\"^\n" +
+	"\x04cart\x18\x02 \x01(\v2\x14.orders.cart.v1.CartR\x04cart\"\x92\x01\n" +
 	"\x0fCheckoutRequest\x12\"\n" +
 	"\rbuyer_user_id\x18\x01 \x01(\x03R\vbuyerUserId\x12'\n" +
-	"\x0fidempotency_key\x18\x02 \x01(\tR\x0eidempotencyKey\"\xeb\x01\n" +
+	"\x0fidempotency_key\x18\x02 \x01(\tR\x0eidempotencyKey\x122\n" +
+	"\x15skip_external_payment\x18\x03 \x01(\bR\x13skipExternalPayment\"\xa5\x02\n" +
 	"\x10CheckoutResponse\x12\x1f\n" +
 	"\vpayment_url\x18\x01 \x01(\tR\n" +
 	"paymentUrl\x12\x1d\n" +
@@ -2571,7 +2608,10 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\x13supplier_breakdowns\x18\x03 \x03(\v2).orders.cart.v1.SupplierCheckoutBreakdownR\x12supplierBreakdowns\x12\x1f\n" +
 	"\vgrand_total\x18\x04 \x01(\x03R\n" +
 	"grandTotal\x12\x1a\n" +
-	"\bcurrency\x18\x05 \x01(\tR\bcurrency\";\n" +
+	"\bcurrency\x18\x05 \x01(\tR\bcurrency\x12\x17\n" +
+	"\acart_id\x18\x06 \x01(\x03R\x06cartId\x12\x1f\n" +
+	"\vcheckout_id\x18\a \x01(\tR\n" +
+	"checkoutId\";\n" +
 	"\x15GetCartSummaryRequest\x12\"\n" +
 	"\rbuyer_user_id\x18\x01 \x01(\x03R\vbuyerUserId\"v\n" +
 	"\x16GetCartSummaryResponse\x12\x1f\n" +

@@ -324,13 +324,21 @@ message CheckoutRequest {
   int64 buyer_user_id = 1;
   // idempotency_key prevents duplicate payment sessions on retry.
   string idempotency_key = 2;
+  // skip_external_payment: when true, the cart transitions to awaiting_payment
+  // but cg-orders does NOT call cg-payments CreateTransaction.
+  // The caller (e.g. bff-admin admin-as-buyer path) is responsible for calling
+  // cg-payments MarkPaidB2B with the returned checkout_id to produce a
+  // succeeded transaction and trigger the cart→orders saga. (Plan 71-08)
+  bool skip_external_payment = 3;
 }
 
 // CheckoutResponse returns payment intent details. No orders are created yet.
 message CheckoutResponse {
   // payment_url is the redirect URL to the payment gateway.
+  // Empty when skip_external_payment=true.
   string payment_url = 1;
   // payment_id is the internal payment record ID (from cg-payments).
+  // Empty when skip_external_payment=true.
   string payment_id = 2;
 
   repeated SupplierCheckoutBreakdown supplier_breakdowns = 3;
@@ -339,6 +347,15 @@ message CheckoutResponse {
   int64 grand_total = 4;
 
   string currency = 5;
+
+  // cart_id is the internal cart identifier. Always populated.
+  // Required by admin-as-buyer callers that need to pass it to MarkPaidB2B.
+  int64 cart_id = 6;
+
+  // checkout_id is the stable idempotency key for this checkout session.
+  // Format: "cart-checkout:<cart_id>:<unix_ms>".
+  // Pass as idempotency_key to MarkPaidB2B (Plan 71-08).
+  string checkout_id = 7;
 }
 
 // --- GetCartSummary ---
