@@ -38,6 +38,7 @@ const (
 	RepairStatus_REPAIR_STATUS_DELIVERED         RepairStatus = 10
 	RepairStatus_REPAIR_STATUS_WAITING_APPROVAL  RepairStatus = 11
 	RepairStatus_REPAIR_STATUS_ESTIMATE_REJECTED RepairStatus = 12
+	RepairStatus_REPAIR_STATUS_CLOSED_BY_CLIENT  RepairStatus = 13
 )
 
 // Enum value maps for RepairStatus.
@@ -56,6 +57,7 @@ var (
 		10: "REPAIR_STATUS_DELIVERED",
 		11: "REPAIR_STATUS_WAITING_APPROVAL",
 		12: "REPAIR_STATUS_ESTIMATE_REJECTED",
+		13: "REPAIR_STATUS_CLOSED_BY_CLIENT",
 	}
 	RepairStatus_value = map[string]int32{
 		"REPAIR_STATUS_UNSPECIFIED":       0,
@@ -71,6 +73,7 @@ var (
 		"REPAIR_STATUS_DELIVERED":         10,
 		"REPAIR_STATUS_WAITING_APPROVAL":  11,
 		"REPAIR_STATUS_ESTIMATE_REJECTED": 12,
+		"REPAIR_STATUS_CLOSED_BY_CLIENT":  13,
 	}
 )
 
@@ -13525,7 +13528,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\x12\x16\n" +
 	"\x06reason\x18\x02 \x01(\tR\x06reason\"H\n" +
 	"\x16RejectEstimateResponse\x12.\n" +
-	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order*\x95\x03\n" +
+	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order*\xb9\x03\n" +
 	"\fRepairStatus\x12\x1d\n" +
 	"\x19REPAIR_STATUS_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13REPAIR_STATUS_QUEUE\x10\x01\x12\x1f\n" +
@@ -13540,7 +13543,8 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\x17REPAIR_STATUS_DELIVERED\x10\n" +
 	"\x12\"\n" +
 	"\x1eREPAIR_STATUS_WAITING_APPROVAL\x10\v\x12#\n" +
-	"\x1fREPAIR_STATUS_ESTIMATE_REJECTED\x10\f*X\n" +
+	"\x1fREPAIR_STATUS_ESTIMATE_REJECTED\x10\f\x12\"\n" +
+	"\x1eREPAIR_STATUS_CLOSED_BY_CLIENT\x10\r*X\n" +
 	"\n" +
 	"MasterRole\x12\x1b\n" +
 	"\x17MASTER_ROLE_UNSPECIFIED\x10\x00\x12\x17\n" +
