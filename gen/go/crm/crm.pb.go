@@ -6343,8 +6343,15 @@ type CloseDealRequest struct {
 	Status          string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"` // "won" or "lost" — backward compat for clients that don't send terminal_stage_id
 	Reason          string                 `protobuf:"bytes,4,opt,name=reason,proto3" json:"reason,omitempty"`
 	TerminalStageId string                 `protobuf:"bytes,5,opt,name=terminal_stage_id,json=terminalStageId,proto3" json:"terminal_stage_id,omitempty"` // explicit terminal stage id; when set, server validates it belongs to deal pipeline and is terminal, and derives status from stage.terminal_type
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Service-only escape hatch for system-driven closes. When true, CloseDeal
+	// skips the "won" stage-exit requirements check (e.g. required CFs). Used
+	// by new_order's acceptance-act sign flow to auto-close the [Autobody] Продажи
+	// deal into "Выдача и закрытие" even when the «Финальная оплата получена» CF
+	// is not yet filled. Must NEVER be set from user-facing surfaces — bff-admin
+	// only forwards it when the caller authenticated via X-API-Key (service token).
+	ForceBypassRequirements bool `protobuf:"varint,6,opt,name=force_bypass_requirements,json=forceBypassRequirements,proto3" json:"force_bypass_requirements,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *CloseDealRequest) Reset() {
@@ -6410,6 +6417,13 @@ func (x *CloseDealRequest) GetTerminalStageId() string {
 		return x.TerminalStageId
 	}
 	return ""
+}
+
+func (x *CloseDealRequest) GetForceBypassRequirements() bool {
+	if x != nil {
+		return x.ForceBypassRequirements
+	}
+	return false
 }
 
 type CloseDealResponse struct {
@@ -20761,13 +20775,14 @@ const file_crm_crm_proto_rawDesc = "" +
 	"pipelineId\x12\x19\n" +
 	"\bstage_id\x18\x04 \x01(\tR\astageId\"A\n" +
 	"\x18MoveDealPipelineResponse\x12%\n" +
-	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xb0\x01\n" +
+	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xec\x01\n" +
 	"\x10CloseDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\x16\n" +
 	"\x06status\x18\x03 \x01(\tR\x06status\x12\x16\n" +
 	"\x06reason\x18\x04 \x01(\tR\x06reason\x12*\n" +
-	"\x11terminal_stage_id\x18\x05 \x01(\tR\x0fterminalStageId\":\n" +
+	"\x11terminal_stage_id\x18\x05 \x01(\tR\x0fterminalStageId\x12:\n" +
+	"\x19force_bypass_requirements\x18\x06 \x01(\bR\x17forceBypassRequirements\":\n" +
 	"\x11CloseDealResponse\x12%\n" +
 	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"U\n" +
 	"\x11ReOpenDealRequest\x12'\n" +

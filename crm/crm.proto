@@ -1245,6 +1245,14 @@ message CloseDealRequest {
   string status           = 3; // "won" or "lost" — backward compat for clients that don't send terminal_stage_id
   string reason           = 4;
   string terminal_stage_id = 5; // explicit terminal stage id; when set, server validates it belongs to deal pipeline and is terminal, and derives status from stage.terminal_type
+
+  // Service-only escape hatch for system-driven closes. When true, CloseDeal
+  // skips the "won" stage-exit requirements check (e.g. required CFs). Used
+  // by new_order's acceptance-act sign flow to auto-close the [Autobody] Продажи
+  // deal into "Выдача и закрытие" even when the «Финальная оплата получена» CF
+  // is not yet filled. Must NEVER be set from user-facing surfaces — bff-admin
+  // only forwards it when the caller authenticated via X-API-Key (service token).
+  bool force_bypass_requirements = 6;
 }
 
 message CloseDealResponse {
