@@ -762,6 +762,19 @@ message DealProto {
   // automatically the next time an /external/deals call lands a fresh
   // append-note on this deal.
   bool has_unacked_notes = 31;
+
+  // Cross-deal link to the upstream source deal. Set when this deal was
+  // auto-created from another deal — currently only by the NPS auto-QC
+  // consumer that mirrors a closed [Autobody] Продажи deal into the
+  // [Autobody] Контроль качества pipeline on acceptance-act sign. Empty
+  // for user-created and manually-imported deals. Backed by deals.source_deal_id.
+  string source_deal_id = 32;
+
+  // Reverse of source_deal_id. Populated server-side at read time when at
+  // least one other deal points back at this one via source_deal_id (the
+  // QC-side mirror of an [Autobody] Продажи source deal). Empty when no
+  // mirror exists yet. Computed, not stored.
+  string linked_deal_id = 33;
 }
 
 message DealStageHistoryProto {
@@ -1201,6 +1214,14 @@ message MoveDealStageRequest {
   string organization_id = 1;
   string deal_id         = 2;
   string stage_id        = 3;
+
+  // Service-only escape hatch for system-driven stage moves (e.g.
+  // acceptance-act sign in new_order auto-routing the deal to "Выдача и
+  // закрытие"). When true, MoveDealStage skips required-CF and exit-gate
+  // checks on the source stage. Must NEVER be set from user-facing
+  // surfaces — bff-admin only forwards it when the caller authenticated
+  // via X-API-Key (service token), not via JWT.
+  bool force_bypass_requirements = 4;
 }
 
 message MoveDealStageResponse {

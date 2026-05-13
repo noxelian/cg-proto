@@ -3849,8 +3849,19 @@ type DealProto struct {
 	// automatically the next time an /external/deals call lands a fresh
 	// append-note on this deal.
 	HasUnackedNotes bool `protobuf:"varint,31,opt,name=has_unacked_notes,json=hasUnackedNotes,proto3" json:"has_unacked_notes,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Cross-deal link to the upstream source deal. Set when this deal was
+	// auto-created from another deal — currently only by the NPS auto-QC
+	// consumer that mirrors a closed [Autobody] Продажи deal into the
+	// [Autobody] Контроль качества pipeline on acceptance-act sign. Empty
+	// for user-created and manually-imported deals. Backed by deals.source_deal_id.
+	SourceDealId string `protobuf:"bytes,32,opt,name=source_deal_id,json=sourceDealId,proto3" json:"source_deal_id,omitempty"`
+	// Reverse of source_deal_id. Populated server-side at read time when at
+	// least one other deal points back at this one via source_deal_id (the
+	// QC-side mirror of an [Autobody] Продажи source deal). Empty when no
+	// mirror exists yet. Computed, not stored.
+	LinkedDealId  string `protobuf:"bytes,33,opt,name=linked_deal_id,json=linkedDealId,proto3" json:"linked_deal_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DealProto) Reset() {
@@ -4091,6 +4102,20 @@ func (x *DealProto) GetHasUnackedNotes() bool {
 		return x.HasUnackedNotes
 	}
 	return false
+}
+
+func (x *DealProto) GetSourceDealId() string {
+	if x != nil {
+		return x.SourceDealId
+	}
+	return ""
+}
+
+func (x *DealProto) GetLinkedDealId() string {
+	if x != nil {
+		return x.LinkedDealId
+	}
+	return ""
 }
 
 type DealStageHistoryProto struct {
@@ -6086,8 +6111,15 @@ type MoveDealStageRequest struct {
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	DealId         string                 `protobuf:"bytes,2,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
 	StageId        string                 `protobuf:"bytes,3,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Service-only escape hatch for system-driven stage moves (e.g.
+	// acceptance-act sign in new_order auto-routing the deal to "Выдача и
+	// закрытие"). When true, MoveDealStage skips required-CF and exit-gate
+	// checks on the source stage. Must NEVER be set from user-facing
+	// surfaces — bff-admin only forwards it when the caller authenticated
+	// via X-API-Key (service token), not via JWT.
+	ForceBypassRequirements bool `protobuf:"varint,4,opt,name=force_bypass_requirements,json=forceBypassRequirements,proto3" json:"force_bypass_requirements,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *MoveDealStageRequest) Reset() {
@@ -6139,6 +6171,13 @@ func (x *MoveDealStageRequest) GetStageId() string {
 		return x.StageId
 	}
 	return ""
+}
+
+func (x *MoveDealStageRequest) GetForceBypassRequirements() bool {
+	if x != nil {
+		return x.ForceBypassRequirements
+	}
+	return false
 }
 
 type MoveDealStageResponse struct {
@@ -20472,7 +20511,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x03vin\x18\x02 \x01(\tR\x03vin\x12#\n" +
 	"\rlicense_plate\x18\x03 \x01(\tR\flicensePlate\"?\n" +
 	"\x15LookupVehicleResponse\x12&\n" +
-	"\x03car\x18\x01 \x01(\v2\x14.crm.v1.CarInfoProtoR\x03car\"\xd6\b\n" +
+	"\x03car\x18\x01 \x01(\v2\x14.crm.v1.CarInfoProtoR\x03car\"\xa2\t\n" +
 	"\tDealProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x1f\n" +
@@ -20512,7 +20551,9 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\fexternal_url\x18\x1c \x01(\tR\vexternalUrl\x12 \n" +
 	"\vdescription\x18\x1d \x01(\tR\vdescription\x12$\n" +
 	"\x04tags\x18\x1e \x03(\v2\x10.crm.v1.TagProtoR\x04tags\x12*\n" +
-	"\x11has_unacked_notes\x18\x1f \x01(\bR\x0fhasUnackedNotesJ\x04\b\a\x10\b\"\xde\x01\n" +
+	"\x11has_unacked_notes\x18\x1f \x01(\bR\x0fhasUnackedNotes\x12$\n" +
+	"\x0esource_deal_id\x18  \x01(\tR\fsourceDealId\x12$\n" +
+	"\x0elinked_deal_id\x18! \x01(\tR\flinkedDealIdJ\x04\b\a\x10\b\"\xde\x01\n" +
 	"\x15DealStageHistoryProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\"\n" +
@@ -20705,11 +20746,12 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x05merge\x18\x04 \x01(\bR\x05merge\"\x95\x01\n" +
 	"\x1dPatchDealCustomFieldsResponse\x12%\n" +
 	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\x12M\n" +
-	"\x16previous_custom_fields\x18\x02 \x01(\v2\x17.google.protobuf.StructR\x14previousCustomFields\"s\n" +
+	"\x16previous_custom_fields\x18\x02 \x01(\v2\x17.google.protobuf.StructR\x14previousCustomFields\"\xaf\x01\n" +
 	"\x14MoveDealStageRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12\x19\n" +
-	"\bstage_id\x18\x03 \x01(\tR\astageId\">\n" +
+	"\bstage_id\x18\x03 \x01(\tR\astageId\x12:\n" +
+	"\x19force_bypass_requirements\x18\x04 \x01(\bR\x17forceBypassRequirements\">\n" +
 	"\x15MoveDealStageResponse\x12%\n" +
 	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\x97\x01\n" +
 	"\x17MoveDealPipelineRequest\x12'\n" +
