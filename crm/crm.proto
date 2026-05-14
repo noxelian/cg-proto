@@ -991,6 +991,14 @@ message CreateExternalDealRequest {
   // append_note_only is false. When append_note_only is true and this
   // field is empty, cg-crm falls back to title as the note body.
   string note_body = 28;
+
+  // auto_done_task_title — when non-empty, cg-crm creates a status=done
+  // task linked to the resulting deal in the same transaction. Fixed
+  // title set by caller; assignee resolved server-side
+  // (deal.assigned_to → fallback user_id 445550 → NULL fails the task
+  // softly). Used for no-payment channels like Arbuz.kz where "first
+  // contact" is vacuous.
+  string auto_done_task_title = 29;
 }
 
 // One turn in an AI-driven conversation persisted into wa_messages so

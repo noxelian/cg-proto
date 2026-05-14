@@ -4755,9 +4755,16 @@ type CreateExternalDealRequest struct {
 	// (markdown supported by the deal-detail UI). Ignored when
 	// append_note_only is false. When append_note_only is true and this
 	// field is empty, cg-crm falls back to title as the note body.
-	NoteBody      string `protobuf:"bytes,28,opt,name=note_body,json=noteBody,proto3" json:"note_body,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	NoteBody string `protobuf:"bytes,28,opt,name=note_body,json=noteBody,proto3" json:"note_body,omitempty"`
+	// auto_done_task_title — when non-empty, cg-crm creates a status=done
+	// task linked to the resulting deal in the same transaction. Fixed
+	// title set by caller; assignee resolved server-side
+	// (deal.assigned_to → fallback user_id 445550 → NULL fails the task
+	// softly). Used for no-payment channels like Arbuz.kz where "first
+	// contact" is vacuous.
+	AutoDoneTaskTitle string `protobuf:"bytes,29,opt,name=auto_done_task_title,json=autoDoneTaskTitle,proto3" json:"auto_done_task_title,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *CreateExternalDealRequest) Reset() {
@@ -4982,6 +4989,13 @@ func (x *CreateExternalDealRequest) GetAppendNoteOnly() bool {
 func (x *CreateExternalDealRequest) GetNoteBody() string {
 	if x != nil {
 		return x.NoteBody
+	}
+	return ""
+}
+
+func (x *CreateExternalDealRequest) GetAutoDoneTaskTitle() string {
+	if x != nil {
+		return x.AutoDoneTaskTitle
 	}
 	return ""
 }
@@ -20637,7 +20651,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\bmodel_id\x18\x04 \x01(\x03R\amodelId\x12#\n" +
 	"\rgeneration_id\x18\x05 \x01(\x03R\fgenerationId\x12\x12\n" +
 	"\x04year\x18\x06 \x01(\x05R\x04year\x12\x14\n" +
-	"\x05color\x18\a \x01(\tR\x05color\"\xc0\t\n" +
+	"\x05color\x18\a \x01(\tR\x05color\"\xf1\t\n" +
 	"\x19CreateExternalDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -20671,7 +20685,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\adeal_id\x18\x19 \x01(\tR\x06dealId\x121\n" +
 	"\x15legacy_amocrm_lead_id\x18\x1a \x01(\tR\x12legacyAmocrmLeadId\x12(\n" +
 	"\x10append_note_only\x18\x1b \x01(\bR\x0eappendNoteOnly\x12\x1b\n" +
-	"\tnote_body\x18\x1c \x01(\tR\bnoteBody\x1a?\n" +
+	"\tnote_body\x18\x1c \x01(\tR\bnoteBody\x12/\n" +
+	"\x14auto_done_task_title\x18\x1d \x01(\tR\x11autoDoneTaskTitle\x1a?\n" +
 	"\x11CustomFieldsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe3\x01\n" +
