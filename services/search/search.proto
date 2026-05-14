@@ -247,6 +247,10 @@ message SearchOrganizationsRequest {
 
   // NSI group filter (preferred over type)
   int64 group_id = 11;                 // NSI service group ID — filter organizations by group
+
+  // Car-make filter — mobile clients pass the make of the user's current car.
+  // Matches orgs whose car_makes array contains this ID OR is empty (= accepts any make).
+  int64 car_make_id = 12;
 }
 
 enum OrganizationSortBy {

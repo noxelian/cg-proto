@@ -1557,7 +1557,10 @@ type SearchOrganizationsRequest struct {
 	// Sorting
 	SortBy OrganizationSortBy `protobuf:"varint,10,opt,name=sort_by,json=sortBy,proto3,enum=services.search.v1.OrganizationSortBy" json:"sort_by,omitempty"`
 	// NSI group filter (preferred over type)
-	GroupId       int64 `protobuf:"varint,11,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"` // NSI service group ID — filter organizations by group
+	GroupId int64 `protobuf:"varint,11,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"` // NSI service group ID — filter organizations by group
+	// Car-make filter — mobile clients pass the make of the user's current car.
+	// Matches orgs whose car_makes array contains this ID OR is empty (= accepts any make).
+	CarMakeId     int64 `protobuf:"varint,12,opt,name=car_make_id,json=carMakeId,proto3" json:"car_make_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1665,6 +1668,13 @@ func (x *SearchOrganizationsRequest) GetSortBy() OrganizationSortBy {
 func (x *SearchOrganizationsRequest) GetGroupId() int64 {
 	if x != nil {
 		return x.GroupId
+	}
+	return 0
+}
+
+func (x *SearchOrganizationsRequest) GetCarMakeId() int64 {
+	if x != nil {
+		return x.CarMakeId
 	}
 	return 0
 }
@@ -1906,7 +1916,7 @@ const file_services_search_search_proto_rawDesc = "" +
 	"\x17expert_for_category_ids\x18\x15 \x03(\x03R\x14expertForCategoryIds\x12\x1e\n" +
 	"\n" +
 	"popularity\x18\x16 \x01(\x03R\n" +
-	"popularity\"\x8c\x03\n" +
+	"popularity\"\xac\x03\n" +
 	"\x1aSearchOrganizationsRequest\x12\x14\n" +
 	"\x05query\x18\x01 \x01(\tR\x05query\x128\n" +
 	"\x04type\x18\x02 \x01(\x0e2$.services.search.v1.OrganizationTypeR\x04type\x12\x17\n" +
@@ -1919,7 +1929,8 @@ const file_services_search_search_proto_rawDesc = "" +
 	"\tpage_size\x18\t \x01(\x05R\bpageSize\x12?\n" +
 	"\asort_by\x18\n" +
 	" \x01(\x0e2&.services.search.v1.OrganizationSortByR\x06sortBy\x12\x19\n" +
-	"\bgroup_id\x18\v \x01(\x03R\agroupId\"\xc3\x01\n" +
+	"\bgroup_id\x18\v \x01(\x03R\agroupId\x12\x1e\n" +
+	"\vcar_make_id\x18\f \x01(\x03R\tcarMakeId\"\xc3\x01\n" +
 	"\x1bSearchOrganizationsResponse\x12N\n" +
 	"\rorganizations\x18\x01 \x03(\v2(.services.search.v1.OrganizationDocumentR\rorganizations\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\x12>\n" +
