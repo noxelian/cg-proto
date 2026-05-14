@@ -2533,6 +2533,13 @@ message ListTelephonyCallsByOrgRequest {
   // directions narrows results to specific call directions.
   // Allowed values: "inbound", "outbound". Empty = both.
   repeated string directions = 10;
+  // Optional phone filter applied at the SQL level on the cg-crm side.
+  // Digits-only (caller strips leading '+'). Matches calls where
+  // src_num = $phone OR dst_num = $phone (equality, uses existing
+  // (org_id, src_num) and (org_id, dst_num) indexes). Empty = no
+  // restriction. Replaces the legacy bff-admin in-memory
+  // strings.Contains loop that fetched up to 2000 rows per request.
+  string phone = 11;
 }
 message ListTelephonyCallsByOrgResponse {
   repeated TelephonyCall calls = 1;

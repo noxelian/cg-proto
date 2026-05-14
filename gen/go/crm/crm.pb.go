@@ -16583,7 +16583,14 @@ type ListTelephonyCallsByOrgRequest struct {
 	DateTo   *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=date_to,json=dateTo,proto3" json:"date_to,omitempty"`
 	// directions narrows results to specific call directions.
 	// Allowed values: "inbound", "outbound". Empty = both.
-	Directions    []string `protobuf:"bytes,10,rep,name=directions,proto3" json:"directions,omitempty"`
+	Directions []string `protobuf:"bytes,10,rep,name=directions,proto3" json:"directions,omitempty"`
+	// Optional phone filter applied at the SQL level on the cg-crm side.
+	// Digits-only (caller strips leading '+'). Matches calls where
+	// src_num = $phone OR dst_num = $phone (equality, uses existing
+	// (org_id, src_num) and (org_id, dst_num) indexes). Empty = no
+	// restriction. Replaces the legacy bff-admin in-memory
+	// strings.Contains loop that fetched up to 2000 rows per request.
+	Phone         string `protobuf:"bytes,11,opt,name=phone,proto3" json:"phone,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -16686,6 +16693,13 @@ func (x *ListTelephonyCallsByOrgRequest) GetDirections() []string {
 		return x.Directions
 	}
 	return nil
+}
+
+func (x *ListTelephonyCallsByOrgRequest) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
 }
 
 type ListTelephonyCallsByOrgResponse struct {
@@ -21611,7 +21625,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\acall_id\x18\x02 \x01(\tR\x06callId\x12<\n" +
 	"\x0ematched_entity\x18\x03 \x01(\v2\x15.crm.v1.MatchedEntityR\rmatchedEntity\"D\n" +
 	"(UpdateTelephonyCallMatchedEntityResponse\x12\x18\n" +
-	"\aupdated\x18\x01 \x01(\bR\aupdated\"\x9d\x03\n" +
+	"\aupdated\x18\x01 \x01(\bR\aupdated\"\xb3\x03\n" +
 	"\x1eListTelephonyCallsByOrgRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
@@ -21625,7 +21639,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\n" +
 	"directions\x18\n" +
 	" \x03(\tR\n" +
-	"directions\"d\n" +
+	"directions\x12\x14\n" +
+	"\x05phone\x18\v \x01(\tR\x05phone\"d\n" +
 	"\x1fListTelephonyCallsByOrgResponse\x12+\n" +
 	"\x05calls\x18\x01 \x03(\v2\x15.crm.v1.TelephonyCallR\x05calls\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"t\n" +
