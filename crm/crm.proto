@@ -217,6 +217,13 @@ service CRMService {
   rpc ListWazzupMessages(ListWazzupMessagesRequest)             returns (ListWazzupMessagesResponse);
   rpc ListWazzupConversations(ListWazzupConversationsRequest)   returns (ListWazzupConversationsResponse);
   rpc HandleWazzupWebhook(WazzupWebhookRequest)                 returns (WazzupWebhookResponse);
+  // CheckWazzupPhones probes Wazzup24 `/v3/checkPhones` to see whether a
+  // phone (or batch of phones) is reachable on WhatsApp. Used by the inbox
+  // search "start new chat" flow — when a phone has no local conversation
+  // history we still want to surface "Начать чат с +7XXX" if Wazzup says
+  // WhatsApp is available. Degrades to status="check_unavailable" on
+  // Wazzup24 4xx (tariff/plan errors) so the inbox keeps working.
+  rpc CheckWazzupPhones(CheckWazzupPhonesRequest) returns (CheckWazzupPhonesResponse);
 
   // Telephony RPCs (Phase 8 — provider-agnostic; replaces Sipuni-specific methods)
   rpc TelephonyOriginate(TelephonyOriginateRequest)         returns (TelephonyOriginateResponse);
@@ -2194,6 +2201,39 @@ message WazzupWebhookRequest {
 
 message WazzupWebhookResponse {
   bool ok = 1;
+}
+
+// CheckWazzupPhones — probe Wazzup24 `/v3/checkPhones` for WhatsApp
+// availability of one or more phones.
+//
+// Caller passes mixed phone formats (raw digits, "+7…", "8…"); cg-crm
+// normalizes via the same E.164 helper used by external-deal intake and
+// strips the leading "+" before forwarding to Wazzup24 (their endpoint
+// expects bare digits).
+//
+// On Wazzup24 4xx (tariff doesn't include phone-check, plan disabled,
+// etc.) cg-crm degrades to one result per input phone with
+// has_whatsapp=false + status="check_unavailable" instead of returning
+// an error — the inbox search-to-new-chat affordance is best-effort.
+// Real network / 5xx errors propagate as codes.Internal.
+message CheckWazzupPhonesRequest {
+  repeated string phones = 1;
+}
+
+message CheckWazzupPhonesResponse {
+  repeated PhoneCheckResult results = 1;
+}
+
+message PhoneCheckResult {
+  // phone is the normalized E.164 (`+7XXXXXXXXXX`) for the input. Callers
+  // match results back to inputs by index OR by phone — both line up.
+  string phone        = 1;
+  bool   has_whatsapp = 2;
+  // status mirrors Wazzup24's checkPhones response string when reachable
+  // (e.g. "success", "phoneExists"), otherwise one of:
+  //   "no_whatsapp"        — Wazzup confirmed the phone has no WhatsApp
+  //   "check_unavailable"  — Wazzup24 4xx (tariff/plan) or unknown status
+  string status       = 3;
 }
 
 // ==================== Telephony (Phase 8 — provider-agnostic) ====================

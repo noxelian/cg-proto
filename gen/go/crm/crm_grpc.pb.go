@@ -109,6 +109,7 @@ const (
 	CRMService_ListWazzupMessages_FullMethodName                 = "/crm.v1.CRMService/ListWazzupMessages"
 	CRMService_ListWazzupConversations_FullMethodName            = "/crm.v1.CRMService/ListWazzupConversations"
 	CRMService_HandleWazzupWebhook_FullMethodName                = "/crm.v1.CRMService/HandleWazzupWebhook"
+	CRMService_CheckWazzupPhones_FullMethodName                  = "/crm.v1.CRMService/CheckWazzupPhones"
 	CRMService_TelephonyOriginate_FullMethodName                 = "/crm.v1.CRMService/TelephonyOriginate"
 	CRMService_TelephonyGetCall_FullMethodName                   = "/crm.v1.CRMService/TelephonyGetCall"
 	CRMService_TelephonyListCalls_FullMethodName                 = "/crm.v1.CRMService/TelephonyListCalls"
@@ -354,6 +355,13 @@ type CRMServiceClient interface {
 	ListWazzupMessages(ctx context.Context, in *ListWazzupMessagesRequest, opts ...grpc.CallOption) (*ListWazzupMessagesResponse, error)
 	ListWazzupConversations(ctx context.Context, in *ListWazzupConversationsRequest, opts ...grpc.CallOption) (*ListWazzupConversationsResponse, error)
 	HandleWazzupWebhook(ctx context.Context, in *WazzupWebhookRequest, opts ...grpc.CallOption) (*WazzupWebhookResponse, error)
+	// CheckWazzupPhones probes Wazzup24 `/v3/checkPhones` to see whether a
+	// phone (or batch of phones) is reachable on WhatsApp. Used by the inbox
+	// search "start new chat" flow — when a phone has no local conversation
+	// history we still want to surface "Начать чат с +7XXX" if Wazzup says
+	// WhatsApp is available. Degrades to status="check_unavailable" on
+	// Wazzup24 4xx (tariff/plan errors) so the inbox keeps working.
+	CheckWazzupPhones(ctx context.Context, in *CheckWazzupPhonesRequest, opts ...grpc.CallOption) (*CheckWazzupPhonesResponse, error)
 	// Telephony RPCs (Phase 8 — provider-agnostic; replaces Sipuni-specific methods)
 	TelephonyOriginate(ctx context.Context, in *TelephonyOriginateRequest, opts ...grpc.CallOption) (*TelephonyOriginateResponse, error)
 	TelephonyGetCall(ctx context.Context, in *TelephonyGetCallRequest, opts ...grpc.CallOption) (*TelephonyGetCallResponse, error)
@@ -1337,6 +1345,16 @@ func (c *cRMServiceClient) HandleWazzupWebhook(ctx context.Context, in *WazzupWe
 	return out, nil
 }
 
+func (c *cRMServiceClient) CheckWazzupPhones(ctx context.Context, in *CheckWazzupPhonesRequest, opts ...grpc.CallOption) (*CheckWazzupPhonesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckWazzupPhonesResponse)
+	err := c.cc.Invoke(ctx, CRMService_CheckWazzupPhones_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) TelephonyOriginate(ctx context.Context, in *TelephonyOriginateRequest, opts ...grpc.CallOption) (*TelephonyOriginateResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TelephonyOriginateResponse)
@@ -1913,6 +1931,13 @@ type CRMServiceServer interface {
 	ListWazzupMessages(context.Context, *ListWazzupMessagesRequest) (*ListWazzupMessagesResponse, error)
 	ListWazzupConversations(context.Context, *ListWazzupConversationsRequest) (*ListWazzupConversationsResponse, error)
 	HandleWazzupWebhook(context.Context, *WazzupWebhookRequest) (*WazzupWebhookResponse, error)
+	// CheckWazzupPhones probes Wazzup24 `/v3/checkPhones` to see whether a
+	// phone (or batch of phones) is reachable on WhatsApp. Used by the inbox
+	// search "start new chat" flow — when a phone has no local conversation
+	// history we still want to surface "Начать чат с +7XXX" if Wazzup says
+	// WhatsApp is available. Degrades to status="check_unavailable" on
+	// Wazzup24 4xx (tariff/plan errors) so the inbox keeps working.
+	CheckWazzupPhones(context.Context, *CheckWazzupPhonesRequest) (*CheckWazzupPhonesResponse, error)
 	// Telephony RPCs (Phase 8 — provider-agnostic; replaces Sipuni-specific methods)
 	TelephonyOriginate(context.Context, *TelephonyOriginateRequest) (*TelephonyOriginateResponse, error)
 	TelephonyGetCall(context.Context, *TelephonyGetCallRequest) (*TelephonyGetCallResponse, error)
@@ -2253,6 +2278,9 @@ func (UnimplementedCRMServiceServer) ListWazzupConversations(context.Context, *L
 }
 func (UnimplementedCRMServiceServer) HandleWazzupWebhook(context.Context, *WazzupWebhookRequest) (*WazzupWebhookResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HandleWazzupWebhook not implemented")
+}
+func (UnimplementedCRMServiceServer) CheckWazzupPhones(context.Context, *CheckWazzupPhonesRequest) (*CheckWazzupPhonesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckWazzupPhones not implemented")
 }
 func (UnimplementedCRMServiceServer) TelephonyOriginate(context.Context, *TelephonyOriginateRequest) (*TelephonyOriginateResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method TelephonyOriginate not implemented")
@@ -4006,6 +4034,24 @@ func _CRMService_HandleWazzupWebhook_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_CheckWazzupPhones_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckWazzupPhonesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).CheckWazzupPhones(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_CheckWazzupPhones_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).CheckWazzupPhones(ctx, req.(*CheckWazzupPhonesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_TelephonyOriginate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TelephonyOriginateRequest)
 	if err := dec(in); err != nil {
@@ -5038,6 +5084,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HandleWazzupWebhook",
 			Handler:    _CRMService_HandleWazzupWebhook_Handler,
+		},
+		{
+			MethodName: "CheckWazzupPhones",
+			Handler:    _CRMService_CheckWazzupPhones_Handler,
 		},
 		{
 			MethodName: "TelephonyOriginate",
