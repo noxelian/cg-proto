@@ -1586,6 +1586,12 @@ message CustomFieldDefinitionProto {
   // is_required=true, the server blocks MoveDealStage out of that stage
   // until deal.custom_fields[field_key] is non-empty.
   string stage_id        = 12;
+  // When true, the kanban card renders a red border + warning indicator
+  // whenever deal.custom_fields[field_key] is empty AND the deal is in
+  // this CF's stage_id (or any stage, for org-wide CFs). Visual only —
+  // does NOT block stage transitions. Default false. Independent of
+  // is_required.
+  bool   highlight_when_empty = 13;
 }
 
 message CreateCustomFieldDefinitionRequest {
@@ -1600,6 +1606,7 @@ message CreateCustomFieldDefinitionRequest {
   // Optional stage scope. When empty the field is org-wide; when set
   // the field lives on that stage only (see CustomFieldDefinitionProto).
   string stage_id        = 9;
+  bool   highlight_when_empty = 10;
 }
 
 message CreateCustomFieldDefinitionResponse {
@@ -1637,6 +1644,7 @@ message UpdateCustomFieldDefinitionRequest {
   // re-scopes the field — use with care on definitions that already
   // have values recorded on deals.
   string stage_id        = 9;
+  bool   highlight_when_empty = 10;
 }
 
 message UpdateCustomFieldDefinitionResponse {

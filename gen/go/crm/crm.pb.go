@@ -8879,9 +8879,15 @@ type CustomFieldDefinitionProto struct {
 	// renders it only on deals currently in that stage and, if
 	// is_required=true, the server blocks MoveDealStage out of that stage
 	// until deal.custom_fields[field_key] is non-empty.
-	StageId       string `protobuf:"bytes,12,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	StageId string `protobuf:"bytes,12,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
+	// When true, the kanban card renders a red border + warning indicator
+	// whenever deal.custom_fields[field_key] is empty AND the deal is in
+	// this CF's stage_id (or any stage, for org-wide CFs). Visual only —
+	// does NOT block stage transitions. Default false. Independent of
+	// is_required.
+	HighlightWhenEmpty bool `protobuf:"varint,13,opt,name=highlight_when_empty,json=highlightWhenEmpty,proto3" json:"highlight_when_empty,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *CustomFieldDefinitionProto) Reset() {
@@ -8998,6 +9004,13 @@ func (x *CustomFieldDefinitionProto) GetStageId() string {
 	return ""
 }
 
+func (x *CustomFieldDefinitionProto) GetHighlightWhenEmpty() bool {
+	if x != nil {
+		return x.HighlightWhenEmpty
+	}
+	return false
+}
+
 type CreateCustomFieldDefinitionRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
@@ -9010,9 +9023,10 @@ type CreateCustomFieldDefinitionRequest struct {
 	Position       int32                  `protobuf:"varint,8,opt,name=position,proto3" json:"position,omitempty"`
 	// Optional stage scope. When empty the field is org-wide; when set
 	// the field lives on that stage only (see CustomFieldDefinitionProto).
-	StageId       string `protobuf:"bytes,9,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	StageId            string `protobuf:"bytes,9,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
+	HighlightWhenEmpty bool   `protobuf:"varint,10,opt,name=highlight_when_empty,json=highlightWhenEmpty,proto3" json:"highlight_when_empty,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *CreateCustomFieldDefinitionRequest) Reset() {
@@ -9106,6 +9120,13 @@ func (x *CreateCustomFieldDefinitionRequest) GetStageId() string {
 		return x.StageId
 	}
 	return ""
+}
+
+func (x *CreateCustomFieldDefinitionRequest) GetHighlightWhenEmpty() bool {
+	if x != nil {
+		return x.HighlightWhenEmpty
+	}
+	return false
 }
 
 type CreateCustomFieldDefinitionResponse struct {
@@ -9357,9 +9378,10 @@ type UpdateCustomFieldDefinitionRequest struct {
 	// Optional stage scope (empty = org-wide). Changing this effectively
 	// re-scopes the field — use with care on definitions that already
 	// have values recorded on deals.
-	StageId       string `protobuf:"bytes,9,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	StageId            string `protobuf:"bytes,9,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
+	HighlightWhenEmpty bool   `protobuf:"varint,10,opt,name=highlight_when_empty,json=highlightWhenEmpty,proto3" json:"highlight_when_empty,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *UpdateCustomFieldDefinitionRequest) Reset() {
@@ -9453,6 +9475,13 @@ func (x *UpdateCustomFieldDefinitionRequest) GetStageId() string {
 		return x.StageId
 	}
 	return ""
+}
+
+func (x *UpdateCustomFieldDefinitionRequest) GetHighlightWhenEmpty() bool {
+	if x != nil {
+		return x.HighlightWhenEmpty
+	}
+	return false
 }
 
 type UpdateCustomFieldDefinitionResponse struct {
@@ -21174,7 +21203,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x04task\x18\x01 \x01(\v2\x11.crm.v1.TaskProtoR\x04task\">\n" +
 	"\x10FieldOptionProto\x12\x14\n" +
 	"\x05value\x18\x01 \x01(\tR\x05value\x12\x14\n" +
-	"\x05label\x18\x02 \x01(\tR\x05label\"\x90\x03\n" +
+	"\x05label\x18\x02 \x01(\tR\x05label\"\xc2\x03\n" +
 	"\x1aCustomFieldDefinitionProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x1f\n" +
@@ -21193,7 +21222,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	" \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\v \x01(\tR\tupdatedAt\x12\x19\n" +
-	"\bstage_id\x18\f \x01(\tR\astageId\"\xca\x02\n" +
+	"\bstage_id\x18\f \x01(\tR\astageId\x120\n" +
+	"\x14highlight_when_empty\x18\r \x01(\bR\x12highlightWhenEmpty\"\xfc\x02\n" +
 	"\"CreateCustomFieldDefinitionRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\ventity_type\x18\x02 \x01(\tR\n" +
@@ -21206,7 +21236,9 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\vis_required\x18\a \x01(\bR\n" +
 	"isRequired\x12\x1a\n" +
 	"\bposition\x18\b \x01(\x05R\bposition\x12\x19\n" +
-	"\bstage_id\x18\t \x01(\tR\astageId\"i\n" +
+	"\bstage_id\x18\t \x01(\tR\astageId\x120\n" +
+	"\x14highlight_when_empty\x18\n" +
+	" \x01(\bR\x12highlightWhenEmpty\"i\n" +
 	"#CreateCustomFieldDefinitionResponse\x12B\n" +
 	"\n" +
 	"definition\x18\x01 \x01(\v2\".crm.v1.CustomFieldDefinitionProtoR\n" +
@@ -21223,7 +21255,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\ventity_type\x18\x02 \x01(\tR\n" +
 	"entityType\"j\n" +
 	"\"ListCustomFieldDefinitionsResponse\x12D\n" +
-	"\vdefinitions\x18\x01 \x03(\v2\".crm.v1.CustomFieldDefinitionProtoR\vdefinitions\"\xb9\x02\n" +
+	"\vdefinitions\x18\x01 \x03(\v2\".crm.v1.CustomFieldDefinitionProtoR\vdefinitions\"\xeb\x02\n" +
 	"\"UpdateCustomFieldDefinitionRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x12\n" +
@@ -21235,7 +21267,9 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\vis_required\x18\a \x01(\bR\n" +
 	"isRequired\x12\x1a\n" +
 	"\bposition\x18\b \x01(\x05R\bposition\x12\x19\n" +
-	"\bstage_id\x18\t \x01(\tR\astageId\"i\n" +
+	"\bstage_id\x18\t \x01(\tR\astageId\x120\n" +
+	"\x14highlight_when_empty\x18\n" +
+	" \x01(\bR\x12highlightWhenEmpty\"i\n" +
 	"#UpdateCustomFieldDefinitionResponse\x12B\n" +
 	"\n" +
 	"definition\x18\x01 \x01(\v2\".crm.v1.CustomFieldDefinitionProtoR\n" +
