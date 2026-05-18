@@ -783,12 +783,15 @@ type RepairOrder struct {
 	ParentOrderId *int64 `protobuf:"varint,38,opt,name=parent_order_id,json=parentOrderId,proto3,oneof" json:"parent_order_id,omitempty"`
 	IsWarranty    bool   `protobuf:"varint,39,opt,name=is_warranty,json=isWarranty,proto3" json:"is_warranty,omitempty"`
 	// User/Garage integration (ADR-repair-order-user-garage)
-	UserId        int64 `protobuf:"varint,42,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                  // canonical user ref from cg-users (0 = legacy/unknown)
-	GarageCarId   int64 `protobuf:"varint,43,opt,name=garage_car_id,json=garageCarId,proto3" json:"garage_car_id,omitempty"` // ref to cg-users user_cars.id (0 = not in garage)
-	MarkId        int32 `protobuf:"varint,44,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`                  // NSI car mark ID
-	ModelId       int32 `protobuf:"varint,45,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`               // NSI car model ID
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	UserId      int64 `protobuf:"varint,42,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                  // canonical user ref from cg-users (0 = legacy/unknown)
+	GarageCarId int64 `protobuf:"varint,43,opt,name=garage_car_id,json=garageCarId,proto3" json:"garage_car_id,omitempty"` // ref to cg-users user_cars.id (0 = not in garage)
+	MarkId      int32 `protobuf:"varint,44,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`                  // NSI car mark ID
+	ModelId     int32 `protobuf:"varint,45,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`               // NSI car model ID
+	// Materials budget cap (legacy CarInRepair.materials_budget). 0 = unset.
+	// Independent from materials_markup (which is works_price * markup_pct / 100).
+	MaterialsBudget int64 `protobuf:"varint,46,opt,name=materials_budget,json=materialsBudget,proto3" json:"materials_budget,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *RepairOrder) Reset() {
@@ -1118,6 +1121,13 @@ func (x *RepairOrder) GetMarkId() int32 {
 func (x *RepairOrder) GetModelId() int32 {
 	if x != nil {
 		return x.ModelId
+	}
+	return 0
+}
+
+func (x *RepairOrder) GetMaterialsBudget() int64 {
+	if x != nil {
+		return x.MaterialsBudget
 	}
 	return 0
 }
@@ -3941,9 +3951,11 @@ type CreateRepairOrderRequest struct {
 	// crm_deal_id for source="crm_deal"). Free string up to 64 chars.
 	// Used by downstream consumers (e.g. cg-subscriptions) to match
 	// repair_order completion to the originating entity. NOT validated here.
-	ExternalRef   *string `protobuf:"bytes,20,opt,name=external_ref,json=externalRef,proto3,oneof" json:"external_ref,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	ExternalRef *string `protobuf:"bytes,20,opt,name=external_ref,json=externalRef,proto3,oneof" json:"external_ref,omitempty"`
+	// Materials budget cap (legacy CarInRepair.materials_budget). 0 = unset.
+	MaterialsBudget int64 `protobuf:"varint,21,opt,name=materials_budget,json=materialsBudget,proto3" json:"materials_budget,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *CreateRepairOrderRequest) Reset() {
@@ -4116,6 +4128,13 @@ func (x *CreateRepairOrderRequest) GetExternalRef() string {
 		return *x.ExternalRef
 	}
 	return ""
+}
+
+func (x *CreateRepairOrderRequest) GetMaterialsBudget() int64 {
+	if x != nil {
+		return x.MaterialsBudget
+	}
+	return 0
 }
 
 type CreateRepairOrderResponse struct {
@@ -12531,7 +12550,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12,\n" +
-	"\x12default_markup_pct\x18\t \x01(\x05R\x10defaultMarkupPct\"\x8e\r\n" +
+	"\x12default_markup_pct\x18\t \x01(\x05R\x10defaultMarkupPct\"\xb9\r\n" +
 	"\vRepairOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vworkshop_id\x18\x02 \x01(\x03R\n" +
@@ -12590,7 +12609,8 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\auser_id\x18* \x01(\x03R\x06userId\x12\"\n" +
 	"\rgarage_car_id\x18+ \x01(\x03R\vgarageCarId\x12\x17\n" +
 	"\amark_id\x18, \x01(\x05R\x06markId\x12\x19\n" +
-	"\bmodel_id\x18- \x01(\x05R\amodelIdB\x12\n" +
+	"\bmodel_id\x18- \x01(\x05R\amodelId\x12)\n" +
+	"\x10materials_budget\x18. \x01(\x03R\x0fmaterialsBudgetB\x12\n" +
 	"\x10_parent_order_idJ\x04\b(\x10)J\x04\b)\x10*R\x10parts_request_idR\fparts_bid_id\"`\n" +
 	"\rMasterSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
@@ -12895,7 +12915,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\vactive_only\x18\x01 \x01(\bR\n" +
 	"activeOnly\"5\n" +
 	"\x1aListWorkshopOrgIDsResponse\x12\x17\n" +
-	"\aorg_ids\x18\x01 \x03(\tR\x06orgIds\"\xf6\x05\n" +
+	"\aorg_ids\x18\x01 \x03(\tR\x06orgIds\"\xa1\x06\n" +
 	"\x18CreateRepairOrderRequest\x12\x1f\n" +
 	"\vworkshop_id\x18\x01 \x01(\x03R\n" +
 	"workshopId\x12#\n" +
@@ -12920,7 +12940,8 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\amark_id\x18\x11 \x01(\x05R\x06markId\x12\x19\n" +
 	"\bmodel_id\x18\x12 \x01(\x05R\amodelId\x12\x1b\n" +
 	"\x06source\x18\x13 \x01(\tH\x01R\x06source\x88\x01\x01\x12&\n" +
-	"\fexternal_ref\x18\x14 \x01(\tH\x02R\vexternalRef\x88\x01\x01B\x12\n" +
+	"\fexternal_ref\x18\x14 \x01(\tH\x02R\vexternalRef\x88\x01\x01\x12)\n" +
+	"\x10materials_budget\x18\x15 \x01(\x03R\x0fmaterialsBudgetB\x12\n" +
 	"\x10_parent_order_idB\t\n" +
 	"\a_sourceB\x0f\n" +
 	"\r_external_ref\"K\n" +
