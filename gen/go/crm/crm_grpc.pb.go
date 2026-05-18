@@ -148,6 +148,8 @@ const (
 	CRMService_CreateWazzupUserExtension_FullMethodName          = "/crm.v1.CRMService/CreateWazzupUserExtension"
 	CRMService_ListWazzupUserExtensions_FullMethodName           = "/crm.v1.CRMService/ListWazzupUserExtensions"
 	CRMService_DeleteWazzupUserExtension_FullMethodName          = "/crm.v1.CRMService/DeleteWazzupUserExtension"
+	CRMService_SetUserDealCardColor_FullMethodName               = "/crm.v1.CRMService/SetUserDealCardColor"
+	CRMService_ListUserDealCardColors_FullMethodName             = "/crm.v1.CRMService/ListUserDealCardColors"
 )
 
 // CRMServiceClient is the client API for CRMService service.
@@ -431,6 +433,13 @@ type CRMServiceClient interface {
 	CreateWazzupUserExtension(ctx context.Context, in *CreateWazzupUserExtensionRequest, opts ...grpc.CallOption) (*CreateWazzupUserExtensionResponse, error)
 	ListWazzupUserExtensions(ctx context.Context, in *ListWazzupUserExtensionsRequest, opts ...grpc.CallOption) (*ListWazzupUserExtensionsResponse, error)
 	DeleteWazzupUserExtension(ctx context.Context, in *DeleteWazzupUserExtensionRequest, opts ...grpc.CallOption) (*DeleteWazzupUserExtensionResponse, error)
+	// Phase 7: Personal kanban card border color (per-user, per-deal).
+	// Private — visible only to the actor. Empty `color` in SetUserDealCardColorRequest
+	// semantically deletes the row (D-TRANSPORT-EMPTY-AS-DELETE).
+	// Scope inherits deal.Service.GetByID(userID, orgID, dealID) — both fields required.
+	// See .planning/phases/07-personal-kanban-card-border-colors-per-user-per-deal-backend.
+	SetUserDealCardColor(ctx context.Context, in *SetUserDealCardColorRequest, opts ...grpc.CallOption) (*UserDealCardColor, error)
+	ListUserDealCardColors(ctx context.Context, in *ListUserDealCardColorsRequest, opts ...grpc.CallOption) (*ListUserDealCardColorsResponse, error)
 }
 
 type cRMServiceClient struct {
@@ -1743,6 +1752,26 @@ func (c *cRMServiceClient) DeleteWazzupUserExtension(ctx context.Context, in *De
 	return out, nil
 }
 
+func (c *cRMServiceClient) SetUserDealCardColor(ctx context.Context, in *SetUserDealCardColorRequest, opts ...grpc.CallOption) (*UserDealCardColor, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserDealCardColor)
+	err := c.cc.Invoke(ctx, CRMService_SetUserDealCardColor_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ListUserDealCardColors(ctx context.Context, in *ListUserDealCardColorsRequest, opts ...grpc.CallOption) (*ListUserDealCardColorsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserDealCardColorsResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListUserDealCardColors_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CRMServiceServer is the server API for CRMService service.
 // All implementations must embed UnimplementedCRMServiceServer
 // for forward compatibility.
@@ -2024,6 +2053,13 @@ type CRMServiceServer interface {
 	CreateWazzupUserExtension(context.Context, *CreateWazzupUserExtensionRequest) (*CreateWazzupUserExtensionResponse, error)
 	ListWazzupUserExtensions(context.Context, *ListWazzupUserExtensionsRequest) (*ListWazzupUserExtensionsResponse, error)
 	DeleteWazzupUserExtension(context.Context, *DeleteWazzupUserExtensionRequest) (*DeleteWazzupUserExtensionResponse, error)
+	// Phase 7: Personal kanban card border color (per-user, per-deal).
+	// Private — visible only to the actor. Empty `color` in SetUserDealCardColorRequest
+	// semantically deletes the row (D-TRANSPORT-EMPTY-AS-DELETE).
+	// Scope inherits deal.Service.GetByID(userID, orgID, dealID) — both fields required.
+	// See .planning/phases/07-personal-kanban-card-border-colors-per-user-per-deal-backend.
+	SetUserDealCardColor(context.Context, *SetUserDealCardColorRequest) (*UserDealCardColor, error)
+	ListUserDealCardColors(context.Context, *ListUserDealCardColorsRequest) (*ListUserDealCardColorsResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
 
@@ -2420,6 +2456,12 @@ func (UnimplementedCRMServiceServer) ListWazzupUserExtensions(context.Context, *
 }
 func (UnimplementedCRMServiceServer) DeleteWazzupUserExtension(context.Context, *DeleteWazzupUserExtensionRequest) (*DeleteWazzupUserExtensionResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteWazzupUserExtension not implemented")
+}
+func (UnimplementedCRMServiceServer) SetUserDealCardColor(context.Context, *SetUserDealCardColorRequest) (*UserDealCardColor, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetUserDealCardColor not implemented")
+}
+func (UnimplementedCRMServiceServer) ListUserDealCardColors(context.Context, *ListUserDealCardColorsRequest) (*ListUserDealCardColorsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListUserDealCardColors not implemented")
 }
 func (UnimplementedCRMServiceServer) mustEmbedUnimplementedCRMServiceServer() {}
 func (UnimplementedCRMServiceServer) testEmbeddedByValue()                    {}
@@ -4764,6 +4806,42 @@ func _CRMService_DeleteWazzupUserExtension_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_SetUserDealCardColor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetUserDealCardColorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).SetUserDealCardColor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_SetUserDealCardColor_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).SetUserDealCardColor(ctx, req.(*SetUserDealCardColorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ListUserDealCardColors_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserDealCardColorsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListUserDealCardColors(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListUserDealCardColors_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListUserDealCardColors(ctx, req.(*ListUserDealCardColorsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CRMService_ServiceDesc is the grpc.ServiceDesc for CRMService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -5286,6 +5364,14 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteWazzupUserExtension",
 			Handler:    _CRMService_DeleteWazzupUserExtension_Handler,
+		},
+		{
+			MethodName: "SetUserDealCardColor",
+			Handler:    _CRMService_SetUserDealCardColor_Handler,
+		},
+		{
+			MethodName: "ListUserDealCardColors",
+			Handler:    _CRMService_ListUserDealCardColors_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
