@@ -19,40 +19,42 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserService_GetProfile_FullMethodName                = "/users.user.v1.UserService/GetProfile"
-	UserService_UpdateProfile_FullMethodName             = "/users.user.v1.UserService/UpdateProfile"
-	UserService_GetUserByID_FullMethodName               = "/users.user.v1.UserService/GetUserByID"
-	UserService_GetUserByPhone_FullMethodName            = "/users.user.v1.UserService/GetUserByPhone"
-	UserService_CreateUser_FullMethodName                = "/users.user.v1.UserService/CreateUser"
-	UserService_GetUsersByIDs_FullMethodName             = "/users.user.v1.UserService/GetUsersByIDs"
-	UserService_GetUsersByPhones_FullMethodName          = "/users.user.v1.UserService/GetUsersByPhones"
-	UserService_FindOrCreateByPhone_FullMethodName       = "/users.user.v1.UserService/FindOrCreateByPhone"
-	UserService_FindOrCreateByInstagramID_FullMethodName = "/users.user.v1.UserService/FindOrCreateByInstagramID"
-	UserService_GetSettings_FullMethodName               = "/users.user.v1.UserService/GetSettings"
-	UserService_UpdateSettings_FullMethodName            = "/users.user.v1.UserService/UpdateSettings"
-	UserService_RegisterDevice_FullMethodName            = "/users.user.v1.UserService/RegisterDevice"
-	UserService_UnregisterDevice_FullMethodName          = "/users.user.v1.UserService/UnregisterDevice"
-	UserService_GetDevices_FullMethodName                = "/users.user.v1.UserService/GetDevices"
-	UserService_DeleteAccount_FullMethodName             = "/users.user.v1.UserService/DeleteAccount"
-	UserService_ListUsers_FullMethodName                 = "/users.user.v1.UserService/ListUsers"
-	UserService_SetPlatformRoles_FullMethodName          = "/users.user.v1.UserService/SetPlatformRoles"
-	UserService_GetPlatformRoles_FullMethodName          = "/users.user.v1.UserService/GetPlatformRoles"
-	UserService_CheckPlatformRoles_FullMethodName        = "/users.user.v1.UserService/CheckPlatformRoles"
-	UserService_SetPlatformOrgAccess_FullMethodName      = "/users.user.v1.UserService/SetPlatformOrgAccess"
-	UserService_GetPlatformOrgAccess_FullMethodName      = "/users.user.v1.UserService/GetPlatformOrgAccess"
-	UserService_RemovePlatformOrgAccess_FullMethodName   = "/users.user.v1.UserService/RemovePlatformOrgAccess"
-	UserService_ListUsersByPlatformRoles_FullMethodName  = "/users.user.v1.UserService/ListUsersByPlatformRoles"
-	UserService_ListPhones_FullMethodName                = "/users.user.v1.UserService/ListPhones"
-	UserService_AddPhone_FullMethodName                  = "/users.user.v1.UserService/AddPhone"
-	UserService_RemovePhone_FullMethodName               = "/users.user.v1.UserService/RemovePhone"
-	UserService_SetPrimaryPhone_FullMethodName           = "/users.user.v1.UserService/SetPrimaryPhone"
-	UserService_RelabelPhone_FullMethodName              = "/users.user.v1.UserService/RelabelPhone"
-	UserService_ListPlatformRoleDefs_FullMethodName      = "/users.user.v1.UserService/ListPlatformRoleDefs"
-	UserService_GetPlatformRoleDef_FullMethodName        = "/users.user.v1.UserService/GetPlatformRoleDef"
-	UserService_CreatePlatformRoleDef_FullMethodName     = "/users.user.v1.UserService/CreatePlatformRoleDef"
-	UserService_UpdatePlatformRoleDef_FullMethodName     = "/users.user.v1.UserService/UpdatePlatformRoleDef"
-	UserService_DeletePlatformRoleDef_FullMethodName     = "/users.user.v1.UserService/DeletePlatformRoleDef"
-	UserService_ListModules_FullMethodName               = "/users.user.v1.UserService/ListModules"
+	UserService_GetProfile_FullMethodName                    = "/users.user.v1.UserService/GetProfile"
+	UserService_UpdateProfile_FullMethodName                 = "/users.user.v1.UserService/UpdateProfile"
+	UserService_GetUserByID_FullMethodName                   = "/users.user.v1.UserService/GetUserByID"
+	UserService_GetUserByPhone_FullMethodName                = "/users.user.v1.UserService/GetUserByPhone"
+	UserService_CreateUser_FullMethodName                    = "/users.user.v1.UserService/CreateUser"
+	UserService_GetUsersByIDs_FullMethodName                 = "/users.user.v1.UserService/GetUsersByIDs"
+	UserService_GetUsersByPhones_FullMethodName              = "/users.user.v1.UserService/GetUsersByPhones"
+	UserService_FindOrCreateByPhone_FullMethodName           = "/users.user.v1.UserService/FindOrCreateByPhone"
+	UserService_FindOrCreateByInstagramID_FullMethodName     = "/users.user.v1.UserService/FindOrCreateByInstagramID"
+	UserService_GetSettings_FullMethodName                   = "/users.user.v1.UserService/GetSettings"
+	UserService_UpdateSettings_FullMethodName                = "/users.user.v1.UserService/UpdateSettings"
+	UserService_RegisterDevice_FullMethodName                = "/users.user.v1.UserService/RegisterDevice"
+	UserService_UnregisterDevice_FullMethodName              = "/users.user.v1.UserService/UnregisterDevice"
+	UserService_GetDevices_FullMethodName                    = "/users.user.v1.UserService/GetDevices"
+	UserService_DeleteAccount_FullMethodName                 = "/users.user.v1.UserService/DeleteAccount"
+	UserService_ListUsers_FullMethodName                     = "/users.user.v1.UserService/ListUsers"
+	UserService_SetPlatformRoles_FullMethodName              = "/users.user.v1.UserService/SetPlatformRoles"
+	UserService_GetPlatformRoles_FullMethodName              = "/users.user.v1.UserService/GetPlatformRoles"
+	UserService_CheckPlatformRoles_FullMethodName            = "/users.user.v1.UserService/CheckPlatformRoles"
+	UserService_SetPlatformOrgAccess_FullMethodName          = "/users.user.v1.UserService/SetPlatformOrgAccess"
+	UserService_GetPlatformOrgAccess_FullMethodName          = "/users.user.v1.UserService/GetPlatformOrgAccess"
+	UserService_RemovePlatformOrgAccess_FullMethodName       = "/users.user.v1.UserService/RemovePlatformOrgAccess"
+	UserService_AddPlatformOrgAccess_FullMethodName          = "/users.user.v1.UserService/AddPlatformOrgAccess"
+	UserService_ListUsersByPlatformRoles_FullMethodName      = "/users.user.v1.UserService/ListUsersByPlatformRoles"
+	UserService_ListUsersByPlatformRolesInOrg_FullMethodName = "/users.user.v1.UserService/ListUsersByPlatformRolesInOrg"
+	UserService_ListPhones_FullMethodName                    = "/users.user.v1.UserService/ListPhones"
+	UserService_AddPhone_FullMethodName                      = "/users.user.v1.UserService/AddPhone"
+	UserService_RemovePhone_FullMethodName                   = "/users.user.v1.UserService/RemovePhone"
+	UserService_SetPrimaryPhone_FullMethodName               = "/users.user.v1.UserService/SetPrimaryPhone"
+	UserService_RelabelPhone_FullMethodName                  = "/users.user.v1.UserService/RelabelPhone"
+	UserService_ListPlatformRoleDefs_FullMethodName          = "/users.user.v1.UserService/ListPlatformRoleDefs"
+	UserService_GetPlatformRoleDef_FullMethodName            = "/users.user.v1.UserService/GetPlatformRoleDef"
+	UserService_CreatePlatformRoleDef_FullMethodName         = "/users.user.v1.UserService/CreatePlatformRoleDef"
+	UserService_UpdatePlatformRoleDef_FullMethodName         = "/users.user.v1.UserService/UpdatePlatformRoleDef"
+	UserService_DeletePlatformRoleDef_FullMethodName         = "/users.user.v1.UserService/DeletePlatformRoleDef"
+	UserService_ListModules_FullMethodName                   = "/users.user.v1.UserService/ListModules"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -108,9 +110,19 @@ type UserServiceClient interface {
 	// affecting their access to other orgs. Idempotent — no error if the row
 	// doesn't exist.
 	RemovePlatformOrgAccess(ctx context.Context, in *RemovePlatformOrgAccessRequest, opts ...grpc.CallOption) (*RemovePlatformOrgAccessResponse, error)
+	// AddPlatformOrgAccess inserts a single (user_id, org_id) row into
+	// platform_org_access. Idempotent — no error on conflict. Called by
+	// cg-users/organization on member.Add and by the backfill cmd so the user
+	// appears in the org-scoped CRM dropdown.
+	AddPlatformOrgAccess(ctx context.Context, in *AddPlatformOrgAccessRequest, opts ...grpc.CallOption) (*AddPlatformOrgAccessResponse, error)
 	// ListUsersByPlatformRoles returns users that have any of the given platform roles.
 	// If roles is empty, returns all users that have at least one platform role.
 	ListUsersByPlatformRoles(ctx context.Context, in *ListUsersByPlatformRolesRequest, opts ...grpc.CallOption) (*ListUsersByPlatformRolesResponse, error)
+	// ListUsersByPlatformRolesInOrg is the org-scoped variant: only returns
+	// users that have one of the requested platform roles AND are present in
+	// platform_org_access for the given organization_id. Used by the CRM
+	// dropdown to keep fired users out without leaking cross-org membership.
+	ListUsersByPlatformRolesInOrg(ctx context.Context, in *ListUsersByPlatformRolesInOrgRequest, opts ...grpc.CallOption) (*ListUsersByPlatformRolesResponse, error)
 	// ListPhones returns every phone on the user's account, primary first.
 	ListPhones(ctx context.Context, in *ListPhonesRequest, opts ...grpc.CallOption) (*ListPhonesResponse, error)
 	// AddPhone inserts a new phone. Returns ALREADY_EXISTS when the phone is
@@ -368,10 +380,30 @@ func (c *userServiceClient) RemovePlatformOrgAccess(ctx context.Context, in *Rem
 	return out, nil
 }
 
+func (c *userServiceClient) AddPlatformOrgAccess(ctx context.Context, in *AddPlatformOrgAccessRequest, opts ...grpc.CallOption) (*AddPlatformOrgAccessResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddPlatformOrgAccessResponse)
+	err := c.cc.Invoke(ctx, UserService_AddPlatformOrgAccess_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) ListUsersByPlatformRoles(ctx context.Context, in *ListUsersByPlatformRolesRequest, opts ...grpc.CallOption) (*ListUsersByPlatformRolesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListUsersByPlatformRolesResponse)
 	err := c.cc.Invoke(ctx, UserService_ListUsersByPlatformRoles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ListUsersByPlatformRolesInOrg(ctx context.Context, in *ListUsersByPlatformRolesInOrgRequest, opts ...grpc.CallOption) (*ListUsersByPlatformRolesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUsersByPlatformRolesResponse)
+	err := c.cc.Invoke(ctx, UserService_ListUsersByPlatformRolesInOrg_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -541,9 +573,19 @@ type UserServiceServer interface {
 	// affecting their access to other orgs. Idempotent — no error if the row
 	// doesn't exist.
 	RemovePlatformOrgAccess(context.Context, *RemovePlatformOrgAccessRequest) (*RemovePlatformOrgAccessResponse, error)
+	// AddPlatformOrgAccess inserts a single (user_id, org_id) row into
+	// platform_org_access. Idempotent — no error on conflict. Called by
+	// cg-users/organization on member.Add and by the backfill cmd so the user
+	// appears in the org-scoped CRM dropdown.
+	AddPlatformOrgAccess(context.Context, *AddPlatformOrgAccessRequest) (*AddPlatformOrgAccessResponse, error)
 	// ListUsersByPlatformRoles returns users that have any of the given platform roles.
 	// If roles is empty, returns all users that have at least one platform role.
 	ListUsersByPlatformRoles(context.Context, *ListUsersByPlatformRolesRequest) (*ListUsersByPlatformRolesResponse, error)
+	// ListUsersByPlatformRolesInOrg is the org-scoped variant: only returns
+	// users that have one of the requested platform roles AND are present in
+	// platform_org_access for the given organization_id. Used by the CRM
+	// dropdown to keep fired users out without leaking cross-org membership.
+	ListUsersByPlatformRolesInOrg(context.Context, *ListUsersByPlatformRolesInOrgRequest) (*ListUsersByPlatformRolesResponse, error)
 	// ListPhones returns every phone on the user's account, primary first.
 	ListPhones(context.Context, *ListPhonesRequest) (*ListPhonesResponse, error)
 	// AddPhone inserts a new phone. Returns ALREADY_EXISTS when the phone is
@@ -647,8 +689,14 @@ func (UnimplementedUserServiceServer) GetPlatformOrgAccess(context.Context, *Get
 func (UnimplementedUserServiceServer) RemovePlatformOrgAccess(context.Context, *RemovePlatformOrgAccessRequest) (*RemovePlatformOrgAccessResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RemovePlatformOrgAccess not implemented")
 }
+func (UnimplementedUserServiceServer) AddPlatformOrgAccess(context.Context, *AddPlatformOrgAccessRequest) (*AddPlatformOrgAccessResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddPlatformOrgAccess not implemented")
+}
 func (UnimplementedUserServiceServer) ListUsersByPlatformRoles(context.Context, *ListUsersByPlatformRolesRequest) (*ListUsersByPlatformRolesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUsersByPlatformRoles not implemented")
+}
+func (UnimplementedUserServiceServer) ListUsersByPlatformRolesInOrg(context.Context, *ListUsersByPlatformRolesInOrgRequest) (*ListUsersByPlatformRolesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListUsersByPlatformRolesInOrg not implemented")
 }
 func (UnimplementedUserServiceServer) ListPhones(context.Context, *ListPhonesRequest) (*ListPhonesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPhones not implemented")
@@ -1100,6 +1148,24 @@ func _UserService_RemovePlatformOrgAccess_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_AddPlatformOrgAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddPlatformOrgAccessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AddPlatformOrgAccess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_AddPlatformOrgAccess_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AddPlatformOrgAccess(ctx, req.(*AddPlatformOrgAccessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_ListUsersByPlatformRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListUsersByPlatformRolesRequest)
 	if err := dec(in); err != nil {
@@ -1114,6 +1180,24 @@ func _UserService_ListUsersByPlatformRoles_Handler(srv interface{}, ctx context.
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).ListUsersByPlatformRoles(ctx, req.(*ListUsersByPlatformRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ListUsersByPlatformRolesInOrg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUsersByPlatformRolesInOrgRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ListUsersByPlatformRolesInOrg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ListUsersByPlatformRolesInOrg_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ListUsersByPlatformRolesInOrg(ctx, req.(*ListUsersByPlatformRolesInOrgRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1412,8 +1496,16 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_RemovePlatformOrgAccess_Handler,
 		},
 		{
+			MethodName: "AddPlatformOrgAccess",
+			Handler:    _UserService_AddPlatformOrgAccess_Handler,
+		},
+		{
 			MethodName: "ListUsersByPlatformRoles",
 			Handler:    _UserService_ListUsersByPlatformRoles_Handler,
+		},
+		{
+			MethodName: "ListUsersByPlatformRolesInOrg",
+			Handler:    _UserService_ListUsersByPlatformRolesInOrg_Handler,
 		},
 		{
 			MethodName: "ListPhones",

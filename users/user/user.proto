@@ -72,10 +72,21 @@ service UserService {
   // affecting their access to other orgs. Idempotent — no error if the row
   // doesn't exist.
   rpc RemovePlatformOrgAccess(RemovePlatformOrgAccessRequest) returns (RemovePlatformOrgAccessResponse);
+  // AddPlatformOrgAccess inserts a single (user_id, org_id) row into
+  // platform_org_access. Idempotent — no error on conflict. Called by
+  // cg-users/organization on member.Add and by the backfill cmd so the user
+  // appears in the org-scoped CRM dropdown.
+  rpc AddPlatformOrgAccess(AddPlatformOrgAccessRequest) returns (AddPlatformOrgAccessResponse);
 
   // ListUsersByPlatformRoles returns users that have any of the given platform roles.
   // If roles is empty, returns all users that have at least one platform role.
   rpc ListUsersByPlatformRoles(ListUsersByPlatformRolesRequest) returns (ListUsersByPlatformRolesResponse);
+
+  // ListUsersByPlatformRolesInOrg is the org-scoped variant: only returns
+  // users that have one of the requested platform roles AND are present in
+  // platform_org_access for the given organization_id. Used by the CRM
+  // dropdown to keep fired users out without leaking cross-org membership.
+  rpc ListUsersByPlatformRolesInOrg(ListUsersByPlatformRolesInOrgRequest) returns (ListUsersByPlatformRolesResponse);
 
   // ==== Phone book (multi-phone feature) ====
   // A user owns up to 5 phone numbers, any of which identifies them across
@@ -395,6 +406,13 @@ message RemovePlatformOrgAccessRequest {
 
 message RemovePlatformOrgAccessResponse {}
 
+message AddPlatformOrgAccessRequest {
+  int64 user_id = 1;
+  string org_id = 2;
+}
+
+message AddPlatformOrgAccessResponse {}
+
 // ListUsers (admin)
 message ListUsersRequest {
   int32 page = 1;
@@ -423,6 +441,15 @@ message ListUsersByPlatformRolesRequest {
 
 message ListUsersByPlatformRolesResponse {
   repeated PlatformMember members = 1;
+}
+
+// ListUsersByPlatformRolesInOrgRequest — same as ListUsersByPlatformRoles but
+// constrained to a single organization via INNER JOIN on platform_org_access.
+// organization_id is required; empty string returns no results (the caller
+// should always provide an org context to avoid leaking cross-org membership).
+message ListUsersByPlatformRolesInOrgRequest {
+  repeated string role_codes = 1;        // empty = every user in the org with any role
+  string organization_id = 2;
 }
 
 // ==== Phone book (Phase 1 messages) ====
