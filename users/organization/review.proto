@@ -89,7 +89,9 @@ message CreateReviewRequest {
   string organization_id = 1;
   int64 author_user_id = 2;
   string author_name = 3;
-  // Required — must reference a completed request/order with this org.
+  // Required when `source` is empty — must reference a completed request/order
+  // with this org. Optional when `source` = "workshop_order" — eligibility is
+  // proven via repair_order_id + DELIVERED check instead.
   string request_id = 4;
   int32 rate = 5;            // 1..5
   string text = 6;
@@ -98,6 +100,12 @@ message CreateReviewRequest {
   optional int64 car_id = 9;
   optional int64 order_amount = 10;
   repeated string photos = 11;
+  // Source identifies the origin flow. Known values: "workshop_order".
+  // Empty = legacy default (request_id-based eligibility).
+  optional string source = 12;
+  // Repair order id for source="workshop_order". Required in that mode,
+  // ignored otherwise. Eligibility verified via cg-workshop DELIVERED check.
+  int64 repair_order_id = 13;
 }
 
 message CreateReviewResponse {

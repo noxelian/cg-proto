@@ -223,15 +223,23 @@ type CreateReviewRequest struct {
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	AuthorUserId   int64                  `protobuf:"varint,2,opt,name=author_user_id,json=authorUserId,proto3" json:"author_user_id,omitempty"`
 	AuthorName     string                 `protobuf:"bytes,3,opt,name=author_name,json=authorName,proto3" json:"author_name,omitempty"`
-	// Required — must reference a completed request/order with this org.
-	RequestId     string   `protobuf:"bytes,4,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
-	Rate          int32    `protobuf:"varint,5,opt,name=rate,proto3" json:"rate,omitempty"` // 1..5
-	Text          string   `protobuf:"bytes,6,opt,name=text,proto3" json:"text,omitempty"`
-	Work          string   `protobuf:"bytes,7,opt,name=work,proto3" json:"work,omitempty"`
-	Car           string   `protobuf:"bytes,8,opt,name=car,proto3" json:"car,omitempty"`
-	CarId         *int64   `protobuf:"varint,9,opt,name=car_id,json=carId,proto3,oneof" json:"car_id,omitempty"`
-	OrderAmount   *int64   `protobuf:"varint,10,opt,name=order_amount,json=orderAmount,proto3,oneof" json:"order_amount,omitempty"`
-	Photos        []string `protobuf:"bytes,11,rep,name=photos,proto3" json:"photos,omitempty"`
+	// Required when `source` is empty — must reference a completed request/order
+	// with this org. Optional when `source` = "workshop_order" — eligibility is
+	// proven via repair_order_id + DELIVERED check instead.
+	RequestId   string   `protobuf:"bytes,4,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	Rate        int32    `protobuf:"varint,5,opt,name=rate,proto3" json:"rate,omitempty"` // 1..5
+	Text        string   `protobuf:"bytes,6,opt,name=text,proto3" json:"text,omitempty"`
+	Work        string   `protobuf:"bytes,7,opt,name=work,proto3" json:"work,omitempty"`
+	Car         string   `protobuf:"bytes,8,opt,name=car,proto3" json:"car,omitempty"`
+	CarId       *int64   `protobuf:"varint,9,opt,name=car_id,json=carId,proto3,oneof" json:"car_id,omitempty"`
+	OrderAmount *int64   `protobuf:"varint,10,opt,name=order_amount,json=orderAmount,proto3,oneof" json:"order_amount,omitempty"`
+	Photos      []string `protobuf:"bytes,11,rep,name=photos,proto3" json:"photos,omitempty"`
+	// Source identifies the origin flow. Known values: "workshop_order".
+	// Empty = legacy default (request_id-based eligibility).
+	Source *string `protobuf:"bytes,12,opt,name=source,proto3,oneof" json:"source,omitempty"`
+	// Repair order id for source="workshop_order". Required in that mode,
+	// ignored otherwise. Eligibility verified via cg-workshop DELIVERED check.
+	RepairOrderId int64 `protobuf:"varint,13,opt,name=repair_order_id,json=repairOrderId,proto3" json:"repair_order_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -341,6 +349,20 @@ func (x *CreateReviewRequest) GetPhotos() []string {
 		return x.Photos
 	}
 	return nil
+}
+
+func (x *CreateReviewRequest) GetSource() string {
+	if x != nil && x.Source != nil {
+		return *x.Source
+	}
+	return ""
+}
+
+func (x *CreateReviewRequest) GetRepairOrderId() int64 {
+	if x != nil {
+		return x.RepairOrderId
+	}
+	return 0
 }
 
 type CreateReviewResponse struct {
@@ -1378,7 +1400,7 @@ const file_users_organization_review_proto_rawDesc = "" +
 	"\a_car_idB\x0f\n" +
 	"\r_order_amountB\f\n" +
 	"\n" +
-	"_legacy_id\"\xea\x02\n" +
+	"_legacy_id\"\xba\x03\n" +
 	"\x13CreateReviewRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12$\n" +
 	"\x0eauthor_user_id\x18\x02 \x01(\x03R\fauthorUserId\x12\x1f\n" +
@@ -1393,9 +1415,12 @@ const file_users_organization_review_proto_rawDesc = "" +
 	"\x06car_id\x18\t \x01(\x03H\x00R\x05carId\x88\x01\x01\x12&\n" +
 	"\forder_amount\x18\n" +
 	" \x01(\x03H\x01R\vorderAmount\x88\x01\x01\x12\x16\n" +
-	"\x06photos\x18\v \x03(\tR\x06photosB\t\n" +
+	"\x06photos\x18\v \x03(\tR\x06photos\x12\x1b\n" +
+	"\x06source\x18\f \x01(\tH\x02R\x06source\x88\x01\x01\x12&\n" +
+	"\x0frepair_order_id\x18\r \x01(\x03R\rrepairOrderIdB\t\n" +
 	"\a_car_idB\x0f\n" +
-	"\r_order_amount\"M\n" +
+	"\r_order_amountB\t\n" +
+	"\a_source\"M\n" +
 	"\x14CreateReviewResponse\x125\n" +
 	"\x06review\x18\x01 \x01(\v2\x1d.users.organization.v1.ReviewR\x06review\"\xa7\x01\n" +
 	"\x12ReplyReviewRequest\x12\x1e\n" +
