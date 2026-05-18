@@ -22,6 +22,7 @@ const (
 	CRMService_CreatePipeline_FullMethodName                     = "/crm.v1.CRMService/CreatePipeline"
 	CRMService_GetPipeline_FullMethodName                        = "/crm.v1.CRMService/GetPipeline"
 	CRMService_ListPipelines_FullMethodName                      = "/crm.v1.CRMService/ListPipelines"
+	CRMService_ListPipelinesForDealMove_FullMethodName           = "/crm.v1.CRMService/ListPipelinesForDealMove"
 	CRMService_UpdatePipeline_FullMethodName                     = "/crm.v1.CRMService/UpdatePipeline"
 	CRMService_ArchivePipeline_FullMethodName                    = "/crm.v1.CRMService/ArchivePipeline"
 	CRMService_AddPipelineSource_FullMethodName                  = "/crm.v1.CRMService/AddPipelineSource"
@@ -156,6 +157,13 @@ type CRMServiceClient interface {
 	CreatePipeline(ctx context.Context, in *CreatePipelineRequest, opts ...grpc.CallOption) (*CreatePipelineResponse, error)
 	GetPipeline(ctx context.Context, in *GetPipelineRequest, opts ...grpc.CallOption) (*GetPipelineResponse, error)
 	ListPipelines(ctx context.Context, in *ListPipelinesRequest, opts ...grpc.CallOption) (*ListPipelinesResponse, error)
+	// ListPipelinesForDealMove returns ALL non-archived pipelines in the org
+	// — explicitly NOT membership-filtered. Used by the move-pipeline dialog
+	// on the deal detail page. Gated by crm.deals.manage (same boundary as
+	// MovePipeline itself) rather than crm.pipelines.view, because the
+	// semantic question is "where can this deal go?", not "what funnels can
+	// this user browse in settings?".
+	ListPipelinesForDealMove(ctx context.Context, in *ListPipelinesForDealMoveRequest, opts ...grpc.CallOption) (*ListPipelinesForDealMoveResponse, error)
 	UpdatePipeline(ctx context.Context, in *UpdatePipelineRequest, opts ...grpc.CallOption) (*UpdatePipelineResponse, error)
 	ArchivePipeline(ctx context.Context, in *ArchivePipelineRequest, opts ...grpc.CallOption) (*ArchivePipelineResponse, error)
 	// AddPipelineSource appends a deal-source string to pipelines.sources if
@@ -457,6 +465,16 @@ func (c *cRMServiceClient) ListPipelines(ctx context.Context, in *ListPipelinesR
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListPipelinesResponse)
 	err := c.cc.Invoke(ctx, CRMService_ListPipelines_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ListPipelinesForDealMove(ctx context.Context, in *ListPipelinesForDealMoveRequest, opts ...grpc.CallOption) (*ListPipelinesForDealMoveResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPipelinesForDealMoveResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListPipelinesForDealMove_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1732,6 +1750,13 @@ type CRMServiceServer interface {
 	CreatePipeline(context.Context, *CreatePipelineRequest) (*CreatePipelineResponse, error)
 	GetPipeline(context.Context, *GetPipelineRequest) (*GetPipelineResponse, error)
 	ListPipelines(context.Context, *ListPipelinesRequest) (*ListPipelinesResponse, error)
+	// ListPipelinesForDealMove returns ALL non-archived pipelines in the org
+	// — explicitly NOT membership-filtered. Used by the move-pipeline dialog
+	// on the deal detail page. Gated by crm.deals.manage (same boundary as
+	// MovePipeline itself) rather than crm.pipelines.view, because the
+	// semantic question is "where can this deal go?", not "what funnels can
+	// this user browse in settings?".
+	ListPipelinesForDealMove(context.Context, *ListPipelinesForDealMoveRequest) (*ListPipelinesForDealMoveResponse, error)
 	UpdatePipeline(context.Context, *UpdatePipelineRequest) (*UpdatePipelineResponse, error)
 	ArchivePipeline(context.Context, *ArchivePipelineRequest) (*ArchivePipelineResponse, error)
 	// AddPipelineSource appends a deal-source string to pipelines.sources if
@@ -2017,6 +2042,9 @@ func (UnimplementedCRMServiceServer) GetPipeline(context.Context, *GetPipelineRe
 }
 func (UnimplementedCRMServiceServer) ListPipelines(context.Context, *ListPipelinesRequest) (*ListPipelinesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPipelines not implemented")
+}
+func (UnimplementedCRMServiceServer) ListPipelinesForDealMove(context.Context, *ListPipelinesForDealMoveRequest) (*ListPipelinesForDealMoveResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPipelinesForDealMove not implemented")
 }
 func (UnimplementedCRMServiceServer) UpdatePipeline(context.Context, *UpdatePipelineRequest) (*UpdatePipelineResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdatePipeline not implemented")
@@ -2464,6 +2492,24 @@ func _CRMService_ListPipelines_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRMServiceServer).ListPipelines(ctx, req.(*ListPipelinesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ListPipelinesForDealMove_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPipelinesForDealMoveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListPipelinesForDealMove(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListPipelinesForDealMove_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListPipelinesForDealMove(ctx, req.(*ListPipelinesForDealMoveRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4736,6 +4782,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListPipelines",
 			Handler:    _CRMService_ListPipelines_Handler,
+		},
+		{
+			MethodName: "ListPipelinesForDealMove",
+			Handler:    _CRMService_ListPipelinesForDealMove_Handler,
 		},
 		{
 			MethodName: "UpdatePipeline",

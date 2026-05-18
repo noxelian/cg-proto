@@ -11,6 +11,13 @@ service CRMService {
   rpc CreatePipeline(CreatePipelineRequest)   returns (CreatePipelineResponse);
   rpc GetPipeline(GetPipelineRequest)         returns (GetPipelineResponse);
   rpc ListPipelines(ListPipelinesRequest)     returns (ListPipelinesResponse);
+  // ListPipelinesForDealMove returns ALL non-archived pipelines in the org
+  // — explicitly NOT membership-filtered. Used by the move-pipeline dialog
+  // on the deal detail page. Gated by crm.deals.manage (same boundary as
+  // MovePipeline itself) rather than crm.pipelines.view, because the
+  // semantic question is "where can this deal go?", not "what funnels can
+  // this user browse in settings?".
+  rpc ListPipelinesForDealMove(ListPipelinesForDealMoveRequest) returns (ListPipelinesForDealMoveResponse);
   rpc UpdatePipeline(UpdatePipelineRequest)   returns (UpdatePipelineResponse);
   rpc ArchivePipeline(ArchivePipelineRequest) returns (ArchivePipelineResponse);
   // AddPipelineSource appends a deal-source string to pipelines.sources if
@@ -372,6 +379,14 @@ message ListPipelinesRequest {
 }
 
 message ListPipelinesResponse {
+  repeated Pipeline pipelines = 1;
+}
+
+message ListPipelinesForDealMoveRequest {
+  string organization_id = 1;
+}
+
+message ListPipelinesForDealMoveResponse {
   repeated Pipeline pipelines = 1;
 }
 
