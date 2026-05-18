@@ -994,8 +994,13 @@ type UpdateCarRequest struct {
 	Mileage        *int32                 `protobuf:"varint,9,opt,name=mileage,proto3,oneof" json:"mileage,omitempty"`
 	IsPrimary      *bool                  `protobuf:"varint,10,opt,name=is_primary,json=isPrimary,proto3,oneof" json:"is_primary,omitempty"`
 	EngineVolumeCc *int32                 `protobuf:"varint,11,opt,name=engine_volume_cc,json=engineVolumeCc,proto3,oneof" json:"engine_volume_cc,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// Optional: when set by a service caller (e.g. CRM manager acting on
+	// behalf of a client), scope the update to this user_id instead of
+	// the JWT subject. Mobile self-edit calls omit this — UpdateCar
+	// falls back to auth.UserID. Mirrors FindOrCreateCarRequest.user_id.
+	UserId        *int64 `protobuf:"varint,12,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateCarRequest) Reset() {
@@ -1101,6 +1106,13 @@ func (x *UpdateCarRequest) GetIsPrimary() bool {
 func (x *UpdateCarRequest) GetEngineVolumeCc() int32 {
 	if x != nil && x.EngineVolumeCc != nil {
 		return *x.EngineVolumeCc
+	}
+	return 0
+}
+
+func (x *UpdateCarRequest) GetUserId() int64 {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
 	}
 	return 0
 }
@@ -3645,7 +3657,7 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\"R\n" +
 	"\x10ListCarsResponse\x12(\n" +
 	"\x04cars\x18\x01 \x03(\v2\x14.users.garage.v1.CarR\x04cars\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"\x80\x04\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xaa\x04\n" +
 	"\x10UpdateCarRequest\x12\x15\n" +
 	"\x06car_id\x18\x01 \x01(\x03R\x05carId\x12\x1c\n" +
 	"\amark_id\x18\x02 \x01(\x05H\x00R\x06markId\x88\x01\x01\x12\x1e\n" +
@@ -3659,7 +3671,9 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\n" +
 	"is_primary\x18\n" +
 	" \x01(\bH\bR\tisPrimary\x88\x01\x01\x12-\n" +
-	"\x10engine_volume_cc\x18\v \x01(\x05H\tR\x0eengineVolumeCc\x88\x01\x01B\n" +
+	"\x10engine_volume_cc\x18\v \x01(\x05H\tR\x0eengineVolumeCc\x88\x01\x01\x12\x1c\n" +
+	"\auser_id\x18\f \x01(\x03H\n" +
+	"R\x06userId\x88\x01\x01B\n" +
 	"\n" +
 	"\b_mark_idB\v\n" +
 	"\t_model_idB\x10\n" +
@@ -3671,7 +3685,9 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\n" +
 	"\b_mileageB\r\n" +
 	"\v_is_primaryB\x13\n" +
-	"\x11_engine_volume_cc\";\n" +
+	"\x11_engine_volume_ccB\n" +
+	"\n" +
+	"\b_user_id\";\n" +
 	"\x11UpdateCarResponse\x12&\n" +
 	"\x03car\x18\x01 \x01(\v2\x14.users.garage.v1.CarR\x03car\")\n" +
 	"\x10DeleteCarRequest\x12\x15\n" +

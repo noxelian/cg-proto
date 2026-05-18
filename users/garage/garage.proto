@@ -170,6 +170,11 @@ message UpdateCarRequest {
   optional int32 mileage = 9;
   optional bool is_primary = 10;
   optional int32 engine_volume_cc = 11;
+  // Optional: when set by a service caller (e.g. CRM manager acting on
+  // behalf of a client), scope the update to this user_id instead of
+  // the JWT subject. Mobile self-edit calls omit this — UpdateCar
+  // falls back to auth.UserID. Mirrors FindOrCreateCarRequest.user_id.
+  optional int64 user_id = 12;
 }
 
 message UpdateCarResponse {
