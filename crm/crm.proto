@@ -305,6 +305,14 @@ service CRMService {
   rpc CreateWazzupUserExtension(CreateWazzupUserExtensionRequest) returns (CreateWazzupUserExtensionResponse);
   rpc ListWazzupUserExtensions(ListWazzupUserExtensionsRequest)   returns (ListWazzupUserExtensionsResponse);
   rpc DeleteWazzupUserExtension(DeleteWazzupUserExtensionRequest) returns (DeleteWazzupUserExtensionResponse);
+
+  // Phase 7: Personal kanban card border color (per-user, per-deal).
+  // Private — visible only to the actor. Empty `color` in SetUserDealCardColorRequest
+  // semantically deletes the row (D-TRANSPORT-EMPTY-AS-DELETE).
+  // Scope inherits deal.Service.GetByID(userID, orgID, dealID) — both fields required.
+  // See .planning/phases/07-personal-kanban-card-border-colors-per-user-per-deal-backend.
+  rpc SetUserDealCardColor(SetUserDealCardColorRequest)     returns (UserDealCardColor);
+  rpc ListUserDealCardColors(ListUserDealCardColorsRequest) returns (ListUserDealCardColorsResponse);
 }
 
 message Pipeline {
@@ -3017,3 +3025,35 @@ message DeleteWazzupUserExtensionRequest {
 }
 
 message DeleteWazzupUserExtensionResponse {}
+
+// ─── Personal Deal Card Color (per-user, per-deal private UI hint) ────────────
+// Phase 7: Personal kanban card border colors.
+// Storage: cg-crm `user_deal_card_colors` table (PK (user_id, deal_id)).
+// Color is a stringly-typed enum: yellow|green|blue|purple|gray|orange|teal.
+// In SetUserDealCardColorRequest, an empty `color` string ("") signals DELETE
+// of the row for (current user, deal_id). organization_id is required on both
+// request types — cg-crm scope gate inherits deal.Service.GetByID(userID, orgID).
+message UserDealCardColor {
+  int64                     user_id    = 1;
+  string                    deal_id    = 2;  // UUID
+  string                    color      = 3;  // enum stringly-typed: yellow|green|blue|purple|gray|orange|teal
+  google.protobuf.Timestamp updated_at = 4;
+}
+
+message SetUserDealCardColorRequest {
+  string organization_id = 1;  // UUID — required, cg-crm scope gate (deal.GetByID(userID, orgID, dealID))
+  string deal_id         = 2;  // UUID
+  // Empty string ("") means delete the color for this (user, deal).
+  string color           = 3;
+}
+
+message ListUserDealCardColorsRequest {
+  string organization_id   = 1;  // UUID — required, scope
+  // Optional filter. Empty repeated = return ALL colors for current user_id
+  // (from gRPC metadata) in this org. Non-empty = surgical fetch by deal_ids.
+  repeated string deal_ids = 2;
+}
+
+message ListUserDealCardColorsResponse {
+  repeated UserDealCardColor colors = 1;
+}
