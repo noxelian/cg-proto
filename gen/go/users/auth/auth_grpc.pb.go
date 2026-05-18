@@ -19,13 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_SendCode_FullMethodName      = "/users.auth.v1.AuthService/SendCode"
-	AuthService_VerifyCode_FullMethodName    = "/users.auth.v1.AuthService/VerifyCode"
-	AuthService_RefreshToken_FullMethodName  = "/users.auth.v1.AuthService/RefreshToken"
-	AuthService_Logout_FullMethodName        = "/users.auth.v1.AuthService/Logout"
-	AuthService_ValidateToken_FullMethodName = "/users.auth.v1.AuthService/ValidateToken"
-	AuthService_GetSessions_FullMethodName   = "/users.auth.v1.AuthService/GetSessions"
-	AuthService_SelectOrg_FullMethodName     = "/users.auth.v1.AuthService/SelectOrg"
+	AuthService_SendCode_FullMethodName               = "/users.auth.v1.AuthService/SendCode"
+	AuthService_VerifyCode_FullMethodName             = "/users.auth.v1.AuthService/VerifyCode"
+	AuthService_RefreshToken_FullMethodName           = "/users.auth.v1.AuthService/RefreshToken"
+	AuthService_Logout_FullMethodName                 = "/users.auth.v1.AuthService/Logout"
+	AuthService_ValidateToken_FullMethodName          = "/users.auth.v1.AuthService/ValidateToken"
+	AuthService_GetSessions_FullMethodName            = "/users.auth.v1.AuthService/GetSessions"
+	AuthService_DeleteSessionsByUserID_FullMethodName = "/users.auth.v1.AuthService/DeleteSessionsByUserID"
+	AuthService_SelectOrg_FullMethodName              = "/users.auth.v1.AuthService/SelectOrg"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -44,6 +45,11 @@ type AuthServiceClient interface {
 	ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error)
 	// GetSessions returns active sessions for user
 	GetSessions(ctx context.Context, in *GetSessionsRequest, opts ...grpc.CallOption) (*GetSessionsResponse, error)
+	// DeleteSessionsByUserID invalidates every session for the given user.
+	// Called by cg-users/organization when a member is fired so the fired
+	// user can no longer refresh their token. Returns the number of rows
+	// removed for observability.
+	DeleteSessionsByUserID(ctx context.Context, in *DeleteSessionsByUserIDRequest, opts ...grpc.CallOption) (*DeleteSessionsByUserIDResponse, error)
 	// SelectOrg issues a new token pair with org context embedded.
 	// Requires: authenticated JWT with app="partner".
 	// Returns 403 if the caller is not a member of the requested organization.
@@ -118,6 +124,16 @@ func (c *authServiceClient) GetSessions(ctx context.Context, in *GetSessionsRequ
 	return out, nil
 }
 
+func (c *authServiceClient) DeleteSessionsByUserID(ctx context.Context, in *DeleteSessionsByUserIDRequest, opts ...grpc.CallOption) (*DeleteSessionsByUserIDResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteSessionsByUserIDResponse)
+	err := c.cc.Invoke(ctx, AuthService_DeleteSessionsByUserID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *authServiceClient) SelectOrg(ctx context.Context, in *SelectOrgRequest, opts ...grpc.CallOption) (*SelectOrgResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SelectOrgResponse)
@@ -144,6 +160,11 @@ type AuthServiceServer interface {
 	ValidateToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error)
 	// GetSessions returns active sessions for user
 	GetSessions(context.Context, *GetSessionsRequest) (*GetSessionsResponse, error)
+	// DeleteSessionsByUserID invalidates every session for the given user.
+	// Called by cg-users/organization when a member is fired so the fired
+	// user can no longer refresh their token. Returns the number of rows
+	// removed for observability.
+	DeleteSessionsByUserID(context.Context, *DeleteSessionsByUserIDRequest) (*DeleteSessionsByUserIDResponse, error)
 	// SelectOrg issues a new token pair with org context embedded.
 	// Requires: authenticated JWT with app="partner".
 	// Returns 403 if the caller is not a member of the requested organization.
@@ -175,6 +196,9 @@ func (UnimplementedAuthServiceServer) ValidateToken(context.Context, *ValidateTo
 }
 func (UnimplementedAuthServiceServer) GetSessions(context.Context, *GetSessionsRequest) (*GetSessionsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSessions not implemented")
+}
+func (UnimplementedAuthServiceServer) DeleteSessionsByUserID(context.Context, *DeleteSessionsByUserIDRequest) (*DeleteSessionsByUserIDResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteSessionsByUserID not implemented")
 }
 func (UnimplementedAuthServiceServer) SelectOrg(context.Context, *SelectOrgRequest) (*SelectOrgResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SelectOrg not implemented")
@@ -308,6 +332,24 @@ func _AuthService_GetSessions_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_DeleteSessionsByUserID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteSessionsByUserIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).DeleteSessionsByUserID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_DeleteSessionsByUserID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).DeleteSessionsByUserID(ctx, req.(*DeleteSessionsByUserIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AuthService_SelectOrg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SelectOrgRequest)
 	if err := dec(in); err != nil {
@@ -356,6 +398,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSessions",
 			Handler:    _AuthService_GetSessions_Handler,
+		},
+		{
+			MethodName: "DeleteSessionsByUserID",
+			Handler:    _AuthService_DeleteSessionsByUserID_Handler,
 		},
 		{
 			MethodName: "SelectOrg",

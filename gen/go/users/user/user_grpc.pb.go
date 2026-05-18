@@ -40,6 +40,7 @@ const (
 	UserService_CheckPlatformRoles_FullMethodName        = "/users.user.v1.UserService/CheckPlatformRoles"
 	UserService_SetPlatformOrgAccess_FullMethodName      = "/users.user.v1.UserService/SetPlatformOrgAccess"
 	UserService_GetPlatformOrgAccess_FullMethodName      = "/users.user.v1.UserService/GetPlatformOrgAccess"
+	UserService_RemovePlatformOrgAccess_FullMethodName   = "/users.user.v1.UserService/RemovePlatformOrgAccess"
 	UserService_ListUsersByPlatformRoles_FullMethodName  = "/users.user.v1.UserService/ListUsersByPlatformRoles"
 	UserService_ListPhones_FullMethodName                = "/users.user.v1.UserService/ListPhones"
 	UserService_AddPhone_FullMethodName                  = "/users.user.v1.UserService/AddPhone"
@@ -101,6 +102,12 @@ type UserServiceClient interface {
 	CheckPlatformRoles(ctx context.Context, in *CheckPlatformRolesRequest, opts ...grpc.CallOption) (*CheckPlatformRolesResponse, error)
 	SetPlatformOrgAccess(ctx context.Context, in *SetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*SetPlatformOrgAccessResponse, error)
 	GetPlatformOrgAccess(ctx context.Context, in *GetPlatformOrgAccessRequest, opts ...grpc.CallOption) (*GetPlatformOrgAccessResponse, error)
+	// RemovePlatformOrgAccess deletes a single (user_id, org_id) row from
+	// platform_org_access. Called by cg-users/organization when a member is
+	// fired so the user disappears from the org-scoped CRM dropdown without
+	// affecting their access to other orgs. Idempotent — no error if the row
+	// doesn't exist.
+	RemovePlatformOrgAccess(ctx context.Context, in *RemovePlatformOrgAccessRequest, opts ...grpc.CallOption) (*RemovePlatformOrgAccessResponse, error)
 	// ListUsersByPlatformRoles returns users that have any of the given platform roles.
 	// If roles is empty, returns all users that have at least one platform role.
 	ListUsersByPlatformRoles(ctx context.Context, in *ListUsersByPlatformRolesRequest, opts ...grpc.CallOption) (*ListUsersByPlatformRolesResponse, error)
@@ -351,6 +358,16 @@ func (c *userServiceClient) GetPlatformOrgAccess(ctx context.Context, in *GetPla
 	return out, nil
 }
 
+func (c *userServiceClient) RemovePlatformOrgAccess(ctx context.Context, in *RemovePlatformOrgAccessRequest, opts ...grpc.CallOption) (*RemovePlatformOrgAccessResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RemovePlatformOrgAccessResponse)
+	err := c.cc.Invoke(ctx, UserService_RemovePlatformOrgAccess_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) ListUsersByPlatformRoles(ctx context.Context, in *ListUsersByPlatformRolesRequest, opts ...grpc.CallOption) (*ListUsersByPlatformRolesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListUsersByPlatformRolesResponse)
@@ -518,6 +535,12 @@ type UserServiceServer interface {
 	CheckPlatformRoles(context.Context, *CheckPlatformRolesRequest) (*CheckPlatformRolesResponse, error)
 	SetPlatformOrgAccess(context.Context, *SetPlatformOrgAccessRequest) (*SetPlatformOrgAccessResponse, error)
 	GetPlatformOrgAccess(context.Context, *GetPlatformOrgAccessRequest) (*GetPlatformOrgAccessResponse, error)
+	// RemovePlatformOrgAccess deletes a single (user_id, org_id) row from
+	// platform_org_access. Called by cg-users/organization when a member is
+	// fired so the user disappears from the org-scoped CRM dropdown without
+	// affecting their access to other orgs. Idempotent — no error if the row
+	// doesn't exist.
+	RemovePlatformOrgAccess(context.Context, *RemovePlatformOrgAccessRequest) (*RemovePlatformOrgAccessResponse, error)
 	// ListUsersByPlatformRoles returns users that have any of the given platform roles.
 	// If roles is empty, returns all users that have at least one platform role.
 	ListUsersByPlatformRoles(context.Context, *ListUsersByPlatformRolesRequest) (*ListUsersByPlatformRolesResponse, error)
@@ -620,6 +643,9 @@ func (UnimplementedUserServiceServer) SetPlatformOrgAccess(context.Context, *Set
 }
 func (UnimplementedUserServiceServer) GetPlatformOrgAccess(context.Context, *GetPlatformOrgAccessRequest) (*GetPlatformOrgAccessResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPlatformOrgAccess not implemented")
+}
+func (UnimplementedUserServiceServer) RemovePlatformOrgAccess(context.Context, *RemovePlatformOrgAccessRequest) (*RemovePlatformOrgAccessResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RemovePlatformOrgAccess not implemented")
 }
 func (UnimplementedUserServiceServer) ListUsersByPlatformRoles(context.Context, *ListUsersByPlatformRolesRequest) (*ListUsersByPlatformRolesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUsersByPlatformRoles not implemented")
@@ -1056,6 +1082,24 @@ func _UserService_GetPlatformOrgAccess_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_RemovePlatformOrgAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemovePlatformOrgAccessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).RemovePlatformOrgAccess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_RemovePlatformOrgAccess_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).RemovePlatformOrgAccess(ctx, req.(*RemovePlatformOrgAccessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_ListUsersByPlatformRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListUsersByPlatformRolesRequest)
 	if err := dec(in); err != nil {
@@ -1362,6 +1406,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPlatformOrgAccess",
 			Handler:    _UserService_GetPlatformOrgAccess_Handler,
+		},
+		{
+			MethodName: "RemovePlatformOrgAccess",
+			Handler:    _UserService_RemovePlatformOrgAccess_Handler,
 		},
 		{
 			MethodName: "ListUsersByPlatformRoles",

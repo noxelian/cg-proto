@@ -25,6 +25,12 @@ service AuthService {
   // GetSessions returns active sessions for user
   rpc GetSessions(GetSessionsRequest) returns (GetSessionsResponse);
 
+  // DeleteSessionsByUserID invalidates every session for the given user.
+  // Called by cg-users/organization when a member is fired so the fired
+  // user can no longer refresh their token. Returns the number of rows
+  // removed for observability.
+  rpc DeleteSessionsByUserID(DeleteSessionsByUserIDRequest) returns (DeleteSessionsByUserIDResponse);
+
   // SelectOrg issues a new token pair with org context embedded.
   // Requires: authenticated JWT with app="partner".
   // Returns 403 if the caller is not a member of the requested organization.
@@ -111,6 +117,14 @@ message GetSessionsRequest {
 
 message GetSessionsResponse {
   repeated Session sessions = 1;
+}
+
+message DeleteSessionsByUserIDRequest {
+  int64 user_id = 1;
+}
+
+message DeleteSessionsByUserIDResponse {
+  int32 deleted_count = 1;
 }
 
 message User {
