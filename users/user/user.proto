@@ -66,6 +66,12 @@ service UserService {
   rpc CheckPlatformRoles(CheckPlatformRolesRequest) returns (CheckPlatformRolesResponse);
   rpc SetPlatformOrgAccess(SetPlatformOrgAccessRequest) returns (SetPlatformOrgAccessResponse);
   rpc GetPlatformOrgAccess(GetPlatformOrgAccessRequest) returns (GetPlatformOrgAccessResponse);
+  // RemovePlatformOrgAccess deletes a single (user_id, org_id) row from
+  // platform_org_access. Called by cg-users/organization when a member is
+  // fired so the user disappears from the org-scoped CRM dropdown without
+  // affecting their access to other orgs. Idempotent — no error if the row
+  // doesn't exist.
+  rpc RemovePlatformOrgAccess(RemovePlatformOrgAccessRequest) returns (RemovePlatformOrgAccessResponse);
 
   // ListUsersByPlatformRoles returns users that have any of the given platform roles.
   // If roles is empty, returns all users that have at least one platform role.
@@ -381,6 +387,13 @@ message GetPlatformOrgAccessRequest {
 message GetPlatformOrgAccessResponse {
   repeated string org_ids = 1;
 }
+
+message RemovePlatformOrgAccessRequest {
+  int64 user_id = 1;
+  string org_id = 2;
+}
+
+message RemovePlatformOrgAccessResponse {}
 
 // ListUsers (admin)
 message ListUsersRequest {

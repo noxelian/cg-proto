@@ -818,6 +818,94 @@ func (x *GetSessionsResponse) GetSessions() []*Session {
 	return nil
 }
 
+type DeleteSessionsByUserIDRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteSessionsByUserIDRequest) Reset() {
+	*x = DeleteSessionsByUserIDRequest{}
+	mi := &file_users_auth_auth_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteSessionsByUserIDRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteSessionsByUserIDRequest) ProtoMessage() {}
+
+func (x *DeleteSessionsByUserIDRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_auth_auth_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteSessionsByUserIDRequest.ProtoReflect.Descriptor instead.
+func (*DeleteSessionsByUserIDRequest) Descriptor() ([]byte, []int) {
+	return file_users_auth_auth_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *DeleteSessionsByUserIDRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type DeleteSessionsByUserIDResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DeletedCount  int32                  `protobuf:"varint,1,opt,name=deleted_count,json=deletedCount,proto3" json:"deleted_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteSessionsByUserIDResponse) Reset() {
+	*x = DeleteSessionsByUserIDResponse{}
+	mi := &file_users_auth_auth_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteSessionsByUserIDResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteSessionsByUserIDResponse) ProtoMessage() {}
+
+func (x *DeleteSessionsByUserIDResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_auth_auth_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteSessionsByUserIDResponse.ProtoReflect.Descriptor instead.
+func (*DeleteSessionsByUserIDResponse) Descriptor() ([]byte, []int) {
+	return file_users_auth_auth_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *DeleteSessionsByUserIDResponse) GetDeletedCount() int32 {
+	if x != nil {
+		return x.DeletedCount
+	}
+	return 0
+}
+
 type User struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -832,7 +920,7 @@ type User struct {
 
 func (x *User) Reset() {
 	*x = User{}
-	mi := &file_users_auth_auth_proto_msgTypes[14]
+	mi := &file_users_auth_auth_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -844,7 +932,7 @@ func (x *User) String() string {
 func (*User) ProtoMessage() {}
 
 func (x *User) ProtoReflect() protoreflect.Message {
-	mi := &file_users_auth_auth_proto_msgTypes[14]
+	mi := &file_users_auth_auth_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -857,7 +945,7 @@ func (x *User) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use User.ProtoReflect.Descriptor instead.
 func (*User) Descriptor() ([]byte, []int) {
-	return file_users_auth_auth_proto_rawDescGZIP(), []int{14}
+	return file_users_auth_auth_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *User) GetId() int64 {
@@ -916,7 +1004,7 @@ type Session struct {
 
 func (x *Session) Reset() {
 	*x = Session{}
-	mi := &file_users_auth_auth_proto_msgTypes[15]
+	mi := &file_users_auth_auth_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -928,7 +1016,7 @@ func (x *Session) String() string {
 func (*Session) ProtoMessage() {}
 
 func (x *Session) ProtoReflect() protoreflect.Message {
-	mi := &file_users_auth_auth_proto_msgTypes[15]
+	mi := &file_users_auth_auth_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -941,7 +1029,7 @@ func (x *Session) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Session.ProtoReflect.Descriptor instead.
 func (*Session) Descriptor() ([]byte, []int) {
-	return file_users_auth_auth_proto_rawDescGZIP(), []int{15}
+	return file_users_auth_auth_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *Session) GetId() string {
@@ -1045,7 +1133,11 @@ const file_users_auth_auth_proto_rawDesc = "" +
 	"\x12GetSessionsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"I\n" +
 	"\x13GetSessionsResponse\x122\n" +
-	"\bsessions\x18\x01 \x03(\v2\x16.users.auth.v1.SessionR\bsessions\"\xce\x01\n" +
+	"\bsessions\x18\x01 \x03(\v2\x16.users.auth.v1.SessionR\bsessions\"8\n" +
+	"\x1dDeleteSessionsByUserIDRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"E\n" +
+	"\x1eDeleteSessionsByUserIDResponse\x12#\n" +
+	"\rdeleted_count\x18\x01 \x01(\x05R\fdeletedCount\"\xce\x01\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x12\n" +
@@ -1064,7 +1156,7 @@ const file_users_auth_auth_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12<\n" +
 	"\flast_used_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"lastUsedAt2\xcf\x04\n" +
+	"lastUsedAt2\xc6\x05\n" +
 	"\vAuthService\x12K\n" +
 	"\bSendCode\x12\x1e.users.auth.v1.SendCodeRequest\x1a\x1f.users.auth.v1.SendCodeResponse\x12Q\n" +
 	"\n" +
@@ -1072,7 +1164,8 @@ const file_users_auth_auth_proto_rawDesc = "" +
 	"\fRefreshToken\x12\".users.auth.v1.RefreshTokenRequest\x1a#.users.auth.v1.RefreshTokenResponse\x12E\n" +
 	"\x06Logout\x12\x1c.users.auth.v1.LogoutRequest\x1a\x1d.users.auth.v1.LogoutResponse\x12Z\n" +
 	"\rValidateToken\x12#.users.auth.v1.ValidateTokenRequest\x1a$.users.auth.v1.ValidateTokenResponse\x12T\n" +
-	"\vGetSessions\x12!.users.auth.v1.GetSessionsRequest\x1a\".users.auth.v1.GetSessionsResponse\x12N\n" +
+	"\vGetSessions\x12!.users.auth.v1.GetSessionsRequest\x1a\".users.auth.v1.GetSessionsResponse\x12u\n" +
+	"\x16DeleteSessionsByUserID\x12,.users.auth.v1.DeleteSessionsByUserIDRequest\x1a-.users.auth.v1.DeleteSessionsByUserIDResponse\x12N\n" +
 	"\tSelectOrg\x12\x1f.users.auth.v1.SelectOrgRequest\x1a .users.auth.v1.SelectOrgResponseB4Z2github.com/4ubak/cg-proto/gen/go/users/auth;authv1b\x06proto3"
 
 var (
@@ -1087,52 +1180,56 @@ func file_users_auth_auth_proto_rawDescGZIP() []byte {
 	return file_users_auth_auth_proto_rawDescData
 }
 
-var file_users_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_users_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_users_auth_auth_proto_goTypes = []any{
-	(*SendCodeRequest)(nil),       // 0: users.auth.v1.SendCodeRequest
-	(*SendCodeResponse)(nil),      // 1: users.auth.v1.SendCodeResponse
-	(*VerifyCodeRequest)(nil),     // 2: users.auth.v1.VerifyCodeRequest
-	(*VerifyCodeResponse)(nil),    // 3: users.auth.v1.VerifyCodeResponse
-	(*RefreshTokenRequest)(nil),   // 4: users.auth.v1.RefreshTokenRequest
-	(*RefreshTokenResponse)(nil),  // 5: users.auth.v1.RefreshTokenResponse
-	(*LogoutRequest)(nil),         // 6: users.auth.v1.LogoutRequest
-	(*LogoutResponse)(nil),        // 7: users.auth.v1.LogoutResponse
-	(*ValidateTokenRequest)(nil),  // 8: users.auth.v1.ValidateTokenRequest
-	(*ValidateTokenResponse)(nil), // 9: users.auth.v1.ValidateTokenResponse
-	(*SelectOrgRequest)(nil),      // 10: users.auth.v1.SelectOrgRequest
-	(*SelectOrgResponse)(nil),     // 11: users.auth.v1.SelectOrgResponse
-	(*GetSessionsRequest)(nil),    // 12: users.auth.v1.GetSessionsRequest
-	(*GetSessionsResponse)(nil),   // 13: users.auth.v1.GetSessionsResponse
-	(*User)(nil),                  // 14: users.auth.v1.User
-	(*Session)(nil),               // 15: users.auth.v1.Session
-	(*timestamppb.Timestamp)(nil), // 16: google.protobuf.Timestamp
+	(*SendCodeRequest)(nil),                // 0: users.auth.v1.SendCodeRequest
+	(*SendCodeResponse)(nil),               // 1: users.auth.v1.SendCodeResponse
+	(*VerifyCodeRequest)(nil),              // 2: users.auth.v1.VerifyCodeRequest
+	(*VerifyCodeResponse)(nil),             // 3: users.auth.v1.VerifyCodeResponse
+	(*RefreshTokenRequest)(nil),            // 4: users.auth.v1.RefreshTokenRequest
+	(*RefreshTokenResponse)(nil),           // 5: users.auth.v1.RefreshTokenResponse
+	(*LogoutRequest)(nil),                  // 6: users.auth.v1.LogoutRequest
+	(*LogoutResponse)(nil),                 // 7: users.auth.v1.LogoutResponse
+	(*ValidateTokenRequest)(nil),           // 8: users.auth.v1.ValidateTokenRequest
+	(*ValidateTokenResponse)(nil),          // 9: users.auth.v1.ValidateTokenResponse
+	(*SelectOrgRequest)(nil),               // 10: users.auth.v1.SelectOrgRequest
+	(*SelectOrgResponse)(nil),              // 11: users.auth.v1.SelectOrgResponse
+	(*GetSessionsRequest)(nil),             // 12: users.auth.v1.GetSessionsRequest
+	(*GetSessionsResponse)(nil),            // 13: users.auth.v1.GetSessionsResponse
+	(*DeleteSessionsByUserIDRequest)(nil),  // 14: users.auth.v1.DeleteSessionsByUserIDRequest
+	(*DeleteSessionsByUserIDResponse)(nil), // 15: users.auth.v1.DeleteSessionsByUserIDResponse
+	(*User)(nil),                           // 16: users.auth.v1.User
+	(*Session)(nil),                        // 17: users.auth.v1.Session
+	(*timestamppb.Timestamp)(nil),          // 18: google.protobuf.Timestamp
 }
 var file_users_auth_auth_proto_depIdxs = []int32{
-	16, // 0: users.auth.v1.VerifyCodeResponse.expires_at:type_name -> google.protobuf.Timestamp
-	14, // 1: users.auth.v1.VerifyCodeResponse.user:type_name -> users.auth.v1.User
-	16, // 2: users.auth.v1.RefreshTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
-	16, // 3: users.auth.v1.SelectOrgResponse.expires_at:type_name -> google.protobuf.Timestamp
-	15, // 4: users.auth.v1.GetSessionsResponse.sessions:type_name -> users.auth.v1.Session
-	16, // 5: users.auth.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	16, // 6: users.auth.v1.User.updated_at:type_name -> google.protobuf.Timestamp
-	16, // 7: users.auth.v1.Session.created_at:type_name -> google.protobuf.Timestamp
-	16, // 8: users.auth.v1.Session.last_used_at:type_name -> google.protobuf.Timestamp
+	18, // 0: users.auth.v1.VerifyCodeResponse.expires_at:type_name -> google.protobuf.Timestamp
+	16, // 1: users.auth.v1.VerifyCodeResponse.user:type_name -> users.auth.v1.User
+	18, // 2: users.auth.v1.RefreshTokenResponse.expires_at:type_name -> google.protobuf.Timestamp
+	18, // 3: users.auth.v1.SelectOrgResponse.expires_at:type_name -> google.protobuf.Timestamp
+	17, // 4: users.auth.v1.GetSessionsResponse.sessions:type_name -> users.auth.v1.Session
+	18, // 5: users.auth.v1.User.created_at:type_name -> google.protobuf.Timestamp
+	18, // 6: users.auth.v1.User.updated_at:type_name -> google.protobuf.Timestamp
+	18, // 7: users.auth.v1.Session.created_at:type_name -> google.protobuf.Timestamp
+	18, // 8: users.auth.v1.Session.last_used_at:type_name -> google.protobuf.Timestamp
 	0,  // 9: users.auth.v1.AuthService.SendCode:input_type -> users.auth.v1.SendCodeRequest
 	2,  // 10: users.auth.v1.AuthService.VerifyCode:input_type -> users.auth.v1.VerifyCodeRequest
 	4,  // 11: users.auth.v1.AuthService.RefreshToken:input_type -> users.auth.v1.RefreshTokenRequest
 	6,  // 12: users.auth.v1.AuthService.Logout:input_type -> users.auth.v1.LogoutRequest
 	8,  // 13: users.auth.v1.AuthService.ValidateToken:input_type -> users.auth.v1.ValidateTokenRequest
 	12, // 14: users.auth.v1.AuthService.GetSessions:input_type -> users.auth.v1.GetSessionsRequest
-	10, // 15: users.auth.v1.AuthService.SelectOrg:input_type -> users.auth.v1.SelectOrgRequest
-	1,  // 16: users.auth.v1.AuthService.SendCode:output_type -> users.auth.v1.SendCodeResponse
-	3,  // 17: users.auth.v1.AuthService.VerifyCode:output_type -> users.auth.v1.VerifyCodeResponse
-	5,  // 18: users.auth.v1.AuthService.RefreshToken:output_type -> users.auth.v1.RefreshTokenResponse
-	7,  // 19: users.auth.v1.AuthService.Logout:output_type -> users.auth.v1.LogoutResponse
-	9,  // 20: users.auth.v1.AuthService.ValidateToken:output_type -> users.auth.v1.ValidateTokenResponse
-	13, // 21: users.auth.v1.AuthService.GetSessions:output_type -> users.auth.v1.GetSessionsResponse
-	11, // 22: users.auth.v1.AuthService.SelectOrg:output_type -> users.auth.v1.SelectOrgResponse
-	16, // [16:23] is the sub-list for method output_type
-	9,  // [9:16] is the sub-list for method input_type
+	14, // 15: users.auth.v1.AuthService.DeleteSessionsByUserID:input_type -> users.auth.v1.DeleteSessionsByUserIDRequest
+	10, // 16: users.auth.v1.AuthService.SelectOrg:input_type -> users.auth.v1.SelectOrgRequest
+	1,  // 17: users.auth.v1.AuthService.SendCode:output_type -> users.auth.v1.SendCodeResponse
+	3,  // 18: users.auth.v1.AuthService.VerifyCode:output_type -> users.auth.v1.VerifyCodeResponse
+	5,  // 19: users.auth.v1.AuthService.RefreshToken:output_type -> users.auth.v1.RefreshTokenResponse
+	7,  // 20: users.auth.v1.AuthService.Logout:output_type -> users.auth.v1.LogoutResponse
+	9,  // 21: users.auth.v1.AuthService.ValidateToken:output_type -> users.auth.v1.ValidateTokenResponse
+	13, // 22: users.auth.v1.AuthService.GetSessions:output_type -> users.auth.v1.GetSessionsResponse
+	15, // 23: users.auth.v1.AuthService.DeleteSessionsByUserID:output_type -> users.auth.v1.DeleteSessionsByUserIDResponse
+	11, // 24: users.auth.v1.AuthService.SelectOrg:output_type -> users.auth.v1.SelectOrgResponse
+	17, // [17:25] is the sub-list for method output_type
+	9,  // [9:17] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name
 	9,  // [9:9] is the sub-list for extension extendee
 	0,  // [0:9] is the sub-list for field type_name
@@ -1149,7 +1246,7 @@ func file_users_auth_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_users_auth_auth_proto_rawDesc), len(file_users_auth_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
