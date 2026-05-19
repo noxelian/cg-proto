@@ -24,6 +24,7 @@ const (
 	WorkshopService_UpdateWorkshop_FullMethodName                 = "/workshop.v1.WorkshopService/UpdateWorkshop"
 	WorkshopService_ListWorkshops_FullMethodName                  = "/workshop.v1.WorkshopService/ListWorkshops"
 	WorkshopService_ListWorkshopOrgIDs_FullMethodName             = "/workshop.v1.WorkshopService/ListWorkshopOrgIDs"
+	WorkshopService_GetWorkshopByLegacyName_FullMethodName        = "/workshop.v1.WorkshopService/GetWorkshopByLegacyName"
 	WorkshopService_CreateRepairOrder_FullMethodName              = "/workshop.v1.WorkshopService/CreateRepairOrder"
 	WorkshopService_GetRepairOrder_FullMethodName                 = "/workshop.v1.WorkshopService/GetRepairOrder"
 	WorkshopService_UpdateRepairOrder_FullMethodName              = "/workshop.v1.WorkshopService/UpdateRepairOrder"
@@ -110,6 +111,10 @@ type WorkshopServiceClient interface {
 	UpdateWorkshop(ctx context.Context, in *UpdateWorkshopRequest, opts ...grpc.CallOption) (*UpdateWorkshopResponse, error)
 	ListWorkshops(ctx context.Context, in *ListWorkshopsRequest, opts ...grpc.CallOption) (*ListWorkshopsResponse, error)
 	ListWorkshopOrgIDs(ctx context.Context, in *ListWorkshopOrgIDsRequest, opts ...grpc.CallOption) (*ListWorkshopOrgIDsResponse, error)
+	// GetWorkshopByLegacyName resolves a legacy workshop name (carried by
+	// new_order's webhook payload, e.g. "Autobody Almaty") to a workshop id.
+	// Returns NOT_FOUND when the name is not mapped.
+	GetWorkshopByLegacyName(ctx context.Context, in *GetWorkshopByLegacyNameRequest, opts ...grpc.CallOption) (*GetWorkshopByLegacyNameResponse, error)
 	// --- Repair Order ---
 	CreateRepairOrder(ctx context.Context, in *CreateRepairOrderRequest, opts ...grpc.CallOption) (*CreateRepairOrderResponse, error)
 	GetRepairOrder(ctx context.Context, in *GetRepairOrderRequest, opts ...grpc.CallOption) (*GetRepairOrderResponse, error)
@@ -259,6 +264,16 @@ func (c *workshopServiceClient) ListWorkshopOrgIDs(ctx context.Context, in *List
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListWorkshopOrgIDsResponse)
 	err := c.cc.Invoke(ctx, WorkshopService_ListWorkshopOrgIDs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) GetWorkshopByLegacyName(ctx context.Context, in *GetWorkshopByLegacyNameRequest, opts ...grpc.CallOption) (*GetWorkshopByLegacyNameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWorkshopByLegacyNameResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_GetWorkshopByLegacyName_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1015,6 +1030,10 @@ type WorkshopServiceServer interface {
 	UpdateWorkshop(context.Context, *UpdateWorkshopRequest) (*UpdateWorkshopResponse, error)
 	ListWorkshops(context.Context, *ListWorkshopsRequest) (*ListWorkshopsResponse, error)
 	ListWorkshopOrgIDs(context.Context, *ListWorkshopOrgIDsRequest) (*ListWorkshopOrgIDsResponse, error)
+	// GetWorkshopByLegacyName resolves a legacy workshop name (carried by
+	// new_order's webhook payload, e.g. "Autobody Almaty") to a workshop id.
+	// Returns NOT_FOUND when the name is not mapped.
+	GetWorkshopByLegacyName(context.Context, *GetWorkshopByLegacyNameRequest) (*GetWorkshopByLegacyNameResponse, error)
 	// --- Repair Order ---
 	CreateRepairOrder(context.Context, *CreateRepairOrderRequest) (*CreateRepairOrderResponse, error)
 	GetRepairOrder(context.Context, *GetRepairOrderRequest) (*GetRepairOrderResponse, error)
@@ -1134,6 +1153,9 @@ func (UnimplementedWorkshopServiceServer) ListWorkshops(context.Context, *ListWo
 }
 func (UnimplementedWorkshopServiceServer) ListWorkshopOrgIDs(context.Context, *ListWorkshopOrgIDsRequest) (*ListWorkshopOrgIDsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListWorkshopOrgIDs not implemented")
+}
+func (UnimplementedWorkshopServiceServer) GetWorkshopByLegacyName(context.Context, *GetWorkshopByLegacyNameRequest) (*GetWorkshopByLegacyNameResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetWorkshopByLegacyName not implemented")
 }
 func (UnimplementedWorkshopServiceServer) CreateRepairOrder(context.Context, *CreateRepairOrderRequest) (*CreateRepairOrderResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateRepairOrder not implemented")
@@ -1464,6 +1486,24 @@ func _WorkshopService_ListWorkshopOrgIDs_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WorkshopServiceServer).ListWorkshopOrgIDs(ctx, req.(*ListWorkshopOrgIDsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_GetWorkshopByLegacyName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWorkshopByLegacyNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).GetWorkshopByLegacyName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_GetWorkshopByLegacyName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).GetWorkshopByLegacyName(ctx, req.(*GetWorkshopByLegacyNameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2826,6 +2866,10 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListWorkshopOrgIDs",
 			Handler:    _WorkshopService_ListWorkshopOrgIDs_Handler,
+		},
+		{
+			MethodName: "GetWorkshopByLegacyName",
+			Handler:    _WorkshopService_GetWorkshopByLegacyName_Handler,
 		},
 		{
 			MethodName: "CreateRepairOrder",

@@ -17,6 +17,10 @@ service WorkshopService {
   rpc UpdateWorkshop(UpdateWorkshopRequest) returns (UpdateWorkshopResponse);
   rpc ListWorkshops(ListWorkshopsRequest) returns (ListWorkshopsResponse);
   rpc ListWorkshopOrgIDs(ListWorkshopOrgIDsRequest) returns (ListWorkshopOrgIDsResponse);
+  // GetWorkshopByLegacyName resolves a legacy workshop name (carried by
+  // new_order's webhook payload, e.g. "Autobody Almaty") to a workshop id.
+  // Returns NOT_FOUND when the name is not mapped.
+  rpc GetWorkshopByLegacyName(GetWorkshopByLegacyNameRequest) returns (GetWorkshopByLegacyNameResponse);
 
   // --- Repair Order ---
   rpc CreateRepairOrder(CreateRepairOrderRequest) returns (CreateRepairOrderResponse);
@@ -240,6 +244,9 @@ message Workshop {
   google.protobuf.Timestamp created_at = 7;
   google.protobuf.Timestamp updated_at = 8;
   int32 default_markup_pct = 9;
+  // Legacy free-form name used by upstream systems (e.g. new_order webhook).
+  // Empty when not mapped to any legacy system.
+  optional string legacy_name = 10;
 }
 
 message RepairOrder {
@@ -580,6 +587,14 @@ message UpdateWorkshopRequest {
   optional string address = 3;
   optional int64 city_id = 4;
   optional bool is_active = 5;
+}
+
+message GetWorkshopByLegacyNameRequest {
+  string legacy_name = 1;
+}
+
+message GetWorkshopByLegacyNameResponse {
+  Workshop workshop = 1;
 }
 
 message UpdateWorkshopResponse {
