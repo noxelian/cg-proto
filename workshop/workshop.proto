@@ -658,6 +658,13 @@ message CreateRepairOrderRequest {
   optional string external_ref = 20;
   // Materials budget cap (legacy CarInRepair.materials_budget). 0 = unset.
   int64 materials_budget = 21;
+  // External id from the originating system (e.g. new_order.order_work.id).
+  // Pairs with `source` for cg-workshop's idempotency dedup on
+  // (workshop_id, source, external_id).
+  optional int64 external_id = 22;
+  // CRM deal id (cg-crm) when this order was spawned from a CRM lead.
+  // Independent from `source`/`external_id` — both may be present.
+  optional string crm_deal_id = 23;
 }
 
 message CreateRepairOrderResponse {

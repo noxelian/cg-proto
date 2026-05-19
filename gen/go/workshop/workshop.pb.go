@@ -4052,8 +4052,15 @@ type CreateRepairOrderRequest struct {
 	ExternalRef *string `protobuf:"bytes,20,opt,name=external_ref,json=externalRef,proto3,oneof" json:"external_ref,omitempty"`
 	// Materials budget cap (legacy CarInRepair.materials_budget). 0 = unset.
 	MaterialsBudget int64 `protobuf:"varint,21,opt,name=materials_budget,json=materialsBudget,proto3" json:"materials_budget,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// External id from the originating system (e.g. new_order.order_work.id).
+	// Pairs with `source` for cg-workshop's idempotency dedup on
+	// (workshop_id, source, external_id).
+	ExternalId *int64 `protobuf:"varint,22,opt,name=external_id,json=externalId,proto3,oneof" json:"external_id,omitempty"`
+	// CRM deal id (cg-crm) when this order was spawned from a CRM lead.
+	// Independent from `source`/`external_id` — both may be present.
+	CrmDealId     *string `protobuf:"bytes,23,opt,name=crm_deal_id,json=crmDealId,proto3,oneof" json:"crm_deal_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateRepairOrderRequest) Reset() {
@@ -4233,6 +4240,20 @@ func (x *CreateRepairOrderRequest) GetMaterialsBudget() int64 {
 		return x.MaterialsBudget
 	}
 	return 0
+}
+
+func (x *CreateRepairOrderRequest) GetExternalId() int64 {
+	if x != nil && x.ExternalId != nil {
+		return *x.ExternalId
+	}
+	return 0
+}
+
+func (x *CreateRepairOrderRequest) GetCrmDealId() string {
+	if x != nil && x.CrmDealId != nil {
+		return *x.CrmDealId
+	}
+	return ""
 }
 
 type CreateRepairOrderResponse struct {
@@ -13022,7 +13043,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\vactive_only\x18\x01 \x01(\bR\n" +
 	"activeOnly\"5\n" +
 	"\x1aListWorkshopOrgIDsResponse\x12\x17\n" +
-	"\aorg_ids\x18\x01 \x03(\tR\x06orgIds\"\xa1\x06\n" +
+	"\aorg_ids\x18\x01 \x03(\tR\x06orgIds\"\x8c\a\n" +
 	"\x18CreateRepairOrderRequest\x12\x1f\n" +
 	"\vworkshop_id\x18\x01 \x01(\x03R\n" +
 	"workshopId\x12#\n" +
@@ -13048,10 +13069,15 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\bmodel_id\x18\x12 \x01(\x05R\amodelId\x12\x1b\n" +
 	"\x06source\x18\x13 \x01(\tH\x01R\x06source\x88\x01\x01\x12&\n" +
 	"\fexternal_ref\x18\x14 \x01(\tH\x02R\vexternalRef\x88\x01\x01\x12)\n" +
-	"\x10materials_budget\x18\x15 \x01(\x03R\x0fmaterialsBudgetB\x12\n" +
+	"\x10materials_budget\x18\x15 \x01(\x03R\x0fmaterialsBudget\x12$\n" +
+	"\vexternal_id\x18\x16 \x01(\x03H\x03R\n" +
+	"externalId\x88\x01\x01\x12#\n" +
+	"\vcrm_deal_id\x18\x17 \x01(\tH\x04R\tcrmDealId\x88\x01\x01B\x12\n" +
 	"\x10_parent_order_idB\t\n" +
 	"\a_sourceB\x0f\n" +
-	"\r_external_ref\"K\n" +
+	"\r_external_refB\x0e\n" +
+	"\f_external_idB\x0e\n" +
+	"\f_crm_deal_id\"K\n" +
 	"\x19CreateRepairOrderResponse\x12.\n" +
 	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order\"2\n" +
 	"\x15GetRepairOrderRequest\x12\x19\n" +
