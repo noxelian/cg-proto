@@ -327,6 +327,13 @@ message AddMemberRequest {
 
 message AddMemberResponse {
   Member member = 1;
+  // was_rehired is true when AddMember reactivated a previously FIRED row
+  // instead of creating a new one. Frontends use this to switch the success
+  // toast from "Участник добавлен" to "Принят обратно: {name}".
+  bool was_rehired = 2;
+  // previous_fired_at is the prior fire timestamp, set only when
+  // was_rehired = true. Useful for the UI to show "уволен N дней назад".
+  google.protobuf.Timestamp previous_fired_at = 3;
 }
 
 message FireMemberRequest {

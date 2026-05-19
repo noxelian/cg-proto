@@ -1804,10 +1804,17 @@ func (x *AddMemberRequest) GetPermissions() []string {
 }
 
 type AddMemberResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Member        *Member                `protobuf:"bytes,1,opt,name=member,proto3" json:"member,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	Member *Member                `protobuf:"bytes,1,opt,name=member,proto3" json:"member,omitempty"`
+	// was_rehired is true when AddMember reactivated a previously FIRED row
+	// instead of creating a new one. Frontends use this to switch the success
+	// toast from "Участник добавлен" to "Принят обратно: {name}".
+	WasRehired bool `protobuf:"varint,2,opt,name=was_rehired,json=wasRehired,proto3" json:"was_rehired,omitempty"`
+	// previous_fired_at is the prior fire timestamp, set only when
+	// was_rehired = true. Useful for the UI to show "уволен N дней назад".
+	PreviousFiredAt *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=previous_fired_at,json=previousFiredAt,proto3" json:"previous_fired_at,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *AddMemberResponse) Reset() {
@@ -1843,6 +1850,20 @@ func (*AddMemberResponse) Descriptor() ([]byte, []int) {
 func (x *AddMemberResponse) GetMember() *Member {
 	if x != nil {
 		return x.Member
+	}
+	return nil
+}
+
+func (x *AddMemberResponse) GetWasRehired() bool {
+	if x != nil {
+		return x.WasRehired
+	}
+	return false
+}
+
+func (x *AddMemberResponse) GetPreviousFiredAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.PreviousFiredAt
 	}
 	return nil
 }
@@ -6680,9 +6701,12 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
 	"\trole_code\x18\x03 \x01(\tR\broleCode\x12 \n" +
-	"\vpermissions\x18\x04 \x03(\tR\vpermissions\"J\n" +
+	"\vpermissions\x18\x04 \x03(\tR\vpermissions\"\xb3\x01\n" +
 	"\x11AddMemberResponse\x125\n" +
-	"\x06member\x18\x01 \x01(\v2\x1d.users.organization.v1.MemberR\x06member\"H\n" +
+	"\x06member\x18\x01 \x01(\v2\x1d.users.organization.v1.MemberR\x06member\x12\x1f\n" +
+	"\vwas_rehired\x18\x02 \x01(\bR\n" +
+	"wasRehired\x12F\n" +
+	"\x11previous_fired_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x0fpreviousFiredAt\"H\n" +
 	"\x11FireMemberRequest\x12\x1b\n" +
 	"\tmember_id\x18\x01 \x01(\tR\bmemberId\x12\x16\n" +
 	"\x06reason\x18\x02 \x01(\tR\x06reason\".\n" +
@@ -7243,151 +7267,152 @@ var file_users_organization_organization_proto_depIdxs = []int32{
 	19,  // 15: users.organization.v1.GetMyOrganizationsResponse.memberships:type_name -> users.organization.v1.OrganizationMembership
 	3,   // 16: users.organization.v1.OrganizationMembership.organization:type_name -> users.organization.v1.Organization
 	6,   // 17: users.organization.v1.AddMemberResponse.member:type_name -> users.organization.v1.Member
-	6,   // 18: users.organization.v1.UpdateMemberRoleResponse.member:type_name -> users.organization.v1.Member
-	1,   // 19: users.organization.v1.GetMembersRequest.status:type_name -> users.organization.v1.MemberStatus
-	6,   // 20: users.organization.v1.GetMembersResponse.members:type_name -> users.organization.v1.Member
-	6,   // 21: users.organization.v1.GetMemberResponse.member:type_name -> users.organization.v1.Member
-	8,   // 22: users.organization.v1.CreateInviteCodeResponse.invite_code:type_name -> users.organization.v1.InviteCode
-	6,   // 23: users.organization.v1.UseInviteCodeResponse.member:type_name -> users.organization.v1.Member
-	3,   // 24: users.organization.v1.UseInviteCodeResponse.organization:type_name -> users.organization.v1.Organization
-	8,   // 25: users.organization.v1.GetInviteCodesResponse.invite_codes:type_name -> users.organization.v1.InviteCode
-	0,   // 26: users.organization.v1.GetRolesRequest.organization_type:type_name -> users.organization.v1.OrganizationType
-	7,   // 27: users.organization.v1.GetRolesResponse.roles:type_name -> users.organization.v1.Role
-	0,   // 28: users.organization.v1.UpsertByLegacyIDRequest.type:type_name -> users.organization.v1.OrganizationType
-	3,   // 29: users.organization.v1.UpsertByLegacyIDResponse.organization:type_name -> users.organization.v1.Organization
-	48,  // 30: users.organization.v1.SetOrganizationMarketplaceFieldsRequest.expert_for_carmake_ids:type_name -> users.organization.v1.Int64List
-	48,  // 31: users.organization.v1.SetOrganizationMarketplaceFieldsRequest.expert_for_category_ids:type_name -> users.organization.v1.Int64List
-	3,   // 32: users.organization.v1.SetOrganizationMarketplaceFieldsResponse.organization:type_name -> users.organization.v1.Organization
-	105, // 33: users.organization.v1.STOProfile.created_at:type_name -> google.protobuf.Timestamp
-	105, // 34: users.organization.v1.STOProfile.updated_at:type_name -> google.protobuf.Timestamp
-	105, // 35: users.organization.v1.CarWashProfile.created_at:type_name -> google.protobuf.Timestamp
-	105, // 36: users.organization.v1.CarWashProfile.updated_at:type_name -> google.protobuf.Timestamp
-	105, // 37: users.organization.v1.PartsProfile.created_at:type_name -> google.protobuf.Timestamp
-	105, // 38: users.organization.v1.PartsProfile.updated_at:type_name -> google.protobuf.Timestamp
-	51,  // 39: users.organization.v1.GetOrgProfileResponse.sto_profile:type_name -> users.organization.v1.STOProfile
-	52,  // 40: users.organization.v1.GetOrgProfileResponse.carwash_profile:type_name -> users.organization.v1.CarWashProfile
-	53,  // 41: users.organization.v1.GetOrgProfileResponse.parts_profile:type_name -> users.organization.v1.PartsProfile
-	51,  // 42: users.organization.v1.UpdateOrgProfileRequest.sto_profile:type_name -> users.organization.v1.STOProfile
-	52,  // 43: users.organization.v1.UpdateOrgProfileRequest.carwash_profile:type_name -> users.organization.v1.CarWashProfile
-	53,  // 44: users.organization.v1.UpdateOrgProfileRequest.parts_profile:type_name -> users.organization.v1.PartsProfile
-	51,  // 45: users.organization.v1.UpdateOrgProfileResponse.sto_profile:type_name -> users.organization.v1.STOProfile
-	52,  // 46: users.organization.v1.UpdateOrgProfileResponse.carwash_profile:type_name -> users.organization.v1.CarWashProfile
-	53,  // 47: users.organization.v1.UpdateOrgProfileResponse.parts_profile:type_name -> users.organization.v1.PartsProfile
-	0,   // 48: users.organization.v1.GetOrgSubscriptionInfoResponse.org_type:type_name -> users.organization.v1.OrganizationType
-	2,   // 49: users.organization.v1.SetPlatformRoleRequest.role:type_name -> users.organization.v1.PlatformRole
-	2,   // 50: users.organization.v1.GetPlatformRoleResponse.role:type_name -> users.organization.v1.PlatformRole
-	2,   // 51: users.organization.v1.CheckPlatformRoleResponse.role:type_name -> users.organization.v1.PlatformRole
-	7,   // 52: users.organization.v1.CreateRoleResponse.role:type_name -> users.organization.v1.Role
-	7,   // 53: users.organization.v1.UpdateRoleInfoResponse.role:type_name -> users.organization.v1.Role
-	105, // 54: users.organization.v1.PermissionOverride.created_at:type_name -> google.protobuf.Timestamp
-	78,  // 55: users.organization.v1.GetMemberPermissionOverridesResponse.overrides:type_name -> users.organization.v1.PermissionOverride
-	0,   // 56: users.organization.v1.UserOrgEntry.type:type_name -> users.organization.v1.OrganizationType
-	86,  // 57: users.organization.v1.ListUserOrganizationsResponse.organizations:type_name -> users.organization.v1.UserOrgEntry
-	3,   // 58: users.organization.v1.CreateDraftOrganizationResponse.organization:type_name -> users.organization.v1.Organization
-	106, // 59: users.organization.v1.UpdateOrganizationInfoRequest.bin:type_name -> google.protobuf.StringValue
-	106, // 60: users.organization.v1.UpdateOrganizationInfoRequest.legal_address:type_name -> google.protobuf.StringValue
-	106, // 61: users.organization.v1.UpdateOrganizationInfoRequest.contact_phone:type_name -> google.protobuf.StringValue
-	106, // 62: users.organization.v1.UpdateOrganizationInfoRequest.contact_email:type_name -> google.protobuf.StringValue
-	3,   // 63: users.organization.v1.UpdateOrganizationInfoResponse.organization:type_name -> users.organization.v1.Organization
-	105, // 64: users.organization.v1.OrganizationDocument.uploaded_at:type_name -> google.protobuf.Timestamp
-	105, // 65: users.organization.v1.OrganizationDocument.reviewed_at:type_name -> google.protobuf.Timestamp
-	94,  // 66: users.organization.v1.UploadDocumentResponse.document:type_name -> users.organization.v1.OrganizationDocument
-	94,  // 67: users.organization.v1.ListDocumentsResponse.documents:type_name -> users.organization.v1.OrganizationDocument
-	94,  // 68: users.organization.v1.GetDocumentResponse.document:type_name -> users.organization.v1.OrganizationDocument
-	94,  // 69: users.organization.v1.ReviewDocumentResponse.document:type_name -> users.organization.v1.OrganizationDocument
-	9,   // 70: users.organization.v1.OrganizationService.CreateOrganization:input_type -> users.organization.v1.CreateOrganizationRequest
-	11,  // 71: users.organization.v1.OrganizationService.GetOrganization:input_type -> users.organization.v1.GetOrganizationRequest
-	13,  // 72: users.organization.v1.OrganizationService.UpdateOrganization:input_type -> users.organization.v1.UpdateOrganizationRequest
-	15,  // 73: users.organization.v1.OrganizationService.DeleteOrganization:input_type -> users.organization.v1.DeleteOrganizationRequest
-	17,  // 74: users.organization.v1.OrganizationService.GetMyOrganizations:input_type -> users.organization.v1.GetMyOrganizationsRequest
-	42,  // 75: users.organization.v1.OrganizationService.UpsertByLegacyID:input_type -> users.organization.v1.UpsertByLegacyIDRequest
-	44,  // 76: users.organization.v1.OrganizationService.SetCategories:input_type -> users.organization.v1.SetCategoriesRequest
-	46,  // 77: users.organization.v1.OrganizationService.GetCategories:input_type -> users.organization.v1.GetCategoriesRequest
-	20,  // 78: users.organization.v1.OrganizationService.AddMember:input_type -> users.organization.v1.AddMemberRequest
-	22,  // 79: users.organization.v1.OrganizationService.FireMember:input_type -> users.organization.v1.FireMemberRequest
-	24,  // 80: users.organization.v1.OrganizationService.UpdateMemberRole:input_type -> users.organization.v1.UpdateMemberRoleRequest
-	26,  // 81: users.organization.v1.OrganizationService.GetMembers:input_type -> users.organization.v1.GetMembersRequest
-	28,  // 82: users.organization.v1.OrganizationService.GetMember:input_type -> users.organization.v1.GetMemberRequest
-	30,  // 83: users.organization.v1.OrganizationService.CreateInviteCode:input_type -> users.organization.v1.CreateInviteCodeRequest
-	32,  // 84: users.organization.v1.OrganizationService.UseInviteCode:input_type -> users.organization.v1.UseInviteCodeRequest
-	34,  // 85: users.organization.v1.OrganizationService.GetInviteCodes:input_type -> users.organization.v1.GetInviteCodesRequest
-	36,  // 86: users.organization.v1.OrganizationService.DeactivateInviteCode:input_type -> users.organization.v1.DeactivateInviteCodeRequest
-	38,  // 87: users.organization.v1.OrganizationService.CheckPermission:input_type -> users.organization.v1.CheckPermissionRequest
-	40,  // 88: users.organization.v1.OrganizationService.GetRoles:input_type -> users.organization.v1.GetRolesRequest
-	70,  // 89: users.organization.v1.OrganizationService.CreateRole:input_type -> users.organization.v1.CreateRoleRequest
-	72,  // 90: users.organization.v1.OrganizationService.UpdateRoleInfo:input_type -> users.organization.v1.UpdateRoleInfoRequest
-	74,  // 91: users.organization.v1.OrganizationService.DeleteRole:input_type -> users.organization.v1.DeleteRoleRequest
-	76,  // 92: users.organization.v1.OrganizationService.SetRolePermissions:input_type -> users.organization.v1.SetRolePermissionsRequest
-	79,  // 93: users.organization.v1.OrganizationService.SetMemberPermissionOverride:input_type -> users.organization.v1.SetMemberPermissionOverrideRequest
-	81,  // 94: users.organization.v1.OrganizationService.RemoveMemberPermissionOverride:input_type -> users.organization.v1.RemoveMemberPermissionOverrideRequest
-	83,  // 95: users.organization.v1.OrganizationService.GetMemberPermissionOverrides:input_type -> users.organization.v1.GetMemberPermissionOverridesRequest
-	54,  // 96: users.organization.v1.OrganizationService.GetOrgProfile:input_type -> users.organization.v1.GetOrgProfileRequest
-	56,  // 97: users.organization.v1.OrganizationService.UpdateOrgProfile:input_type -> users.organization.v1.UpdateOrgProfileRequest
-	58,  // 98: users.organization.v1.OrganizationService.GetOrganizationSubscriptionInfo:input_type -> users.organization.v1.GetOrgSubscriptionInfoRequest
-	85,  // 99: users.organization.v1.OrganizationService.ListUserOrganizations:input_type -> users.organization.v1.ListUserOrganizationsRequest
-	88,  // 100: users.organization.v1.OrganizationService.CreateDraftOrganization:input_type -> users.organization.v1.CreateDraftOrganizationRequest
-	90,  // 101: users.organization.v1.OrganizationService.UpdateOrganizationInfo:input_type -> users.organization.v1.UpdateOrganizationInfoRequest
-	92,  // 102: users.organization.v1.OrganizationService.RequestActivation:input_type -> users.organization.v1.RequestActivationRequest
-	49,  // 103: users.organization.v1.OrganizationService.SetOrganizationMarketplaceFields:input_type -> users.organization.v1.SetOrganizationMarketplaceFieldsRequest
-	60,  // 104: users.organization.v1.OrganizationService.SetPlatformRole:input_type -> users.organization.v1.SetPlatformRoleRequest
-	62,  // 105: users.organization.v1.OrganizationService.GetPlatformRole:input_type -> users.organization.v1.GetPlatformRoleRequest
-	64,  // 106: users.organization.v1.OrganizationService.SetPlatformOrgAccess:input_type -> users.organization.v1.SetPlatformOrgAccessRequest
-	66,  // 107: users.organization.v1.OrganizationService.GetPlatformOrgAccess:input_type -> users.organization.v1.GetPlatformOrgAccessRequest
-	68,  // 108: users.organization.v1.OrganizationService.CheckPlatformRole:input_type -> users.organization.v1.CheckPlatformRoleRequest
-	95,  // 109: users.organization.v1.OrganizationDocumentService.UploadDocument:input_type -> users.organization.v1.UploadDocumentRequest
-	97,  // 110: users.organization.v1.OrganizationDocumentService.ListDocuments:input_type -> users.organization.v1.ListDocumentsRequest
-	99,  // 111: users.organization.v1.OrganizationDocumentService.GetDocument:input_type -> users.organization.v1.GetDocumentRequest
-	101, // 112: users.organization.v1.OrganizationDocumentService.DeleteDocument:input_type -> users.organization.v1.DeleteDocumentRequest
-	103, // 113: users.organization.v1.OrganizationDocumentService.ReviewDocument:input_type -> users.organization.v1.ReviewDocumentRequest
-	10,  // 114: users.organization.v1.OrganizationService.CreateOrganization:output_type -> users.organization.v1.CreateOrganizationResponse
-	12,  // 115: users.organization.v1.OrganizationService.GetOrganization:output_type -> users.organization.v1.GetOrganizationResponse
-	14,  // 116: users.organization.v1.OrganizationService.UpdateOrganization:output_type -> users.organization.v1.UpdateOrganizationResponse
-	16,  // 117: users.organization.v1.OrganizationService.DeleteOrganization:output_type -> users.organization.v1.DeleteOrganizationResponse
-	18,  // 118: users.organization.v1.OrganizationService.GetMyOrganizations:output_type -> users.organization.v1.GetMyOrganizationsResponse
-	43,  // 119: users.organization.v1.OrganizationService.UpsertByLegacyID:output_type -> users.organization.v1.UpsertByLegacyIDResponse
-	45,  // 120: users.organization.v1.OrganizationService.SetCategories:output_type -> users.organization.v1.SetCategoriesResponse
-	47,  // 121: users.organization.v1.OrganizationService.GetCategories:output_type -> users.organization.v1.GetCategoriesResponse
-	21,  // 122: users.organization.v1.OrganizationService.AddMember:output_type -> users.organization.v1.AddMemberResponse
-	23,  // 123: users.organization.v1.OrganizationService.FireMember:output_type -> users.organization.v1.FireMemberResponse
-	25,  // 124: users.organization.v1.OrganizationService.UpdateMemberRole:output_type -> users.organization.v1.UpdateMemberRoleResponse
-	27,  // 125: users.organization.v1.OrganizationService.GetMembers:output_type -> users.organization.v1.GetMembersResponse
-	29,  // 126: users.organization.v1.OrganizationService.GetMember:output_type -> users.organization.v1.GetMemberResponse
-	31,  // 127: users.organization.v1.OrganizationService.CreateInviteCode:output_type -> users.organization.v1.CreateInviteCodeResponse
-	33,  // 128: users.organization.v1.OrganizationService.UseInviteCode:output_type -> users.organization.v1.UseInviteCodeResponse
-	35,  // 129: users.organization.v1.OrganizationService.GetInviteCodes:output_type -> users.organization.v1.GetInviteCodesResponse
-	37,  // 130: users.organization.v1.OrganizationService.DeactivateInviteCode:output_type -> users.organization.v1.DeactivateInviteCodeResponse
-	39,  // 131: users.organization.v1.OrganizationService.CheckPermission:output_type -> users.organization.v1.CheckPermissionResponse
-	41,  // 132: users.organization.v1.OrganizationService.GetRoles:output_type -> users.organization.v1.GetRolesResponse
-	71,  // 133: users.organization.v1.OrganizationService.CreateRole:output_type -> users.organization.v1.CreateRoleResponse
-	73,  // 134: users.organization.v1.OrganizationService.UpdateRoleInfo:output_type -> users.organization.v1.UpdateRoleInfoResponse
-	75,  // 135: users.organization.v1.OrganizationService.DeleteRole:output_type -> users.organization.v1.DeleteRoleResponse
-	77,  // 136: users.organization.v1.OrganizationService.SetRolePermissions:output_type -> users.organization.v1.SetRolePermissionsResponse
-	80,  // 137: users.organization.v1.OrganizationService.SetMemberPermissionOverride:output_type -> users.organization.v1.SetMemberPermissionOverrideResponse
-	82,  // 138: users.organization.v1.OrganizationService.RemoveMemberPermissionOverride:output_type -> users.organization.v1.RemoveMemberPermissionOverrideResponse
-	84,  // 139: users.organization.v1.OrganizationService.GetMemberPermissionOverrides:output_type -> users.organization.v1.GetMemberPermissionOverridesResponse
-	55,  // 140: users.organization.v1.OrganizationService.GetOrgProfile:output_type -> users.organization.v1.GetOrgProfileResponse
-	57,  // 141: users.organization.v1.OrganizationService.UpdateOrgProfile:output_type -> users.organization.v1.UpdateOrgProfileResponse
-	59,  // 142: users.organization.v1.OrganizationService.GetOrganizationSubscriptionInfo:output_type -> users.organization.v1.GetOrgSubscriptionInfoResponse
-	87,  // 143: users.organization.v1.OrganizationService.ListUserOrganizations:output_type -> users.organization.v1.ListUserOrganizationsResponse
-	89,  // 144: users.organization.v1.OrganizationService.CreateDraftOrganization:output_type -> users.organization.v1.CreateDraftOrganizationResponse
-	91,  // 145: users.organization.v1.OrganizationService.UpdateOrganizationInfo:output_type -> users.organization.v1.UpdateOrganizationInfoResponse
-	93,  // 146: users.organization.v1.OrganizationService.RequestActivation:output_type -> users.organization.v1.RequestActivationResponse
-	50,  // 147: users.organization.v1.OrganizationService.SetOrganizationMarketplaceFields:output_type -> users.organization.v1.SetOrganizationMarketplaceFieldsResponse
-	61,  // 148: users.organization.v1.OrganizationService.SetPlatformRole:output_type -> users.organization.v1.SetPlatformRoleResponse
-	63,  // 149: users.organization.v1.OrganizationService.GetPlatformRole:output_type -> users.organization.v1.GetPlatformRoleResponse
-	65,  // 150: users.organization.v1.OrganizationService.SetPlatformOrgAccess:output_type -> users.organization.v1.SetPlatformOrgAccessResponse
-	67,  // 151: users.organization.v1.OrganizationService.GetPlatformOrgAccess:output_type -> users.organization.v1.GetPlatformOrgAccessResponse
-	69,  // 152: users.organization.v1.OrganizationService.CheckPlatformRole:output_type -> users.organization.v1.CheckPlatformRoleResponse
-	96,  // 153: users.organization.v1.OrganizationDocumentService.UploadDocument:output_type -> users.organization.v1.UploadDocumentResponse
-	98,  // 154: users.organization.v1.OrganizationDocumentService.ListDocuments:output_type -> users.organization.v1.ListDocumentsResponse
-	100, // 155: users.organization.v1.OrganizationDocumentService.GetDocument:output_type -> users.organization.v1.GetDocumentResponse
-	102, // 156: users.organization.v1.OrganizationDocumentService.DeleteDocument:output_type -> users.organization.v1.DeleteDocumentResponse
-	104, // 157: users.organization.v1.OrganizationDocumentService.ReviewDocument:output_type -> users.organization.v1.ReviewDocumentResponse
-	114, // [114:158] is the sub-list for method output_type
-	70,  // [70:114] is the sub-list for method input_type
-	70,  // [70:70] is the sub-list for extension type_name
-	70,  // [70:70] is the sub-list for extension extendee
-	0,   // [0:70] is the sub-list for field type_name
+	105, // 18: users.organization.v1.AddMemberResponse.previous_fired_at:type_name -> google.protobuf.Timestamp
+	6,   // 19: users.organization.v1.UpdateMemberRoleResponse.member:type_name -> users.organization.v1.Member
+	1,   // 20: users.organization.v1.GetMembersRequest.status:type_name -> users.organization.v1.MemberStatus
+	6,   // 21: users.organization.v1.GetMembersResponse.members:type_name -> users.organization.v1.Member
+	6,   // 22: users.organization.v1.GetMemberResponse.member:type_name -> users.organization.v1.Member
+	8,   // 23: users.organization.v1.CreateInviteCodeResponse.invite_code:type_name -> users.organization.v1.InviteCode
+	6,   // 24: users.organization.v1.UseInviteCodeResponse.member:type_name -> users.organization.v1.Member
+	3,   // 25: users.organization.v1.UseInviteCodeResponse.organization:type_name -> users.organization.v1.Organization
+	8,   // 26: users.organization.v1.GetInviteCodesResponse.invite_codes:type_name -> users.organization.v1.InviteCode
+	0,   // 27: users.organization.v1.GetRolesRequest.organization_type:type_name -> users.organization.v1.OrganizationType
+	7,   // 28: users.organization.v1.GetRolesResponse.roles:type_name -> users.organization.v1.Role
+	0,   // 29: users.organization.v1.UpsertByLegacyIDRequest.type:type_name -> users.organization.v1.OrganizationType
+	3,   // 30: users.organization.v1.UpsertByLegacyIDResponse.organization:type_name -> users.organization.v1.Organization
+	48,  // 31: users.organization.v1.SetOrganizationMarketplaceFieldsRequest.expert_for_carmake_ids:type_name -> users.organization.v1.Int64List
+	48,  // 32: users.organization.v1.SetOrganizationMarketplaceFieldsRequest.expert_for_category_ids:type_name -> users.organization.v1.Int64List
+	3,   // 33: users.organization.v1.SetOrganizationMarketplaceFieldsResponse.organization:type_name -> users.organization.v1.Organization
+	105, // 34: users.organization.v1.STOProfile.created_at:type_name -> google.protobuf.Timestamp
+	105, // 35: users.organization.v1.STOProfile.updated_at:type_name -> google.protobuf.Timestamp
+	105, // 36: users.organization.v1.CarWashProfile.created_at:type_name -> google.protobuf.Timestamp
+	105, // 37: users.organization.v1.CarWashProfile.updated_at:type_name -> google.protobuf.Timestamp
+	105, // 38: users.organization.v1.PartsProfile.created_at:type_name -> google.protobuf.Timestamp
+	105, // 39: users.organization.v1.PartsProfile.updated_at:type_name -> google.protobuf.Timestamp
+	51,  // 40: users.organization.v1.GetOrgProfileResponse.sto_profile:type_name -> users.organization.v1.STOProfile
+	52,  // 41: users.organization.v1.GetOrgProfileResponse.carwash_profile:type_name -> users.organization.v1.CarWashProfile
+	53,  // 42: users.organization.v1.GetOrgProfileResponse.parts_profile:type_name -> users.organization.v1.PartsProfile
+	51,  // 43: users.organization.v1.UpdateOrgProfileRequest.sto_profile:type_name -> users.organization.v1.STOProfile
+	52,  // 44: users.organization.v1.UpdateOrgProfileRequest.carwash_profile:type_name -> users.organization.v1.CarWashProfile
+	53,  // 45: users.organization.v1.UpdateOrgProfileRequest.parts_profile:type_name -> users.organization.v1.PartsProfile
+	51,  // 46: users.organization.v1.UpdateOrgProfileResponse.sto_profile:type_name -> users.organization.v1.STOProfile
+	52,  // 47: users.organization.v1.UpdateOrgProfileResponse.carwash_profile:type_name -> users.organization.v1.CarWashProfile
+	53,  // 48: users.organization.v1.UpdateOrgProfileResponse.parts_profile:type_name -> users.organization.v1.PartsProfile
+	0,   // 49: users.organization.v1.GetOrgSubscriptionInfoResponse.org_type:type_name -> users.organization.v1.OrganizationType
+	2,   // 50: users.organization.v1.SetPlatformRoleRequest.role:type_name -> users.organization.v1.PlatformRole
+	2,   // 51: users.organization.v1.GetPlatformRoleResponse.role:type_name -> users.organization.v1.PlatformRole
+	2,   // 52: users.organization.v1.CheckPlatformRoleResponse.role:type_name -> users.organization.v1.PlatformRole
+	7,   // 53: users.organization.v1.CreateRoleResponse.role:type_name -> users.organization.v1.Role
+	7,   // 54: users.organization.v1.UpdateRoleInfoResponse.role:type_name -> users.organization.v1.Role
+	105, // 55: users.organization.v1.PermissionOverride.created_at:type_name -> google.protobuf.Timestamp
+	78,  // 56: users.organization.v1.GetMemberPermissionOverridesResponse.overrides:type_name -> users.organization.v1.PermissionOverride
+	0,   // 57: users.organization.v1.UserOrgEntry.type:type_name -> users.organization.v1.OrganizationType
+	86,  // 58: users.organization.v1.ListUserOrganizationsResponse.organizations:type_name -> users.organization.v1.UserOrgEntry
+	3,   // 59: users.organization.v1.CreateDraftOrganizationResponse.organization:type_name -> users.organization.v1.Organization
+	106, // 60: users.organization.v1.UpdateOrganizationInfoRequest.bin:type_name -> google.protobuf.StringValue
+	106, // 61: users.organization.v1.UpdateOrganizationInfoRequest.legal_address:type_name -> google.protobuf.StringValue
+	106, // 62: users.organization.v1.UpdateOrganizationInfoRequest.contact_phone:type_name -> google.protobuf.StringValue
+	106, // 63: users.organization.v1.UpdateOrganizationInfoRequest.contact_email:type_name -> google.protobuf.StringValue
+	3,   // 64: users.organization.v1.UpdateOrganizationInfoResponse.organization:type_name -> users.organization.v1.Organization
+	105, // 65: users.organization.v1.OrganizationDocument.uploaded_at:type_name -> google.protobuf.Timestamp
+	105, // 66: users.organization.v1.OrganizationDocument.reviewed_at:type_name -> google.protobuf.Timestamp
+	94,  // 67: users.organization.v1.UploadDocumentResponse.document:type_name -> users.organization.v1.OrganizationDocument
+	94,  // 68: users.organization.v1.ListDocumentsResponse.documents:type_name -> users.organization.v1.OrganizationDocument
+	94,  // 69: users.organization.v1.GetDocumentResponse.document:type_name -> users.organization.v1.OrganizationDocument
+	94,  // 70: users.organization.v1.ReviewDocumentResponse.document:type_name -> users.organization.v1.OrganizationDocument
+	9,   // 71: users.organization.v1.OrganizationService.CreateOrganization:input_type -> users.organization.v1.CreateOrganizationRequest
+	11,  // 72: users.organization.v1.OrganizationService.GetOrganization:input_type -> users.organization.v1.GetOrganizationRequest
+	13,  // 73: users.organization.v1.OrganizationService.UpdateOrganization:input_type -> users.organization.v1.UpdateOrganizationRequest
+	15,  // 74: users.organization.v1.OrganizationService.DeleteOrganization:input_type -> users.organization.v1.DeleteOrganizationRequest
+	17,  // 75: users.organization.v1.OrganizationService.GetMyOrganizations:input_type -> users.organization.v1.GetMyOrganizationsRequest
+	42,  // 76: users.organization.v1.OrganizationService.UpsertByLegacyID:input_type -> users.organization.v1.UpsertByLegacyIDRequest
+	44,  // 77: users.organization.v1.OrganizationService.SetCategories:input_type -> users.organization.v1.SetCategoriesRequest
+	46,  // 78: users.organization.v1.OrganizationService.GetCategories:input_type -> users.organization.v1.GetCategoriesRequest
+	20,  // 79: users.organization.v1.OrganizationService.AddMember:input_type -> users.organization.v1.AddMemberRequest
+	22,  // 80: users.organization.v1.OrganizationService.FireMember:input_type -> users.organization.v1.FireMemberRequest
+	24,  // 81: users.organization.v1.OrganizationService.UpdateMemberRole:input_type -> users.organization.v1.UpdateMemberRoleRequest
+	26,  // 82: users.organization.v1.OrganizationService.GetMembers:input_type -> users.organization.v1.GetMembersRequest
+	28,  // 83: users.organization.v1.OrganizationService.GetMember:input_type -> users.organization.v1.GetMemberRequest
+	30,  // 84: users.organization.v1.OrganizationService.CreateInviteCode:input_type -> users.organization.v1.CreateInviteCodeRequest
+	32,  // 85: users.organization.v1.OrganizationService.UseInviteCode:input_type -> users.organization.v1.UseInviteCodeRequest
+	34,  // 86: users.organization.v1.OrganizationService.GetInviteCodes:input_type -> users.organization.v1.GetInviteCodesRequest
+	36,  // 87: users.organization.v1.OrganizationService.DeactivateInviteCode:input_type -> users.organization.v1.DeactivateInviteCodeRequest
+	38,  // 88: users.organization.v1.OrganizationService.CheckPermission:input_type -> users.organization.v1.CheckPermissionRequest
+	40,  // 89: users.organization.v1.OrganizationService.GetRoles:input_type -> users.organization.v1.GetRolesRequest
+	70,  // 90: users.organization.v1.OrganizationService.CreateRole:input_type -> users.organization.v1.CreateRoleRequest
+	72,  // 91: users.organization.v1.OrganizationService.UpdateRoleInfo:input_type -> users.organization.v1.UpdateRoleInfoRequest
+	74,  // 92: users.organization.v1.OrganizationService.DeleteRole:input_type -> users.organization.v1.DeleteRoleRequest
+	76,  // 93: users.organization.v1.OrganizationService.SetRolePermissions:input_type -> users.organization.v1.SetRolePermissionsRequest
+	79,  // 94: users.organization.v1.OrganizationService.SetMemberPermissionOverride:input_type -> users.organization.v1.SetMemberPermissionOverrideRequest
+	81,  // 95: users.organization.v1.OrganizationService.RemoveMemberPermissionOverride:input_type -> users.organization.v1.RemoveMemberPermissionOverrideRequest
+	83,  // 96: users.organization.v1.OrganizationService.GetMemberPermissionOverrides:input_type -> users.organization.v1.GetMemberPermissionOverridesRequest
+	54,  // 97: users.organization.v1.OrganizationService.GetOrgProfile:input_type -> users.organization.v1.GetOrgProfileRequest
+	56,  // 98: users.organization.v1.OrganizationService.UpdateOrgProfile:input_type -> users.organization.v1.UpdateOrgProfileRequest
+	58,  // 99: users.organization.v1.OrganizationService.GetOrganizationSubscriptionInfo:input_type -> users.organization.v1.GetOrgSubscriptionInfoRequest
+	85,  // 100: users.organization.v1.OrganizationService.ListUserOrganizations:input_type -> users.organization.v1.ListUserOrganizationsRequest
+	88,  // 101: users.organization.v1.OrganizationService.CreateDraftOrganization:input_type -> users.organization.v1.CreateDraftOrganizationRequest
+	90,  // 102: users.organization.v1.OrganizationService.UpdateOrganizationInfo:input_type -> users.organization.v1.UpdateOrganizationInfoRequest
+	92,  // 103: users.organization.v1.OrganizationService.RequestActivation:input_type -> users.organization.v1.RequestActivationRequest
+	49,  // 104: users.organization.v1.OrganizationService.SetOrganizationMarketplaceFields:input_type -> users.organization.v1.SetOrganizationMarketplaceFieldsRequest
+	60,  // 105: users.organization.v1.OrganizationService.SetPlatformRole:input_type -> users.organization.v1.SetPlatformRoleRequest
+	62,  // 106: users.organization.v1.OrganizationService.GetPlatformRole:input_type -> users.organization.v1.GetPlatformRoleRequest
+	64,  // 107: users.organization.v1.OrganizationService.SetPlatformOrgAccess:input_type -> users.organization.v1.SetPlatformOrgAccessRequest
+	66,  // 108: users.organization.v1.OrganizationService.GetPlatformOrgAccess:input_type -> users.organization.v1.GetPlatformOrgAccessRequest
+	68,  // 109: users.organization.v1.OrganizationService.CheckPlatformRole:input_type -> users.organization.v1.CheckPlatformRoleRequest
+	95,  // 110: users.organization.v1.OrganizationDocumentService.UploadDocument:input_type -> users.organization.v1.UploadDocumentRequest
+	97,  // 111: users.organization.v1.OrganizationDocumentService.ListDocuments:input_type -> users.organization.v1.ListDocumentsRequest
+	99,  // 112: users.organization.v1.OrganizationDocumentService.GetDocument:input_type -> users.organization.v1.GetDocumentRequest
+	101, // 113: users.organization.v1.OrganizationDocumentService.DeleteDocument:input_type -> users.organization.v1.DeleteDocumentRequest
+	103, // 114: users.organization.v1.OrganizationDocumentService.ReviewDocument:input_type -> users.organization.v1.ReviewDocumentRequest
+	10,  // 115: users.organization.v1.OrganizationService.CreateOrganization:output_type -> users.organization.v1.CreateOrganizationResponse
+	12,  // 116: users.organization.v1.OrganizationService.GetOrganization:output_type -> users.organization.v1.GetOrganizationResponse
+	14,  // 117: users.organization.v1.OrganizationService.UpdateOrganization:output_type -> users.organization.v1.UpdateOrganizationResponse
+	16,  // 118: users.organization.v1.OrganizationService.DeleteOrganization:output_type -> users.organization.v1.DeleteOrganizationResponse
+	18,  // 119: users.organization.v1.OrganizationService.GetMyOrganizations:output_type -> users.organization.v1.GetMyOrganizationsResponse
+	43,  // 120: users.organization.v1.OrganizationService.UpsertByLegacyID:output_type -> users.organization.v1.UpsertByLegacyIDResponse
+	45,  // 121: users.organization.v1.OrganizationService.SetCategories:output_type -> users.organization.v1.SetCategoriesResponse
+	47,  // 122: users.organization.v1.OrganizationService.GetCategories:output_type -> users.organization.v1.GetCategoriesResponse
+	21,  // 123: users.organization.v1.OrganizationService.AddMember:output_type -> users.organization.v1.AddMemberResponse
+	23,  // 124: users.organization.v1.OrganizationService.FireMember:output_type -> users.organization.v1.FireMemberResponse
+	25,  // 125: users.organization.v1.OrganizationService.UpdateMemberRole:output_type -> users.organization.v1.UpdateMemberRoleResponse
+	27,  // 126: users.organization.v1.OrganizationService.GetMembers:output_type -> users.organization.v1.GetMembersResponse
+	29,  // 127: users.organization.v1.OrganizationService.GetMember:output_type -> users.organization.v1.GetMemberResponse
+	31,  // 128: users.organization.v1.OrganizationService.CreateInviteCode:output_type -> users.organization.v1.CreateInviteCodeResponse
+	33,  // 129: users.organization.v1.OrganizationService.UseInviteCode:output_type -> users.organization.v1.UseInviteCodeResponse
+	35,  // 130: users.organization.v1.OrganizationService.GetInviteCodes:output_type -> users.organization.v1.GetInviteCodesResponse
+	37,  // 131: users.organization.v1.OrganizationService.DeactivateInviteCode:output_type -> users.organization.v1.DeactivateInviteCodeResponse
+	39,  // 132: users.organization.v1.OrganizationService.CheckPermission:output_type -> users.organization.v1.CheckPermissionResponse
+	41,  // 133: users.organization.v1.OrganizationService.GetRoles:output_type -> users.organization.v1.GetRolesResponse
+	71,  // 134: users.organization.v1.OrganizationService.CreateRole:output_type -> users.organization.v1.CreateRoleResponse
+	73,  // 135: users.organization.v1.OrganizationService.UpdateRoleInfo:output_type -> users.organization.v1.UpdateRoleInfoResponse
+	75,  // 136: users.organization.v1.OrganizationService.DeleteRole:output_type -> users.organization.v1.DeleteRoleResponse
+	77,  // 137: users.organization.v1.OrganizationService.SetRolePermissions:output_type -> users.organization.v1.SetRolePermissionsResponse
+	80,  // 138: users.organization.v1.OrganizationService.SetMemberPermissionOverride:output_type -> users.organization.v1.SetMemberPermissionOverrideResponse
+	82,  // 139: users.organization.v1.OrganizationService.RemoveMemberPermissionOverride:output_type -> users.organization.v1.RemoveMemberPermissionOverrideResponse
+	84,  // 140: users.organization.v1.OrganizationService.GetMemberPermissionOverrides:output_type -> users.organization.v1.GetMemberPermissionOverridesResponse
+	55,  // 141: users.organization.v1.OrganizationService.GetOrgProfile:output_type -> users.organization.v1.GetOrgProfileResponse
+	57,  // 142: users.organization.v1.OrganizationService.UpdateOrgProfile:output_type -> users.organization.v1.UpdateOrgProfileResponse
+	59,  // 143: users.organization.v1.OrganizationService.GetOrganizationSubscriptionInfo:output_type -> users.organization.v1.GetOrgSubscriptionInfoResponse
+	87,  // 144: users.organization.v1.OrganizationService.ListUserOrganizations:output_type -> users.organization.v1.ListUserOrganizationsResponse
+	89,  // 145: users.organization.v1.OrganizationService.CreateDraftOrganization:output_type -> users.organization.v1.CreateDraftOrganizationResponse
+	91,  // 146: users.organization.v1.OrganizationService.UpdateOrganizationInfo:output_type -> users.organization.v1.UpdateOrganizationInfoResponse
+	93,  // 147: users.organization.v1.OrganizationService.RequestActivation:output_type -> users.organization.v1.RequestActivationResponse
+	50,  // 148: users.organization.v1.OrganizationService.SetOrganizationMarketplaceFields:output_type -> users.organization.v1.SetOrganizationMarketplaceFieldsResponse
+	61,  // 149: users.organization.v1.OrganizationService.SetPlatformRole:output_type -> users.organization.v1.SetPlatformRoleResponse
+	63,  // 150: users.organization.v1.OrganizationService.GetPlatformRole:output_type -> users.organization.v1.GetPlatformRoleResponse
+	65,  // 151: users.organization.v1.OrganizationService.SetPlatformOrgAccess:output_type -> users.organization.v1.SetPlatformOrgAccessResponse
+	67,  // 152: users.organization.v1.OrganizationService.GetPlatformOrgAccess:output_type -> users.organization.v1.GetPlatformOrgAccessResponse
+	69,  // 153: users.organization.v1.OrganizationService.CheckPlatformRole:output_type -> users.organization.v1.CheckPlatformRoleResponse
+	96,  // 154: users.organization.v1.OrganizationDocumentService.UploadDocument:output_type -> users.organization.v1.UploadDocumentResponse
+	98,  // 155: users.organization.v1.OrganizationDocumentService.ListDocuments:output_type -> users.organization.v1.ListDocumentsResponse
+	100, // 156: users.organization.v1.OrganizationDocumentService.GetDocument:output_type -> users.organization.v1.GetDocumentResponse
+	102, // 157: users.organization.v1.OrganizationDocumentService.DeleteDocument:output_type -> users.organization.v1.DeleteDocumentResponse
+	104, // 158: users.organization.v1.OrganizationDocumentService.ReviewDocument:output_type -> users.organization.v1.ReviewDocumentResponse
+	115, // [115:159] is the sub-list for method output_type
+	71,  // [71:115] is the sub-list for method input_type
+	71,  // [71:71] is the sub-list for extension type_name
+	71,  // [71:71] is the sub-list for extension extendee
+	0,   // [0:71] is the sub-list for field type_name
 }
 
 func init() { file_users_organization_organization_proto_init() }
