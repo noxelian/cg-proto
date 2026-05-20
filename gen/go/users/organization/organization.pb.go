@@ -697,8 +697,13 @@ type Member struct {
 	Status         MemberStatus           `protobuf:"varint,6,opt,name=status,proto3,enum=users.organization.v1.MemberStatus" json:"status,omitempty"`
 	HiredAt        *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=hired_at,json=hiredAt,proto3" json:"hired_at,omitempty"`
 	FiredAt        *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=fired_at,json=firedAt,proto3" json:"fired_at,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// fired_reason is the free-text reason captured when the member was fired
+	// (FireMemberRequest.reason). Empty for active members. Persisted on the
+	// members row so the admin panel can show "почему уволен" without a
+	// separate member_history lookup.
+	FiredReason   string `protobuf:"bytes,9,opt,name=fired_reason,json=firedReason,proto3" json:"fired_reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Member) Reset() {
@@ -785,6 +790,13 @@ func (x *Member) GetFiredAt() *timestamppb.Timestamp {
 		return x.FiredAt
 	}
 	return nil
+}
+
+func (x *Member) GetFiredReason() string {
+	if x != nil {
+		return x.FiredReason
+	}
+	return ""
 }
 
 type Role struct {
@@ -6582,7 +6594,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\bthursday\x18\x04 \x01(\tR\bthursday\x12\x16\n" +
 	"\x06friday\x18\x05 \x01(\tR\x06friday\x12\x1a\n" +
 	"\bsaturday\x18\x06 \x01(\tR\bsaturday\x12\x16\n" +
-	"\x06sunday\x18\a \x01(\tR\x06sunday\"\xc4\x02\n" +
+	"\x06sunday\x18\a \x01(\tR\x06sunday\"\xe7\x02\n" +
 	"\x06Member\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x17\n" +
@@ -6591,7 +6603,8 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\vpermissions\x18\x05 \x03(\tR\vpermissions\x12;\n" +
 	"\x06status\x18\x06 \x01(\x0e2#.users.organization.v1.MemberStatusR\x06status\x125\n" +
 	"\bhired_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\ahiredAt\x125\n" +
-	"\bfired_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\afiredAt\"\xba\x01\n" +
+	"\bfired_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\afiredAt\x12!\n" +
+	"\ffired_reason\x18\t \x01(\tR\vfiredReason\"\xba\x01\n" +
 	"\x04Role\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +

@@ -210,6 +210,11 @@ message Member {
   MemberStatus status = 6;
   google.protobuf.Timestamp hired_at = 7;
   google.protobuf.Timestamp fired_at = 8;
+  // fired_reason is the free-text reason captured when the member was fired
+  // (FireMemberRequest.reason). Empty for active members. Persisted on the
+  // members row so the admin panel can show "почему уволен" without a
+  // separate member_history lookup.
+  string fired_reason = 9;
 }
 
 message Role {
