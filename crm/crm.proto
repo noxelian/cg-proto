@@ -217,6 +217,15 @@ service CRMService {
   // one tab per accessible WhatsApp number ("WhatsApp ××××").
   rpc ListWhatsAppChannels(ListWhatsAppChannelsRequest) returns (ListWhatsAppChannelsResponse);
 
+  // Instagram Direct manager-send RPC. Mirrors the SendWhatsAppMessage shape
+  // but the recipient is resolved server-side from the deal's linked cg-users
+  // record (users.instagram_id). Outbound rows persist in wa_messages with
+  // surrogate phone='ig:<igsid>' so they share the existing chat surface.
+  // Side-effect: cg-crm calls fa-ai-core `/internal/instagram/send` which
+  // posts to Graph `/me/messages` and sets a 24h handover flag in Redis so
+  // AI auto-replies pause for that thread.
+  rpc SendInstagramMessage(SendInstagramMessageRequest) returns (SendInstagramMessageResponse);
+
   // Wazzup24 messaging RPCs — separate provider mirroring the WhatsApp channel
   // that's still connected to AmoCRM. Lets the new CRM surface the same chats
   // without disrupting AmoCRM's existing Wazzup integration.
@@ -1992,6 +2001,27 @@ message SendWhatsAppMessageRequest {
 
 message SendWhatsAppMessageResponse {
   WAMessageProto message = 1;
+}
+
+// SendInstagramMessage — manager-initiated Instagram Direct reply.
+// organization_id + user_id come from gRPC metadata (same pattern as the
+// existing WhatsApp/Wazzup send RPCs). cg-crm resolves the IG recipient
+// from deal.user_id → users.instagram_id, persists an outbound wa_messages
+// row with phone='ig:<igsid>', and triggers fa-ai-core's /internal/instagram/send
+// which posts to Graph and sets the 24h AI-handover Redis flag.
+message SendInstagramMessageRequest {
+  string deal_id = 1;
+  string text    = 2;
+}
+
+message SendInstagramMessageResponse {
+  // external_msg_id stamped on the persisted wa_messages row
+  // (format: "cg-crm:manager-ig:<uuid>"). Idempotency hook for retries.
+  string external_msg_id = 1;
+  // Wall-clock instant when the AI handover flag expires (now + 24h).
+  // Lets the caller surface "AI на паузе до …" in UI without a separate
+  // Redis round-trip. Always populated on success.
+  google.protobuf.Timestamp pause_ai_until = 2;
 }
 
 message ListWhatsAppMessagesRequest {

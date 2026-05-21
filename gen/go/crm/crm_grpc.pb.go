@@ -106,6 +106,7 @@ const (
 	CRMService_HandleWhatsAppWebhook_FullMethodName              = "/crm.v1.CRMService/HandleWhatsAppWebhook"
 	CRMService_MarkWhatsAppChatRead_FullMethodName               = "/crm.v1.CRMService/MarkWhatsAppChatRead"
 	CRMService_ListWhatsAppChannels_FullMethodName               = "/crm.v1.CRMService/ListWhatsAppChannels"
+	CRMService_SendInstagramMessage_FullMethodName               = "/crm.v1.CRMService/SendInstagramMessage"
 	CRMService_SendWazzupMessage_FullMethodName                  = "/crm.v1.CRMService/SendWazzupMessage"
 	CRMService_ListWazzupMessages_FullMethodName                 = "/crm.v1.CRMService/ListWazzupMessages"
 	CRMService_ListWazzupConversations_FullMethodName            = "/crm.v1.CRMService/ListWazzupConversations"
@@ -358,6 +359,14 @@ type CRMServiceClient interface {
 	// intersect the user's pipeline_members. Used by the sidebar to render
 	// one tab per accessible WhatsApp number ("WhatsApp ××××").
 	ListWhatsAppChannels(ctx context.Context, in *ListWhatsAppChannelsRequest, opts ...grpc.CallOption) (*ListWhatsAppChannelsResponse, error)
+	// Instagram Direct manager-send RPC. Mirrors the SendWhatsAppMessage shape
+	// but the recipient is resolved server-side from the deal's linked cg-users
+	// record (users.instagram_id). Outbound rows persist in wa_messages with
+	// surrogate phone='ig:<igsid>' so they share the existing chat surface.
+	// Side-effect: cg-crm calls fa-ai-core `/internal/instagram/send` which
+	// posts to Graph `/me/messages` and sets a 24h handover flag in Redis so
+	// AI auto-replies pause for that thread.
+	SendInstagramMessage(ctx context.Context, in *SendInstagramMessageRequest, opts ...grpc.CallOption) (*SendInstagramMessageResponse, error)
 	// Wazzup24 messaging RPCs — separate provider mirroring the WhatsApp channel
 	// that's still connected to AmoCRM. Lets the new CRM surface the same chats
 	// without disrupting AmoCRM's existing Wazzup integration.
@@ -1332,6 +1341,16 @@ func (c *cRMServiceClient) ListWhatsAppChannels(ctx context.Context, in *ListWha
 	return out, nil
 }
 
+func (c *cRMServiceClient) SendInstagramMessage(ctx context.Context, in *SendInstagramMessageRequest, opts ...grpc.CallOption) (*SendInstagramMessageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendInstagramMessageResponse)
+	err := c.cc.Invoke(ctx, CRMService_SendInstagramMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) SendWazzupMessage(ctx context.Context, in *SendWazzupMessageRequest, opts ...grpc.CallOption) (*SendWazzupMessageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SendWazzupMessageResponse)
@@ -1978,6 +1997,14 @@ type CRMServiceServer interface {
 	// intersect the user's pipeline_members. Used by the sidebar to render
 	// one tab per accessible WhatsApp number ("WhatsApp ××××").
 	ListWhatsAppChannels(context.Context, *ListWhatsAppChannelsRequest) (*ListWhatsAppChannelsResponse, error)
+	// Instagram Direct manager-send RPC. Mirrors the SendWhatsAppMessage shape
+	// but the recipient is resolved server-side from the deal's linked cg-users
+	// record (users.instagram_id). Outbound rows persist in wa_messages with
+	// surrogate phone='ig:<igsid>' so they share the existing chat surface.
+	// Side-effect: cg-crm calls fa-ai-core `/internal/instagram/send` which
+	// posts to Graph `/me/messages` and sets a 24h handover flag in Redis so
+	// AI auto-replies pause for that thread.
+	SendInstagramMessage(context.Context, *SendInstagramMessageRequest) (*SendInstagramMessageResponse, error)
 	// Wazzup24 messaging RPCs — separate provider mirroring the WhatsApp channel
 	// that's still connected to AmoCRM. Lets the new CRM surface the same chats
 	// without disrupting AmoCRM's existing Wazzup integration.
@@ -2330,6 +2357,9 @@ func (UnimplementedCRMServiceServer) MarkWhatsAppChatRead(context.Context, *Mark
 }
 func (UnimplementedCRMServiceServer) ListWhatsAppChannels(context.Context, *ListWhatsAppChannelsRequest) (*ListWhatsAppChannelsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListWhatsAppChannels not implemented")
+}
+func (UnimplementedCRMServiceServer) SendInstagramMessage(context.Context, *SendInstagramMessageRequest) (*SendInstagramMessageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SendInstagramMessage not implemented")
 }
 func (UnimplementedCRMServiceServer) SendWazzupMessage(context.Context, *SendWazzupMessageRequest) (*SendWazzupMessageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendWazzupMessage not implemented")
@@ -4050,6 +4080,24 @@ func _CRMService_ListWhatsAppChannels_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_SendInstagramMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendInstagramMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).SendInstagramMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_SendInstagramMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).SendInstagramMessage(ctx, req.(*SendInstagramMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_SendWazzupMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SendWazzupMessageRequest)
 	if err := dec(in); err != nil {
@@ -5196,6 +5244,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListWhatsAppChannels",
 			Handler:    _CRMService_ListWhatsAppChannels_Handler,
+		},
+		{
+			MethodName: "SendInstagramMessage",
+			Handler:    _CRMService_SendInstagramMessage_Handler,
 		},
 		{
 			MethodName: "SendWazzupMessage",
