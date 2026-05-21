@@ -19722,6 +19722,15 @@ type NotificationPreferences struct {
 	AllPipelines         bool                   `protobuf:"varint,3,opt,name=all_pipelines,json=allPipelines,proto3" json:"all_pipelines,omitempty"`
 	PipelineIds          []string               `protobuf:"bytes,4,rep,name=pipeline_ids,json=pipelineIds,proto3" json:"pipeline_ids,omitempty"`
 	UpdatedAt            *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// Inbound-channel mute toggles. Independent of the new-deal toggles above —
+	// sound_enabled gates the new-deal chime, these gate the chime fired when an
+	// inbound WhatsApp/Wazzup message arrives (cg-crm-web AppLayout listeners).
+	// Defaults true on the server so existing managers behave exactly as before
+	// until they opt out from the settings page.
+	WaSoundEnabled       bool `protobuf:"varint,6,opt,name=wa_sound_enabled,json=waSoundEnabled,proto3" json:"wa_sound_enabled,omitempty"`
+	WaDesktopEnabled     bool `protobuf:"varint,7,opt,name=wa_desktop_enabled,json=waDesktopEnabled,proto3" json:"wa_desktop_enabled,omitempty"`
+	WazzupSoundEnabled   bool `protobuf:"varint,8,opt,name=wazzup_sound_enabled,json=wazzupSoundEnabled,proto3" json:"wazzup_sound_enabled,omitempty"`
+	WazzupDesktopEnabled bool `protobuf:"varint,9,opt,name=wazzup_desktop_enabled,json=wazzupDesktopEnabled,proto3" json:"wazzup_desktop_enabled,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -19789,6 +19798,34 @@ func (x *NotificationPreferences) GetUpdatedAt() *timestamppb.Timestamp {
 		return x.UpdatedAt
 	}
 	return nil
+}
+
+func (x *NotificationPreferences) GetWaSoundEnabled() bool {
+	if x != nil {
+		return x.WaSoundEnabled
+	}
+	return false
+}
+
+func (x *NotificationPreferences) GetWaDesktopEnabled() bool {
+	if x != nil {
+		return x.WaDesktopEnabled
+	}
+	return false
+}
+
+func (x *NotificationPreferences) GetWazzupSoundEnabled() bool {
+	if x != nil {
+		return x.WazzupSoundEnabled
+	}
+	return false
+}
+
+func (x *NotificationPreferences) GetWazzupDesktopEnabled() bool {
+	if x != nil {
+		return x.WazzupDesktopEnabled
+	}
+	return false
 }
 
 type GetMyNotificationPreferencesRequest struct {
@@ -19881,6 +19918,11 @@ type UpdateMyNotificationPreferencesRequest struct {
 	DesktopAlertsEnabled bool                   `protobuf:"varint,2,opt,name=desktop_alerts_enabled,json=desktopAlertsEnabled,proto3" json:"desktop_alerts_enabled,omitempty"`
 	AllPipelines         bool                   `protobuf:"varint,3,opt,name=all_pipelines,json=allPipelines,proto3" json:"all_pipelines,omitempty"`
 	PipelineIds          []string               `protobuf:"bytes,4,rep,name=pipeline_ids,json=pipelineIds,proto3" json:"pipeline_ids,omitempty"`
+	// Inbound-channel mute toggles — mirror of NotificationPreferences.
+	WaSoundEnabled       bool `protobuf:"varint,5,opt,name=wa_sound_enabled,json=waSoundEnabled,proto3" json:"wa_sound_enabled,omitempty"`
+	WaDesktopEnabled     bool `protobuf:"varint,6,opt,name=wa_desktop_enabled,json=waDesktopEnabled,proto3" json:"wa_desktop_enabled,omitempty"`
+	WazzupSoundEnabled   bool `protobuf:"varint,7,opt,name=wazzup_sound_enabled,json=wazzupSoundEnabled,proto3" json:"wazzup_sound_enabled,omitempty"`
+	WazzupDesktopEnabled bool `protobuf:"varint,8,opt,name=wazzup_desktop_enabled,json=wazzupDesktopEnabled,proto3" json:"wazzup_desktop_enabled,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -19941,6 +19983,34 @@ func (x *UpdateMyNotificationPreferencesRequest) GetPipelineIds() []string {
 		return x.PipelineIds
 	}
 	return nil
+}
+
+func (x *UpdateMyNotificationPreferencesRequest) GetWaSoundEnabled() bool {
+	if x != nil {
+		return x.WaSoundEnabled
+	}
+	return false
+}
+
+func (x *UpdateMyNotificationPreferencesRequest) GetWaDesktopEnabled() bool {
+	if x != nil {
+		return x.WaDesktopEnabled
+	}
+	return false
+}
+
+func (x *UpdateMyNotificationPreferencesRequest) GetWazzupSoundEnabled() bool {
+	if x != nil {
+		return x.WazzupSoundEnabled
+	}
+	return false
+}
+
+func (x *UpdateMyNotificationPreferencesRequest) GetWazzupDesktopEnabled() bool {
+	if x != nil {
+		return x.WazzupDesktopEnabled
+	}
+	return false
 }
 
 type UpdateMyNotificationPreferencesResponse struct {
@@ -22396,22 +22466,30 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\"I\n" +
 	" AcknowledgeExternalNotesResponse\x12%\n" +
-	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xf7\x01\n" +
+	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xb7\x03\n" +
 	"\x17NotificationPreferences\x12#\n" +
 	"\rsound_enabled\x18\x01 \x01(\bR\fsoundEnabled\x124\n" +
 	"\x16desktop_alerts_enabled\x18\x02 \x01(\bR\x14desktopAlertsEnabled\x12#\n" +
 	"\rall_pipelines\x18\x03 \x01(\bR\fallPipelines\x12!\n" +
 	"\fpipeline_ids\x18\x04 \x03(\tR\vpipelineIds\x129\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"%\n" +
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12(\n" +
+	"\x10wa_sound_enabled\x18\x06 \x01(\bR\x0ewaSoundEnabled\x12,\n" +
+	"\x12wa_desktop_enabled\x18\a \x01(\bR\x10waDesktopEnabled\x120\n" +
+	"\x14wazzup_sound_enabled\x18\b \x01(\bR\x12wazzupSoundEnabled\x124\n" +
+	"\x16wazzup_desktop_enabled\x18\t \x01(\bR\x14wazzupDesktopEnabled\"%\n" +
 	"#GetMyNotificationPreferencesRequest\"i\n" +
 	"$GetMyNotificationPreferencesResponse\x12A\n" +
-	"\vpreferences\x18\x01 \x01(\v2\x1f.crm.v1.NotificationPreferencesR\vpreferences\"\xcb\x01\n" +
+	"\vpreferences\x18\x01 \x01(\v2\x1f.crm.v1.NotificationPreferencesR\vpreferences\"\x8b\x03\n" +
 	"&UpdateMyNotificationPreferencesRequest\x12#\n" +
 	"\rsound_enabled\x18\x01 \x01(\bR\fsoundEnabled\x124\n" +
 	"\x16desktop_alerts_enabled\x18\x02 \x01(\bR\x14desktopAlertsEnabled\x12#\n" +
 	"\rall_pipelines\x18\x03 \x01(\bR\fallPipelines\x12!\n" +
-	"\fpipeline_ids\x18\x04 \x03(\tR\vpipelineIds\"l\n" +
+	"\fpipeline_ids\x18\x04 \x03(\tR\vpipelineIds\x12(\n" +
+	"\x10wa_sound_enabled\x18\x05 \x01(\bR\x0ewaSoundEnabled\x12,\n" +
+	"\x12wa_desktop_enabled\x18\x06 \x01(\bR\x10waDesktopEnabled\x120\n" +
+	"\x14wazzup_sound_enabled\x18\a \x01(\bR\x12wazzupSoundEnabled\x124\n" +
+	"\x16wazzup_desktop_enabled\x18\b \x01(\bR\x14wazzupDesktopEnabled\"l\n" +
 	"'UpdateMyNotificationPreferencesResponse\x12A\n" +
 	"\vpreferences\x18\x01 \x01(\v2\x1f.crm.v1.NotificationPreferencesR\vpreferences\"O\n" +
 	"\n" +

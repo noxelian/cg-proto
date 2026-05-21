@@ -2932,6 +2932,15 @@ message NotificationPreferences {
   bool   all_pipelines         = 3;
   repeated string pipeline_ids = 4;
   google.protobuf.Timestamp updated_at = 5;
+  // Inbound-channel mute toggles. Independent of the new-deal toggles above —
+  // sound_enabled gates the new-deal chime, these gate the chime fired when an
+  // inbound WhatsApp/Wazzup message arrives (cg-crm-web AppLayout listeners).
+  // Defaults true on the server so existing managers behave exactly as before
+  // until they opt out from the settings page.
+  bool   wa_sound_enabled       = 6;
+  bool   wa_desktop_enabled     = 7;
+  bool   wazzup_sound_enabled   = 8;
+  bool   wazzup_desktop_enabled = 9;
 }
 
 message GetMyNotificationPreferencesRequest {}
@@ -2949,6 +2958,11 @@ message UpdateMyNotificationPreferencesRequest {
   bool   desktop_alerts_enabled = 2;
   bool   all_pipelines          = 3;
   repeated string pipeline_ids  = 4;
+  // Inbound-channel mute toggles — mirror of NotificationPreferences.
+  bool   wa_sound_enabled       = 5;
+  bool   wa_desktop_enabled     = 6;
+  bool   wazzup_sound_enabled   = 7;
+  bool   wazzup_desktop_enabled = 8;
 }
 
 message UpdateMyNotificationPreferencesResponse {
