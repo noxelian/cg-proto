@@ -800,8 +800,13 @@ type RepairOrder struct {
 	// Materials budget cap (legacy CarInRepair.materials_budget). 0 = unset.
 	// Independent from materials_markup (which is works_price * markup_pct / 100).
 	MaterialsBudget int64 `protobuf:"varint,46,opt,name=materials_budget,json=materialsBudget,proto3" json:"materials_budget,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Car-work progress aggregates — populated on the kanban board so the
+	// master-receptionist can read order progress without opening the card.
+	WorksCount    int32   `protobuf:"varint,47,opt,name=works_count,json=worksCount,proto3" json:"works_count,omitempty"`  // total car_works rows
+	WorksDone     int32   `protobuf:"varint,48,opt,name=works_done,json=worksDone,proto3" json:"works_done,omitempty"`     // car_works with is_done = true
+	TotalHours    float64 `protobuf:"fixed64,49,opt,name=total_hours,json=totalHours,proto3" json:"total_hours,omitempty"` // SUM(car_works.hour_rate) — normo-hours (н/ч)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RepairOrder) Reset() {
@@ -1138,6 +1143,27 @@ func (x *RepairOrder) GetModelId() int32 {
 func (x *RepairOrder) GetMaterialsBudget() int64 {
 	if x != nil {
 		return x.MaterialsBudget
+	}
+	return 0
+}
+
+func (x *RepairOrder) GetWorksCount() int32 {
+	if x != nil {
+		return x.WorksCount
+	}
+	return 0
+}
+
+func (x *RepairOrder) GetWorksDone() int32 {
+	if x != nil {
+		return x.WorksDone
+	}
+	return 0
+}
+
+func (x *RepairOrder) GetTotalHours() float64 {
+	if x != nil {
+		return x.TotalHours
 	}
 	return 0
 }
@@ -12673,7 +12699,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\vlegacy_name\x18\n" +
 	" \x01(\tH\x00R\n" +
 	"legacyName\x88\x01\x01B\x0e\n" +
-	"\f_legacy_name\"\xb9\r\n" +
+	"\f_legacy_name\"\x9a\x0e\n" +
 	"\vRepairOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vworkshop_id\x18\x02 \x01(\x03R\n" +
@@ -12733,7 +12759,13 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\rgarage_car_id\x18+ \x01(\x03R\vgarageCarId\x12\x17\n" +
 	"\amark_id\x18, \x01(\x05R\x06markId\x12\x19\n" +
 	"\bmodel_id\x18- \x01(\x05R\amodelId\x12)\n" +
-	"\x10materials_budget\x18. \x01(\x03R\x0fmaterialsBudgetB\x12\n" +
+	"\x10materials_budget\x18. \x01(\x03R\x0fmaterialsBudget\x12\x1f\n" +
+	"\vworks_count\x18/ \x01(\x05R\n" +
+	"worksCount\x12\x1d\n" +
+	"\n" +
+	"works_done\x180 \x01(\x05R\tworksDone\x12\x1f\n" +
+	"\vtotal_hours\x181 \x01(\x01R\n" +
+	"totalHoursB\x12\n" +
 	"\x10_parent_order_idJ\x04\b(\x10)J\x04\b)\x10*R\x10parts_request_idR\fparts_bid_id\"`\n" +
 	"\rMasterSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
