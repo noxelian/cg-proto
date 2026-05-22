@@ -303,6 +303,11 @@ message RepairOrder {
   // Materials budget cap (legacy CarInRepair.materials_budget). 0 = unset.
   // Independent from materials_markup (which is works_price * markup_pct / 100).
   int64 materials_budget = 46;
+  // Car-work progress aggregates — populated on the kanban board so the
+  // master-receptionist can read order progress without opening the card.
+  int32 works_count = 47;  // total car_works rows
+  int32 works_done  = 48;  // car_works with is_done = true
+  double total_hours = 49; // SUM(car_works.hour_rate) — normo-hours (н/ч)
 }
 
 message MasterSummary {
