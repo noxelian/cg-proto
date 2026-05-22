@@ -164,6 +164,13 @@ enum MasterRole {
   MASTER_ROLE_TECH = 2;
 }
 
+// MasterStatusFilter selects which masters ListMasters returns.
+enum MasterStatusFilter {
+  MASTER_STATUS_FILTER_ALL = 0;     // active + fired
+  MASTER_STATUS_FILTER_ACTIVE = 1;  // is_active = true
+  MASTER_STATUS_FILTER_FIRED = 2;   // is_active = false
+}
+
 enum FixSalaryType {
   FIX_SALARY_TYPE_UNSPECIFIED = 0;
   FIX_SALARY_TYPE_PAINTER = 1;
@@ -861,12 +868,26 @@ message FireMasterResponse {
 
 message ListMastersRequest {
   int64 workshop_id = 1;
-  bool active_only = 2;
+  bool active_only = 2;  // legacy flag; honored when status = ALL for back-compat
   MasterRole role = 3;
+  int32 page = 4;        // 1-based; 0 = unpaged (legacy callers)
+  int32 page_size = 5;   // 0 = no limit (legacy callers)
+  string search = 6;     // matches name / phone / position
+  MasterStatusFilter status = 7;
+}
+
+// MasterCounts holds workshop-wide totals, independent of the current filter,
+// so the UI can render status-tab counters in one round-trip.
+message MasterCounts {
+  int32 active = 1;
+  int32 fired = 2;
+  int32 total = 3;
 }
 
 message ListMastersResponse {
   repeated Master masters = 1;
+  int32 total = 2;          // total rows matching the current filter + search
+  MasterCounts counts = 3;  // workshop-wide counts (ignores search/status)
 }
 
 // =============================================================================
