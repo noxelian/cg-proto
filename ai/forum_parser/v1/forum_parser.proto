@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package ai.forum_parser.v1;
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/ai/forum_parser/v1;forumparserv1";
+
+import "google/protobuf/timestamp.proto";
+
+// ForumParserService — crawled + CTOgram user discussions in one model.
+// Production: BFF (cg-bff) calls over gRPC; forum-parser may expose HTTP for local dev only.
+//
+// Auth for mutating RPCs (CreateDiscussion, CreateReply, ListMyDiscussions):
+//   - metadata "authorization": "Bearer <jwt>" (BFF forwards mobile/web token), and/or
+//   - metadata "x-user-id": "<usr_id>" when BFF has already validated the token.
+service ForumParserService {
+  // Semantic search (POST /v1/search) or brand browse when browse=true.
+  rpc SearchThreads(SearchThreadsRequest) returns (SearchThreadsResponse);
+
+  // Thread detail with OP + first page of posts (GET /v1/threads/:id).
+  rpc GetThread(GetThreadRequest) returns (GetThreadResponse);
+
+  // Paginated posts excluding OP duplication logic on server (GET /v1/threads/:id/posts).
+  rpc ListThreadPosts(ListThreadPostsRequest) returns (ListThreadPostsResponse);
+
+  // Feed by garage car (GET /v1/discussions?car_make_id=...).
+  rpc ListDiscussions(ListDiscussionsRequest) returns (ListDiscussionsResponse);
+
+  // Current user's threads (GET /v1/discussions/mine). Requires auth metadata.
+  rpc ListMyDiscussions(ListMyDiscussionsRequest) returns (ListMyDiscussionsResponse);
+
+  // Create user thread (POST /v1/discussions). Requires auth metadata.
+  rpc CreateDiscussion(CreateDiscussionRequest) returns (CreateDiscussionResponse);
+
+  // Reply on any thread (POST /v1/threads/:id/replies). Requires auth metadata.
+  rpc CreateReply(CreateReplyRequest) returns (CreateReplyResponse);
+}
+
+// ThreadCard is the list/detail header for crawled and user-authored threads.
+message ThreadCard {
+  string id = 1;
+  string forum_slug = 2;
+  string forum_name = 3;
+  string title = 4;
+  string excerpt = 5;
+  int32 reply_count = 6;
+  double score = 7;
+  google.protobuf.Timestamp last_activity = 8;
+  string source_url = 9;
+  bool is_user_authored = 10;
+  int64 author_user_id = 11; // 0 if crawled / unknown
+  int32 car_make_id = 12; // 0 if unset
+  string car_make_name = 13;
+  int32 car_model_id = 14; // 0 if unset
+  string car_model_name = 15;
+  int32 car_year = 16; // 0 if unset
+  bool can_reply = 17;
+}
+
+message Post {
+  int32 position = 1;
+  string author = 2;
+  string body = 3;
+  google.protobuf.Timestamp posted_at = 4;
+  bool is_user_post = 5;
+  int64 author_user_id = 6; // 0 if crawled author string only
+  int32 reply_to_position = 7; // 0 = not a targeted reply
+  string quote_excerpt = 8;
+}
+
+message SearchThreadsRequest {
+  string query = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+  // true = car-make browse (keyword match + lower threshold), same as HTTP browse flag.
+  bool browse = 4;
+}
+
+message SearchThreadsResponse {
+  repeated ThreadCard threads = 1;
+  bool has_more = 2;
+  double min_score = 3;
+  bool browse = 4;
+}
+
+message GetThreadRequest {
+  string thread_id = 1;
+  int32 posts_limit = 2;
+  int32 posts_offset = 3;
+}
+
+message GetThreadResponse {
+  ThreadCard thread = 1;
+  repeated Post posts = 2;
+}
+
+message ListThreadPostsRequest {
+  string thread_id = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message ListThreadPostsResponse {
+  repeated Post posts = 1;
+}
+
+message ListDiscussionsRequest {
+  int32 car_make_id = 1; // required (>0)
+  string car_make_name = 2;
+  int32 car_model_id = 3; // 0 = any model for make
+  string car_model_name = 4;
+  int32 car_year = 5; // 0 = any year
+  int32 limit = 6;
+  int32 offset = 7;
+}
+
+message ListDiscussionsResponse {
+  repeated ThreadCard threads = 1;
+  bool has_more = 2;
+}
+
+message ListMyDiscussionsRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListMyDiscussionsResponse {
+  repeated ThreadCard threads = 1;
+  bool has_more = 2;
+}
+
+message CreateDiscussionRequest {
+  string title = 1;
+  string body = 2;
+  int32 car_make_id = 3; // 0 = optional
+  string car_make_name = 4;
+  int32 car_model_id = 5;
+  string car_model_name = 6;
+  int32 car_year = 7;
+}
+
+message CreateDiscussionResponse {
+  ThreadCard thread = 1;
+}
+
+message CreateReplyRequest {
+  string thread_id = 1;
+  string body = 2;
+  int32 reply_to_position = 3; // 0 = none
+  string quote_excerpt = 4;
+}
+
+message CreateReplyResponse {
+  Post reply = 1;
+}
