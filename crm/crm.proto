@@ -204,6 +204,9 @@ service CRMService {
   // Powers the standalone WhatsApp inbox page on the CRM web app.
   rpc ListWhatsAppConversations(ListWhatsAppConversationsRequest) returns (ListWhatsAppConversationsResponse);
   rpc ListWhatsAppTemplates(ListWhatsAppTemplatesRequest) returns (ListWhatsAppTemplatesResponse);
+  // CreateWhatsAppTemplate submits a new message template to Meta for review.
+  // Meta returns an immediate status (usually PENDING). Admin-only surface.
+  rpc CreateWhatsAppTemplate(CreateWhatsAppTemplateRequest) returns (CreateWhatsAppTemplateResponse);
   rpc HandleWhatsAppWebhook(WhatsAppWebhookRequest)       returns (WhatsAppWebhookResponse);
   // MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
   // given phone. Replaces the previous side-effect reset that fired on every
@@ -2145,6 +2148,10 @@ message ListWhatsAppTemplatesRequest {
   // from inbox views where the active conversation already exposes the
   // PNID (deals don't carry it directly).
   string phone_number_id = 3;
+  // include_all_statuses returns PENDING/REJECTED templates too (not just
+  // APPROVED). Used by the admin template-management surface so the operator
+  // can track review state + rejection reasons. Send paths leave this false.
+  bool include_all_statuses = 4;
 }
 
 message ListWhatsAppTemplatesResponse {
@@ -2162,11 +2169,37 @@ message WhatsAppTemplate {
   // for templates fetched without channel filtering or when only one
   // WABA is configured. Lets the UI group/badge templates per number.
   string phone_number_id = 7;
+  // Meta template id (the WABA-scoped numeric id). Empty for the legacy
+  // approved-only list; populated when include_all_statuses is requested.
+  string id = 8;
+  // rejected_reason is Meta's machine code explaining a REJECTED status
+  // (e.g. "INVALID_FORMAT", "ABUSIVE_CONTENT"). Empty unless status==REJECTED.
+  string rejected_reason = 9;
 }
 
 message WhatsAppTemplateParam {
   int32  index = 1;  // 1-based index matching {{1}}, {{2}}, etc.
   string example = 2;  // example value from Meta
+}
+
+// CreateWhatsAppTemplate — submit a new template to Meta for approval.
+message CreateWhatsAppTemplateRequest {
+  string organization_id = 1;
+  string name            = 2;  // lowercase snake_case, e.g. "hr_first_contact_ru"
+  string language        = 3;  // Meta language code, e.g. "ru", "kk", "en_US"
+  string category        = 4;  // "MARKETING" | "UTILITY" | "AUTHENTICATION"
+  string body            = 5;  // body text with {{1}}, {{2}} placeholders
+  // example value for each placeholder, ordered by index ({{1}} first).
+  // Meta requires a sample per variable to review the template.
+  repeated string examples = 6;
+  // Optional WABA selector by Meta phone_number_id. Empty = primary WABA.
+  string phone_number_id = 7;
+}
+
+message CreateWhatsAppTemplateResponse {
+  string id       = 1;  // Meta template id
+  string status   = 2;  // immediate status from Meta, usually "PENDING"
+  string category = 3;  // category Meta assigned (may differ from requested)
 }
 
 // ==================== Wazzup24 Messages ====================

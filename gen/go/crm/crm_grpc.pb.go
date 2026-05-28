@@ -103,6 +103,7 @@ const (
 	CRMService_ListWhatsAppMessages_FullMethodName               = "/crm.v1.CRMService/ListWhatsAppMessages"
 	CRMService_ListWhatsAppConversations_FullMethodName          = "/crm.v1.CRMService/ListWhatsAppConversations"
 	CRMService_ListWhatsAppTemplates_FullMethodName              = "/crm.v1.CRMService/ListWhatsAppTemplates"
+	CRMService_CreateWhatsAppTemplate_FullMethodName             = "/crm.v1.CRMService/CreateWhatsAppTemplate"
 	CRMService_HandleWhatsAppWebhook_FullMethodName              = "/crm.v1.CRMService/HandleWhatsAppWebhook"
 	CRMService_MarkWhatsAppChatRead_FullMethodName               = "/crm.v1.CRMService/MarkWhatsAppChatRead"
 	CRMService_ListWhatsAppChannels_FullMethodName               = "/crm.v1.CRMService/ListWhatsAppChannels"
@@ -347,6 +348,9 @@ type CRMServiceClient interface {
 	// Powers the standalone WhatsApp inbox page on the CRM web app.
 	ListWhatsAppConversations(ctx context.Context, in *ListWhatsAppConversationsRequest, opts ...grpc.CallOption) (*ListWhatsAppConversationsResponse, error)
 	ListWhatsAppTemplates(ctx context.Context, in *ListWhatsAppTemplatesRequest, opts ...grpc.CallOption) (*ListWhatsAppTemplatesResponse, error)
+	// CreateWhatsAppTemplate submits a new message template to Meta for review.
+	// Meta returns an immediate status (usually PENDING). Admin-only surface.
+	CreateWhatsAppTemplate(ctx context.Context, in *CreateWhatsAppTemplateRequest, opts ...grpc.CallOption) (*CreateWhatsAppTemplateResponse, error)
 	HandleWhatsAppWebhook(ctx context.Context, in *WhatsAppWebhookRequest, opts ...grpc.CallOption) (*WhatsAppWebhookResponse, error)
 	// MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
 	// given phone. Replaces the previous side-effect reset that fired on every
@@ -1311,6 +1315,16 @@ func (c *cRMServiceClient) ListWhatsAppTemplates(ctx context.Context, in *ListWh
 	return out, nil
 }
 
+func (c *cRMServiceClient) CreateWhatsAppTemplate(ctx context.Context, in *CreateWhatsAppTemplateRequest, opts ...grpc.CallOption) (*CreateWhatsAppTemplateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateWhatsAppTemplateResponse)
+	err := c.cc.Invoke(ctx, CRMService_CreateWhatsAppTemplate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) HandleWhatsAppWebhook(ctx context.Context, in *WhatsAppWebhookRequest, opts ...grpc.CallOption) (*WhatsAppWebhookResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(WhatsAppWebhookResponse)
@@ -1985,6 +1999,9 @@ type CRMServiceServer interface {
 	// Powers the standalone WhatsApp inbox page on the CRM web app.
 	ListWhatsAppConversations(context.Context, *ListWhatsAppConversationsRequest) (*ListWhatsAppConversationsResponse, error)
 	ListWhatsAppTemplates(context.Context, *ListWhatsAppTemplatesRequest) (*ListWhatsAppTemplatesResponse, error)
+	// CreateWhatsAppTemplate submits a new message template to Meta for review.
+	// Meta returns an immediate status (usually PENDING). Admin-only surface.
+	CreateWhatsAppTemplate(context.Context, *CreateWhatsAppTemplateRequest) (*CreateWhatsAppTemplateResponse, error)
 	HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error)
 	// MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
 	// given phone. Replaces the previous side-effect reset that fired on every
@@ -2348,6 +2365,9 @@ func (UnimplementedCRMServiceServer) ListWhatsAppConversations(context.Context, 
 }
 func (UnimplementedCRMServiceServer) ListWhatsAppTemplates(context.Context, *ListWhatsAppTemplatesRequest) (*ListWhatsAppTemplatesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListWhatsAppTemplates not implemented")
+}
+func (UnimplementedCRMServiceServer) CreateWhatsAppTemplate(context.Context, *CreateWhatsAppTemplateRequest) (*CreateWhatsAppTemplateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateWhatsAppTemplate not implemented")
 }
 func (UnimplementedCRMServiceServer) HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HandleWhatsAppWebhook not implemented")
@@ -4026,6 +4046,24 @@ func _CRMService_ListWhatsAppTemplates_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_CreateWhatsAppTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateWhatsAppTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).CreateWhatsAppTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_CreateWhatsAppTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).CreateWhatsAppTemplate(ctx, req.(*CreateWhatsAppTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_HandleWhatsAppWebhook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WhatsAppWebhookRequest)
 	if err := dec(in); err != nil {
@@ -5232,6 +5270,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListWhatsAppTemplates",
 			Handler:    _CRMService_ListWhatsAppTemplates_Handler,
+		},
+		{
+			MethodName: "CreateWhatsAppTemplate",
+			Handler:    _CRMService_CreateWhatsAppTemplate_Handler,
 		},
 		{
 			MethodName: "HandleWhatsAppWebhook",
