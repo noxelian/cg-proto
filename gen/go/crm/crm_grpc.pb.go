@@ -104,6 +104,8 @@ const (
 	CRMService_ListWhatsAppConversations_FullMethodName          = "/crm.v1.CRMService/ListWhatsAppConversations"
 	CRMService_ListWhatsAppTemplates_FullMethodName              = "/crm.v1.CRMService/ListWhatsAppTemplates"
 	CRMService_CreateWhatsAppTemplate_FullMethodName             = "/crm.v1.CRMService/CreateWhatsAppTemplate"
+	CRMService_UpdateWhatsAppTemplate_FullMethodName             = "/crm.v1.CRMService/UpdateWhatsAppTemplate"
+	CRMService_DeleteWhatsAppTemplate_FullMethodName             = "/crm.v1.CRMService/DeleteWhatsAppTemplate"
 	CRMService_HandleWhatsAppWebhook_FullMethodName              = "/crm.v1.CRMService/HandleWhatsAppWebhook"
 	CRMService_MarkWhatsAppChatRead_FullMethodName               = "/crm.v1.CRMService/MarkWhatsAppChatRead"
 	CRMService_ListWhatsAppChannels_FullMethodName               = "/crm.v1.CRMService/ListWhatsAppChannels"
@@ -351,6 +353,11 @@ type CRMServiceClient interface {
 	// CreateWhatsAppTemplate submits a new message template to Meta for review.
 	// Meta returns an immediate status (usually PENDING). Admin-only surface.
 	CreateWhatsAppTemplate(ctx context.Context, in *CreateWhatsAppTemplateRequest, opts ...grpc.CallOption) (*CreateWhatsAppTemplateResponse, error)
+	// UpdateWhatsAppTemplate edits an existing template's body + examples (+ buttons).
+	// Editing an approved template returns it to PENDING re-review. Admin-only surface.
+	UpdateWhatsAppTemplate(ctx context.Context, in *UpdateWhatsAppTemplateRequest, opts ...grpc.CallOption) (*UpdateWhatsAppTemplateResponse, error)
+	// DeleteWhatsAppTemplate removes a template by name from the WABA. Admin-only surface.
+	DeleteWhatsAppTemplate(ctx context.Context, in *DeleteWhatsAppTemplateRequest, opts ...grpc.CallOption) (*DeleteWhatsAppTemplateResponse, error)
 	HandleWhatsAppWebhook(ctx context.Context, in *WhatsAppWebhookRequest, opts ...grpc.CallOption) (*WhatsAppWebhookResponse, error)
 	// MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
 	// given phone. Replaces the previous side-effect reset that fired on every
@@ -1325,6 +1332,26 @@ func (c *cRMServiceClient) CreateWhatsAppTemplate(ctx context.Context, in *Creat
 	return out, nil
 }
 
+func (c *cRMServiceClient) UpdateWhatsAppTemplate(ctx context.Context, in *UpdateWhatsAppTemplateRequest, opts ...grpc.CallOption) (*UpdateWhatsAppTemplateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateWhatsAppTemplateResponse)
+	err := c.cc.Invoke(ctx, CRMService_UpdateWhatsAppTemplate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) DeleteWhatsAppTemplate(ctx context.Context, in *DeleteWhatsAppTemplateRequest, opts ...grpc.CallOption) (*DeleteWhatsAppTemplateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteWhatsAppTemplateResponse)
+	err := c.cc.Invoke(ctx, CRMService_DeleteWhatsAppTemplate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) HandleWhatsAppWebhook(ctx context.Context, in *WhatsAppWebhookRequest, opts ...grpc.CallOption) (*WhatsAppWebhookResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(WhatsAppWebhookResponse)
@@ -2002,6 +2029,11 @@ type CRMServiceServer interface {
 	// CreateWhatsAppTemplate submits a new message template to Meta for review.
 	// Meta returns an immediate status (usually PENDING). Admin-only surface.
 	CreateWhatsAppTemplate(context.Context, *CreateWhatsAppTemplateRequest) (*CreateWhatsAppTemplateResponse, error)
+	// UpdateWhatsAppTemplate edits an existing template's body + examples (+ buttons).
+	// Editing an approved template returns it to PENDING re-review. Admin-only surface.
+	UpdateWhatsAppTemplate(context.Context, *UpdateWhatsAppTemplateRequest) (*UpdateWhatsAppTemplateResponse, error)
+	// DeleteWhatsAppTemplate removes a template by name from the WABA. Admin-only surface.
+	DeleteWhatsAppTemplate(context.Context, *DeleteWhatsAppTemplateRequest) (*DeleteWhatsAppTemplateResponse, error)
 	HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error)
 	// MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
 	// given phone. Replaces the previous side-effect reset that fired on every
@@ -2368,6 +2400,12 @@ func (UnimplementedCRMServiceServer) ListWhatsAppTemplates(context.Context, *Lis
 }
 func (UnimplementedCRMServiceServer) CreateWhatsAppTemplate(context.Context, *CreateWhatsAppTemplateRequest) (*CreateWhatsAppTemplateResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateWhatsAppTemplate not implemented")
+}
+func (UnimplementedCRMServiceServer) UpdateWhatsAppTemplate(context.Context, *UpdateWhatsAppTemplateRequest) (*UpdateWhatsAppTemplateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateWhatsAppTemplate not implemented")
+}
+func (UnimplementedCRMServiceServer) DeleteWhatsAppTemplate(context.Context, *DeleteWhatsAppTemplateRequest) (*DeleteWhatsAppTemplateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteWhatsAppTemplate not implemented")
 }
 func (UnimplementedCRMServiceServer) HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HandleWhatsAppWebhook not implemented")
@@ -4064,6 +4102,42 @@ func _CRMService_CreateWhatsAppTemplate_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_UpdateWhatsAppTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateWhatsAppTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).UpdateWhatsAppTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_UpdateWhatsAppTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).UpdateWhatsAppTemplate(ctx, req.(*UpdateWhatsAppTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_DeleteWhatsAppTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteWhatsAppTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).DeleteWhatsAppTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_DeleteWhatsAppTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).DeleteWhatsAppTemplate(ctx, req.(*DeleteWhatsAppTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_HandleWhatsAppWebhook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WhatsAppWebhookRequest)
 	if err := dec(in); err != nil {
@@ -5274,6 +5348,14 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateWhatsAppTemplate",
 			Handler:    _CRMService_CreateWhatsAppTemplate_Handler,
+		},
+		{
+			MethodName: "UpdateWhatsAppTemplate",
+			Handler:    _CRMService_UpdateWhatsAppTemplate_Handler,
+		},
+		{
+			MethodName: "DeleteWhatsAppTemplate",
+			Handler:    _CRMService_DeleteWhatsAppTemplate_Handler,
 		},
 		{
 			MethodName: "HandleWhatsAppWebhook",

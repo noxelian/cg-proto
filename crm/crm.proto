@@ -207,6 +207,11 @@ service CRMService {
   // CreateWhatsAppTemplate submits a new message template to Meta for review.
   // Meta returns an immediate status (usually PENDING). Admin-only surface.
   rpc CreateWhatsAppTemplate(CreateWhatsAppTemplateRequest) returns (CreateWhatsAppTemplateResponse);
+  // UpdateWhatsAppTemplate edits an existing template's body + examples (+ buttons).
+  // Editing an approved template returns it to PENDING re-review. Admin-only surface.
+  rpc UpdateWhatsAppTemplate(UpdateWhatsAppTemplateRequest) returns (UpdateWhatsAppTemplateResponse);
+  // DeleteWhatsAppTemplate removes a template by name from the WABA. Admin-only surface.
+  rpc DeleteWhatsAppTemplate(DeleteWhatsAppTemplateRequest) returns (DeleteWhatsAppTemplateResponse);
   rpc HandleWhatsAppWebhook(WhatsAppWebhookRequest)       returns (WhatsAppWebhookResponse);
   // MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
   // given phone. Replaces the previous side-effect reset that fired on every
@@ -2190,6 +2195,14 @@ message WhatsAppTemplate {
   // rejected_reason is Meta's machine code explaining a REJECTED status
   // (e.g. "INVALID_FORMAT", "ABUSIVE_CONTENT"). Empty unless status==REJECTED.
   string rejected_reason = 9;
+  // Static QUICK_REPLY buttons attached to the template (v1: text-only).
+  repeated WhatsAppTemplateButton buttons = 10;
+}
+
+// WhatsAppTemplateButton is a static QUICK_REPLY button (text-only). v1 supports
+// only QUICK_REPLY; no dynamic URL/phone buttons.
+message WhatsAppTemplateButton {
+  string text = 1;  // button label, max ~25 chars
 }
 
 message WhatsAppTemplateParam {
@@ -2209,12 +2222,40 @@ message CreateWhatsAppTemplateRequest {
   repeated string examples = 6;
   // Optional WABA selector by Meta phone_number_id. Empty = primary WABA.
   string phone_number_id = 7;
+  // Static QUICK_REPLY button labels, in order. v1: text-only buttons.
+  repeated string buttons = 8;
 }
 
 message CreateWhatsAppTemplateResponse {
   string id       = 1;  // Meta template id
   string status   = 2;  // immediate status from Meta, usually "PENDING"
   string category = 3;  // category Meta assigned (may differ from requested)
+}
+
+// UpdateWhatsAppTemplate — edit body + examples (+ buttons) of an existing template.
+// Identified by Meta template id. category/language/name are NOT editable here.
+message UpdateWhatsAppTemplateRequest {
+  string organization_id = 1;
+  string template_id     = 2;  // Meta template id (WhatsAppTemplate.id)
+  string body            = 3;  // new body text with {{1}} placeholders
+  repeated string examples = 4;  // one sample per placeholder, ordered {{1}} first
+  repeated string buttons  = 5;  // static QUICK_REPLY button labels, in order
+  string phone_number_id   = 6;  // optional WABA selector; empty = primary WABA
+}
+
+message UpdateWhatsAppTemplateResponse {
+  bool success = 1;
+}
+
+// DeleteWhatsAppTemplate — remove a template by name.
+message DeleteWhatsAppTemplateRequest {
+  string organization_id = 1;
+  string name            = 2;  // template name to delete
+  string phone_number_id = 3;  // optional WABA selector; empty = primary WABA
+}
+
+message DeleteWhatsAppTemplateResponse {
+  bool success = 1;
 }
 
 // ==================== Wazzup24 Messages ====================
