@@ -1194,6 +1194,21 @@ message UpdateDealRequest {
   // empty preserves" when _set is false.
   string external_url      = 10;
   bool   external_url_set  = 11;
+
+  // user_id re-links the deal to a different contact (the deal's
+  // client). Mirrors the create-time semantics: CreateDealRequest.user_id
+  // is the cg-users user_id surfaced by the contact picker and is written
+  // verbatim to deals.user_id (the read path enriches contact_name /
+  // contact_phone from it via GetUserByID with a phone fallback). The
+  // field is a tri-state controlled by user_id_set so a PUT that omits
+  // the contact preserves the existing link:
+  //   user_id_set=false → preserve existing contact (legacy callers).
+  //   user_id_set=true, user_id=0    → clear the contact link.
+  //   user_id_set=true, user_id=>0   → re-link to that contact.
+  // Older clients that never send the flag keep working unchanged
+  // (preserve). New field tags 12/13 are append-only per cg-proto rules.
+  int64  user_id           = 12;
+  bool   user_id_set       = 13;
 }
 
 message UpdateDealResponse {

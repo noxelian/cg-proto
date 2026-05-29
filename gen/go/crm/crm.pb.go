@@ -5693,8 +5693,24 @@ type UpdateDealRequest struct {
 	// empty preserves" when _set is false.
 	ExternalUrl    string `protobuf:"bytes,10,opt,name=external_url,json=externalUrl,proto3" json:"external_url,omitempty"`
 	ExternalUrlSet bool   `protobuf:"varint,11,opt,name=external_url_set,json=externalUrlSet,proto3" json:"external_url_set,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// user_id re-links the deal to a different contact (the deal's
+	// client). Mirrors the create-time semantics: CreateDealRequest.user_id
+	// is the cg-users user_id surfaced by the contact picker and is written
+	// verbatim to deals.user_id (the read path enriches contact_name /
+	// contact_phone from it via GetUserByID with a phone fallback). The
+	// field is a tri-state controlled by user_id_set so a PUT that omits
+	// the contact preserves the existing link:
+	//
+	//	user_id_set=false → preserve existing contact (legacy callers).
+	//	user_id_set=true, user_id=0    → clear the contact link.
+	//	user_id_set=true, user_id=>0   → re-link to that contact.
+	//
+	// Older clients that never send the flag keep working unchanged
+	// (preserve). New field tags 12/13 are append-only per cg-proto rules.
+	UserId        int64 `protobuf:"varint,12,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserIdSet     bool  `protobuf:"varint,13,opt,name=user_id_set,json=userIdSet,proto3" json:"user_id_set,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateDealRequest) Reset() {
@@ -5800,6 +5816,20 @@ func (x *UpdateDealRequest) GetExternalUrl() string {
 func (x *UpdateDealRequest) GetExternalUrlSet() bool {
 	if x != nil {
 		return x.ExternalUrlSet
+	}
+	return false
+}
+
+func (x *UpdateDealRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *UpdateDealRequest) GetUserIdSet() bool {
+	if x != nil {
+		return x.UserIdSet
 	}
 	return false
 }
@@ -21632,7 +21662,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x06cities\x18\x18 \x03(\tR\x06cities\"R\n" +
 	"\x11ListDealsResponse\x12'\n" +
 	"\x05deals\x18\x01 \x03(\v2\x11.crm.v1.DealProtoR\x05deals\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x03R\x05total\"\xfe\x02\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\xb7\x03\n" +
 	"\x11UpdateDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x14\n" +
@@ -21647,7 +21677,9 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x06source\x18\t \x01(\tR\x06source\x12!\n" +
 	"\fexternal_url\x18\n" +
 	" \x01(\tR\vexternalUrl\x12(\n" +
-	"\x10external_url_set\x18\v \x01(\bR\x0eexternalUrlSet\";\n" +
+	"\x10external_url_set\x18\v \x01(\bR\x0eexternalUrlSet\x12\x17\n" +
+	"\auser_id\x18\f \x01(\x03R\x06userId\x12\x1e\n" +
+	"\vuser_id_set\x18\r \x01(\bR\tuserIdSet\";\n" +
 	"\x12UpdateDealResponse\x12%\n" +
 	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xab\x04\n" +
 	"\x11ImportDealRequest\x12'\n" +
