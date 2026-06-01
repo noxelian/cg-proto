@@ -23,6 +23,7 @@ const (
 	UserService_UpdateProfile_FullMethodName                 = "/users.user.v1.UserService/UpdateProfile"
 	UserService_GetUserByID_FullMethodName                   = "/users.user.v1.UserService/GetUserByID"
 	UserService_GetUserByPhone_FullMethodName                = "/users.user.v1.UserService/GetUserByPhone"
+	UserService_GetUserByLegacyID_FullMethodName             = "/users.user.v1.UserService/GetUserByLegacyID"
 	UserService_CreateUser_FullMethodName                    = "/users.user.v1.UserService/CreateUser"
 	UserService_GetUsersByIDs_FullMethodName                 = "/users.user.v1.UserService/GetUsersByIDs"
 	UserService_GetUsersByPhones_FullMethodName              = "/users.user.v1.UserService/GetUsersByPhones"
@@ -69,6 +70,8 @@ type UserServiceClient interface {
 	GetUserByID(ctx context.Context, in *GetUserByIDRequest, opts ...grpc.CallOption) (*GetUserByIDResponse, error)
 	// GetUserByPhone returns user by phone (for auth service)
 	GetUserByPhone(ctx context.Context, in *GetUserByPhoneRequest, opts ...grpc.CallOption) (*GetUserByPhoneResponse, error)
+	// GetUserByLegacyID resolves cg_api.usr id → platform user (miniapp legacy token bridge).
+	GetUserByLegacyID(ctx context.Context, in *GetUserByLegacyIDRequest, opts ...grpc.CallOption) (*GetUserByLegacyIDResponse, error)
 	// CreateUser creates new user (for auth service on first login)
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	// GetUsersByIDs returns multiple users by IDs (for batch loading)
@@ -194,6 +197,16 @@ func (c *userServiceClient) GetUserByPhone(ctx context.Context, in *GetUserByPho
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserByPhoneResponse)
 	err := c.cc.Invoke(ctx, UserService_GetUserByPhone_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetUserByLegacyID(ctx context.Context, in *GetUserByLegacyIDRequest, opts ...grpc.CallOption) (*GetUserByLegacyIDResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserByLegacyIDResponse)
+	err := c.cc.Invoke(ctx, UserService_GetUserByLegacyID_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -532,6 +545,8 @@ type UserServiceServer interface {
 	GetUserByID(context.Context, *GetUserByIDRequest) (*GetUserByIDResponse, error)
 	// GetUserByPhone returns user by phone (for auth service)
 	GetUserByPhone(context.Context, *GetUserByPhoneRequest) (*GetUserByPhoneResponse, error)
+	// GetUserByLegacyID resolves cg_api.usr id → platform user (miniapp legacy token bridge).
+	GetUserByLegacyID(context.Context, *GetUserByLegacyIDRequest) (*GetUserByLegacyIDResponse, error)
 	// CreateUser creates new user (for auth service on first login)
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	// GetUsersByIDs returns multiple users by IDs (for batch loading)
@@ -634,6 +649,9 @@ func (UnimplementedUserServiceServer) GetUserByID(context.Context, *GetUserByIDR
 }
 func (UnimplementedUserServiceServer) GetUserByPhone(context.Context, *GetUserByPhoneRequest) (*GetUserByPhoneResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserByPhone not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserByLegacyID(context.Context, *GetUserByLegacyIDRequest) (*GetUserByLegacyIDResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetUserByLegacyID not implemented")
 }
 func (UnimplementedUserServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateUser not implemented")
@@ -820,6 +838,24 @@ func _UserService_GetUserByPhone_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).GetUserByPhone(ctx, req.(*GetUserByPhoneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetUserByLegacyID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserByLegacyIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserByLegacyID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetUserByLegacyID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserByLegacyID(ctx, req.(*GetUserByLegacyIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1422,6 +1458,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserByPhone",
 			Handler:    _UserService_GetUserByPhone_Handler,
+		},
+		{
+			MethodName: "GetUserByLegacyID",
+			Handler:    _UserService_GetUserByLegacyID_Handler,
 		},
 		{
 			MethodName: "CreateUser",
