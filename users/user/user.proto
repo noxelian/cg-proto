@@ -18,6 +18,9 @@ service UserService {
   
   // GetUserByPhone returns user by phone (for auth service)
   rpc GetUserByPhone(GetUserByPhoneRequest) returns (GetUserByPhoneResponse);
+
+  // GetUserByLegacyID resolves cg_api.usr id → platform user (miniapp legacy token bridge).
+  rpc GetUserByLegacyID(GetUserByLegacyIDRequest) returns (GetUserByLegacyIDResponse);
   
   // CreateUser creates new user (for auth service on first login)
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
@@ -168,6 +171,8 @@ message User {
   // an external integration (Instagram Direct AI today).
   string instagram_id       = 10;
   string instagram_username = 11;
+  // Original cg_api.usr id when user was migrated from legacy API.
+  optional int64 legacy_id = 12;
 }
 
 message UserCounters {
@@ -236,6 +241,14 @@ message GetUserByPhoneRequest {
 }
 
 message GetUserByPhoneResponse {
+  User user = 1;
+}
+
+message GetUserByLegacyIDRequest {
+  int64 legacy_id = 1;
+}
+
+message GetUserByLegacyIDResponse {
   User user = 1;
 }
 
