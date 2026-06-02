@@ -1983,7 +1983,7 @@ message WAMessageProto {
   string id           = 1;
   string phone        = 2;
   string direction    = 3;  // "inbound" / "outbound"
-  string content_type = 4;  // "text" / "image" / "document" / "video" / "audio" / "template"
+  string content_type = 4;  // "text" / "image" / "sticker" / "document" / "video" / "audio" / "reaction" / "template"
   string body         = 5;
   string media_url    = 6;
   string status       = 7;  // "sent" / "delivered" / "read" / "failed" / "received"
