@@ -82,6 +82,11 @@ service CRMService {
   // wrong pipeline would be a UX trap.
   rpc MoveDealPipeline(MoveDealPipelineRequest)             returns (MoveDealPipelineResponse);
   rpc CloseDeal(CloseDealRequest)                           returns (CloseDealResponse);
+  // CreatePartsNPSMirror mints (or returns the existing) КК NPS-by-parts
+  // mirror deal + NPS task on a parts-delivered trigger. Service-to-service
+  // only: cg-bff (Этап 2b) calls it with a minted service JWT, exactly like
+  // CloseDeal. Idempotent on source_ref — see CreatePartsNPSMirrorRequest.
+  rpc CreatePartsNPSMirror(CreatePartsNPSMirrorRequest)     returns (CreatePartsNPSMirrorResponse);
   rpc ReOpenDeal(ReOpenDealRequest)                         returns (ReOpenDealResponse);
   // DeleteDeal hard-deletes a deal and every dependent row that the
   // schema cascades on (tasks, activities, deal_stage_history, notes).
@@ -1327,6 +1332,37 @@ message CloseDealRequest {
 
 message CloseDealResponse {
   DealProto deal = 1;
+}
+
+// CreatePartsNPSMirrorRequest asks cg-crm to land a КК NPS-by-parts mirror
+// deal (stage «Доставили запчасть» 38dec932) with an NPS follow-up task,
+// created by the system user. Idempotency key is
+// (source="auto_qc_nps_parts", external_id=source_ref): source_ref is stored
+// as external_id on the mirror, and repeat calls with the same source_ref
+// return the existing deal with created=false (no duplicate deal, no
+// duplicate NPS task). This matters because the caller is fire-and-forget and
+// a future reconciler may retry (qc_mirror_reconciler lesson).
+message CreatePartsNPSMirrorRequest {
+  string organization_id = 1; // KK pipeline org (UUID)
+  string title           = 2; // deal title, e.g. "NPS запчасти: <order>"
+  string contact_phone   = 3; // optional — empty maps to nil
+  // optional; cg-crm currently IGNORES this (reserved for future contact
+  // resolution). Provided now so Этап 2b can pass it without a proto bump later.
+  string contact_name    = 4;
+  // idempotency key, e.g. "parts_order:<id>". Stored as external_id on the
+  // mirror; repeat calls with the same source_ref return the existing deal
+  // (created=false). REQUIRED for idempotency.
+  string source_ref      = 5;
+  int64  user_id         = 6; // optional, 0 = none (no garage link)
+  int64  vehicle_id      = 7; // optional, 0 = none
+  int64  amount_tiin     = 8; // optional, 0 default
+  string currency        = 9; // optional; cg-crm defaults to "KZT" when empty
+}
+
+message CreatePartsNPSMirrorResponse {
+  string deal_id  = 1; // UUID of the (created or existing) КК mirror deal
+  string stage_id = 2; // UUID of the deal's current stage (38dec932 on create)
+  bool   created  = 3; // false when an existing mirror was found via source_ref (idempotent hit)
 }
 
 message ReOpenDealRequest {

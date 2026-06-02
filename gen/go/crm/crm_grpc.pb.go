@@ -54,6 +54,7 @@ const (
 	CRMService_MoveDealStage_FullMethodName                      = "/crm.v1.CRMService/MoveDealStage"
 	CRMService_MoveDealPipeline_FullMethodName                   = "/crm.v1.CRMService/MoveDealPipeline"
 	CRMService_CloseDeal_FullMethodName                          = "/crm.v1.CRMService/CloseDeal"
+	CRMService_CreatePartsNPSMirror_FullMethodName               = "/crm.v1.CRMService/CreatePartsNPSMirror"
 	CRMService_ReOpenDeal_FullMethodName                         = "/crm.v1.CRMService/ReOpenDeal"
 	CRMService_DeleteDeal_FullMethodName                         = "/crm.v1.CRMService/DeleteDeal"
 	CRMService_AcknowledgeExternalNotes_FullMethodName           = "/crm.v1.CRMService/AcknowledgeExternalNotes"
@@ -240,6 +241,11 @@ type CRMServiceClient interface {
 	// wrong pipeline would be a UX trap.
 	MoveDealPipeline(ctx context.Context, in *MoveDealPipelineRequest, opts ...grpc.CallOption) (*MoveDealPipelineResponse, error)
 	CloseDeal(ctx context.Context, in *CloseDealRequest, opts ...grpc.CallOption) (*CloseDealResponse, error)
+	// CreatePartsNPSMirror mints (or returns the existing) КК NPS-by-parts
+	// mirror deal + NPS task on a parts-delivered trigger. Service-to-service
+	// only: cg-bff (Этап 2b) calls it with a minted service JWT, exactly like
+	// CloseDeal. Idempotent on source_ref — see CreatePartsNPSMirrorRequest.
+	CreatePartsNPSMirror(ctx context.Context, in *CreatePartsNPSMirrorRequest, opts ...grpc.CallOption) (*CreatePartsNPSMirrorResponse, error)
 	ReOpenDeal(ctx context.Context, in *ReOpenDealRequest, opts ...grpc.CallOption) (*ReOpenDealResponse, error)
 	// DeleteDeal hard-deletes a deal and every dependent row that the
 	// schema cascades on (tasks, activities, deal_stage_history, notes).
@@ -826,6 +832,16 @@ func (c *cRMServiceClient) CloseDeal(ctx context.Context, in *CloseDealRequest, 
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CloseDealResponse)
 	err := c.cc.Invoke(ctx, CRMService_CloseDeal_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) CreatePartsNPSMirror(ctx context.Context, in *CreatePartsNPSMirrorRequest, opts ...grpc.CallOption) (*CreatePartsNPSMirrorResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreatePartsNPSMirrorResponse)
+	err := c.cc.Invoke(ctx, CRMService_CreatePartsNPSMirror_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1916,6 +1932,11 @@ type CRMServiceServer interface {
 	// wrong pipeline would be a UX trap.
 	MoveDealPipeline(context.Context, *MoveDealPipelineRequest) (*MoveDealPipelineResponse, error)
 	CloseDeal(context.Context, *CloseDealRequest) (*CloseDealResponse, error)
+	// CreatePartsNPSMirror mints (or returns the existing) КК NPS-by-parts
+	// mirror deal + NPS task on a parts-delivered trigger. Service-to-service
+	// only: cg-bff (Этап 2b) calls it with a minted service JWT, exactly like
+	// CloseDeal. Idempotent on source_ref — see CreatePartsNPSMirrorRequest.
+	CreatePartsNPSMirror(context.Context, *CreatePartsNPSMirrorRequest) (*CreatePartsNPSMirrorResponse, error)
 	ReOpenDeal(context.Context, *ReOpenDealRequest) (*ReOpenDealResponse, error)
 	// DeleteDeal hard-deletes a deal and every dependent row that the
 	// schema cascades on (tasks, activities, deal_stage_history, notes).
@@ -2250,6 +2271,9 @@ func (UnimplementedCRMServiceServer) MoveDealPipeline(context.Context, *MoveDeal
 }
 func (UnimplementedCRMServiceServer) CloseDeal(context.Context, *CloseDealRequest) (*CloseDealResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CloseDeal not implemented")
+}
+func (UnimplementedCRMServiceServer) CreatePartsNPSMirror(context.Context, *CreatePartsNPSMirrorRequest) (*CreatePartsNPSMirrorResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreatePartsNPSMirror not implemented")
 }
 func (UnimplementedCRMServiceServer) ReOpenDeal(context.Context, *ReOpenDealRequest) (*ReOpenDealResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ReOpenDeal not implemented")
@@ -3198,6 +3222,24 @@ func _CRMService_CloseDeal_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CRMServiceServer).CloseDeal(ctx, req.(*CloseDealRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_CreatePartsNPSMirror_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePartsNPSMirrorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).CreatePartsNPSMirror(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_CreatePartsNPSMirror_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).CreatePartsNPSMirror(ctx, req.(*CreatePartsNPSMirrorRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -5148,6 +5190,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CloseDeal",
 			Handler:    _CRMService_CloseDeal_Handler,
+		},
+		{
+			MethodName: "CreatePartsNPSMirror",
+			Handler:    _CRMService_CreatePartsNPSMirror_Handler,
 		},
 		{
 			MethodName: "ReOpenDeal",
