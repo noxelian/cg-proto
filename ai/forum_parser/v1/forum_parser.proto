@@ -86,11 +86,20 @@ message GetThreadRequest {
   string thread_id = 1;
   int32 posts_limit = 2;
   int32 posts_offset = 3;
+  // When > 0, server picks posts_offset so this position appears in the page (chronological order).
+  int32 around_position = 4;
 }
 
 message GetThreadResponse {
   ThreadCard thread = 1;
   repeated Post posts = 2;
+  bool posts_has_more = 3;
+  int32 posts_total = 4;
+  // Viewer positions when my_positions_set=true. OP is position 0.
+  int32 my_first_position = 5;
+  int32 my_last_position = 6;
+  // True when viewer is known and has at least one post (or is thread OP author).
+  bool my_positions_set = 7;
 }
 
 message ListThreadPostsRequest {
@@ -101,6 +110,7 @@ message ListThreadPostsRequest {
 
 message ListThreadPostsResponse {
   repeated Post posts = 1;
+  bool has_more = 2;
 }
 
 message ListDiscussionsRequest {

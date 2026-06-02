@@ -433,12 +433,14 @@ func (x *SearchThreadsResponse) GetBrowse() bool {
 }
 
 type GetThreadRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ThreadId      string                 `protobuf:"bytes,1,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
-	PostsLimit    int32                  `protobuf:"varint,2,opt,name=posts_limit,json=postsLimit,proto3" json:"posts_limit,omitempty"`
-	PostsOffset   int32                  `protobuf:"varint,3,opt,name=posts_offset,json=postsOffset,proto3" json:"posts_offset,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	ThreadId    string                 `protobuf:"bytes,1,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
+	PostsLimit  int32                  `protobuf:"varint,2,opt,name=posts_limit,json=postsLimit,proto3" json:"posts_limit,omitempty"`
+	PostsOffset int32                  `protobuf:"varint,3,opt,name=posts_offset,json=postsOffset,proto3" json:"posts_offset,omitempty"`
+	// When > 0, server picks posts_offset so this position appears in the page (chronological order).
+	AroundPosition int32 `protobuf:"varint,4,opt,name=around_position,json=aroundPosition,proto3" json:"around_position,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *GetThreadRequest) Reset() {
@@ -492,12 +494,26 @@ func (x *GetThreadRequest) GetPostsOffset() int32 {
 	return 0
 }
 
+func (x *GetThreadRequest) GetAroundPosition() int32 {
+	if x != nil {
+		return x.AroundPosition
+	}
+	return 0
+}
+
 type GetThreadResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Thread        *ThreadCard            `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
-	Posts         []*Post                `protobuf:"bytes,2,rep,name=posts,proto3" json:"posts,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Thread       *ThreadCard            `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
+	Posts        []*Post                `protobuf:"bytes,2,rep,name=posts,proto3" json:"posts,omitempty"`
+	PostsHasMore bool                   `protobuf:"varint,3,opt,name=posts_has_more,json=postsHasMore,proto3" json:"posts_has_more,omitempty"`
+	PostsTotal   int32                  `protobuf:"varint,4,opt,name=posts_total,json=postsTotal,proto3" json:"posts_total,omitempty"`
+	// Viewer positions when my_positions_set=true. OP is position 0.
+	MyFirstPosition int32 `protobuf:"varint,5,opt,name=my_first_position,json=myFirstPosition,proto3" json:"my_first_position,omitempty"`
+	MyLastPosition  int32 `protobuf:"varint,6,opt,name=my_last_position,json=myLastPosition,proto3" json:"my_last_position,omitempty"`
+	// True when viewer is known and has at least one post (or is thread OP author).
+	MyPositionsSet bool `protobuf:"varint,7,opt,name=my_positions_set,json=myPositionsSet,proto3" json:"my_positions_set,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *GetThreadResponse) Reset() {
@@ -542,6 +558,41 @@ func (x *GetThreadResponse) GetPosts() []*Post {
 		return x.Posts
 	}
 	return nil
+}
+
+func (x *GetThreadResponse) GetPostsHasMore() bool {
+	if x != nil {
+		return x.PostsHasMore
+	}
+	return false
+}
+
+func (x *GetThreadResponse) GetPostsTotal() int32 {
+	if x != nil {
+		return x.PostsTotal
+	}
+	return 0
+}
+
+func (x *GetThreadResponse) GetMyFirstPosition() int32 {
+	if x != nil {
+		return x.MyFirstPosition
+	}
+	return 0
+}
+
+func (x *GetThreadResponse) GetMyLastPosition() int32 {
+	if x != nil {
+		return x.MyLastPosition
+	}
+	return 0
+}
+
+func (x *GetThreadResponse) GetMyPositionsSet() bool {
+	if x != nil {
+		return x.MyPositionsSet
+	}
+	return false
 }
 
 type ListThreadPostsRequest struct {
@@ -607,6 +658,7 @@ func (x *ListThreadPostsRequest) GetOffset() int32 {
 type ListThreadPostsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Posts         []*Post                `protobuf:"bytes,1,rep,name=posts,proto3" json:"posts,omitempty"`
+	HasMore       bool                   `protobuf:"varint,2,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -646,6 +698,13 @@ func (x *ListThreadPostsResponse) GetPosts() []*Post {
 		return x.Posts
 	}
 	return nil
+}
+
+func (x *ListThreadPostsResponse) GetHasMore() bool {
+	if x != nil {
+		return x.HasMore
+	}
+	return false
 }
 
 type ListDiscussionsRequest struct {
@@ -1193,21 +1252,29 @@ const file_ai_forum_parser_v1_forum_parser_proto_rawDesc = "" +
 	"\athreads\x18\x01 \x03(\v2\x1e.ai.forum_parser.v1.ThreadCardR\athreads\x12\x19\n" +
 	"\bhas_more\x18\x02 \x01(\bR\ahasMore\x12\x1b\n" +
 	"\tmin_score\x18\x03 \x01(\x01R\bminScore\x12\x16\n" +
-	"\x06browse\x18\x04 \x01(\bR\x06browse\"s\n" +
+	"\x06browse\x18\x04 \x01(\bR\x06browse\"\x9c\x01\n" +
 	"\x10GetThreadRequest\x12\x1b\n" +
 	"\tthread_id\x18\x01 \x01(\tR\bthreadId\x12\x1f\n" +
 	"\vposts_limit\x18\x02 \x01(\x05R\n" +
 	"postsLimit\x12!\n" +
-	"\fposts_offset\x18\x03 \x01(\x05R\vpostsOffset\"{\n" +
+	"\fposts_offset\x18\x03 \x01(\x05R\vpostsOffset\x12'\n" +
+	"\x0faround_position\x18\x04 \x01(\x05R\x0earoundPosition\"\xc2\x02\n" +
 	"\x11GetThreadResponse\x126\n" +
 	"\x06thread\x18\x01 \x01(\v2\x1e.ai.forum_parser.v1.ThreadCardR\x06thread\x12.\n" +
-	"\x05posts\x18\x02 \x03(\v2\x18.ai.forum_parser.v1.PostR\x05posts\"c\n" +
+	"\x05posts\x18\x02 \x03(\v2\x18.ai.forum_parser.v1.PostR\x05posts\x12$\n" +
+	"\x0eposts_has_more\x18\x03 \x01(\bR\fpostsHasMore\x12\x1f\n" +
+	"\vposts_total\x18\x04 \x01(\x05R\n" +
+	"postsTotal\x12*\n" +
+	"\x11my_first_position\x18\x05 \x01(\x05R\x0fmyFirstPosition\x12(\n" +
+	"\x10my_last_position\x18\x06 \x01(\x05R\x0emyLastPosition\x12(\n" +
+	"\x10my_positions_set\x18\a \x01(\bR\x0emyPositionsSet\"c\n" +
 	"\x16ListThreadPostsRequest\x12\x1b\n" +
 	"\tthread_id\x18\x01 \x01(\tR\bthreadId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x03 \x01(\x05R\x06offset\"I\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"d\n" +
 	"\x17ListThreadPostsResponse\x12.\n" +
-	"\x05posts\x18\x01 \x03(\v2\x18.ai.forum_parser.v1.PostR\x05posts\"\xed\x01\n" +
+	"\x05posts\x18\x01 \x03(\v2\x18.ai.forum_parser.v1.PostR\x05posts\x12\x19\n" +
+	"\bhas_more\x18\x02 \x01(\bR\ahasMore\"\xed\x01\n" +
 	"\x16ListDiscussionsRequest\x12\x1e\n" +
 	"\vcar_make_id\x18\x01 \x01(\x05R\tcarMakeId\x12\"\n" +
 	"\rcar_make_name\x18\x02 \x01(\tR\vcarMakeName\x12 \n" +
