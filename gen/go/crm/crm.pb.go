@@ -4851,8 +4851,21 @@ type CreateExternalDealRequest struct {
 	// softly). Used for no-payment channels like Arbuz.kz where "first
 	// contact" is vacuous.
 	AutoDoneTaskTitle string `protobuf:"bytes,29,opt,name=auto_done_task_title,json=autoDoneTaskTitle,proto3" json:"auto_done_task_title,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	// move_to_stage_on_merge — when true AND the call links an EXISTING deal
+	// (via deal_id, (source, external_id), or contact-scope merge_cap), cg-crm
+	// advances that linked deal forward to stage_id. Forward-only: the move is
+	// skipped when stage_id is already the current stage, is terminal, belongs
+	// to another pipeline, or sits at/behind the deal's current stage position
+	// (never moves a deal backward). Permission and stage-exit-requirement
+	// gates are bypassed (the caller is a service-key integration). Used by
+	// cg-subscriptions: a returning subscription payment links the client's
+	// existing open deal in «Подписка autobody» and advances it to «Оплатили»
+	// without a manual kanban drag. Default false preserves the existing
+	// merge behaviour (link/update fields, leave stage untouched) for all
+	// other callers.
+	MoveToStageOnMerge bool `protobuf:"varint,30,opt,name=move_to_stage_on_merge,json=moveToStageOnMerge,proto3" json:"move_to_stage_on_merge,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *CreateExternalDealRequest) Reset() {
@@ -5086,6 +5099,13 @@ func (x *CreateExternalDealRequest) GetAutoDoneTaskTitle() string {
 		return x.AutoDoneTaskTitle
 	}
 	return ""
+}
+
+func (x *CreateExternalDealRequest) GetMoveToStageOnMerge() bool {
+	if x != nil {
+		return x.MoveToStageOnMerge
+	}
+	return false
 }
 
 // One turn in an AI-driven conversation persisted into wa_messages so
@@ -22056,7 +22076,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\bmodel_id\x18\x04 \x01(\x03R\amodelId\x12#\n" +
 	"\rgeneration_id\x18\x05 \x01(\x03R\fgenerationId\x12\x12\n" +
 	"\x04year\x18\x06 \x01(\x05R\x04year\x12\x14\n" +
-	"\x05color\x18\a \x01(\tR\x05color\"\xf1\t\n" +
+	"\x05color\x18\a \x01(\tR\x05color\"\xa5\n" +
+	"\n" +
 	"\x19CreateExternalDealRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -22091,7 +22112,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x15legacy_amocrm_lead_id\x18\x1a \x01(\tR\x12legacyAmocrmLeadId\x12(\n" +
 	"\x10append_note_only\x18\x1b \x01(\bR\x0eappendNoteOnly\x12\x1b\n" +
 	"\tnote_body\x18\x1c \x01(\tR\bnoteBody\x12/\n" +
-	"\x14auto_done_task_title\x18\x1d \x01(\tR\x11autoDoneTaskTitle\x1a?\n" +
+	"\x14auto_done_task_title\x18\x1d \x01(\tR\x11autoDoneTaskTitle\x122\n" +
+	"\x16move_to_stage_on_merge\x18\x1e \x01(\bR\x12moveToStageOnMerge\x1a?\n" +
 	"\x11CustomFieldsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe3\x01\n" +
