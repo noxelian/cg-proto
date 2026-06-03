@@ -512,6 +512,10 @@ type GetThreadResponse struct {
 	MyLastPosition  int32 `protobuf:"varint,6,opt,name=my_last_position,json=myLastPosition,proto3" json:"my_last_position,omitempty"`
 	// True when viewer is known and has at least one post (or is thread OP author).
 	MyPositionsSet bool `protobuf:"varint,7,opt,name=my_positions_set,json=myPositionsSet,proto3" json:"my_positions_set,omitempty"`
+	// Row offset used for this page (SQL OFFSET on published posts, excluding synthetic OP).
+	PostsOffset int32 `protobuf:"varint,8,opt,name=posts_offset,json=postsOffset,proto3" json:"posts_offset,omitempty"`
+	// True when earlier posts exist (posts_offset > 0).
+	PostsHasBefore bool `protobuf:"varint,9,opt,name=posts_has_before,json=postsHasBefore,proto3" json:"posts_has_before,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -591,6 +595,20 @@ func (x *GetThreadResponse) GetMyLastPosition() int32 {
 func (x *GetThreadResponse) GetMyPositionsSet() bool {
 	if x != nil {
 		return x.MyPositionsSet
+	}
+	return false
+}
+
+func (x *GetThreadResponse) GetPostsOffset() int32 {
+	if x != nil {
+		return x.PostsOffset
+	}
+	return 0
+}
+
+func (x *GetThreadResponse) GetPostsHasBefore() bool {
+	if x != nil {
+		return x.PostsHasBefore
 	}
 	return false
 }
@@ -1258,7 +1276,7 @@ const file_ai_forum_parser_v1_forum_parser_proto_rawDesc = "" +
 	"\vposts_limit\x18\x02 \x01(\x05R\n" +
 	"postsLimit\x12!\n" +
 	"\fposts_offset\x18\x03 \x01(\x05R\vpostsOffset\x12'\n" +
-	"\x0faround_position\x18\x04 \x01(\x05R\x0earoundPosition\"\xc2\x02\n" +
+	"\x0faround_position\x18\x04 \x01(\x05R\x0earoundPosition\"\x8f\x03\n" +
 	"\x11GetThreadResponse\x126\n" +
 	"\x06thread\x18\x01 \x01(\v2\x1e.ai.forum_parser.v1.ThreadCardR\x06thread\x12.\n" +
 	"\x05posts\x18\x02 \x03(\v2\x18.ai.forum_parser.v1.PostR\x05posts\x12$\n" +
@@ -1267,7 +1285,9 @@ const file_ai_forum_parser_v1_forum_parser_proto_rawDesc = "" +
 	"postsTotal\x12*\n" +
 	"\x11my_first_position\x18\x05 \x01(\x05R\x0fmyFirstPosition\x12(\n" +
 	"\x10my_last_position\x18\x06 \x01(\x05R\x0emyLastPosition\x12(\n" +
-	"\x10my_positions_set\x18\a \x01(\bR\x0emyPositionsSet\"c\n" +
+	"\x10my_positions_set\x18\a \x01(\bR\x0emyPositionsSet\x12!\n" +
+	"\fposts_offset\x18\b \x01(\x05R\vpostsOffset\x12(\n" +
+	"\x10posts_has_before\x18\t \x01(\bR\x0epostsHasBefore\"c\n" +
 	"\x16ListThreadPostsRequest\x12\x1b\n" +
 	"\tthread_id\x18\x01 \x01(\tR\bthreadId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +

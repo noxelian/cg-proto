@@ -100,6 +100,10 @@ message GetThreadResponse {
   int32 my_last_position = 6;
   // True when viewer is known and has at least one post (or is thread OP author).
   bool my_positions_set = 7;
+  // Row offset used for this page (SQL OFFSET on published posts, excluding synthetic OP).
+  int32 posts_offset = 8;
+  // True when earlier posts exist (posts_offset > 0).
+  bool posts_has_before = 9;
 }
 
 message ListThreadPostsRequest {
