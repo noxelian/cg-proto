@@ -335,6 +335,18 @@ service CRMService {
   // See .planning/phases/07-personal-kanban-card-border-colors-per-user-per-deal-backend.
   rpc SetUserDealCardColor(SetUserDealCardColorRequest)     returns (UserDealCardColor);
   rpc ListUserDealCardColors(ListUserDealCardColorsRequest) returns (ListUserDealCardColorsResponse);
+
+  // Phase 11: External call logging for recruiters (WhatsApp / Google Meet).
+  // Recruiter-logged calls that never pass through Asterisk telephony — stored
+  // in a SEPARATE external_calls table (NOT telephony_calls) so PBX attribution
+  // stays clean. created_by_user_id is the JWT primary id stored verbatim.
+  // CountExternalCallsByUser feeds the daily cg-mini-jake report as a separate
+  // bucket; DeleteExternalCall is a soft-delete (own-only, enforced by caller_user_id).
+  // See .planning/phases/11-external-call-logging-for-recruiters-whatsapp-google-meet-co.
+  rpc CreateExternalCall(CreateExternalCallRequest)             returns (CreateExternalCallResponse);
+  rpc ListExternalCalls(ListExternalCallsRequest)               returns (ListExternalCallsResponse);
+  rpc CountExternalCallsByUser(CountExternalCallsByUserRequest) returns (CountExternalCallsByUserResponse);
+  rpc DeleteExternalCall(DeleteExternalCallRequest)             returns (DeleteExternalCallResponse);
 }
 
 message Pipeline {
@@ -3239,4 +3251,70 @@ message ListUserDealCardColorsRequest {
 
 message ListUserDealCardColorsResponse {
   repeated UserDealCardColor colors = 1;
+}
+
+// Phase 11: External call logging for recruiters (WhatsApp / Google Meet).
+// Backed by cg-crm `external_calls` table (migration 000078) — a SEPARATE
+// table from telephony_calls. Fields mirror the migration column set (D-05).
+// created_by_user_id is the JWT primary id stored verbatim (Blocker 2 — no
+// legacy_id translation). channel/contact_ref_type are stringly-typed enums.
+// occurred_at drives the daily-report day window; deleted_at non-null = soft-deleted.
+message ExternalCall {
+  string                    id                = 1;  // UUID
+  string                    organization_id   = 2;  // UUID
+  int64                     created_by_user_id = 3; // cg-users primary id (JWT user_id)
+  string                    channel           = 4;  // whatsapp|google_meet|other
+  string                    contact_ref       = 5;  // optional (D-07) — phone/email/url value
+  string                    contact_ref_type  = 6;  // optional — phone|email|url
+  string                    direction         = 7;  // inbound|outbound
+  int32                     duration_sec      = 8;  // optional (D-08-count) — NOT a count filter
+  google.protobuf.Timestamp occurred_at       = 9;
+  string                    note              = 10; // optional
+  google.protobuf.Timestamp created_at        = 11;
+  google.protobuf.Timestamp deleted_at        = 12; // soft-delete (D-09); unset = active
+}
+
+message CreateExternalCallRequest {
+  string                    organization_id    = 1;  // UUID
+  int64                     created_by_user_id  = 2;  // JWT primary id, stored verbatim
+  string                    channel             = 3;  // whatsapp|google_meet|other
+  string                    contact_ref         = 4;  // optional (D-07)
+  string                    contact_ref_type    = 5;  // optional — phone|email|url
+  string                    direction           = 6;  // inbound|outbound
+  int32                     duration_sec        = 7;  // optional
+  google.protobuf.Timestamp occurred_at         = 8;  // server enforces [now-2d, now] (D-08-bd)
+  string                    note                = 9;  // optional
+}
+
+message CreateExternalCallResponse {
+  ExternalCall call = 1;
+}
+
+message ListExternalCallsRequest {
+  string                    organization_id = 1;  // UUID
+  google.protobuf.Timestamp from            = 2;  // occurred_at >= from
+  google.protobuf.Timestamp to              = 3;  // occurred_at < to
+}
+
+message ListExternalCallsResponse {
+  repeated ExternalCall calls = 1;  // excludes soft-deleted rows
+}
+
+message CountExternalCallsByUserRequest {
+  repeated int64            user_ids = 1;  // cg-users primary ids
+  google.protobuf.Timestamp from     = 2;  // occurred_at >= from
+  google.protobuf.Timestamp to       = 3;  // occurred_at < to
+}
+
+message CountExternalCallsByUserResponse {
+  map<int64, int32> counts_by_user = 1;  // non-deleted external_calls per user in window
+}
+
+message DeleteExternalCallRequest {
+  string id             = 1;  // UUID of the external_calls row
+  int64  caller_user_id = 2;  // own-only enforcement (D-09): must equal row.created_by_user_id
+}
+
+message DeleteExternalCallResponse {
+  bool deleted = 1;  // false if not found / not owned
 }

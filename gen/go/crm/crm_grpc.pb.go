@@ -155,6 +155,10 @@ const (
 	CRMService_DeleteWazzupUserExtension_FullMethodName          = "/crm.v1.CRMService/DeleteWazzupUserExtension"
 	CRMService_SetUserDealCardColor_FullMethodName               = "/crm.v1.CRMService/SetUserDealCardColor"
 	CRMService_ListUserDealCardColors_FullMethodName             = "/crm.v1.CRMService/ListUserDealCardColors"
+	CRMService_CreateExternalCall_FullMethodName                 = "/crm.v1.CRMService/CreateExternalCall"
+	CRMService_ListExternalCalls_FullMethodName                  = "/crm.v1.CRMService/ListExternalCalls"
+	CRMService_CountExternalCallsByUser_FullMethodName           = "/crm.v1.CRMService/CountExternalCallsByUser"
+	CRMService_DeleteExternalCall_FullMethodName                 = "/crm.v1.CRMService/DeleteExternalCall"
 )
 
 // CRMServiceClient is the client API for CRMService service.
@@ -466,6 +470,17 @@ type CRMServiceClient interface {
 	// See .planning/phases/07-personal-kanban-card-border-colors-per-user-per-deal-backend.
 	SetUserDealCardColor(ctx context.Context, in *SetUserDealCardColorRequest, opts ...grpc.CallOption) (*UserDealCardColor, error)
 	ListUserDealCardColors(ctx context.Context, in *ListUserDealCardColorsRequest, opts ...grpc.CallOption) (*ListUserDealCardColorsResponse, error)
+	// Phase 11: External call logging for recruiters (WhatsApp / Google Meet).
+	// Recruiter-logged calls that never pass through Asterisk telephony — stored
+	// in a SEPARATE external_calls table (NOT telephony_calls) so PBX attribution
+	// stays clean. created_by_user_id is the JWT primary id stored verbatim.
+	// CountExternalCallsByUser feeds the daily cg-mini-jake report as a separate
+	// bucket; DeleteExternalCall is a soft-delete (own-only, enforced by caller_user_id).
+	// See .planning/phases/11-external-call-logging-for-recruiters-whatsapp-google-meet-co.
+	CreateExternalCall(ctx context.Context, in *CreateExternalCallRequest, opts ...grpc.CallOption) (*CreateExternalCallResponse, error)
+	ListExternalCalls(ctx context.Context, in *ListExternalCallsRequest, opts ...grpc.CallOption) (*ListExternalCallsResponse, error)
+	CountExternalCallsByUser(ctx context.Context, in *CountExternalCallsByUserRequest, opts ...grpc.CallOption) (*CountExternalCallsByUserResponse, error)
+	DeleteExternalCall(ctx context.Context, in *DeleteExternalCallRequest, opts ...grpc.CallOption) (*DeleteExternalCallResponse, error)
 }
 
 type cRMServiceClient struct {
@@ -1848,6 +1863,46 @@ func (c *cRMServiceClient) ListUserDealCardColors(ctx context.Context, in *ListU
 	return out, nil
 }
 
+func (c *cRMServiceClient) CreateExternalCall(ctx context.Context, in *CreateExternalCallRequest, opts ...grpc.CallOption) (*CreateExternalCallResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateExternalCallResponse)
+	err := c.cc.Invoke(ctx, CRMService_CreateExternalCall_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ListExternalCalls(ctx context.Context, in *ListExternalCallsRequest, opts ...grpc.CallOption) (*ListExternalCallsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListExternalCallsResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListExternalCalls_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) CountExternalCallsByUser(ctx context.Context, in *CountExternalCallsByUserRequest, opts ...grpc.CallOption) (*CountExternalCallsByUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CountExternalCallsByUserResponse)
+	err := c.cc.Invoke(ctx, CRMService_CountExternalCallsByUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) DeleteExternalCall(ctx context.Context, in *DeleteExternalCallRequest, opts ...grpc.CallOption) (*DeleteExternalCallResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteExternalCallResponse)
+	err := c.cc.Invoke(ctx, CRMService_DeleteExternalCall_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CRMServiceServer is the server API for CRMService service.
 // All implementations must embed UnimplementedCRMServiceServer
 // for forward compatibility.
@@ -2157,6 +2212,17 @@ type CRMServiceServer interface {
 	// See .planning/phases/07-personal-kanban-card-border-colors-per-user-per-deal-backend.
 	SetUserDealCardColor(context.Context, *SetUserDealCardColorRequest) (*UserDealCardColor, error)
 	ListUserDealCardColors(context.Context, *ListUserDealCardColorsRequest) (*ListUserDealCardColorsResponse, error)
+	// Phase 11: External call logging for recruiters (WhatsApp / Google Meet).
+	// Recruiter-logged calls that never pass through Asterisk telephony — stored
+	// in a SEPARATE external_calls table (NOT telephony_calls) so PBX attribution
+	// stays clean. created_by_user_id is the JWT primary id stored verbatim.
+	// CountExternalCallsByUser feeds the daily cg-mini-jake report as a separate
+	// bucket; DeleteExternalCall is a soft-delete (own-only, enforced by caller_user_id).
+	// See .planning/phases/11-external-call-logging-for-recruiters-whatsapp-google-meet-co.
+	CreateExternalCall(context.Context, *CreateExternalCallRequest) (*CreateExternalCallResponse, error)
+	ListExternalCalls(context.Context, *ListExternalCallsRequest) (*ListExternalCallsResponse, error)
+	CountExternalCallsByUser(context.Context, *CountExternalCallsByUserRequest) (*CountExternalCallsByUserResponse, error)
+	DeleteExternalCall(context.Context, *DeleteExternalCallRequest) (*DeleteExternalCallResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
 
@@ -2574,6 +2640,18 @@ func (UnimplementedCRMServiceServer) SetUserDealCardColor(context.Context, *SetU
 }
 func (UnimplementedCRMServiceServer) ListUserDealCardColors(context.Context, *ListUserDealCardColorsRequest) (*ListUserDealCardColorsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUserDealCardColors not implemented")
+}
+func (UnimplementedCRMServiceServer) CreateExternalCall(context.Context, *CreateExternalCallRequest) (*CreateExternalCallResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateExternalCall not implemented")
+}
+func (UnimplementedCRMServiceServer) ListExternalCalls(context.Context, *ListExternalCallsRequest) (*ListExternalCallsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListExternalCalls not implemented")
+}
+func (UnimplementedCRMServiceServer) CountExternalCallsByUser(context.Context, *CountExternalCallsByUserRequest) (*CountExternalCallsByUserResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CountExternalCallsByUser not implemented")
+}
+func (UnimplementedCRMServiceServer) DeleteExternalCall(context.Context, *DeleteExternalCallRequest) (*DeleteExternalCallResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteExternalCall not implemented")
 }
 func (UnimplementedCRMServiceServer) mustEmbedUnimplementedCRMServiceServer() {}
 func (UnimplementedCRMServiceServer) testEmbeddedByValue()                    {}
@@ -5044,6 +5122,78 @@ func _CRMService_ListUserDealCardColors_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_CreateExternalCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateExternalCallRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).CreateExternalCall(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_CreateExternalCall_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).CreateExternalCall(ctx, req.(*CreateExternalCallRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ListExternalCalls_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListExternalCallsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListExternalCalls(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListExternalCalls_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListExternalCalls(ctx, req.(*ListExternalCallsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_CountExternalCallsByUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CountExternalCallsByUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).CountExternalCallsByUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_CountExternalCallsByUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).CountExternalCallsByUser(ctx, req.(*CountExternalCallsByUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_DeleteExternalCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteExternalCallRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).DeleteExternalCall(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_DeleteExternalCall_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).DeleteExternalCall(ctx, req.(*DeleteExternalCallRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CRMService_ServiceDesc is the grpc.ServiceDesc for CRMService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -5594,6 +5744,22 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUserDealCardColors",
 			Handler:    _CRMService_ListUserDealCardColors_Handler,
+		},
+		{
+			MethodName: "CreateExternalCall",
+			Handler:    _CRMService_CreateExternalCall_Handler,
+		},
+		{
+			MethodName: "ListExternalCalls",
+			Handler:    _CRMService_ListExternalCalls_Handler,
+		},
+		{
+			MethodName: "CountExternalCallsByUser",
+			Handler:    _CRMService_CountExternalCallsByUser_Handler,
+		},
+		{
+			MethodName: "DeleteExternalCall",
+			Handler:    _CRMService_DeleteExternalCall_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
