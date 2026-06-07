@@ -191,6 +191,20 @@ service CRMService {
   rpc GetDealSourcesBreakdown(GetDealSourcesBreakdownRequest) returns (GetDealSourcesBreakdownResponse);
   rpc GetCloseReasonsBreakdown(GetCloseReasonsBreakdownRequest) returns (GetCloseReasonsBreakdownResponse);
 
+  // Agent-performance RPCs (Phase 12, FOUND-11) — the unified queryable
+  // agent-performance model. Mirrors the cg-crm analytics/agentperf model
+  // structs (TimeInStageStat / StalledDeal / FirstContactSLAReport /
+  // AgentFunnel / LinkageReport / AttributionCoverage / AgentRef). Multi-agent
+  // by design: every per-agent result groups by agent even at N=1, and the
+  // unattributed bucket is surfaced honestly (agent_id 0), never dropped.
+  rpc GetTimeInStage(GetTimeInStageRequest)                 returns (GetTimeInStageResponse);
+  rpc GetStalledDeals(GetStalledDealsRequest)               returns (GetStalledDealsResponse);
+  rpc GetFirstContactSLA(GetFirstContactSLARequest)         returns (GetFirstContactSLAResponse);
+  rpc GetConversionFunnel(GetConversionFunnelRequest)       returns (GetConversionFunnelResponse);
+  rpc GetCallOutcomeLinkage(GetCallOutcomeLinkageRequest)   returns (GetCallOutcomeLinkageResponse);
+  rpc GetAttributionCoverage(GetAttributionCoverageRequest) returns (GetAttributionCoverageResponse);
+  rpc ListAgents(ListAgentsRequest)                         returns (ListAgentsResponse);
+
   // Notes RPCs
   rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse);
   rpc UpdateNote(UpdateNoteRequest) returns (UpdateNoteResponse);
@@ -1998,6 +2012,195 @@ message CloseReasonBreakdownItem {
 
 message GetCloseReasonsBreakdownResponse {
   repeated CloseReasonBreakdownItem items = 1;
+}
+
+// ==================== Agent-Performance Messages (Phase 12, FOUND-11) ====================
+//
+// These mirror the cg-crm internal/domain/analytics/agentperf model structs so
+// the server (12-11) and bff-admin (12-12) map row-for-row without loss.
+//
+// Conventions (all additive — no existing field renumbered):
+//   - Requests follow GetManagerStatsRequest: organization_id + optional
+//     pipeline_id + date_from/date_to + optional user_id. (Stalled/TimeInStage
+//     ignore the date range server-side but keep it for a uniform request shape;
+//     ListAgents needs neither dates nor pipeline.)
+//   - Counts are int64 to match the existing analytics messages and avoid any
+//     overflow concern; rates/percentages are double (0-100).
+//   - Durations are int64 SECONDS (lossless on the wire; the dashboard formats).
+//   - Booleans (no_next_step, active): downstream JSON in 12-12 MUST NOT rely on
+//     proto `omitempty` — a `false` would be silently dropped from a gin.H
+//     response (proto false-bool/omitempty footgun). Wrap in a response struct
+//     without omitempty when forwarding.
+
+// --- TimeInStage (FOUND-05): per-(stage, agent) median + p90 occupancy. ---
+message GetTimeInStageRequest {
+  string organization_id              = 1;
+  string pipeline_id                  = 2; // optional; empty = all pipelines
+  google.protobuf.Timestamp date_from = 3;
+  google.protobuf.Timestamp date_to   = 4;
+  int64  user_id                      = 5; // optional; 0 = no agent filter
+}
+
+message TimeInStageStatProto {
+  string stage_id    = 1;
+  int64  agent_id    = 2; // owner-at-entry; 0 = unattributed bucket
+  int64  p50_seconds = 3;
+  int64  p90_seconds = 4;
+  int64  count       = 5; // number of stage episodes in the sample
+}
+
+message GetTimeInStageResponse {
+  repeated TimeInStageStatProto stats = 1;
+}
+
+// --- StalledDeals (FOUND-08): open deals sitting too long or with no next step. ---
+message GetStalledDealsRequest {
+  string organization_id              = 1;
+  string pipeline_id                  = 2;
+  google.protobuf.Timestamp date_from = 3;
+  google.protobuf.Timestamp date_to   = 4;
+  int64  user_id                      = 5;
+}
+
+message StalledDealProto {
+  string deal_id      = 1;
+  string stage_id     = 2;
+  int64  agent_id     = 3;
+  int64  age_seconds  = 4;
+  string reason       = 5; // "time_in_stage" | "no_activity"
+  bool   no_next_step = 6; // true = no active (pending) task scheduled
+}
+
+message GetStalledDealsResponse {
+  repeated StalledDealProto deals = 1;
+}
+
+// --- FirstContactSLA (FOUND-06): first-contact SLA breakdown, org + per-agent. ---
+message GetFirstContactSLARequest {
+  string organization_id              = 1;
+  string pipeline_id                  = 2;
+  google.protobuf.Timestamp date_from = 3;
+  google.protobuf.Timestamp date_to   = 4;
+  int64  user_id                      = 5;
+}
+
+message AgentSLAStatProto {
+  int64  agent_id          = 1;
+  int64  total_leads       = 2;
+  int64  within_target     = 3;
+  int64  breached          = 4;
+  int64  no_contact        = 5;
+  // wa_unattributable: leads whose only outbound WA reply has a NULL sender —
+  // surfaced alongside no_contact, never folded into it (D-07).
+  int64  wa_unattributable = 6;
+  double pct_within        = 7;
+}
+
+message GetFirstContactSLAResponse {
+  int64  total_leads       = 1;
+  int64  within_target     = 2;
+  int64  breached          = 3;
+  int64  no_contact        = 4;
+  int64  wa_unattributable = 5;
+  double pct_within        = 6;
+  int64  target_minutes    = 7;
+  repeated AgentSLAStatProto per_agent = 8;
+}
+
+// --- ConversionFunnel (FOUND-07): per-agent milestone counts + derived rates. ---
+message GetConversionFunnelRequest {
+  string organization_id              = 1;
+  string pipeline_id                  = 2;
+  google.protobuf.Timestamp date_from = 3;
+  google.protobuf.Timestamp date_to   = 4;
+  int64  user_id                      = 5;
+}
+
+message FunnelCountsProto {
+  int64 agent_id        = 1;
+  int64 leads           = 2;
+  int64 appointment_set = 3;
+  int64 car_in_shop     = 4;
+  int64 won             = 5; // entered any stage with stages.counts_as_won
+}
+
+message FunnelRatesProto {
+  double appointment_set_rate = 1; // appointment_set / leads
+  double show_up_rate         = 2; // car_in_shop / appointment_set
+  double win_rate             = 3; // won / leads
+}
+
+message AgentFunnelProto {
+  int64             agent_id = 1;
+  FunnelCountsProto counts   = 2;
+  FunnelRatesProto  rates    = 3;
+}
+
+message GetConversionFunnelResponse {
+  repeated AgentFunnelProto agents = 1;
+}
+
+// --- CallOutcomeLinkage (FOUND-09): call→deal→outcome, org + per-agent. ---
+message GetCallOutcomeLinkageRequest {
+  string organization_id              = 1;
+  string pipeline_id                  = 2;
+  google.protobuf.Timestamp date_from = 3;
+  google.protobuf.Timestamp date_to   = 4;
+  int64  user_id                      = 5;
+}
+
+message AgentLinkageStatProto {
+  int64 agent_id    = 1; // 0 = explicit unattributed bucket (never dropped)
+  int64 total_calls = 2;
+  int64 won         = 3;
+  int64 lost        = 4;
+  int64 open        = 5;
+  int64 unlinked    = 6; // calls with no resolvable deal
+}
+
+message GetCallOutcomeLinkageResponse {
+  int64 total_calls = 1;
+  int64 won         = 2;
+  int64 lost        = 3;
+  int64 open        = 4;
+  int64 unlinked    = 5;
+  repeated AgentLinkageStatProto per_agent = 6;
+}
+
+// --- AttributionCoverage (FOUND-03): honest call→agent / call→deal coverage. ---
+message GetAttributionCoverageRequest {
+  string organization_id              = 1;
+  string pipeline_id                  = 2;
+  google.protobuf.Timestamp date_from = 3;
+  google.protobuf.Timestamp date_to   = 4;
+  int64  user_id                      = 5;
+}
+
+message GetAttributionCoverageResponse {
+  int64  total_calls    = 1;
+  int64  resolved_agent = 2;
+  int64  resolved_deal  = 3;
+  // unattributed: calls with no resolved agent (raw 0 or resolver orphan) —
+  // surfaced honestly so coverage never falsely reads 100%.
+  int64  unattributed   = 4;
+  double pct_agent      = 5;
+  double pct_deal       = 6;
+}
+
+// --- ListAgents (FOUND-04): the active multi-agent roster. ---
+message ListAgentsRequest {
+  string organization_id = 1;
+  int64  user_id         = 2; // caller; for scope/permission resolution
+}
+
+message AgentRefProto {
+  int64  user_id = 1;
+  string label   = 2;
+  bool   active  = 3; // see omitempty footgun note above for downstream JSON
+}
+
+message ListAgentsResponse {
+  repeated AgentRefProto agents = 1;
 }
 
 // ==================== Notes ====================

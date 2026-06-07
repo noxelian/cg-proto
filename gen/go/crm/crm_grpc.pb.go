@@ -96,6 +96,13 @@ const (
 	CRMService_GetActivityStats_FullMethodName                   = "/crm.v1.CRMService/GetActivityStats"
 	CRMService_GetDealSourcesBreakdown_FullMethodName            = "/crm.v1.CRMService/GetDealSourcesBreakdown"
 	CRMService_GetCloseReasonsBreakdown_FullMethodName           = "/crm.v1.CRMService/GetCloseReasonsBreakdown"
+	CRMService_GetTimeInStage_FullMethodName                     = "/crm.v1.CRMService/GetTimeInStage"
+	CRMService_GetStalledDeals_FullMethodName                    = "/crm.v1.CRMService/GetStalledDeals"
+	CRMService_GetFirstContactSLA_FullMethodName                 = "/crm.v1.CRMService/GetFirstContactSLA"
+	CRMService_GetConversionFunnel_FullMethodName                = "/crm.v1.CRMService/GetConversionFunnel"
+	CRMService_GetCallOutcomeLinkage_FullMethodName              = "/crm.v1.CRMService/GetCallOutcomeLinkage"
+	CRMService_GetAttributionCoverage_FullMethodName             = "/crm.v1.CRMService/GetAttributionCoverage"
+	CRMService_ListAgents_FullMethodName                         = "/crm.v1.CRMService/ListAgents"
 	CRMService_CreateNote_FullMethodName                         = "/crm.v1.CRMService/CreateNote"
 	CRMService_UpdateNote_FullMethodName                         = "/crm.v1.CRMService/UpdateNote"
 	CRMService_ListNotes_FullMethodName                          = "/crm.v1.CRMService/ListNotes"
@@ -343,6 +350,19 @@ type CRMServiceClient interface {
 	GetActivityStats(ctx context.Context, in *GetActivityStatsRequest, opts ...grpc.CallOption) (*GetActivityStatsResponse, error)
 	GetDealSourcesBreakdown(ctx context.Context, in *GetDealSourcesBreakdownRequest, opts ...grpc.CallOption) (*GetDealSourcesBreakdownResponse, error)
 	GetCloseReasonsBreakdown(ctx context.Context, in *GetCloseReasonsBreakdownRequest, opts ...grpc.CallOption) (*GetCloseReasonsBreakdownResponse, error)
+	// Agent-performance RPCs (Phase 12, FOUND-11) — the unified queryable
+	// agent-performance model. Mirrors the cg-crm analytics/agentperf model
+	// structs (TimeInStageStat / StalledDeal / FirstContactSLAReport /
+	// AgentFunnel / LinkageReport / AttributionCoverage / AgentRef). Multi-agent
+	// by design: every per-agent result groups by agent even at N=1, and the
+	// unattributed bucket is surfaced honestly (agent_id 0), never dropped.
+	GetTimeInStage(ctx context.Context, in *GetTimeInStageRequest, opts ...grpc.CallOption) (*GetTimeInStageResponse, error)
+	GetStalledDeals(ctx context.Context, in *GetStalledDealsRequest, opts ...grpc.CallOption) (*GetStalledDealsResponse, error)
+	GetFirstContactSLA(ctx context.Context, in *GetFirstContactSLARequest, opts ...grpc.CallOption) (*GetFirstContactSLAResponse, error)
+	GetConversionFunnel(ctx context.Context, in *GetConversionFunnelRequest, opts ...grpc.CallOption) (*GetConversionFunnelResponse, error)
+	GetCallOutcomeLinkage(ctx context.Context, in *GetCallOutcomeLinkageRequest, opts ...grpc.CallOption) (*GetCallOutcomeLinkageResponse, error)
+	GetAttributionCoverage(ctx context.Context, in *GetAttributionCoverageRequest, opts ...grpc.CallOption) (*GetAttributionCoverageResponse, error)
+	ListAgents(ctx context.Context, in *ListAgentsRequest, opts ...grpc.CallOption) (*ListAgentsResponse, error)
 	// Notes RPCs
 	CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error)
 	UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error)
@@ -1273,6 +1293,76 @@ func (c *cRMServiceClient) GetCloseReasonsBreakdown(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *cRMServiceClient) GetTimeInStage(ctx context.Context, in *GetTimeInStageRequest, opts ...grpc.CallOption) (*GetTimeInStageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTimeInStageResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetTimeInStage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetStalledDeals(ctx context.Context, in *GetStalledDealsRequest, opts ...grpc.CallOption) (*GetStalledDealsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetStalledDealsResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetStalledDeals_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetFirstContactSLA(ctx context.Context, in *GetFirstContactSLARequest, opts ...grpc.CallOption) (*GetFirstContactSLAResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetFirstContactSLAResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetFirstContactSLA_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetConversionFunnel(ctx context.Context, in *GetConversionFunnelRequest, opts ...grpc.CallOption) (*GetConversionFunnelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetConversionFunnelResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetConversionFunnel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetCallOutcomeLinkage(ctx context.Context, in *GetCallOutcomeLinkageRequest, opts ...grpc.CallOption) (*GetCallOutcomeLinkageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCallOutcomeLinkageResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetCallOutcomeLinkage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetAttributionCoverage(ctx context.Context, in *GetAttributionCoverageRequest, opts ...grpc.CallOption) (*GetAttributionCoverageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAttributionCoverageResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetAttributionCoverage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ListAgents(ctx context.Context, in *ListAgentsRequest, opts ...grpc.CallOption) (*ListAgentsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAgentsResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListAgents_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateNoteResponse)
@@ -2085,6 +2175,19 @@ type CRMServiceServer interface {
 	GetActivityStats(context.Context, *GetActivityStatsRequest) (*GetActivityStatsResponse, error)
 	GetDealSourcesBreakdown(context.Context, *GetDealSourcesBreakdownRequest) (*GetDealSourcesBreakdownResponse, error)
 	GetCloseReasonsBreakdown(context.Context, *GetCloseReasonsBreakdownRequest) (*GetCloseReasonsBreakdownResponse, error)
+	// Agent-performance RPCs (Phase 12, FOUND-11) — the unified queryable
+	// agent-performance model. Mirrors the cg-crm analytics/agentperf model
+	// structs (TimeInStageStat / StalledDeal / FirstContactSLAReport /
+	// AgentFunnel / LinkageReport / AttributionCoverage / AgentRef). Multi-agent
+	// by design: every per-agent result groups by agent even at N=1, and the
+	// unattributed bucket is surfaced honestly (agent_id 0), never dropped.
+	GetTimeInStage(context.Context, *GetTimeInStageRequest) (*GetTimeInStageResponse, error)
+	GetStalledDeals(context.Context, *GetStalledDealsRequest) (*GetStalledDealsResponse, error)
+	GetFirstContactSLA(context.Context, *GetFirstContactSLARequest) (*GetFirstContactSLAResponse, error)
+	GetConversionFunnel(context.Context, *GetConversionFunnelRequest) (*GetConversionFunnelResponse, error)
+	GetCallOutcomeLinkage(context.Context, *GetCallOutcomeLinkageRequest) (*GetCallOutcomeLinkageResponse, error)
+	GetAttributionCoverage(context.Context, *GetAttributionCoverageRequest) (*GetAttributionCoverageResponse, error)
+	ListAgents(context.Context, *ListAgentsRequest) (*ListAgentsResponse, error)
 	// Notes RPCs
 	CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error)
 	UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error)
@@ -2463,6 +2566,27 @@ func (UnimplementedCRMServiceServer) GetDealSourcesBreakdown(context.Context, *G
 }
 func (UnimplementedCRMServiceServer) GetCloseReasonsBreakdown(context.Context, *GetCloseReasonsBreakdownRequest) (*GetCloseReasonsBreakdownResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCloseReasonsBreakdown not implemented")
+}
+func (UnimplementedCRMServiceServer) GetTimeInStage(context.Context, *GetTimeInStageRequest) (*GetTimeInStageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTimeInStage not implemented")
+}
+func (UnimplementedCRMServiceServer) GetStalledDeals(context.Context, *GetStalledDealsRequest) (*GetStalledDealsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetStalledDeals not implemented")
+}
+func (UnimplementedCRMServiceServer) GetFirstContactSLA(context.Context, *GetFirstContactSLARequest) (*GetFirstContactSLAResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFirstContactSLA not implemented")
+}
+func (UnimplementedCRMServiceServer) GetConversionFunnel(context.Context, *GetConversionFunnelRequest) (*GetConversionFunnelResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetConversionFunnel not implemented")
+}
+func (UnimplementedCRMServiceServer) GetCallOutcomeLinkage(context.Context, *GetCallOutcomeLinkageRequest) (*GetCallOutcomeLinkageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCallOutcomeLinkage not implemented")
+}
+func (UnimplementedCRMServiceServer) GetAttributionCoverage(context.Context, *GetAttributionCoverageRequest) (*GetAttributionCoverageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAttributionCoverage not implemented")
+}
+func (UnimplementedCRMServiceServer) ListAgents(context.Context, *ListAgentsRequest) (*ListAgentsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListAgents not implemented")
 }
 func (UnimplementedCRMServiceServer) CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateNote not implemented")
@@ -4060,6 +4184,132 @@ func _CRMService_GetCloseReasonsBreakdown_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_GetTimeInStage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTimeInStageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetTimeInStage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetTimeInStage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetTimeInStage(ctx, req.(*GetTimeInStageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetStalledDeals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStalledDealsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetStalledDeals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetStalledDeals_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetStalledDeals(ctx, req.(*GetStalledDealsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetFirstContactSLA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFirstContactSLARequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetFirstContactSLA(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetFirstContactSLA_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetFirstContactSLA(ctx, req.(*GetFirstContactSLARequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetConversionFunnel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetConversionFunnelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetConversionFunnel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetConversionFunnel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetConversionFunnel(ctx, req.(*GetConversionFunnelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetCallOutcomeLinkage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCallOutcomeLinkageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetCallOutcomeLinkage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetCallOutcomeLinkage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetCallOutcomeLinkage(ctx, req.(*GetCallOutcomeLinkageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetAttributionCoverage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAttributionCoverageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetAttributionCoverage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetAttributionCoverage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetAttributionCoverage(ctx, req.(*GetAttributionCoverageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ListAgents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAgentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListAgents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListAgents_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListAgents(ctx, req.(*ListAgentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_CreateNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateNoteRequest)
 	if err := dec(in); err != nil {
@@ -5508,6 +5758,34 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCloseReasonsBreakdown",
 			Handler:    _CRMService_GetCloseReasonsBreakdown_Handler,
+		},
+		{
+			MethodName: "GetTimeInStage",
+			Handler:    _CRMService_GetTimeInStage_Handler,
+		},
+		{
+			MethodName: "GetStalledDeals",
+			Handler:    _CRMService_GetStalledDeals_Handler,
+		},
+		{
+			MethodName: "GetFirstContactSLA",
+			Handler:    _CRMService_GetFirstContactSLA_Handler,
+		},
+		{
+			MethodName: "GetConversionFunnel",
+			Handler:    _CRMService_GetConversionFunnel_Handler,
+		},
+		{
+			MethodName: "GetCallOutcomeLinkage",
+			Handler:    _CRMService_GetCallOutcomeLinkage_Handler,
+		},
+		{
+			MethodName: "GetAttributionCoverage",
+			Handler:    _CRMService_GetAttributionCoverage_Handler,
+		},
+		{
+			MethodName: "ListAgents",
+			Handler:    _CRMService_ListAgents_Handler,
 		},
 		{
 			MethodName: "CreateNote",
