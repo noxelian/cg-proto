@@ -81,6 +81,15 @@ service OrganizationService {
   // RequestActivation transitions org status from trial -> pending_docs.
   rpc RequestActivation(RequestActivationRequest) returns (RequestActivationResponse);
 
+  // SearchOrganizations is the Postgres-backed marketplace catalog that replaces
+  // the Elasticsearch-backed services.search.v1.SearchOrganizations. It wraps the
+  // org-service domain method FilterCandidates (model.CandidateFilter ->
+  // []model.CandidateResult), the shared filter+relevance-rank query that serves
+  // both the client catalog and matching-candidate selection. The request shape
+  // mirrors services.search.v1.SearchOrganizationsRequest so BFF mapping stays
+  // trivial during the ES cutover.
+  rpc SearchOrganizations(SearchOrganizationsRequest) returns (SearchOrganizationsResponse);
+
   // SetOrganizationMarketplaceFields lets platform admins/moderators edit the
   // marketplace ranking flags (is_reviewed, is_dealer, expert_for_carmake_ids,
   // expert_for_category_ids) on an organization. Each field is optional —
@@ -770,6 +779,102 @@ message RequestActivationRequest {
 
 message RequestActivationResponse {
   bool success = 1;
+}
+
+// =============================================
+// SearchOrganizations — Postgres-backed marketplace catalog
+// =============================================
+//
+// Mirrors services.search.v1 SearchOrganizations so the BFF can swap the
+// backend without reshaping its mapping. Request fields are copied from
+// services.search.v1.SearchOrganizationsRequest; the result is aligned to
+// org-service's model.CandidateResult (embedded Organization + the two
+// relevance-match flags) and model.CandidateFilter.
+
+// OrganizationSortBy mirrors services.search.v1.OrganizationSortBy. The
+// Postgres FilterCandidates query applies a fixed relevance chain
+// (expert_carmake, expert_category, dealer, reviewed, popularity, raters,
+// rating); RELEVANCE selects that default chain.
+enum OrganizationSortBy {
+  ORGANIZATION_SORT_BY_UNSPECIFIED = 0;
+  ORGANIZATION_SORT_BY_RELEVANCE = 1;
+  ORGANIZATION_SORT_BY_DISTANCE = 2;
+  ORGANIZATION_SORT_BY_RATING = 3;
+  ORGANIZATION_SORT_BY_NAME = 4;
+}
+
+message SearchOrganizationsRequest {
+  string query = 1;                    // Full-text search by name (reserved; FilterCandidates has no free-text score yet)
+  int64 city_id = 2;                   // 0 = any city (model.CandidateFilter.CityID)
+  int64 group_id = 3;                  // NSI service group ID; 0 = any group (model.CandidateFilter.GroupID)
+  repeated int64 category_ids = 4;     // Empty = any; otherwise array OVERLAP (model.CandidateFilter.CategoryIDs)
+
+  // Car-make filter. 0 = any make; else org matches if it lists no makes
+  // (accepts any) OR lists this make (model.CandidateFilter.CarMakeID).
+  int64 car_make_id = 5;
+
+  // Geo search (sort by distance). Distance is computed from these coords.
+  double latitude = 6;
+  double longitude = 7;
+  double radius_km = 8;                // Optional search radius in km (0 = unbounded)
+
+  // Pagination — maps to model.CandidateFilter.Limit/Offset.
+  int32 page = 9;
+  int32 page_size = 10;
+
+  // Sorting.
+  OrganizationSortBy sort_by = 11;
+}
+
+// OrganizationSearchResult is one ranked organization, aligned to
+// model.CandidateResult (the embedded model.Organization plus the two
+// relevance-match booleans).
+message OrganizationSearchResult {
+  string id = 1;
+  string name = 2;
+  OrganizationType type = 3;
+  int64 city_id = 4;
+  repeated int64 category_ids = 5;
+  repeated int64 car_make_ids = 6;
+  repeated int64 car_model_ids = 7;
+
+  double rating = 8;
+  // raters_count mirrors model.Organization.RatersCount (the review/rater count
+  // used by the marketplace UI; ES called this reviews_count).
+  int32 raters_count = 9;
+
+  bool is_dealer = 10;
+  bool is_reviewed = 11;
+  int64 popularity = 12;
+  repeated int64 expert_for_carmake_ids = 13;
+  repeated int64 expert_for_category_ids = 14;
+
+  optional double latitude = 15;
+  optional double longitude = 16;
+  // distance in km from the request lat/lon, when both are provided (0 otherwise).
+  double distance = 17;
+
+  // Relevance-match flags from model.CandidateResult, surfaced for badge reuse.
+  bool expert_carmake_match = 18;
+  bool expert_category_match = 19;
+}
+
+message SearchOrganizationsResponse {
+  repeated OrganizationSearchResult organizations = 1;
+  int32 total = 2;
+  optional OrganizationSearchFacets facets = 3;
+}
+
+// OrganizationSearchFacets mirrors services.search.v1.OrganizationFacets.
+message OrganizationSearchFacets {
+  repeated SearchFacetBucket cities = 1;
+  repeated SearchFacetBucket categories = 2;
+}
+
+message SearchFacetBucket {
+  string key = 1;
+  string name = 2;
+  int64 count = 3;
 }
 
 // =============================================

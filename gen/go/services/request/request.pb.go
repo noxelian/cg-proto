@@ -1944,6 +1944,255 @@ func (x *IsRequestNewResponse) GetIsNew() bool {
 	return false
 }
 
+// DismissRequest — hide a request for an organization ("не интересно").
+// Wraps domain DismissRequest(ctx, requestID, orgID).
+type DismissRequestRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	RequestId      string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`                // UUID string
+	OrganizationId string                 `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"` // UUID from organization-service
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *DismissRequestRequest) Reset() {
+	*x = DismissRequestRequest{}
+	mi := &file_services_request_request_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DismissRequestRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DismissRequestRequest) ProtoMessage() {}
+
+func (x *DismissRequestRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DismissRequestRequest.ProtoReflect.Descriptor instead.
+func (*DismissRequestRequest) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *DismissRequestRequest) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *DismissRequestRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+type DismissRequestResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DismissRequestResponse) Reset() {
+	*x = DismissRequestResponse{}
+	mi := &file_services_request_request_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DismissRequestResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DismissRequestResponse) ProtoMessage() {}
+
+func (x *DismissRequestResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DismissRequestResponse.ProtoReflect.Descriptor instead.
+func (*DismissRequestResponse) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *DismissRequestResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+// CountUnreadForOrganization — count unread & not-dismissed requests for an
+// organization, scoped by the org-profile filter. Wraps domain
+// CountUnreadForOrganization(ctx, orgID, model.RequestFilter).
+//
+// Filter fields map 1:1 to model.RequestFilter. Empty/zero = no filter on that
+// field. Note the domain filter carries a single category_id (not a list).
+type CountUnreadForOrganizationRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"` // UUID from organization-service
+	// Org-profile filter (subset of model.RequestFilter used by the feed).
+	Type          RequestType `protobuf:"varint,2,opt,name=type,proto3,enum=services.request.v1.RequestType" json:"type,omitempty"` // UNSPECIFIED = any type
+	GroupId       int64       `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                 // 0 = any group
+	CategoryId    int64       `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`        // 0 = any category (model.RequestFilter.CategoryID)
+	CityId        int64       `protobuf:"varint,5,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`                    // 0 = any city
+	CarMakeId     int64       `protobuf:"varint,6,opt,name=car_make_id,json=carMakeId,proto3" json:"car_make_id,omitempty"`         // 0 = any make
+	CarModelId    int64       `protobuf:"varint,7,opt,name=car_model_id,json=carModelId,proto3" json:"car_model_id,omitempty"`      // 0 = any model
+	Year          int32       `protobuf:"varint,8,opt,name=year,proto3" json:"year,omitempty"`                                      // 0 = any year
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CountUnreadForOrganizationRequest) Reset() {
+	*x = CountUnreadForOrganizationRequest{}
+	mi := &file_services_request_request_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CountUnreadForOrganizationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CountUnreadForOrganizationRequest) ProtoMessage() {}
+
+func (x *CountUnreadForOrganizationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CountUnreadForOrganizationRequest.ProtoReflect.Descriptor instead.
+func (*CountUnreadForOrganizationRequest) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *CountUnreadForOrganizationRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *CountUnreadForOrganizationRequest) GetType() RequestType {
+	if x != nil {
+		return x.Type
+	}
+	return RequestType_REQUEST_TYPE_UNSPECIFIED
+}
+
+func (x *CountUnreadForOrganizationRequest) GetGroupId() int64 {
+	if x != nil {
+		return x.GroupId
+	}
+	return 0
+}
+
+func (x *CountUnreadForOrganizationRequest) GetCategoryId() int64 {
+	if x != nil {
+		return x.CategoryId
+	}
+	return 0
+}
+
+func (x *CountUnreadForOrganizationRequest) GetCityId() int64 {
+	if x != nil {
+		return x.CityId
+	}
+	return 0
+}
+
+func (x *CountUnreadForOrganizationRequest) GetCarMakeId() int64 {
+	if x != nil {
+		return x.CarMakeId
+	}
+	return 0
+}
+
+func (x *CountUnreadForOrganizationRequest) GetCarModelId() int64 {
+	if x != nil {
+		return x.CarModelId
+	}
+	return 0
+}
+
+func (x *CountUnreadForOrganizationRequest) GetYear() int32 {
+	if x != nil {
+		return x.Year
+	}
+	return 0
+}
+
+type CountUnreadForOrganizationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Count         int64                  `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CountUnreadForOrganizationResponse) Reset() {
+	*x = CountUnreadForOrganizationResponse{}
+	mi := &file_services_request_request_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CountUnreadForOrganizationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CountUnreadForOrganizationResponse) ProtoMessage() {}
+
+func (x *CountUnreadForOrganizationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CountUnreadForOrganizationResponse.ProtoReflect.Descriptor instead.
+func (*CountUnreadForOrganizationResponse) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *CountUnreadForOrganizationResponse) GetCount() int64 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
 // ClassifyRequest — AI auto-classification of repair/parts requests
 type ClassifyRequestRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -1958,7 +2207,7 @@ type ClassifyRequestRequest struct {
 
 func (x *ClassifyRequestRequest) Reset() {
 	*x = ClassifyRequestRequest{}
-	mi := &file_services_request_request_proto_msgTypes[27]
+	mi := &file_services_request_request_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1970,7 +2219,7 @@ func (x *ClassifyRequestRequest) String() string {
 func (*ClassifyRequestRequest) ProtoMessage() {}
 
 func (x *ClassifyRequestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[27]
+	mi := &file_services_request_request_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1983,7 +2232,7 @@ func (x *ClassifyRequestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClassifyRequestRequest.ProtoReflect.Descriptor instead.
 func (*ClassifyRequestRequest) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{27}
+	return file_services_request_request_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *ClassifyRequestRequest) GetRequestId() string {
@@ -2030,7 +2279,7 @@ type ClassifyRequestResponse struct {
 
 func (x *ClassifyRequestResponse) Reset() {
 	*x = ClassifyRequestResponse{}
-	mi := &file_services_request_request_proto_msgTypes[28]
+	mi := &file_services_request_request_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2042,7 +2291,7 @@ func (x *ClassifyRequestResponse) String() string {
 func (*ClassifyRequestResponse) ProtoMessage() {}
 
 func (x *ClassifyRequestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[28]
+	mi := &file_services_request_request_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2055,7 +2304,7 @@ func (x *ClassifyRequestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClassifyRequestResponse.ProtoReflect.Descriptor instead.
 func (*ClassifyRequestResponse) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{28}
+	return file_services_request_request_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ClassifyRequestResponse) GetRequest() *Request {
@@ -2232,7 +2481,26 @@ const file_services_request_request_proto_rawDesc = "" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\"-\n" +
 	"\x14IsRequestNewResponse\x12\x15\n" +
-	"\x06is_new\x18\x01 \x01(\bR\x05isNew\"\xb2\x01\n" +
+	"\x06is_new\x18\x01 \x01(\bR\x05isNew\"_\n" +
+	"\x15DismissRequestRequest\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\x12'\n" +
+	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\"2\n" +
+	"\x16DismissRequestResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xad\x02\n" +
+	"!CountUnreadForOrganizationRequest\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x124\n" +
+	"\x04type\x18\x02 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12\x19\n" +
+	"\bgroup_id\x18\x03 \x01(\x03R\agroupId\x12\x1f\n" +
+	"\vcategory_id\x18\x04 \x01(\x03R\n" +
+	"categoryId\x12\x17\n" +
+	"\acity_id\x18\x05 \x01(\x03R\x06cityId\x12\x1e\n" +
+	"\vcar_make_id\x18\x06 \x01(\x03R\tcarMakeId\x12 \n" +
+	"\fcar_model_id\x18\a \x01(\x03R\n" +
+	"carModelId\x12\x12\n" +
+	"\x04year\x18\b \x01(\x05R\x04year\":\n" +
+	"\"CountUnreadForOrganizationResponse\x12\x14\n" +
+	"\x05count\x18\x01 \x01(\x03R\x05count\"\xb2\x01\n" +
 	"\x16ClassifyRequestRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x19\n" +
@@ -2251,7 +2519,7 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x19REQUEST_STATUS_MODERATION\x10\x01\x12\x1c\n" +
 	"\x18REQUEST_STATUS_PUBLISHED\x10\x02\x12\x1a\n" +
 	"\x16REQUEST_STATUS_DELETED\x10\x03\x12\x19\n" +
-	"\x15REQUEST_STATUS_CLOSED\x10\x042\x86\f\n" +
+	"\x15REQUEST_STATUS_CLOSED\x10\x042\x81\x0e\n" +
 	"\x0eRequestService\x12f\n" +
 	"\rCreateRequest\x12).services.request.v1.CreateRequestRequest\x1a*.services.request.v1.CreateRequestResponse\x12]\n" +
 	"\n" +
@@ -2266,7 +2534,9 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x0eGetSuggestions\x12*.services.request.v1.GetSuggestionsRequest\x1a+.services.request.v1.GetSuggestionsResponse\x12\x96\x01\n" +
 	"\x1dGetNewRequestsForOrganization\x129.services.request.v1.GetNewRequestsForOrganizationRequest\x1a:.services.request.v1.GetNewRequestsForOrganizationResponse\x12x\n" +
 	"\x13MarkRequestAsViewed\x12/.services.request.v1.MarkRequestAsViewedRequest\x1a0.services.request.v1.MarkRequestAsViewedResponse\x12c\n" +
-	"\fIsRequestNew\x12(.services.request.v1.IsRequestNewRequest\x1a).services.request.v1.IsRequestNewResponse\x12l\n" +
+	"\fIsRequestNew\x12(.services.request.v1.IsRequestNewRequest\x1a).services.request.v1.IsRequestNewResponse\x12i\n" +
+	"\x0eDismissRequest\x12*.services.request.v1.DismissRequestRequest\x1a+.services.request.v1.DismissRequestResponse\x12\x8d\x01\n" +
+	"\x1aCountUnreadForOrganization\x126.services.request.v1.CountUnreadForOrganizationRequest\x1a7.services.request.v1.CountUnreadForOrganizationResponse\x12l\n" +
 	"\x0fClassifyRequest\x12+.services.request.v1.ClassifyRequestRequest\x1a,.services.request.v1.ClassifyRequestResponseB=Z;github.com/4ubak/cg-proto/gen/go/services/request;requestv1b\x06proto3"
 
 var (
@@ -2282,7 +2552,7 @@ func file_services_request_request_proto_rawDescGZIP() []byte {
 }
 
 var file_services_request_request_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_services_request_request_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
+var file_services_request_request_proto_msgTypes = make([]protoimpl.MessageInfo, 33)
 var file_services_request_request_proto_goTypes = []any{
 	(RequestType)(0),                              // 0: services.request.v1.RequestType
 	(RequestStatus)(0),                            // 1: services.request.v1.RequestStatus
@@ -2313,16 +2583,20 @@ var file_services_request_request_proto_goTypes = []any{
 	(*MarkRequestAsViewedResponse)(nil),           // 26: services.request.v1.MarkRequestAsViewedResponse
 	(*IsRequestNewRequest)(nil),                   // 27: services.request.v1.IsRequestNewRequest
 	(*IsRequestNewResponse)(nil),                  // 28: services.request.v1.IsRequestNewResponse
-	(*ClassifyRequestRequest)(nil),                // 29: services.request.v1.ClassifyRequestRequest
-	(*ClassifyRequestResponse)(nil),               // 30: services.request.v1.ClassifyRequestResponse
-	(*timestamppb.Timestamp)(nil),                 // 31: google.protobuf.Timestamp
+	(*DismissRequestRequest)(nil),                 // 29: services.request.v1.DismissRequestRequest
+	(*DismissRequestResponse)(nil),                // 30: services.request.v1.DismissRequestResponse
+	(*CountUnreadForOrganizationRequest)(nil),     // 31: services.request.v1.CountUnreadForOrganizationRequest
+	(*CountUnreadForOrganizationResponse)(nil),    // 32: services.request.v1.CountUnreadForOrganizationResponse
+	(*ClassifyRequestRequest)(nil),                // 33: services.request.v1.ClassifyRequestRequest
+	(*ClassifyRequestResponse)(nil),               // 34: services.request.v1.ClassifyRequestResponse
+	(*timestamppb.Timestamp)(nil),                 // 35: google.protobuf.Timestamp
 }
 var file_services_request_request_proto_depIdxs = []int32{
 	0,  // 0: services.request.v1.Request.type:type_name -> services.request.v1.RequestType
 	1,  // 1: services.request.v1.Request.status:type_name -> services.request.v1.RequestStatus
-	31, // 2: services.request.v1.Request.created_at:type_name -> google.protobuf.Timestamp
-	31, // 3: services.request.v1.Request.updated_at:type_name -> google.protobuf.Timestamp
-	31, // 4: services.request.v1.Request.published_at:type_name -> google.protobuf.Timestamp
+	35, // 2: services.request.v1.Request.created_at:type_name -> google.protobuf.Timestamp
+	35, // 3: services.request.v1.Request.updated_at:type_name -> google.protobuf.Timestamp
+	35, // 4: services.request.v1.Request.published_at:type_name -> google.protobuf.Timestamp
 	0,  // 5: services.request.v1.CreateRequestRequest.type:type_name -> services.request.v1.RequestType
 	2,  // 6: services.request.v1.CreateRequestResponse.request:type_name -> services.request.v1.Request
 	2,  // 7: services.request.v1.GetRequestResponse.request:type_name -> services.request.v1.Request
@@ -2336,40 +2610,45 @@ var file_services_request_request_proto_depIdxs = []int32{
 	2,  // 15: services.request.v1.ChangeStatusResponse.request:type_name -> services.request.v1.Request
 	1,  // 16: services.request.v1.GetUserRequestsRequest.status:type_name -> services.request.v1.RequestStatus
 	2,  // 17: services.request.v1.GetUserRequestsResponse.requests:type_name -> services.request.v1.Request
-	2,  // 18: services.request.v1.ClassifyRequestResponse.request:type_name -> services.request.v1.Request
-	3,  // 19: services.request.v1.RequestService.CreateRequest:input_type -> services.request.v1.CreateRequestRequest
-	5,  // 20: services.request.v1.RequestService.GetRequest:input_type -> services.request.v1.GetRequestRequest
-	7,  // 21: services.request.v1.RequestService.UpdateRequest:input_type -> services.request.v1.UpdateRequestRequest
-	9,  // 22: services.request.v1.RequestService.DeleteRequest:input_type -> services.request.v1.DeleteRequestRequest
-	11, // 23: services.request.v1.RequestService.ListRequests:input_type -> services.request.v1.ListRequestsRequest
-	13, // 24: services.request.v1.RequestService.SearchRequests:input_type -> services.request.v1.SearchRequestsRequest
-	15, // 25: services.request.v1.RequestService.ChangeStatus:input_type -> services.request.v1.ChangeStatusRequest
-	17, // 26: services.request.v1.RequestService.GetUserRequests:input_type -> services.request.v1.GetUserRequestsRequest
-	19, // 27: services.request.v1.RequestService.IncrementViews:input_type -> services.request.v1.IncrementViewsRequest
-	21, // 28: services.request.v1.RequestService.GetSuggestions:input_type -> services.request.v1.GetSuggestionsRequest
-	23, // 29: services.request.v1.RequestService.GetNewRequestsForOrganization:input_type -> services.request.v1.GetNewRequestsForOrganizationRequest
-	25, // 30: services.request.v1.RequestService.MarkRequestAsViewed:input_type -> services.request.v1.MarkRequestAsViewedRequest
-	27, // 31: services.request.v1.RequestService.IsRequestNew:input_type -> services.request.v1.IsRequestNewRequest
-	29, // 32: services.request.v1.RequestService.ClassifyRequest:input_type -> services.request.v1.ClassifyRequestRequest
-	4,  // 33: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
-	6,  // 34: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
-	8,  // 35: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
-	10, // 36: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
-	12, // 37: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
-	14, // 38: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
-	16, // 39: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
-	18, // 40: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
-	20, // 41: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
-	22, // 42: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
-	24, // 43: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
-	26, // 44: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
-	28, // 45: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
-	30, // 46: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
-	33, // [33:47] is the sub-list for method output_type
-	19, // [19:33] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	0,  // 18: services.request.v1.CountUnreadForOrganizationRequest.type:type_name -> services.request.v1.RequestType
+	2,  // 19: services.request.v1.ClassifyRequestResponse.request:type_name -> services.request.v1.Request
+	3,  // 20: services.request.v1.RequestService.CreateRequest:input_type -> services.request.v1.CreateRequestRequest
+	5,  // 21: services.request.v1.RequestService.GetRequest:input_type -> services.request.v1.GetRequestRequest
+	7,  // 22: services.request.v1.RequestService.UpdateRequest:input_type -> services.request.v1.UpdateRequestRequest
+	9,  // 23: services.request.v1.RequestService.DeleteRequest:input_type -> services.request.v1.DeleteRequestRequest
+	11, // 24: services.request.v1.RequestService.ListRequests:input_type -> services.request.v1.ListRequestsRequest
+	13, // 25: services.request.v1.RequestService.SearchRequests:input_type -> services.request.v1.SearchRequestsRequest
+	15, // 26: services.request.v1.RequestService.ChangeStatus:input_type -> services.request.v1.ChangeStatusRequest
+	17, // 27: services.request.v1.RequestService.GetUserRequests:input_type -> services.request.v1.GetUserRequestsRequest
+	19, // 28: services.request.v1.RequestService.IncrementViews:input_type -> services.request.v1.IncrementViewsRequest
+	21, // 29: services.request.v1.RequestService.GetSuggestions:input_type -> services.request.v1.GetSuggestionsRequest
+	23, // 30: services.request.v1.RequestService.GetNewRequestsForOrganization:input_type -> services.request.v1.GetNewRequestsForOrganizationRequest
+	25, // 31: services.request.v1.RequestService.MarkRequestAsViewed:input_type -> services.request.v1.MarkRequestAsViewedRequest
+	27, // 32: services.request.v1.RequestService.IsRequestNew:input_type -> services.request.v1.IsRequestNewRequest
+	29, // 33: services.request.v1.RequestService.DismissRequest:input_type -> services.request.v1.DismissRequestRequest
+	31, // 34: services.request.v1.RequestService.CountUnreadForOrganization:input_type -> services.request.v1.CountUnreadForOrganizationRequest
+	33, // 35: services.request.v1.RequestService.ClassifyRequest:input_type -> services.request.v1.ClassifyRequestRequest
+	4,  // 36: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
+	6,  // 37: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
+	8,  // 38: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
+	10, // 39: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
+	12, // 40: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
+	14, // 41: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
+	16, // 42: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
+	18, // 43: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
+	20, // 44: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
+	22, // 45: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
+	24, // 46: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
+	26, // 47: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
+	28, // 48: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
+	30, // 49: services.request.v1.RequestService.DismissRequest:output_type -> services.request.v1.DismissRequestResponse
+	32, // 50: services.request.v1.RequestService.CountUnreadForOrganization:output_type -> services.request.v1.CountUnreadForOrganizationResponse
+	34, // 51: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
+	36, // [36:52] is the sub-list for method output_type
+	20, // [20:36] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_services_request_request_proto_init() }
@@ -2387,7 +2666,7 @@ func file_services_request_request_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_request_request_proto_rawDesc), len(file_services_request_request_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   29,
+			NumMessages:   33,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

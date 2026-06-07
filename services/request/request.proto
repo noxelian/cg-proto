@@ -22,7 +22,7 @@ service RequestService {
   // ListRequests lists requests with filters
   rpc ListRequests(ListRequestsRequest) returns (ListRequestsResponse);
   
-  // SearchRequests searches requests using Elasticsearch
+  // SearchRequests searches requests via Postgres
   rpc SearchRequests(SearchRequestsRequest) returns (SearchRequestsResponse);
   
   // ChangeStatus changes request status (moderation, published, deleted)
@@ -42,9 +42,19 @@ service RequestService {
   
   // MarkRequestAsViewed marks request as viewed for organization
   rpc MarkRequestAsViewed(MarkRequestAsViewedRequest) returns (MarkRequestAsViewedResponse);
-  
+
   // IsRequestNew checks if request is new for organization
   rpc IsRequestNew(IsRequestNewRequest) returns (IsRequestNewResponse);
+
+  // DismissRequest hides a request for an organization ("не интересно"). Wraps
+  // the domain method DismissRequest(ctx, requestID, orgID).
+  rpc DismissRequest(DismissRequestRequest) returns (DismissRequestResponse);
+
+  // CountUnreadForOrganization returns the number of matched requests that are
+  // unread and not dismissed for the organization, scoped by the org-profile
+  // filter. Wraps the filter-aware domain method
+  // CountUnreadForOrganization(ctx, orgID, model.RequestFilter).
+  rpc CountUnreadForOrganization(CountUnreadForOrganizationRequest) returns (CountUnreadForOrganizationResponse);
 
   // ClassifyRequest sets group_id, category_ids and cleaned note for a request.
   // Used by AI classify service after auto-classification.
@@ -284,6 +294,40 @@ message IsRequestNewRequest {
 
 message IsRequestNewResponse {
   bool is_new = 1;
+}
+
+// DismissRequest — hide a request for an organization ("не интересно").
+// Wraps domain DismissRequest(ctx, requestID, orgID).
+message DismissRequestRequest {
+  string request_id = 1;       // UUID string
+  string organization_id = 2;  // UUID from organization-service
+}
+
+message DismissRequestResponse {
+  bool success = 1;
+}
+
+// CountUnreadForOrganization — count unread & not-dismissed requests for an
+// organization, scoped by the org-profile filter. Wraps domain
+// CountUnreadForOrganization(ctx, orgID, model.RequestFilter).
+//
+// Filter fields map 1:1 to model.RequestFilter. Empty/zero = no filter on that
+// field. Note the domain filter carries a single category_id (not a list).
+message CountUnreadForOrganizationRequest {
+  string organization_id = 1;  // UUID from organization-service
+
+  // Org-profile filter (subset of model.RequestFilter used by the feed).
+  RequestType type = 2;        // UNSPECIFIED = any type
+  int64 group_id = 3;          // 0 = any group
+  int64 category_id = 4;       // 0 = any category (model.RequestFilter.CategoryID)
+  int64 city_id = 5;           // 0 = any city
+  int64 car_make_id = 6;       // 0 = any make
+  int64 car_model_id = 7;      // 0 = any model
+  int32 year = 8;              // 0 = any year
+}
+
+message CountUnreadForOrganizationResponse {
+  int64 count = 1;
 }
 
 // ClassifyRequest — AI auto-classification of repair/parts requests

@@ -32,6 +32,8 @@ const (
 	RequestService_GetNewRequestsForOrganization_FullMethodName = "/services.request.v1.RequestService/GetNewRequestsForOrganization"
 	RequestService_MarkRequestAsViewed_FullMethodName           = "/services.request.v1.RequestService/MarkRequestAsViewed"
 	RequestService_IsRequestNew_FullMethodName                  = "/services.request.v1.RequestService/IsRequestNew"
+	RequestService_DismissRequest_FullMethodName                = "/services.request.v1.RequestService/DismissRequest"
+	RequestService_CountUnreadForOrganization_FullMethodName    = "/services.request.v1.RequestService/CountUnreadForOrganization"
 	RequestService_ClassifyRequest_FullMethodName               = "/services.request.v1.RequestService/ClassifyRequest"
 )
 
@@ -49,7 +51,7 @@ type RequestServiceClient interface {
 	DeleteRequest(ctx context.Context, in *DeleteRequestRequest, opts ...grpc.CallOption) (*DeleteRequestResponse, error)
 	// ListRequests lists requests with filters
 	ListRequests(ctx context.Context, in *ListRequestsRequest, opts ...grpc.CallOption) (*ListRequestsResponse, error)
-	// SearchRequests searches requests using Elasticsearch
+	// SearchRequests searches requests via Postgres
 	SearchRequests(ctx context.Context, in *SearchRequestsRequest, opts ...grpc.CallOption) (*SearchRequestsResponse, error)
 	// ChangeStatus changes request status (moderation, published, deleted)
 	ChangeStatus(ctx context.Context, in *ChangeStatusRequest, opts ...grpc.CallOption) (*ChangeStatusResponse, error)
@@ -65,6 +67,14 @@ type RequestServiceClient interface {
 	MarkRequestAsViewed(ctx context.Context, in *MarkRequestAsViewedRequest, opts ...grpc.CallOption) (*MarkRequestAsViewedResponse, error)
 	// IsRequestNew checks if request is new for organization
 	IsRequestNew(ctx context.Context, in *IsRequestNewRequest, opts ...grpc.CallOption) (*IsRequestNewResponse, error)
+	// DismissRequest hides a request for an organization ("не интересно"). Wraps
+	// the domain method DismissRequest(ctx, requestID, orgID).
+	DismissRequest(ctx context.Context, in *DismissRequestRequest, opts ...grpc.CallOption) (*DismissRequestResponse, error)
+	// CountUnreadForOrganization returns the number of matched requests that are
+	// unread and not dismissed for the organization, scoped by the org-profile
+	// filter. Wraps the filter-aware domain method
+	// CountUnreadForOrganization(ctx, orgID, model.RequestFilter).
+	CountUnreadForOrganization(ctx context.Context, in *CountUnreadForOrganizationRequest, opts ...grpc.CallOption) (*CountUnreadForOrganizationResponse, error)
 	// ClassifyRequest sets group_id, category_ids and cleaned note for a request.
 	// Used by AI classify service after auto-classification.
 	ClassifyRequest(ctx context.Context, in *ClassifyRequestRequest, opts ...grpc.CallOption) (*ClassifyRequestResponse, error)
@@ -208,6 +218,26 @@ func (c *requestServiceClient) IsRequestNew(ctx context.Context, in *IsRequestNe
 	return out, nil
 }
 
+func (c *requestServiceClient) DismissRequest(ctx context.Context, in *DismissRequestRequest, opts ...grpc.CallOption) (*DismissRequestResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DismissRequestResponse)
+	err := c.cc.Invoke(ctx, RequestService_DismissRequest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestServiceClient) CountUnreadForOrganization(ctx context.Context, in *CountUnreadForOrganizationRequest, opts ...grpc.CallOption) (*CountUnreadForOrganizationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CountUnreadForOrganizationResponse)
+	err := c.cc.Invoke(ctx, RequestService_CountUnreadForOrganization_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *requestServiceClient) ClassifyRequest(ctx context.Context, in *ClassifyRequestRequest, opts ...grpc.CallOption) (*ClassifyRequestResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ClassifyRequestResponse)
@@ -232,7 +262,7 @@ type RequestServiceServer interface {
 	DeleteRequest(context.Context, *DeleteRequestRequest) (*DeleteRequestResponse, error)
 	// ListRequests lists requests with filters
 	ListRequests(context.Context, *ListRequestsRequest) (*ListRequestsResponse, error)
-	// SearchRequests searches requests using Elasticsearch
+	// SearchRequests searches requests via Postgres
 	SearchRequests(context.Context, *SearchRequestsRequest) (*SearchRequestsResponse, error)
 	// ChangeStatus changes request status (moderation, published, deleted)
 	ChangeStatus(context.Context, *ChangeStatusRequest) (*ChangeStatusResponse, error)
@@ -248,6 +278,14 @@ type RequestServiceServer interface {
 	MarkRequestAsViewed(context.Context, *MarkRequestAsViewedRequest) (*MarkRequestAsViewedResponse, error)
 	// IsRequestNew checks if request is new for organization
 	IsRequestNew(context.Context, *IsRequestNewRequest) (*IsRequestNewResponse, error)
+	// DismissRequest hides a request for an organization ("не интересно"). Wraps
+	// the domain method DismissRequest(ctx, requestID, orgID).
+	DismissRequest(context.Context, *DismissRequestRequest) (*DismissRequestResponse, error)
+	// CountUnreadForOrganization returns the number of matched requests that are
+	// unread and not dismissed for the organization, scoped by the org-profile
+	// filter. Wraps the filter-aware domain method
+	// CountUnreadForOrganization(ctx, orgID, model.RequestFilter).
+	CountUnreadForOrganization(context.Context, *CountUnreadForOrganizationRequest) (*CountUnreadForOrganizationResponse, error)
 	// ClassifyRequest sets group_id, category_ids and cleaned note for a request.
 	// Used by AI classify service after auto-classification.
 	ClassifyRequest(context.Context, *ClassifyRequestRequest) (*ClassifyRequestResponse, error)
@@ -299,6 +337,12 @@ func (UnimplementedRequestServiceServer) MarkRequestAsViewed(context.Context, *M
 }
 func (UnimplementedRequestServiceServer) IsRequestNew(context.Context, *IsRequestNewRequest) (*IsRequestNewResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method IsRequestNew not implemented")
+}
+func (UnimplementedRequestServiceServer) DismissRequest(context.Context, *DismissRequestRequest) (*DismissRequestResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DismissRequest not implemented")
+}
+func (UnimplementedRequestServiceServer) CountUnreadForOrganization(context.Context, *CountUnreadForOrganizationRequest) (*CountUnreadForOrganizationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CountUnreadForOrganization not implemented")
 }
 func (UnimplementedRequestServiceServer) ClassifyRequest(context.Context, *ClassifyRequestRequest) (*ClassifyRequestResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ClassifyRequest not implemented")
@@ -558,6 +602,42 @@ func _RequestService_IsRequestNew_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestService_DismissRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DismissRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).DismissRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_DismissRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).DismissRequest(ctx, req.(*DismissRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestService_CountUnreadForOrganization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CountUnreadForOrganizationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).CountUnreadForOrganization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_CountUnreadForOrganization_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).CountUnreadForOrganization(ctx, req.(*CountUnreadForOrganizationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RequestService_ClassifyRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ClassifyRequestRequest)
 	if err := dec(in); err != nil {
@@ -634,6 +714,14 @@ var RequestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsRequestNew",
 			Handler:    _RequestService_IsRequestNew_Handler,
+		},
+		{
+			MethodName: "DismissRequest",
+			Handler:    _RequestService_DismissRequest_Handler,
+		},
+		{
+			MethodName: "CountUnreadForOrganization",
+			Handler:    _RequestService_CountUnreadForOrganization_Handler,
 		},
 		{
 			MethodName: "ClassifyRequest",
