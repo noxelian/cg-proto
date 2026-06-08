@@ -22,6 +22,267 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type QuestionStatus int32
+
+const (
+	QuestionStatus_QUESTION_STATUS_UNSPECIFIED QuestionStatus = 0
+	QuestionStatus_QUESTION_STATUS_OPEN        QuestionStatus = 1
+	QuestionStatus_QUESTION_STATUS_SOLVED      QuestionStatus = 2
+	QuestionStatus_QUESTION_STATUS_CLOSED      QuestionStatus = 3
+)
+
+// Enum value maps for QuestionStatus.
+var (
+	QuestionStatus_name = map[int32]string{
+		0: "QUESTION_STATUS_UNSPECIFIED",
+		1: "QUESTION_STATUS_OPEN",
+		2: "QUESTION_STATUS_SOLVED",
+		3: "QUESTION_STATUS_CLOSED",
+	}
+	QuestionStatus_value = map[string]int32{
+		"QUESTION_STATUS_UNSPECIFIED": 0,
+		"QUESTION_STATUS_OPEN":        1,
+		"QUESTION_STATUS_SOLVED":      2,
+		"QUESTION_STATUS_CLOSED":      3,
+	}
+)
+
+func (x QuestionStatus) Enum() *QuestionStatus {
+	p := new(QuestionStatus)
+	*p = x
+	return p
+}
+
+func (x QuestionStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (QuestionStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_ai_forum_parser_v1_forum_parser_proto_enumTypes[0].Descriptor()
+}
+
+func (QuestionStatus) Type() protoreflect.EnumType {
+	return &file_ai_forum_parser_v1_forum_parser_proto_enumTypes[0]
+}
+
+func (x QuestionStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use QuestionStatus.Descriptor instead.
+func (QuestionStatus) EnumDescriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{0}
+}
+
+type AuthorRole int32
+
+const (
+	AuthorRole_AUTHOR_ROLE_UNSPECIFIED AuthorRole = 0
+	AuthorRole_AUTHOR_ROLE_CLIENT      AuthorRole = 1
+	AuthorRole_AUTHOR_ROLE_MASTER      AuthorRole = 2
+)
+
+// Enum value maps for AuthorRole.
+var (
+	AuthorRole_name = map[int32]string{
+		0: "AUTHOR_ROLE_UNSPECIFIED",
+		1: "AUTHOR_ROLE_CLIENT",
+		2: "AUTHOR_ROLE_MASTER",
+	}
+	AuthorRole_value = map[string]int32{
+		"AUTHOR_ROLE_UNSPECIFIED": 0,
+		"AUTHOR_ROLE_CLIENT":      1,
+		"AUTHOR_ROLE_MASTER":      2,
+	}
+)
+
+func (x AuthorRole) Enum() *AuthorRole {
+	p := new(AuthorRole)
+	*p = x
+	return p
+}
+
+func (x AuthorRole) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AuthorRole) Descriptor() protoreflect.EnumDescriptor {
+	return file_ai_forum_parser_v1_forum_parser_proto_enumTypes[1].Descriptor()
+}
+
+func (AuthorRole) Type() protoreflect.EnumType {
+	return &file_ai_forum_parser_v1_forum_parser_proto_enumTypes[1]
+}
+
+func (x AuthorRole) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AuthorRole.Descriptor instead.
+func (AuthorRole) EnumDescriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{1}
+}
+
+type QuestionSort int32
+
+const (
+	QuestionSort_QUESTION_SORT_UNSPECIFIED  QuestionSort = 0
+	QuestionSort_QUESTION_SORT_NEW          QuestionSort = 1
+	QuestionSort_QUESTION_SORT_NO_ANSWER    QuestionSort = 2
+	QuestionSort_QUESTION_SORT_POPULAR_WEEK QuestionSort = 3
+)
+
+// Enum value maps for QuestionSort.
+var (
+	QuestionSort_name = map[int32]string{
+		0: "QUESTION_SORT_UNSPECIFIED",
+		1: "QUESTION_SORT_NEW",
+		2: "QUESTION_SORT_NO_ANSWER",
+		3: "QUESTION_SORT_POPULAR_WEEK",
+	}
+	QuestionSort_value = map[string]int32{
+		"QUESTION_SORT_UNSPECIFIED":  0,
+		"QUESTION_SORT_NEW":          1,
+		"QUESTION_SORT_NO_ANSWER":    2,
+		"QUESTION_SORT_POPULAR_WEEK": 3,
+	}
+)
+
+func (x QuestionSort) Enum() *QuestionSort {
+	p := new(QuestionSort)
+	*p = x
+	return p
+}
+
+func (x QuestionSort) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (QuestionSort) Descriptor() protoreflect.EnumDescriptor {
+	return file_ai_forum_parser_v1_forum_parser_proto_enumTypes[2].Descriptor()
+}
+
+func (QuestionSort) Type() protoreflect.EnumType {
+	return &file_ai_forum_parser_v1_forum_parser_proto_enumTypes[2]
+}
+
+func (x QuestionSort) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use QuestionSort.Descriptor instead.
+func (QuestionSort) EnumDescriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{2}
+}
+
+type QuestionStatusFilter int32
+
+const (
+	QuestionStatusFilter_QUESTION_STATUS_FILTER_UNSPECIFIED QuestionStatusFilter = 0
+	QuestionStatusFilter_QUESTION_STATUS_FILTER_OPEN        QuestionStatusFilter = 1
+	QuestionStatusFilter_QUESTION_STATUS_FILTER_SOLVED      QuestionStatusFilter = 2
+	// Open questions with zero answers.
+	QuestionStatusFilter_QUESTION_STATUS_FILTER_NO_ANSWER QuestionStatusFilter = 3
+)
+
+// Enum value maps for QuestionStatusFilter.
+var (
+	QuestionStatusFilter_name = map[int32]string{
+		0: "QUESTION_STATUS_FILTER_UNSPECIFIED",
+		1: "QUESTION_STATUS_FILTER_OPEN",
+		2: "QUESTION_STATUS_FILTER_SOLVED",
+		3: "QUESTION_STATUS_FILTER_NO_ANSWER",
+	}
+	QuestionStatusFilter_value = map[string]int32{
+		"QUESTION_STATUS_FILTER_UNSPECIFIED": 0,
+		"QUESTION_STATUS_FILTER_OPEN":        1,
+		"QUESTION_STATUS_FILTER_SOLVED":      2,
+		"QUESTION_STATUS_FILTER_NO_ANSWER":   3,
+	}
+)
+
+func (x QuestionStatusFilter) Enum() *QuestionStatusFilter {
+	p := new(QuestionStatusFilter)
+	*p = x
+	return p
+}
+
+func (x QuestionStatusFilter) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (QuestionStatusFilter) Descriptor() protoreflect.EnumDescriptor {
+	return file_ai_forum_parser_v1_forum_parser_proto_enumTypes[3].Descriptor()
+}
+
+func (QuestionStatusFilter) Type() protoreflect.EnumType {
+	return &file_ai_forum_parser_v1_forum_parser_proto_enumTypes[3]
+}
+
+func (x QuestionStatusFilter) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use QuestionStatusFilter.Descriptor instead.
+func (QuestionStatusFilter) EnumDescriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{3}
+}
+
+type ReportReason int32
+
+const (
+	ReportReason_REPORT_REASON_UNSPECIFIED ReportReason = 0
+	ReportReason_REPORT_REASON_SPAM        ReportReason = 1
+	ReportReason_REPORT_REASON_ABUSE       ReportReason = 2
+	ReportReason_REPORT_REASON_ADVERTISING ReportReason = 3
+	ReportReason_REPORT_REASON_OTHER       ReportReason = 4
+)
+
+// Enum value maps for ReportReason.
+var (
+	ReportReason_name = map[int32]string{
+		0: "REPORT_REASON_UNSPECIFIED",
+		1: "REPORT_REASON_SPAM",
+		2: "REPORT_REASON_ABUSE",
+		3: "REPORT_REASON_ADVERTISING",
+		4: "REPORT_REASON_OTHER",
+	}
+	ReportReason_value = map[string]int32{
+		"REPORT_REASON_UNSPECIFIED": 0,
+		"REPORT_REASON_SPAM":        1,
+		"REPORT_REASON_ABUSE":       2,
+		"REPORT_REASON_ADVERTISING": 3,
+		"REPORT_REASON_OTHER":       4,
+	}
+)
+
+func (x ReportReason) Enum() *ReportReason {
+	p := new(ReportReason)
+	*p = x
+	return p
+}
+
+func (x ReportReason) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ReportReason) Descriptor() protoreflect.EnumDescriptor {
+	return file_ai_forum_parser_v1_forum_parser_proto_enumTypes[4].Descriptor()
+}
+
+func (ReportReason) Type() protoreflect.EnumType {
+	return &file_ai_forum_parser_v1_forum_parser_proto_enumTypes[4]
+}
+
+func (x ReportReason) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ReportReason.Descriptor instead.
+func (ReportReason) EnumDescriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{4}
+}
+
 // ThreadCard is the list/detail header for crawled and user-authored threads.
 type ThreadCard struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
@@ -512,6 +773,10 @@ type GetThreadResponse struct {
 	MyLastPosition  int32 `protobuf:"varint,6,opt,name=my_last_position,json=myLastPosition,proto3" json:"my_last_position,omitempty"`
 	// True when viewer is known and has at least one post (or is thread OP author).
 	MyPositionsSet bool `protobuf:"varint,7,opt,name=my_positions_set,json=myPositionsSet,proto3" json:"my_positions_set,omitempty"`
+	// Row offset used for this page (SQL OFFSET on published posts, excluding synthetic OP).
+	PostsOffset int32 `protobuf:"varint,8,opt,name=posts_offset,json=postsOffset,proto3" json:"posts_offset,omitempty"`
+	// True when earlier posts exist (posts_offset > 0).
+	PostsHasBefore bool `protobuf:"varint,9,opt,name=posts_has_before,json=postsHasBefore,proto3" json:"posts_has_before,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -591,6 +856,20 @@ func (x *GetThreadResponse) GetMyLastPosition() int32 {
 func (x *GetThreadResponse) GetMyPositionsSet() bool {
 	if x != nil {
 		return x.MyPositionsSet
+	}
+	return false
+}
+
+func (x *GetThreadResponse) GetPostsOffset() int32 {
+	if x != nil {
+		return x.PostsOffset
+	}
+	return 0
+}
+
+func (x *GetThreadResponse) GetPostsHasBefore() bool {
+	if x != nil {
+		return x.PostsHasBefore
 	}
 	return false
 }
@@ -1203,6 +1482,2490 @@ func (x *CreateReplyResponse) GetReply() *Post {
 	return nil
 }
 
+// Topic is a fixed catalog row (forum_topics table).
+type Topic struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Topic) Reset() {
+	*x = Topic{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Topic) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Topic) ProtoMessage() {}
+
+func (x *Topic) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Topic.ProtoReflect.Descriptor instead.
+func (*Topic) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *Topic) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Topic) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+// QuestionCard — list/header shape for Q&A UI (maps to ctogram user thread).
+type QuestionCard struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Id                string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title             string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Excerpt           string                 `protobuf:"bytes,3,opt,name=excerpt,proto3" json:"excerpt,omitempty"`
+	QuestionStatus    QuestionStatus         `protobuf:"varint,4,opt,name=question_status,json=questionStatus,proto3,enum=ai.forum_parser.v1.QuestionStatus" json:"question_status,omitempty"`
+	TopicId           string                 `protobuf:"bytes,5,opt,name=topic_id,json=topicId,proto3" json:"topic_id,omitempty"`
+	TopicName         string                 `protobuf:"bytes,6,opt,name=topic_name,json=topicName,proto3" json:"topic_name,omitempty"`
+	AnswerCount       int32                  `protobuf:"varint,7,opt,name=answer_count,json=answerCount,proto3" json:"answer_count,omitempty"`
+	ViewCount         int32                  `protobuf:"varint,8,opt,name=view_count,json=viewCount,proto3" json:"view_count,omitempty"`
+	HasMasterAnswer   bool                   `protobuf:"varint,9,opt,name=has_master_answer,json=hasMasterAnswer,proto3" json:"has_master_answer,omitempty"`
+	PhotoCount        int32                  `protobuf:"varint,10,opt,name=photo_count,json=photoCount,proto3" json:"photo_count,omitempty"`
+	AuthorUserId      int64                  `protobuf:"varint,11,opt,name=author_user_id,json=authorUserId,proto3" json:"author_user_id,omitempty"`
+	AuthorDisplayName string                 `protobuf:"bytes,12,opt,name=author_display_name,json=authorDisplayName,proto3" json:"author_display_name,omitempty"`
+	CarMakeId         int32                  `protobuf:"varint,13,opt,name=car_make_id,json=carMakeId,proto3" json:"car_make_id,omitempty"`
+	CarMakeName       string                 `protobuf:"bytes,14,opt,name=car_make_name,json=carMakeName,proto3" json:"car_make_name,omitempty"`
+	CarModelId        int32                  `protobuf:"varint,15,opt,name=car_model_id,json=carModelId,proto3" json:"car_model_id,omitempty"`
+	CarModelName      string                 `protobuf:"bytes,16,opt,name=car_model_name,json=carModelName,proto3" json:"car_model_name,omitempty"`
+	CarYear           int32                  `protobuf:"varint,17,opt,name=car_year,json=carYear,proto3" json:"car_year,omitempty"`
+	GarageCarId       int64                  `protobuf:"varint,18,opt,name=garage_car_id,json=garageCarId,proto3" json:"garage_car_id,omitempty"`
+	City              string                 `protobuf:"bytes,19,opt,name=city,proto3" json:"city,omitempty"`
+	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	LastActivity      *timestamppb.Timestamp `protobuf:"bytes,21,opt,name=last_activity,json=lastActivity,proto3" json:"last_activity,omitempty"`
+	// True when authenticated viewer is the question author.
+	IsAuthor      bool `protobuf:"varint,22,opt,name=is_author,json=isAuthor,proto3" json:"is_author,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *QuestionCard) Reset() {
+	*x = QuestionCard{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *QuestionCard) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QuestionCard) ProtoMessage() {}
+
+func (x *QuestionCard) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QuestionCard.ProtoReflect.Descriptor instead.
+func (*QuestionCard) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *QuestionCard) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *QuestionCard) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *QuestionCard) GetExcerpt() string {
+	if x != nil {
+		return x.Excerpt
+	}
+	return ""
+}
+
+func (x *QuestionCard) GetQuestionStatus() QuestionStatus {
+	if x != nil {
+		return x.QuestionStatus
+	}
+	return QuestionStatus_QUESTION_STATUS_UNSPECIFIED
+}
+
+func (x *QuestionCard) GetTopicId() string {
+	if x != nil {
+		return x.TopicId
+	}
+	return ""
+}
+
+func (x *QuestionCard) GetTopicName() string {
+	if x != nil {
+		return x.TopicName
+	}
+	return ""
+}
+
+func (x *QuestionCard) GetAnswerCount() int32 {
+	if x != nil {
+		return x.AnswerCount
+	}
+	return 0
+}
+
+func (x *QuestionCard) GetViewCount() int32 {
+	if x != nil {
+		return x.ViewCount
+	}
+	return 0
+}
+
+func (x *QuestionCard) GetHasMasterAnswer() bool {
+	if x != nil {
+		return x.HasMasterAnswer
+	}
+	return false
+}
+
+func (x *QuestionCard) GetPhotoCount() int32 {
+	if x != nil {
+		return x.PhotoCount
+	}
+	return 0
+}
+
+func (x *QuestionCard) GetAuthorUserId() int64 {
+	if x != nil {
+		return x.AuthorUserId
+	}
+	return 0
+}
+
+func (x *QuestionCard) GetAuthorDisplayName() string {
+	if x != nil {
+		return x.AuthorDisplayName
+	}
+	return ""
+}
+
+func (x *QuestionCard) GetCarMakeId() int32 {
+	if x != nil {
+		return x.CarMakeId
+	}
+	return 0
+}
+
+func (x *QuestionCard) GetCarMakeName() string {
+	if x != nil {
+		return x.CarMakeName
+	}
+	return ""
+}
+
+func (x *QuestionCard) GetCarModelId() int32 {
+	if x != nil {
+		return x.CarModelId
+	}
+	return 0
+}
+
+func (x *QuestionCard) GetCarModelName() string {
+	if x != nil {
+		return x.CarModelName
+	}
+	return ""
+}
+
+func (x *QuestionCard) GetCarYear() int32 {
+	if x != nil {
+		return x.CarYear
+	}
+	return 0
+}
+
+func (x *QuestionCard) GetGarageCarId() int64 {
+	if x != nil {
+		return x.GarageCarId
+	}
+	return 0
+}
+
+func (x *QuestionCard) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *QuestionCard) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *QuestionCard) GetLastActivity() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastActivity
+	}
+	return nil
+}
+
+func (x *QuestionCard) GetIsAuthor() bool {
+	if x != nil {
+		return x.IsAuthor
+	}
+	return false
+}
+
+// Answer — one reply on a question (maps to published user post).
+type Answer struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Id                string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	AuthorRole        AuthorRole             `protobuf:"varint,2,opt,name=author_role,json=authorRole,proto3,enum=ai.forum_parser.v1.AuthorRole" json:"author_role,omitempty"`
+	AuthorUserId      int64                  `protobuf:"varint,3,opt,name=author_user_id,json=authorUserId,proto3" json:"author_user_id,omitempty"`
+	AuthorDisplayName string                 `protobuf:"bytes,4,opt,name=author_display_name,json=authorDisplayName,proto3" json:"author_display_name,omitempty"`
+	WorkshopId        int64                  `protobuf:"varint,5,opt,name=workshop_id,json=workshopId,proto3" json:"workshop_id,omitempty"`
+	WorkshopName      string                 `protobuf:"bytes,6,opt,name=workshop_name,json=workshopName,proto3" json:"workshop_name,omitempty"`
+	OfferBooking      bool                   `protobuf:"varint,7,opt,name=offer_booking,json=offerBooking,proto3" json:"offer_booking,omitempty"`
+	Body              string                 `protobuf:"bytes,8,opt,name=body,proto3" json:"body,omitempty"`
+	PhotoUrls         []string               `protobuf:"bytes,9,rep,name=photo_urls,json=photoUrls,proto3" json:"photo_urls,omitempty"`
+	IsBest            bool                   `protobuf:"varint,10,opt,name=is_best,json=isBest,proto3" json:"is_best,omitempty"`
+	PostedAt          *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=posted_at,json=postedAt,proto3" json:"posted_at,omitempty"`
+	// Legacy chronological index within thread (position > 0).
+	Position      int32 `protobuf:"varint,12,opt,name=position,proto3" json:"position,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Answer) Reset() {
+	*x = Answer{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Answer) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Answer) ProtoMessage() {}
+
+func (x *Answer) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Answer.ProtoReflect.Descriptor instead.
+func (*Answer) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *Answer) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Answer) GetAuthorRole() AuthorRole {
+	if x != nil {
+		return x.AuthorRole
+	}
+	return AuthorRole_AUTHOR_ROLE_UNSPECIFIED
+}
+
+func (x *Answer) GetAuthorUserId() int64 {
+	if x != nil {
+		return x.AuthorUserId
+	}
+	return 0
+}
+
+func (x *Answer) GetAuthorDisplayName() string {
+	if x != nil {
+		return x.AuthorDisplayName
+	}
+	return ""
+}
+
+func (x *Answer) GetWorkshopId() int64 {
+	if x != nil {
+		return x.WorkshopId
+	}
+	return 0
+}
+
+func (x *Answer) GetWorkshopName() string {
+	if x != nil {
+		return x.WorkshopName
+	}
+	return ""
+}
+
+func (x *Answer) GetOfferBooking() bool {
+	if x != nil {
+		return x.OfferBooking
+	}
+	return false
+}
+
+func (x *Answer) GetBody() string {
+	if x != nil {
+		return x.Body
+	}
+	return ""
+}
+
+func (x *Answer) GetPhotoUrls() []string {
+	if x != nil {
+		return x.PhotoUrls
+	}
+	return nil
+}
+
+func (x *Answer) GetIsBest() bool {
+	if x != nil {
+		return x.IsBest
+	}
+	return false
+}
+
+func (x *Answer) GetPostedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.PostedAt
+	}
+	return nil
+}
+
+func (x *Answer) GetPosition() int32 {
+	if x != nil {
+		return x.Position
+	}
+	return 0
+}
+
+type FAQCollection struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Slug          string                 `protobuf:"bytes,3,opt,name=slug,proto3" json:"slug,omitempty"`
+	QuestionCount int32                  `protobuf:"varint,4,opt,name=question_count,json=questionCount,proto3" json:"question_count,omitempty"`
+	// Optional cover gradient/key for UI (e.g. "navy", "green").
+	StyleKey      string `protobuf:"bytes,5,opt,name=style_key,json=styleKey,proto3" json:"style_key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FAQCollection) Reset() {
+	*x = FAQCollection{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FAQCollection) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FAQCollection) ProtoMessage() {}
+
+func (x *FAQCollection) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FAQCollection.ProtoReflect.Descriptor instead.
+func (*FAQCollection) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *FAQCollection) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *FAQCollection) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *FAQCollection) GetSlug() string {
+	if x != nil {
+		return x.Slug
+	}
+	return ""
+}
+
+func (x *FAQCollection) GetQuestionCount() int32 {
+	if x != nil {
+		return x.QuestionCount
+	}
+	return 0
+}
+
+func (x *FAQCollection) GetStyleKey() string {
+	if x != nil {
+		return x.StyleKey
+	}
+	return ""
+}
+
+type ListTopicsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListTopicsRequest) Reset() {
+	*x = ListTopicsRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTopicsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTopicsRequest) ProtoMessage() {}
+
+func (x *ListTopicsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTopicsRequest.ProtoReflect.Descriptor instead.
+func (*ListTopicsRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{20}
+}
+
+type ListTopicsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Topics        []*Topic               `protobuf:"bytes,1,rep,name=topics,proto3" json:"topics,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListTopicsResponse) Reset() {
+	*x = ListTopicsResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTopicsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTopicsResponse) ProtoMessage() {}
+
+func (x *ListTopicsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTopicsResponse.ProtoReflect.Descriptor instead.
+func (*ListTopicsResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *ListTopicsResponse) GetTopics() []*Topic {
+	if x != nil {
+		return x.Topics
+	}
+	return nil
+}
+
+type ListQuestionsRequest struct {
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Query        string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
+	TopicId      string                 `protobuf:"bytes,2,opt,name=topic_id,json=topicId,proto3" json:"topic_id,omitempty"`
+	StatusFilter QuestionStatusFilter   `protobuf:"varint,3,opt,name=status_filter,json=statusFilter,proto3,enum=ai.forum_parser.v1.QuestionStatusFilter" json:"status_filter,omitempty"`
+	Sort         QuestionSort           `protobuf:"varint,4,opt,name=sort,proto3,enum=ai.forum_parser.v1.QuestionSort" json:"sort,omitempty"`
+	// When true, filter to viewer garage car make/model/year (requires auth).
+	MyCar         bool   `protobuf:"varint,5,opt,name=my_car,json=myCar,proto3" json:"my_car,omitempty"`
+	CarMakeId     int32  `protobuf:"varint,6,opt,name=car_make_id,json=carMakeId,proto3" json:"car_make_id,omitempty"`
+	CarModelId    int32  `protobuf:"varint,7,opt,name=car_model_id,json=carModelId,proto3" json:"car_model_id,omitempty"`
+	CarYear       int32  `protobuf:"varint,8,opt,name=car_year,json=carYear,proto3" json:"car_year,omitempty"`
+	City          string `protobuf:"bytes,9,opt,name=city,proto3" json:"city,omitempty"`
+	Limit         int32  `protobuf:"varint,10,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32  `protobuf:"varint,11,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListQuestionsRequest) Reset() {
+	*x = ListQuestionsRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListQuestionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListQuestionsRequest) ProtoMessage() {}
+
+func (x *ListQuestionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListQuestionsRequest.ProtoReflect.Descriptor instead.
+func (*ListQuestionsRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *ListQuestionsRequest) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+func (x *ListQuestionsRequest) GetTopicId() string {
+	if x != nil {
+		return x.TopicId
+	}
+	return ""
+}
+
+func (x *ListQuestionsRequest) GetStatusFilter() QuestionStatusFilter {
+	if x != nil {
+		return x.StatusFilter
+	}
+	return QuestionStatusFilter_QUESTION_STATUS_FILTER_UNSPECIFIED
+}
+
+func (x *ListQuestionsRequest) GetSort() QuestionSort {
+	if x != nil {
+		return x.Sort
+	}
+	return QuestionSort_QUESTION_SORT_UNSPECIFIED
+}
+
+func (x *ListQuestionsRequest) GetMyCar() bool {
+	if x != nil {
+		return x.MyCar
+	}
+	return false
+}
+
+func (x *ListQuestionsRequest) GetCarMakeId() int32 {
+	if x != nil {
+		return x.CarMakeId
+	}
+	return 0
+}
+
+func (x *ListQuestionsRequest) GetCarModelId() int32 {
+	if x != nil {
+		return x.CarModelId
+	}
+	return 0
+}
+
+func (x *ListQuestionsRequest) GetCarYear() int32 {
+	if x != nil {
+		return x.CarYear
+	}
+	return 0
+}
+
+func (x *ListQuestionsRequest) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *ListQuestionsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListQuestionsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type ListQuestionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Questions     []*QuestionCard        `protobuf:"bytes,1,rep,name=questions,proto3" json:"questions,omitempty"`
+	HasMore       bool                   `protobuf:"varint,2,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListQuestionsResponse) Reset() {
+	*x = ListQuestionsResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListQuestionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListQuestionsResponse) ProtoMessage() {}
+
+func (x *ListQuestionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListQuestionsResponse.ProtoReflect.Descriptor instead.
+func (*ListQuestionsResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *ListQuestionsResponse) GetQuestions() []*QuestionCard {
+	if x != nil {
+		return x.Questions
+	}
+	return nil
+}
+
+func (x *ListQuestionsResponse) GetHasMore() bool {
+	if x != nil {
+		return x.HasMore
+	}
+	return false
+}
+
+type ListMyQuestionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Limit         int32                  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyQuestionsRequest) Reset() {
+	*x = ListMyQuestionsRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyQuestionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyQuestionsRequest) ProtoMessage() {}
+
+func (x *ListMyQuestionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyQuestionsRequest.ProtoReflect.Descriptor instead.
+func (*ListMyQuestionsRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *ListMyQuestionsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListMyQuestionsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type ListMyQuestionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Questions     []*QuestionCard        `protobuf:"bytes,1,rep,name=questions,proto3" json:"questions,omitempty"`
+	HasMore       bool                   `protobuf:"varint,2,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyQuestionsResponse) Reset() {
+	*x = ListMyQuestionsResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyQuestionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyQuestionsResponse) ProtoMessage() {}
+
+func (x *ListMyQuestionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyQuestionsResponse.ProtoReflect.Descriptor instead.
+func (*ListMyQuestionsResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *ListMyQuestionsResponse) GetQuestions() []*QuestionCard {
+	if x != nil {
+		return x.Questions
+	}
+	return nil
+}
+
+func (x *ListMyQuestionsResponse) GetHasMore() bool {
+	if x != nil {
+		return x.HasMore
+	}
+	return false
+}
+
+type ListKnowledgeBaseRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Query         string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
+	TopicId       string                 `protobuf:"bytes,2,opt,name=topic_id,json=topicId,proto3" json:"topic_id,omitempty"`
+	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListKnowledgeBaseRequest) Reset() {
+	*x = ListKnowledgeBaseRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListKnowledgeBaseRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListKnowledgeBaseRequest) ProtoMessage() {}
+
+func (x *ListKnowledgeBaseRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListKnowledgeBaseRequest.ProtoReflect.Descriptor instead.
+func (*ListKnowledgeBaseRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *ListKnowledgeBaseRequest) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+func (x *ListKnowledgeBaseRequest) GetTopicId() string {
+	if x != nil {
+		return x.TopicId
+	}
+	return ""
+}
+
+func (x *ListKnowledgeBaseRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListKnowledgeBaseRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type ListKnowledgeBaseResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Questions     []*QuestionCard        `protobuf:"bytes,1,rep,name=questions,proto3" json:"questions,omitempty"`
+	HasMore       bool                   `protobuf:"varint,2,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListKnowledgeBaseResponse) Reset() {
+	*x = ListKnowledgeBaseResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListKnowledgeBaseResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListKnowledgeBaseResponse) ProtoMessage() {}
+
+func (x *ListKnowledgeBaseResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListKnowledgeBaseResponse.ProtoReflect.Descriptor instead.
+func (*ListKnowledgeBaseResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *ListKnowledgeBaseResponse) GetQuestions() []*QuestionCard {
+	if x != nil {
+		return x.Questions
+	}
+	return nil
+}
+
+func (x *ListKnowledgeBaseResponse) GetHasMore() bool {
+	if x != nil {
+		return x.HasMore
+	}
+	return false
+}
+
+type ListFAQCollectionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListFAQCollectionsRequest) Reset() {
+	*x = ListFAQCollectionsRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListFAQCollectionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListFAQCollectionsRequest) ProtoMessage() {}
+
+func (x *ListFAQCollectionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListFAQCollectionsRequest.ProtoReflect.Descriptor instead.
+func (*ListFAQCollectionsRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{28}
+}
+
+type ListFAQCollectionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Collections   []*FAQCollection       `protobuf:"bytes,1,rep,name=collections,proto3" json:"collections,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListFAQCollectionsResponse) Reset() {
+	*x = ListFAQCollectionsResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListFAQCollectionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListFAQCollectionsResponse) ProtoMessage() {}
+
+func (x *ListFAQCollectionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListFAQCollectionsResponse.ProtoReflect.Descriptor instead.
+func (*ListFAQCollectionsResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *ListFAQCollectionsResponse) GetCollections() []*FAQCollection {
+	if x != nil {
+		return x.Collections
+	}
+	return nil
+}
+
+type FindSimilarSolvedRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	TopicId       string                 `protobuf:"bytes,2,opt,name=topic_id,json=topicId,proto3" json:"topic_id,omitempty"`
+	CarMakeId     int32                  `protobuf:"varint,3,opt,name=car_make_id,json=carMakeId,proto3" json:"car_make_id,omitempty"`
+	CarMakeName   string                 `protobuf:"bytes,4,opt,name=car_make_name,json=carMakeName,proto3" json:"car_make_name,omitempty"`
+	CarModelId    int32                  `protobuf:"varint,5,opt,name=car_model_id,json=carModelId,proto3" json:"car_model_id,omitempty"`
+	CarModelName  string                 `protobuf:"bytes,6,opt,name=car_model_name,json=carModelName,proto3" json:"car_model_name,omitempty"`
+	Limit         int32                  `protobuf:"varint,7,opt,name=limit,proto3" json:"limit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FindSimilarSolvedRequest) Reset() {
+	*x = FindSimilarSolvedRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FindSimilarSolvedRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FindSimilarSolvedRequest) ProtoMessage() {}
+
+func (x *FindSimilarSolvedRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FindSimilarSolvedRequest.ProtoReflect.Descriptor instead.
+func (*FindSimilarSolvedRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *FindSimilarSolvedRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *FindSimilarSolvedRequest) GetTopicId() string {
+	if x != nil {
+		return x.TopicId
+	}
+	return ""
+}
+
+func (x *FindSimilarSolvedRequest) GetCarMakeId() int32 {
+	if x != nil {
+		return x.CarMakeId
+	}
+	return 0
+}
+
+func (x *FindSimilarSolvedRequest) GetCarMakeName() string {
+	if x != nil {
+		return x.CarMakeName
+	}
+	return ""
+}
+
+func (x *FindSimilarSolvedRequest) GetCarModelId() int32 {
+	if x != nil {
+		return x.CarModelId
+	}
+	return 0
+}
+
+func (x *FindSimilarSolvedRequest) GetCarModelName() string {
+	if x != nil {
+		return x.CarModelName
+	}
+	return ""
+}
+
+func (x *FindSimilarSolvedRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+type FindSimilarSolvedResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Questions     []*QuestionCard        `protobuf:"bytes,1,rep,name=questions,proto3" json:"questions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FindSimilarSolvedResponse) Reset() {
+	*x = FindSimilarSolvedResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FindSimilarSolvedResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FindSimilarSolvedResponse) ProtoMessage() {}
+
+func (x *FindSimilarSolvedResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FindSimilarSolvedResponse.ProtoReflect.Descriptor instead.
+func (*FindSimilarSolvedResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *FindSimilarSolvedResponse) GetQuestions() []*QuestionCard {
+	if x != nil {
+		return x.Questions
+	}
+	return nil
+}
+
+type SuggestTopicRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SuggestTopicRequest) Reset() {
+	*x = SuggestTopicRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SuggestTopicRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SuggestTopicRequest) ProtoMessage() {}
+
+func (x *SuggestTopicRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SuggestTopicRequest.ProtoReflect.Descriptor instead.
+func (*SuggestTopicRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *SuggestTopicRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+type SuggestTopicResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TopicId       string                 `protobuf:"bytes,1,opt,name=topic_id,json=topicId,proto3" json:"topic_id,omitempty"`
+	TopicName     string                 `protobuf:"bytes,2,opt,name=topic_name,json=topicName,proto3" json:"topic_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SuggestTopicResponse) Reset() {
+	*x = SuggestTopicResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SuggestTopicResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SuggestTopicResponse) ProtoMessage() {}
+
+func (x *SuggestTopicResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SuggestTopicResponse.ProtoReflect.Descriptor instead.
+func (*SuggestTopicResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *SuggestTopicResponse) GetTopicId() string {
+	if x != nil {
+		return x.TopicId
+	}
+	return ""
+}
+
+func (x *SuggestTopicResponse) GetTopicName() string {
+	if x != nil {
+		return x.TopicName
+	}
+	return ""
+}
+
+type GetQuestionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	QuestionId    string                 `protobuf:"bytes,1,opt,name=question_id,json=questionId,proto3" json:"question_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetQuestionRequest) Reset() {
+	*x = GetQuestionRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetQuestionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetQuestionRequest) ProtoMessage() {}
+
+func (x *GetQuestionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetQuestionRequest.ProtoReflect.Descriptor instead.
+func (*GetQuestionRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *GetQuestionRequest) GetQuestionId() string {
+	if x != nil {
+		return x.QuestionId
+	}
+	return ""
+}
+
+type GetQuestionResponse struct {
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Question     *QuestionCard          `protobuf:"bytes,1,opt,name=question,proto3" json:"question,omitempty"`
+	Body         string                 `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
+	PhotoUrls    []string               `protobuf:"bytes,3,rep,name=photo_urls,json=photoUrls,proto3" json:"photo_urls,omitempty"`
+	Answers      []*Answer              `protobuf:"bytes,4,rep,name=answers,proto3" json:"answers,omitempty"`
+	BestAnswerId string                 `protobuf:"bytes,5,opt,name=best_answer_id,json=bestAnswerId,proto3" json:"best_answer_id,omitempty"`
+	// Viewer may mark best answer when true.
+	CanMarkBest   bool `protobuf:"varint,6,opt,name=can_mark_best,json=canMarkBest,proto3" json:"can_mark_best,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetQuestionResponse) Reset() {
+	*x = GetQuestionResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetQuestionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetQuestionResponse) ProtoMessage() {}
+
+func (x *GetQuestionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetQuestionResponse.ProtoReflect.Descriptor instead.
+func (*GetQuestionResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *GetQuestionResponse) GetQuestion() *QuestionCard {
+	if x != nil {
+		return x.Question
+	}
+	return nil
+}
+
+func (x *GetQuestionResponse) GetBody() string {
+	if x != nil {
+		return x.Body
+	}
+	return ""
+}
+
+func (x *GetQuestionResponse) GetPhotoUrls() []string {
+	if x != nil {
+		return x.PhotoUrls
+	}
+	return nil
+}
+
+func (x *GetQuestionResponse) GetAnswers() []*Answer {
+	if x != nil {
+		return x.Answers
+	}
+	return nil
+}
+
+func (x *GetQuestionResponse) GetBestAnswerId() string {
+	if x != nil {
+		return x.BestAnswerId
+	}
+	return ""
+}
+
+func (x *GetQuestionResponse) GetCanMarkBest() bool {
+	if x != nil {
+		return x.CanMarkBest
+	}
+	return false
+}
+
+type CreateQuestionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Body          string                 `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
+	TopicId       string                 `protobuf:"bytes,3,opt,name=topic_id,json=topicId,proto3" json:"topic_id,omitempty"`
+	CarMakeId     int32                  `protobuf:"varint,4,opt,name=car_make_id,json=carMakeId,proto3" json:"car_make_id,omitempty"`
+	CarMakeName   string                 `protobuf:"bytes,5,opt,name=car_make_name,json=carMakeName,proto3" json:"car_make_name,omitempty"`
+	CarModelId    int32                  `protobuf:"varint,6,opt,name=car_model_id,json=carModelId,proto3" json:"car_model_id,omitempty"`
+	CarModelName  string                 `protobuf:"bytes,7,opt,name=car_model_name,json=carModelName,proto3" json:"car_model_name,omitempty"`
+	CarYear       int32                  `protobuf:"varint,8,opt,name=car_year,json=carYear,proto3" json:"car_year,omitempty"`
+	GarageCarId   int64                  `protobuf:"varint,9,opt,name=garage_car_id,json=garageCarId,proto3" json:"garage_car_id,omitempty"`
+	City          string                 `protobuf:"bytes,10,opt,name=city,proto3" json:"city,omitempty"`
+	PhotoUrls     []string               `protobuf:"bytes,11,rep,name=photo_urls,json=photoUrls,proto3" json:"photo_urls,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateQuestionRequest) Reset() {
+	*x = CreateQuestionRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateQuestionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateQuestionRequest) ProtoMessage() {}
+
+func (x *CreateQuestionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateQuestionRequest.ProtoReflect.Descriptor instead.
+func (*CreateQuestionRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *CreateQuestionRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *CreateQuestionRequest) GetBody() string {
+	if x != nil {
+		return x.Body
+	}
+	return ""
+}
+
+func (x *CreateQuestionRequest) GetTopicId() string {
+	if x != nil {
+		return x.TopicId
+	}
+	return ""
+}
+
+func (x *CreateQuestionRequest) GetCarMakeId() int32 {
+	if x != nil {
+		return x.CarMakeId
+	}
+	return 0
+}
+
+func (x *CreateQuestionRequest) GetCarMakeName() string {
+	if x != nil {
+		return x.CarMakeName
+	}
+	return ""
+}
+
+func (x *CreateQuestionRequest) GetCarModelId() int32 {
+	if x != nil {
+		return x.CarModelId
+	}
+	return 0
+}
+
+func (x *CreateQuestionRequest) GetCarModelName() string {
+	if x != nil {
+		return x.CarModelName
+	}
+	return ""
+}
+
+func (x *CreateQuestionRequest) GetCarYear() int32 {
+	if x != nil {
+		return x.CarYear
+	}
+	return 0
+}
+
+func (x *CreateQuestionRequest) GetGarageCarId() int64 {
+	if x != nil {
+		return x.GarageCarId
+	}
+	return 0
+}
+
+func (x *CreateQuestionRequest) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *CreateQuestionRequest) GetPhotoUrls() []string {
+	if x != nil {
+		return x.PhotoUrls
+	}
+	return nil
+}
+
+type CreateQuestionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Question      *QuestionCard          `protobuf:"bytes,1,opt,name=question,proto3" json:"question,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateQuestionResponse) Reset() {
+	*x = CreateQuestionResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateQuestionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateQuestionResponse) ProtoMessage() {}
+
+func (x *CreateQuestionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateQuestionResponse.ProtoReflect.Descriptor instead.
+func (*CreateQuestionResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *CreateQuestionResponse) GetQuestion() *QuestionCard {
+	if x != nil {
+		return x.Question
+	}
+	return nil
+}
+
+type CreateAnswerRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	QuestionId    string                 `protobuf:"bytes,1,opt,name=question_id,json=questionId,proto3" json:"question_id,omitempty"`
+	Body          string                 `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
+	AuthorRole    AuthorRole             `protobuf:"varint,3,opt,name=author_role,json=authorRole,proto3,enum=ai.forum_parser.v1.AuthorRole" json:"author_role,omitempty"`
+	WorkshopId    int64                  `protobuf:"varint,4,opt,name=workshop_id,json=workshopId,proto3" json:"workshop_id,omitempty"`
+	OfferBooking  bool                   `protobuf:"varint,5,opt,name=offer_booking,json=offerBooking,proto3" json:"offer_booking,omitempty"`
+	PhotoUrls     []string               `protobuf:"bytes,6,rep,name=photo_urls,json=photoUrls,proto3" json:"photo_urls,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateAnswerRequest) Reset() {
+	*x = CreateAnswerRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateAnswerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAnswerRequest) ProtoMessage() {}
+
+func (x *CreateAnswerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateAnswerRequest.ProtoReflect.Descriptor instead.
+func (*CreateAnswerRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *CreateAnswerRequest) GetQuestionId() string {
+	if x != nil {
+		return x.QuestionId
+	}
+	return ""
+}
+
+func (x *CreateAnswerRequest) GetBody() string {
+	if x != nil {
+		return x.Body
+	}
+	return ""
+}
+
+func (x *CreateAnswerRequest) GetAuthorRole() AuthorRole {
+	if x != nil {
+		return x.AuthorRole
+	}
+	return AuthorRole_AUTHOR_ROLE_UNSPECIFIED
+}
+
+func (x *CreateAnswerRequest) GetWorkshopId() int64 {
+	if x != nil {
+		return x.WorkshopId
+	}
+	return 0
+}
+
+func (x *CreateAnswerRequest) GetOfferBooking() bool {
+	if x != nil {
+		return x.OfferBooking
+	}
+	return false
+}
+
+func (x *CreateAnswerRequest) GetPhotoUrls() []string {
+	if x != nil {
+		return x.PhotoUrls
+	}
+	return nil
+}
+
+type CreateAnswerResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Answer        *Answer                `protobuf:"bytes,1,opt,name=answer,proto3" json:"answer,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateAnswerResponse) Reset() {
+	*x = CreateAnswerResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateAnswerResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAnswerResponse) ProtoMessage() {}
+
+func (x *CreateAnswerResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateAnswerResponse.ProtoReflect.Descriptor instead.
+func (*CreateAnswerResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *CreateAnswerResponse) GetAnswer() *Answer {
+	if x != nil {
+		return x.Answer
+	}
+	return nil
+}
+
+type MarkBestAnswerRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	QuestionId    string                 `protobuf:"bytes,1,opt,name=question_id,json=questionId,proto3" json:"question_id,omitempty"`
+	AnswerId      string                 `protobuf:"bytes,2,opt,name=answer_id,json=answerId,proto3" json:"answer_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MarkBestAnswerRequest) Reset() {
+	*x = MarkBestAnswerRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MarkBestAnswerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MarkBestAnswerRequest) ProtoMessage() {}
+
+func (x *MarkBestAnswerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MarkBestAnswerRequest.ProtoReflect.Descriptor instead.
+func (*MarkBestAnswerRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *MarkBestAnswerRequest) GetQuestionId() string {
+	if x != nil {
+		return x.QuestionId
+	}
+	return ""
+}
+
+func (x *MarkBestAnswerRequest) GetAnswerId() string {
+	if x != nil {
+		return x.AnswerId
+	}
+	return ""
+}
+
+type MarkBestAnswerResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Question      *QuestionCard          `protobuf:"bytes,1,opt,name=question,proto3" json:"question,omitempty"`
+	BestAnswer    *Answer                `protobuf:"bytes,2,opt,name=best_answer,json=bestAnswer,proto3" json:"best_answer,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MarkBestAnswerResponse) Reset() {
+	*x = MarkBestAnswerResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MarkBestAnswerResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MarkBestAnswerResponse) ProtoMessage() {}
+
+func (x *MarkBestAnswerResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MarkBestAnswerResponse.ProtoReflect.Descriptor instead.
+func (*MarkBestAnswerResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *MarkBestAnswerResponse) GetQuestion() *QuestionCard {
+	if x != nil {
+		return x.Question
+	}
+	return nil
+}
+
+func (x *MarkBestAnswerResponse) GetBestAnswer() *Answer {
+	if x != nil {
+		return x.BestAnswer
+	}
+	return nil
+}
+
+type ReportQuestionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	QuestionId    string                 `protobuf:"bytes,1,opt,name=question_id,json=questionId,proto3" json:"question_id,omitempty"`
+	Reason        ReportReason           `protobuf:"varint,2,opt,name=reason,proto3,enum=ai.forum_parser.v1.ReportReason" json:"reason,omitempty"`
+	Comment       string                 `protobuf:"bytes,3,opt,name=comment,proto3" json:"comment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReportQuestionRequest) Reset() {
+	*x = ReportQuestionRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReportQuestionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReportQuestionRequest) ProtoMessage() {}
+
+func (x *ReportQuestionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReportQuestionRequest.ProtoReflect.Descriptor instead.
+func (*ReportQuestionRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *ReportQuestionRequest) GetQuestionId() string {
+	if x != nil {
+		return x.QuestionId
+	}
+	return ""
+}
+
+func (x *ReportQuestionRequest) GetReason() ReportReason {
+	if x != nil {
+		return x.Reason
+	}
+	return ReportReason_REPORT_REASON_UNSPECIFIED
+}
+
+func (x *ReportQuestionRequest) GetComment() string {
+	if x != nil {
+		return x.Comment
+	}
+	return ""
+}
+
+type ReportQuestionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReportQuestionResponse) Reset() {
+	*x = ReportQuestionResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReportQuestionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReportQuestionResponse) ProtoMessage() {}
+
+func (x *ReportQuestionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReportQuestionResponse.ProtoReflect.Descriptor instead.
+func (*ReportQuestionResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{43}
+}
+
+type ReportAnswerRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	QuestionId    string                 `protobuf:"bytes,1,opt,name=question_id,json=questionId,proto3" json:"question_id,omitempty"`
+	AnswerId      string                 `protobuf:"bytes,2,opt,name=answer_id,json=answerId,proto3" json:"answer_id,omitempty"`
+	Reason        ReportReason           `protobuf:"varint,3,opt,name=reason,proto3,enum=ai.forum_parser.v1.ReportReason" json:"reason,omitempty"`
+	Comment       string                 `protobuf:"bytes,4,opt,name=comment,proto3" json:"comment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReportAnswerRequest) Reset() {
+	*x = ReportAnswerRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReportAnswerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReportAnswerRequest) ProtoMessage() {}
+
+func (x *ReportAnswerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReportAnswerRequest.ProtoReflect.Descriptor instead.
+func (*ReportAnswerRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *ReportAnswerRequest) GetQuestionId() string {
+	if x != nil {
+		return x.QuestionId
+	}
+	return ""
+}
+
+func (x *ReportAnswerRequest) GetAnswerId() string {
+	if x != nil {
+		return x.AnswerId
+	}
+	return ""
+}
+
+func (x *ReportAnswerRequest) GetReason() ReportReason {
+	if x != nil {
+		return x.Reason
+	}
+	return ReportReason_REPORT_REASON_UNSPECIFIED
+}
+
+func (x *ReportAnswerRequest) GetComment() string {
+	if x != nil {
+		return x.Comment
+	}
+	return ""
+}
+
+type ReportAnswerResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReportAnswerResponse) Reset() {
+	*x = ReportAnswerResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReportAnswerResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReportAnswerResponse) ProtoMessage() {}
+
+func (x *ReportAnswerResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReportAnswerResponse.ProtoReflect.Descriptor instead.
+func (*ReportAnswerResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{45}
+}
+
+type MasterProfile struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WorkshopId    int64                  `protobuf:"varint,2,opt,name=workshop_id,json=workshopId,proto3" json:"workshop_id,omitempty"`
+	WorkshopName  string                 `protobuf:"bytes,3,opt,name=workshop_name,json=workshopName,proto3" json:"workshop_name,omitempty"`
+	TopicIds      []string               `protobuf:"bytes,4,rep,name=topic_ids,json=topicIds,proto3" json:"topic_ids,omitempty"`
+	CarBrands     []string               `protobuf:"bytes,5,rep,name=car_brands,json=carBrands,proto3" json:"car_brands,omitempty"`
+	RadiusKm      int32                  `protobuf:"varint,6,opt,name=radius_km,json=radiusKm,proto3" json:"radius_km,omitempty"`
+	City          string                 `protobuf:"bytes,7,opt,name=city,proto3" json:"city,omitempty"`
+	Onboarded     bool                   `protobuf:"varint,8,opt,name=onboarded,proto3" json:"onboarded,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MasterProfile) Reset() {
+	*x = MasterProfile{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MasterProfile) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MasterProfile) ProtoMessage() {}
+
+func (x *MasterProfile) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MasterProfile.ProtoReflect.Descriptor instead.
+func (*MasterProfile) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *MasterProfile) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *MasterProfile) GetWorkshopId() int64 {
+	if x != nil {
+		return x.WorkshopId
+	}
+	return 0
+}
+
+func (x *MasterProfile) GetWorkshopName() string {
+	if x != nil {
+		return x.WorkshopName
+	}
+	return ""
+}
+
+func (x *MasterProfile) GetTopicIds() []string {
+	if x != nil {
+		return x.TopicIds
+	}
+	return nil
+}
+
+func (x *MasterProfile) GetCarBrands() []string {
+	if x != nil {
+		return x.CarBrands
+	}
+	return nil
+}
+
+func (x *MasterProfile) GetRadiusKm() int32 {
+	if x != nil {
+		return x.RadiusKm
+	}
+	return 0
+}
+
+func (x *MasterProfile) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *MasterProfile) GetOnboarded() bool {
+	if x != nil {
+		return x.Onboarded
+	}
+	return false
+}
+
+type GetMasterProfileRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMasterProfileRequest) Reset() {
+	*x = GetMasterProfileRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[47]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMasterProfileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMasterProfileRequest) ProtoMessage() {}
+
+func (x *GetMasterProfileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[47]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMasterProfileRequest.ProtoReflect.Descriptor instead.
+func (*GetMasterProfileRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{47}
+}
+
+type GetMasterProfileResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Profile       *MasterProfile         `protobuf:"bytes,1,opt,name=profile,proto3" json:"profile,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMasterProfileResponse) Reset() {
+	*x = GetMasterProfileResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[48]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMasterProfileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMasterProfileResponse) ProtoMessage() {}
+
+func (x *GetMasterProfileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[48]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMasterProfileResponse.ProtoReflect.Descriptor instead.
+func (*GetMasterProfileResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{48}
+}
+
+func (x *GetMasterProfileResponse) GetProfile() *MasterProfile {
+	if x != nil {
+		return x.Profile
+	}
+	return nil
+}
+
+type UpsertMasterProfileRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	WorkshopId    int64                  `protobuf:"varint,1,opt,name=workshop_id,json=workshopId,proto3" json:"workshop_id,omitempty"`
+	TopicIds      []string               `protobuf:"bytes,2,rep,name=topic_ids,json=topicIds,proto3" json:"topic_ids,omitempty"`
+	CarBrands     []string               `protobuf:"bytes,3,rep,name=car_brands,json=carBrands,proto3" json:"car_brands,omitempty"`
+	RadiusKm      int32                  `protobuf:"varint,4,opt,name=radius_km,json=radiusKm,proto3" json:"radius_km,omitempty"`
+	City          string                 `protobuf:"bytes,5,opt,name=city,proto3" json:"city,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpsertMasterProfileRequest) Reset() {
+	*x = UpsertMasterProfileRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[49]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpsertMasterProfileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpsertMasterProfileRequest) ProtoMessage() {}
+
+func (x *UpsertMasterProfileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[49]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpsertMasterProfileRequest.ProtoReflect.Descriptor instead.
+func (*UpsertMasterProfileRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{49}
+}
+
+func (x *UpsertMasterProfileRequest) GetWorkshopId() int64 {
+	if x != nil {
+		return x.WorkshopId
+	}
+	return 0
+}
+
+func (x *UpsertMasterProfileRequest) GetTopicIds() []string {
+	if x != nil {
+		return x.TopicIds
+	}
+	return nil
+}
+
+func (x *UpsertMasterProfileRequest) GetCarBrands() []string {
+	if x != nil {
+		return x.CarBrands
+	}
+	return nil
+}
+
+func (x *UpsertMasterProfileRequest) GetRadiusKm() int32 {
+	if x != nil {
+		return x.RadiusKm
+	}
+	return 0
+}
+
+func (x *UpsertMasterProfileRequest) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+type UpsertMasterProfileResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Profile       *MasterProfile         `protobuf:"bytes,1,opt,name=profile,proto3" json:"profile,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpsertMasterProfileResponse) Reset() {
+	*x = UpsertMasterProfileResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[50]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpsertMasterProfileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpsertMasterProfileResponse) ProtoMessage() {}
+
+func (x *UpsertMasterProfileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[50]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpsertMasterProfileResponse.ProtoReflect.Descriptor instead.
+func (*UpsertMasterProfileResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{50}
+}
+
+func (x *UpsertMasterProfileResponse) GetProfile() *MasterProfile {
+	if x != nil {
+		return x.Profile
+	}
+	return nil
+}
+
+type ListIncomingQuestionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Limit         int32                  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListIncomingQuestionsRequest) Reset() {
+	*x = ListIncomingQuestionsRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[51]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListIncomingQuestionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListIncomingQuestionsRequest) ProtoMessage() {}
+
+func (x *ListIncomingQuestionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[51]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListIncomingQuestionsRequest.ProtoReflect.Descriptor instead.
+func (*ListIncomingQuestionsRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{51}
+}
+
+func (x *ListIncomingQuestionsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListIncomingQuestionsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type ListIncomingQuestionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Questions     []*QuestionCard        `protobuf:"bytes,1,rep,name=questions,proto3" json:"questions,omitempty"`
+	HasMore       bool                   `protobuf:"varint,2,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListIncomingQuestionsResponse) Reset() {
+	*x = ListIncomingQuestionsResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[52]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListIncomingQuestionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListIncomingQuestionsResponse) ProtoMessage() {}
+
+func (x *ListIncomingQuestionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[52]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListIncomingQuestionsResponse.ProtoReflect.Descriptor instead.
+func (*ListIncomingQuestionsResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{52}
+}
+
+func (x *ListIncomingQuestionsResponse) GetQuestions() []*QuestionCard {
+	if x != nil {
+		return x.Questions
+	}
+	return nil
+}
+
+func (x *ListIncomingQuestionsResponse) GetHasMore() bool {
+	if x != nil {
+		return x.HasMore
+	}
+	return false
+}
+
+type HideQuestionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	QuestionId    string                 `protobuf:"bytes,1,opt,name=question_id,json=questionId,proto3" json:"question_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HideQuestionRequest) Reset() {
+	*x = HideQuestionRequest{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[53]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HideQuestionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HideQuestionRequest) ProtoMessage() {}
+
+func (x *HideQuestionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[53]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HideQuestionRequest.ProtoReflect.Descriptor instead.
+func (*HideQuestionRequest) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{53}
+}
+
+func (x *HideQuestionRequest) GetQuestionId() string {
+	if x != nil {
+		return x.QuestionId
+	}
+	return ""
+}
+
+type HideQuestionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HideQuestionResponse) Reset() {
+	*x = HideQuestionResponse{}
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[54]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HideQuestionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HideQuestionResponse) ProtoMessage() {}
+
+func (x *HideQuestionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_forum_parser_v1_forum_parser_proto_msgTypes[54]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HideQuestionResponse.ProtoReflect.Descriptor instead.
+func (*HideQuestionResponse) Descriptor() ([]byte, []int) {
+	return file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP(), []int{54}
+}
+
 var File_ai_forum_parser_v1_forum_parser_proto protoreflect.FileDescriptor
 
 const file_ai_forum_parser_v1_forum_parser_proto_rawDesc = "" +
@@ -1258,7 +4021,7 @@ const file_ai_forum_parser_v1_forum_parser_proto_rawDesc = "" +
 	"\vposts_limit\x18\x02 \x01(\x05R\n" +
 	"postsLimit\x12!\n" +
 	"\fposts_offset\x18\x03 \x01(\x05R\vpostsOffset\x12'\n" +
-	"\x0faround_position\x18\x04 \x01(\x05R\x0earoundPosition\"\xc2\x02\n" +
+	"\x0faround_position\x18\x04 \x01(\x05R\x0earoundPosition\"\x8f\x03\n" +
 	"\x11GetThreadResponse\x126\n" +
 	"\x06thread\x18\x01 \x01(\v2\x1e.ai.forum_parser.v1.ThreadCardR\x06thread\x12.\n" +
 	"\x05posts\x18\x02 \x03(\v2\x18.ai.forum_parser.v1.PostR\x05posts\x12$\n" +
@@ -1267,7 +4030,9 @@ const file_ai_forum_parser_v1_forum_parser_proto_rawDesc = "" +
 	"postsTotal\x12*\n" +
 	"\x11my_first_position\x18\x05 \x01(\x05R\x0fmyFirstPosition\x12(\n" +
 	"\x10my_last_position\x18\x06 \x01(\x05R\x0emyLastPosition\x12(\n" +
-	"\x10my_positions_set\x18\a \x01(\bR\x0emyPositionsSet\"c\n" +
+	"\x10my_positions_set\x18\a \x01(\bR\x0emyPositionsSet\x12!\n" +
+	"\fposts_offset\x18\b \x01(\x05R\vpostsOffset\x12(\n" +
+	"\x10posts_has_before\x18\t \x01(\bR\x0epostsHasBefore\"c\n" +
 	"\x16ListThreadPostsRequest\x12\x1b\n" +
 	"\tthread_id\x18\x01 \x01(\tR\bthreadId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
@@ -1310,7 +4075,238 @@ const file_ai_forum_parser_v1_forum_parser_proto_rawDesc = "" +
 	"\x11reply_to_position\x18\x03 \x01(\x05R\x0freplyToPosition\x12#\n" +
 	"\rquote_excerpt\x18\x04 \x01(\tR\fquoteExcerpt\"E\n" +
 	"\x13CreateReplyResponse\x12.\n" +
-	"\x05reply\x18\x01 \x01(\v2\x18.ai.forum_parser.v1.PostR\x05reply2\xed\x05\n" +
+	"\x05reply\x18\x01 \x01(\v2\x18.ai.forum_parser.v1.PostR\x05reply\"+\n" +
+	"\x05Topic\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"\xb2\x06\n" +
+	"\fQuestionCard\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12\x18\n" +
+	"\aexcerpt\x18\x03 \x01(\tR\aexcerpt\x12K\n" +
+	"\x0fquestion_status\x18\x04 \x01(\x0e2\".ai.forum_parser.v1.QuestionStatusR\x0equestionStatus\x12\x19\n" +
+	"\btopic_id\x18\x05 \x01(\tR\atopicId\x12\x1d\n" +
+	"\n" +
+	"topic_name\x18\x06 \x01(\tR\ttopicName\x12!\n" +
+	"\fanswer_count\x18\a \x01(\x05R\vanswerCount\x12\x1d\n" +
+	"\n" +
+	"view_count\x18\b \x01(\x05R\tviewCount\x12*\n" +
+	"\x11has_master_answer\x18\t \x01(\bR\x0fhasMasterAnswer\x12\x1f\n" +
+	"\vphoto_count\x18\n" +
+	" \x01(\x05R\n" +
+	"photoCount\x12$\n" +
+	"\x0eauthor_user_id\x18\v \x01(\x03R\fauthorUserId\x12.\n" +
+	"\x13author_display_name\x18\f \x01(\tR\x11authorDisplayName\x12\x1e\n" +
+	"\vcar_make_id\x18\r \x01(\x05R\tcarMakeId\x12\"\n" +
+	"\rcar_make_name\x18\x0e \x01(\tR\vcarMakeName\x12 \n" +
+	"\fcar_model_id\x18\x0f \x01(\x05R\n" +
+	"carModelId\x12$\n" +
+	"\x0ecar_model_name\x18\x10 \x01(\tR\fcarModelName\x12\x19\n" +
+	"\bcar_year\x18\x11 \x01(\x05R\acarYear\x12\"\n" +
+	"\rgarage_car_id\x18\x12 \x01(\x03R\vgarageCarId\x12\x12\n" +
+	"\x04city\x18\x13 \x01(\tR\x04city\x129\n" +
+	"\n" +
+	"created_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12?\n" +
+	"\rlast_activity\x18\x15 \x01(\v2\x1a.google.protobuf.TimestampR\flastActivity\x12\x1b\n" +
+	"\tis_author\x18\x16 \x01(\bR\bisAuthor\"\xbb\x03\n" +
+	"\x06Answer\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12?\n" +
+	"\vauthor_role\x18\x02 \x01(\x0e2\x1e.ai.forum_parser.v1.AuthorRoleR\n" +
+	"authorRole\x12$\n" +
+	"\x0eauthor_user_id\x18\x03 \x01(\x03R\fauthorUserId\x12.\n" +
+	"\x13author_display_name\x18\x04 \x01(\tR\x11authorDisplayName\x12\x1f\n" +
+	"\vworkshop_id\x18\x05 \x01(\x03R\n" +
+	"workshopId\x12#\n" +
+	"\rworkshop_name\x18\x06 \x01(\tR\fworkshopName\x12#\n" +
+	"\roffer_booking\x18\a \x01(\bR\fofferBooking\x12\x12\n" +
+	"\x04body\x18\b \x01(\tR\x04body\x12\x1d\n" +
+	"\n" +
+	"photo_urls\x18\t \x03(\tR\tphotoUrls\x12\x17\n" +
+	"\ais_best\x18\n" +
+	" \x01(\bR\x06isBest\x127\n" +
+	"\tposted_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\bpostedAt\x12\x1a\n" +
+	"\bposition\x18\f \x01(\x05R\bposition\"\x8d\x01\n" +
+	"\rFAQCollection\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12\x12\n" +
+	"\x04slug\x18\x03 \x01(\tR\x04slug\x12%\n" +
+	"\x0equestion_count\x18\x04 \x01(\x05R\rquestionCount\x12\x1b\n" +
+	"\tstyle_key\x18\x05 \x01(\tR\bstyleKey\"\x13\n" +
+	"\x11ListTopicsRequest\"G\n" +
+	"\x12ListTopicsResponse\x121\n" +
+	"\x06topics\x18\x01 \x03(\v2\x19.ai.forum_parser.v1.TopicR\x06topics\"\x82\x03\n" +
+	"\x14ListQuestionsRequest\x12\x14\n" +
+	"\x05query\x18\x01 \x01(\tR\x05query\x12\x19\n" +
+	"\btopic_id\x18\x02 \x01(\tR\atopicId\x12M\n" +
+	"\rstatus_filter\x18\x03 \x01(\x0e2(.ai.forum_parser.v1.QuestionStatusFilterR\fstatusFilter\x124\n" +
+	"\x04sort\x18\x04 \x01(\x0e2 .ai.forum_parser.v1.QuestionSortR\x04sort\x12\x15\n" +
+	"\x06my_car\x18\x05 \x01(\bR\x05myCar\x12\x1e\n" +
+	"\vcar_make_id\x18\x06 \x01(\x05R\tcarMakeId\x12 \n" +
+	"\fcar_model_id\x18\a \x01(\x05R\n" +
+	"carModelId\x12\x19\n" +
+	"\bcar_year\x18\b \x01(\x05R\acarYear\x12\x12\n" +
+	"\x04city\x18\t \x01(\tR\x04city\x12\x14\n" +
+	"\x05limit\x18\n" +
+	" \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\v \x01(\x05R\x06offset\"r\n" +
+	"\x15ListQuestionsResponse\x12>\n" +
+	"\tquestions\x18\x01 \x03(\v2 .ai.forum_parser.v1.QuestionCardR\tquestions\x12\x19\n" +
+	"\bhas_more\x18\x02 \x01(\bR\ahasMore\"F\n" +
+	"\x16ListMyQuestionsRequest\x12\x14\n" +
+	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x02 \x01(\x05R\x06offset\"t\n" +
+	"\x17ListMyQuestionsResponse\x12>\n" +
+	"\tquestions\x18\x01 \x03(\v2 .ai.forum_parser.v1.QuestionCardR\tquestions\x12\x19\n" +
+	"\bhas_more\x18\x02 \x01(\bR\ahasMore\"y\n" +
+	"\x18ListKnowledgeBaseRequest\x12\x14\n" +
+	"\x05query\x18\x01 \x01(\tR\x05query\x12\x19\n" +
+	"\btopic_id\x18\x02 \x01(\tR\atopicId\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x04 \x01(\x05R\x06offset\"v\n" +
+	"\x19ListKnowledgeBaseResponse\x12>\n" +
+	"\tquestions\x18\x01 \x03(\v2 .ai.forum_parser.v1.QuestionCardR\tquestions\x12\x19\n" +
+	"\bhas_more\x18\x02 \x01(\bR\ahasMore\"\x1b\n" +
+	"\x19ListFAQCollectionsRequest\"a\n" +
+	"\x1aListFAQCollectionsResponse\x12C\n" +
+	"\vcollections\x18\x01 \x03(\v2!.ai.forum_parser.v1.FAQCollectionR\vcollections\"\xed\x01\n" +
+	"\x18FindSimilarSolvedRequest\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x12\x19\n" +
+	"\btopic_id\x18\x02 \x01(\tR\atopicId\x12\x1e\n" +
+	"\vcar_make_id\x18\x03 \x01(\x05R\tcarMakeId\x12\"\n" +
+	"\rcar_make_name\x18\x04 \x01(\tR\vcarMakeName\x12 \n" +
+	"\fcar_model_id\x18\x05 \x01(\x05R\n" +
+	"carModelId\x12$\n" +
+	"\x0ecar_model_name\x18\x06 \x01(\tR\fcarModelName\x12\x14\n" +
+	"\x05limit\x18\a \x01(\x05R\x05limit\"[\n" +
+	"\x19FindSimilarSolvedResponse\x12>\n" +
+	"\tquestions\x18\x01 \x03(\v2 .ai.forum_parser.v1.QuestionCardR\tquestions\"+\n" +
+	"\x13SuggestTopicRequest\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\"P\n" +
+	"\x14SuggestTopicResponse\x12\x19\n" +
+	"\btopic_id\x18\x01 \x01(\tR\atopicId\x12\x1d\n" +
+	"\n" +
+	"topic_name\x18\x02 \x01(\tR\ttopicName\"5\n" +
+	"\x12GetQuestionRequest\x12\x1f\n" +
+	"\vquestion_id\x18\x01 \x01(\tR\n" +
+	"questionId\"\x86\x02\n" +
+	"\x13GetQuestionResponse\x12<\n" +
+	"\bquestion\x18\x01 \x01(\v2 .ai.forum_parser.v1.QuestionCardR\bquestion\x12\x12\n" +
+	"\x04body\x18\x02 \x01(\tR\x04body\x12\x1d\n" +
+	"\n" +
+	"photo_urls\x18\x03 \x03(\tR\tphotoUrls\x124\n" +
+	"\aanswers\x18\x04 \x03(\v2\x1a.ai.forum_parser.v1.AnswerR\aanswers\x12$\n" +
+	"\x0ebest_answer_id\x18\x05 \x01(\tR\fbestAnswerId\x12\"\n" +
+	"\rcan_mark_best\x18\x06 \x01(\bR\vcanMarkBest\"\xda\x02\n" +
+	"\x15CreateQuestionRequest\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x12\x12\n" +
+	"\x04body\x18\x02 \x01(\tR\x04body\x12\x19\n" +
+	"\btopic_id\x18\x03 \x01(\tR\atopicId\x12\x1e\n" +
+	"\vcar_make_id\x18\x04 \x01(\x05R\tcarMakeId\x12\"\n" +
+	"\rcar_make_name\x18\x05 \x01(\tR\vcarMakeName\x12 \n" +
+	"\fcar_model_id\x18\x06 \x01(\x05R\n" +
+	"carModelId\x12$\n" +
+	"\x0ecar_model_name\x18\a \x01(\tR\fcarModelName\x12\x19\n" +
+	"\bcar_year\x18\b \x01(\x05R\acarYear\x12\"\n" +
+	"\rgarage_car_id\x18\t \x01(\x03R\vgarageCarId\x12\x12\n" +
+	"\x04city\x18\n" +
+	" \x01(\tR\x04city\x12\x1d\n" +
+	"\n" +
+	"photo_urls\x18\v \x03(\tR\tphotoUrls\"V\n" +
+	"\x16CreateQuestionResponse\x12<\n" +
+	"\bquestion\x18\x01 \x01(\v2 .ai.forum_parser.v1.QuestionCardR\bquestion\"\xf0\x01\n" +
+	"\x13CreateAnswerRequest\x12\x1f\n" +
+	"\vquestion_id\x18\x01 \x01(\tR\n" +
+	"questionId\x12\x12\n" +
+	"\x04body\x18\x02 \x01(\tR\x04body\x12?\n" +
+	"\vauthor_role\x18\x03 \x01(\x0e2\x1e.ai.forum_parser.v1.AuthorRoleR\n" +
+	"authorRole\x12\x1f\n" +
+	"\vworkshop_id\x18\x04 \x01(\x03R\n" +
+	"workshopId\x12#\n" +
+	"\roffer_booking\x18\x05 \x01(\bR\fofferBooking\x12\x1d\n" +
+	"\n" +
+	"photo_urls\x18\x06 \x03(\tR\tphotoUrls\"J\n" +
+	"\x14CreateAnswerResponse\x122\n" +
+	"\x06answer\x18\x01 \x01(\v2\x1a.ai.forum_parser.v1.AnswerR\x06answer\"U\n" +
+	"\x15MarkBestAnswerRequest\x12\x1f\n" +
+	"\vquestion_id\x18\x01 \x01(\tR\n" +
+	"questionId\x12\x1b\n" +
+	"\tanswer_id\x18\x02 \x01(\tR\banswerId\"\x93\x01\n" +
+	"\x16MarkBestAnswerResponse\x12<\n" +
+	"\bquestion\x18\x01 \x01(\v2 .ai.forum_parser.v1.QuestionCardR\bquestion\x12;\n" +
+	"\vbest_answer\x18\x02 \x01(\v2\x1a.ai.forum_parser.v1.AnswerR\n" +
+	"bestAnswer\"\x8c\x01\n" +
+	"\x15ReportQuestionRequest\x12\x1f\n" +
+	"\vquestion_id\x18\x01 \x01(\tR\n" +
+	"questionId\x128\n" +
+	"\x06reason\x18\x02 \x01(\x0e2 .ai.forum_parser.v1.ReportReasonR\x06reason\x12\x18\n" +
+	"\acomment\x18\x03 \x01(\tR\acomment\"\x18\n" +
+	"\x16ReportQuestionResponse\"\xa7\x01\n" +
+	"\x13ReportAnswerRequest\x12\x1f\n" +
+	"\vquestion_id\x18\x01 \x01(\tR\n" +
+	"questionId\x12\x1b\n" +
+	"\tanswer_id\x18\x02 \x01(\tR\banswerId\x128\n" +
+	"\x06reason\x18\x03 \x01(\x0e2 .ai.forum_parser.v1.ReportReasonR\x06reason\x12\x18\n" +
+	"\acomment\x18\x04 \x01(\tR\acomment\"\x16\n" +
+	"\x14ReportAnswerResponse\"\xf9\x01\n" +
+	"\rMasterProfile\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1f\n" +
+	"\vworkshop_id\x18\x02 \x01(\x03R\n" +
+	"workshopId\x12#\n" +
+	"\rworkshop_name\x18\x03 \x01(\tR\fworkshopName\x12\x1b\n" +
+	"\ttopic_ids\x18\x04 \x03(\tR\btopicIds\x12\x1d\n" +
+	"\n" +
+	"car_brands\x18\x05 \x03(\tR\tcarBrands\x12\x1b\n" +
+	"\tradius_km\x18\x06 \x01(\x05R\bradiusKm\x12\x12\n" +
+	"\x04city\x18\a \x01(\tR\x04city\x12\x1c\n" +
+	"\tonboarded\x18\b \x01(\bR\tonboarded\"\x19\n" +
+	"\x17GetMasterProfileRequest\"W\n" +
+	"\x18GetMasterProfileResponse\x12;\n" +
+	"\aprofile\x18\x01 \x01(\v2!.ai.forum_parser.v1.MasterProfileR\aprofile\"\xaa\x01\n" +
+	"\x1aUpsertMasterProfileRequest\x12\x1f\n" +
+	"\vworkshop_id\x18\x01 \x01(\x03R\n" +
+	"workshopId\x12\x1b\n" +
+	"\ttopic_ids\x18\x02 \x03(\tR\btopicIds\x12\x1d\n" +
+	"\n" +
+	"car_brands\x18\x03 \x03(\tR\tcarBrands\x12\x1b\n" +
+	"\tradius_km\x18\x04 \x01(\x05R\bradiusKm\x12\x12\n" +
+	"\x04city\x18\x05 \x01(\tR\x04city\"Z\n" +
+	"\x1bUpsertMasterProfileResponse\x12;\n" +
+	"\aprofile\x18\x01 \x01(\v2!.ai.forum_parser.v1.MasterProfileR\aprofile\"L\n" +
+	"\x1cListIncomingQuestionsRequest\x12\x14\n" +
+	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x02 \x01(\x05R\x06offset\"z\n" +
+	"\x1dListIncomingQuestionsResponse\x12>\n" +
+	"\tquestions\x18\x01 \x03(\v2 .ai.forum_parser.v1.QuestionCardR\tquestions\x12\x19\n" +
+	"\bhas_more\x18\x02 \x01(\bR\ahasMore\"6\n" +
+	"\x13HideQuestionRequest\x12\x1f\n" +
+	"\vquestion_id\x18\x01 \x01(\tR\n" +
+	"questionId\"\x16\n" +
+	"\x14HideQuestionResponse*\x83\x01\n" +
+	"\x0eQuestionStatus\x12\x1f\n" +
+	"\x1bQUESTION_STATUS_UNSPECIFIED\x10\x00\x12\x18\n" +
+	"\x14QUESTION_STATUS_OPEN\x10\x01\x12\x1a\n" +
+	"\x16QUESTION_STATUS_SOLVED\x10\x02\x12\x1a\n" +
+	"\x16QUESTION_STATUS_CLOSED\x10\x03*Y\n" +
+	"\n" +
+	"AuthorRole\x12\x1b\n" +
+	"\x17AUTHOR_ROLE_UNSPECIFIED\x10\x00\x12\x16\n" +
+	"\x12AUTHOR_ROLE_CLIENT\x10\x01\x12\x16\n" +
+	"\x12AUTHOR_ROLE_MASTER\x10\x02*\x81\x01\n" +
+	"\fQuestionSort\x12\x1d\n" +
+	"\x19QUESTION_SORT_UNSPECIFIED\x10\x00\x12\x15\n" +
+	"\x11QUESTION_SORT_NEW\x10\x01\x12\x1b\n" +
+	"\x17QUESTION_SORT_NO_ANSWER\x10\x02\x12\x1e\n" +
+	"\x1aQUESTION_SORT_POPULAR_WEEK\x10\x03*\xa8\x01\n" +
+	"\x14QuestionStatusFilter\x12&\n" +
+	"\"QUESTION_STATUS_FILTER_UNSPECIFIED\x10\x00\x12\x1f\n" +
+	"\x1bQUESTION_STATUS_FILTER_OPEN\x10\x01\x12!\n" +
+	"\x1dQUESTION_STATUS_FILTER_SOLVED\x10\x02\x12$\n" +
+	" QUESTION_STATUS_FILTER_NO_ANSWER\x10\x03*\x96\x01\n" +
+	"\fReportReason\x12\x1d\n" +
+	"\x19REPORT_REASON_UNSPECIFIED\x10\x00\x12\x16\n" +
+	"\x12REPORT_REASON_SPAM\x10\x01\x12\x17\n" +
+	"\x13REPORT_REASON_ABUSE\x10\x02\x12\x1d\n" +
+	"\x19REPORT_REASON_ADVERTISING\x10\x03\x12\x17\n" +
+	"\x13REPORT_REASON_OTHER\x10\x042\xed\x05\n" +
 	"\x12ForumParserService\x12d\n" +
 	"\rSearchThreads\x12(.ai.forum_parser.v1.SearchThreadsRequest\x1a).ai.forum_parser.v1.SearchThreadsResponse\x12X\n" +
 	"\tGetThread\x12$.ai.forum_parser.v1.GetThreadRequest\x1a%.ai.forum_parser.v1.GetThreadResponse\x12j\n" +
@@ -1318,7 +4314,26 @@ const file_ai_forum_parser_v1_forum_parser_proto_rawDesc = "" +
 	"\x0fListDiscussions\x12*.ai.forum_parser.v1.ListDiscussionsRequest\x1a+.ai.forum_parser.v1.ListDiscussionsResponse\x12p\n" +
 	"\x11ListMyDiscussions\x12,.ai.forum_parser.v1.ListMyDiscussionsRequest\x1a-.ai.forum_parser.v1.ListMyDiscussionsResponse\x12m\n" +
 	"\x10CreateDiscussion\x12+.ai.forum_parser.v1.CreateDiscussionRequest\x1a,.ai.forum_parser.v1.CreateDiscussionResponse\x12^\n" +
-	"\vCreateReply\x12&.ai.forum_parser.v1.CreateReplyRequest\x1a'.ai.forum_parser.v1.CreateReplyResponseBCZAgithub.com/4ubak/cg-proto/gen/go/ai/forum_parser/v1;forumparserv1b\x06proto3"
+	"\vCreateReply\x12&.ai.forum_parser.v1.CreateReplyRequest\x1a'.ai.forum_parser.v1.CreateReplyResponse2\xa4\x0e\n" +
+	"\x0eForumQAService\x12[\n" +
+	"\n" +
+	"ListTopics\x12%.ai.forum_parser.v1.ListTopicsRequest\x1a&.ai.forum_parser.v1.ListTopicsResponse\x12d\n" +
+	"\rListQuestions\x12(.ai.forum_parser.v1.ListQuestionsRequest\x1a).ai.forum_parser.v1.ListQuestionsResponse\x12j\n" +
+	"\x0fListMyQuestions\x12*.ai.forum_parser.v1.ListMyQuestionsRequest\x1a+.ai.forum_parser.v1.ListMyQuestionsResponse\x12p\n" +
+	"\x11ListKnowledgeBase\x12,.ai.forum_parser.v1.ListKnowledgeBaseRequest\x1a-.ai.forum_parser.v1.ListKnowledgeBaseResponse\x12s\n" +
+	"\x12ListFAQCollections\x12-.ai.forum_parser.v1.ListFAQCollectionsRequest\x1a..ai.forum_parser.v1.ListFAQCollectionsResponse\x12p\n" +
+	"\x11FindSimilarSolved\x12,.ai.forum_parser.v1.FindSimilarSolvedRequest\x1a-.ai.forum_parser.v1.FindSimilarSolvedResponse\x12a\n" +
+	"\fSuggestTopic\x12'.ai.forum_parser.v1.SuggestTopicRequest\x1a(.ai.forum_parser.v1.SuggestTopicResponse\x12^\n" +
+	"\vGetQuestion\x12&.ai.forum_parser.v1.GetQuestionRequest\x1a'.ai.forum_parser.v1.GetQuestionResponse\x12g\n" +
+	"\x0eCreateQuestion\x12).ai.forum_parser.v1.CreateQuestionRequest\x1a*.ai.forum_parser.v1.CreateQuestionResponse\x12a\n" +
+	"\fCreateAnswer\x12'.ai.forum_parser.v1.CreateAnswerRequest\x1a(.ai.forum_parser.v1.CreateAnswerResponse\x12g\n" +
+	"\x0eMarkBestAnswer\x12).ai.forum_parser.v1.MarkBestAnswerRequest\x1a*.ai.forum_parser.v1.MarkBestAnswerResponse\x12g\n" +
+	"\x0eReportQuestion\x12).ai.forum_parser.v1.ReportQuestionRequest\x1a*.ai.forum_parser.v1.ReportQuestionResponse\x12a\n" +
+	"\fReportAnswer\x12'.ai.forum_parser.v1.ReportAnswerRequest\x1a(.ai.forum_parser.v1.ReportAnswerResponse\x12m\n" +
+	"\x10GetMasterProfile\x12+.ai.forum_parser.v1.GetMasterProfileRequest\x1a,.ai.forum_parser.v1.GetMasterProfileResponse\x12v\n" +
+	"\x13UpsertMasterProfile\x12..ai.forum_parser.v1.UpsertMasterProfileRequest\x1a/.ai.forum_parser.v1.UpsertMasterProfileResponse\x12|\n" +
+	"\x15ListIncomingQuestions\x120.ai.forum_parser.v1.ListIncomingQuestionsRequest\x1a1.ai.forum_parser.v1.ListIncomingQuestionsResponse\x12a\n" +
+	"\fHideQuestion\x12'.ai.forum_parser.v1.HideQuestionRequest\x1a(.ai.forum_parser.v1.HideQuestionResponseBCZAgithub.com/4ubak/cg-proto/gen/go/ai/forum_parser/v1;forumparserv1b\x06proto3"
 
 var (
 	file_ai_forum_parser_v1_forum_parser_proto_rawDescOnce sync.Once
@@ -1332,56 +4347,160 @@ func file_ai_forum_parser_v1_forum_parser_proto_rawDescGZIP() []byte {
 	return file_ai_forum_parser_v1_forum_parser_proto_rawDescData
 }
 
-var file_ai_forum_parser_v1_forum_parser_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_ai_forum_parser_v1_forum_parser_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
+var file_ai_forum_parser_v1_forum_parser_proto_msgTypes = make([]protoimpl.MessageInfo, 55)
 var file_ai_forum_parser_v1_forum_parser_proto_goTypes = []any{
-	(*ThreadCard)(nil),                // 0: ai.forum_parser.v1.ThreadCard
-	(*Post)(nil),                      // 1: ai.forum_parser.v1.Post
-	(*SearchThreadsRequest)(nil),      // 2: ai.forum_parser.v1.SearchThreadsRequest
-	(*SearchThreadsResponse)(nil),     // 3: ai.forum_parser.v1.SearchThreadsResponse
-	(*GetThreadRequest)(nil),          // 4: ai.forum_parser.v1.GetThreadRequest
-	(*GetThreadResponse)(nil),         // 5: ai.forum_parser.v1.GetThreadResponse
-	(*ListThreadPostsRequest)(nil),    // 6: ai.forum_parser.v1.ListThreadPostsRequest
-	(*ListThreadPostsResponse)(nil),   // 7: ai.forum_parser.v1.ListThreadPostsResponse
-	(*ListDiscussionsRequest)(nil),    // 8: ai.forum_parser.v1.ListDiscussionsRequest
-	(*ListDiscussionsResponse)(nil),   // 9: ai.forum_parser.v1.ListDiscussionsResponse
-	(*ListMyDiscussionsRequest)(nil),  // 10: ai.forum_parser.v1.ListMyDiscussionsRequest
-	(*ListMyDiscussionsResponse)(nil), // 11: ai.forum_parser.v1.ListMyDiscussionsResponse
-	(*CreateDiscussionRequest)(nil),   // 12: ai.forum_parser.v1.CreateDiscussionRequest
-	(*CreateDiscussionResponse)(nil),  // 13: ai.forum_parser.v1.CreateDiscussionResponse
-	(*CreateReplyRequest)(nil),        // 14: ai.forum_parser.v1.CreateReplyRequest
-	(*CreateReplyResponse)(nil),       // 15: ai.forum_parser.v1.CreateReplyResponse
-	(*timestamppb.Timestamp)(nil),     // 16: google.protobuf.Timestamp
+	(QuestionStatus)(0),                   // 0: ai.forum_parser.v1.QuestionStatus
+	(AuthorRole)(0),                       // 1: ai.forum_parser.v1.AuthorRole
+	(QuestionSort)(0),                     // 2: ai.forum_parser.v1.QuestionSort
+	(QuestionStatusFilter)(0),             // 3: ai.forum_parser.v1.QuestionStatusFilter
+	(ReportReason)(0),                     // 4: ai.forum_parser.v1.ReportReason
+	(*ThreadCard)(nil),                    // 5: ai.forum_parser.v1.ThreadCard
+	(*Post)(nil),                          // 6: ai.forum_parser.v1.Post
+	(*SearchThreadsRequest)(nil),          // 7: ai.forum_parser.v1.SearchThreadsRequest
+	(*SearchThreadsResponse)(nil),         // 8: ai.forum_parser.v1.SearchThreadsResponse
+	(*GetThreadRequest)(nil),              // 9: ai.forum_parser.v1.GetThreadRequest
+	(*GetThreadResponse)(nil),             // 10: ai.forum_parser.v1.GetThreadResponse
+	(*ListThreadPostsRequest)(nil),        // 11: ai.forum_parser.v1.ListThreadPostsRequest
+	(*ListThreadPostsResponse)(nil),       // 12: ai.forum_parser.v1.ListThreadPostsResponse
+	(*ListDiscussionsRequest)(nil),        // 13: ai.forum_parser.v1.ListDiscussionsRequest
+	(*ListDiscussionsResponse)(nil),       // 14: ai.forum_parser.v1.ListDiscussionsResponse
+	(*ListMyDiscussionsRequest)(nil),      // 15: ai.forum_parser.v1.ListMyDiscussionsRequest
+	(*ListMyDiscussionsResponse)(nil),     // 16: ai.forum_parser.v1.ListMyDiscussionsResponse
+	(*CreateDiscussionRequest)(nil),       // 17: ai.forum_parser.v1.CreateDiscussionRequest
+	(*CreateDiscussionResponse)(nil),      // 18: ai.forum_parser.v1.CreateDiscussionResponse
+	(*CreateReplyRequest)(nil),            // 19: ai.forum_parser.v1.CreateReplyRequest
+	(*CreateReplyResponse)(nil),           // 20: ai.forum_parser.v1.CreateReplyResponse
+	(*Topic)(nil),                         // 21: ai.forum_parser.v1.Topic
+	(*QuestionCard)(nil),                  // 22: ai.forum_parser.v1.QuestionCard
+	(*Answer)(nil),                        // 23: ai.forum_parser.v1.Answer
+	(*FAQCollection)(nil),                 // 24: ai.forum_parser.v1.FAQCollection
+	(*ListTopicsRequest)(nil),             // 25: ai.forum_parser.v1.ListTopicsRequest
+	(*ListTopicsResponse)(nil),            // 26: ai.forum_parser.v1.ListTopicsResponse
+	(*ListQuestionsRequest)(nil),          // 27: ai.forum_parser.v1.ListQuestionsRequest
+	(*ListQuestionsResponse)(nil),         // 28: ai.forum_parser.v1.ListQuestionsResponse
+	(*ListMyQuestionsRequest)(nil),        // 29: ai.forum_parser.v1.ListMyQuestionsRequest
+	(*ListMyQuestionsResponse)(nil),       // 30: ai.forum_parser.v1.ListMyQuestionsResponse
+	(*ListKnowledgeBaseRequest)(nil),      // 31: ai.forum_parser.v1.ListKnowledgeBaseRequest
+	(*ListKnowledgeBaseResponse)(nil),     // 32: ai.forum_parser.v1.ListKnowledgeBaseResponse
+	(*ListFAQCollectionsRequest)(nil),     // 33: ai.forum_parser.v1.ListFAQCollectionsRequest
+	(*ListFAQCollectionsResponse)(nil),    // 34: ai.forum_parser.v1.ListFAQCollectionsResponse
+	(*FindSimilarSolvedRequest)(nil),      // 35: ai.forum_parser.v1.FindSimilarSolvedRequest
+	(*FindSimilarSolvedResponse)(nil),     // 36: ai.forum_parser.v1.FindSimilarSolvedResponse
+	(*SuggestTopicRequest)(nil),           // 37: ai.forum_parser.v1.SuggestTopicRequest
+	(*SuggestTopicResponse)(nil),          // 38: ai.forum_parser.v1.SuggestTopicResponse
+	(*GetQuestionRequest)(nil),            // 39: ai.forum_parser.v1.GetQuestionRequest
+	(*GetQuestionResponse)(nil),           // 40: ai.forum_parser.v1.GetQuestionResponse
+	(*CreateQuestionRequest)(nil),         // 41: ai.forum_parser.v1.CreateQuestionRequest
+	(*CreateQuestionResponse)(nil),        // 42: ai.forum_parser.v1.CreateQuestionResponse
+	(*CreateAnswerRequest)(nil),           // 43: ai.forum_parser.v1.CreateAnswerRequest
+	(*CreateAnswerResponse)(nil),          // 44: ai.forum_parser.v1.CreateAnswerResponse
+	(*MarkBestAnswerRequest)(nil),         // 45: ai.forum_parser.v1.MarkBestAnswerRequest
+	(*MarkBestAnswerResponse)(nil),        // 46: ai.forum_parser.v1.MarkBestAnswerResponse
+	(*ReportQuestionRequest)(nil),         // 47: ai.forum_parser.v1.ReportQuestionRequest
+	(*ReportQuestionResponse)(nil),        // 48: ai.forum_parser.v1.ReportQuestionResponse
+	(*ReportAnswerRequest)(nil),           // 49: ai.forum_parser.v1.ReportAnswerRequest
+	(*ReportAnswerResponse)(nil),          // 50: ai.forum_parser.v1.ReportAnswerResponse
+	(*MasterProfile)(nil),                 // 51: ai.forum_parser.v1.MasterProfile
+	(*GetMasterProfileRequest)(nil),       // 52: ai.forum_parser.v1.GetMasterProfileRequest
+	(*GetMasterProfileResponse)(nil),      // 53: ai.forum_parser.v1.GetMasterProfileResponse
+	(*UpsertMasterProfileRequest)(nil),    // 54: ai.forum_parser.v1.UpsertMasterProfileRequest
+	(*UpsertMasterProfileResponse)(nil),   // 55: ai.forum_parser.v1.UpsertMasterProfileResponse
+	(*ListIncomingQuestionsRequest)(nil),  // 56: ai.forum_parser.v1.ListIncomingQuestionsRequest
+	(*ListIncomingQuestionsResponse)(nil), // 57: ai.forum_parser.v1.ListIncomingQuestionsResponse
+	(*HideQuestionRequest)(nil),           // 58: ai.forum_parser.v1.HideQuestionRequest
+	(*HideQuestionResponse)(nil),          // 59: ai.forum_parser.v1.HideQuestionResponse
+	(*timestamppb.Timestamp)(nil),         // 60: google.protobuf.Timestamp
 }
 var file_ai_forum_parser_v1_forum_parser_proto_depIdxs = []int32{
-	16, // 0: ai.forum_parser.v1.ThreadCard.last_activity:type_name -> google.protobuf.Timestamp
-	16, // 1: ai.forum_parser.v1.Post.posted_at:type_name -> google.protobuf.Timestamp
-	0,  // 2: ai.forum_parser.v1.SearchThreadsResponse.threads:type_name -> ai.forum_parser.v1.ThreadCard
-	0,  // 3: ai.forum_parser.v1.GetThreadResponse.thread:type_name -> ai.forum_parser.v1.ThreadCard
-	1,  // 4: ai.forum_parser.v1.GetThreadResponse.posts:type_name -> ai.forum_parser.v1.Post
-	1,  // 5: ai.forum_parser.v1.ListThreadPostsResponse.posts:type_name -> ai.forum_parser.v1.Post
-	0,  // 6: ai.forum_parser.v1.ListDiscussionsResponse.threads:type_name -> ai.forum_parser.v1.ThreadCard
-	0,  // 7: ai.forum_parser.v1.ListMyDiscussionsResponse.threads:type_name -> ai.forum_parser.v1.ThreadCard
-	0,  // 8: ai.forum_parser.v1.CreateDiscussionResponse.thread:type_name -> ai.forum_parser.v1.ThreadCard
-	1,  // 9: ai.forum_parser.v1.CreateReplyResponse.reply:type_name -> ai.forum_parser.v1.Post
-	2,  // 10: ai.forum_parser.v1.ForumParserService.SearchThreads:input_type -> ai.forum_parser.v1.SearchThreadsRequest
-	4,  // 11: ai.forum_parser.v1.ForumParserService.GetThread:input_type -> ai.forum_parser.v1.GetThreadRequest
-	6,  // 12: ai.forum_parser.v1.ForumParserService.ListThreadPosts:input_type -> ai.forum_parser.v1.ListThreadPostsRequest
-	8,  // 13: ai.forum_parser.v1.ForumParserService.ListDiscussions:input_type -> ai.forum_parser.v1.ListDiscussionsRequest
-	10, // 14: ai.forum_parser.v1.ForumParserService.ListMyDiscussions:input_type -> ai.forum_parser.v1.ListMyDiscussionsRequest
-	12, // 15: ai.forum_parser.v1.ForumParserService.CreateDiscussion:input_type -> ai.forum_parser.v1.CreateDiscussionRequest
-	14, // 16: ai.forum_parser.v1.ForumParserService.CreateReply:input_type -> ai.forum_parser.v1.CreateReplyRequest
-	3,  // 17: ai.forum_parser.v1.ForumParserService.SearchThreads:output_type -> ai.forum_parser.v1.SearchThreadsResponse
-	5,  // 18: ai.forum_parser.v1.ForumParserService.GetThread:output_type -> ai.forum_parser.v1.GetThreadResponse
-	7,  // 19: ai.forum_parser.v1.ForumParserService.ListThreadPosts:output_type -> ai.forum_parser.v1.ListThreadPostsResponse
-	9,  // 20: ai.forum_parser.v1.ForumParserService.ListDiscussions:output_type -> ai.forum_parser.v1.ListDiscussionsResponse
-	11, // 21: ai.forum_parser.v1.ForumParserService.ListMyDiscussions:output_type -> ai.forum_parser.v1.ListMyDiscussionsResponse
-	13, // 22: ai.forum_parser.v1.ForumParserService.CreateDiscussion:output_type -> ai.forum_parser.v1.CreateDiscussionResponse
-	15, // 23: ai.forum_parser.v1.ForumParserService.CreateReply:output_type -> ai.forum_parser.v1.CreateReplyResponse
-	17, // [17:24] is the sub-list for method output_type
-	10, // [10:17] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	60, // 0: ai.forum_parser.v1.ThreadCard.last_activity:type_name -> google.protobuf.Timestamp
+	60, // 1: ai.forum_parser.v1.Post.posted_at:type_name -> google.protobuf.Timestamp
+	5,  // 2: ai.forum_parser.v1.SearchThreadsResponse.threads:type_name -> ai.forum_parser.v1.ThreadCard
+	5,  // 3: ai.forum_parser.v1.GetThreadResponse.thread:type_name -> ai.forum_parser.v1.ThreadCard
+	6,  // 4: ai.forum_parser.v1.GetThreadResponse.posts:type_name -> ai.forum_parser.v1.Post
+	6,  // 5: ai.forum_parser.v1.ListThreadPostsResponse.posts:type_name -> ai.forum_parser.v1.Post
+	5,  // 6: ai.forum_parser.v1.ListDiscussionsResponse.threads:type_name -> ai.forum_parser.v1.ThreadCard
+	5,  // 7: ai.forum_parser.v1.ListMyDiscussionsResponse.threads:type_name -> ai.forum_parser.v1.ThreadCard
+	5,  // 8: ai.forum_parser.v1.CreateDiscussionResponse.thread:type_name -> ai.forum_parser.v1.ThreadCard
+	6,  // 9: ai.forum_parser.v1.CreateReplyResponse.reply:type_name -> ai.forum_parser.v1.Post
+	0,  // 10: ai.forum_parser.v1.QuestionCard.question_status:type_name -> ai.forum_parser.v1.QuestionStatus
+	60, // 11: ai.forum_parser.v1.QuestionCard.created_at:type_name -> google.protobuf.Timestamp
+	60, // 12: ai.forum_parser.v1.QuestionCard.last_activity:type_name -> google.protobuf.Timestamp
+	1,  // 13: ai.forum_parser.v1.Answer.author_role:type_name -> ai.forum_parser.v1.AuthorRole
+	60, // 14: ai.forum_parser.v1.Answer.posted_at:type_name -> google.protobuf.Timestamp
+	21, // 15: ai.forum_parser.v1.ListTopicsResponse.topics:type_name -> ai.forum_parser.v1.Topic
+	3,  // 16: ai.forum_parser.v1.ListQuestionsRequest.status_filter:type_name -> ai.forum_parser.v1.QuestionStatusFilter
+	2,  // 17: ai.forum_parser.v1.ListQuestionsRequest.sort:type_name -> ai.forum_parser.v1.QuestionSort
+	22, // 18: ai.forum_parser.v1.ListQuestionsResponse.questions:type_name -> ai.forum_parser.v1.QuestionCard
+	22, // 19: ai.forum_parser.v1.ListMyQuestionsResponse.questions:type_name -> ai.forum_parser.v1.QuestionCard
+	22, // 20: ai.forum_parser.v1.ListKnowledgeBaseResponse.questions:type_name -> ai.forum_parser.v1.QuestionCard
+	24, // 21: ai.forum_parser.v1.ListFAQCollectionsResponse.collections:type_name -> ai.forum_parser.v1.FAQCollection
+	22, // 22: ai.forum_parser.v1.FindSimilarSolvedResponse.questions:type_name -> ai.forum_parser.v1.QuestionCard
+	22, // 23: ai.forum_parser.v1.GetQuestionResponse.question:type_name -> ai.forum_parser.v1.QuestionCard
+	23, // 24: ai.forum_parser.v1.GetQuestionResponse.answers:type_name -> ai.forum_parser.v1.Answer
+	22, // 25: ai.forum_parser.v1.CreateQuestionResponse.question:type_name -> ai.forum_parser.v1.QuestionCard
+	1,  // 26: ai.forum_parser.v1.CreateAnswerRequest.author_role:type_name -> ai.forum_parser.v1.AuthorRole
+	23, // 27: ai.forum_parser.v1.CreateAnswerResponse.answer:type_name -> ai.forum_parser.v1.Answer
+	22, // 28: ai.forum_parser.v1.MarkBestAnswerResponse.question:type_name -> ai.forum_parser.v1.QuestionCard
+	23, // 29: ai.forum_parser.v1.MarkBestAnswerResponse.best_answer:type_name -> ai.forum_parser.v1.Answer
+	4,  // 30: ai.forum_parser.v1.ReportQuestionRequest.reason:type_name -> ai.forum_parser.v1.ReportReason
+	4,  // 31: ai.forum_parser.v1.ReportAnswerRequest.reason:type_name -> ai.forum_parser.v1.ReportReason
+	51, // 32: ai.forum_parser.v1.GetMasterProfileResponse.profile:type_name -> ai.forum_parser.v1.MasterProfile
+	51, // 33: ai.forum_parser.v1.UpsertMasterProfileResponse.profile:type_name -> ai.forum_parser.v1.MasterProfile
+	22, // 34: ai.forum_parser.v1.ListIncomingQuestionsResponse.questions:type_name -> ai.forum_parser.v1.QuestionCard
+	7,  // 35: ai.forum_parser.v1.ForumParserService.SearchThreads:input_type -> ai.forum_parser.v1.SearchThreadsRequest
+	9,  // 36: ai.forum_parser.v1.ForumParserService.GetThread:input_type -> ai.forum_parser.v1.GetThreadRequest
+	11, // 37: ai.forum_parser.v1.ForumParserService.ListThreadPosts:input_type -> ai.forum_parser.v1.ListThreadPostsRequest
+	13, // 38: ai.forum_parser.v1.ForumParserService.ListDiscussions:input_type -> ai.forum_parser.v1.ListDiscussionsRequest
+	15, // 39: ai.forum_parser.v1.ForumParserService.ListMyDiscussions:input_type -> ai.forum_parser.v1.ListMyDiscussionsRequest
+	17, // 40: ai.forum_parser.v1.ForumParserService.CreateDiscussion:input_type -> ai.forum_parser.v1.CreateDiscussionRequest
+	19, // 41: ai.forum_parser.v1.ForumParserService.CreateReply:input_type -> ai.forum_parser.v1.CreateReplyRequest
+	25, // 42: ai.forum_parser.v1.ForumQAService.ListTopics:input_type -> ai.forum_parser.v1.ListTopicsRequest
+	27, // 43: ai.forum_parser.v1.ForumQAService.ListQuestions:input_type -> ai.forum_parser.v1.ListQuestionsRequest
+	29, // 44: ai.forum_parser.v1.ForumQAService.ListMyQuestions:input_type -> ai.forum_parser.v1.ListMyQuestionsRequest
+	31, // 45: ai.forum_parser.v1.ForumQAService.ListKnowledgeBase:input_type -> ai.forum_parser.v1.ListKnowledgeBaseRequest
+	33, // 46: ai.forum_parser.v1.ForumQAService.ListFAQCollections:input_type -> ai.forum_parser.v1.ListFAQCollectionsRequest
+	35, // 47: ai.forum_parser.v1.ForumQAService.FindSimilarSolved:input_type -> ai.forum_parser.v1.FindSimilarSolvedRequest
+	37, // 48: ai.forum_parser.v1.ForumQAService.SuggestTopic:input_type -> ai.forum_parser.v1.SuggestTopicRequest
+	39, // 49: ai.forum_parser.v1.ForumQAService.GetQuestion:input_type -> ai.forum_parser.v1.GetQuestionRequest
+	41, // 50: ai.forum_parser.v1.ForumQAService.CreateQuestion:input_type -> ai.forum_parser.v1.CreateQuestionRequest
+	43, // 51: ai.forum_parser.v1.ForumQAService.CreateAnswer:input_type -> ai.forum_parser.v1.CreateAnswerRequest
+	45, // 52: ai.forum_parser.v1.ForumQAService.MarkBestAnswer:input_type -> ai.forum_parser.v1.MarkBestAnswerRequest
+	47, // 53: ai.forum_parser.v1.ForumQAService.ReportQuestion:input_type -> ai.forum_parser.v1.ReportQuestionRequest
+	49, // 54: ai.forum_parser.v1.ForumQAService.ReportAnswer:input_type -> ai.forum_parser.v1.ReportAnswerRequest
+	52, // 55: ai.forum_parser.v1.ForumQAService.GetMasterProfile:input_type -> ai.forum_parser.v1.GetMasterProfileRequest
+	54, // 56: ai.forum_parser.v1.ForumQAService.UpsertMasterProfile:input_type -> ai.forum_parser.v1.UpsertMasterProfileRequest
+	56, // 57: ai.forum_parser.v1.ForumQAService.ListIncomingQuestions:input_type -> ai.forum_parser.v1.ListIncomingQuestionsRequest
+	58, // 58: ai.forum_parser.v1.ForumQAService.HideQuestion:input_type -> ai.forum_parser.v1.HideQuestionRequest
+	8,  // 59: ai.forum_parser.v1.ForumParserService.SearchThreads:output_type -> ai.forum_parser.v1.SearchThreadsResponse
+	10, // 60: ai.forum_parser.v1.ForumParserService.GetThread:output_type -> ai.forum_parser.v1.GetThreadResponse
+	12, // 61: ai.forum_parser.v1.ForumParserService.ListThreadPosts:output_type -> ai.forum_parser.v1.ListThreadPostsResponse
+	14, // 62: ai.forum_parser.v1.ForumParserService.ListDiscussions:output_type -> ai.forum_parser.v1.ListDiscussionsResponse
+	16, // 63: ai.forum_parser.v1.ForumParserService.ListMyDiscussions:output_type -> ai.forum_parser.v1.ListMyDiscussionsResponse
+	18, // 64: ai.forum_parser.v1.ForumParserService.CreateDiscussion:output_type -> ai.forum_parser.v1.CreateDiscussionResponse
+	20, // 65: ai.forum_parser.v1.ForumParserService.CreateReply:output_type -> ai.forum_parser.v1.CreateReplyResponse
+	26, // 66: ai.forum_parser.v1.ForumQAService.ListTopics:output_type -> ai.forum_parser.v1.ListTopicsResponse
+	28, // 67: ai.forum_parser.v1.ForumQAService.ListQuestions:output_type -> ai.forum_parser.v1.ListQuestionsResponse
+	30, // 68: ai.forum_parser.v1.ForumQAService.ListMyQuestions:output_type -> ai.forum_parser.v1.ListMyQuestionsResponse
+	32, // 69: ai.forum_parser.v1.ForumQAService.ListKnowledgeBase:output_type -> ai.forum_parser.v1.ListKnowledgeBaseResponse
+	34, // 70: ai.forum_parser.v1.ForumQAService.ListFAQCollections:output_type -> ai.forum_parser.v1.ListFAQCollectionsResponse
+	36, // 71: ai.forum_parser.v1.ForumQAService.FindSimilarSolved:output_type -> ai.forum_parser.v1.FindSimilarSolvedResponse
+	38, // 72: ai.forum_parser.v1.ForumQAService.SuggestTopic:output_type -> ai.forum_parser.v1.SuggestTopicResponse
+	40, // 73: ai.forum_parser.v1.ForumQAService.GetQuestion:output_type -> ai.forum_parser.v1.GetQuestionResponse
+	42, // 74: ai.forum_parser.v1.ForumQAService.CreateQuestion:output_type -> ai.forum_parser.v1.CreateQuestionResponse
+	44, // 75: ai.forum_parser.v1.ForumQAService.CreateAnswer:output_type -> ai.forum_parser.v1.CreateAnswerResponse
+	46, // 76: ai.forum_parser.v1.ForumQAService.MarkBestAnswer:output_type -> ai.forum_parser.v1.MarkBestAnswerResponse
+	48, // 77: ai.forum_parser.v1.ForumQAService.ReportQuestion:output_type -> ai.forum_parser.v1.ReportQuestionResponse
+	50, // 78: ai.forum_parser.v1.ForumQAService.ReportAnswer:output_type -> ai.forum_parser.v1.ReportAnswerResponse
+	53, // 79: ai.forum_parser.v1.ForumQAService.GetMasterProfile:output_type -> ai.forum_parser.v1.GetMasterProfileResponse
+	55, // 80: ai.forum_parser.v1.ForumQAService.UpsertMasterProfile:output_type -> ai.forum_parser.v1.UpsertMasterProfileResponse
+	57, // 81: ai.forum_parser.v1.ForumQAService.ListIncomingQuestions:output_type -> ai.forum_parser.v1.ListIncomingQuestionsResponse
+	59, // 82: ai.forum_parser.v1.ForumQAService.HideQuestion:output_type -> ai.forum_parser.v1.HideQuestionResponse
+	59, // [59:83] is the sub-list for method output_type
+	35, // [35:59] is the sub-list for method input_type
+	35, // [35:35] is the sub-list for extension type_name
+	35, // [35:35] is the sub-list for extension extendee
+	0,  // [0:35] is the sub-list for field type_name
 }
 
 func init() { file_ai_forum_parser_v1_forum_parser_proto_init() }
@@ -1394,13 +4513,14 @@ func file_ai_forum_parser_v1_forum_parser_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ai_forum_parser_v1_forum_parser_proto_rawDesc), len(file_ai_forum_parser_v1_forum_parser_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   16,
+			NumEnums:      5,
+			NumMessages:   55,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_ai_forum_parser_v1_forum_parser_proto_goTypes,
 		DependencyIndexes: file_ai_forum_parser_v1_forum_parser_proto_depIdxs,
+		EnumInfos:         file_ai_forum_parser_v1_forum_parser_proto_enumTypes,
 		MessageInfos:      file_ai_forum_parser_v1_forum_parser_proto_msgTypes,
 	}.Build()
 	File_ai_forum_parser_v1_forum_parser_proto = out.File

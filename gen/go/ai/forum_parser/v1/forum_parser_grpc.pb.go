@@ -375,3 +375,741 @@ var ForumParserService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "ai/forum_parser/v1/forum_parser.proto",
 }
+
+const (
+	ForumQAService_ListTopics_FullMethodName            = "/ai.forum_parser.v1.ForumQAService/ListTopics"
+	ForumQAService_ListQuestions_FullMethodName         = "/ai.forum_parser.v1.ForumQAService/ListQuestions"
+	ForumQAService_ListMyQuestions_FullMethodName       = "/ai.forum_parser.v1.ForumQAService/ListMyQuestions"
+	ForumQAService_ListKnowledgeBase_FullMethodName     = "/ai.forum_parser.v1.ForumQAService/ListKnowledgeBase"
+	ForumQAService_ListFAQCollections_FullMethodName    = "/ai.forum_parser.v1.ForumQAService/ListFAQCollections"
+	ForumQAService_FindSimilarSolved_FullMethodName     = "/ai.forum_parser.v1.ForumQAService/FindSimilarSolved"
+	ForumQAService_SuggestTopic_FullMethodName          = "/ai.forum_parser.v1.ForumQAService/SuggestTopic"
+	ForumQAService_GetQuestion_FullMethodName           = "/ai.forum_parser.v1.ForumQAService/GetQuestion"
+	ForumQAService_CreateQuestion_FullMethodName        = "/ai.forum_parser.v1.ForumQAService/CreateQuestion"
+	ForumQAService_CreateAnswer_FullMethodName          = "/ai.forum_parser.v1.ForumQAService/CreateAnswer"
+	ForumQAService_MarkBestAnswer_FullMethodName        = "/ai.forum_parser.v1.ForumQAService/MarkBestAnswer"
+	ForumQAService_ReportQuestion_FullMethodName        = "/ai.forum_parser.v1.ForumQAService/ReportQuestion"
+	ForumQAService_ReportAnswer_FullMethodName          = "/ai.forum_parser.v1.ForumQAService/ReportAnswer"
+	ForumQAService_GetMasterProfile_FullMethodName      = "/ai.forum_parser.v1.ForumQAService/GetMasterProfile"
+	ForumQAService_UpsertMasterProfile_FullMethodName   = "/ai.forum_parser.v1.ForumQAService/UpsertMasterProfile"
+	ForumQAService_ListIncomingQuestions_FullMethodName = "/ai.forum_parser.v1.ForumQAService/ListIncomingQuestions"
+	ForumQAService_HideQuestion_FullMethodName          = "/ai.forum_parser.v1.ForumQAService/HideQuestion"
+)
+
+// ForumQAServiceClient is the client API for ForumQAService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// ForumQAService — user questions, answers, knowledge base, master (PRO) flows.
+// Mutating RPCs require auth metadata (same as ForumParserService).
+type ForumQAServiceClient interface {
+	// Static topic catalog (engine, suspension, …).
+	ListTopics(ctx context.Context, in *ListTopicsRequest, opts ...grpc.CallOption) (*ListTopicsResponse, error)
+	// Public feed with filters and sort (GET /v1/questions).
+	ListQuestions(ctx context.Context, in *ListQuestionsRequest, opts ...grpc.CallOption) (*ListQuestionsResponse, error)
+	// Current user's questions and threads where user answered (GET /v1/questions/mine).
+	ListMyQuestions(ctx context.Context, in *ListMyQuestionsRequest, opts ...grpc.CallOption) (*ListMyQuestionsResponse, error)
+	// Solved questions for knowledge-base tab (GET /v1/knowledge).
+	ListKnowledgeBase(ctx context.Context, in *ListKnowledgeBaseRequest, opts ...grpc.CallOption) (*ListKnowledgeBaseResponse, error)
+	// Curated FAQ collections shown on knowledge-base tab.
+	ListFAQCollections(ctx context.Context, in *ListFAQCollectionsRequest, opts ...grpc.CallOption) (*ListFAQCollectionsResponse, error)
+	// Similar solved questions shown before publishing (guard on create form).
+	FindSimilarSolved(ctx context.Context, in *FindSimilarSolvedRequest, opts ...grpc.CallOption) (*FindSimilarSolvedResponse, error)
+	// Auto-suggest topic from question title keywords.
+	SuggestTopic(ctx context.Context, in *SuggestTopicRequest, opts ...grpc.CallOption) (*SuggestTopicResponse, error)
+	// Question detail with answers (GET /v1/questions/:id). Increments view_count.
+	GetQuestion(ctx context.Context, in *GetQuestionRequest, opts ...grpc.CallOption) (*GetQuestionResponse, error)
+	CreateQuestion(ctx context.Context, in *CreateQuestionRequest, opts ...grpc.CallOption) (*CreateQuestionResponse, error)
+	CreateAnswer(ctx context.Context, in *CreateAnswerRequest, opts ...grpc.CallOption) (*CreateAnswerResponse, error)
+	// Question author marks best answer → status solved, entry in knowledge base.
+	MarkBestAnswer(ctx context.Context, in *MarkBestAnswerRequest, opts ...grpc.CallOption) (*MarkBestAnswerResponse, error)
+	ReportQuestion(ctx context.Context, in *ReportQuestionRequest, opts ...grpc.CallOption) (*ReportQuestionResponse, error)
+	ReportAnswer(ctx context.Context, in *ReportAnswerRequest, opts ...grpc.CallOption) (*ReportAnswerResponse, error)
+	GetMasterProfile(ctx context.Context, in *GetMasterProfileRequest, opts ...grpc.CallOption) (*GetMasterProfileResponse, error)
+	UpsertMasterProfile(ctx context.Context, in *UpsertMasterProfileRequest, opts ...grpc.CallOption) (*UpsertMasterProfileResponse, error)
+	// Open questions matching master profile (topics, brands, radius).
+	ListIncomingQuestions(ctx context.Context, in *ListIncomingQuestionsRequest, opts ...grpc.CallOption) (*ListIncomingQuestionsResponse, error)
+	// Master dismisses a question from their incoming list.
+	HideQuestion(ctx context.Context, in *HideQuestionRequest, opts ...grpc.CallOption) (*HideQuestionResponse, error)
+}
+
+type forumQAServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewForumQAServiceClient(cc grpc.ClientConnInterface) ForumQAServiceClient {
+	return &forumQAServiceClient{cc}
+}
+
+func (c *forumQAServiceClient) ListTopics(ctx context.Context, in *ListTopicsRequest, opts ...grpc.CallOption) (*ListTopicsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTopicsResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_ListTopics_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) ListQuestions(ctx context.Context, in *ListQuestionsRequest, opts ...grpc.CallOption) (*ListQuestionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListQuestionsResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_ListQuestions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) ListMyQuestions(ctx context.Context, in *ListMyQuestionsRequest, opts ...grpc.CallOption) (*ListMyQuestionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMyQuestionsResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_ListMyQuestions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) ListKnowledgeBase(ctx context.Context, in *ListKnowledgeBaseRequest, opts ...grpc.CallOption) (*ListKnowledgeBaseResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListKnowledgeBaseResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_ListKnowledgeBase_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) ListFAQCollections(ctx context.Context, in *ListFAQCollectionsRequest, opts ...grpc.CallOption) (*ListFAQCollectionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListFAQCollectionsResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_ListFAQCollections_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) FindSimilarSolved(ctx context.Context, in *FindSimilarSolvedRequest, opts ...grpc.CallOption) (*FindSimilarSolvedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FindSimilarSolvedResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_FindSimilarSolved_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) SuggestTopic(ctx context.Context, in *SuggestTopicRequest, opts ...grpc.CallOption) (*SuggestTopicResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SuggestTopicResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_SuggestTopic_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) GetQuestion(ctx context.Context, in *GetQuestionRequest, opts ...grpc.CallOption) (*GetQuestionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetQuestionResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_GetQuestion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) CreateQuestion(ctx context.Context, in *CreateQuestionRequest, opts ...grpc.CallOption) (*CreateQuestionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateQuestionResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_CreateQuestion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) CreateAnswer(ctx context.Context, in *CreateAnswerRequest, opts ...grpc.CallOption) (*CreateAnswerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateAnswerResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_CreateAnswer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) MarkBestAnswer(ctx context.Context, in *MarkBestAnswerRequest, opts ...grpc.CallOption) (*MarkBestAnswerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MarkBestAnswerResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_MarkBestAnswer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) ReportQuestion(ctx context.Context, in *ReportQuestionRequest, opts ...grpc.CallOption) (*ReportQuestionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReportQuestionResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_ReportQuestion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) ReportAnswer(ctx context.Context, in *ReportAnswerRequest, opts ...grpc.CallOption) (*ReportAnswerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReportAnswerResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_ReportAnswer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) GetMasterProfile(ctx context.Context, in *GetMasterProfileRequest, opts ...grpc.CallOption) (*GetMasterProfileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMasterProfileResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_GetMasterProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) UpsertMasterProfile(ctx context.Context, in *UpsertMasterProfileRequest, opts ...grpc.CallOption) (*UpsertMasterProfileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpsertMasterProfileResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_UpsertMasterProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) ListIncomingQuestions(ctx context.Context, in *ListIncomingQuestionsRequest, opts ...grpc.CallOption) (*ListIncomingQuestionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListIncomingQuestionsResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_ListIncomingQuestions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forumQAServiceClient) HideQuestion(ctx context.Context, in *HideQuestionRequest, opts ...grpc.CallOption) (*HideQuestionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(HideQuestionResponse)
+	err := c.cc.Invoke(ctx, ForumQAService_HideQuestion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ForumQAServiceServer is the server API for ForumQAService service.
+// All implementations must embed UnimplementedForumQAServiceServer
+// for forward compatibility.
+//
+// ForumQAService — user questions, answers, knowledge base, master (PRO) flows.
+// Mutating RPCs require auth metadata (same as ForumParserService).
+type ForumQAServiceServer interface {
+	// Static topic catalog (engine, suspension, …).
+	ListTopics(context.Context, *ListTopicsRequest) (*ListTopicsResponse, error)
+	// Public feed with filters and sort (GET /v1/questions).
+	ListQuestions(context.Context, *ListQuestionsRequest) (*ListQuestionsResponse, error)
+	// Current user's questions and threads where user answered (GET /v1/questions/mine).
+	ListMyQuestions(context.Context, *ListMyQuestionsRequest) (*ListMyQuestionsResponse, error)
+	// Solved questions for knowledge-base tab (GET /v1/knowledge).
+	ListKnowledgeBase(context.Context, *ListKnowledgeBaseRequest) (*ListKnowledgeBaseResponse, error)
+	// Curated FAQ collections shown on knowledge-base tab.
+	ListFAQCollections(context.Context, *ListFAQCollectionsRequest) (*ListFAQCollectionsResponse, error)
+	// Similar solved questions shown before publishing (guard on create form).
+	FindSimilarSolved(context.Context, *FindSimilarSolvedRequest) (*FindSimilarSolvedResponse, error)
+	// Auto-suggest topic from question title keywords.
+	SuggestTopic(context.Context, *SuggestTopicRequest) (*SuggestTopicResponse, error)
+	// Question detail with answers (GET /v1/questions/:id). Increments view_count.
+	GetQuestion(context.Context, *GetQuestionRequest) (*GetQuestionResponse, error)
+	CreateQuestion(context.Context, *CreateQuestionRequest) (*CreateQuestionResponse, error)
+	CreateAnswer(context.Context, *CreateAnswerRequest) (*CreateAnswerResponse, error)
+	// Question author marks best answer → status solved, entry in knowledge base.
+	MarkBestAnswer(context.Context, *MarkBestAnswerRequest) (*MarkBestAnswerResponse, error)
+	ReportQuestion(context.Context, *ReportQuestionRequest) (*ReportQuestionResponse, error)
+	ReportAnswer(context.Context, *ReportAnswerRequest) (*ReportAnswerResponse, error)
+	GetMasterProfile(context.Context, *GetMasterProfileRequest) (*GetMasterProfileResponse, error)
+	UpsertMasterProfile(context.Context, *UpsertMasterProfileRequest) (*UpsertMasterProfileResponse, error)
+	// Open questions matching master profile (topics, brands, radius).
+	ListIncomingQuestions(context.Context, *ListIncomingQuestionsRequest) (*ListIncomingQuestionsResponse, error)
+	// Master dismisses a question from their incoming list.
+	HideQuestion(context.Context, *HideQuestionRequest) (*HideQuestionResponse, error)
+	mustEmbedUnimplementedForumQAServiceServer()
+}
+
+// UnimplementedForumQAServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedForumQAServiceServer struct{}
+
+func (UnimplementedForumQAServiceServer) ListTopics(context.Context, *ListTopicsRequest) (*ListTopicsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTopics not implemented")
+}
+func (UnimplementedForumQAServiceServer) ListQuestions(context.Context, *ListQuestionsRequest) (*ListQuestionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListQuestions not implemented")
+}
+func (UnimplementedForumQAServiceServer) ListMyQuestions(context.Context, *ListMyQuestionsRequest) (*ListMyQuestionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMyQuestions not implemented")
+}
+func (UnimplementedForumQAServiceServer) ListKnowledgeBase(context.Context, *ListKnowledgeBaseRequest) (*ListKnowledgeBaseResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListKnowledgeBase not implemented")
+}
+func (UnimplementedForumQAServiceServer) ListFAQCollections(context.Context, *ListFAQCollectionsRequest) (*ListFAQCollectionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListFAQCollections not implemented")
+}
+func (UnimplementedForumQAServiceServer) FindSimilarSolved(context.Context, *FindSimilarSolvedRequest) (*FindSimilarSolvedResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method FindSimilarSolved not implemented")
+}
+func (UnimplementedForumQAServiceServer) SuggestTopic(context.Context, *SuggestTopicRequest) (*SuggestTopicResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SuggestTopic not implemented")
+}
+func (UnimplementedForumQAServiceServer) GetQuestion(context.Context, *GetQuestionRequest) (*GetQuestionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetQuestion not implemented")
+}
+func (UnimplementedForumQAServiceServer) CreateQuestion(context.Context, *CreateQuestionRequest) (*CreateQuestionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateQuestion not implemented")
+}
+func (UnimplementedForumQAServiceServer) CreateAnswer(context.Context, *CreateAnswerRequest) (*CreateAnswerResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateAnswer not implemented")
+}
+func (UnimplementedForumQAServiceServer) MarkBestAnswer(context.Context, *MarkBestAnswerRequest) (*MarkBestAnswerResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MarkBestAnswer not implemented")
+}
+func (UnimplementedForumQAServiceServer) ReportQuestion(context.Context, *ReportQuestionRequest) (*ReportQuestionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReportQuestion not implemented")
+}
+func (UnimplementedForumQAServiceServer) ReportAnswer(context.Context, *ReportAnswerRequest) (*ReportAnswerResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReportAnswer not implemented")
+}
+func (UnimplementedForumQAServiceServer) GetMasterProfile(context.Context, *GetMasterProfileRequest) (*GetMasterProfileResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMasterProfile not implemented")
+}
+func (UnimplementedForumQAServiceServer) UpsertMasterProfile(context.Context, *UpsertMasterProfileRequest) (*UpsertMasterProfileResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpsertMasterProfile not implemented")
+}
+func (UnimplementedForumQAServiceServer) ListIncomingQuestions(context.Context, *ListIncomingQuestionsRequest) (*ListIncomingQuestionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListIncomingQuestions not implemented")
+}
+func (UnimplementedForumQAServiceServer) HideQuestion(context.Context, *HideQuestionRequest) (*HideQuestionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method HideQuestion not implemented")
+}
+func (UnimplementedForumQAServiceServer) mustEmbedUnimplementedForumQAServiceServer() {}
+func (UnimplementedForumQAServiceServer) testEmbeddedByValue()                        {}
+
+// UnsafeForumQAServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ForumQAServiceServer will
+// result in compilation errors.
+type UnsafeForumQAServiceServer interface {
+	mustEmbedUnimplementedForumQAServiceServer()
+}
+
+func RegisterForumQAServiceServer(s grpc.ServiceRegistrar, srv ForumQAServiceServer) {
+	// If the following call panics, it indicates UnimplementedForumQAServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ForumQAService_ServiceDesc, srv)
+}
+
+func _ForumQAService_ListTopics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTopicsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).ListTopics(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_ListTopics_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).ListTopics(ctx, req.(*ListTopicsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_ListQuestions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListQuestionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).ListQuestions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_ListQuestions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).ListQuestions(ctx, req.(*ListQuestionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_ListMyQuestions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMyQuestionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).ListMyQuestions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_ListMyQuestions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).ListMyQuestions(ctx, req.(*ListMyQuestionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_ListKnowledgeBase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListKnowledgeBaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).ListKnowledgeBase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_ListKnowledgeBase_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).ListKnowledgeBase(ctx, req.(*ListKnowledgeBaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_ListFAQCollections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListFAQCollectionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).ListFAQCollections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_ListFAQCollections_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).ListFAQCollections(ctx, req.(*ListFAQCollectionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_FindSimilarSolved_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindSimilarSolvedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).FindSimilarSolved(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_FindSimilarSolved_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).FindSimilarSolved(ctx, req.(*FindSimilarSolvedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_SuggestTopic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SuggestTopicRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).SuggestTopic(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_SuggestTopic_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).SuggestTopic(ctx, req.(*SuggestTopicRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_GetQuestion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetQuestionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).GetQuestion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_GetQuestion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).GetQuestion(ctx, req.(*GetQuestionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_CreateQuestion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateQuestionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).CreateQuestion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_CreateQuestion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).CreateQuestion(ctx, req.(*CreateQuestionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_CreateAnswer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAnswerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).CreateAnswer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_CreateAnswer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).CreateAnswer(ctx, req.(*CreateAnswerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_MarkBestAnswer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MarkBestAnswerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).MarkBestAnswer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_MarkBestAnswer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).MarkBestAnswer(ctx, req.(*MarkBestAnswerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_ReportQuestion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReportQuestionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).ReportQuestion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_ReportQuestion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).ReportQuestion(ctx, req.(*ReportQuestionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_ReportAnswer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReportAnswerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).ReportAnswer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_ReportAnswer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).ReportAnswer(ctx, req.(*ReportAnswerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_GetMasterProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMasterProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).GetMasterProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_GetMasterProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).GetMasterProfile(ctx, req.(*GetMasterProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_UpsertMasterProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertMasterProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).UpsertMasterProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_UpsertMasterProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).UpsertMasterProfile(ctx, req.(*UpsertMasterProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_ListIncomingQuestions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListIncomingQuestionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).ListIncomingQuestions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_ListIncomingQuestions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).ListIncomingQuestions(ctx, req.(*ListIncomingQuestionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForumQAService_HideQuestion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HideQuestionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForumQAServiceServer).HideQuestion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ForumQAService_HideQuestion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForumQAServiceServer).HideQuestion(ctx, req.(*HideQuestionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ForumQAService_ServiceDesc is the grpc.ServiceDesc for ForumQAService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ForumQAService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "ai.forum_parser.v1.ForumQAService",
+	HandlerType: (*ForumQAServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListTopics",
+			Handler:    _ForumQAService_ListTopics_Handler,
+		},
+		{
+			MethodName: "ListQuestions",
+			Handler:    _ForumQAService_ListQuestions_Handler,
+		},
+		{
+			MethodName: "ListMyQuestions",
+			Handler:    _ForumQAService_ListMyQuestions_Handler,
+		},
+		{
+			MethodName: "ListKnowledgeBase",
+			Handler:    _ForumQAService_ListKnowledgeBase_Handler,
+		},
+		{
+			MethodName: "ListFAQCollections",
+			Handler:    _ForumQAService_ListFAQCollections_Handler,
+		},
+		{
+			MethodName: "FindSimilarSolved",
+			Handler:    _ForumQAService_FindSimilarSolved_Handler,
+		},
+		{
+			MethodName: "SuggestTopic",
+			Handler:    _ForumQAService_SuggestTopic_Handler,
+		},
+		{
+			MethodName: "GetQuestion",
+			Handler:    _ForumQAService_GetQuestion_Handler,
+		},
+		{
+			MethodName: "CreateQuestion",
+			Handler:    _ForumQAService_CreateQuestion_Handler,
+		},
+		{
+			MethodName: "CreateAnswer",
+			Handler:    _ForumQAService_CreateAnswer_Handler,
+		},
+		{
+			MethodName: "MarkBestAnswer",
+			Handler:    _ForumQAService_MarkBestAnswer_Handler,
+		},
+		{
+			MethodName: "ReportQuestion",
+			Handler:    _ForumQAService_ReportQuestion_Handler,
+		},
+		{
+			MethodName: "ReportAnswer",
+			Handler:    _ForumQAService_ReportAnswer_Handler,
+		},
+		{
+			MethodName: "GetMasterProfile",
+			Handler:    _ForumQAService_GetMasterProfile_Handler,
+		},
+		{
+			MethodName: "UpsertMasterProfile",
+			Handler:    _ForumQAService_UpsertMasterProfile_Handler,
+		},
+		{
+			MethodName: "ListIncomingQuestions",
+			Handler:    _ForumQAService_ListIncomingQuestions_Handler,
+		},
+		{
+			MethodName: "HideQuestion",
+			Handler:    _ForumQAService_HideQuestion_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "ai/forum_parser/v1/forum_parser.proto",
+}

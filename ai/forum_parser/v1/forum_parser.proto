@@ -100,6 +100,10 @@ message GetThreadResponse {
   int32 my_last_position = 6;
   // True when viewer is known and has at least one post (or is thread OP author).
   bool my_positions_set = 7;
+  // Row offset used for this page (SQL OFFSET on published posts, excluding synthetic OP).
+  int32 posts_offset = 8;
+  // True when earlier posts exist (posts_offset > 0).
+  bool posts_has_before = 9;
 }
 
 message ListThreadPostsRequest {
@@ -162,3 +166,360 @@ message CreateReplyRequest {
 message CreateReplyResponse {
   Post reply = 1;
 }
+
+// =============================================================================
+// Forum Q&A (CTOgram community questions — no crawled threads in this API).
+// BFF maps HTTP /v1/questions/* to ForumQAService.
+// =============================================================================
+
+// ForumQAService — user questions, answers, knowledge base, master (PRO) flows.
+// Mutating RPCs require auth metadata (same as ForumParserService).
+service ForumQAService {
+  // Static topic catalog (engine, suspension, …).
+  rpc ListTopics(ListTopicsRequest) returns (ListTopicsResponse);
+
+  // Public feed with filters and sort (GET /v1/questions).
+  rpc ListQuestions(ListQuestionsRequest) returns (ListQuestionsResponse);
+
+  // Current user's questions and threads where user answered (GET /v1/questions/mine).
+  rpc ListMyQuestions(ListMyQuestionsRequest) returns (ListMyQuestionsResponse);
+
+  // Solved questions for knowledge-base tab (GET /v1/knowledge).
+  rpc ListKnowledgeBase(ListKnowledgeBaseRequest) returns (ListKnowledgeBaseResponse);
+
+  // Curated FAQ collections shown on knowledge-base tab.
+  rpc ListFAQCollections(ListFAQCollectionsRequest) returns (ListFAQCollectionsResponse);
+
+  // Similar solved questions shown before publishing (guard on create form).
+  rpc FindSimilarSolved(FindSimilarSolvedRequest) returns (FindSimilarSolvedResponse);
+
+  // Auto-suggest topic from question title keywords.
+  rpc SuggestTopic(SuggestTopicRequest) returns (SuggestTopicResponse);
+
+  // Question detail with answers (GET /v1/questions/:id). Increments view_count.
+  rpc GetQuestion(GetQuestionRequest) returns (GetQuestionResponse);
+
+  rpc CreateQuestion(CreateQuestionRequest) returns (CreateQuestionResponse);
+
+  rpc CreateAnswer(CreateAnswerRequest) returns (CreateAnswerResponse);
+
+  // Question author marks best answer → status solved, entry in knowledge base.
+  rpc MarkBestAnswer(MarkBestAnswerRequest) returns (MarkBestAnswerResponse);
+
+  rpc ReportQuestion(ReportQuestionRequest) returns (ReportQuestionResponse);
+
+  rpc ReportAnswer(ReportAnswerRequest) returns (ReportAnswerResponse);
+
+  // --- Master (PRO) ---
+
+  rpc GetMasterProfile(GetMasterProfileRequest) returns (GetMasterProfileResponse);
+
+  rpc UpsertMasterProfile(UpsertMasterProfileRequest) returns (UpsertMasterProfileResponse);
+
+  // Open questions matching master profile (topics, brands, radius).
+  rpc ListIncomingQuestions(ListIncomingQuestionsRequest) returns (ListIncomingQuestionsResponse);
+
+  // Master dismisses a question from their incoming list.
+  rpc HideQuestion(HideQuestionRequest) returns (HideQuestionResponse);
+}
+
+enum QuestionStatus {
+  QUESTION_STATUS_UNSPECIFIED = 0;
+  QUESTION_STATUS_OPEN = 1;
+  QUESTION_STATUS_SOLVED = 2;
+  QUESTION_STATUS_CLOSED = 3;
+}
+
+enum AuthorRole {
+  AUTHOR_ROLE_UNSPECIFIED = 0;
+  AUTHOR_ROLE_CLIENT = 1;
+  AUTHOR_ROLE_MASTER = 2;
+}
+
+enum QuestionSort {
+  QUESTION_SORT_UNSPECIFIED = 0;
+  QUESTION_SORT_NEW = 1;
+  QUESTION_SORT_NO_ANSWER = 2;
+  QUESTION_SORT_POPULAR_WEEK = 3;
+}
+
+enum QuestionStatusFilter {
+  QUESTION_STATUS_FILTER_UNSPECIFIED = 0;
+  QUESTION_STATUS_FILTER_OPEN = 1;
+  QUESTION_STATUS_FILTER_SOLVED = 2;
+  // Open questions with zero answers.
+  QUESTION_STATUS_FILTER_NO_ANSWER = 3;
+}
+
+enum ReportReason {
+  REPORT_REASON_UNSPECIFIED = 0;
+  REPORT_REASON_SPAM = 1;
+  REPORT_REASON_ABUSE = 2;
+  REPORT_REASON_ADVERTISING = 3;
+  REPORT_REASON_OTHER = 4;
+}
+
+// Topic is a fixed catalog row (forum_topics table).
+message Topic {
+  string id = 1;
+  string name = 2;
+}
+
+// QuestionCard — list/header shape for Q&A UI (maps to ctogram user thread).
+message QuestionCard {
+  string id = 1;
+  string title = 2;
+  string excerpt = 3;
+  QuestionStatus question_status = 4;
+  string topic_id = 5;
+  string topic_name = 6;
+  int32 answer_count = 7;
+  int32 view_count = 8;
+  bool has_master_answer = 9;
+  int32 photo_count = 10;
+  int64 author_user_id = 11;
+  string author_display_name = 12;
+  int32 car_make_id = 13;
+  string car_make_name = 14;
+  int32 car_model_id = 15;
+  string car_model_name = 16;
+  int32 car_year = 17;
+  int64 garage_car_id = 18;
+  string city = 19;
+  google.protobuf.Timestamp created_at = 20;
+  google.protobuf.Timestamp last_activity = 21;
+  // True when authenticated viewer is the question author.
+  bool is_author = 22;
+}
+
+// Answer — one reply on a question (maps to published user post).
+message Answer {
+  string id = 1;
+  AuthorRole author_role = 2;
+  int64 author_user_id = 3;
+  string author_display_name = 4;
+  int64 workshop_id = 5;
+  string workshop_name = 6;
+  bool offer_booking = 7;
+  string body = 8;
+  repeated string photo_urls = 9;
+  bool is_best = 10;
+  google.protobuf.Timestamp posted_at = 11;
+  // Legacy chronological index within thread (position > 0).
+  int32 position = 12;
+}
+
+message FAQCollection {
+  string id = 1;
+  string title = 2;
+  string slug = 3;
+  int32 question_count = 4;
+  // Optional cover gradient/key for UI (e.g. "navy", "green").
+  string style_key = 5;
+}
+
+// --- Topics ---
+
+message ListTopicsRequest {}
+
+message ListTopicsResponse {
+  repeated Topic topics = 1;
+}
+
+// --- List / search feed ---
+
+message ListQuestionsRequest {
+  string query = 1;
+  string topic_id = 2;
+  QuestionStatusFilter status_filter = 3;
+  QuestionSort sort = 4;
+  // When true, filter to viewer garage car make/model/year (requires auth).
+  bool my_car = 5;
+  int32 car_make_id = 6;
+  int32 car_model_id = 7;
+  int32 car_year = 8;
+  string city = 9;
+  int32 limit = 10;
+  int32 offset = 11;
+}
+
+message ListQuestionsResponse {
+  repeated QuestionCard questions = 1;
+  bool has_more = 2;
+}
+
+message ListMyQuestionsRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListMyQuestionsResponse {
+  repeated QuestionCard questions = 1;
+  bool has_more = 2;
+}
+
+// --- Knowledge base ---
+
+message ListKnowledgeBaseRequest {
+  string query = 1;
+  string topic_id = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message ListKnowledgeBaseResponse {
+  repeated QuestionCard questions = 1;
+  bool has_more = 2;
+}
+
+message ListFAQCollectionsRequest {}
+
+message ListFAQCollectionsResponse {
+  repeated FAQCollection collections = 1;
+}
+
+message FindSimilarSolvedRequest {
+  string title = 1;
+  string topic_id = 2;
+  int32 car_make_id = 3;
+  string car_make_name = 4;
+  int32 car_model_id = 5;
+  string car_model_name = 6;
+  int32 limit = 7;
+}
+
+message FindSimilarSolvedResponse {
+  repeated QuestionCard questions = 1;
+}
+
+message SuggestTopicRequest {
+  string title = 1;
+}
+
+message SuggestTopicResponse {
+  string topic_id = 1;
+  string topic_name = 2;
+}
+
+// --- Detail ---
+
+message GetQuestionRequest {
+  string question_id = 1;
+}
+
+message GetQuestionResponse {
+  QuestionCard question = 1;
+  string body = 2;
+  repeated string photo_urls = 3;
+  repeated Answer answers = 4;
+  string best_answer_id = 5;
+  // Viewer may mark best answer when true.
+  bool can_mark_best = 6;
+}
+
+// --- Create / mutate ---
+
+message CreateQuestionRequest {
+  string title = 1;
+  string body = 2;
+  string topic_id = 3;
+  int32 car_make_id = 4;
+  string car_make_name = 5;
+  int32 car_model_id = 6;
+  string car_model_name = 7;
+  int32 car_year = 8;
+  int64 garage_car_id = 9;
+  string city = 10;
+  repeated string photo_urls = 11;
+}
+
+message CreateQuestionResponse {
+  QuestionCard question = 1;
+}
+
+message CreateAnswerRequest {
+  string question_id = 1;
+  string body = 2;
+  AuthorRole author_role = 3;
+  int64 workshop_id = 4;
+  bool offer_booking = 5;
+  repeated string photo_urls = 6;
+}
+
+message CreateAnswerResponse {
+  Answer answer = 1;
+}
+
+message MarkBestAnswerRequest {
+  string question_id = 1;
+  string answer_id = 2;
+}
+
+message MarkBestAnswerResponse {
+  QuestionCard question = 1;
+  Answer best_answer = 2;
+}
+
+message ReportQuestionRequest {
+  string question_id = 1;
+  ReportReason reason = 2;
+  string comment = 3;
+}
+
+message ReportQuestionResponse {}
+
+message ReportAnswerRequest {
+  string question_id = 1;
+  string answer_id = 2;
+  ReportReason reason = 3;
+  string comment = 4;
+}
+
+message ReportAnswerResponse {}
+
+// --- Master profile ---
+
+message MasterProfile {
+  int64 user_id = 1;
+  int64 workshop_id = 2;
+  string workshop_name = 3;
+  repeated string topic_ids = 4;
+  repeated string car_brands = 5;
+  int32 radius_km = 6;
+  string city = 7;
+  bool onboarded = 8;
+}
+
+message GetMasterProfileRequest {}
+
+message GetMasterProfileResponse {
+  MasterProfile profile = 1;
+}
+
+message UpsertMasterProfileRequest {
+  int64 workshop_id = 1;
+  repeated string topic_ids = 2;
+  repeated string car_brands = 3;
+  int32 radius_km = 4;
+  string city = 5;
+}
+
+message UpsertMasterProfileResponse {
+  MasterProfile profile = 1;
+}
+
+message ListIncomingQuestionsRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListIncomingQuestionsResponse {
+  repeated QuestionCard questions = 1;
+  bool has_more = 2;
+}
+
+message HideQuestionRequest {
+  string question_id = 1;
+}
+
+message HideQuestionResponse {}
