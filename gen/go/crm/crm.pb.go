@@ -15098,7 +15098,9 @@ type WhatsAppTemplate struct {
 	// (e.g. "INVALID_FORMAT", "ABUSIVE_CONTENT"). Empty unless status==REJECTED.
 	RejectedReason string `protobuf:"bytes,9,opt,name=rejected_reason,json=rejectedReason,proto3" json:"rejected_reason,omitempty"`
 	// Static QUICK_REPLY buttons attached to the template (v1: text-only).
-	Buttons       []*WhatsAppTemplateButton `protobuf:"bytes,10,rep,name=buttons,proto3" json:"buttons,omitempty"`
+	Buttons []*WhatsAppTemplateButton `protobuf:"bytes,10,rep,name=buttons,proto3" json:"buttons,omitempty"`
+	// pipeline UUIDs this template is scoped to; empty = visible to all pipelines
+	PipelineIds   []string `protobuf:"bytes,11,rep,name=pipeline_ids,json=pipelineIds,proto3" json:"pipeline_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -15199,6 +15201,13 @@ func (x *WhatsAppTemplate) GetRejectedReason() string {
 func (x *WhatsAppTemplate) GetButtons() []*WhatsAppTemplateButton {
 	if x != nil {
 		return x.Buttons
+	}
+	return nil
+}
+
+func (x *WhatsAppTemplate) GetPipelineIds() []string {
+	if x != nil {
+		return x.PipelineIds
 	}
 	return nil
 }
@@ -15315,7 +15324,9 @@ type CreateWhatsAppTemplateRequest struct {
 	// Optional WABA selector by Meta phone_number_id. Empty = primary WABA.
 	PhoneNumberId string `protobuf:"bytes,7,opt,name=phone_number_id,json=phoneNumberId,proto3" json:"phone_number_id,omitempty"`
 	// Static QUICK_REPLY button labels, in order. v1: text-only buttons.
-	Buttons       []string `protobuf:"bytes,8,rep,name=buttons,proto3" json:"buttons,omitempty"`
+	Buttons []string `protobuf:"bytes,8,rep,name=buttons,proto3" json:"buttons,omitempty"`
+	// pipeline UUIDs this template is scoped to; empty = visible to all pipelines
+	PipelineIds   []string `protobuf:"bytes,9,rep,name=pipeline_ids,json=pipelineIds,proto3" json:"pipeline_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -15406,6 +15417,13 @@ func (x *CreateWhatsAppTemplateRequest) GetButtons() []string {
 	return nil
 }
 
+func (x *CreateWhatsAppTemplateRequest) GetPipelineIds() []string {
+	if x != nil {
+		return x.PipelineIds
+	}
+	return nil
+}
+
 type CreateWhatsAppTemplateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`             // Meta template id
@@ -15476,8 +15494,12 @@ type UpdateWhatsAppTemplateRequest struct {
 	Examples       []string               `protobuf:"bytes,4,rep,name=examples,proto3" json:"examples,omitempty"`                                  // one sample per placeholder, ordered {{1}} first
 	Buttons        []string               `protobuf:"bytes,5,rep,name=buttons,proto3" json:"buttons,omitempty"`                                    // static QUICK_REPLY button labels, in order
 	PhoneNumberId  string                 `protobuf:"bytes,6,opt,name=phone_number_id,json=phoneNumberId,proto3" json:"phone_number_id,omitempty"` // optional WABA selector; empty = primary WABA
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// pipeline UUIDs this template is scoped to; empty = visible to all pipelines
+	PipelineIds []string `protobuf:"bytes,7,rep,name=pipeline_ids,json=pipelineIds,proto3" json:"pipeline_ids,omitempty"`
+	// template name — keys the wa_template_pipeline_scope upsert on edit
+	Name          string `protobuf:"bytes,8,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateWhatsAppTemplateRequest) Reset() {
@@ -15548,6 +15570,20 @@ func (x *UpdateWhatsAppTemplateRequest) GetButtons() []string {
 func (x *UpdateWhatsAppTemplateRequest) GetPhoneNumberId() string {
 	if x != nil {
 		return x.PhoneNumberId
+	}
+	return ""
+}
+
+func (x *UpdateWhatsAppTemplateRequest) GetPipelineIds() []string {
+	if x != nil {
+		return x.PipelineIds
+	}
+	return nil
+}
+
+func (x *UpdateWhatsAppTemplateRequest) GetName() string {
+	if x != nil {
+		return x.Name
 	}
 	return ""
 }
@@ -25095,7 +25131,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0fphone_number_id\x18\x03 \x01(\tR\rphoneNumberId\x120\n" +
 	"\x14include_all_statuses\x18\x04 \x01(\bR\x12includeAllStatuses\"W\n" +
 	"\x1dListWhatsAppTemplatesResponse\x126\n" +
-	"\ttemplates\x18\x01 \x03(\v2\x18.crm.v1.WhatsAppTemplateR\ttemplates\"\xdc\x02\n" +
+	"\ttemplates\x18\x01 \x03(\v2\x18.crm.v1.WhatsAppTemplateR\ttemplates\"\xff\x02\n" +
 	"\x10WhatsAppTemplate\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
 	"\blanguage\x18\x02 \x01(\tR\blanguage\x12\x16\n" +
@@ -25107,12 +25143,13 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x02id\x18\b \x01(\tR\x02id\x12'\n" +
 	"\x0frejected_reason\x18\t \x01(\tR\x0erejectedReason\x128\n" +
 	"\abuttons\x18\n" +
-	" \x03(\v2\x1e.crm.v1.WhatsAppTemplateButtonR\abuttons\",\n" +
+	" \x03(\v2\x1e.crm.v1.WhatsAppTemplateButtonR\abuttons\x12!\n" +
+	"\fpipeline_ids\x18\v \x03(\tR\vpipelineIds\",\n" +
 	"\x16WhatsAppTemplateButton\x12\x12\n" +
 	"\x04text\x18\x01 \x01(\tR\x04text\"G\n" +
 	"\x15WhatsAppTemplateParam\x12\x14\n" +
 	"\x05index\x18\x01 \x01(\x05R\x05index\x12\x18\n" +
-	"\aexample\x18\x02 \x01(\tR\aexample\"\x86\x02\n" +
+	"\aexample\x18\x02 \x01(\tR\aexample\"\xa9\x02\n" +
 	"\x1dCreateWhatsAppTemplateRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
@@ -25121,11 +25158,12 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x04body\x18\x05 \x01(\tR\x04body\x12\x1a\n" +
 	"\bexamples\x18\x06 \x03(\tR\bexamples\x12&\n" +
 	"\x0fphone_number_id\x18\a \x01(\tR\rphoneNumberId\x12\x18\n" +
-	"\abuttons\x18\b \x03(\tR\abuttons\"d\n" +
+	"\abuttons\x18\b \x03(\tR\abuttons\x12!\n" +
+	"\fpipeline_ids\x18\t \x03(\tR\vpipelineIds\"d\n" +
 	"\x1eCreateWhatsAppTemplateResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\x12\x1a\n" +
-	"\bcategory\x18\x03 \x01(\tR\bcategory\"\xdb\x01\n" +
+	"\bcategory\x18\x03 \x01(\tR\bcategory\"\x92\x02\n" +
 	"\x1dUpdateWhatsAppTemplateRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vtemplate_id\x18\x02 \x01(\tR\n" +
@@ -25133,7 +25171,9 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x04body\x18\x03 \x01(\tR\x04body\x12\x1a\n" +
 	"\bexamples\x18\x04 \x03(\tR\bexamples\x12\x18\n" +
 	"\abuttons\x18\x05 \x03(\tR\abuttons\x12&\n" +
-	"\x0fphone_number_id\x18\x06 \x01(\tR\rphoneNumberId\":\n" +
+	"\x0fphone_number_id\x18\x06 \x01(\tR\rphoneNumberId\x12!\n" +
+	"\fpipeline_ids\x18\a \x03(\tR\vpipelineIds\x12\x12\n" +
+	"\x04name\x18\b \x01(\tR\x04name\":\n" +
 	"\x1eUpdateWhatsAppTemplateResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x84\x01\n" +
 	"\x1dDeleteWhatsAppTemplateRequest\x12'\n" +

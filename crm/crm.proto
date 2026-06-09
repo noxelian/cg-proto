@@ -2462,6 +2462,8 @@ message WhatsAppTemplate {
   string rejected_reason = 9;
   // Static QUICK_REPLY buttons attached to the template (v1: text-only).
   repeated WhatsAppTemplateButton buttons = 10;
+  // pipeline UUIDs this template is scoped to; empty = visible to all pipelines
+  repeated string pipeline_ids = 11;
 }
 
 // WhatsAppTemplateButton is a static QUICK_REPLY button (text-only). v1 supports
@@ -2489,6 +2491,8 @@ message CreateWhatsAppTemplateRequest {
   string phone_number_id = 7;
   // Static QUICK_REPLY button labels, in order. v1: text-only buttons.
   repeated string buttons = 8;
+  // pipeline UUIDs this template is scoped to; empty = visible to all pipelines
+  repeated string pipeline_ids = 9;
 }
 
 message CreateWhatsAppTemplateResponse {
@@ -2506,6 +2510,10 @@ message UpdateWhatsAppTemplateRequest {
   repeated string examples = 4;  // one sample per placeholder, ordered {{1}} first
   repeated string buttons  = 5;  // static QUICK_REPLY button labels, in order
   string phone_number_id   = 6;  // optional WABA selector; empty = primary WABA
+  // pipeline UUIDs this template is scoped to; empty = visible to all pipelines
+  repeated string pipeline_ids = 7;
+  // template name — keys the wa_template_pipeline_scope upsert on edit
+  string name = 8;
 }
 
 message UpdateWhatsAppTemplateResponse {
