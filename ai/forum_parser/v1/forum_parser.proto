@@ -316,6 +316,10 @@ message FAQCollection {
   int32 question_count = 4;
   // Optional cover gradient/key for UI (e.g. "navy", "green").
   string style_key = 5;
+  // topic_id when filter_kind = "topic"; empty for "popular".
+  string topic_id = 6;
+  // "topic" | "popular"
+  string filter_kind = 7;
 }
 
 // --- Topics ---
@@ -516,6 +520,8 @@ message ListIncomingQuestionsRequest {
 message ListIncomingQuestionsResponse {
   repeated QuestionCard questions = 1;
   bool has_more = 2;
+  // Total open questions matching master profile (ignores pagination).
+  int32 total_count = 3;
 }
 
 message HideQuestionRequest {
