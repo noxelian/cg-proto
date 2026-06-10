@@ -154,6 +154,8 @@ const (
 	CRMService_CreateTelephonyRecording_FullMethodName           = "/crm.v1.CRMService/CreateTelephonyRecording"
 	CRMService_GetTelephonyCallRecording_FullMethodName          = "/crm.v1.CRMService/GetTelephonyCallRecording"
 	CRMService_UpdateTelephonyRecordingTranscript_FullMethodName = "/crm.v1.CRMService/UpdateTelephonyRecordingTranscript"
+	CRMService_UpsertTelephonyCallAnalysis_FullMethodName        = "/crm.v1.CRMService/UpsertTelephonyCallAnalysis"
+	CRMService_GetCallAnalysis_FullMethodName                    = "/crm.v1.CRMService/GetCallAnalysis"
 	CRMService_ResolveWAChannelUsers_FullMethodName              = "/crm.v1.CRMService/ResolveWAChannelUsers"
 	CRMService_GetMyNotificationPreferences_FullMethodName       = "/crm.v1.CRMService/GetMyNotificationPreferences"
 	CRMService_UpdateMyNotificationPreferences_FullMethodName    = "/crm.v1.CRMService/UpdateMyNotificationPreferences"
@@ -460,6 +462,15 @@ type CRMServiceClient interface {
 	GetTelephonyCallRecording(ctx context.Context, in *GetTelephonyCallRecordingRequest, opts ...grpc.CallOption) (*GetTelephonyCallRecordingResponse, error)
 	// Transcription pipeline — write recording transcript from the transcriber worker
 	UpdateTelephonyRecordingTranscript(ctx context.Context, in *UpdateTelephonyRecordingTranscriptRequest, opts ...grpc.CallOption) (*UpdateTelephonyRecordingTranscriptResponse, error)
+	// Phase 13: call analysis — written by the cg-ai call-analyzer worker.
+	// UpsertTelephonyCallAnalysis persists the full versioned, evidence-bearing
+	// scoring result (idempotent on call_id+model_version+rubric_version via a
+	// DB unique index); cg-crm resolves agent_user_id/deal_id server-side via the
+	// Phase 12 identity resolver, so they are NOT request fields. GetCallAnalysis
+	// reads the latest analysis for a (org, call). Caller must be the worker —
+	// enforce via service-mesh auth at deploy time.
+	UpsertTelephonyCallAnalysis(ctx context.Context, in *UpsertTelephonyCallAnalysisRequest, opts ...grpc.CallOption) (*UpsertTelephonyCallAnalysisResponse, error)
+	GetCallAnalysis(ctx context.Context, in *GetCallAnalysisRequest, opts ...grpc.CallOption) (*GetCallAnalysisResponse, error)
 	// ResolveWAChannelUsers resolves which user_ids have access to a WhatsApp
 	// channel identified by phone_number_id within an org. Used by the BFF
 	// webhook handler to scope BroadcastToUsers instead of BroadcastAll, so
@@ -1873,6 +1884,26 @@ func (c *cRMServiceClient) UpdateTelephonyRecordingTranscript(ctx context.Contex
 	return out, nil
 }
 
+func (c *cRMServiceClient) UpsertTelephonyCallAnalysis(ctx context.Context, in *UpsertTelephonyCallAnalysisRequest, opts ...grpc.CallOption) (*UpsertTelephonyCallAnalysisResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpsertTelephonyCallAnalysisResponse)
+	err := c.cc.Invoke(ctx, CRMService_UpsertTelephonyCallAnalysis_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetCallAnalysis(ctx context.Context, in *GetCallAnalysisRequest, opts ...grpc.CallOption) (*GetCallAnalysisResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCallAnalysisResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetCallAnalysis_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) ResolveWAChannelUsers(ctx context.Context, in *ResolveWAChannelUsersRequest, opts ...grpc.CallOption) (*ResolveWAChannelUsersResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ResolveWAChannelUsersResponse)
@@ -2285,6 +2316,15 @@ type CRMServiceServer interface {
 	GetTelephonyCallRecording(context.Context, *GetTelephonyCallRecordingRequest) (*GetTelephonyCallRecordingResponse, error)
 	// Transcription pipeline — write recording transcript from the transcriber worker
 	UpdateTelephonyRecordingTranscript(context.Context, *UpdateTelephonyRecordingTranscriptRequest) (*UpdateTelephonyRecordingTranscriptResponse, error)
+	// Phase 13: call analysis — written by the cg-ai call-analyzer worker.
+	// UpsertTelephonyCallAnalysis persists the full versioned, evidence-bearing
+	// scoring result (idempotent on call_id+model_version+rubric_version via a
+	// DB unique index); cg-crm resolves agent_user_id/deal_id server-side via the
+	// Phase 12 identity resolver, so they are NOT request fields. GetCallAnalysis
+	// reads the latest analysis for a (org, call). Caller must be the worker —
+	// enforce via service-mesh auth at deploy time.
+	UpsertTelephonyCallAnalysis(context.Context, *UpsertTelephonyCallAnalysisRequest) (*UpsertTelephonyCallAnalysisResponse, error)
+	GetCallAnalysis(context.Context, *GetCallAnalysisRequest) (*GetCallAnalysisResponse, error)
 	// ResolveWAChannelUsers resolves which user_ids have access to a WhatsApp
 	// channel identified by phone_number_id within an org. Used by the BFF
 	// webhook handler to scope BroadcastToUsers instead of BroadcastAll, so
@@ -2740,6 +2780,12 @@ func (UnimplementedCRMServiceServer) GetTelephonyCallRecording(context.Context, 
 }
 func (UnimplementedCRMServiceServer) UpdateTelephonyRecordingTranscript(context.Context, *UpdateTelephonyRecordingTranscriptRequest) (*UpdateTelephonyRecordingTranscriptResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTelephonyRecordingTranscript not implemented")
+}
+func (UnimplementedCRMServiceServer) UpsertTelephonyCallAnalysis(context.Context, *UpsertTelephonyCallAnalysisRequest) (*UpsertTelephonyCallAnalysisResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpsertTelephonyCallAnalysis not implemented")
+}
+func (UnimplementedCRMServiceServer) GetCallAnalysis(context.Context, *GetCallAnalysisRequest) (*GetCallAnalysisResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCallAnalysis not implemented")
 }
 func (UnimplementedCRMServiceServer) ResolveWAChannelUsers(context.Context, *ResolveWAChannelUsersRequest) (*ResolveWAChannelUsersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResolveWAChannelUsers not implemented")
@@ -5228,6 +5274,42 @@ func _CRMService_UpdateTelephonyRecordingTranscript_Handler(srv interface{}, ctx
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_UpsertTelephonyCallAnalysis_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertTelephonyCallAnalysisRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).UpsertTelephonyCallAnalysis(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_UpsertTelephonyCallAnalysis_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).UpsertTelephonyCallAnalysis(ctx, req.(*UpsertTelephonyCallAnalysisRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetCallAnalysis_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCallAnalysisRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetCallAnalysis(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetCallAnalysis_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetCallAnalysis(ctx, req.(*GetCallAnalysisRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_ResolveWAChannelUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ResolveWAChannelUsersRequest)
 	if err := dec(in); err != nil {
@@ -5990,6 +6072,14 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateTelephonyRecordingTranscript",
 			Handler:    _CRMService_UpdateTelephonyRecordingTranscript_Handler,
+		},
+		{
+			MethodName: "UpsertTelephonyCallAnalysis",
+			Handler:    _CRMService_UpsertTelephonyCallAnalysis_Handler,
+		},
+		{
+			MethodName: "GetCallAnalysis",
+			Handler:    _CRMService_GetCallAnalysis_Handler,
 		},
 		{
 			MethodName: "ResolveWAChannelUsers",
