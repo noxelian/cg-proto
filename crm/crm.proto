@@ -316,6 +316,16 @@ service CRMService {
   // Transcription pipeline — write recording transcript from the transcriber worker
   rpc UpdateTelephonyRecordingTranscript(UpdateTelephonyRecordingTranscriptRequest) returns (UpdateTelephonyRecordingTranscriptResponse);
 
+  // Phase 13: call analysis — written by the cg-ai call-analyzer worker.
+  // UpsertTelephonyCallAnalysis persists the full versioned, evidence-bearing
+  // scoring result (idempotent on call_id+model_version+rubric_version via a
+  // DB unique index); cg-crm resolves agent_user_id/deal_id server-side via the
+  // Phase 12 identity resolver, so they are NOT request fields. GetCallAnalysis
+  // reads the latest analysis for a (org, call). Caller must be the worker —
+  // enforce via service-mesh auth at deploy time.
+  rpc UpsertTelephonyCallAnalysis(UpsertTelephonyCallAnalysisRequest) returns (UpsertTelephonyCallAnalysisResponse);
+  rpc GetCallAnalysis(GetCallAnalysisRequest) returns (GetCallAnalysisResponse);
+
   // ResolveWAChannelUsers resolves which user_ids have access to a WhatsApp
   // channel identified by phone_number_id within an org. Used by the BFF
   // webhook handler to scope BroadcastToUsers instead of BroadcastAll, so
@@ -3200,6 +3210,66 @@ message UpdateTelephonyRecordingTranscriptRequest {
 
 message UpdateTelephonyRecordingTranscriptResponse {
   TelephonyRecording recording = 1;
+}
+
+// Phase 13: call-analysis messages — written by the cg-ai call-analyzer worker.
+
+// CallAnalysisDimension is one rubric dimension's score + grounding evidence.
+message CallAnalysisDimension {
+  string dimension = 1; // discovery | value_framing | objection_handling | closing | talk_listen | tone_gate
+  int32  score     = 2; // 1-4; 0 = abstained for this dimension (CALL-02)
+  string evidence  = 3; // verbatim transcript quote backing the score (CALL-02)
+}
+
+// CallAnalysisChecklistItem is one script-adherence item (CALL-06):
+// greeting | make-model qualification | photo-intake offer | appointment-set.
+message CallAnalysisChecklistItem {
+  string item   = 1;
+  bool   passed = 2;
+}
+
+// TelephonyCallAnalysis is the full versioned, evidence-bearing scoring result.
+// model_version/prompt_version/rubric_version are part of the permanent
+// idempotency triple (CALL-04); coaching_note is a single string (not repeated)
+// to enforce "exactly one actionable note" at the type level (CALL-04).
+message TelephonyCallAnalysis {
+  string id              = 1;
+  string organization_id = 2;
+  string call_id         = 3;
+  string recording_id    = 4;
+  repeated CallAnalysisDimension dimensions = 5;
+  string outcome         = 6;  // дожал | слил | назначил_встречу | недозвон | отказ | insufficient_evidence (CALL-03)
+  bool   nedozhal        = 7;  // interest present, no next step fixed (CALL-05)
+  string coaching_note   = 8;  // exactly one actionable note (CALL-04)
+  repeated string objection_tags = 9; // (CALL-07)
+  repeated CallAnalysisChecklistItem checklist = 10; // (CALL-06)
+  double talk_listen_ratio = 11; // manager/client speech ratio; -1 = uncomputable/mono (CALL-10)
+  string analysis_status = 12; // scored | insufficient_evidence | failed
+  string model_version   = 13; // NON-NULL
+  string prompt_version  = 14; // NON-NULL
+  string rubric_version  = 15; // NON-NULL
+  string created_at      = 16;
+}
+
+// UpsertTelephonyCallAnalysisRequest — the worker sends the full result;
+// cg-crm resolves agent_user_id/deal_id server-side (not request fields).
+message UpsertTelephonyCallAnalysisRequest {
+  TelephonyCallAnalysis analysis = 1;
+}
+
+// UpsertTelephonyCallAnalysisResponse — returns the persisted row (including
+// any server-resolved fields added later).
+message UpsertTelephonyCallAnalysisResponse {
+  TelephonyCallAnalysis analysis = 1;
+}
+
+message GetCallAnalysisRequest {
+  string organization_id = 1;
+  string call_id         = 2;
+}
+
+message GetCallAnalysisResponse {
+  TelephonyCallAnalysis analysis = 1;
 }
 
 // ResolveWAChannelUsers — request/response for the scoped-broadcast RPC.
