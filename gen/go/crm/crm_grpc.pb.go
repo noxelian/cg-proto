@@ -115,6 +115,7 @@ const (
 	CRMService_UpdateWhatsAppTemplate_FullMethodName             = "/crm.v1.CRMService/UpdateWhatsAppTemplate"
 	CRMService_DeleteWhatsAppTemplate_FullMethodName             = "/crm.v1.CRMService/DeleteWhatsAppTemplate"
 	CRMService_HandleWhatsAppWebhook_FullMethodName              = "/crm.v1.CRMService/HandleWhatsAppWebhook"
+	CRMService_UpsertCtwaAttribution_FullMethodName              = "/crm.v1.CRMService/UpsertCtwaAttribution"
 	CRMService_MarkWhatsAppChatRead_FullMethodName               = "/crm.v1.CRMService/MarkWhatsAppChatRead"
 	CRMService_ListWhatsAppChannels_FullMethodName               = "/crm.v1.CRMService/ListWhatsAppChannels"
 	CRMService_SendInstagramMessage_FullMethodName               = "/crm.v1.CRMService/SendInstagramMessage"
@@ -391,6 +392,11 @@ type CRMServiceClient interface {
 	// DeleteWhatsAppTemplate removes a template by name from the WABA. Admin-only surface.
 	DeleteWhatsAppTemplate(ctx context.Context, in *DeleteWhatsAppTemplateRequest, opts ...grpc.CallOption) (*DeleteWhatsAppTemplateResponse, error)
 	HandleWhatsAppWebhook(ctx context.Context, in *WhatsAppWebhookRequest, opts ...grpc.CallOption) (*WhatsAppWebhookResponse, error)
+	// UpsertCtwaAttribution records a Click-to-WhatsApp referral attribution
+	// (stage 1b). Called from cg-bff's external gateway when fa-ai-core relays
+	// a Meta referral-bearing inbound for the ad number. Idempotent upsert on
+	// ctwa_clid. deal_id is always NULL at this stage.
+	UpsertCtwaAttribution(ctx context.Context, in *UpsertCtwaAttributionRequest, opts ...grpc.CallOption) (*UpsertCtwaAttributionResponse, error)
 	// MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
 	// given phone. Replaces the previous side-effect reset that fired on every
 	// ListWhatsAppMessages poll — that behaviour raced with incoming inbound
@@ -1494,6 +1500,16 @@ func (c *cRMServiceClient) HandleWhatsAppWebhook(ctx context.Context, in *WhatsA
 	return out, nil
 }
 
+func (c *cRMServiceClient) UpsertCtwaAttribution(ctx context.Context, in *UpsertCtwaAttributionRequest, opts ...grpc.CallOption) (*UpsertCtwaAttributionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpsertCtwaAttributionResponse)
+	err := c.cc.Invoke(ctx, CRMService_UpsertCtwaAttribution_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) MarkWhatsAppChatRead(ctx context.Context, in *MarkWhatsAppChatReadRequest, opts ...grpc.CallOption) (*MarkWhatsAppChatReadResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MarkWhatsAppChatReadResponse)
@@ -2245,6 +2261,11 @@ type CRMServiceServer interface {
 	// DeleteWhatsAppTemplate removes a template by name from the WABA. Admin-only surface.
 	DeleteWhatsAppTemplate(context.Context, *DeleteWhatsAppTemplateRequest) (*DeleteWhatsAppTemplateResponse, error)
 	HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error)
+	// UpsertCtwaAttribution records a Click-to-WhatsApp referral attribution
+	// (stage 1b). Called from cg-bff's external gateway when fa-ai-core relays
+	// a Meta referral-bearing inbound for the ad number. Idempotent upsert on
+	// ctwa_clid. deal_id is always NULL at this stage.
+	UpsertCtwaAttribution(context.Context, *UpsertCtwaAttributionRequest) (*UpsertCtwaAttributionResponse, error)
 	// MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
 	// given phone. Replaces the previous side-effect reset that fired on every
 	// ListWhatsAppMessages poll — that behaviour raced with incoming inbound
@@ -2663,6 +2684,9 @@ func (UnimplementedCRMServiceServer) DeleteWhatsAppTemplate(context.Context, *De
 }
 func (UnimplementedCRMServiceServer) HandleWhatsAppWebhook(context.Context, *WhatsAppWebhookRequest) (*WhatsAppWebhookResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HandleWhatsAppWebhook not implemented")
+}
+func (UnimplementedCRMServiceServer) UpsertCtwaAttribution(context.Context, *UpsertCtwaAttributionRequest) (*UpsertCtwaAttributionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpsertCtwaAttribution not implemented")
 }
 func (UnimplementedCRMServiceServer) MarkWhatsAppChatRead(context.Context, *MarkWhatsAppChatReadRequest) (*MarkWhatsAppChatReadResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method MarkWhatsAppChatRead not implemented")
@@ -4572,6 +4596,24 @@ func _CRMService_HandleWhatsAppWebhook_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_UpsertCtwaAttribution_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertCtwaAttributionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).UpsertCtwaAttribution(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_UpsertCtwaAttribution_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).UpsertCtwaAttribution(ctx, req.(*UpsertCtwaAttributionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_MarkWhatsAppChatRead_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MarkWhatsAppChatReadRequest)
 	if err := dec(in); err != nil {
@@ -5916,6 +5958,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HandleWhatsAppWebhook",
 			Handler:    _CRMService_HandleWhatsAppWebhook_Handler,
+		},
+		{
+			MethodName: "UpsertCtwaAttribution",
+			Handler:    _CRMService_UpsertCtwaAttribution_Handler,
 		},
 		{
 			MethodName: "MarkWhatsAppChatRead",

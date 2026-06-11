@@ -232,6 +232,11 @@ service CRMService {
   // DeleteWhatsAppTemplate removes a template by name from the WABA. Admin-only surface.
   rpc DeleteWhatsAppTemplate(DeleteWhatsAppTemplateRequest) returns (DeleteWhatsAppTemplateResponse);
   rpc HandleWhatsAppWebhook(WhatsAppWebhookRequest)       returns (WhatsAppWebhookResponse);
+  // UpsertCtwaAttribution records a Click-to-WhatsApp referral attribution
+  // (stage 1b). Called from cg-bff's external gateway when fa-ai-core relays
+  // a Meta referral-bearing inbound for the ad number. Idempotent upsert on
+  // ctwa_clid. deal_id is always NULL at this stage.
+  rpc UpsertCtwaAttribution(UpsertCtwaAttributionRequest) returns (UpsertCtwaAttributionResponse);
   // MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
   // given phone. Replaces the previous side-effect reset that fired on every
   // ListWhatsAppMessages poll — that behaviour raced with incoming inbound
@@ -2426,6 +2431,27 @@ message WhatsAppWebhookRequest {
 }
 
 message WhatsAppWebhookResponse {
+  bool ok = 1;
+}
+
+// UpsertCtwaAttributionRequest carries a Meta Click-to-WhatsApp referral
+// attribution relayed from fa-ai-core. organization_id may be empty (stored
+// as uuid.Nil). deal_id is intentionally omitted — stage 1b always persists
+// a NULL deal_id. Idempotent on ctwa_clid.
+message UpsertCtwaAttributionRequest {
+  string organization_id            = 1;
+  string wa_id                      = 2;
+  string phone_number_id            = 3;
+  string ctwa_clid                  = 4;
+  string ctwa_ad_id                 = 5;
+  string source_url                 = 6;
+  string source_type                = 7;
+  string headline                   = 8;
+  string body                       = 9;
+  google.protobuf.Timestamp captured_at = 10;
+}
+
+message UpsertCtwaAttributionResponse {
   bool ok = 1;
 }
 
