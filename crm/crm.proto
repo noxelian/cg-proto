@@ -331,6 +331,17 @@ service CRMService {
   rpc UpsertTelephonyCallAnalysis(UpsertTelephonyCallAnalysisRequest) returns (UpsertTelephonyCallAnalysisResponse);
   rpc GetCallAnalysis(GetCallAnalysisRequest) returns (GetCallAnalysisResponse);
 
+  // Phase 18: full-deal-context bundle for the call-analyzer (call analysis v2).
+  // Keyed by call_id (NOT deal_id) so cg-crm reuses its server-side call→deal
+  // resolution; the analyzer only ever knows the call. Returns the deal's current
+  // stage (+ appointment/won milestone flags the analyzer's deterministic outcome
+  // guard reads), the stage-history timeline, the resolved vehicle make/model
+  // (authoritative — NOT inferred from ASR), the merged WhatsApp/Wazzup message
+  // timeline, and optional pre-call AI-chat turns. Deal-less calls return
+  // has_deal=false (analyzer degrades to call-only). SkipMethods read RPC —
+  // service-internal caller (the worker), same posture as GetCallAnalysis.
+  rpc GetDealContextBundle(GetDealContextBundleRequest) returns (GetDealContextBundleResponse);
+
   // ResolveWAChannelUsers resolves which user_ids have access to a WhatsApp
   // channel identified by phone_number_id within an org. Used by the BFF
   // webhook handler to scope BroadcastToUsers instead of BroadcastAll, so
@@ -3634,4 +3645,89 @@ message DeleteExternalCallRequest {
 
 message DeleteExternalCallResponse {
   bool deleted = 1;  // false if not found / not owned
+}
+
+// ============================================================================
+// Phase 18: Full-deal-context bundle (call analysis v2)
+// ============================================================================
+
+// GetDealContextBundleRequest — mirror GetCallAnalysisRequest naming. Keyed by
+// call_id so cg-crm reuses server-side call→deal resolution (telephony_calls.deal_id).
+message GetDealContextBundleRequest {
+  string organization_id = 1;
+  string call_id         = 2;
+}
+
+message GetDealContextBundleResponse {
+  DealContextBundle bundle = 1;
+}
+
+// DealContextBundle — the whole sales-process context for one call, assembled
+// server-side in cg-crm. The analyzer builds a chronology from this + the call
+// transcript and feeds it to the judge.
+message DealContextBundle {
+  // has_deal=false when the call has no deal_id (deal-less); the analyzer then
+  // degrades to call-only scoring (no stage/vehicle/message context).
+  bool   has_deal        = 1;
+  string deal_id         = 2;
+  string organization_id = 3;
+
+  // Current stage + the milestone flags the analyzer's deterministic outcome
+  // guard reads (see cg-crm stages.counts_as_appointment / counts_as_won).
+  string current_stage_id                   = 4;
+  string current_stage_name                 = 5;
+  bool   current_stage_counts_as_appointment = 6;
+  bool   current_stage_counts_as_won         = 7;
+  string current_stage_terminal_type         = 8; // e.g. "won" | "lost" | "" (open)
+
+  // Stage-history timeline ordered by changed_at (resolved names server-side).
+  repeated DealStageTransition stage_timeline = 9;
+
+  // Vehicle resolved from deals.vehicle_id via cg-users garage + NSI
+  // (authoritative). Empty make/model = unresolved (fail-soft) — the judge then
+  // falls back to "авто не указано", NEVER infers the car from the transcript.
+  DealVehicle vehicle = 10;
+
+  // Merged WhatsApp + Wazzup message timeline ordered by created_at.
+  repeated DealMessage messages = 11;
+
+  // OPTIONAL pre-call AI-chat turns (Plan 06 populates; empty when the
+  // deal→AI-session link does not resolve).
+  repeated AiChatTurn ai_chat = 12;
+}
+
+// DealStageTransition — one stage move (mirror DealStageHistoryProto shape, with
+// resolved from/to stage names added server-side).
+message DealStageTransition {
+  string from_stage_id   = 1; // empty if first stage
+  string from_stage_name = 2;
+  string to_stage_id     = 3;
+  string to_stage_name   = 4;
+  google.protobuf.Timestamp changed_at = 5;
+}
+
+// DealVehicle — resolved make/model (mirror CarInfoProto mark_name/model_name
+// semantics). Empty make/model means unresolved (fail-soft).
+message DealVehicle {
+  int64  vehicle_id = 1;
+  string make       = 2;
+  string model      = 3;
+  int32  year       = 4;
+}
+
+// DealMessage — one WhatsApp or Wazzup message. Non-text bodies carry a
+// placeholder string (e.g. "[image]"), never binary.
+message DealMessage {
+  string direction    = 1; // "inbound" | "outbound"
+  string body         = 2;
+  string channel      = 3; // "whatsapp" | "wazzup" | ...
+  string content_type = 4; // "text" | "image" | "document" | ...
+  google.protobuf.Timestamp created_at = 5;
+}
+
+// AiChatTurn — one pre-call AI-chat turn (the bot conversing with the client).
+message AiChatTurn {
+  string role    = 1; // "user" | "assistant"
+  string content = 2;
+  google.protobuf.Timestamp created_at = 3;
 }
