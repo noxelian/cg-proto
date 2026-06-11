@@ -3254,6 +3254,15 @@ message CallAnalysisChecklistItem {
   bool   passed = 2;
 }
 
+// CallAnalysisSummary is a concise, factual recap of the call (strictly from the
+// transcript) so a reader grasps it without listening: what the client wanted,
+// what the manager actually did, and how/why it ended.
+message CallAnalysisSummary {
+  string client_request   = 1; // что хотел клиент (авто + проблема/запрос)
+  string manager_response = 2; // что менеджер реально предложил/сделал
+  string result_reason    = 3; // чем закончилось и почему
+}
+
 // TelephonyCallAnalysis is the full versioned, evidence-bearing scoring result.
 // model_version/prompt_version/rubric_version are part of the permanent
 // idempotency triple (CALL-04); coaching_note is a single string (not repeated)
@@ -3275,6 +3284,7 @@ message TelephonyCallAnalysis {
   string prompt_version  = 14; // NON-NULL
   string rubric_version  = 15; // NON-NULL
   string created_at      = 16;
+  CallAnalysisSummary summary = 17; // concise factual recap (Phase 13 follow-up)
 }
 
 // UpsertTelephonyCallAnalysisRequest — the worker sends the full result;
