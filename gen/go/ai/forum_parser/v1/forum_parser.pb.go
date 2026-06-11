@@ -1890,7 +1890,11 @@ type FAQCollection struct {
 	Slug          string                 `protobuf:"bytes,3,opt,name=slug,proto3" json:"slug,omitempty"`
 	QuestionCount int32                  `protobuf:"varint,4,opt,name=question_count,json=questionCount,proto3" json:"question_count,omitempty"`
 	// Optional cover gradient/key for UI (e.g. "navy", "green").
-	StyleKey      string `protobuf:"bytes,5,opt,name=style_key,json=styleKey,proto3" json:"style_key,omitempty"`
+	StyleKey string `protobuf:"bytes,5,opt,name=style_key,json=styleKey,proto3" json:"style_key,omitempty"`
+	// topic_id when filter_kind = "topic"; empty for "popular".
+	TopicId string `protobuf:"bytes,6,opt,name=topic_id,json=topicId,proto3" json:"topic_id,omitempty"`
+	// "topic" | "popular"
+	FilterKind    string `protobuf:"bytes,7,opt,name=filter_kind,json=filterKind,proto3" json:"filter_kind,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1956,6 +1960,20 @@ func (x *FAQCollection) GetQuestionCount() int32 {
 func (x *FAQCollection) GetStyleKey() string {
 	if x != nil {
 		return x.StyleKey
+	}
+	return ""
+}
+
+func (x *FAQCollection) GetTopicId() string {
+	if x != nil {
+		return x.TopicId
+	}
+	return ""
+}
+
+func (x *FAQCollection) GetFilterKind() string {
+	if x != nil {
+		return x.FilterKind
 	}
 	return ""
 }
@@ -3835,9 +3853,11 @@ func (x *ListIncomingQuestionsRequest) GetOffset() int32 {
 }
 
 type ListIncomingQuestionsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Questions     []*QuestionCard        `protobuf:"bytes,1,rep,name=questions,proto3" json:"questions,omitempty"`
-	HasMore       bool                   `protobuf:"varint,2,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Questions []*QuestionCard        `protobuf:"bytes,1,rep,name=questions,proto3" json:"questions,omitempty"`
+	HasMore   bool                   `protobuf:"varint,2,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
+	// Total open questions matching master profile (ignores pagination).
+	TotalCount    int32 `protobuf:"varint,3,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3884,6 +3904,13 @@ func (x *ListIncomingQuestionsResponse) GetHasMore() bool {
 		return x.HasMore
 	}
 	return false
+}
+
+func (x *ListIncomingQuestionsResponse) GetTotalCount() int32 {
+	if x != nil {
+		return x.TotalCount
+	}
+	return 0
 }
 
 type HideQuestionRequest struct {
@@ -4124,13 +4151,16 @@ const file_ai_forum_parser_v1_forum_parser_proto_rawDesc = "" +
 	"\ais_best\x18\n" +
 	" \x01(\bR\x06isBest\x127\n" +
 	"\tposted_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\bpostedAt\x12\x1a\n" +
-	"\bposition\x18\f \x01(\x05R\bposition\"\x8d\x01\n" +
+	"\bposition\x18\f \x01(\x05R\bposition\"\xc9\x01\n" +
 	"\rFAQCollection\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x12\n" +
 	"\x04slug\x18\x03 \x01(\tR\x04slug\x12%\n" +
 	"\x0equestion_count\x18\x04 \x01(\x05R\rquestionCount\x12\x1b\n" +
-	"\tstyle_key\x18\x05 \x01(\tR\bstyleKey\"\x13\n" +
+	"\tstyle_key\x18\x05 \x01(\tR\bstyleKey\x12\x19\n" +
+	"\btopic_id\x18\x06 \x01(\tR\atopicId\x12\x1f\n" +
+	"\vfilter_kind\x18\a \x01(\tR\n" +
+	"filterKind\"\x13\n" +
 	"\x11ListTopicsRequest\"G\n" +
 	"\x12ListTopicsResponse\x121\n" +
 	"\x06topics\x18\x01 \x03(\v2\x19.ai.forum_parser.v1.TopicR\x06topics\"\x82\x03\n" +
@@ -4273,10 +4303,12 @@ const file_ai_forum_parser_v1_forum_parser_proto_rawDesc = "" +
 	"\aprofile\x18\x01 \x01(\v2!.ai.forum_parser.v1.MasterProfileR\aprofile\"L\n" +
 	"\x1cListIncomingQuestionsRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x02 \x01(\x05R\x06offset\"z\n" +
+	"\x06offset\x18\x02 \x01(\x05R\x06offset\"\x9b\x01\n" +
 	"\x1dListIncomingQuestionsResponse\x12>\n" +
 	"\tquestions\x18\x01 \x03(\v2 .ai.forum_parser.v1.QuestionCardR\tquestions\x12\x19\n" +
-	"\bhas_more\x18\x02 \x01(\bR\ahasMore\"6\n" +
+	"\bhas_more\x18\x02 \x01(\bR\ahasMore\x12\x1f\n" +
+	"\vtotal_count\x18\x03 \x01(\x05R\n" +
+	"totalCount\"6\n" +
 	"\x13HideQuestionRequest\x12\x1f\n" +
 	"\vquestion_id\x18\x01 \x01(\tR\n" +
 	"questionId\"\x16\n" +
