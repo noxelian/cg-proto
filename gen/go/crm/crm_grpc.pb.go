@@ -157,6 +157,7 @@ const (
 	CRMService_UpdateTelephonyRecordingTranscript_FullMethodName = "/crm.v1.CRMService/UpdateTelephonyRecordingTranscript"
 	CRMService_UpsertTelephonyCallAnalysis_FullMethodName        = "/crm.v1.CRMService/UpsertTelephonyCallAnalysis"
 	CRMService_GetCallAnalysis_FullMethodName                    = "/crm.v1.CRMService/GetCallAnalysis"
+	CRMService_GetDealContextBundle_FullMethodName               = "/crm.v1.CRMService/GetDealContextBundle"
 	CRMService_ResolveWAChannelUsers_FullMethodName              = "/crm.v1.CRMService/ResolveWAChannelUsers"
 	CRMService_GetMyNotificationPreferences_FullMethodName       = "/crm.v1.CRMService/GetMyNotificationPreferences"
 	CRMService_UpdateMyNotificationPreferences_FullMethodName    = "/crm.v1.CRMService/UpdateMyNotificationPreferences"
@@ -477,6 +478,16 @@ type CRMServiceClient interface {
 	// enforce via service-mesh auth at deploy time.
 	UpsertTelephonyCallAnalysis(ctx context.Context, in *UpsertTelephonyCallAnalysisRequest, opts ...grpc.CallOption) (*UpsertTelephonyCallAnalysisResponse, error)
 	GetCallAnalysis(ctx context.Context, in *GetCallAnalysisRequest, opts ...grpc.CallOption) (*GetCallAnalysisResponse, error)
+	// Phase 18: full-deal-context bundle for the call-analyzer (call analysis v2).
+	// Keyed by call_id (NOT deal_id) so cg-crm reuses its server-side call→deal
+	// resolution; the analyzer only ever knows the call. Returns the deal's current
+	// stage (+ appointment/won milestone flags the analyzer's deterministic outcome
+	// guard reads), the stage-history timeline, the resolved vehicle make/model
+	// (authoritative — NOT inferred from ASR), the merged WhatsApp/Wazzup message
+	// timeline, and optional pre-call AI-chat turns. Deal-less calls return
+	// has_deal=false (analyzer degrades to call-only). SkipMethods read RPC —
+	// service-internal caller (the worker), same posture as GetCallAnalysis.
+	GetDealContextBundle(ctx context.Context, in *GetDealContextBundleRequest, opts ...grpc.CallOption) (*GetDealContextBundleResponse, error)
 	// ResolveWAChannelUsers resolves which user_ids have access to a WhatsApp
 	// channel identified by phone_number_id within an org. Used by the BFF
 	// webhook handler to scope BroadcastToUsers instead of BroadcastAll, so
@@ -1920,6 +1931,16 @@ func (c *cRMServiceClient) GetCallAnalysis(ctx context.Context, in *GetCallAnaly
 	return out, nil
 }
 
+func (c *cRMServiceClient) GetDealContextBundle(ctx context.Context, in *GetDealContextBundleRequest, opts ...grpc.CallOption) (*GetDealContextBundleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDealContextBundleResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetDealContextBundle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) ResolveWAChannelUsers(ctx context.Context, in *ResolveWAChannelUsersRequest, opts ...grpc.CallOption) (*ResolveWAChannelUsersResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ResolveWAChannelUsersResponse)
@@ -2346,6 +2367,16 @@ type CRMServiceServer interface {
 	// enforce via service-mesh auth at deploy time.
 	UpsertTelephonyCallAnalysis(context.Context, *UpsertTelephonyCallAnalysisRequest) (*UpsertTelephonyCallAnalysisResponse, error)
 	GetCallAnalysis(context.Context, *GetCallAnalysisRequest) (*GetCallAnalysisResponse, error)
+	// Phase 18: full-deal-context bundle for the call-analyzer (call analysis v2).
+	// Keyed by call_id (NOT deal_id) so cg-crm reuses its server-side call→deal
+	// resolution; the analyzer only ever knows the call. Returns the deal's current
+	// stage (+ appointment/won milestone flags the analyzer's deterministic outcome
+	// guard reads), the stage-history timeline, the resolved vehicle make/model
+	// (authoritative — NOT inferred from ASR), the merged WhatsApp/Wazzup message
+	// timeline, and optional pre-call AI-chat turns. Deal-less calls return
+	// has_deal=false (analyzer degrades to call-only). SkipMethods read RPC —
+	// service-internal caller (the worker), same posture as GetCallAnalysis.
+	GetDealContextBundle(context.Context, *GetDealContextBundleRequest) (*GetDealContextBundleResponse, error)
 	// ResolveWAChannelUsers resolves which user_ids have access to a WhatsApp
 	// channel identified by phone_number_id within an org. Used by the BFF
 	// webhook handler to scope BroadcastToUsers instead of BroadcastAll, so
@@ -2810,6 +2841,9 @@ func (UnimplementedCRMServiceServer) UpsertTelephonyCallAnalysis(context.Context
 }
 func (UnimplementedCRMServiceServer) GetCallAnalysis(context.Context, *GetCallAnalysisRequest) (*GetCallAnalysisResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCallAnalysis not implemented")
+}
+func (UnimplementedCRMServiceServer) GetDealContextBundle(context.Context, *GetDealContextBundleRequest) (*GetDealContextBundleResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetDealContextBundle not implemented")
 }
 func (UnimplementedCRMServiceServer) ResolveWAChannelUsers(context.Context, *ResolveWAChannelUsersRequest) (*ResolveWAChannelUsersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResolveWAChannelUsers not implemented")
@@ -5352,6 +5386,24 @@ func _CRMService_GetCallAnalysis_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_GetDealContextBundle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDealContextBundleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetDealContextBundle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetDealContextBundle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetDealContextBundle(ctx, req.(*GetDealContextBundleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_ResolveWAChannelUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ResolveWAChannelUsersRequest)
 	if err := dec(in); err != nil {
@@ -6126,6 +6178,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCallAnalysis",
 			Handler:    _CRMService_GetCallAnalysis_Handler,
+		},
+		{
+			MethodName: "GetDealContextBundle",
+			Handler:    _CRMService_GetDealContextBundle_Handler,
 		},
 		{
 			MethodName: "ResolveWAChannelUsers",
