@@ -3702,6 +3702,21 @@ message DealContextBundle {
   // to frame advice around the on-site stage (post-visit price objection / follow
   // up after the visit) rather than "fix a visit date".
   bool has_work_order = 13;
+
+  // Manager's tasks on the deal (follow-ups / reminders the manager recorded),
+  // newest first. Shows the judge that the manager is actively working the deal —
+  // a «Записан на осмотр» stage with pending follow-up tasks is NOT "abandoned".
+  repeated DealTask tasks = 14;
+}
+
+// DealTask — one task a manager recorded on the deal (cg_crm.tasks).
+message DealTask {
+  string title       = 1;
+  string description = 2;
+  string status      = 3; // "pending" | "done" | ...
+  google.protobuf.Timestamp due_at       = 4;
+  google.protobuf.Timestamp completed_at = 5;
+  google.protobuf.Timestamp created_at   = 6;
 }
 
 // DealStageTransition — one stage move (mirror DealStageHistoryProto shape, with
