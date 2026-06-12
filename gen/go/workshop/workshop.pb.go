@@ -4790,6 +4790,7 @@ type ListRepairOrdersRequest struct {
 	Page          int32                  `protobuf:"varint,5,opt,name=page,proto3" json:"page,omitempty"`
 	PageSize      int32                  `protobuf:"varint,6,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	UserId        int64                  `protobuf:"varint,7,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrgId         string                 `protobuf:"bytes,8,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4873,6 +4874,13 @@ func (x *ListRepairOrdersRequest) GetUserId() int64 {
 	return 0
 }
 
+func (x *ListRepairOrdersRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
 type ListRepairOrdersResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Orders        []*RepairOrder         `protobuf:"bytes,1,rep,name=orders,proto3" json:"orders,omitempty"`
@@ -4928,6 +4936,7 @@ func (x *ListRepairOrdersResponse) GetTotal() int32 {
 type GetKanbanRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	WorkshopId    int64                  `protobuf:"varint,1,opt,name=workshop_id,json=workshopId,proto3" json:"workshop_id,omitempty"`
+	OrgId         string                 `protobuf:"bytes,2,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4967,6 +4976,13 @@ func (x *GetKanbanRequest) GetWorkshopId() int64 {
 		return x.WorkshopId
 	}
 	return 0
+}
+
+func (x *GetKanbanRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
 }
 
 type GetKanbanResponse struct {
@@ -13325,7 +13341,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"new_status\x18\x02 \x01(\x0e2\x19.workshop.v1.RepairStatusR\tnewStatus\x12\x18\n" +
 	"\acomment\x18\x03 \x01(\tR\acomment\"Q\n" +
 	"\x1fUpdateRepairOrderStatusResponse\x12.\n" +
-	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order\"\xec\x01\n" +
+	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order\"\x83\x02\n" +
 	"\x17ListRepairOrdersRequest\x12\x1f\n" +
 	"\vworkshop_id\x18\x01 \x01(\x03R\n" +
 	"workshopId\x121\n" +
@@ -13334,13 +13350,15 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\x06search\x18\x04 \x01(\tR\x06search\x12\x12\n" +
 	"\x04page\x18\x05 \x01(\x05R\x04page\x12\x1b\n" +
 	"\tpage_size\x18\x06 \x01(\x05R\bpageSize\x12\x17\n" +
-	"\auser_id\x18\a \x01(\x03R\x06userId\"b\n" +
+	"\auser_id\x18\a \x01(\x03R\x06userId\x12\x15\n" +
+	"\x06org_id\x18\b \x01(\tR\x05orgId\"b\n" +
 	"\x18ListRepairOrdersResponse\x120\n" +
 	"\x06orders\x18\x01 \x03(\v2\x18.workshop.v1.RepairOrderR\x06orders\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"3\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"J\n" +
 	"\x10GetKanbanRequest\x12\x1f\n" +
 	"\vworkshop_id\x18\x01 \x01(\x03R\n" +
-	"workshopId\"\x90\x01\n" +
+	"workshopId\x12\x15\n" +
+	"\x06org_id\x18\x02 \x01(\tR\x05orgId\"\x90\x01\n" +
 	"\x11GetKanbanResponse\x123\n" +
 	"\acolumns\x18\x01 \x03(\v2\x19.workshop.v1.KanbanColumnR\acolumns\x12!\n" +
 	"\ftotal_orders\x18\x02 \x01(\x05R\vtotalOrders\x12#\n" +
