@@ -3694,6 +3694,14 @@ message DealContextBundle {
   // OPTIONAL pre-call AI-chat turns (Plan 06 populates; empty when the
   // deal→AI-session link does not resolve).
   repeated AiChatTurn ai_chat = 12;
+
+  // True when a заказ-наряд (work order) exists for this deal — i.e. the client
+  // PHYSICALLY came to the shop. Derived server-side from cg_crm signals set when
+  // new_order links a ЗН into the deal (external_url present, or finance_* custom
+  // fields). The judge uses this to stop guessing whether the client visited and
+  // to frame advice around the on-site stage (post-visit price objection / follow
+  // up after the visit) rather than "fix a visit date".
+  bool has_work_order = 13;
 }
 
 // DealStageTransition — one stage move (mirror DealStageHistoryProto shape, with

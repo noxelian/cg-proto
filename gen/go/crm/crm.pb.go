@@ -24705,7 +24705,14 @@ type DealContextBundle struct {
 	Messages []*DealMessage `protobuf:"bytes,11,rep,name=messages,proto3" json:"messages,omitempty"`
 	// OPTIONAL pre-call AI-chat turns (Plan 06 populates; empty when the
 	// deal→AI-session link does not resolve).
-	AiChat        []*AiChatTurn `protobuf:"bytes,12,rep,name=ai_chat,json=aiChat,proto3" json:"ai_chat,omitempty"`
+	AiChat []*AiChatTurn `protobuf:"bytes,12,rep,name=ai_chat,json=aiChat,proto3" json:"ai_chat,omitempty"`
+	// True when a заказ-наряд (work order) exists for this deal — i.e. the client
+	// PHYSICALLY came to the shop. Derived server-side from cg_crm signals set when
+	// new_order links a ЗН into the deal (external_url present, or finance_* custom
+	// fields). The judge uses this to stop guessing whether the client visited and
+	// to frame advice around the on-site stage (post-visit price objection / follow
+	// up after the visit) rather than "fix a visit date".
+	HasWorkOrder  bool `protobuf:"varint,13,opt,name=has_work_order,json=hasWorkOrder,proto3" json:"has_work_order,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -24822,6 +24829,13 @@ func (x *DealContextBundle) GetAiChat() []*AiChatTurn {
 		return x.AiChat
 	}
 	return nil
+}
+
+func (x *DealContextBundle) GetHasWorkOrder() bool {
+	if x != nil {
+		return x.HasWorkOrder
+	}
+	return false
 }
 
 // DealStageTransition — one stage move (mirror DealStageHistoryProto shape, with
@@ -27120,7 +27134,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\acall_id\x18\x02 \x01(\tR\x06callId\"Q\n" +
 	"\x1cGetDealContextBundleResponse\x121\n" +
-	"\x06bundle\x18\x01 \x01(\v2\x19.crm.v1.DealContextBundleR\x06bundle\"\xe4\x04\n" +
+	"\x06bundle\x18\x01 \x01(\v2\x19.crm.v1.DealContextBundleR\x06bundle\"\x8a\x05\n" +
 	"\x11DealContextBundle\x12\x19\n" +
 	"\bhas_deal\x18\x01 \x01(\bR\ahasDeal\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12'\n" +
@@ -27134,7 +27148,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\avehicle\x18\n" +
 	" \x01(\v2\x13.crm.v1.DealVehicleR\avehicle\x12/\n" +
 	"\bmessages\x18\v \x03(\v2\x13.crm.v1.DealMessageR\bmessages\x12+\n" +
-	"\aai_chat\x18\f \x03(\v2\x12.crm.v1.AiChatTurnR\x06aiChat\"\xe0\x01\n" +
+	"\aai_chat\x18\f \x03(\v2\x12.crm.v1.AiChatTurnR\x06aiChat\x12$\n" +
+	"\x0ehas_work_order\x18\r \x01(\bR\fhasWorkOrder\"\xe0\x01\n" +
 	"\x13DealStageTransition\x12\"\n" +
 	"\rfrom_stage_id\x18\x01 \x01(\tR\vfromStageId\x12&\n" +
 	"\x0ffrom_stage_name\x18\x02 \x01(\tR\rfromStageName\x12\x1e\n" +
