@@ -733,6 +733,7 @@ message ListRepairOrdersRequest {
   int32 page = 5;
   int32 page_size = 6;
   int64 user_id = 7;
+  string org_id = 8;
 }
 
 message ListRepairOrdersResponse {
@@ -742,6 +743,7 @@ message ListRepairOrdersResponse {
 
 message GetKanbanRequest {
   int64 workshop_id = 1;
+  string org_id = 2;
 }
 
 message GetKanbanResponse {
