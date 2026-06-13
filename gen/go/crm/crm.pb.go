@@ -12052,10 +12052,12 @@ type StalledDealProto struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DealId        string                 `protobuf:"bytes,1,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
 	StageId       string                 `protobuf:"bytes,2,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
-	AgentId       int64                  `protobuf:"varint,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
+	AgentId       int64                  `protobuf:"varint,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"` // 0 = unassigned (no owner)
 	AgeSeconds    int64                  `protobuf:"varint,4,opt,name=age_seconds,json=ageSeconds,proto3" json:"age_seconds,omitempty"`
-	Reason        string                 `protobuf:"bytes,5,opt,name=reason,proto3" json:"reason,omitempty"`                              // "time_in_stage" | "no_activity"
+	Reason        string                 `protobuf:"bytes,5,opt,name=reason,proto3" json:"reason,omitempty"`                              // "time_in_stage" | "no_activity" | "" when not stalled
 	NoNextStep    bool                   `protobuf:"varint,6,opt,name=no_next_step,json=noNextStep,proto3" json:"no_next_step,omitempty"` // true = no active (pending) task scheduled
+	Title         string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`                                // deal title, for the drill-down list (UAT#2 #5)
+	IsStalled     bool                   `protobuf:"varint,8,opt,name=is_stalled,json=isStalled,proto3" json:"is_stalled,omitempty"`      // true = past stall threshold; false = open-in-cell only (UAT#2 #3)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -12128,6 +12130,20 @@ func (x *StalledDealProto) GetReason() string {
 func (x *StalledDealProto) GetNoNextStep() bool {
 	if x != nil {
 		return x.NoNextStep
+	}
+	return false
+}
+
+func (x *StalledDealProto) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *StalledDealProto) GetIsStalled() bool {
+	if x != nil {
+		return x.IsStalled
 	}
 	return false
 }
@@ -26405,7 +26421,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"pipelineId\x127\n" +
 	"\tdate_from\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\bdateFrom\x123\n" +
 	"\adate_to\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x06dateTo\x12\x17\n" +
-	"\auser_id\x18\x05 \x01(\x03R\x06userId\"\xbc\x01\n" +
+	"\auser_id\x18\x05 \x01(\x03R\x06userId\"\xf1\x01\n" +
 	"\x10StalledDealProto\x12\x17\n" +
 	"\adeal_id\x18\x01 \x01(\tR\x06dealId\x12\x19\n" +
 	"\bstage_id\x18\x02 \x01(\tR\astageId\x12\x19\n" +
@@ -26414,7 +26430,10 @@ const file_crm_crm_proto_rawDesc = "" +
 	"ageSeconds\x12\x16\n" +
 	"\x06reason\x18\x05 \x01(\tR\x06reason\x12 \n" +
 	"\fno_next_step\x18\x06 \x01(\bR\n" +
-	"noNextStep\"I\n" +
+	"noNextStep\x12\x14\n" +
+	"\x05title\x18\a \x01(\tR\x05title\x12\x1d\n" +
+	"\n" +
+	"is_stalled\x18\b \x01(\bR\tisStalled\"I\n" +
 	"\x17GetStalledDealsResponse\x12.\n" +
 	"\x05deals\x18\x01 \x03(\v2\x18.crm.v1.StalledDealProtoR\x05deals\"\xec\x01\n" +
 	"\x19GetFirstContactSLARequest\x12'\n" +

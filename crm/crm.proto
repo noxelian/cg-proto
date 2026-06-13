@@ -2098,10 +2098,12 @@ message GetStalledDealsRequest {
 message StalledDealProto {
   string deal_id      = 1;
   string stage_id     = 2;
-  int64  agent_id     = 3;
+  int64  agent_id     = 3; // 0 = unassigned (no owner)
   int64  age_seconds  = 4;
-  string reason       = 5; // "time_in_stage" | "no_activity"
+  string reason       = 5; // "time_in_stage" | "no_activity" | "" when not stalled
   bool   no_next_step = 6; // true = no active (pending) task scheduled
+  string title        = 7; // deal title, for the drill-down list (UAT#2 #5)
+  bool   is_stalled   = 8; // true = past stall threshold; false = open-in-cell only (UAT#2 #3)
 }
 
 message GetStalledDealsResponse {
