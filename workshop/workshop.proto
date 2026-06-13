@@ -315,6 +315,10 @@ message RepairOrder {
   int32 works_count = 47;  // total car_works rows
   int32 works_done  = 48;  // car_works with is_done = true
   double total_hours = 49; // SUM(car_works.hour_rate) — normo-hours (н/ч)
+  // Enriched field for the kanban board: comma-separated unique names of the
+  // masters assigned to this order's car_works (STRING_AGG, "" if none). Lets
+  // the foreman see who is on each order without opening the card.
+  string assigned_master_names = 50;
 }
 
 message MasterSummary {

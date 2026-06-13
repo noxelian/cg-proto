@@ -852,11 +852,15 @@ type RepairOrder struct {
 	MaterialsBudget int64 `protobuf:"varint,46,opt,name=materials_budget,json=materialsBudget,proto3" json:"materials_budget,omitempty"`
 	// Car-work progress aggregates — populated on the kanban board so the
 	// master-receptionist can read order progress without opening the card.
-	WorksCount    int32   `protobuf:"varint,47,opt,name=works_count,json=worksCount,proto3" json:"works_count,omitempty"`  // total car_works rows
-	WorksDone     int32   `protobuf:"varint,48,opt,name=works_done,json=worksDone,proto3" json:"works_done,omitempty"`     // car_works with is_done = true
-	TotalHours    float64 `protobuf:"fixed64,49,opt,name=total_hours,json=totalHours,proto3" json:"total_hours,omitempty"` // SUM(car_works.hour_rate) — normo-hours (н/ч)
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	WorksCount int32   `protobuf:"varint,47,opt,name=works_count,json=worksCount,proto3" json:"works_count,omitempty"`  // total car_works rows
+	WorksDone  int32   `protobuf:"varint,48,opt,name=works_done,json=worksDone,proto3" json:"works_done,omitempty"`     // car_works with is_done = true
+	TotalHours float64 `protobuf:"fixed64,49,opt,name=total_hours,json=totalHours,proto3" json:"total_hours,omitempty"` // SUM(car_works.hour_rate) — normo-hours (н/ч)
+	// Enriched field for the kanban board: comma-separated unique names of the
+	// masters assigned to this order's car_works (STRING_AGG, "" if none). Lets
+	// the foreman see who is on each order without opening the card.
+	AssignedMasterNames string `protobuf:"bytes,50,opt,name=assigned_master_names,json=assignedMasterNames,proto3" json:"assigned_master_names,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *RepairOrder) Reset() {
@@ -1216,6 +1220,13 @@ func (x *RepairOrder) GetTotalHours() float64 {
 		return x.TotalHours
 	}
 	return 0
+}
+
+func (x *RepairOrder) GetAssignedMasterNames() string {
+	if x != nil {
+		return x.AssignedMasterNames
+	}
+	return ""
 }
 
 type MasterSummary struct {
@@ -12875,7 +12886,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\vlegacy_name\x18\n" +
 	" \x01(\tH\x00R\n" +
 	"legacyName\x88\x01\x01B\x0e\n" +
-	"\f_legacy_name\"\x9a\x0e\n" +
+	"\f_legacy_name\"\xce\x0e\n" +
 	"\vRepairOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vworkshop_id\x18\x02 \x01(\x03R\n" +
@@ -12941,7 +12952,8 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\n" +
 	"works_done\x180 \x01(\x05R\tworksDone\x12\x1f\n" +
 	"\vtotal_hours\x181 \x01(\x01R\n" +
-	"totalHoursB\x12\n" +
+	"totalHours\x122\n" +
+	"\x15assigned_master_names\x182 \x01(\tR\x13assignedMasterNamesB\x12\n" +
 	"\x10_parent_order_idJ\x04\b(\x10)J\x04\b)\x10*R\x10parts_request_idR\fparts_bid_id\"`\n" +
 	"\rMasterSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +

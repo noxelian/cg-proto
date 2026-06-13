@@ -157,7 +157,10 @@ type Request struct {
 	RepairOrderId *int64  `protobuf:"varint,20,opt,name=repair_order_id,json=repairOrderId,proto3,oneof" json:"repair_order_id,omitempty"` // Linked repair order in cg-workshop
 	OrgId         *string `protobuf:"bytes,21,opt,name=org_id,json=orgId,proto3,oneof" json:"org_id,omitempty"`                            // Organization UUID creating the request
 	// Enriched field: set when listing with organization_id context
-	IsNew         bool `protobuf:"varint,22,opt,name=is_new,json=isNew,proto3" json:"is_new,omitempty"` // true if this request has not been viewed by the requesting organization
+	IsNew bool `protobuf:"varint,22,opt,name=is_new,json=isNew,proto3" json:"is_new,omitempty"` // true if this request has not been viewed by the requesting organization
+	// Enriched field: number of bids (откликов) on this request. Populated by the
+	// list/get queries via a LATERAL count subquery (no row multiplication).
+	BidsCount     int32 `protobuf:"varint,23,opt,name=bids_count,json=bidsCount,proto3" json:"bids_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -344,6 +347,13 @@ func (x *Request) GetIsNew() bool {
 		return x.IsNew
 	}
 	return false
+}
+
+func (x *Request) GetBidsCount() int32 {
+	if x != nil {
+		return x.BidsCount
+	}
+	return 0
 }
 
 // CreateRequest
@@ -2318,7 +2328,7 @@ var File_services_request_request_proto protoreflect.FileDescriptor
 
 const file_services_request_request_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/request/request.proto\x12\x13services.request.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe2\x06\n" +
+	"\x1eservices/request/request.proto\x12\x13services.request.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x81\a\n" +
 	"\aRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x124\n" +
 	"\x04type\x18\x02 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12:\n" +
@@ -2345,7 +2355,9 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\fpublished_at\x18\x13 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\vpublishedAt\x88\x01\x01\x12+\n" +
 	"\x0frepair_order_id\x18\x14 \x01(\x03H\x02R\rrepairOrderId\x88\x01\x01\x12\x1a\n" +
 	"\x06org_id\x18\x15 \x01(\tH\x03R\x05orgId\x88\x01\x01\x12\x15\n" +
-	"\x06is_new\x18\x16 \x01(\bR\x05isNewB\x14\n" +
+	"\x06is_new\x18\x16 \x01(\bR\x05isNew\x12\x1d\n" +
+	"\n" +
+	"bids_count\x18\x17 \x01(\x05R\tbidsCountB\x14\n" +
 	"\x12_car_generation_idB\x0f\n" +
 	"\r_published_atB\x12\n" +
 	"\x10_repair_order_idB\t\n" +
