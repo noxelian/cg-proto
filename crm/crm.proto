@@ -204,6 +204,13 @@ service CRMService {
   rpc GetCallOutcomeLinkage(GetCallOutcomeLinkageRequest)   returns (GetCallOutcomeLinkageResponse);
   rpc GetAttributionCoverage(GetAttributionCoverageRequest) returns (GetAttributionCoverageResponse);
   rpc ListAgents(ListAgentsRequest)                         returns (ListAgentsResponse);
+  // ListCallAnalyses returns per-call analysis rows (scores, evidence, summary,
+  // coaching) for a period/agent/pipeline — the list-by-period read path the
+  // dashboard needs (DASH-02 call card, DASH-03 score↔outcome). User-facing /
+  // head_of_sales-scoped: the cg-crm handler MUST be auth'd and NOT registered
+  // in SkipMethods (evidence quotes carry transcript PII, T-14-07) — this is a
+  // different auth posture than the service-internal GetCallAnalysis (worker).
+  rpc ListCallAnalyses(ListCallAnalysesRequest)             returns (ListCallAnalysesResponse);
 
   // Notes RPCs
   rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse);
@@ -3317,6 +3324,27 @@ message GetCallAnalysisRequest {
 
 message GetCallAnalysisResponse {
   TelephonyCallAnalysis analysis = 1;
+}
+
+// ListCallAnalysesRequest mirrors GetStalledDealsRequest (org/pipeline/period/
+// agent filter) plus pagination. user_id = 0 means "all agents". Backs the
+// dashboard list-by-period read path (DASH-02 / DASH-03).
+message ListCallAnalysesRequest {
+  string organization_id              = 1;
+  string pipeline_id                  = 2;
+  google.protobuf.Timestamp date_from = 3;
+  google.protobuf.Timestamp date_to   = 4;
+  int64  user_id                      = 5; // 0 = all agents
+  int32  page                         = 6; // 1-based; 0 treated as 1
+  int32  page_size                    = 7; // 0 = server default
+}
+
+// ListCallAnalysesResponse reuses the existing TelephonyCallAnalysis message
+// verbatim (no new dimension/checklist/summary shapes). total = full count
+// across all pages for the given filter.
+message ListCallAnalysesResponse {
+  repeated TelephonyCallAnalysis analyses = 1;
+  int32 total                             = 2;
 }
 
 // ResolveWAChannelUsers — request/response for the scoped-broadcast RPC.

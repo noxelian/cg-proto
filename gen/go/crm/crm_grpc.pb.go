@@ -103,6 +103,7 @@ const (
 	CRMService_GetCallOutcomeLinkage_FullMethodName              = "/crm.v1.CRMService/GetCallOutcomeLinkage"
 	CRMService_GetAttributionCoverage_FullMethodName             = "/crm.v1.CRMService/GetAttributionCoverage"
 	CRMService_ListAgents_FullMethodName                         = "/crm.v1.CRMService/ListAgents"
+	CRMService_ListCallAnalyses_FullMethodName                   = "/crm.v1.CRMService/ListCallAnalyses"
 	CRMService_CreateNote_FullMethodName                         = "/crm.v1.CRMService/CreateNote"
 	CRMService_UpdateNote_FullMethodName                         = "/crm.v1.CRMService/UpdateNote"
 	CRMService_ListNotes_FullMethodName                          = "/crm.v1.CRMService/ListNotes"
@@ -367,6 +368,13 @@ type CRMServiceClient interface {
 	GetCallOutcomeLinkage(ctx context.Context, in *GetCallOutcomeLinkageRequest, opts ...grpc.CallOption) (*GetCallOutcomeLinkageResponse, error)
 	GetAttributionCoverage(ctx context.Context, in *GetAttributionCoverageRequest, opts ...grpc.CallOption) (*GetAttributionCoverageResponse, error)
 	ListAgents(ctx context.Context, in *ListAgentsRequest, opts ...grpc.CallOption) (*ListAgentsResponse, error)
+	// ListCallAnalyses returns per-call analysis rows (scores, evidence, summary,
+	// coaching) for a period/agent/pipeline — the list-by-period read path the
+	// dashboard needs (DASH-02 call card, DASH-03 score↔outcome). User-facing /
+	// head_of_sales-scoped: the cg-crm handler MUST be auth'd and NOT registered
+	// in SkipMethods (evidence quotes carry transcript PII, T-14-07) — this is a
+	// different auth posture than the service-internal GetCallAnalysis (worker).
+	ListCallAnalyses(ctx context.Context, in *ListCallAnalysesRequest, opts ...grpc.CallOption) (*ListCallAnalysesResponse, error)
 	// Notes RPCs
 	CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error)
 	UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error)
@@ -1391,6 +1399,16 @@ func (c *cRMServiceClient) ListAgents(ctx context.Context, in *ListAgentsRequest
 	return out, nil
 }
 
+func (c *cRMServiceClient) ListCallAnalyses(ctx context.Context, in *ListCallAnalysesRequest, opts ...grpc.CallOption) (*ListCallAnalysesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCallAnalysesResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListCallAnalyses_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateNoteResponse)
@@ -2256,6 +2274,13 @@ type CRMServiceServer interface {
 	GetCallOutcomeLinkage(context.Context, *GetCallOutcomeLinkageRequest) (*GetCallOutcomeLinkageResponse, error)
 	GetAttributionCoverage(context.Context, *GetAttributionCoverageRequest) (*GetAttributionCoverageResponse, error)
 	ListAgents(context.Context, *ListAgentsRequest) (*ListAgentsResponse, error)
+	// ListCallAnalyses returns per-call analysis rows (scores, evidence, summary,
+	// coaching) for a period/agent/pipeline — the list-by-period read path the
+	// dashboard needs (DASH-02 call card, DASH-03 score↔outcome). User-facing /
+	// head_of_sales-scoped: the cg-crm handler MUST be auth'd and NOT registered
+	// in SkipMethods (evidence quotes carry transcript PII, T-14-07) — this is a
+	// different auth posture than the service-internal GetCallAnalysis (worker).
+	ListCallAnalyses(context.Context, *ListCallAnalysesRequest) (*ListCallAnalysesResponse, error)
 	// Notes RPCs
 	CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error)
 	UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error)
@@ -2679,6 +2704,9 @@ func (UnimplementedCRMServiceServer) GetAttributionCoverage(context.Context, *Ge
 }
 func (UnimplementedCRMServiceServer) ListAgents(context.Context, *ListAgentsRequest) (*ListAgentsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListAgents not implemented")
+}
+func (UnimplementedCRMServiceServer) ListCallAnalyses(context.Context, *ListCallAnalysesRequest) (*ListCallAnalysesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListCallAnalyses not implemented")
 }
 func (UnimplementedCRMServiceServer) CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateNote not implemented")
@@ -4414,6 +4442,24 @@ func _CRMService_ListAgents_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_ListCallAnalyses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCallAnalysesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListCallAnalyses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListCallAnalyses_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListCallAnalyses(ctx, req.(*ListCallAnalysesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_CreateNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateNoteRequest)
 	if err := dec(in); err != nil {
@@ -5962,6 +6008,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListAgents",
 			Handler:    _CRMService_ListAgents_Handler,
+		},
+		{
+			MethodName: "ListCallAnalyses",
+			Handler:    _CRMService_ListCallAnalyses_Handler,
 		},
 		{
 			MethodName: "CreateNote",
