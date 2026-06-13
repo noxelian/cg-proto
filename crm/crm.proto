@@ -3303,6 +3303,12 @@ message TelephonyCallAnalysis {
   string rubric_version  = 15; // NON-NULL
   string created_at      = 16;
   CallAnalysisSummary summary = 17; // concise factual recap (Phase 13 follow-up)
+  // Server-side-resolved linkage (cg-crm resolves these at upsert time via the
+  // call→deal phone match; columns already exist on telephony_call_analysis).
+  // Exposed for the «ИИ-РОП» dashboard call card (Phase 14, DASH-02/D-10 deal
+  // link + agent attribution). Additive — empty/0 when unresolved.
+  string deal_id        = 18;
+  int64  agent_user_id  = 19;
 }
 
 // UpsertTelephonyCallAnalysisRequest — the worker sends the full result;

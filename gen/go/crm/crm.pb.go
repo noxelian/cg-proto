@@ -21624,8 +21624,14 @@ type TelephonyCallAnalysis struct {
 	RubricVersion   string                       `protobuf:"bytes,15,opt,name=rubric_version,json=rubricVersion,proto3" json:"rubric_version,omitempty"`           // NON-NULL
 	CreatedAt       string                       `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	Summary         *CallAnalysisSummary         `protobuf:"bytes,17,opt,name=summary,proto3" json:"summary,omitempty"` // concise factual recap (Phase 13 follow-up)
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Server-side-resolved linkage (cg-crm resolves these at upsert time via the
+	// call→deal phone match; columns already exist on telephony_call_analysis).
+	// Exposed for the «ИИ-РОП» dashboard call card (Phase 14, DASH-02/D-10 deal
+	// link + agent attribution). Additive — empty/0 when unresolved.
+	DealId        string `protobuf:"bytes,18,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
+	AgentUserId   int64  `protobuf:"varint,19,opt,name=agent_user_id,json=agentUserId,proto3" json:"agent_user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *TelephonyCallAnalysis) Reset() {
@@ -21775,6 +21781,20 @@ func (x *TelephonyCallAnalysis) GetSummary() *CallAnalysisSummary {
 		return x.Summary
 	}
 	return nil
+}
+
+func (x *TelephonyCallAnalysis) GetDealId() string {
+	if x != nil {
+		return x.DealId
+	}
+	return ""
+}
+
+func (x *TelephonyCallAnalysis) GetAgentUserId() int64 {
+	if x != nil {
+		return x.AgentUserId
+	}
+	return 0
 }
 
 // UpsertTelephonyCallAnalysisRequest — the worker sends the full result;
@@ -27152,7 +27172,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x13CallAnalysisSummary\x12%\n" +
 	"\x0eclient_request\x18\x01 \x01(\tR\rclientRequest\x12)\n" +
 	"\x10manager_response\x18\x02 \x01(\tR\x0fmanagerResponse\x12#\n" +
-	"\rresult_reason\x18\x03 \x01(\tR\fresultReason\"\xac\x05\n" +
+	"\rresult_reason\x18\x03 \x01(\tR\fresultReason\"\xe9\x05\n" +
 	"\x15TelephonyCallAnalysis\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x17\n" +
@@ -27174,7 +27194,9 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0erubric_version\x18\x0f \x01(\tR\rrubricVersion\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x10 \x01(\tR\tcreatedAt\x125\n" +
-	"\asummary\x18\x11 \x01(\v2\x1b.crm.v1.CallAnalysisSummaryR\asummary\"_\n" +
+	"\asummary\x18\x11 \x01(\v2\x1b.crm.v1.CallAnalysisSummaryR\asummary\x12\x17\n" +
+	"\adeal_id\x18\x12 \x01(\tR\x06dealId\x12\"\n" +
+	"\ragent_user_id\x18\x13 \x01(\x03R\vagentUserId\"_\n" +
 	"\"UpsertTelephonyCallAnalysisRequest\x129\n" +
 	"\banalysis\x18\x01 \x01(\v2\x1d.crm.v1.TelephonyCallAnalysisR\banalysis\"`\n" +
 	"#UpsertTelephonyCallAnalysisResponse\x129\n" +
