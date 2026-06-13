@@ -113,6 +113,10 @@ message Request {
 
   // Enriched field: set when listing with organization_id context
   bool is_new = 22;  // true if this request has not been viewed by the requesting organization
+
+  // Enriched field: number of bids (откликов) on this request. Populated by the
+  // list/get queries via a LATERAL count subquery (no row multiplication).
+  int32 bids_count = 23;
 }
 
 // CreateRequest
