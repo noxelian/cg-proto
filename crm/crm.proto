@@ -2140,6 +2140,9 @@ message GetFirstContactSLAResponse {
   double pct_within        = 6;
   int64  target_minutes    = 7;
   repeated AgentSLAStatProto per_agent = 8;
+  // The actual leads with NO first contact yet (deal_id + title), so the
+  // «ждут первого контакта» tile can drill into the exact list (UAT#3 #E2a/#E2h).
+  repeated StalledDealProto no_contact_leads = 9;
 }
 
 // --- ConversionFunnel (FOUND-07): per-agent milestone counts + derived rates. ---
@@ -3345,6 +3348,10 @@ message ListCallAnalysesRequest {
   int64  user_id                      = 5; // 0 = all agents
   int32  page                         = 6; // 1-based; 0 treated as 1
   int32  page_size                    = 7; // 0 = server default
+  // Optional: restrict to a single deal's calls (resolved by the deal's phone,
+  // since telephony_calls.deal_id is NULL in prod). Backs the in-deal «ИИ-РОП»
+  // tab (UAT#3 #E1).
+  string deal_id                      = 8;
 }
 
 // ListCallAnalysesResponse reuses the existing TelephonyCallAnalysis message
