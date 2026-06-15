@@ -27,6 +27,8 @@ const (
 	AuthService_GetSessions_FullMethodName            = "/users.auth.v1.AuthService/GetSessions"
 	AuthService_DeleteSessionsByUserID_FullMethodName = "/users.auth.v1.AuthService/DeleteSessionsByUserID"
 	AuthService_SelectOrg_FullMethodName              = "/users.auth.v1.AuthService/SelectOrg"
+	AuthService_GetSendCodeRateLimit_FullMethodName   = "/users.auth.v1.AuthService/GetSendCodeRateLimit"
+	AuthService_ResetSendCodeRateLimit_FullMethodName = "/users.auth.v1.AuthService/ResetSendCodeRateLimit"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -54,6 +56,12 @@ type AuthServiceClient interface {
 	// Requires: authenticated JWT with app="partner".
 	// Returns 403 if the caller is not a member of the requested organization.
 	SelectOrg(ctx context.Context, in *SelectOrgRequest, opts ...grpc.CallOption) (*SelectOrgResponse, error)
+	// GetSendCodeRateLimit returns the current SendCode (OTP) rate-limit state
+	// for a phone — admin support tool to inspect why a user can't get a code.
+	GetSendCodeRateLimit(ctx context.Context, in *GetSendCodeRateLimitRequest, opts ...grpc.CallOption) (*GetSendCodeRateLimitResponse, error)
+	// ResetSendCodeRateLimit clears the SendCode rate-limit counters for a phone
+	// (and its per-IP entry if provided) so the user can request a code again.
+	ResetSendCodeRateLimit(ctx context.Context, in *ResetSendCodeRateLimitRequest, opts ...grpc.CallOption) (*ResetSendCodeRateLimitResponse, error)
 }
 
 type authServiceClient struct {
@@ -144,6 +152,26 @@ func (c *authServiceClient) SelectOrg(ctx context.Context, in *SelectOrgRequest,
 	return out, nil
 }
 
+func (c *authServiceClient) GetSendCodeRateLimit(ctx context.Context, in *GetSendCodeRateLimitRequest, opts ...grpc.CallOption) (*GetSendCodeRateLimitResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSendCodeRateLimitResponse)
+	err := c.cc.Invoke(ctx, AuthService_GetSendCodeRateLimit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) ResetSendCodeRateLimit(ctx context.Context, in *ResetSendCodeRateLimitRequest, opts ...grpc.CallOption) (*ResetSendCodeRateLimitResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResetSendCodeRateLimitResponse)
+	err := c.cc.Invoke(ctx, AuthService_ResetSendCodeRateLimit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -169,6 +197,12 @@ type AuthServiceServer interface {
 	// Requires: authenticated JWT with app="partner".
 	// Returns 403 if the caller is not a member of the requested organization.
 	SelectOrg(context.Context, *SelectOrgRequest) (*SelectOrgResponse, error)
+	// GetSendCodeRateLimit returns the current SendCode (OTP) rate-limit state
+	// for a phone — admin support tool to inspect why a user can't get a code.
+	GetSendCodeRateLimit(context.Context, *GetSendCodeRateLimitRequest) (*GetSendCodeRateLimitResponse, error)
+	// ResetSendCodeRateLimit clears the SendCode rate-limit counters for a phone
+	// (and its per-IP entry if provided) so the user can request a code again.
+	ResetSendCodeRateLimit(context.Context, *ResetSendCodeRateLimitRequest) (*ResetSendCodeRateLimitResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -202,6 +236,12 @@ func (UnimplementedAuthServiceServer) DeleteSessionsByUserID(context.Context, *D
 }
 func (UnimplementedAuthServiceServer) SelectOrg(context.Context, *SelectOrgRequest) (*SelectOrgResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SelectOrg not implemented")
+}
+func (UnimplementedAuthServiceServer) GetSendCodeRateLimit(context.Context, *GetSendCodeRateLimitRequest) (*GetSendCodeRateLimitResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSendCodeRateLimit not implemented")
+}
+func (UnimplementedAuthServiceServer) ResetSendCodeRateLimit(context.Context, *ResetSendCodeRateLimitRequest) (*ResetSendCodeRateLimitResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResetSendCodeRateLimit not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -368,6 +408,42 @@ func _AuthService_SelectOrg_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_GetSendCodeRateLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSendCodeRateLimitRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GetSendCodeRateLimit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_GetSendCodeRateLimit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GetSendCodeRateLimit(ctx, req.(*GetSendCodeRateLimitRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_ResetSendCodeRateLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetSendCodeRateLimitRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).ResetSendCodeRateLimit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_ResetSendCodeRateLimit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).ResetSendCodeRateLimit(ctx, req.(*ResetSendCodeRateLimitRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -406,6 +482,14 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SelectOrg",
 			Handler:    _AuthService_SelectOrg_Handler,
+		},
+		{
+			MethodName: "GetSendCodeRateLimit",
+			Handler:    _AuthService_GetSendCodeRateLimit_Handler,
+		},
+		{
+			MethodName: "ResetSendCodeRateLimit",
+			Handler:    _AuthService_ResetSendCodeRateLimit_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

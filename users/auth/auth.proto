@@ -35,6 +35,33 @@ service AuthService {
   // Requires: authenticated JWT with app="partner".
   // Returns 403 if the caller is not a member of the requested organization.
   rpc SelectOrg(SelectOrgRequest) returns (SelectOrgResponse);
+
+  // GetSendCodeRateLimit returns the current SendCode (OTP) rate-limit state
+  // for a phone — admin support tool to inspect why a user can't get a code.
+  rpc GetSendCodeRateLimit(GetSendCodeRateLimitRequest) returns (GetSendCodeRateLimitResponse);
+
+  // ResetSendCodeRateLimit clears the SendCode rate-limit counters for a phone
+  // (and its per-IP entry if provided) so the user can request a code again.
+  rpc ResetSendCodeRateLimit(ResetSendCodeRateLimitRequest) returns (ResetSendCodeRateLimitResponse);
+}
+
+message GetSendCodeRateLimitRequest {
+  string phone = 1;
+}
+
+message GetSendCodeRateLimitResponse {
+  int64 phone_count = 1;       // requests counted in the current window
+  int64 phone_limit = 2;       // max allowed per window (3)
+  int64 window_seconds = 3;    // window length (3600)
+  bool blocked = 4;            // true if phone_count >= phone_limit
+}
+
+message ResetSendCodeRateLimitRequest {
+  string phone = 1;
+}
+
+message ResetSendCodeRateLimitResponse {
+  bool success = 1;
 }
 
 message SendCodeRequest {
