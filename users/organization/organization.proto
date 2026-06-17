@@ -857,6 +857,16 @@ message OrganizationSearchResult {
   // Relevance-match flags from model.CandidateResult, surfaced for badge reuse.
   bool expert_carmake_match = 18;
   bool expert_category_match = 19;
+
+  // Display fields the marketplace catalog UI renders on each card. Sourced from
+  // model.CandidateResult (already hydrated by the filter query) so the public
+  // catalog (gwc /organizations/*) reaches parity with the legacy cg_api
+  // /v2/ads/services response (ava / usr_phone / address / whatsapp_link).
+  string avatar = 20;
+  string phone = 21;
+  string address = 22;
+  string whatsapp_link = 23;
+  string description = 24;
 }
 
 message SearchOrganizationsResponse {
