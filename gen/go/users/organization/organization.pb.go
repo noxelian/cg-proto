@@ -6063,11 +6063,16 @@ type OrganizationSearchResult struct {
 	// model.CandidateResult (already hydrated by the filter query) so the public
 	// catalog (gwc /organizations/*) reaches parity with the legacy cg_api
 	// /v2/ads/services response (ava / usr_phone / address / whatsapp_link).
-	Avatar        string `protobuf:"bytes,20,opt,name=avatar,proto3" json:"avatar,omitempty"`
-	Phone         string `protobuf:"bytes,21,opt,name=phone,proto3" json:"phone,omitempty"`
-	Address       string `protobuf:"bytes,22,opt,name=address,proto3" json:"address,omitempty"`
-	WhatsappLink  string `protobuf:"bytes,23,opt,name=whatsapp_link,json=whatsappLink,proto3" json:"whatsapp_link,omitempty"`
-	Description   string `protobuf:"bytes,24,opt,name=description,proto3" json:"description,omitempty"`
+	Avatar       string `protobuf:"bytes,20,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	Phone        string `protobuf:"bytes,21,opt,name=phone,proto3" json:"phone,omitempty"`
+	Address      string `protobuf:"bytes,22,opt,name=address,proto3" json:"address,omitempty"`
+	WhatsappLink string `protobuf:"bytes,23,opt,name=whatsapp_link,json=whatsappLink,proto3" json:"whatsapp_link,omitempty"`
+	Description  string `protobuf:"bytes,24,opt,name=description,proto3" json:"description,omitempty"`
+	// legacy_id is the original cg_api.ad numeric id. UUID `id` is the canonical
+	// identifier, but the miniapp carries legacy_id as a transitional bridge so
+	// flows still on the legacy API (chat sAdId, order-create, reviews) keep
+	// working while list+detail move to gwc. Zero when not a migrated org.
+	LegacyId      *int64 `protobuf:"varint,25,opt,name=legacy_id,json=legacyId,proto3,oneof" json:"legacy_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6268,6 +6273,13 @@ func (x *OrganizationSearchResult) GetDescription() string {
 		return x.Description
 	}
 	return ""
+}
+
+func (x *OrganizationSearchResult) GetLegacyId() int64 {
+	if x != nil && x.LegacyId != nil {
+		return *x.LegacyId
+	}
+	return 0
 }
 
 type SearchOrganizationsResponse struct {
@@ -7624,7 +7636,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x04page\x18\t \x01(\x05R\x04page\x12\x1b\n" +
 	"\tpage_size\x18\n" +
 	" \x01(\x05R\bpageSize\x12B\n" +
-	"\asort_by\x18\v \x01(\x0e2).users.organization.v1.OrganizationSortByR\x06sortBy\"\xf2\x06\n" +
+	"\asort_by\x18\v \x01(\x0e2).users.organization.v1.OrganizationSortByR\x06sortBy\"\xa2\a\n" +
 	"\x18OrganizationSearchResult\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12;\n" +
@@ -7654,10 +7666,13 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x05phone\x18\x15 \x01(\tR\x05phone\x12\x18\n" +
 	"\aaddress\x18\x16 \x01(\tR\aaddress\x12#\n" +
 	"\rwhatsapp_link\x18\x17 \x01(\tR\fwhatsappLink\x12 \n" +
-	"\vdescription\x18\x18 \x01(\tR\vdescriptionB\v\n" +
+	"\vdescription\x18\x18 \x01(\tR\vdescription\x12 \n" +
+	"\tlegacy_id\x18\x19 \x01(\x03H\x02R\blegacyId\x88\x01\x01B\v\n" +
 	"\t_latitudeB\f\n" +
 	"\n" +
-	"_longitude\"\xe3\x01\n" +
+	"_longitudeB\f\n" +
+	"\n" +
+	"_legacy_id\"\xe3\x01\n" +
 	"\x1bSearchOrganizationsResponse\x12U\n" +
 	"\rorganizations\x18\x01 \x03(\v2/.users.organization.v1.OrganizationSearchResultR\rorganizations\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\x12L\n" +

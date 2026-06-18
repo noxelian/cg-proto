@@ -867,6 +867,12 @@ message OrganizationSearchResult {
   string address = 22;
   string whatsapp_link = 23;
   string description = 24;
+
+  // legacy_id is the original cg_api.ad numeric id. UUID `id` is the canonical
+  // identifier, but the miniapp carries legacy_id as a transitional bridge so
+  // flows still on the legacy API (chat sAdId, order-create, reviews) keep
+  // working while list+detail move to gwc. Zero when not a migrated org.
+  optional int64 legacy_id = 25;
 }
 
 message SearchOrganizationsResponse {
