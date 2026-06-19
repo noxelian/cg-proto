@@ -1,0 +1,151 @@
+syntax = "proto3";
+
+package signing.signing.v1;
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/signing/signing;signingv1";
+
+import "google/protobuf/timestamp.proto";
+
+// SigningService — reusable АВР (work-completion act) / document signing service.
+// Any caller (cg-workshop repair_order, cg-services request, …) submits a
+// already-rendered document (DOCX/PDF) plus the signer identity; the service
+// drives the SMS-code + ЭЦП (Documentolog) signing lifecycle and stores the
+// signed result. Document rendering is the caller's job (e.g. via cg-agreement)
+// so this service stays decoupled from each document's template.
+service SigningService {
+  // 1. Create a signing session: stores the document, uploads it to the EDS
+  //    provider, returns the session in INITIATED state.
+  rpc InitiateSigningRequest(InitiateSigningRequestRequest) returns (InitiateSigningRequestResponse);
+
+  // 2. Send the SMS verification code to the signer (EDS provider).
+  rpc RequestVerificationCode(RequestVerificationCodeRequest) returns (RequestVerificationCodeResponse);
+
+  // 3. Verify the SMS code and sign the document with ЭЦП.
+  rpc VerifyAndSign(VerifyAndSignRequest) returns (VerifyAndSignResponse);
+
+  // 4. Read a signing session (status polling).
+  rpc GetSigningSession(GetSigningSessionRequest) returns (GetSigningSessionResponse);
+
+  // 5. Download the signed (EDS-wrapped) document.
+  rpc DownloadSignedDocument(DownloadSignedDocumentRequest) returns (DownloadSignedDocumentResponse);
+
+  // 6. Cancel an unsigned session.
+  rpc CancelSigningSession(CancelSigningSessionRequest) returns (CancelSigningSessionResponse);
+
+  // Lookup the latest session for a (document_type, document_reference_id) —
+  // lets a caller find an existing signing session without storing the id.
+  rpc GetSessionByDocument(GetSessionByDocumentRequest) returns (GetSessionByDocumentResponse);
+}
+
+enum SignableDocumentType {
+  SIGNABLE_DOCUMENT_TYPE_UNSPECIFIED = 0;
+  SIGNABLE_DOCUMENT_TYPE_REPAIR_ORDER_AVR = 1;  // АВР for cg-workshop repair_order
+  SIGNABLE_DOCUMENT_TYPE_REQUEST_AVR = 2;        // АВР for cg-services request
+}
+
+enum SigningSessionStatus {
+  SIGNING_SESSION_STATUS_UNSPECIFIED = 0;
+  SIGNING_SESSION_STATUS_INITIATED = 1;  // created, document uploaded to EDS
+  SIGNING_SESSION_STATUS_SMS_SENT = 2;   // verification code sent
+  SIGNING_SESSION_STATUS_SIGNED = 3;     // signed with ЭЦП
+  SIGNING_SESSION_STATUS_CANCELLED = 4;
+  SIGNING_SESSION_STATUS_EXPIRED = 5;    // code TTL elapsed
+}
+
+message SigningSession {
+  string id = 1;  // UUID
+  SignableDocumentType document_type = 2;
+  string document_reference_id = 3;  // repair_order_id / request_id (caller's space)
+  string organization_id = 4;
+
+  // Signer identity (caller is responsible for verifying it)
+  string signer_phone = 5;
+  string signer_iin = 6;        // ИИН — required for ЭЦП
+  string signer_full_name = 7;  // "Фамилия Имя Отчество"
+
+  // EDS provider (Documentolog) handles
+  string file_id = 8;
+  string file_name = 9;
+  string doc24_id = 10;
+
+  SigningSessionStatus status = 11;
+  int32 verification_attempts = 12;
+  int32 max_verification_attempts = 13;
+
+  google.protobuf.Timestamp created_at = 14;
+  google.protobuf.Timestamp code_sent_at = 15;
+  google.protobuf.Timestamp code_expires_at = 16;
+  google.protobuf.Timestamp signed_at = 17;
+  google.protobuf.Timestamp cancelled_at = 18;
+  google.protobuf.Timestamp updated_at = 19;
+}
+
+message InitiateSigningRequestRequest {
+  SignableDocumentType document_type = 1;
+  string document_reference_id = 2;
+  string organization_id = 3;
+
+  string signer_phone = 4;
+  string signer_iin = 5;
+  string signer_full_name = 6;
+
+  bytes document = 7;          // rendered DOCX/PDF to sign
+  string document_filename = 8;
+  string document_title = 9;   // e.g. "АВР ЗН-12345"
+}
+
+message InitiateSigningRequestResponse {
+  SigningSession session = 1;
+}
+
+message RequestVerificationCodeRequest {
+  string session_id = 1;
+}
+
+message RequestVerificationCodeResponse {
+  SigningSession session = 1;
+}
+
+message VerifyAndSignRequest {
+  string session_id = 1;
+  string verification_code = 2;
+}
+
+message VerifyAndSignResponse {
+  SigningSession session = 1;
+}
+
+message GetSigningSessionRequest {
+  string session_id = 1;
+}
+
+message GetSigningSessionResponse {
+  SigningSession session = 1;
+}
+
+message GetSessionByDocumentRequest {
+  SignableDocumentType document_type = 1;
+  string document_reference_id = 2;
+}
+
+message GetSessionByDocumentResponse {
+  SigningSession session = 1;  // empty/unset id if none
+}
+
+message DownloadSignedDocumentRequest {
+  string session_id = 1;
+}
+
+message DownloadSignedDocumentResponse {
+  bytes document = 1;       // EDS-signed document bytes
+  string filename = 2;
+  string content_type = 3;
+}
+
+message CancelSigningSessionRequest {
+  string session_id = 1;
+}
+
+message CancelSigningSessionResponse {
+  SigningSession session = 1;
+}
