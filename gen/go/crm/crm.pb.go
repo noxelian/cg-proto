@@ -15261,6 +15261,7 @@ type CtwaConversionItem struct {
 	SentAt        *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=sent_at,json=sentAt,proto3" json:"sent_at,omitempty"`
 	CtwaAdId      string                 `protobuf:"bytes,9,opt,name=ctwa_ad_id,json=ctwaAdId,proto3" json:"ctwa_ad_id,omitempty"`
 	CapturedAt    *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=captured_at,json=capturedAt,proto3" json:"captured_at,omitempty"`
+	ErrorDetail   string                 `protobuf:"bytes,11,opt,name=error_detail,json=errorDetail,proto3" json:"error_detail,omitempty"` // populated for status=failed: Meta API error body / send error (empty on success)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -15363,6 +15364,13 @@ func (x *CtwaConversionItem) GetCapturedAt() *timestamppb.Timestamp {
 		return x.CapturedAt
 	}
 	return nil
+}
+
+func (x *CtwaConversionItem) GetErrorDetail() string {
+	if x != nil {
+		return x.ErrorDetail
+	}
+	return ""
 }
 
 type CtwaConversionsSummary struct {
@@ -27289,7 +27297,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\adate_to\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x06dateTo\x12\x16\n" +
 	"\x06search\x18\x06 \x01(\tR\x06search\x12\x12\n" +
 	"\x04page\x18\a \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\b \x01(\x05R\bpageSize\"\xfa\x02\n" +
+	"\tpage_size\x18\b \x01(\x05R\bpageSize\"\x9d\x03\n" +
 	"\x12CtwaConversionItem\x12\x17\n" +
 	"\adeal_id\x18\x01 \x01(\tR\x06dealId\x12\x1d\n" +
 	"\n" +
@@ -27306,7 +27314,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"ctwa_ad_id\x18\t \x01(\tR\bctwaAdId\x12;\n" +
 	"\vcaptured_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"capturedAt\"\xc3\x01\n" +
+	"capturedAt\x12!\n" +
+	"\ferror_detail\x18\v \x01(\tR\verrorDetail\"\xc3\x01\n" +
 	"\x16CtwaConversionsSummary\x12\x14\n" +
 	"\x05total\x18\x01 \x01(\x03R\x05total\x12\x12\n" +
 	"\x04sent\x18\x02 \x01(\x03R\x04sent\x12\x16\n" +
