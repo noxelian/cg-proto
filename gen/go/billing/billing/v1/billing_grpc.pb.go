@@ -30,6 +30,9 @@ const (
 	BillingService_GetStatement_FullMethodName         = "/billing.billing.v1.BillingService/GetStatement"
 	BillingService_GetUserBalance_FullMethodName       = "/billing.billing.v1.BillingService/GetUserBalance"
 	BillingService_ListSpending_FullMethodName         = "/billing.billing.v1.BillingService/ListSpending"
+	BillingService_GetWalletBalance_FullMethodName     = "/billing.billing.v1.BillingService/GetWalletBalance"
+	BillingService_DebitWallet_FullMethodName          = "/billing.billing.v1.BillingService/DebitWallet"
+	BillingService_CreditWallet_FullMethodName         = "/billing.billing.v1.BillingService/CreditWallet"
 )
 
 // BillingServiceClient is the client API for BillingService service.
@@ -63,6 +66,14 @@ type BillingServiceClient interface {
 	// includes entity_type, entity_id, amount, currency, and a counterparty_name
 	// resolved from upstream services. Intended for the mobile "spending feed".
 	ListSpending(ctx context.Context, in *ListSpendingRequest, opts ...grpc.CallOption) (*ListSpendingResponse, error)
+	// GetWalletBalance returns the user's deductible bonus/cashback balance.
+	GetWalletBalance(ctx context.Context, in *GetWalletBalanceRequest, opts ...grpc.CallOption) (*GetWalletBalanceResponse, error)
+	// DebitWallet subtracts amount from the user's bonus wallet. Idempotent on
+	// idempotency_key. Called by cg-payments StartPayment before the provider call.
+	DebitWallet(ctx context.Context, in *DebitWalletRequest, opts ...grpc.CallOption) (*DebitWalletResponse, error)
+	// CreditWallet adds bonus/cashback to the user's wallet. Idempotent on
+	// idempotency_key. Called by the payment_confirmed Kafka consumer.
+	CreditWallet(ctx context.Context, in *CreditWalletRequest, opts ...grpc.CallOption) (*CreditWalletResponse, error)
 }
 
 type billingServiceClient struct {
@@ -183,6 +194,36 @@ func (c *billingServiceClient) ListSpending(ctx context.Context, in *ListSpendin
 	return out, nil
 }
 
+func (c *billingServiceClient) GetWalletBalance(ctx context.Context, in *GetWalletBalanceRequest, opts ...grpc.CallOption) (*GetWalletBalanceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWalletBalanceResponse)
+	err := c.cc.Invoke(ctx, BillingService_GetWalletBalance_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) DebitWallet(ctx context.Context, in *DebitWalletRequest, opts ...grpc.CallOption) (*DebitWalletResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DebitWalletResponse)
+	err := c.cc.Invoke(ctx, BillingService_DebitWallet_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) CreditWallet(ctx context.Context, in *CreditWalletRequest, opts ...grpc.CallOption) (*CreditWalletResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreditWalletResponse)
+	err := c.cc.Invoke(ctx, BillingService_CreditWallet_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BillingServiceServer is the server API for BillingService service.
 // All implementations must embed UnimplementedBillingServiceServer
 // for forward compatibility.
@@ -214,6 +255,14 @@ type BillingServiceServer interface {
 	// includes entity_type, entity_id, amount, currency, and a counterparty_name
 	// resolved from upstream services. Intended for the mobile "spending feed".
 	ListSpending(context.Context, *ListSpendingRequest) (*ListSpendingResponse, error)
+	// GetWalletBalance returns the user's deductible bonus/cashback balance.
+	GetWalletBalance(context.Context, *GetWalletBalanceRequest) (*GetWalletBalanceResponse, error)
+	// DebitWallet subtracts amount from the user's bonus wallet. Idempotent on
+	// idempotency_key. Called by cg-payments StartPayment before the provider call.
+	DebitWallet(context.Context, *DebitWalletRequest) (*DebitWalletResponse, error)
+	// CreditWallet adds bonus/cashback to the user's wallet. Idempotent on
+	// idempotency_key. Called by the payment_confirmed Kafka consumer.
+	CreditWallet(context.Context, *CreditWalletRequest) (*CreditWalletResponse, error)
 	mustEmbedUnimplementedBillingServiceServer()
 }
 
@@ -256,6 +305,15 @@ func (UnimplementedBillingServiceServer) GetUserBalance(context.Context, *GetUse
 }
 func (UnimplementedBillingServiceServer) ListSpending(context.Context, *ListSpendingRequest) (*ListSpendingResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListSpending not implemented")
+}
+func (UnimplementedBillingServiceServer) GetWalletBalance(context.Context, *GetWalletBalanceRequest) (*GetWalletBalanceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetWalletBalance not implemented")
+}
+func (UnimplementedBillingServiceServer) DebitWallet(context.Context, *DebitWalletRequest) (*DebitWalletResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DebitWallet not implemented")
+}
+func (UnimplementedBillingServiceServer) CreditWallet(context.Context, *CreditWalletRequest) (*CreditWalletResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreditWallet not implemented")
 }
 func (UnimplementedBillingServiceServer) mustEmbedUnimplementedBillingServiceServer() {}
 func (UnimplementedBillingServiceServer) testEmbeddedByValue()                        {}
@@ -476,6 +534,60 @@ func _BillingService_ListSpending_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BillingService_GetWalletBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWalletBalanceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).GetWalletBalance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_GetWalletBalance_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).GetWalletBalance(ctx, req.(*GetWalletBalanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_DebitWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DebitWalletRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).DebitWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_DebitWallet_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).DebitWallet(ctx, req.(*DebitWalletRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_CreditWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreditWalletRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).CreditWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_CreditWallet_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).CreditWallet(ctx, req.(*CreditWalletRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BillingService_ServiceDesc is the grpc.ServiceDesc for BillingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -526,6 +638,18 @@ var BillingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListSpending",
 			Handler:    _BillingService_ListSpending_Handler,
+		},
+		{
+			MethodName: "GetWalletBalance",
+			Handler:    _BillingService_GetWalletBalance_Handler,
+		},
+		{
+			MethodName: "DebitWallet",
+			Handler:    _BillingService_DebitWallet_Handler,
+		},
+		{
+			MethodName: "CreditWallet",
+			Handler:    _BillingService_CreditWallet_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

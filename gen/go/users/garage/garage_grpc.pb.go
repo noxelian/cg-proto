@@ -25,6 +25,7 @@ const (
 	GarageService_UpdateCar_FullMethodName             = "/users.garage.v1.GarageService/UpdateCar"
 	GarageService_DeleteCar_FullMethodName             = "/users.garage.v1.GarageService/DeleteCar"
 	GarageService_FindOrCreateCar_FullMethodName       = "/users.garage.v1.GarageService/FindOrCreateCar"
+	GarageService_LookupVehicleByPlate_FullMethodName  = "/users.garage.v1.GarageService/LookupVehicleByPlate"
 	GarageService_AddCarPhoto_FullMethodName           = "/users.garage.v1.GarageService/AddCarPhoto"
 	GarageService_DeleteCarPhoto_FullMethodName        = "/users.garage.v1.GarageService/DeleteCarPhoto"
 	GarageService_SetPrimaryPhoto_FullMethodName       = "/users.garage.v1.GarageService/SetPrimaryPhoto"
@@ -61,6 +62,10 @@ type GarageServiceClient interface {
 	// If found, returns existing car. If not found, creates and returns.
 	// Idempotent: unique index on (user_id, license_plate) prevents duplicates.
 	FindOrCreateCar(ctx context.Context, in *FindOrCreateCarRequest, opts ...grpc.CallOption) (*FindOrCreateCarResponse, error)
+	// LookupVehicleByPlate resolves a Kazakhstani registration number (GRZ) to
+	// vehicle info via the Freedom eGov bridge. Auth policy is enforced by the
+	// handler SkipMethods list, not at the proto level.
+	LookupVehicleByPlate(ctx context.Context, in *LookupVehicleByPlateRequest, opts ...grpc.CallOption) (*LookupVehicleByPlateResponse, error)
 	// Photos
 	AddCarPhoto(ctx context.Context, in *AddCarPhotoRequest, opts ...grpc.CallOption) (*AddCarPhotoResponse, error)
 	DeleteCarPhoto(ctx context.Context, in *DeleteCarPhotoRequest, opts ...grpc.CallOption) (*DeleteCarPhotoResponse, error)
@@ -149,6 +154,16 @@ func (c *garageServiceClient) FindOrCreateCar(ctx context.Context, in *FindOrCre
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(FindOrCreateCarResponse)
 	err := c.cc.Invoke(ctx, GarageService_FindOrCreateCar_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *garageServiceClient) LookupVehicleByPlate(ctx context.Context, in *LookupVehicleByPlateRequest, opts ...grpc.CallOption) (*LookupVehicleByPlateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LookupVehicleByPlateResponse)
+	err := c.cc.Invoke(ctx, GarageService_LookupVehicleByPlate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -369,6 +384,10 @@ type GarageServiceServer interface {
 	// If found, returns existing car. If not found, creates and returns.
 	// Idempotent: unique index on (user_id, license_plate) prevents duplicates.
 	FindOrCreateCar(context.Context, *FindOrCreateCarRequest) (*FindOrCreateCarResponse, error)
+	// LookupVehicleByPlate resolves a Kazakhstani registration number (GRZ) to
+	// vehicle info via the Freedom eGov bridge. Auth policy is enforced by the
+	// handler SkipMethods list, not at the proto level.
+	LookupVehicleByPlate(context.Context, *LookupVehicleByPlateRequest) (*LookupVehicleByPlateResponse, error)
 	// Photos
 	AddCarPhoto(context.Context, *AddCarPhotoRequest) (*AddCarPhotoResponse, error)
 	DeleteCarPhoto(context.Context, *DeleteCarPhotoRequest) (*DeleteCarPhotoResponse, error)
@@ -420,6 +439,9 @@ func (UnimplementedGarageServiceServer) DeleteCar(context.Context, *DeleteCarReq
 }
 func (UnimplementedGarageServiceServer) FindOrCreateCar(context.Context, *FindOrCreateCarRequest) (*FindOrCreateCarResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method FindOrCreateCar not implemented")
+}
+func (UnimplementedGarageServiceServer) LookupVehicleByPlate(context.Context, *LookupVehicleByPlateRequest) (*LookupVehicleByPlateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method LookupVehicleByPlate not implemented")
 }
 func (UnimplementedGarageServiceServer) AddCarPhoto(context.Context, *AddCarPhotoRequest) (*AddCarPhotoResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddCarPhoto not implemented")
@@ -606,6 +628,24 @@ func _GarageService_FindOrCreateCar_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GarageServiceServer).FindOrCreateCar(ctx, req.(*FindOrCreateCarRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GarageService_LookupVehicleByPlate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LookupVehicleByPlateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GarageServiceServer).LookupVehicleByPlate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GarageService_LookupVehicleByPlate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GarageServiceServer).LookupVehicleByPlate(ctx, req.(*LookupVehicleByPlateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1000,6 +1040,10 @@ var GarageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindOrCreateCar",
 			Handler:    _GarageService_FindOrCreateCar_Handler,
+		},
+		{
+			MethodName: "LookupVehicleByPlate",
+			Handler:    _GarageService_LookupVehicleByPlate_Handler,
 		},
 		{
 			MethodName: "AddCarPhoto",

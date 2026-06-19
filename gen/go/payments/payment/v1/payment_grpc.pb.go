@@ -27,6 +27,8 @@ const (
 	PaymentService_HandleKaspiCheckPay_FullMethodName = "/payments.payment.v1.PaymentService/HandleKaspiCheckPay"
 	PaymentService_GetPaymentAuditLog_FullMethodName  = "/payments.payment.v1.PaymentService/GetPaymentAuditLog"
 	PaymentService_MarkPaidB2B_FullMethodName         = "/payments.payment.v1.PaymentService/MarkPaidB2B"
+	PaymentService_InitPayment_FullMethodName         = "/payments.payment.v1.PaymentService/InitPayment"
+	PaymentService_StartPayment_FullMethodName        = "/payments.payment.v1.PaymentService/StartPayment"
 )
 
 // PaymentServiceClient is the client API for PaymentService service.
@@ -55,6 +57,11 @@ type PaymentServiceClient interface {
 	// to B2C online payments. Caller must hold the
 	// `payments:admin_mark_paid` permission (enforced at the handler).
 	MarkPaidB2B(ctx context.Context, in *MarkPaidB2BRequest, opts ...grpc.CallOption) (*MarkPaidB2BResponse, error)
+	// InitPayment opens the CombinedPayModal: returns selectable payment methods,
+	// wallet eligibility, and the session token used by StartPayment.
+	InitPayment(ctx context.Context, in *InitPaymentRequest, opts ...grpc.CallOption) (*InitPaymentResponse, error)
+	// StartPayment begins the chosen payment option (or settles from wallet).
+	StartPayment(ctx context.Context, in *StartPaymentRequest, opts ...grpc.CallOption) (*StartPaymentResponse, error)
 }
 
 type paymentServiceClient struct {
@@ -145,6 +152,26 @@ func (c *paymentServiceClient) MarkPaidB2B(ctx context.Context, in *MarkPaidB2BR
 	return out, nil
 }
 
+func (c *paymentServiceClient) InitPayment(ctx context.Context, in *InitPaymentRequest, opts ...grpc.CallOption) (*InitPaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(InitPaymentResponse)
+	err := c.cc.Invoke(ctx, PaymentService_InitPayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) StartPayment(ctx context.Context, in *StartPaymentRequest, opts ...grpc.CallOption) (*StartPaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StartPaymentResponse)
+	err := c.cc.Invoke(ctx, PaymentService_StartPayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PaymentServiceServer is the server API for PaymentService service.
 // All implementations must embed UnimplementedPaymentServiceServer
 // for forward compatibility.
@@ -171,6 +198,11 @@ type PaymentServiceServer interface {
 	// to B2C online payments. Caller must hold the
 	// `payments:admin_mark_paid` permission (enforced at the handler).
 	MarkPaidB2B(context.Context, *MarkPaidB2BRequest) (*MarkPaidB2BResponse, error)
+	// InitPayment opens the CombinedPayModal: returns selectable payment methods,
+	// wallet eligibility, and the session token used by StartPayment.
+	InitPayment(context.Context, *InitPaymentRequest) (*InitPaymentResponse, error)
+	// StartPayment begins the chosen payment option (or settles from wallet).
+	StartPayment(context.Context, *StartPaymentRequest) (*StartPaymentResponse, error)
 	mustEmbedUnimplementedPaymentServiceServer()
 }
 
@@ -204,6 +236,12 @@ func (UnimplementedPaymentServiceServer) GetPaymentAuditLog(context.Context, *Ge
 }
 func (UnimplementedPaymentServiceServer) MarkPaidB2B(context.Context, *MarkPaidB2BRequest) (*MarkPaidB2BResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method MarkPaidB2B not implemented")
+}
+func (UnimplementedPaymentServiceServer) InitPayment(context.Context, *InitPaymentRequest) (*InitPaymentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method InitPayment not implemented")
+}
+func (UnimplementedPaymentServiceServer) StartPayment(context.Context, *StartPaymentRequest) (*StartPaymentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method StartPayment not implemented")
 }
 func (UnimplementedPaymentServiceServer) mustEmbedUnimplementedPaymentServiceServer() {}
 func (UnimplementedPaymentServiceServer) testEmbeddedByValue()                        {}
@@ -370,6 +408,42 @@ func _PaymentService_MarkPaidB2B_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PaymentService_InitPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InitPaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).InitPayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_InitPayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).InitPayment(ctx, req.(*InitPaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_StartPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartPaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).StartPayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_StartPayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).StartPayment(ctx, req.(*StartPaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PaymentService_ServiceDesc is the grpc.ServiceDesc for PaymentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -408,6 +482,14 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MarkPaidB2B",
 			Handler:    _PaymentService_MarkPaidB2B_Handler,
+		},
+		{
+			MethodName: "InitPayment",
+			Handler:    _PaymentService_InitPayment_Handler,
+		},
+		{
+			MethodName: "StartPayment",
+			Handler:    _PaymentService_StartPayment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

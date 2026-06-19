@@ -32,6 +32,15 @@ service PaymentService {
   // to B2C online payments. Caller must hold the
   // `payments:admin_mark_paid` permission (enforced at the handler).
   rpc MarkPaidB2B(MarkPaidB2BRequest) returns (MarkPaidB2BResponse);
+
+  // === Combined-pay (cg_web migration) ===
+
+  // InitPayment opens the CombinedPayModal: returns selectable payment methods,
+  // wallet eligibility, and the session token used by StartPayment.
+  rpc InitPayment(InitPaymentRequest) returns (InitPaymentResponse);
+
+  // StartPayment begins the chosen payment option (or settles from wallet).
+  rpc StartPayment(StartPaymentRequest) returns (StartPaymentResponse);
 }
 
 // =============================================
@@ -68,6 +77,39 @@ enum PaymentMethod {
   PAYMENT_METHOD_APPLE_PAY = 2;
   PAYMENT_METHOD_GOOGLE_PAY = 3;
   PAYMENT_METHOD_KASPI = 4;
+}
+
+// PayEntityType is the canonical entity-type counterpart of the free-form
+// `entity_type` string used by InitPayment / StartPayment. Legacy pay_type_id
+// values 1-18 are mapped here so the BFF can validate without string compares.
+enum PayEntityType {
+  PAY_ENTITY_TYPE_UNSPECIFIED = 0;
+  PAY_ENTITY_TYPE_ADS = 1;               // legacy PayTypeAds=1
+  PAY_ENTITY_TYPE_BASKET = 2;            // legacy PayTypeBasket=2
+  PAY_ENTITY_TYPE_HELP_REQUEST = 3;      // legacy PayTypeHelpRequest=3
+  PAY_ENTITY_TYPE_TURNKEY = 4;           // legacy PayTypeTurnkey=4
+  PAY_ENTITY_TYPE_PAYMENT_REQUEST = 5;   // legacy PayTypePaymentRequest=5
+  PAY_ENTITY_TYPE_BANNER = 6;            // legacy PayTypeBanner=6
+  PAY_ENTITY_TYPE_AD_PAY_CALL = 7;       // legacy PayTypeAdPayCallRequests=7
+  PAY_ENTITY_TYPE_ORDER_WORK = 11;       // legacy PayTypeOrderWork=11 (repair order)
+  PAY_ENTITY_TYPE_CHAT_RESPONSE = 12;    // legacy PayTypeChatResponse=12
+  PAY_ENTITY_TYPE_MAINTENANCE = 15;      // legacy PayTypeMaintenance=15
+  PAY_ENTITY_TYPE_CAR_WASH_AUTO = 16;    // legacy PayTypeCarWashAutoBook=16
+  PAY_ENTITY_TYPE_CAR_WASH_BOOKING = 17; // legacy PayTypeCarWash=17
+  PAY_ENTITY_TYPE_SUBSCRIPTION = 20;     // new_cg: subscription
+  PAY_ENTITY_TYPE_BID_PURCHASE = 21;     // new_cg: bid_purchase
+  PAY_ENTITY_TYPE_ORDER = 22;            // new_cg: marketplace order
+  PAY_ENTITY_TYPE_BOOKING = 23;          // new_cg: car-wash booking
+  PAY_ENTITY_TYPE_CART_CHECKOUT = 24;    // new_cg: cart_checkout
+}
+
+// PayOptionKind is the installment / BNPL flavour of a payment option.
+enum PayOptionKind {
+  PAY_OPTION_KIND_UNSPECIFIED = 0;
+  PAY_OPTION_KIND_CARD = 1;        // ioka card / Apple Pay / Google Pay
+  PAY_OPTION_KIND_KASPI = 2;       // Kaspi QR / Kaspi Pay direct
+  PAY_OPTION_KIND_INSTALLMENT = 3; // BNPL / kaspi_pay installment
+  PAY_OPTION_KIND_WALLET = 4;      // pay from bonus wallet balance
 }
 
 // =============================================
@@ -252,4 +294,74 @@ message MarkPaidB2BResponse {
   // transaction (replay). The caller can use this to suppress duplicate
   // side effects on its own side.
   bool idempotent = 2;
+}
+
+// =============================================
+// Combined-pay (cg_web migration)
+// =============================================
+
+// PayOption is a single selectable payment method shown in CombinedPayModal.
+message PayOption {
+  string id = 1;             // provider key: "ioka", "kaspi", "kaspi_pay", "wallet"
+  string title = 2;          // display name shown in UI
+  string sub_title = 3;      // e.g. "моментальная оплата"
+  string cashback_title = 4; // e.g. "5% бонусов"
+  string icon_url = 5;       // absolute URL to bank/provider logo
+  PayOptionKind kind = 6;
+  // Opaque token the client passes back in StartPaymentRequest.pay_session_token
+  // to identify this option. Encodes entity_type + entity_id + provider +
+  // idempotency_key without leaking internal IDs in plain text.
+  string pay_session_token = 7;
+}
+
+message InitPaymentRequest {
+  PayEntityType entity_type = 1;
+  int64 entity_id = 2;        // 0 is valid for entity types that create an
+                              // internal payment_request on the fly
+  int64 amount = 3;           // tiyn; required
+  string currency = 4;        // default "KZT"
+  int64 user_id = 5;
+  // Optional contextual fields forwarded from CombinedPayModel.
+  string city = 6;
+  string phone = 7;
+  string note = 8;
+  // delivery_amount is added to amount when computing the total.
+  int64 delivery_amount = 9;
+}
+
+message InitPaymentResponse {
+  // available_options are the standard (non-installment) methods (FE available_banks[]).
+  repeated PayOption available_options = 1;
+  // installment_options are BNPL / kaspi_pay entries (FE loan_from_bank[]).
+  repeated PayOption installment_options = 2;
+  // wallet_eligible is true when the user has a positive wallet balance (FE from_account).
+  bool wallet_eligible = 3;
+  // wallet_balance_tiyn is the current deductible wallet balance; 0 when ineligible.
+  int64 wallet_balance_tiyn = 4;
+  // total_amount_tiyn is amount + delivery_amount as confirmed by the service.
+  int64 total_amount_tiyn = 5;
+}
+
+message StartPaymentRequest {
+  // pay_session_token was returned in InitPaymentResponse.PayOption.pay_session_token.
+  string pay_session_token = 1;
+  // use_wallet_balance: true when the user toggled "Потратить бонусы".
+  bool use_wallet_balance = 2;
+  // wallet_apply_amount is the tiyn amount to deduct; capped at min(balance, total).
+  int64 wallet_apply_amount = 3;
+  // return_url is the deep-link / HTTPS URL the provider redirects to after payment.
+  string return_url = 4;
+}
+
+message StartPaymentResponse {
+  // payment_url is the provider checkout URL; empty when fully settled from wallet.
+  string payment_url = 1;
+  // installment_url is set instead of payment_url for BNPL options.
+  string installment_url = 2;
+  // transaction_id is the newly created or idempotently returned transaction.
+  int64 transaction_id = 3;
+  // wallet_debited_tiyn is the amount actually deducted from the wallet.
+  int64 wallet_debited_tiyn = 4;
+  // fully_paid_from_wallet=true means the wallet covered the full amount.
+  bool fully_paid_from_wallet = 5;
 }

@@ -3554,6 +3554,253 @@ func (*DeleteReminderResponse) Descriptor() ([]byte, []int) {
 	return file_users_garage_garage_proto_rawDescGZIP(), []int{56}
 }
 
+// LookupVehicleByPlateRequest — request for plate-to-vehicle resolution.
+type LookupVehicleByPlateRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// gov_number is the Kazakhstani GRZ plate, e.g. "777XAK01". The impl
+	// normalises to uppercase and strips spaces before calling Freedom.
+	GovNumber     string `protobuf:"bytes,1,opt,name=gov_number,json=govNumber,proto3" json:"gov_number,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LookupVehicleByPlateRequest) Reset() {
+	*x = LookupVehicleByPlateRequest{}
+	mi := &file_users_garage_garage_proto_msgTypes[57]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LookupVehicleByPlateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LookupVehicleByPlateRequest) ProtoMessage() {}
+
+func (x *LookupVehicleByPlateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_garage_garage_proto_msgTypes[57]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LookupVehicleByPlateRequest.ProtoReflect.Descriptor instead.
+func (*LookupVehicleByPlateRequest) Descriptor() ([]byte, []int) {
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{57}
+}
+
+func (x *LookupVehicleByPlateRequest) GetGovNumber() string {
+	if x != nil {
+		return x.GovNumber
+	}
+	return ""
+}
+
+// LookupVehicleByPlateResponse wraps the resolved vehicle data.
+type LookupVehicleByPlateResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Vehicle       *VehicleInfo           `protobuf:"bytes,1,opt,name=vehicle,proto3" json:"vehicle,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LookupVehicleByPlateResponse) Reset() {
+	*x = LookupVehicleByPlateResponse{}
+	mi := &file_users_garage_garage_proto_msgTypes[58]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LookupVehicleByPlateResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LookupVehicleByPlateResponse) ProtoMessage() {}
+
+func (x *LookupVehicleByPlateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_garage_garage_proto_msgTypes[58]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LookupVehicleByPlateResponse.ProtoReflect.Descriptor instead.
+func (*LookupVehicleByPlateResponse) Descriptor() ([]byte, []int) {
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{58}
+}
+
+func (x *LookupVehicleByPlateResponse) GetVehicle() *VehicleInfo {
+	if x != nil {
+		return x.Vehicle
+	}
+	return nil
+}
+
+// VehicleInfo mirrors the subset of the Freedom bridge vehicle-info that
+// AddCarByNumber needs, plus the NSI-resolved mark_id/model_id pair.
+// All fields are optional — Freedom may omit fields for some vehicle classes.
+type VehicleInfo struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// gov_number echoes back the normalised plate used for the lookup.
+	GovNumber string `protobuf:"bytes,1,opt,name=gov_number,json=govNumber,proto3" json:"gov_number,omitempty"`
+	// vin is the chassis / VIN code; empty when not disclosed to the caller.
+	Vin string `protobuf:"bytes,2,opt,name=vin,proto3" json:"vin,omitempty"`
+	// registration_certificate is the STS series+number.
+	RegistrationCertificate string `protobuf:"bytes,3,opt,name=registration_certificate,json=registrationCertificate,proto3" json:"registration_certificate,omitempty"`
+	// model_modification is the raw Freedom make+model string, e.g. "TOYOTA Camry".
+	ModelModification string `protobuf:"bytes,4,opt,name=model_modification,json=modelModification,proto3" json:"model_modification,omitempty"`
+	// year is the vehicle release year (decoded to int32).
+	Year int32 `protobuf:"varint,5,opt,name=year,proto3" json:"year,omitempty"`
+	// engine_volume_cc is engine displacement in cm³ (matches Car.engine_volume_cc).
+	EngineVolumeCc int32 `protobuf:"varint,6,opt,name=engine_volume_cc,json=engineVolumeCc,proto3" json:"engine_volume_cc,omitempty"`
+	// color_code is the raw colour code from Freedom.
+	ColorCode string `protobuf:"bytes,7,opt,name=color_code,json=colorCode,proto3" json:"color_code,omitempty"`
+	// engine_power_kw / engine_power_hp are returned as strings by Freedom.
+	EnginePowerKw string `protobuf:"bytes,8,opt,name=engine_power_kw,json=enginePowerKw,proto3" json:"engine_power_kw,omitempty"`
+	EnginePowerHp string `protobuf:"bytes,9,opt,name=engine_power_hp,json=enginePowerHp,proto3" json:"engine_power_hp,omitempty"`
+	// mark_id is the NSI carmake ID resolved by fuzzy matching; 0 when no match.
+	MarkId int32 `protobuf:"varint,10,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	// model_id is the NSI carmodel ID resolved by fuzzy matching; 0 when no match.
+	ModelId int32 `protobuf:"varint,11,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
+	// car_name is a human-readable label assembled by the impl; empty when unresolved.
+	CarName string `protobuf:"bytes,12,opt,name=car_name,json=carName,proto3" json:"car_name,omitempty"`
+	// mask is a legacy field carried forward from the cg_api contract; usually empty.
+	Mask          string `protobuf:"bytes,13,opt,name=mask,proto3" json:"mask,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VehicleInfo) Reset() {
+	*x = VehicleInfo{}
+	mi := &file_users_garage_garage_proto_msgTypes[59]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VehicleInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VehicleInfo) ProtoMessage() {}
+
+func (x *VehicleInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_users_garage_garage_proto_msgTypes[59]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VehicleInfo.ProtoReflect.Descriptor instead.
+func (*VehicleInfo) Descriptor() ([]byte, []int) {
+	return file_users_garage_garage_proto_rawDescGZIP(), []int{59}
+}
+
+func (x *VehicleInfo) GetGovNumber() string {
+	if x != nil {
+		return x.GovNumber
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetVin() string {
+	if x != nil {
+		return x.Vin
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetRegistrationCertificate() string {
+	if x != nil {
+		return x.RegistrationCertificate
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetModelModification() string {
+	if x != nil {
+		return x.ModelModification
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetYear() int32 {
+	if x != nil {
+		return x.Year
+	}
+	return 0
+}
+
+func (x *VehicleInfo) GetEngineVolumeCc() int32 {
+	if x != nil {
+		return x.EngineVolumeCc
+	}
+	return 0
+}
+
+func (x *VehicleInfo) GetColorCode() string {
+	if x != nil {
+		return x.ColorCode
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetEnginePowerKw() string {
+	if x != nil {
+		return x.EnginePowerKw
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetEnginePowerHp() string {
+	if x != nil {
+		return x.EnginePowerHp
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetMarkId() int32 {
+	if x != nil {
+		return x.MarkId
+	}
+	return 0
+}
+
+func (x *VehicleInfo) GetModelId() int32 {
+	if x != nil {
+		return x.ModelId
+	}
+	return 0
+}
+
+func (x *VehicleInfo) GetCarName() string {
+	if x != nil {
+		return x.CarName
+	}
+	return ""
+}
+
+func (x *VehicleInfo) GetMask() string {
+	if x != nil {
+		return x.Mask
+	}
+	return ""
+}
+
 var File_users_garage_garage_proto protoreflect.FileDescriptor
 
 const file_users_garage_garage_proto_rawDesc = "" +
@@ -3866,14 +4113,37 @@ const file_users_garage_garage_proto_rawDesc = "" +
 	"\x06car_id\x18\x01 \x01(\x03R\x05carId\x12\x1f\n" +
 	"\vreminder_id\x18\x02 \x01(\x03R\n" +
 	"reminderId\"\x18\n" +
-	"\x16DeleteReminderResponse2\x85\x14\n" +
+	"\x16DeleteReminderResponse\"<\n" +
+	"\x1bLookupVehicleByPlateRequest\x12\x1d\n" +
+	"\n" +
+	"gov_number\x18\x01 \x01(\tR\tgovNumber\"V\n" +
+	"\x1cLookupVehicleByPlateResponse\x126\n" +
+	"\avehicle\x18\x01 \x01(\v2\x1c.users.garage.v1.VehicleInfoR\avehicle\"\xb8\x03\n" +
+	"\vVehicleInfo\x12\x1d\n" +
+	"\n" +
+	"gov_number\x18\x01 \x01(\tR\tgovNumber\x12\x10\n" +
+	"\x03vin\x18\x02 \x01(\tR\x03vin\x129\n" +
+	"\x18registration_certificate\x18\x03 \x01(\tR\x17registrationCertificate\x12-\n" +
+	"\x12model_modification\x18\x04 \x01(\tR\x11modelModification\x12\x12\n" +
+	"\x04year\x18\x05 \x01(\x05R\x04year\x12(\n" +
+	"\x10engine_volume_cc\x18\x06 \x01(\x05R\x0eengineVolumeCc\x12\x1d\n" +
+	"\n" +
+	"color_code\x18\a \x01(\tR\tcolorCode\x12&\n" +
+	"\x0fengine_power_kw\x18\b \x01(\tR\renginePowerKw\x12&\n" +
+	"\x0fengine_power_hp\x18\t \x01(\tR\renginePowerHp\x12\x17\n" +
+	"\amark_id\x18\n" +
+	" \x01(\x05R\x06markId\x12\x19\n" +
+	"\bmodel_id\x18\v \x01(\x05R\amodelId\x12\x19\n" +
+	"\bcar_name\x18\f \x01(\tR\acarName\x12\x12\n" +
+	"\x04mask\x18\r \x01(\tR\x04mask2\xfa\x14\n" +
 	"\rGarageService\x12R\n" +
 	"\tCreateCar\x12!.users.garage.v1.CreateCarRequest\x1a\".users.garage.v1.CreateCarResponse\x12I\n" +
 	"\x06GetCar\x12\x1e.users.garage.v1.GetCarRequest\x1a\x1f.users.garage.v1.GetCarResponse\x12O\n" +
 	"\bListCars\x12 .users.garage.v1.ListCarsRequest\x1a!.users.garage.v1.ListCarsResponse\x12R\n" +
 	"\tUpdateCar\x12!.users.garage.v1.UpdateCarRequest\x1a\".users.garage.v1.UpdateCarResponse\x12R\n" +
 	"\tDeleteCar\x12!.users.garage.v1.DeleteCarRequest\x1a\".users.garage.v1.DeleteCarResponse\x12d\n" +
-	"\x0fFindOrCreateCar\x12'.users.garage.v1.FindOrCreateCarRequest\x1a(.users.garage.v1.FindOrCreateCarResponse\x12X\n" +
+	"\x0fFindOrCreateCar\x12'.users.garage.v1.FindOrCreateCarRequest\x1a(.users.garage.v1.FindOrCreateCarResponse\x12s\n" +
+	"\x14LookupVehicleByPlate\x12,.users.garage.v1.LookupVehicleByPlateRequest\x1a-.users.garage.v1.LookupVehicleByPlateResponse\x12X\n" +
 	"\vAddCarPhoto\x12#.users.garage.v1.AddCarPhotoRequest\x1a$.users.garage.v1.AddCarPhotoResponse\x12a\n" +
 	"\x0eDeleteCarPhoto\x12&.users.garage.v1.DeleteCarPhotoRequest\x1a'.users.garage.v1.DeleteCarPhotoResponse\x12d\n" +
 	"\x0fSetPrimaryPhoto\x12'.users.garage.v1.SetPrimaryPhotoRequest\x1a(.users.garage.v1.SetPrimaryPhotoResponse\x12a\n" +
@@ -3907,7 +4177,7 @@ func file_users_garage_garage_proto_rawDescGZIP() []byte {
 	return file_users_garage_garage_proto_rawDescData
 }
 
-var file_users_garage_garage_proto_msgTypes = make([]protoimpl.MessageInfo, 57)
+var file_users_garage_garage_proto_msgTypes = make([]protoimpl.MessageInfo, 60)
 var file_users_garage_garage_proto_goTypes = []any{
 	(*Car)(nil),                           // 0: users.garage.v1.Car
 	(*CarPhoto)(nil),                      // 1: users.garage.v1.CarPhoto
@@ -3966,24 +4236,27 @@ var file_users_garage_garage_proto_goTypes = []any{
 	(*CompleteReminderResponse)(nil),      // 54: users.garage.v1.CompleteReminderResponse
 	(*DeleteReminderRequest)(nil),         // 55: users.garage.v1.DeleteReminderRequest
 	(*DeleteReminderResponse)(nil),        // 56: users.garage.v1.DeleteReminderResponse
-	(*timestamppb.Timestamp)(nil),         // 57: google.protobuf.Timestamp
+	(*LookupVehicleByPlateRequest)(nil),   // 57: users.garage.v1.LookupVehicleByPlateRequest
+	(*LookupVehicleByPlateResponse)(nil),  // 58: users.garage.v1.LookupVehicleByPlateResponse
+	(*VehicleInfo)(nil),                   // 59: users.garage.v1.VehicleInfo
+	(*timestamppb.Timestamp)(nil),         // 60: google.protobuf.Timestamp
 }
 var file_users_garage_garage_proto_depIdxs = []int32{
 	1,  // 0: users.garage.v1.Car.photos:type_name -> users.garage.v1.CarPhoto
-	57, // 1: users.garage.v1.Car.created_at:type_name -> google.protobuf.Timestamp
-	57, // 2: users.garage.v1.Car.updated_at:type_name -> google.protobuf.Timestamp
-	57, // 3: users.garage.v1.CarPhoto.created_at:type_name -> google.protobuf.Timestamp
-	57, // 4: users.garage.v1.CarDocument.issued_at:type_name -> google.protobuf.Timestamp
-	57, // 5: users.garage.v1.CarDocument.expires_at:type_name -> google.protobuf.Timestamp
-	57, // 6: users.garage.v1.CarDocument.created_at:type_name -> google.protobuf.Timestamp
-	57, // 7: users.garage.v1.CarDocument.updated_at:type_name -> google.protobuf.Timestamp
-	57, // 8: users.garage.v1.ServiceRecord.service_date:type_name -> google.protobuf.Timestamp
-	57, // 9: users.garage.v1.ServiceRecord.created_at:type_name -> google.protobuf.Timestamp
-	57, // 10: users.garage.v1.ServiceRecord.updated_at:type_name -> google.protobuf.Timestamp
-	57, // 11: users.garage.v1.Reminder.remind_at:type_name -> google.protobuf.Timestamp
-	57, // 12: users.garage.v1.Reminder.completed_at:type_name -> google.protobuf.Timestamp
-	57, // 13: users.garage.v1.Reminder.created_at:type_name -> google.protobuf.Timestamp
-	57, // 14: users.garage.v1.Reminder.updated_at:type_name -> google.protobuf.Timestamp
+	60, // 1: users.garage.v1.Car.created_at:type_name -> google.protobuf.Timestamp
+	60, // 2: users.garage.v1.Car.updated_at:type_name -> google.protobuf.Timestamp
+	60, // 3: users.garage.v1.CarPhoto.created_at:type_name -> google.protobuf.Timestamp
+	60, // 4: users.garage.v1.CarDocument.issued_at:type_name -> google.protobuf.Timestamp
+	60, // 5: users.garage.v1.CarDocument.expires_at:type_name -> google.protobuf.Timestamp
+	60, // 6: users.garage.v1.CarDocument.created_at:type_name -> google.protobuf.Timestamp
+	60, // 7: users.garage.v1.CarDocument.updated_at:type_name -> google.protobuf.Timestamp
+	60, // 8: users.garage.v1.ServiceRecord.service_date:type_name -> google.protobuf.Timestamp
+	60, // 9: users.garage.v1.ServiceRecord.created_at:type_name -> google.protobuf.Timestamp
+	60, // 10: users.garage.v1.ServiceRecord.updated_at:type_name -> google.protobuf.Timestamp
+	60, // 11: users.garage.v1.Reminder.remind_at:type_name -> google.protobuf.Timestamp
+	60, // 12: users.garage.v1.Reminder.completed_at:type_name -> google.protobuf.Timestamp
+	60, // 13: users.garage.v1.Reminder.created_at:type_name -> google.protobuf.Timestamp
+	60, // 14: users.garage.v1.Reminder.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 15: users.garage.v1.CreateCarResponse.car:type_name -> users.garage.v1.Car
 	0,  // 16: users.garage.v1.GetCarResponse.car:type_name -> users.garage.v1.Car
 	0,  // 17: users.garage.v1.ListCarsResponse.cars:type_name -> users.garage.v1.Car
@@ -3991,85 +4264,88 @@ var file_users_garage_garage_proto_depIdxs = []int32{
 	0,  // 19: users.garage.v1.FindOrCreateCarResponse.car:type_name -> users.garage.v1.Car
 	1,  // 20: users.garage.v1.AddCarPhotoResponse.photo:type_name -> users.garage.v1.CarPhoto
 	1,  // 21: users.garage.v1.SetPrimaryPhotoResponse.photo:type_name -> users.garage.v1.CarPhoto
-	57, // 22: users.garage.v1.CreateDocumentRequest.issued_at:type_name -> google.protobuf.Timestamp
-	57, // 23: users.garage.v1.CreateDocumentRequest.expires_at:type_name -> google.protobuf.Timestamp
+	60, // 22: users.garage.v1.CreateDocumentRequest.issued_at:type_name -> google.protobuf.Timestamp
+	60, // 23: users.garage.v1.CreateDocumentRequest.expires_at:type_name -> google.protobuf.Timestamp
 	2,  // 24: users.garage.v1.CreateDocumentResponse.document:type_name -> users.garage.v1.CarDocument
 	2,  // 25: users.garage.v1.GetDocumentResponse.document:type_name -> users.garage.v1.CarDocument
 	2,  // 26: users.garage.v1.ListDocumentsResponse.documents:type_name -> users.garage.v1.CarDocument
-	57, // 27: users.garage.v1.UpdateDocumentRequest.issued_at:type_name -> google.protobuf.Timestamp
-	57, // 28: users.garage.v1.UpdateDocumentRequest.expires_at:type_name -> google.protobuf.Timestamp
+	60, // 27: users.garage.v1.UpdateDocumentRequest.issued_at:type_name -> google.protobuf.Timestamp
+	60, // 28: users.garage.v1.UpdateDocumentRequest.expires_at:type_name -> google.protobuf.Timestamp
 	2,  // 29: users.garage.v1.UpdateDocumentResponse.document:type_name -> users.garage.v1.CarDocument
-	57, // 30: users.garage.v1.CreateServiceRecordRequest.service_date:type_name -> google.protobuf.Timestamp
+	60, // 30: users.garage.v1.CreateServiceRecordRequest.service_date:type_name -> google.protobuf.Timestamp
 	3,  // 31: users.garage.v1.CreateServiceRecordResponse.record:type_name -> users.garage.v1.ServiceRecord
 	3,  // 32: users.garage.v1.GetServiceRecordResponse.record:type_name -> users.garage.v1.ServiceRecord
 	3,  // 33: users.garage.v1.ListServiceRecordsResponse.records:type_name -> users.garage.v1.ServiceRecord
-	57, // 34: users.garage.v1.UpdateServiceRecordRequest.service_date:type_name -> google.protobuf.Timestamp
+	60, // 34: users.garage.v1.UpdateServiceRecordRequest.service_date:type_name -> google.protobuf.Timestamp
 	3,  // 35: users.garage.v1.UpdateServiceRecordResponse.record:type_name -> users.garage.v1.ServiceRecord
-	57, // 36: users.garage.v1.CreateReminderRequest.remind_at:type_name -> google.protobuf.Timestamp
+	60, // 36: users.garage.v1.CreateReminderRequest.remind_at:type_name -> google.protobuf.Timestamp
 	4,  // 37: users.garage.v1.CreateReminderResponse.reminder:type_name -> users.garage.v1.Reminder
 	4,  // 38: users.garage.v1.GetReminderResponse.reminder:type_name -> users.garage.v1.Reminder
 	4,  // 39: users.garage.v1.ListRemindersResponse.reminders:type_name -> users.garage.v1.Reminder
 	4,  // 40: users.garage.v1.ListUpcomingRemindersResponse.reminders:type_name -> users.garage.v1.Reminder
-	57, // 41: users.garage.v1.UpdateReminderRequest.remind_at:type_name -> google.protobuf.Timestamp
+	60, // 41: users.garage.v1.UpdateReminderRequest.remind_at:type_name -> google.protobuf.Timestamp
 	4,  // 42: users.garage.v1.UpdateReminderResponse.reminder:type_name -> users.garage.v1.Reminder
 	4,  // 43: users.garage.v1.CompleteReminderResponse.reminder:type_name -> users.garage.v1.Reminder
-	5,  // 44: users.garage.v1.GarageService.CreateCar:input_type -> users.garage.v1.CreateCarRequest
-	7,  // 45: users.garage.v1.GarageService.GetCar:input_type -> users.garage.v1.GetCarRequest
-	9,  // 46: users.garage.v1.GarageService.ListCars:input_type -> users.garage.v1.ListCarsRequest
-	11, // 47: users.garage.v1.GarageService.UpdateCar:input_type -> users.garage.v1.UpdateCarRequest
-	13, // 48: users.garage.v1.GarageService.DeleteCar:input_type -> users.garage.v1.DeleteCarRequest
-	15, // 49: users.garage.v1.GarageService.FindOrCreateCar:input_type -> users.garage.v1.FindOrCreateCarRequest
-	17, // 50: users.garage.v1.GarageService.AddCarPhoto:input_type -> users.garage.v1.AddCarPhotoRequest
-	19, // 51: users.garage.v1.GarageService.DeleteCarPhoto:input_type -> users.garage.v1.DeleteCarPhotoRequest
-	21, // 52: users.garage.v1.GarageService.SetPrimaryPhoto:input_type -> users.garage.v1.SetPrimaryPhotoRequest
-	23, // 53: users.garage.v1.GarageService.CreateDocument:input_type -> users.garage.v1.CreateDocumentRequest
-	25, // 54: users.garage.v1.GarageService.GetDocument:input_type -> users.garage.v1.GetDocumentRequest
-	27, // 55: users.garage.v1.GarageService.ListDocuments:input_type -> users.garage.v1.ListDocumentsRequest
-	29, // 56: users.garage.v1.GarageService.UpdateDocument:input_type -> users.garage.v1.UpdateDocumentRequest
-	31, // 57: users.garage.v1.GarageService.DeleteDocument:input_type -> users.garage.v1.DeleteDocumentRequest
-	33, // 58: users.garage.v1.GarageService.CreateServiceRecord:input_type -> users.garage.v1.CreateServiceRecordRequest
-	35, // 59: users.garage.v1.GarageService.GetServiceRecord:input_type -> users.garage.v1.GetServiceRecordRequest
-	37, // 60: users.garage.v1.GarageService.ListServiceRecords:input_type -> users.garage.v1.ListServiceRecordsRequest
-	39, // 61: users.garage.v1.GarageService.UpdateServiceRecord:input_type -> users.garage.v1.UpdateServiceRecordRequest
-	41, // 62: users.garage.v1.GarageService.DeleteServiceRecord:input_type -> users.garage.v1.DeleteServiceRecordRequest
-	43, // 63: users.garage.v1.GarageService.CreateReminder:input_type -> users.garage.v1.CreateReminderRequest
-	45, // 64: users.garage.v1.GarageService.GetReminder:input_type -> users.garage.v1.GetReminderRequest
-	47, // 65: users.garage.v1.GarageService.ListReminders:input_type -> users.garage.v1.ListRemindersRequest
-	49, // 66: users.garage.v1.GarageService.ListUpcomingReminders:input_type -> users.garage.v1.ListUpcomingRemindersRequest
-	51, // 67: users.garage.v1.GarageService.UpdateReminder:input_type -> users.garage.v1.UpdateReminderRequest
-	53, // 68: users.garage.v1.GarageService.CompleteReminder:input_type -> users.garage.v1.CompleteReminderRequest
-	55, // 69: users.garage.v1.GarageService.DeleteReminder:input_type -> users.garage.v1.DeleteReminderRequest
-	6,  // 70: users.garage.v1.GarageService.CreateCar:output_type -> users.garage.v1.CreateCarResponse
-	8,  // 71: users.garage.v1.GarageService.GetCar:output_type -> users.garage.v1.GetCarResponse
-	10, // 72: users.garage.v1.GarageService.ListCars:output_type -> users.garage.v1.ListCarsResponse
-	12, // 73: users.garage.v1.GarageService.UpdateCar:output_type -> users.garage.v1.UpdateCarResponse
-	14, // 74: users.garage.v1.GarageService.DeleteCar:output_type -> users.garage.v1.DeleteCarResponse
-	16, // 75: users.garage.v1.GarageService.FindOrCreateCar:output_type -> users.garage.v1.FindOrCreateCarResponse
-	18, // 76: users.garage.v1.GarageService.AddCarPhoto:output_type -> users.garage.v1.AddCarPhotoResponse
-	20, // 77: users.garage.v1.GarageService.DeleteCarPhoto:output_type -> users.garage.v1.DeleteCarPhotoResponse
-	22, // 78: users.garage.v1.GarageService.SetPrimaryPhoto:output_type -> users.garage.v1.SetPrimaryPhotoResponse
-	24, // 79: users.garage.v1.GarageService.CreateDocument:output_type -> users.garage.v1.CreateDocumentResponse
-	26, // 80: users.garage.v1.GarageService.GetDocument:output_type -> users.garage.v1.GetDocumentResponse
-	28, // 81: users.garage.v1.GarageService.ListDocuments:output_type -> users.garage.v1.ListDocumentsResponse
-	30, // 82: users.garage.v1.GarageService.UpdateDocument:output_type -> users.garage.v1.UpdateDocumentResponse
-	32, // 83: users.garage.v1.GarageService.DeleteDocument:output_type -> users.garage.v1.DeleteDocumentResponse
-	34, // 84: users.garage.v1.GarageService.CreateServiceRecord:output_type -> users.garage.v1.CreateServiceRecordResponse
-	36, // 85: users.garage.v1.GarageService.GetServiceRecord:output_type -> users.garage.v1.GetServiceRecordResponse
-	38, // 86: users.garage.v1.GarageService.ListServiceRecords:output_type -> users.garage.v1.ListServiceRecordsResponse
-	40, // 87: users.garage.v1.GarageService.UpdateServiceRecord:output_type -> users.garage.v1.UpdateServiceRecordResponse
-	42, // 88: users.garage.v1.GarageService.DeleteServiceRecord:output_type -> users.garage.v1.DeleteServiceRecordResponse
-	44, // 89: users.garage.v1.GarageService.CreateReminder:output_type -> users.garage.v1.CreateReminderResponse
-	46, // 90: users.garage.v1.GarageService.GetReminder:output_type -> users.garage.v1.GetReminderResponse
-	48, // 91: users.garage.v1.GarageService.ListReminders:output_type -> users.garage.v1.ListRemindersResponse
-	50, // 92: users.garage.v1.GarageService.ListUpcomingReminders:output_type -> users.garage.v1.ListUpcomingRemindersResponse
-	52, // 93: users.garage.v1.GarageService.UpdateReminder:output_type -> users.garage.v1.UpdateReminderResponse
-	54, // 94: users.garage.v1.GarageService.CompleteReminder:output_type -> users.garage.v1.CompleteReminderResponse
-	56, // 95: users.garage.v1.GarageService.DeleteReminder:output_type -> users.garage.v1.DeleteReminderResponse
-	70, // [70:96] is the sub-list for method output_type
-	44, // [44:70] is the sub-list for method input_type
-	44, // [44:44] is the sub-list for extension type_name
-	44, // [44:44] is the sub-list for extension extendee
-	0,  // [0:44] is the sub-list for field type_name
+	59, // 44: users.garage.v1.LookupVehicleByPlateResponse.vehicle:type_name -> users.garage.v1.VehicleInfo
+	5,  // 45: users.garage.v1.GarageService.CreateCar:input_type -> users.garage.v1.CreateCarRequest
+	7,  // 46: users.garage.v1.GarageService.GetCar:input_type -> users.garage.v1.GetCarRequest
+	9,  // 47: users.garage.v1.GarageService.ListCars:input_type -> users.garage.v1.ListCarsRequest
+	11, // 48: users.garage.v1.GarageService.UpdateCar:input_type -> users.garage.v1.UpdateCarRequest
+	13, // 49: users.garage.v1.GarageService.DeleteCar:input_type -> users.garage.v1.DeleteCarRequest
+	15, // 50: users.garage.v1.GarageService.FindOrCreateCar:input_type -> users.garage.v1.FindOrCreateCarRequest
+	57, // 51: users.garage.v1.GarageService.LookupVehicleByPlate:input_type -> users.garage.v1.LookupVehicleByPlateRequest
+	17, // 52: users.garage.v1.GarageService.AddCarPhoto:input_type -> users.garage.v1.AddCarPhotoRequest
+	19, // 53: users.garage.v1.GarageService.DeleteCarPhoto:input_type -> users.garage.v1.DeleteCarPhotoRequest
+	21, // 54: users.garage.v1.GarageService.SetPrimaryPhoto:input_type -> users.garage.v1.SetPrimaryPhotoRequest
+	23, // 55: users.garage.v1.GarageService.CreateDocument:input_type -> users.garage.v1.CreateDocumentRequest
+	25, // 56: users.garage.v1.GarageService.GetDocument:input_type -> users.garage.v1.GetDocumentRequest
+	27, // 57: users.garage.v1.GarageService.ListDocuments:input_type -> users.garage.v1.ListDocumentsRequest
+	29, // 58: users.garage.v1.GarageService.UpdateDocument:input_type -> users.garage.v1.UpdateDocumentRequest
+	31, // 59: users.garage.v1.GarageService.DeleteDocument:input_type -> users.garage.v1.DeleteDocumentRequest
+	33, // 60: users.garage.v1.GarageService.CreateServiceRecord:input_type -> users.garage.v1.CreateServiceRecordRequest
+	35, // 61: users.garage.v1.GarageService.GetServiceRecord:input_type -> users.garage.v1.GetServiceRecordRequest
+	37, // 62: users.garage.v1.GarageService.ListServiceRecords:input_type -> users.garage.v1.ListServiceRecordsRequest
+	39, // 63: users.garage.v1.GarageService.UpdateServiceRecord:input_type -> users.garage.v1.UpdateServiceRecordRequest
+	41, // 64: users.garage.v1.GarageService.DeleteServiceRecord:input_type -> users.garage.v1.DeleteServiceRecordRequest
+	43, // 65: users.garage.v1.GarageService.CreateReminder:input_type -> users.garage.v1.CreateReminderRequest
+	45, // 66: users.garage.v1.GarageService.GetReminder:input_type -> users.garage.v1.GetReminderRequest
+	47, // 67: users.garage.v1.GarageService.ListReminders:input_type -> users.garage.v1.ListRemindersRequest
+	49, // 68: users.garage.v1.GarageService.ListUpcomingReminders:input_type -> users.garage.v1.ListUpcomingRemindersRequest
+	51, // 69: users.garage.v1.GarageService.UpdateReminder:input_type -> users.garage.v1.UpdateReminderRequest
+	53, // 70: users.garage.v1.GarageService.CompleteReminder:input_type -> users.garage.v1.CompleteReminderRequest
+	55, // 71: users.garage.v1.GarageService.DeleteReminder:input_type -> users.garage.v1.DeleteReminderRequest
+	6,  // 72: users.garage.v1.GarageService.CreateCar:output_type -> users.garage.v1.CreateCarResponse
+	8,  // 73: users.garage.v1.GarageService.GetCar:output_type -> users.garage.v1.GetCarResponse
+	10, // 74: users.garage.v1.GarageService.ListCars:output_type -> users.garage.v1.ListCarsResponse
+	12, // 75: users.garage.v1.GarageService.UpdateCar:output_type -> users.garage.v1.UpdateCarResponse
+	14, // 76: users.garage.v1.GarageService.DeleteCar:output_type -> users.garage.v1.DeleteCarResponse
+	16, // 77: users.garage.v1.GarageService.FindOrCreateCar:output_type -> users.garage.v1.FindOrCreateCarResponse
+	58, // 78: users.garage.v1.GarageService.LookupVehicleByPlate:output_type -> users.garage.v1.LookupVehicleByPlateResponse
+	18, // 79: users.garage.v1.GarageService.AddCarPhoto:output_type -> users.garage.v1.AddCarPhotoResponse
+	20, // 80: users.garage.v1.GarageService.DeleteCarPhoto:output_type -> users.garage.v1.DeleteCarPhotoResponse
+	22, // 81: users.garage.v1.GarageService.SetPrimaryPhoto:output_type -> users.garage.v1.SetPrimaryPhotoResponse
+	24, // 82: users.garage.v1.GarageService.CreateDocument:output_type -> users.garage.v1.CreateDocumentResponse
+	26, // 83: users.garage.v1.GarageService.GetDocument:output_type -> users.garage.v1.GetDocumentResponse
+	28, // 84: users.garage.v1.GarageService.ListDocuments:output_type -> users.garage.v1.ListDocumentsResponse
+	30, // 85: users.garage.v1.GarageService.UpdateDocument:output_type -> users.garage.v1.UpdateDocumentResponse
+	32, // 86: users.garage.v1.GarageService.DeleteDocument:output_type -> users.garage.v1.DeleteDocumentResponse
+	34, // 87: users.garage.v1.GarageService.CreateServiceRecord:output_type -> users.garage.v1.CreateServiceRecordResponse
+	36, // 88: users.garage.v1.GarageService.GetServiceRecord:output_type -> users.garage.v1.GetServiceRecordResponse
+	38, // 89: users.garage.v1.GarageService.ListServiceRecords:output_type -> users.garage.v1.ListServiceRecordsResponse
+	40, // 90: users.garage.v1.GarageService.UpdateServiceRecord:output_type -> users.garage.v1.UpdateServiceRecordResponse
+	42, // 91: users.garage.v1.GarageService.DeleteServiceRecord:output_type -> users.garage.v1.DeleteServiceRecordResponse
+	44, // 92: users.garage.v1.GarageService.CreateReminder:output_type -> users.garage.v1.CreateReminderResponse
+	46, // 93: users.garage.v1.GarageService.GetReminder:output_type -> users.garage.v1.GetReminderResponse
+	48, // 94: users.garage.v1.GarageService.ListReminders:output_type -> users.garage.v1.ListRemindersResponse
+	50, // 95: users.garage.v1.GarageService.ListUpcomingReminders:output_type -> users.garage.v1.ListUpcomingRemindersResponse
+	52, // 96: users.garage.v1.GarageService.UpdateReminder:output_type -> users.garage.v1.UpdateReminderResponse
+	54, // 97: users.garage.v1.GarageService.CompleteReminder:output_type -> users.garage.v1.CompleteReminderResponse
+	56, // 98: users.garage.v1.GarageService.DeleteReminder:output_type -> users.garage.v1.DeleteReminderResponse
+	72, // [72:99] is the sub-list for method output_type
+	45, // [45:72] is the sub-list for method input_type
+	45, // [45:45] is the sub-list for extension type_name
+	45, // [45:45] is the sub-list for extension extendee
+	0,  // [0:45] is the sub-list for field type_name
 }
 
 func init() { file_users_garage_garage_proto_init() }
@@ -4087,7 +4363,7 @@ func file_users_garage_garage_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_users_garage_garage_proto_rawDesc), len(file_users_garage_garage_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   57,
+			NumMessages:   60,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -36,6 +36,8 @@ const (
 	RequestService_CountUnreadForOrganization_FullMethodName    = "/services.request.v1.RequestService/CountUnreadForOrganization"
 	RequestService_ClassifyRequest_FullMethodName               = "/services.request.v1.RequestService/ClassifyRequest"
 	RequestService_GetUserRequestCounts_FullMethodName          = "/services.request.v1.RequestService/GetUserRequestCounts"
+	RequestService_PauseRequest_FullMethodName                  = "/services.request.v1.RequestService/PauseRequest"
+	RequestService_UnpauseRequest_FullMethodName                = "/services.request.v1.RequestService/UnpauseRequest"
 )
 
 // RequestServiceClient is the client API for RequestService service.
@@ -83,6 +85,13 @@ type RequestServiceClient interface {
 	// one call (legacy ads/count: total / active(PUBLISHED) / moderation /
 	// inactive(DELETED+CLOSED)). Optional type filter (0 = all).
 	GetUserRequestCounts(ctx context.Context, in *GetUserRequestCountsRequest, opts ...grpc.CallOption) (*GetUserRequestCountsResponse, error)
+	// PauseRequest temporarily hides a published request from the СТО feed.
+	// Sets status → PAUSED, records paused_at and optionally paused_by_org_id.
+	// Only the request owner may call this.
+	PauseRequest(ctx context.Context, in *PauseRequestRequest, opts ...grpc.CallOption) (*PauseRequestResponse, error)
+	// UnpauseRequest restores a paused request back to PUBLISHED, clearing
+	// paused_at / paused_by_org_id. Only the request owner may call this.
+	UnpauseRequest(ctx context.Context, in *UnpauseRequestRequest, opts ...grpc.CallOption) (*UnpauseRequestResponse, error)
 }
 
 type requestServiceClient struct {
@@ -263,6 +272,26 @@ func (c *requestServiceClient) GetUserRequestCounts(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *requestServiceClient) PauseRequest(ctx context.Context, in *PauseRequestRequest, opts ...grpc.CallOption) (*PauseRequestResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PauseRequestResponse)
+	err := c.cc.Invoke(ctx, RequestService_PauseRequest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestServiceClient) UnpauseRequest(ctx context.Context, in *UnpauseRequestRequest, opts ...grpc.CallOption) (*UnpauseRequestResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UnpauseRequestResponse)
+	err := c.cc.Invoke(ctx, RequestService_UnpauseRequest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RequestServiceServer is the server API for RequestService service.
 // All implementations must embed UnimplementedRequestServiceServer
 // for forward compatibility.
@@ -308,6 +337,13 @@ type RequestServiceServer interface {
 	// one call (legacy ads/count: total / active(PUBLISHED) / moderation /
 	// inactive(DELETED+CLOSED)). Optional type filter (0 = all).
 	GetUserRequestCounts(context.Context, *GetUserRequestCountsRequest) (*GetUserRequestCountsResponse, error)
+	// PauseRequest temporarily hides a published request from the СТО feed.
+	// Sets status → PAUSED, records paused_at and optionally paused_by_org_id.
+	// Only the request owner may call this.
+	PauseRequest(context.Context, *PauseRequestRequest) (*PauseRequestResponse, error)
+	// UnpauseRequest restores a paused request back to PUBLISHED, clearing
+	// paused_at / paused_by_org_id. Only the request owner may call this.
+	UnpauseRequest(context.Context, *UnpauseRequestRequest) (*UnpauseRequestResponse, error)
 	mustEmbedUnimplementedRequestServiceServer()
 }
 
@@ -368,6 +404,12 @@ func (UnimplementedRequestServiceServer) ClassifyRequest(context.Context, *Class
 }
 func (UnimplementedRequestServiceServer) GetUserRequestCounts(context.Context, *GetUserRequestCountsRequest) (*GetUserRequestCountsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserRequestCounts not implemented")
+}
+func (UnimplementedRequestServiceServer) PauseRequest(context.Context, *PauseRequestRequest) (*PauseRequestResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PauseRequest not implemented")
+}
+func (UnimplementedRequestServiceServer) UnpauseRequest(context.Context, *UnpauseRequestRequest) (*UnpauseRequestResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UnpauseRequest not implemented")
 }
 func (UnimplementedRequestServiceServer) mustEmbedUnimplementedRequestServiceServer() {}
 func (UnimplementedRequestServiceServer) testEmbeddedByValue()                        {}
@@ -696,6 +738,42 @@ func _RequestService_GetUserRequestCounts_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestService_PauseRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PauseRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).PauseRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_PauseRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).PauseRequest(ctx, req.(*PauseRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestService_UnpauseRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnpauseRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).UnpauseRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_UnpauseRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).UnpauseRequest(ctx, req.(*UnpauseRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RequestService_ServiceDesc is the grpc.ServiceDesc for RequestService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -770,6 +848,14 @@ var RequestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserRequestCounts",
 			Handler:    _RequestService_GetUserRequestCounts_Handler,
+		},
+		{
+			MethodName: "PauseRequest",
+			Handler:    _RequestService_PauseRequest_Handler,
+		},
+		{
+			MethodName: "UnpauseRequest",
+			Handler:    _RequestService_UnpauseRequest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

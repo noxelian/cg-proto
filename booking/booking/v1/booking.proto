@@ -72,6 +72,9 @@ message WashService {
   repeated WashPricing pricing = 8;
   google.protobuf.Timestamp created_at = 9;
   google.protobuf.Timestamp updated_at = 10;
+  // FE-ready view of all (body_type × service_type) pricing combinations with
+  // human-readable labels. Populated on fetch; field 8 `pricing` is unchanged.
+  repeated WashPricingDisplay prices_display = 11;
 }
 
 message WashPricing {
@@ -81,6 +84,25 @@ message WashPricing {
   int64 price_amount = 4;
   string currency = 5;
   bool is_active = 6;
+  // Service-type dimension (e.g. "body", "body_salon"). Empty string means the
+  // row applies to all service types; legacy rows are treated as "body".
+  string service_type = 7;
+  // Human-readable display labels, populated by cg-booking so the FE needs no
+  // client-side lookup table. body_type_name: sedan→"Седан" etc.
+  string body_type_name = 8;
+  // service_type_name: body→"Кузов", body_salon→"Кузов+Салон".
+  string service_type_name = 9;
+}
+
+// WashPricingDisplay is a computed FE-ready row for a single
+// (body_type × service_type) combination with human-readable labels.
+message WashPricingDisplay {
+  string body_type = 1;          // "sedan" | "crossover" | "suv"
+  string service_type = 2;       // "body" | "body_salon"
+  string body_type_name = 3;     // "Седан" | "Кроссовер" | "Внедорожник"
+  string service_type_name = 4;  // "Кузов" | "Кузов+Салон"
+  int64 price_amount = 5;        // smallest currency unit (tiyn for KZT)
+  string currency = 6;           // "KZT"
 }
 
 message WashSlot {
@@ -117,6 +139,8 @@ message Booking {
   string notes = 21;
   google.protobuf.Timestamp created_at = 22;
   google.protobuf.Timestamp updated_at = 23;
+  // Service-type dimension chosen for this booking (e.g. "body", "body_salon").
+  string service_type = 24;
 }
 
 // =============================================
@@ -139,6 +163,8 @@ message CreateBookingRequest {
   string car_plate = 13;
   string notes = 14;
   string idempotency_key = 15;
+  // Service-type dimension selected by the customer (e.g. "body", "body_salon").
+  string service_type = 16;
 }
 
 message CreateBookingResponse {
@@ -237,6 +263,8 @@ message WashPricingInput {
   string body_type = 1;
   int64 price_amount = 2;
   string currency = 3;
+  // Service-type dimension; if omitted/empty, cg-booking defaults to "body".
+  string service_type = 4;
 }
 
 message SetWashPricingResponse {

@@ -19,6 +19,11 @@ service GarageService {
   // Idempotent: unique index on (user_id, license_plate) prevents duplicates.
   rpc FindOrCreateCar(FindOrCreateCarRequest) returns (FindOrCreateCarResponse);
 
+  // LookupVehicleByPlate resolves a Kazakhstani registration number (GRZ) to
+  // vehicle info via the Freedom eGov bridge. Auth policy is enforced by the
+  // handler SkipMethods list, not at the proto level.
+  rpc LookupVehicleByPlate(LookupVehicleByPlateRequest) returns (LookupVehicleByPlateResponse);
+
   // Photos
   rpc AddCarPhoto(AddCarPhotoRequest) returns (AddCarPhotoResponse);
   rpc DeleteCarPhoto(DeleteCarPhotoRequest) returns (DeleteCarPhotoResponse);
@@ -417,3 +422,48 @@ message DeleteReminderRequest {
 }
 
 message DeleteReminderResponse {}
+
+// ==================== Vehicle Plate Lookup ====================
+
+// LookupVehicleByPlateRequest — request for plate-to-vehicle resolution.
+message LookupVehicleByPlateRequest {
+  // gov_number is the Kazakhstani GRZ plate, e.g. "777XAK01". The impl
+  // normalises to uppercase and strips spaces before calling Freedom.
+  string gov_number = 1;
+}
+
+// LookupVehicleByPlateResponse wraps the resolved vehicle data.
+message LookupVehicleByPlateResponse {
+  VehicleInfo vehicle = 1;
+}
+
+// VehicleInfo mirrors the subset of the Freedom bridge vehicle-info that
+// AddCarByNumber needs, plus the NSI-resolved mark_id/model_id pair.
+// All fields are optional — Freedom may omit fields for some vehicle classes.
+message VehicleInfo {
+  // gov_number echoes back the normalised plate used for the lookup.
+  string gov_number = 1;
+  // vin is the chassis / VIN code; empty when not disclosed to the caller.
+  string vin = 2;
+  // registration_certificate is the STS series+number.
+  string registration_certificate = 3;
+  // model_modification is the raw Freedom make+model string, e.g. "TOYOTA Camry".
+  string model_modification = 4;
+  // year is the vehicle release year (decoded to int32).
+  int32 year = 5;
+  // engine_volume_cc is engine displacement in cm³ (matches Car.engine_volume_cc).
+  int32 engine_volume_cc = 6;
+  // color_code is the raw colour code from Freedom.
+  string color_code = 7;
+  // engine_power_kw / engine_power_hp are returned as strings by Freedom.
+  string engine_power_kw = 8;
+  string engine_power_hp = 9;
+  // mark_id is the NSI carmake ID resolved by fuzzy matching; 0 when no match.
+  int32 mark_id = 10;
+  // model_id is the NSI carmodel ID resolved by fuzzy matching; 0 when no match.
+  int32 model_id = 11;
+  // car_name is a human-readable label assembled by the impl; empty when unresolved.
+  string car_name = 12;
+  // mask is a legacy field carried forward from the cg_api contract; usually empty.
+  string mask = 13;
+}

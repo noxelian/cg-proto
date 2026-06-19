@@ -242,6 +242,159 @@ func (PaymentMethod) EnumDescriptor() ([]byte, []int) {
 	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{3}
 }
 
+// PayEntityType is the canonical entity-type counterpart of the free-form
+// `entity_type` string used by InitPayment / StartPayment. Legacy pay_type_id
+// values 1-18 are mapped here so the BFF can validate without string compares.
+type PayEntityType int32
+
+const (
+	PayEntityType_PAY_ENTITY_TYPE_UNSPECIFIED      PayEntityType = 0
+	PayEntityType_PAY_ENTITY_TYPE_ADS              PayEntityType = 1  // legacy PayTypeAds=1
+	PayEntityType_PAY_ENTITY_TYPE_BASKET           PayEntityType = 2  // legacy PayTypeBasket=2
+	PayEntityType_PAY_ENTITY_TYPE_HELP_REQUEST     PayEntityType = 3  // legacy PayTypeHelpRequest=3
+	PayEntityType_PAY_ENTITY_TYPE_TURNKEY          PayEntityType = 4  // legacy PayTypeTurnkey=4
+	PayEntityType_PAY_ENTITY_TYPE_PAYMENT_REQUEST  PayEntityType = 5  // legacy PayTypePaymentRequest=5
+	PayEntityType_PAY_ENTITY_TYPE_BANNER           PayEntityType = 6  // legacy PayTypeBanner=6
+	PayEntityType_PAY_ENTITY_TYPE_AD_PAY_CALL      PayEntityType = 7  // legacy PayTypeAdPayCallRequests=7
+	PayEntityType_PAY_ENTITY_TYPE_ORDER_WORK       PayEntityType = 11 // legacy PayTypeOrderWork=11 (repair order)
+	PayEntityType_PAY_ENTITY_TYPE_CHAT_RESPONSE    PayEntityType = 12 // legacy PayTypeChatResponse=12
+	PayEntityType_PAY_ENTITY_TYPE_MAINTENANCE      PayEntityType = 15 // legacy PayTypeMaintenance=15
+	PayEntityType_PAY_ENTITY_TYPE_CAR_WASH_AUTO    PayEntityType = 16 // legacy PayTypeCarWashAutoBook=16
+	PayEntityType_PAY_ENTITY_TYPE_CAR_WASH_BOOKING PayEntityType = 17 // legacy PayTypeCarWash=17
+	PayEntityType_PAY_ENTITY_TYPE_SUBSCRIPTION     PayEntityType = 20 // new_cg: subscription
+	PayEntityType_PAY_ENTITY_TYPE_BID_PURCHASE     PayEntityType = 21 // new_cg: bid_purchase
+	PayEntityType_PAY_ENTITY_TYPE_ORDER            PayEntityType = 22 // new_cg: marketplace order
+	PayEntityType_PAY_ENTITY_TYPE_BOOKING          PayEntityType = 23 // new_cg: car-wash booking
+	PayEntityType_PAY_ENTITY_TYPE_CART_CHECKOUT    PayEntityType = 24 // new_cg: cart_checkout
+)
+
+// Enum value maps for PayEntityType.
+var (
+	PayEntityType_name = map[int32]string{
+		0:  "PAY_ENTITY_TYPE_UNSPECIFIED",
+		1:  "PAY_ENTITY_TYPE_ADS",
+		2:  "PAY_ENTITY_TYPE_BASKET",
+		3:  "PAY_ENTITY_TYPE_HELP_REQUEST",
+		4:  "PAY_ENTITY_TYPE_TURNKEY",
+		5:  "PAY_ENTITY_TYPE_PAYMENT_REQUEST",
+		6:  "PAY_ENTITY_TYPE_BANNER",
+		7:  "PAY_ENTITY_TYPE_AD_PAY_CALL",
+		11: "PAY_ENTITY_TYPE_ORDER_WORK",
+		12: "PAY_ENTITY_TYPE_CHAT_RESPONSE",
+		15: "PAY_ENTITY_TYPE_MAINTENANCE",
+		16: "PAY_ENTITY_TYPE_CAR_WASH_AUTO",
+		17: "PAY_ENTITY_TYPE_CAR_WASH_BOOKING",
+		20: "PAY_ENTITY_TYPE_SUBSCRIPTION",
+		21: "PAY_ENTITY_TYPE_BID_PURCHASE",
+		22: "PAY_ENTITY_TYPE_ORDER",
+		23: "PAY_ENTITY_TYPE_BOOKING",
+		24: "PAY_ENTITY_TYPE_CART_CHECKOUT",
+	}
+	PayEntityType_value = map[string]int32{
+		"PAY_ENTITY_TYPE_UNSPECIFIED":      0,
+		"PAY_ENTITY_TYPE_ADS":              1,
+		"PAY_ENTITY_TYPE_BASKET":           2,
+		"PAY_ENTITY_TYPE_HELP_REQUEST":     3,
+		"PAY_ENTITY_TYPE_TURNKEY":          4,
+		"PAY_ENTITY_TYPE_PAYMENT_REQUEST":  5,
+		"PAY_ENTITY_TYPE_BANNER":           6,
+		"PAY_ENTITY_TYPE_AD_PAY_CALL":      7,
+		"PAY_ENTITY_TYPE_ORDER_WORK":       11,
+		"PAY_ENTITY_TYPE_CHAT_RESPONSE":    12,
+		"PAY_ENTITY_TYPE_MAINTENANCE":      15,
+		"PAY_ENTITY_TYPE_CAR_WASH_AUTO":    16,
+		"PAY_ENTITY_TYPE_CAR_WASH_BOOKING": 17,
+		"PAY_ENTITY_TYPE_SUBSCRIPTION":     20,
+		"PAY_ENTITY_TYPE_BID_PURCHASE":     21,
+		"PAY_ENTITY_TYPE_ORDER":            22,
+		"PAY_ENTITY_TYPE_BOOKING":          23,
+		"PAY_ENTITY_TYPE_CART_CHECKOUT":    24,
+	}
+)
+
+func (x PayEntityType) Enum() *PayEntityType {
+	p := new(PayEntityType)
+	*p = x
+	return p
+}
+
+func (x PayEntityType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PayEntityType) Descriptor() protoreflect.EnumDescriptor {
+	return file_payments_payment_v1_payment_proto_enumTypes[4].Descriptor()
+}
+
+func (PayEntityType) Type() protoreflect.EnumType {
+	return &file_payments_payment_v1_payment_proto_enumTypes[4]
+}
+
+func (x PayEntityType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PayEntityType.Descriptor instead.
+func (PayEntityType) EnumDescriptor() ([]byte, []int) {
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{4}
+}
+
+// PayOptionKind is the installment / BNPL flavour of a payment option.
+type PayOptionKind int32
+
+const (
+	PayOptionKind_PAY_OPTION_KIND_UNSPECIFIED PayOptionKind = 0
+	PayOptionKind_PAY_OPTION_KIND_CARD        PayOptionKind = 1 // ioka card / Apple Pay / Google Pay
+	PayOptionKind_PAY_OPTION_KIND_KASPI       PayOptionKind = 2 // Kaspi QR / Kaspi Pay direct
+	PayOptionKind_PAY_OPTION_KIND_INSTALLMENT PayOptionKind = 3 // BNPL / kaspi_pay installment
+	PayOptionKind_PAY_OPTION_KIND_WALLET      PayOptionKind = 4 // pay from bonus wallet balance
+)
+
+// Enum value maps for PayOptionKind.
+var (
+	PayOptionKind_name = map[int32]string{
+		0: "PAY_OPTION_KIND_UNSPECIFIED",
+		1: "PAY_OPTION_KIND_CARD",
+		2: "PAY_OPTION_KIND_KASPI",
+		3: "PAY_OPTION_KIND_INSTALLMENT",
+		4: "PAY_OPTION_KIND_WALLET",
+	}
+	PayOptionKind_value = map[string]int32{
+		"PAY_OPTION_KIND_UNSPECIFIED": 0,
+		"PAY_OPTION_KIND_CARD":        1,
+		"PAY_OPTION_KIND_KASPI":       2,
+		"PAY_OPTION_KIND_INSTALLMENT": 3,
+		"PAY_OPTION_KIND_WALLET":      4,
+	}
+)
+
+func (x PayOptionKind) Enum() *PayOptionKind {
+	p := new(PayOptionKind)
+	*p = x
+	return p
+}
+
+func (x PayOptionKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PayOptionKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_payments_payment_v1_payment_proto_enumTypes[5].Descriptor()
+}
+
+func (PayOptionKind) Type() protoreflect.EnumType {
+	return &file_payments_payment_v1_payment_proto_enumTypes[5]
+}
+
+func (x PayOptionKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PayOptionKind.Descriptor instead.
+func (PayOptionKind) EnumDescriptor() ([]byte, []int) {
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{5}
+}
+
 type Transaction struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -1662,6 +1815,447 @@ func (x *MarkPaidB2BResponse) GetIdempotent() bool {
 	return false
 }
 
+// PayOption is a single selectable payment method shown in CombinedPayModal.
+type PayOption struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`                                            // provider key: "ioka", "kaspi", "kaspi_pay", "wallet"
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`                                      // display name shown in UI
+	SubTitle      string                 `protobuf:"bytes,3,opt,name=sub_title,json=subTitle,proto3" json:"sub_title,omitempty"`                // e.g. "моментальная оплата"
+	CashbackTitle string                 `protobuf:"bytes,4,opt,name=cashback_title,json=cashbackTitle,proto3" json:"cashback_title,omitempty"` // e.g. "5% бонусов"
+	IconUrl       string                 `protobuf:"bytes,5,opt,name=icon_url,json=iconUrl,proto3" json:"icon_url,omitempty"`                   // absolute URL to bank/provider logo
+	Kind          PayOptionKind          `protobuf:"varint,6,opt,name=kind,proto3,enum=payments.payment.v1.PayOptionKind" json:"kind,omitempty"`
+	// Opaque token the client passes back in StartPaymentRequest.pay_session_token
+	// to identify this option. Encodes entity_type + entity_id + provider +
+	// idempotency_key without leaking internal IDs in plain text.
+	PaySessionToken string `protobuf:"bytes,7,opt,name=pay_session_token,json=paySessionToken,proto3" json:"pay_session_token,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *PayOption) Reset() {
+	*x = PayOption{}
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PayOption) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PayOption) ProtoMessage() {}
+
+func (x *PayOption) ProtoReflect() protoreflect.Message {
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PayOption.ProtoReflect.Descriptor instead.
+func (*PayOption) Descriptor() ([]byte, []int) {
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *PayOption) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *PayOption) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *PayOption) GetSubTitle() string {
+	if x != nil {
+		return x.SubTitle
+	}
+	return ""
+}
+
+func (x *PayOption) GetCashbackTitle() string {
+	if x != nil {
+		return x.CashbackTitle
+	}
+	return ""
+}
+
+func (x *PayOption) GetIconUrl() string {
+	if x != nil {
+		return x.IconUrl
+	}
+	return ""
+}
+
+func (x *PayOption) GetKind() PayOptionKind {
+	if x != nil {
+		return x.Kind
+	}
+	return PayOptionKind_PAY_OPTION_KIND_UNSPECIFIED
+}
+
+func (x *PayOption) GetPaySessionToken() string {
+	if x != nil {
+		return x.PaySessionToken
+	}
+	return ""
+}
+
+type InitPaymentRequest struct {
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	EntityType PayEntityType          `protobuf:"varint,1,opt,name=entity_type,json=entityType,proto3,enum=payments.payment.v1.PayEntityType" json:"entity_type,omitempty"`
+	EntityId   int64                  `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"` // 0 is valid for entity types that create an
+	// internal payment_request on the fly
+	Amount   int64  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`    // tiyn; required
+	Currency string `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"` // default "KZT"
+	UserId   int64  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// Optional contextual fields forwarded from CombinedPayModel.
+	City  string `protobuf:"bytes,6,opt,name=city,proto3" json:"city,omitempty"`
+	Phone string `protobuf:"bytes,7,opt,name=phone,proto3" json:"phone,omitempty"`
+	Note  string `protobuf:"bytes,8,opt,name=note,proto3" json:"note,omitempty"`
+	// delivery_amount is added to amount when computing the total.
+	DeliveryAmount int64 `protobuf:"varint,9,opt,name=delivery_amount,json=deliveryAmount,proto3" json:"delivery_amount,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *InitPaymentRequest) Reset() {
+	*x = InitPaymentRequest{}
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InitPaymentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InitPaymentRequest) ProtoMessage() {}
+
+func (x *InitPaymentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InitPaymentRequest.ProtoReflect.Descriptor instead.
+func (*InitPaymentRequest) Descriptor() ([]byte, []int) {
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *InitPaymentRequest) GetEntityType() PayEntityType {
+	if x != nil {
+		return x.EntityType
+	}
+	return PayEntityType_PAY_ENTITY_TYPE_UNSPECIFIED
+}
+
+func (x *InitPaymentRequest) GetEntityId() int64 {
+	if x != nil {
+		return x.EntityId
+	}
+	return 0
+}
+
+func (x *InitPaymentRequest) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *InitPaymentRequest) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *InitPaymentRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *InitPaymentRequest) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *InitPaymentRequest) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *InitPaymentRequest) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
+func (x *InitPaymentRequest) GetDeliveryAmount() int64 {
+	if x != nil {
+		return x.DeliveryAmount
+	}
+	return 0
+}
+
+type InitPaymentResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// available_options are the standard (non-installment) methods (FE available_banks[]).
+	AvailableOptions []*PayOption `protobuf:"bytes,1,rep,name=available_options,json=availableOptions,proto3" json:"available_options,omitempty"`
+	// installment_options are BNPL / kaspi_pay entries (FE loan_from_bank[]).
+	InstallmentOptions []*PayOption `protobuf:"bytes,2,rep,name=installment_options,json=installmentOptions,proto3" json:"installment_options,omitempty"`
+	// wallet_eligible is true when the user has a positive wallet balance (FE from_account).
+	WalletEligible bool `protobuf:"varint,3,opt,name=wallet_eligible,json=walletEligible,proto3" json:"wallet_eligible,omitempty"`
+	// wallet_balance_tiyn is the current deductible wallet balance; 0 when ineligible.
+	WalletBalanceTiyn int64 `protobuf:"varint,4,opt,name=wallet_balance_tiyn,json=walletBalanceTiyn,proto3" json:"wallet_balance_tiyn,omitempty"`
+	// total_amount_tiyn is amount + delivery_amount as confirmed by the service.
+	TotalAmountTiyn int64 `protobuf:"varint,5,opt,name=total_amount_tiyn,json=totalAmountTiyn,proto3" json:"total_amount_tiyn,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *InitPaymentResponse) Reset() {
+	*x = InitPaymentResponse{}
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InitPaymentResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InitPaymentResponse) ProtoMessage() {}
+
+func (x *InitPaymentResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InitPaymentResponse.ProtoReflect.Descriptor instead.
+func (*InitPaymentResponse) Descriptor() ([]byte, []int) {
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *InitPaymentResponse) GetAvailableOptions() []*PayOption {
+	if x != nil {
+		return x.AvailableOptions
+	}
+	return nil
+}
+
+func (x *InitPaymentResponse) GetInstallmentOptions() []*PayOption {
+	if x != nil {
+		return x.InstallmentOptions
+	}
+	return nil
+}
+
+func (x *InitPaymentResponse) GetWalletEligible() bool {
+	if x != nil {
+		return x.WalletEligible
+	}
+	return false
+}
+
+func (x *InitPaymentResponse) GetWalletBalanceTiyn() int64 {
+	if x != nil {
+		return x.WalletBalanceTiyn
+	}
+	return 0
+}
+
+func (x *InitPaymentResponse) GetTotalAmountTiyn() int64 {
+	if x != nil {
+		return x.TotalAmountTiyn
+	}
+	return 0
+}
+
+type StartPaymentRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// pay_session_token was returned in InitPaymentResponse.PayOption.pay_session_token.
+	PaySessionToken string `protobuf:"bytes,1,opt,name=pay_session_token,json=paySessionToken,proto3" json:"pay_session_token,omitempty"`
+	// use_wallet_balance: true when the user toggled "Потратить бонусы".
+	UseWalletBalance bool `protobuf:"varint,2,opt,name=use_wallet_balance,json=useWalletBalance,proto3" json:"use_wallet_balance,omitempty"`
+	// wallet_apply_amount is the tiyn amount to deduct; capped at min(balance, total).
+	WalletApplyAmount int64 `protobuf:"varint,3,opt,name=wallet_apply_amount,json=walletApplyAmount,proto3" json:"wallet_apply_amount,omitempty"`
+	// return_url is the deep-link / HTTPS URL the provider redirects to after payment.
+	ReturnUrl     string `protobuf:"bytes,4,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StartPaymentRequest) Reset() {
+	*x = StartPaymentRequest{}
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StartPaymentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StartPaymentRequest) ProtoMessage() {}
+
+func (x *StartPaymentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StartPaymentRequest.ProtoReflect.Descriptor instead.
+func (*StartPaymentRequest) Descriptor() ([]byte, []int) {
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *StartPaymentRequest) GetPaySessionToken() string {
+	if x != nil {
+		return x.PaySessionToken
+	}
+	return ""
+}
+
+func (x *StartPaymentRequest) GetUseWalletBalance() bool {
+	if x != nil {
+		return x.UseWalletBalance
+	}
+	return false
+}
+
+func (x *StartPaymentRequest) GetWalletApplyAmount() int64 {
+	if x != nil {
+		return x.WalletApplyAmount
+	}
+	return 0
+}
+
+func (x *StartPaymentRequest) GetReturnUrl() string {
+	if x != nil {
+		return x.ReturnUrl
+	}
+	return ""
+}
+
+type StartPaymentResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// payment_url is the provider checkout URL; empty when fully settled from wallet.
+	PaymentUrl string `protobuf:"bytes,1,opt,name=payment_url,json=paymentUrl,proto3" json:"payment_url,omitempty"`
+	// installment_url is set instead of payment_url for BNPL options.
+	InstallmentUrl string `protobuf:"bytes,2,opt,name=installment_url,json=installmentUrl,proto3" json:"installment_url,omitempty"`
+	// transaction_id is the newly created or idempotently returned transaction.
+	TransactionId int64 `protobuf:"varint,3,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	// wallet_debited_tiyn is the amount actually deducted from the wallet.
+	WalletDebitedTiyn int64 `protobuf:"varint,4,opt,name=wallet_debited_tiyn,json=walletDebitedTiyn,proto3" json:"wallet_debited_tiyn,omitempty"`
+	// fully_paid_from_wallet=true means the wallet covered the full amount.
+	FullyPaidFromWallet bool `protobuf:"varint,5,opt,name=fully_paid_from_wallet,json=fullyPaidFromWallet,proto3" json:"fully_paid_from_wallet,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *StartPaymentResponse) Reset() {
+	*x = StartPaymentResponse{}
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StartPaymentResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StartPaymentResponse) ProtoMessage() {}
+
+func (x *StartPaymentResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StartPaymentResponse.ProtoReflect.Descriptor instead.
+func (*StartPaymentResponse) Descriptor() ([]byte, []int) {
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *StartPaymentResponse) GetPaymentUrl() string {
+	if x != nil {
+		return x.PaymentUrl
+	}
+	return ""
+}
+
+func (x *StartPaymentResponse) GetInstallmentUrl() string {
+	if x != nil {
+		return x.InstallmentUrl
+	}
+	return ""
+}
+
+func (x *StartPaymentResponse) GetTransactionId() int64 {
+	if x != nil {
+		return x.TransactionId
+	}
+	return 0
+}
+
+func (x *StartPaymentResponse) GetWalletDebitedTiyn() int64 {
+	if x != nil {
+		return x.WalletDebitedTiyn
+	}
+	return 0
+}
+
+func (x *StartPaymentResponse) GetFullyPaidFromWallet() bool {
+	if x != nil {
+		return x.FullyPaidFromWallet
+	}
+	return false
+}
+
 var File_payments_payment_v1_payment_proto protoreflect.FileDescriptor
 
 const file_payments_payment_v1_payment_proto_rawDesc = "" +
@@ -1801,7 +2395,45 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\vtransaction\x18\x01 \x01(\v2 .payments.payment.v1.TransactionR\vtransaction\x12\x1e\n" +
 	"\n" +
 	"idempotent\x18\x02 \x01(\bR\n" +
-	"idempotent*\x87\x02\n" +
+	"idempotent\"\xf4\x01\n" +
+	"\tPayOption\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12\x1b\n" +
+	"\tsub_title\x18\x03 \x01(\tR\bsubTitle\x12%\n" +
+	"\x0ecashback_title\x18\x04 \x01(\tR\rcashbackTitle\x12\x19\n" +
+	"\bicon_url\x18\x05 \x01(\tR\aiconUrl\x126\n" +
+	"\x04kind\x18\x06 \x01(\x0e2\".payments.payment.v1.PayOptionKindR\x04kind\x12*\n" +
+	"\x11pay_session_token\x18\a \x01(\tR\x0fpaySessionToken\"\xaa\x02\n" +
+	"\x12InitPaymentRequest\x12C\n" +
+	"\ventity_type\x18\x01 \x01(\x0e2\".payments.payment.v1.PayEntityTypeR\n" +
+	"entityType\x12\x1b\n" +
+	"\tentity_id\x18\x02 \x01(\x03R\bentityId\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\x12\x1a\n" +
+	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12\x17\n" +
+	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x12\n" +
+	"\x04city\x18\x06 \x01(\tR\x04city\x12\x14\n" +
+	"\x05phone\x18\a \x01(\tR\x05phone\x12\x12\n" +
+	"\x04note\x18\b \x01(\tR\x04note\x12'\n" +
+	"\x0fdelivery_amount\x18\t \x01(\x03R\x0edeliveryAmount\"\xb8\x02\n" +
+	"\x13InitPaymentResponse\x12K\n" +
+	"\x11available_options\x18\x01 \x03(\v2\x1e.payments.payment.v1.PayOptionR\x10availableOptions\x12O\n" +
+	"\x13installment_options\x18\x02 \x03(\v2\x1e.payments.payment.v1.PayOptionR\x12installmentOptions\x12'\n" +
+	"\x0fwallet_eligible\x18\x03 \x01(\bR\x0ewalletEligible\x12.\n" +
+	"\x13wallet_balance_tiyn\x18\x04 \x01(\x03R\x11walletBalanceTiyn\x12*\n" +
+	"\x11total_amount_tiyn\x18\x05 \x01(\x03R\x0ftotalAmountTiyn\"\xbe\x01\n" +
+	"\x13StartPaymentRequest\x12*\n" +
+	"\x11pay_session_token\x18\x01 \x01(\tR\x0fpaySessionToken\x12,\n" +
+	"\x12use_wallet_balance\x18\x02 \x01(\bR\x10useWalletBalance\x12.\n" +
+	"\x13wallet_apply_amount\x18\x03 \x01(\x03R\x11walletApplyAmount\x12\x1d\n" +
+	"\n" +
+	"return_url\x18\x04 \x01(\tR\treturnUrl\"\xec\x01\n" +
+	"\x14StartPaymentResponse\x12\x1f\n" +
+	"\vpayment_url\x18\x01 \x01(\tR\n" +
+	"paymentUrl\x12'\n" +
+	"\x0finstallment_url\x18\x02 \x01(\tR\x0einstallmentUrl\x12%\n" +
+	"\x0etransaction_id\x18\x03 \x01(\x03R\rtransactionId\x12.\n" +
+	"\x13wallet_debited_tiyn\x18\x04 \x01(\x03R\x11walletDebitedTiyn\x123\n" +
+	"\x16fully_paid_from_wallet\x18\x05 \x01(\bR\x13fullyPaidFromWallet*\x87\x02\n" +
 	"\x11TransactionStatus\x12\"\n" +
 	"\x1eTRANSACTION_STATUS_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aTRANSACTION_STATUS_PENDING\x10\x01\x12!\n" +
@@ -1825,7 +2457,32 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x13PAYMENT_METHOD_CARD\x10\x01\x12\x1c\n" +
 	"\x18PAYMENT_METHOD_APPLE_PAY\x10\x02\x12\x1d\n" +
 	"\x19PAYMENT_METHOD_GOOGLE_PAY\x10\x03\x12\x18\n" +
-	"\x14PAYMENT_METHOD_KASPI\x10\x042\x92\a\n" +
+	"\x14PAYMENT_METHOD_KASPI\x10\x04*\xd2\x04\n" +
+	"\rPayEntityType\x12\x1f\n" +
+	"\x1bPAY_ENTITY_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
+	"\x13PAY_ENTITY_TYPE_ADS\x10\x01\x12\x1a\n" +
+	"\x16PAY_ENTITY_TYPE_BASKET\x10\x02\x12 \n" +
+	"\x1cPAY_ENTITY_TYPE_HELP_REQUEST\x10\x03\x12\x1b\n" +
+	"\x17PAY_ENTITY_TYPE_TURNKEY\x10\x04\x12#\n" +
+	"\x1fPAY_ENTITY_TYPE_PAYMENT_REQUEST\x10\x05\x12\x1a\n" +
+	"\x16PAY_ENTITY_TYPE_BANNER\x10\x06\x12\x1f\n" +
+	"\x1bPAY_ENTITY_TYPE_AD_PAY_CALL\x10\a\x12\x1e\n" +
+	"\x1aPAY_ENTITY_TYPE_ORDER_WORK\x10\v\x12!\n" +
+	"\x1dPAY_ENTITY_TYPE_CHAT_RESPONSE\x10\f\x12\x1f\n" +
+	"\x1bPAY_ENTITY_TYPE_MAINTENANCE\x10\x0f\x12!\n" +
+	"\x1dPAY_ENTITY_TYPE_CAR_WASH_AUTO\x10\x10\x12$\n" +
+	" PAY_ENTITY_TYPE_CAR_WASH_BOOKING\x10\x11\x12 \n" +
+	"\x1cPAY_ENTITY_TYPE_SUBSCRIPTION\x10\x14\x12 \n" +
+	"\x1cPAY_ENTITY_TYPE_BID_PURCHASE\x10\x15\x12\x19\n" +
+	"\x15PAY_ENTITY_TYPE_ORDER\x10\x16\x12\x1b\n" +
+	"\x17PAY_ENTITY_TYPE_BOOKING\x10\x17\x12!\n" +
+	"\x1dPAY_ENTITY_TYPE_CART_CHECKOUT\x10\x18*\xa2\x01\n" +
+	"\rPayOptionKind\x12\x1f\n" +
+	"\x1bPAY_OPTION_KIND_UNSPECIFIED\x10\x00\x12\x18\n" +
+	"\x14PAY_OPTION_KIND_CARD\x10\x01\x12\x19\n" +
+	"\x15PAY_OPTION_KIND_KASPI\x10\x02\x12\x1f\n" +
+	"\x1bPAY_OPTION_KIND_INSTALLMENT\x10\x03\x12\x1a\n" +
+	"\x16PAY_OPTION_KIND_WALLET\x10\x042\xd9\b\n" +
 	"\x0ePaymentService\x12r\n" +
 	"\x11CreateTransaction\x12-.payments.payment.v1.CreateTransactionRequest\x1a..payments.payment.v1.CreateTransactionResponse\x12o\n" +
 	"\x10ListTransactions\x12,.payments.payment.v1.ListTransactionsRequest\x1a-.payments.payment.v1.ListTransactionsResponse\x12i\n" +
@@ -1834,7 +2491,9 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x11HandleIokaWebhook\x12-.payments.payment.v1.HandleIokaWebhookRequest\x1a..payments.payment.v1.HandleIokaWebhookResponse\x12x\n" +
 	"\x13HandleKaspiCheckPay\x12/.payments.payment.v1.HandleKaspiCheckPayRequest\x1a0.payments.payment.v1.HandleKaspiCheckPayResponse\x12u\n" +
 	"\x12GetPaymentAuditLog\x12..payments.payment.v1.GetPaymentAuditLogRequest\x1a/.payments.payment.v1.GetPaymentAuditLogResponse\x12`\n" +
-	"\vMarkPaidB2B\x12'.payments.payment.v1.MarkPaidB2BRequest\x1a(.payments.payment.v1.MarkPaidB2BResponseB=Z;github.com/4ubak/cg-proto/gen/go/payments/payment;paymentv1b\x06proto3"
+	"\vMarkPaidB2B\x12'.payments.payment.v1.MarkPaidB2BRequest\x1a(.payments.payment.v1.MarkPaidB2BResponse\x12`\n" +
+	"\vInitPayment\x12'.payments.payment.v1.InitPaymentRequest\x1a(.payments.payment.v1.InitPaymentResponse\x12c\n" +
+	"\fStartPayment\x12(.payments.payment.v1.StartPaymentRequest\x1a).payments.payment.v1.StartPaymentResponseB=Z;github.com/4ubak/cg-proto/gen/go/payments/payment;paymentv1b\x06proto3"
 
 var (
 	file_payments_payment_v1_payment_proto_rawDescOnce sync.Once
@@ -1848,76 +2507,91 @@ func file_payments_payment_v1_payment_proto_rawDescGZIP() []byte {
 	return file_payments_payment_v1_payment_proto_rawDescData
 }
 
-var file_payments_payment_v1_payment_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_payments_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_payments_payment_v1_payment_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
+var file_payments_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_payments_payment_v1_payment_proto_goTypes = []any{
 	(TransactionStatus)(0),              // 0: payments.payment.v1.TransactionStatus
 	(TransactionType)(0),                // 1: payments.payment.v1.TransactionType
 	(PaymentProvider)(0),                // 2: payments.payment.v1.PaymentProvider
 	(PaymentMethod)(0),                  // 3: payments.payment.v1.PaymentMethod
-	(*Transaction)(nil),                 // 4: payments.payment.v1.Transaction
-	(*Refund)(nil),                      // 5: payments.payment.v1.Refund
-	(*AuditLogEntry)(nil),               // 6: payments.payment.v1.AuditLogEntry
-	(*CreateTransactionRequest)(nil),    // 7: payments.payment.v1.CreateTransactionRequest
-	(*CreateTransactionResponse)(nil),   // 8: payments.payment.v1.CreateTransactionResponse
-	(*ListTransactionsRequest)(nil),     // 9: payments.payment.v1.ListTransactionsRequest
-	(*ListTransactionsResponse)(nil),    // 10: payments.payment.v1.ListTransactionsResponse
-	(*GetTransactionRequest)(nil),       // 11: payments.payment.v1.GetTransactionRequest
-	(*GetTransactionResponse)(nil),      // 12: payments.payment.v1.GetTransactionResponse
-	(*InitiateRefundRequest)(nil),       // 13: payments.payment.v1.InitiateRefundRequest
-	(*InitiateRefundResponse)(nil),      // 14: payments.payment.v1.InitiateRefundResponse
-	(*HandleIokaWebhookRequest)(nil),    // 15: payments.payment.v1.HandleIokaWebhookRequest
-	(*HandleIokaWebhookResponse)(nil),   // 16: payments.payment.v1.HandleIokaWebhookResponse
-	(*HandleKaspiCheckPayRequest)(nil),  // 17: payments.payment.v1.HandleKaspiCheckPayRequest
-	(*HandleKaspiCheckPayResponse)(nil), // 18: payments.payment.v1.HandleKaspiCheckPayResponse
-	(*GetPaymentAuditLogRequest)(nil),   // 19: payments.payment.v1.GetPaymentAuditLogRequest
-	(*GetPaymentAuditLogResponse)(nil),  // 20: payments.payment.v1.GetPaymentAuditLogResponse
-	(*MarkPaidB2BRequest)(nil),          // 21: payments.payment.v1.MarkPaidB2BRequest
-	(*MarkPaidB2BResponse)(nil),         // 22: payments.payment.v1.MarkPaidB2BResponse
-	nil,                                 // 23: payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
-	(*timestamppb.Timestamp)(nil),       // 24: google.protobuf.Timestamp
+	(PayEntityType)(0),                  // 4: payments.payment.v1.PayEntityType
+	(PayOptionKind)(0),                  // 5: payments.payment.v1.PayOptionKind
+	(*Transaction)(nil),                 // 6: payments.payment.v1.Transaction
+	(*Refund)(nil),                      // 7: payments.payment.v1.Refund
+	(*AuditLogEntry)(nil),               // 8: payments.payment.v1.AuditLogEntry
+	(*CreateTransactionRequest)(nil),    // 9: payments.payment.v1.CreateTransactionRequest
+	(*CreateTransactionResponse)(nil),   // 10: payments.payment.v1.CreateTransactionResponse
+	(*ListTransactionsRequest)(nil),     // 11: payments.payment.v1.ListTransactionsRequest
+	(*ListTransactionsResponse)(nil),    // 12: payments.payment.v1.ListTransactionsResponse
+	(*GetTransactionRequest)(nil),       // 13: payments.payment.v1.GetTransactionRequest
+	(*GetTransactionResponse)(nil),      // 14: payments.payment.v1.GetTransactionResponse
+	(*InitiateRefundRequest)(nil),       // 15: payments.payment.v1.InitiateRefundRequest
+	(*InitiateRefundResponse)(nil),      // 16: payments.payment.v1.InitiateRefundResponse
+	(*HandleIokaWebhookRequest)(nil),    // 17: payments.payment.v1.HandleIokaWebhookRequest
+	(*HandleIokaWebhookResponse)(nil),   // 18: payments.payment.v1.HandleIokaWebhookResponse
+	(*HandleKaspiCheckPayRequest)(nil),  // 19: payments.payment.v1.HandleKaspiCheckPayRequest
+	(*HandleKaspiCheckPayResponse)(nil), // 20: payments.payment.v1.HandleKaspiCheckPayResponse
+	(*GetPaymentAuditLogRequest)(nil),   // 21: payments.payment.v1.GetPaymentAuditLogRequest
+	(*GetPaymentAuditLogResponse)(nil),  // 22: payments.payment.v1.GetPaymentAuditLogResponse
+	(*MarkPaidB2BRequest)(nil),          // 23: payments.payment.v1.MarkPaidB2BRequest
+	(*MarkPaidB2BResponse)(nil),         // 24: payments.payment.v1.MarkPaidB2BResponse
+	(*PayOption)(nil),                   // 25: payments.payment.v1.PayOption
+	(*InitPaymentRequest)(nil),          // 26: payments.payment.v1.InitPaymentRequest
+	(*InitPaymentResponse)(nil),         // 27: payments.payment.v1.InitPaymentResponse
+	(*StartPaymentRequest)(nil),         // 28: payments.payment.v1.StartPaymentRequest
+	(*StartPaymentResponse)(nil),        // 29: payments.payment.v1.StartPaymentResponse
+	nil,                                 // 30: payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
+	(*timestamppb.Timestamp)(nil),       // 31: google.protobuf.Timestamp
 }
 var file_payments_payment_v1_payment_proto_depIdxs = []int32{
 	2,  // 0: payments.payment.v1.Transaction.provider:type_name -> payments.payment.v1.PaymentProvider
 	3,  // 1: payments.payment.v1.Transaction.payment_method:type_name -> payments.payment.v1.PaymentMethod
 	0,  // 2: payments.payment.v1.Transaction.status:type_name -> payments.payment.v1.TransactionStatus
 	1,  // 3: payments.payment.v1.Transaction.type:type_name -> payments.payment.v1.TransactionType
-	24, // 4: payments.payment.v1.Transaction.paid_at:type_name -> google.protobuf.Timestamp
-	24, // 5: payments.payment.v1.Transaction.created_at:type_name -> google.protobuf.Timestamp
-	24, // 6: payments.payment.v1.Transaction.updated_at:type_name -> google.protobuf.Timestamp
-	24, // 7: payments.payment.v1.Refund.created_at:type_name -> google.protobuf.Timestamp
-	24, // 8: payments.payment.v1.AuditLogEntry.created_at:type_name -> google.protobuf.Timestamp
+	31, // 4: payments.payment.v1.Transaction.paid_at:type_name -> google.protobuf.Timestamp
+	31, // 5: payments.payment.v1.Transaction.created_at:type_name -> google.protobuf.Timestamp
+	31, // 6: payments.payment.v1.Transaction.updated_at:type_name -> google.protobuf.Timestamp
+	31, // 7: payments.payment.v1.Refund.created_at:type_name -> google.protobuf.Timestamp
+	31, // 8: payments.payment.v1.AuditLogEntry.created_at:type_name -> google.protobuf.Timestamp
 	2,  // 9: payments.payment.v1.CreateTransactionRequest.provider:type_name -> payments.payment.v1.PaymentProvider
 	3,  // 10: payments.payment.v1.CreateTransactionRequest.payment_method:type_name -> payments.payment.v1.PaymentMethod
-	4,  // 11: payments.payment.v1.CreateTransactionResponse.transaction:type_name -> payments.payment.v1.Transaction
+	6,  // 11: payments.payment.v1.CreateTransactionResponse.transaction:type_name -> payments.payment.v1.Transaction
 	0,  // 12: payments.payment.v1.ListTransactionsRequest.status:type_name -> payments.payment.v1.TransactionStatus
-	4,  // 13: payments.payment.v1.ListTransactionsResponse.transactions:type_name -> payments.payment.v1.Transaction
-	4,  // 14: payments.payment.v1.GetTransactionResponse.transaction:type_name -> payments.payment.v1.Transaction
-	5,  // 15: payments.payment.v1.InitiateRefundResponse.refund:type_name -> payments.payment.v1.Refund
-	23, // 16: payments.payment.v1.HandleIokaWebhookRequest.headers:type_name -> payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
-	6,  // 17: payments.payment.v1.GetPaymentAuditLogResponse.entries:type_name -> payments.payment.v1.AuditLogEntry
-	4,  // 18: payments.payment.v1.MarkPaidB2BResponse.transaction:type_name -> payments.payment.v1.Transaction
-	7,  // 19: payments.payment.v1.PaymentService.CreateTransaction:input_type -> payments.payment.v1.CreateTransactionRequest
-	9,  // 20: payments.payment.v1.PaymentService.ListTransactions:input_type -> payments.payment.v1.ListTransactionsRequest
-	11, // 21: payments.payment.v1.PaymentService.GetTransaction:input_type -> payments.payment.v1.GetTransactionRequest
-	13, // 22: payments.payment.v1.PaymentService.InitiateRefund:input_type -> payments.payment.v1.InitiateRefundRequest
-	15, // 23: payments.payment.v1.PaymentService.HandleIokaWebhook:input_type -> payments.payment.v1.HandleIokaWebhookRequest
-	17, // 24: payments.payment.v1.PaymentService.HandleKaspiCheckPay:input_type -> payments.payment.v1.HandleKaspiCheckPayRequest
-	19, // 25: payments.payment.v1.PaymentService.GetPaymentAuditLog:input_type -> payments.payment.v1.GetPaymentAuditLogRequest
-	21, // 26: payments.payment.v1.PaymentService.MarkPaidB2B:input_type -> payments.payment.v1.MarkPaidB2BRequest
-	8,  // 27: payments.payment.v1.PaymentService.CreateTransaction:output_type -> payments.payment.v1.CreateTransactionResponse
-	10, // 28: payments.payment.v1.PaymentService.ListTransactions:output_type -> payments.payment.v1.ListTransactionsResponse
-	12, // 29: payments.payment.v1.PaymentService.GetTransaction:output_type -> payments.payment.v1.GetTransactionResponse
-	14, // 30: payments.payment.v1.PaymentService.InitiateRefund:output_type -> payments.payment.v1.InitiateRefundResponse
-	16, // 31: payments.payment.v1.PaymentService.HandleIokaWebhook:output_type -> payments.payment.v1.HandleIokaWebhookResponse
-	18, // 32: payments.payment.v1.PaymentService.HandleKaspiCheckPay:output_type -> payments.payment.v1.HandleKaspiCheckPayResponse
-	20, // 33: payments.payment.v1.PaymentService.GetPaymentAuditLog:output_type -> payments.payment.v1.GetPaymentAuditLogResponse
-	22, // 34: payments.payment.v1.PaymentService.MarkPaidB2B:output_type -> payments.payment.v1.MarkPaidB2BResponse
-	27, // [27:35] is the sub-list for method output_type
-	19, // [19:27] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	6,  // 13: payments.payment.v1.ListTransactionsResponse.transactions:type_name -> payments.payment.v1.Transaction
+	6,  // 14: payments.payment.v1.GetTransactionResponse.transaction:type_name -> payments.payment.v1.Transaction
+	7,  // 15: payments.payment.v1.InitiateRefundResponse.refund:type_name -> payments.payment.v1.Refund
+	30, // 16: payments.payment.v1.HandleIokaWebhookRequest.headers:type_name -> payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
+	8,  // 17: payments.payment.v1.GetPaymentAuditLogResponse.entries:type_name -> payments.payment.v1.AuditLogEntry
+	6,  // 18: payments.payment.v1.MarkPaidB2BResponse.transaction:type_name -> payments.payment.v1.Transaction
+	5,  // 19: payments.payment.v1.PayOption.kind:type_name -> payments.payment.v1.PayOptionKind
+	4,  // 20: payments.payment.v1.InitPaymentRequest.entity_type:type_name -> payments.payment.v1.PayEntityType
+	25, // 21: payments.payment.v1.InitPaymentResponse.available_options:type_name -> payments.payment.v1.PayOption
+	25, // 22: payments.payment.v1.InitPaymentResponse.installment_options:type_name -> payments.payment.v1.PayOption
+	9,  // 23: payments.payment.v1.PaymentService.CreateTransaction:input_type -> payments.payment.v1.CreateTransactionRequest
+	11, // 24: payments.payment.v1.PaymentService.ListTransactions:input_type -> payments.payment.v1.ListTransactionsRequest
+	13, // 25: payments.payment.v1.PaymentService.GetTransaction:input_type -> payments.payment.v1.GetTransactionRequest
+	15, // 26: payments.payment.v1.PaymentService.InitiateRefund:input_type -> payments.payment.v1.InitiateRefundRequest
+	17, // 27: payments.payment.v1.PaymentService.HandleIokaWebhook:input_type -> payments.payment.v1.HandleIokaWebhookRequest
+	19, // 28: payments.payment.v1.PaymentService.HandleKaspiCheckPay:input_type -> payments.payment.v1.HandleKaspiCheckPayRequest
+	21, // 29: payments.payment.v1.PaymentService.GetPaymentAuditLog:input_type -> payments.payment.v1.GetPaymentAuditLogRequest
+	23, // 30: payments.payment.v1.PaymentService.MarkPaidB2B:input_type -> payments.payment.v1.MarkPaidB2BRequest
+	26, // 31: payments.payment.v1.PaymentService.InitPayment:input_type -> payments.payment.v1.InitPaymentRequest
+	28, // 32: payments.payment.v1.PaymentService.StartPayment:input_type -> payments.payment.v1.StartPaymentRequest
+	10, // 33: payments.payment.v1.PaymentService.CreateTransaction:output_type -> payments.payment.v1.CreateTransactionResponse
+	12, // 34: payments.payment.v1.PaymentService.ListTransactions:output_type -> payments.payment.v1.ListTransactionsResponse
+	14, // 35: payments.payment.v1.PaymentService.GetTransaction:output_type -> payments.payment.v1.GetTransactionResponse
+	16, // 36: payments.payment.v1.PaymentService.InitiateRefund:output_type -> payments.payment.v1.InitiateRefundResponse
+	18, // 37: payments.payment.v1.PaymentService.HandleIokaWebhook:output_type -> payments.payment.v1.HandleIokaWebhookResponse
+	20, // 38: payments.payment.v1.PaymentService.HandleKaspiCheckPay:output_type -> payments.payment.v1.HandleKaspiCheckPayResponse
+	22, // 39: payments.payment.v1.PaymentService.GetPaymentAuditLog:output_type -> payments.payment.v1.GetPaymentAuditLogResponse
+	24, // 40: payments.payment.v1.PaymentService.MarkPaidB2B:output_type -> payments.payment.v1.MarkPaidB2BResponse
+	27, // 41: payments.payment.v1.PaymentService.InitPayment:output_type -> payments.payment.v1.InitPaymentResponse
+	29, // 42: payments.payment.v1.PaymentService.StartPayment:output_type -> payments.payment.v1.StartPaymentResponse
+	33, // [33:43] is the sub-list for method output_type
+	23, // [23:33] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_payments_payment_v1_payment_proto_init() }
@@ -1930,8 +2604,8 @@ func file_payments_payment_v1_payment_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_payments_payment_v1_payment_proto_rawDesc), len(file_payments_payment_v1_payment_proto_rawDesc)),
-			NumEnums:      4,
-			NumMessages:   20,
+			NumEnums:      6,
+			NumMessages:   25,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

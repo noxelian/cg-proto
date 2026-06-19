@@ -81,6 +81,9 @@ const (
 	// Closed by the customer after picking an organization and (for repair)
 	// leaving a review, or after parts/workshop receipt confirmation.
 	RequestStatus_REQUEST_STATUS_CLOSED RequestStatus = 4
+	// Temporarily hidden by the customer ("на паузе"). Stays classified and can
+	// be republished at any time (→ PUBLISHED). Invisible to the org/СТО feed.
+	RequestStatus_REQUEST_STATUS_PAUSED RequestStatus = 5
 )
 
 // Enum value maps for RequestStatus.
@@ -91,6 +94,7 @@ var (
 		2: "REQUEST_STATUS_PUBLISHED",
 		3: "REQUEST_STATUS_DELETED",
 		4: "REQUEST_STATUS_CLOSED",
+		5: "REQUEST_STATUS_PAUSED",
 	}
 	RequestStatus_value = map[string]int32{
 		"REQUEST_STATUS_UNSPECIFIED": 0,
@@ -98,6 +102,7 @@ var (
 		"REQUEST_STATUS_PUBLISHED":   2,
 		"REQUEST_STATUS_DELETED":     3,
 		"REQUEST_STATUS_CLOSED":      4,
+		"REQUEST_STATUS_PAUSED":      5,
 	}
 )
 
@@ -160,7 +165,12 @@ type Request struct {
 	IsNew bool `protobuf:"varint,22,opt,name=is_new,json=isNew,proto3" json:"is_new,omitempty"` // true if this request has not been viewed by the requesting organization
 	// Enriched field: number of bids (откликов) on this request. Populated by the
 	// list/get queries via a LATERAL count subquery (no row multiplication).
-	BidsCount     int32 `protobuf:"varint,23,opt,name=bids_count,json=bidsCount,proto3" json:"bids_count,omitempty"`
+	BidsCount int32 `protobuf:"varint,23,opt,name=bids_count,json=bidsCount,proto3" json:"bids_count,omitempty"`
+	// Pause metadata — set only when status == REQUEST_STATUS_PAUSED.
+	PausedAt *timestamppb.Timestamp `protobuf:"bytes,24,opt,name=paused_at,json=pausedAt,proto3,oneof" json:"paused_at,omitempty"`
+	// UUID of org the customer paused "for" (mirrors legacy paused_by_service_id);
+	// empty when self-paused.
+	PausedByOrgId *string `protobuf:"bytes,25,opt,name=paused_by_org_id,json=pausedByOrgId,proto3,oneof" json:"paused_by_org_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -354,6 +364,20 @@ func (x *Request) GetBidsCount() int32 {
 		return x.BidsCount
 	}
 	return 0
+}
+
+func (x *Request) GetPausedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.PausedAt
+	}
+	return nil
+}
+
+func (x *Request) GetPausedByOrgId() string {
+	if x != nil && x.PausedByOrgId != nil {
+		return *x.PausedByOrgId
+	}
+	return ""
 }
 
 // CreateRequest
@@ -2383,6 +2407,7 @@ type GetUserRequestCountsResponse struct {
 	Active        int32                  `protobuf:"varint,2,opt,name=active,proto3" json:"active,omitempty"`         // REQUEST_STATUS_PUBLISHED
 	Moderation    int32                  `protobuf:"varint,3,opt,name=moderation,proto3" json:"moderation,omitempty"` // REQUEST_STATUS_MODERATION
 	Inactive      int32                  `protobuf:"varint,4,opt,name=inactive,proto3" json:"inactive,omitempty"`     // REQUEST_STATUS_DELETED + REQUEST_STATUS_CLOSED
+	Paused        int32                  `protobuf:"varint,5,opt,name=paused,proto3" json:"paused,omitempty"`         // REQUEST_STATUS_PAUSED (separate bucket)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2445,11 +2470,222 @@ func (x *GetUserRequestCountsResponse) GetInactive() int32 {
 	return 0
 }
 
+func (x *GetUserRequestCountsResponse) GetPaused() int32 {
+	if x != nil {
+		return x.Paused
+	}
+	return 0
+}
+
+// PauseRequest — hide a published request from the СТО feed.
+type PauseRequestRequest struct {
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	RequestId string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"` // UUID of the request to pause
+	UserId    int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`         // must match request.user_id
+	// Optional UUID of the organization the customer is pausing for.
+	// Mirrors legacy paused_by_service_id. Empty = self-pause.
+	PausedByOrgId *string `protobuf:"bytes,3,opt,name=paused_by_org_id,json=pausedByOrgId,proto3,oneof" json:"paused_by_org_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PauseRequestRequest) Reset() {
+	*x = PauseRequestRequest{}
+	mi := &file_services_request_request_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PauseRequestRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PauseRequestRequest) ProtoMessage() {}
+
+func (x *PauseRequestRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PauseRequestRequest.ProtoReflect.Descriptor instead.
+func (*PauseRequestRequest) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *PauseRequestRequest) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *PauseRequestRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *PauseRequestRequest) GetPausedByOrgId() string {
+	if x != nil && x.PausedByOrgId != nil {
+		return *x.PausedByOrgId
+	}
+	return ""
+}
+
+type PauseRequestResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Request       *Request               `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PauseRequestResponse) Reset() {
+	*x = PauseRequestResponse{}
+	mi := &file_services_request_request_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PauseRequestResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PauseRequestResponse) ProtoMessage() {}
+
+func (x *PauseRequestResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PauseRequestResponse.ProtoReflect.Descriptor instead.
+func (*PauseRequestResponse) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *PauseRequestResponse) GetRequest() *Request {
+	if x != nil {
+		return x.Request
+	}
+	return nil
+}
+
+// UnpauseRequest — restore a paused request to PUBLISHED.
+type UnpauseRequestRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"` // UUID of the request to unpause
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`         // must match request.user_id
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnpauseRequestRequest) Reset() {
+	*x = UnpauseRequestRequest{}
+	mi := &file_services_request_request_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnpauseRequestRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnpauseRequestRequest) ProtoMessage() {}
+
+func (x *UnpauseRequestRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnpauseRequestRequest.ProtoReflect.Descriptor instead.
+func (*UnpauseRequestRequest) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *UnpauseRequestRequest) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *UnpauseRequestRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type UnpauseRequestResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Request       *Request               `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnpauseRequestResponse) Reset() {
+	*x = UnpauseRequestResponse{}
+	mi := &file_services_request_request_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnpauseRequestResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnpauseRequestResponse) ProtoMessage() {}
+
+func (x *UnpauseRequestResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnpauseRequestResponse.ProtoReflect.Descriptor instead.
+func (*UnpauseRequestResponse) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *UnpauseRequestResponse) GetRequest() *Request {
+	if x != nil {
+		return x.Request
+	}
+	return nil
+}
+
 var File_services_request_request_proto protoreflect.FileDescriptor
 
 const file_services_request_request_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/request/request.proto\x12\x13services.request.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x81\a\n" +
+	"\x1eservices/request/request.proto\x12\x13services.request.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x90\b\n" +
 	"\aRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x124\n" +
 	"\x04type\x18\x02 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12:\n" +
@@ -2478,11 +2714,16 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x06org_id\x18\x15 \x01(\tH\x03R\x05orgId\x88\x01\x01\x12\x15\n" +
 	"\x06is_new\x18\x16 \x01(\bR\x05isNew\x12\x1d\n" +
 	"\n" +
-	"bids_count\x18\x17 \x01(\x05R\tbidsCountB\x14\n" +
+	"bids_count\x18\x17 \x01(\x05R\tbidsCount\x12<\n" +
+	"\tpaused_at\x18\x18 \x01(\v2\x1a.google.protobuf.TimestampH\x04R\bpausedAt\x88\x01\x01\x12,\n" +
+	"\x10paused_by_org_id\x18\x19 \x01(\tH\x05R\rpausedByOrgId\x88\x01\x01B\x14\n" +
 	"\x12_car_generation_idB\x0f\n" +
 	"\r_published_atB\x12\n" +
 	"\x10_repair_order_idB\t\n" +
-	"\a_org_id\"\xdb\x04\n" +
+	"\a_org_idB\f\n" +
+	"\n" +
+	"_paused_atB\x13\n" +
+	"\x11_paused_by_org_id\"\xdb\x04\n" +
 	"\x14CreateRequestRequest\x124\n" +
 	"\x04type\x18\x01 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
@@ -2645,24 +2886,40 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"l\n" +
 	"\x1bGetUserRequestCountsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x124\n" +
-	"\x04type\x18\x02 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\"\x88\x01\n" +
+	"\x04type\x18\x02 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\"\xa0\x01\n" +
 	"\x1cGetUserRequestCountsResponse\x12\x14\n" +
 	"\x05total\x18\x01 \x01(\x05R\x05total\x12\x16\n" +
 	"\x06active\x18\x02 \x01(\x05R\x06active\x12\x1e\n" +
 	"\n" +
 	"moderation\x18\x03 \x01(\x05R\n" +
 	"moderation\x12\x1a\n" +
-	"\binactive\x18\x04 \x01(\x05R\binactive*\\\n" +
+	"\binactive\x18\x04 \x01(\x05R\binactive\x12\x16\n" +
+	"\x06paused\x18\x05 \x01(\x05R\x06paused\"\x90\x01\n" +
+	"\x13PauseRequestRequest\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12,\n" +
+	"\x10paused_by_org_id\x18\x03 \x01(\tH\x00R\rpausedByOrgId\x88\x01\x01B\x13\n" +
+	"\x11_paused_by_org_id\"N\n" +
+	"\x14PauseRequestResponse\x126\n" +
+	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"O\n" +
+	"\x15UnpauseRequestRequest\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"P\n" +
+	"\x16UnpauseRequestResponse\x126\n" +
+	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest*\\\n" +
 	"\vRequestType\x12\x1c\n" +
 	"\x18REQUEST_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13REQUEST_TYPE_REPAIR\x10\x01\x12\x16\n" +
-	"\x12REQUEST_TYPE_PARTS\x10\x02*\xa3\x01\n" +
+	"\x12REQUEST_TYPE_PARTS\x10\x02*\xbe\x01\n" +
 	"\rRequestStatus\x12\x1e\n" +
 	"\x1aREQUEST_STATUS_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19REQUEST_STATUS_MODERATION\x10\x01\x12\x1c\n" +
 	"\x18REQUEST_STATUS_PUBLISHED\x10\x02\x12\x1a\n" +
 	"\x16REQUEST_STATUS_DELETED\x10\x03\x12\x19\n" +
-	"\x15REQUEST_STATUS_CLOSED\x10\x042\xfe\x0e\n" +
+	"\x15REQUEST_STATUS_CLOSED\x10\x04\x12\x19\n" +
+	"\x15REQUEST_STATUS_PAUSED\x10\x052\xce\x10\n" +
 	"\x0eRequestService\x12f\n" +
 	"\rCreateRequest\x12).services.request.v1.CreateRequestRequest\x1a*.services.request.v1.CreateRequestResponse\x12]\n" +
 	"\n" +
@@ -2681,7 +2938,9 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x0eDismissRequest\x12*.services.request.v1.DismissRequestRequest\x1a+.services.request.v1.DismissRequestResponse\x12\x8d\x01\n" +
 	"\x1aCountUnreadForOrganization\x126.services.request.v1.CountUnreadForOrganizationRequest\x1a7.services.request.v1.CountUnreadForOrganizationResponse\x12l\n" +
 	"\x0fClassifyRequest\x12+.services.request.v1.ClassifyRequestRequest\x1a,.services.request.v1.ClassifyRequestResponse\x12{\n" +
-	"\x14GetUserRequestCounts\x120.services.request.v1.GetUserRequestCountsRequest\x1a1.services.request.v1.GetUserRequestCountsResponseB=Z;github.com/4ubak/cg-proto/gen/go/services/request;requestv1b\x06proto3"
+	"\x14GetUserRequestCounts\x120.services.request.v1.GetUserRequestCountsRequest\x1a1.services.request.v1.GetUserRequestCountsResponse\x12c\n" +
+	"\fPauseRequest\x12(.services.request.v1.PauseRequestRequest\x1a).services.request.v1.PauseRequestResponse\x12i\n" +
+	"\x0eUnpauseRequest\x12*.services.request.v1.UnpauseRequestRequest\x1a+.services.request.v1.UnpauseRequestResponseB=Z;github.com/4ubak/cg-proto/gen/go/services/request;requestv1b\x06proto3"
 
 var (
 	file_services_request_request_proto_rawDescOnce sync.Once
@@ -2696,7 +2955,7 @@ func file_services_request_request_proto_rawDescGZIP() []byte {
 }
 
 var file_services_request_request_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_services_request_request_proto_msgTypes = make([]protoimpl.MessageInfo, 35)
+var file_services_request_request_proto_msgTypes = make([]protoimpl.MessageInfo, 39)
 var file_services_request_request_proto_goTypes = []any{
 	(RequestType)(0),                              // 0: services.request.v1.RequestType
 	(RequestStatus)(0),                            // 1: services.request.v1.RequestStatus
@@ -2735,69 +2994,80 @@ var file_services_request_request_proto_goTypes = []any{
 	(*ClassifyRequestResponse)(nil),               // 34: services.request.v1.ClassifyRequestResponse
 	(*GetUserRequestCountsRequest)(nil),           // 35: services.request.v1.GetUserRequestCountsRequest
 	(*GetUserRequestCountsResponse)(nil),          // 36: services.request.v1.GetUserRequestCountsResponse
-	(*timestamppb.Timestamp)(nil),                 // 37: google.protobuf.Timestamp
+	(*PauseRequestRequest)(nil),                   // 37: services.request.v1.PauseRequestRequest
+	(*PauseRequestResponse)(nil),                  // 38: services.request.v1.PauseRequestResponse
+	(*UnpauseRequestRequest)(nil),                 // 39: services.request.v1.UnpauseRequestRequest
+	(*UnpauseRequestResponse)(nil),                // 40: services.request.v1.UnpauseRequestResponse
+	(*timestamppb.Timestamp)(nil),                 // 41: google.protobuf.Timestamp
 }
 var file_services_request_request_proto_depIdxs = []int32{
 	0,  // 0: services.request.v1.Request.type:type_name -> services.request.v1.RequestType
 	1,  // 1: services.request.v1.Request.status:type_name -> services.request.v1.RequestStatus
-	37, // 2: services.request.v1.Request.created_at:type_name -> google.protobuf.Timestamp
-	37, // 3: services.request.v1.Request.updated_at:type_name -> google.protobuf.Timestamp
-	37, // 4: services.request.v1.Request.published_at:type_name -> google.protobuf.Timestamp
-	0,  // 5: services.request.v1.CreateRequestRequest.type:type_name -> services.request.v1.RequestType
-	2,  // 6: services.request.v1.CreateRequestResponse.request:type_name -> services.request.v1.Request
-	2,  // 7: services.request.v1.GetRequestResponse.request:type_name -> services.request.v1.Request
-	2,  // 8: services.request.v1.UpdateRequestResponse.request:type_name -> services.request.v1.Request
-	0,  // 9: services.request.v1.ListRequestsRequest.type:type_name -> services.request.v1.RequestType
-	1,  // 10: services.request.v1.ListRequestsRequest.status:type_name -> services.request.v1.RequestStatus
-	2,  // 11: services.request.v1.ListRequestsResponse.requests:type_name -> services.request.v1.Request
-	0,  // 12: services.request.v1.SearchRequestsRequest.type:type_name -> services.request.v1.RequestType
-	2,  // 13: services.request.v1.SearchRequestsResponse.requests:type_name -> services.request.v1.Request
-	1,  // 14: services.request.v1.ChangeStatusRequest.status:type_name -> services.request.v1.RequestStatus
-	2,  // 15: services.request.v1.ChangeStatusResponse.request:type_name -> services.request.v1.Request
-	1,  // 16: services.request.v1.GetUserRequestsRequest.status:type_name -> services.request.v1.RequestStatus
-	2,  // 17: services.request.v1.GetUserRequestsResponse.requests:type_name -> services.request.v1.Request
-	0,  // 18: services.request.v1.CountUnreadForOrganizationRequest.type:type_name -> services.request.v1.RequestType
-	2,  // 19: services.request.v1.ClassifyRequestResponse.request:type_name -> services.request.v1.Request
-	0,  // 20: services.request.v1.GetUserRequestCountsRequest.type:type_name -> services.request.v1.RequestType
-	3,  // 21: services.request.v1.RequestService.CreateRequest:input_type -> services.request.v1.CreateRequestRequest
-	5,  // 22: services.request.v1.RequestService.GetRequest:input_type -> services.request.v1.GetRequestRequest
-	7,  // 23: services.request.v1.RequestService.UpdateRequest:input_type -> services.request.v1.UpdateRequestRequest
-	9,  // 24: services.request.v1.RequestService.DeleteRequest:input_type -> services.request.v1.DeleteRequestRequest
-	11, // 25: services.request.v1.RequestService.ListRequests:input_type -> services.request.v1.ListRequestsRequest
-	13, // 26: services.request.v1.RequestService.SearchRequests:input_type -> services.request.v1.SearchRequestsRequest
-	15, // 27: services.request.v1.RequestService.ChangeStatus:input_type -> services.request.v1.ChangeStatusRequest
-	17, // 28: services.request.v1.RequestService.GetUserRequests:input_type -> services.request.v1.GetUserRequestsRequest
-	19, // 29: services.request.v1.RequestService.IncrementViews:input_type -> services.request.v1.IncrementViewsRequest
-	21, // 30: services.request.v1.RequestService.GetSuggestions:input_type -> services.request.v1.GetSuggestionsRequest
-	23, // 31: services.request.v1.RequestService.GetNewRequestsForOrganization:input_type -> services.request.v1.GetNewRequestsForOrganizationRequest
-	25, // 32: services.request.v1.RequestService.MarkRequestAsViewed:input_type -> services.request.v1.MarkRequestAsViewedRequest
-	27, // 33: services.request.v1.RequestService.IsRequestNew:input_type -> services.request.v1.IsRequestNewRequest
-	29, // 34: services.request.v1.RequestService.DismissRequest:input_type -> services.request.v1.DismissRequestRequest
-	31, // 35: services.request.v1.RequestService.CountUnreadForOrganization:input_type -> services.request.v1.CountUnreadForOrganizationRequest
-	33, // 36: services.request.v1.RequestService.ClassifyRequest:input_type -> services.request.v1.ClassifyRequestRequest
-	35, // 37: services.request.v1.RequestService.GetUserRequestCounts:input_type -> services.request.v1.GetUserRequestCountsRequest
-	4,  // 38: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
-	6,  // 39: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
-	8,  // 40: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
-	10, // 41: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
-	12, // 42: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
-	14, // 43: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
-	16, // 44: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
-	18, // 45: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
-	20, // 46: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
-	22, // 47: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
-	24, // 48: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
-	26, // 49: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
-	28, // 50: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
-	30, // 51: services.request.v1.RequestService.DismissRequest:output_type -> services.request.v1.DismissRequestResponse
-	32, // 52: services.request.v1.RequestService.CountUnreadForOrganization:output_type -> services.request.v1.CountUnreadForOrganizationResponse
-	34, // 53: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
-	36, // 54: services.request.v1.RequestService.GetUserRequestCounts:output_type -> services.request.v1.GetUserRequestCountsResponse
-	38, // [38:55] is the sub-list for method output_type
-	21, // [21:38] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	41, // 2: services.request.v1.Request.created_at:type_name -> google.protobuf.Timestamp
+	41, // 3: services.request.v1.Request.updated_at:type_name -> google.protobuf.Timestamp
+	41, // 4: services.request.v1.Request.published_at:type_name -> google.protobuf.Timestamp
+	41, // 5: services.request.v1.Request.paused_at:type_name -> google.protobuf.Timestamp
+	0,  // 6: services.request.v1.CreateRequestRequest.type:type_name -> services.request.v1.RequestType
+	2,  // 7: services.request.v1.CreateRequestResponse.request:type_name -> services.request.v1.Request
+	2,  // 8: services.request.v1.GetRequestResponse.request:type_name -> services.request.v1.Request
+	2,  // 9: services.request.v1.UpdateRequestResponse.request:type_name -> services.request.v1.Request
+	0,  // 10: services.request.v1.ListRequestsRequest.type:type_name -> services.request.v1.RequestType
+	1,  // 11: services.request.v1.ListRequestsRequest.status:type_name -> services.request.v1.RequestStatus
+	2,  // 12: services.request.v1.ListRequestsResponse.requests:type_name -> services.request.v1.Request
+	0,  // 13: services.request.v1.SearchRequestsRequest.type:type_name -> services.request.v1.RequestType
+	2,  // 14: services.request.v1.SearchRequestsResponse.requests:type_name -> services.request.v1.Request
+	1,  // 15: services.request.v1.ChangeStatusRequest.status:type_name -> services.request.v1.RequestStatus
+	2,  // 16: services.request.v1.ChangeStatusResponse.request:type_name -> services.request.v1.Request
+	1,  // 17: services.request.v1.GetUserRequestsRequest.status:type_name -> services.request.v1.RequestStatus
+	2,  // 18: services.request.v1.GetUserRequestsResponse.requests:type_name -> services.request.v1.Request
+	0,  // 19: services.request.v1.CountUnreadForOrganizationRequest.type:type_name -> services.request.v1.RequestType
+	2,  // 20: services.request.v1.ClassifyRequestResponse.request:type_name -> services.request.v1.Request
+	0,  // 21: services.request.v1.GetUserRequestCountsRequest.type:type_name -> services.request.v1.RequestType
+	2,  // 22: services.request.v1.PauseRequestResponse.request:type_name -> services.request.v1.Request
+	2,  // 23: services.request.v1.UnpauseRequestResponse.request:type_name -> services.request.v1.Request
+	3,  // 24: services.request.v1.RequestService.CreateRequest:input_type -> services.request.v1.CreateRequestRequest
+	5,  // 25: services.request.v1.RequestService.GetRequest:input_type -> services.request.v1.GetRequestRequest
+	7,  // 26: services.request.v1.RequestService.UpdateRequest:input_type -> services.request.v1.UpdateRequestRequest
+	9,  // 27: services.request.v1.RequestService.DeleteRequest:input_type -> services.request.v1.DeleteRequestRequest
+	11, // 28: services.request.v1.RequestService.ListRequests:input_type -> services.request.v1.ListRequestsRequest
+	13, // 29: services.request.v1.RequestService.SearchRequests:input_type -> services.request.v1.SearchRequestsRequest
+	15, // 30: services.request.v1.RequestService.ChangeStatus:input_type -> services.request.v1.ChangeStatusRequest
+	17, // 31: services.request.v1.RequestService.GetUserRequests:input_type -> services.request.v1.GetUserRequestsRequest
+	19, // 32: services.request.v1.RequestService.IncrementViews:input_type -> services.request.v1.IncrementViewsRequest
+	21, // 33: services.request.v1.RequestService.GetSuggestions:input_type -> services.request.v1.GetSuggestionsRequest
+	23, // 34: services.request.v1.RequestService.GetNewRequestsForOrganization:input_type -> services.request.v1.GetNewRequestsForOrganizationRequest
+	25, // 35: services.request.v1.RequestService.MarkRequestAsViewed:input_type -> services.request.v1.MarkRequestAsViewedRequest
+	27, // 36: services.request.v1.RequestService.IsRequestNew:input_type -> services.request.v1.IsRequestNewRequest
+	29, // 37: services.request.v1.RequestService.DismissRequest:input_type -> services.request.v1.DismissRequestRequest
+	31, // 38: services.request.v1.RequestService.CountUnreadForOrganization:input_type -> services.request.v1.CountUnreadForOrganizationRequest
+	33, // 39: services.request.v1.RequestService.ClassifyRequest:input_type -> services.request.v1.ClassifyRequestRequest
+	35, // 40: services.request.v1.RequestService.GetUserRequestCounts:input_type -> services.request.v1.GetUserRequestCountsRequest
+	37, // 41: services.request.v1.RequestService.PauseRequest:input_type -> services.request.v1.PauseRequestRequest
+	39, // 42: services.request.v1.RequestService.UnpauseRequest:input_type -> services.request.v1.UnpauseRequestRequest
+	4,  // 43: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
+	6,  // 44: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
+	8,  // 45: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
+	10, // 46: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
+	12, // 47: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
+	14, // 48: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
+	16, // 49: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
+	18, // 50: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
+	20, // 51: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
+	22, // 52: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
+	24, // 53: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
+	26, // 54: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
+	28, // 55: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
+	30, // 56: services.request.v1.RequestService.DismissRequest:output_type -> services.request.v1.DismissRequestResponse
+	32, // 57: services.request.v1.RequestService.CountUnreadForOrganization:output_type -> services.request.v1.CountUnreadForOrganizationResponse
+	34, // 58: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
+	36, // 59: services.request.v1.RequestService.GetUserRequestCounts:output_type -> services.request.v1.GetUserRequestCountsResponse
+	38, // 60: services.request.v1.RequestService.PauseRequest:output_type -> services.request.v1.PauseRequestResponse
+	40, // 61: services.request.v1.RequestService.UnpauseRequest:output_type -> services.request.v1.UnpauseRequestResponse
+	43, // [43:62] is the sub-list for method output_type
+	24, // [24:43] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_services_request_request_proto_init() }
@@ -2809,13 +3079,14 @@ func file_services_request_request_proto_init() {
 	file_services_request_request_proto_msgTypes[1].OneofWrappers = []any{}
 	file_services_request_request_proto_msgTypes[5].OneofWrappers = []any{}
 	file_services_request_request_proto_msgTypes[9].OneofWrappers = []any{}
+	file_services_request_request_proto_msgTypes[35].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_request_request_proto_rawDesc), len(file_services_request_request_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   35,
+			NumMessages:   39,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

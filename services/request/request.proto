@@ -64,6 +64,15 @@ service RequestService {
   // one call (legacy ads/count: total / active(PUBLISHED) / moderation /
   // inactive(DELETED+CLOSED)). Optional type filter (0 = all).
   rpc GetUserRequestCounts(GetUserRequestCountsRequest) returns (GetUserRequestCountsResponse);
+
+  // PauseRequest temporarily hides a published request from the СТО feed.
+  // Sets status → PAUSED, records paused_at and optionally paused_by_org_id.
+  // Only the request owner may call this.
+  rpc PauseRequest(PauseRequestRequest) returns (PauseRequestResponse);
+
+  // UnpauseRequest restores a paused request back to PUBLISHED, clearing
+  // paused_at / paused_by_org_id. Only the request owner may call this.
+  rpc UnpauseRequest(UnpauseRequestRequest) returns (UnpauseRequestResponse);
 }
 
 enum RequestType {
@@ -80,6 +89,9 @@ enum RequestStatus {
   // Closed by the customer after picking an organization and (for repair)
   // leaving a review, or after parts/workshop receipt confirmation.
   REQUEST_STATUS_CLOSED = 4;
+  // Temporarily hidden by the customer ("на паузе"). Stays classified and can
+  // be republished at any time (→ PUBLISHED). Invisible to the org/СТО feed.
+  REQUEST_STATUS_PAUSED = 5;
 }
 
 message Request {
@@ -122,6 +134,12 @@ message Request {
   // Enriched field: number of bids (откликов) on this request. Populated by the
   // list/get queries via a LATERAL count subquery (no row multiplication).
   int32 bids_count = 23;
+
+  // Pause metadata — set only when status == REQUEST_STATUS_PAUSED.
+  optional google.protobuf.Timestamp paused_at = 24;
+  // UUID of org the customer paused "for" (mirrors legacy paused_by_service_id);
+  // empty when self-paused.
+  optional string paused_by_org_id = 25;
 }
 
 // CreateRequest
@@ -363,5 +381,29 @@ message GetUserRequestCountsResponse {
   int32 active = 2;       // REQUEST_STATUS_PUBLISHED
   int32 moderation = 3;   // REQUEST_STATUS_MODERATION
   int32 inactive = 4;     // REQUEST_STATUS_DELETED + REQUEST_STATUS_CLOSED
+  int32 paused = 5;       // REQUEST_STATUS_PAUSED (separate bucket)
+}
+
+// PauseRequest — hide a published request from the СТО feed.
+message PauseRequestRequest {
+  string request_id = 1;  // UUID of the request to pause
+  int64 user_id = 2;      // must match request.user_id
+  // Optional UUID of the organization the customer is pausing for.
+  // Mirrors legacy paused_by_service_id. Empty = self-pause.
+  optional string paused_by_org_id = 3;
+}
+
+message PauseRequestResponse {
+  Request request = 1;
+}
+
+// UnpauseRequest — restore a paused request to PUBLISHED.
+message UnpauseRequestRequest {
+  string request_id = 1;  // UUID of the request to unpause
+  int64 user_id = 2;      // must match request.user_id
+}
+
+message UnpauseRequestResponse {
+  Request request = 1;
 }
 
