@@ -30,6 +30,10 @@ const (
 	BookingService_SetWashPricing_FullMethodName       = "/booking.booking.v1.BookingService/SetWashPricing"
 	BookingService_GetAvailableSlots_FullMethodName    = "/booking.booking.v1.BookingService/GetAvailableSlots"
 	BookingService_GenerateWashSlots_FullMethodName    = "/booking.booking.v1.BookingService/GenerateWashSlots"
+	BookingService_RescheduleBooking_FullMethodName    = "/booking.booking.v1.BookingService/RescheduleBooking"
+	BookingService_CreateReview_FullMethodName         = "/booking.booking.v1.BookingService/CreateReview"
+	BookingService_ListReviews_FullMethodName          = "/booking.booking.v1.BookingService/ListReviews"
+	BookingService_ListPendingReviews_FullMethodName   = "/booking.booking.v1.BookingService/ListPendingReviews"
 )
 
 // BookingServiceClient is the client API for BookingService service.
@@ -53,6 +57,12 @@ type BookingServiceClient interface {
 	// === Wash slots ===
 	GetAvailableSlots(ctx context.Context, in *GetAvailableSlotsRequest, opts ...grpc.CallOption) (*GetAvailableSlotsResponse, error)
 	GenerateWashSlots(ctx context.Context, in *GenerateWashSlotsRequest, opts ...grpc.CallOption) (*GenerateWashSlotsResponse, error)
+	// === Reschedule ===
+	RescheduleBooking(ctx context.Context, in *RescheduleBookingRequest, opts ...grpc.CallOption) (*RescheduleBookingResponse, error)
+	// === Reviews (booking-scoped, one per completed booking) ===
+	CreateReview(ctx context.Context, in *CreateReviewRequest, opts ...grpc.CallOption) (*CreateReviewResponse, error)
+	ListReviews(ctx context.Context, in *ListReviewsRequest, opts ...grpc.CallOption) (*ListReviewsResponse, error)
+	ListPendingReviews(ctx context.Context, in *ListPendingReviewsRequest, opts ...grpc.CallOption) (*ListPendingReviewsResponse, error)
 }
 
 type bookingServiceClient struct {
@@ -173,6 +183,46 @@ func (c *bookingServiceClient) GenerateWashSlots(ctx context.Context, in *Genera
 	return out, nil
 }
 
+func (c *bookingServiceClient) RescheduleBooking(ctx context.Context, in *RescheduleBookingRequest, opts ...grpc.CallOption) (*RescheduleBookingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RescheduleBookingResponse)
+	err := c.cc.Invoke(ctx, BookingService_RescheduleBooking_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bookingServiceClient) CreateReview(ctx context.Context, in *CreateReviewRequest, opts ...grpc.CallOption) (*CreateReviewResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateReviewResponse)
+	err := c.cc.Invoke(ctx, BookingService_CreateReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bookingServiceClient) ListReviews(ctx context.Context, in *ListReviewsRequest, opts ...grpc.CallOption) (*ListReviewsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListReviewsResponse)
+	err := c.cc.Invoke(ctx, BookingService_ListReviews_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bookingServiceClient) ListPendingReviews(ctx context.Context, in *ListPendingReviewsRequest, opts ...grpc.CallOption) (*ListPendingReviewsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPendingReviewsResponse)
+	err := c.cc.Invoke(ctx, BookingService_ListPendingReviews_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BookingServiceServer is the server API for BookingService service.
 // All implementations must embed UnimplementedBookingServiceServer
 // for forward compatibility.
@@ -194,6 +244,12 @@ type BookingServiceServer interface {
 	// === Wash slots ===
 	GetAvailableSlots(context.Context, *GetAvailableSlotsRequest) (*GetAvailableSlotsResponse, error)
 	GenerateWashSlots(context.Context, *GenerateWashSlotsRequest) (*GenerateWashSlotsResponse, error)
+	// === Reschedule ===
+	RescheduleBooking(context.Context, *RescheduleBookingRequest) (*RescheduleBookingResponse, error)
+	// === Reviews (booking-scoped, one per completed booking) ===
+	CreateReview(context.Context, *CreateReviewRequest) (*CreateReviewResponse, error)
+	ListReviews(context.Context, *ListReviewsRequest) (*ListReviewsResponse, error)
+	ListPendingReviews(context.Context, *ListPendingReviewsRequest) (*ListPendingReviewsResponse, error)
 	mustEmbedUnimplementedBookingServiceServer()
 }
 
@@ -236,6 +292,18 @@ func (UnimplementedBookingServiceServer) GetAvailableSlots(context.Context, *Get
 }
 func (UnimplementedBookingServiceServer) GenerateWashSlots(context.Context, *GenerateWashSlotsRequest) (*GenerateWashSlotsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GenerateWashSlots not implemented")
+}
+func (UnimplementedBookingServiceServer) RescheduleBooking(context.Context, *RescheduleBookingRequest) (*RescheduleBookingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RescheduleBooking not implemented")
+}
+func (UnimplementedBookingServiceServer) CreateReview(context.Context, *CreateReviewRequest) (*CreateReviewResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateReview not implemented")
+}
+func (UnimplementedBookingServiceServer) ListReviews(context.Context, *ListReviewsRequest) (*ListReviewsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListReviews not implemented")
+}
+func (UnimplementedBookingServiceServer) ListPendingReviews(context.Context, *ListPendingReviewsRequest) (*ListPendingReviewsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPendingReviews not implemented")
 }
 func (UnimplementedBookingServiceServer) mustEmbedUnimplementedBookingServiceServer() {}
 func (UnimplementedBookingServiceServer) testEmbeddedByValue()                        {}
@@ -456,6 +524,78 @@ func _BookingService_GenerateWashSlots_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BookingService_RescheduleBooking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RescheduleBookingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).RescheduleBooking(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookingService_RescheduleBooking_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).RescheduleBooking(ctx, req.(*RescheduleBookingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BookingService_CreateReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).CreateReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookingService_CreateReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).CreateReview(ctx, req.(*CreateReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BookingService_ListReviews_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListReviewsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).ListReviews(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookingService_ListReviews_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).ListReviews(ctx, req.(*ListReviewsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BookingService_ListPendingReviews_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPendingReviewsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookingServiceServer).ListPendingReviews(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BookingService_ListPendingReviews_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookingServiceServer).ListPendingReviews(ctx, req.(*ListPendingReviewsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BookingService_ServiceDesc is the grpc.ServiceDesc for BookingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -506,6 +646,22 @@ var BookingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenerateWashSlots",
 			Handler:    _BookingService_GenerateWashSlots_Handler,
+		},
+		{
+			MethodName: "RescheduleBooking",
+			Handler:    _BookingService_RescheduleBooking_Handler,
+		},
+		{
+			MethodName: "CreateReview",
+			Handler:    _BookingService_CreateReview_Handler,
+		},
+		{
+			MethodName: "ListReviews",
+			Handler:    _BookingService_ListReviews_Handler,
+		},
+		{
+			MethodName: "ListPendingReviews",
+			Handler:    _BookingService_ListPendingReviews_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
