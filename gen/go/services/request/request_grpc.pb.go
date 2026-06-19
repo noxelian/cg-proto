@@ -35,6 +35,7 @@ const (
 	RequestService_DismissRequest_FullMethodName                = "/services.request.v1.RequestService/DismissRequest"
 	RequestService_CountUnreadForOrganization_FullMethodName    = "/services.request.v1.RequestService/CountUnreadForOrganization"
 	RequestService_ClassifyRequest_FullMethodName               = "/services.request.v1.RequestService/ClassifyRequest"
+	RequestService_GetUserRequestCounts_FullMethodName          = "/services.request.v1.RequestService/GetUserRequestCounts"
 )
 
 // RequestServiceClient is the client API for RequestService service.
@@ -78,6 +79,10 @@ type RequestServiceClient interface {
 	// ClassifyRequest sets group_id, category_ids and cleaned note for a request.
 	// Used by AI classify service after auto-classification.
 	ClassifyRequest(ctx context.Context, in *ClassifyRequestRequest, opts ...grpc.CallOption) (*ClassifyRequestResponse, error)
+	// GetUserRequestCounts returns the user's request counts grouped by state in
+	// one call (legacy ads/count: total / active(PUBLISHED) / moderation /
+	// inactive(DELETED+CLOSED)). Optional type filter (0 = all).
+	GetUserRequestCounts(ctx context.Context, in *GetUserRequestCountsRequest, opts ...grpc.CallOption) (*GetUserRequestCountsResponse, error)
 }
 
 type requestServiceClient struct {
@@ -248,6 +253,16 @@ func (c *requestServiceClient) ClassifyRequest(ctx context.Context, in *Classify
 	return out, nil
 }
 
+func (c *requestServiceClient) GetUserRequestCounts(ctx context.Context, in *GetUserRequestCountsRequest, opts ...grpc.CallOption) (*GetUserRequestCountsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserRequestCountsResponse)
+	err := c.cc.Invoke(ctx, RequestService_GetUserRequestCounts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RequestServiceServer is the server API for RequestService service.
 // All implementations must embed UnimplementedRequestServiceServer
 // for forward compatibility.
@@ -289,6 +304,10 @@ type RequestServiceServer interface {
 	// ClassifyRequest sets group_id, category_ids and cleaned note for a request.
 	// Used by AI classify service after auto-classification.
 	ClassifyRequest(context.Context, *ClassifyRequestRequest) (*ClassifyRequestResponse, error)
+	// GetUserRequestCounts returns the user's request counts grouped by state in
+	// one call (legacy ads/count: total / active(PUBLISHED) / moderation /
+	// inactive(DELETED+CLOSED)). Optional type filter (0 = all).
+	GetUserRequestCounts(context.Context, *GetUserRequestCountsRequest) (*GetUserRequestCountsResponse, error)
 	mustEmbedUnimplementedRequestServiceServer()
 }
 
@@ -346,6 +365,9 @@ func (UnimplementedRequestServiceServer) CountUnreadForOrganization(context.Cont
 }
 func (UnimplementedRequestServiceServer) ClassifyRequest(context.Context, *ClassifyRequestRequest) (*ClassifyRequestResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ClassifyRequest not implemented")
+}
+func (UnimplementedRequestServiceServer) GetUserRequestCounts(context.Context, *GetUserRequestCountsRequest) (*GetUserRequestCountsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetUserRequestCounts not implemented")
 }
 func (UnimplementedRequestServiceServer) mustEmbedUnimplementedRequestServiceServer() {}
 func (UnimplementedRequestServiceServer) testEmbeddedByValue()                        {}
@@ -656,6 +678,24 @@ func _RequestService_ClassifyRequest_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestService_GetUserRequestCounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequestCountsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).GetUserRequestCounts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_GetUserRequestCounts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).GetUserRequestCounts(ctx, req.(*GetUserRequestCountsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RequestService_ServiceDesc is the grpc.ServiceDesc for RequestService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -726,6 +766,10 @@ var RequestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ClassifyRequest",
 			Handler:    _RequestService_ClassifyRequest_Handler,
+		},
+		{
+			MethodName: "GetUserRequestCounts",
+			Handler:    _RequestService_GetUserRequestCounts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -59,6 +59,11 @@ service RequestService {
   // ClassifyRequest sets group_id, category_ids and cleaned note for a request.
   // Used by AI classify service after auto-classification.
   rpc ClassifyRequest(ClassifyRequestRequest) returns (ClassifyRequestResponse);
+
+  // GetUserRequestCounts returns the user's request counts grouped by state in
+  // one call (legacy ads/count: total / active(PUBLISHED) / moderation /
+  // inactive(DELETED+CLOSED)). Optional type filter (0 = all).
+  rpc GetUserRequestCounts(GetUserRequestCountsRequest) returns (GetUserRequestCountsResponse);
 }
 
 enum RequestType {
@@ -345,5 +350,18 @@ message ClassifyRequestRequest {
 
 message ClassifyRequestResponse {
   Request request = 1;
+}
+
+// GetUserRequestCounts — per-state counts of a user's requests (legacy ads/count).
+message GetUserRequestCountsRequest {
+  int64 user_id = 1;
+  RequestType type = 2;  // optional filter; 0 (unspecified) = all types
+}
+
+message GetUserRequestCountsResponse {
+  int32 total = 1;
+  int32 active = 2;       // REQUEST_STATUS_PUBLISHED
+  int32 moderation = 3;   // REQUEST_STATUS_MODERATION
+  int32 inactive = 4;     // REQUEST_STATUS_DELETED + REQUEST_STATUS_CLOSED
 }
 

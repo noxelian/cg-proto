@@ -2324,6 +2324,127 @@ func (x *ClassifyRequestResponse) GetRequest() *Request {
 	return nil
 }
 
+// GetUserRequestCounts — per-state counts of a user's requests (legacy ads/count).
+type GetUserRequestCountsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Type          RequestType            `protobuf:"varint,2,opt,name=type,proto3,enum=services.request.v1.RequestType" json:"type,omitempty"` // optional filter; 0 (unspecified) = all types
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserRequestCountsRequest) Reset() {
+	*x = GetUserRequestCountsRequest{}
+	mi := &file_services_request_request_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserRequestCountsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserRequestCountsRequest) ProtoMessage() {}
+
+func (x *GetUserRequestCountsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserRequestCountsRequest.ProtoReflect.Descriptor instead.
+func (*GetUserRequestCountsRequest) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *GetUserRequestCountsRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *GetUserRequestCountsRequest) GetType() RequestType {
+	if x != nil {
+		return x.Type
+	}
+	return RequestType_REQUEST_TYPE_UNSPECIFIED
+}
+
+type GetUserRequestCountsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Total         int32                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
+	Active        int32                  `protobuf:"varint,2,opt,name=active,proto3" json:"active,omitempty"`         // REQUEST_STATUS_PUBLISHED
+	Moderation    int32                  `protobuf:"varint,3,opt,name=moderation,proto3" json:"moderation,omitempty"` // REQUEST_STATUS_MODERATION
+	Inactive      int32                  `protobuf:"varint,4,opt,name=inactive,proto3" json:"inactive,omitempty"`     // REQUEST_STATUS_DELETED + REQUEST_STATUS_CLOSED
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserRequestCountsResponse) Reset() {
+	*x = GetUserRequestCountsResponse{}
+	mi := &file_services_request_request_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserRequestCountsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserRequestCountsResponse) ProtoMessage() {}
+
+func (x *GetUserRequestCountsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserRequestCountsResponse.ProtoReflect.Descriptor instead.
+func (*GetUserRequestCountsResponse) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *GetUserRequestCountsResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *GetUserRequestCountsResponse) GetActive() int32 {
+	if x != nil {
+		return x.Active
+	}
+	return 0
+}
+
+func (x *GetUserRequestCountsResponse) GetModeration() int32 {
+	if x != nil {
+		return x.Moderation
+	}
+	return 0
+}
+
+func (x *GetUserRequestCountsResponse) GetInactive() int32 {
+	if x != nil {
+		return x.Inactive
+	}
+	return 0
+}
+
 var File_services_request_request_proto protoreflect.FileDescriptor
 
 const file_services_request_request_proto_rawDesc = "" +
@@ -2521,7 +2642,17 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\fcleaned_note\x18\x04 \x01(\tR\vcleanedNote\x12\x18\n" +
 	"\apublish\x18\x05 \x01(\bR\apublish\"Q\n" +
 	"\x17ClassifyRequestResponse\x126\n" +
-	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest*\\\n" +
+	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"l\n" +
+	"\x1bGetUserRequestCountsRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x124\n" +
+	"\x04type\x18\x02 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\"\x88\x01\n" +
+	"\x1cGetUserRequestCountsResponse\x12\x14\n" +
+	"\x05total\x18\x01 \x01(\x05R\x05total\x12\x16\n" +
+	"\x06active\x18\x02 \x01(\x05R\x06active\x12\x1e\n" +
+	"\n" +
+	"moderation\x18\x03 \x01(\x05R\n" +
+	"moderation\x12\x1a\n" +
+	"\binactive\x18\x04 \x01(\x05R\binactive*\\\n" +
 	"\vRequestType\x12\x1c\n" +
 	"\x18REQUEST_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13REQUEST_TYPE_REPAIR\x10\x01\x12\x16\n" +
@@ -2531,7 +2662,7 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x19REQUEST_STATUS_MODERATION\x10\x01\x12\x1c\n" +
 	"\x18REQUEST_STATUS_PUBLISHED\x10\x02\x12\x1a\n" +
 	"\x16REQUEST_STATUS_DELETED\x10\x03\x12\x19\n" +
-	"\x15REQUEST_STATUS_CLOSED\x10\x042\x81\x0e\n" +
+	"\x15REQUEST_STATUS_CLOSED\x10\x042\xfe\x0e\n" +
 	"\x0eRequestService\x12f\n" +
 	"\rCreateRequest\x12).services.request.v1.CreateRequestRequest\x1a*.services.request.v1.CreateRequestResponse\x12]\n" +
 	"\n" +
@@ -2549,7 +2680,8 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\fIsRequestNew\x12(.services.request.v1.IsRequestNewRequest\x1a).services.request.v1.IsRequestNewResponse\x12i\n" +
 	"\x0eDismissRequest\x12*.services.request.v1.DismissRequestRequest\x1a+.services.request.v1.DismissRequestResponse\x12\x8d\x01\n" +
 	"\x1aCountUnreadForOrganization\x126.services.request.v1.CountUnreadForOrganizationRequest\x1a7.services.request.v1.CountUnreadForOrganizationResponse\x12l\n" +
-	"\x0fClassifyRequest\x12+.services.request.v1.ClassifyRequestRequest\x1a,.services.request.v1.ClassifyRequestResponseB=Z;github.com/4ubak/cg-proto/gen/go/services/request;requestv1b\x06proto3"
+	"\x0fClassifyRequest\x12+.services.request.v1.ClassifyRequestRequest\x1a,.services.request.v1.ClassifyRequestResponse\x12{\n" +
+	"\x14GetUserRequestCounts\x120.services.request.v1.GetUserRequestCountsRequest\x1a1.services.request.v1.GetUserRequestCountsResponseB=Z;github.com/4ubak/cg-proto/gen/go/services/request;requestv1b\x06proto3"
 
 var (
 	file_services_request_request_proto_rawDescOnce sync.Once
@@ -2564,7 +2696,7 @@ func file_services_request_request_proto_rawDescGZIP() []byte {
 }
 
 var file_services_request_request_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_services_request_request_proto_msgTypes = make([]protoimpl.MessageInfo, 33)
+var file_services_request_request_proto_msgTypes = make([]protoimpl.MessageInfo, 35)
 var file_services_request_request_proto_goTypes = []any{
 	(RequestType)(0),                              // 0: services.request.v1.RequestType
 	(RequestStatus)(0),                            // 1: services.request.v1.RequestStatus
@@ -2601,14 +2733,16 @@ var file_services_request_request_proto_goTypes = []any{
 	(*CountUnreadForOrganizationResponse)(nil),    // 32: services.request.v1.CountUnreadForOrganizationResponse
 	(*ClassifyRequestRequest)(nil),                // 33: services.request.v1.ClassifyRequestRequest
 	(*ClassifyRequestResponse)(nil),               // 34: services.request.v1.ClassifyRequestResponse
-	(*timestamppb.Timestamp)(nil),                 // 35: google.protobuf.Timestamp
+	(*GetUserRequestCountsRequest)(nil),           // 35: services.request.v1.GetUserRequestCountsRequest
+	(*GetUserRequestCountsResponse)(nil),          // 36: services.request.v1.GetUserRequestCountsResponse
+	(*timestamppb.Timestamp)(nil),                 // 37: google.protobuf.Timestamp
 }
 var file_services_request_request_proto_depIdxs = []int32{
 	0,  // 0: services.request.v1.Request.type:type_name -> services.request.v1.RequestType
 	1,  // 1: services.request.v1.Request.status:type_name -> services.request.v1.RequestStatus
-	35, // 2: services.request.v1.Request.created_at:type_name -> google.protobuf.Timestamp
-	35, // 3: services.request.v1.Request.updated_at:type_name -> google.protobuf.Timestamp
-	35, // 4: services.request.v1.Request.published_at:type_name -> google.protobuf.Timestamp
+	37, // 2: services.request.v1.Request.created_at:type_name -> google.protobuf.Timestamp
+	37, // 3: services.request.v1.Request.updated_at:type_name -> google.protobuf.Timestamp
+	37, // 4: services.request.v1.Request.published_at:type_name -> google.protobuf.Timestamp
 	0,  // 5: services.request.v1.CreateRequestRequest.type:type_name -> services.request.v1.RequestType
 	2,  // 6: services.request.v1.CreateRequestResponse.request:type_name -> services.request.v1.Request
 	2,  // 7: services.request.v1.GetRequestResponse.request:type_name -> services.request.v1.Request
@@ -2624,43 +2758,46 @@ var file_services_request_request_proto_depIdxs = []int32{
 	2,  // 17: services.request.v1.GetUserRequestsResponse.requests:type_name -> services.request.v1.Request
 	0,  // 18: services.request.v1.CountUnreadForOrganizationRequest.type:type_name -> services.request.v1.RequestType
 	2,  // 19: services.request.v1.ClassifyRequestResponse.request:type_name -> services.request.v1.Request
-	3,  // 20: services.request.v1.RequestService.CreateRequest:input_type -> services.request.v1.CreateRequestRequest
-	5,  // 21: services.request.v1.RequestService.GetRequest:input_type -> services.request.v1.GetRequestRequest
-	7,  // 22: services.request.v1.RequestService.UpdateRequest:input_type -> services.request.v1.UpdateRequestRequest
-	9,  // 23: services.request.v1.RequestService.DeleteRequest:input_type -> services.request.v1.DeleteRequestRequest
-	11, // 24: services.request.v1.RequestService.ListRequests:input_type -> services.request.v1.ListRequestsRequest
-	13, // 25: services.request.v1.RequestService.SearchRequests:input_type -> services.request.v1.SearchRequestsRequest
-	15, // 26: services.request.v1.RequestService.ChangeStatus:input_type -> services.request.v1.ChangeStatusRequest
-	17, // 27: services.request.v1.RequestService.GetUserRequests:input_type -> services.request.v1.GetUserRequestsRequest
-	19, // 28: services.request.v1.RequestService.IncrementViews:input_type -> services.request.v1.IncrementViewsRequest
-	21, // 29: services.request.v1.RequestService.GetSuggestions:input_type -> services.request.v1.GetSuggestionsRequest
-	23, // 30: services.request.v1.RequestService.GetNewRequestsForOrganization:input_type -> services.request.v1.GetNewRequestsForOrganizationRequest
-	25, // 31: services.request.v1.RequestService.MarkRequestAsViewed:input_type -> services.request.v1.MarkRequestAsViewedRequest
-	27, // 32: services.request.v1.RequestService.IsRequestNew:input_type -> services.request.v1.IsRequestNewRequest
-	29, // 33: services.request.v1.RequestService.DismissRequest:input_type -> services.request.v1.DismissRequestRequest
-	31, // 34: services.request.v1.RequestService.CountUnreadForOrganization:input_type -> services.request.v1.CountUnreadForOrganizationRequest
-	33, // 35: services.request.v1.RequestService.ClassifyRequest:input_type -> services.request.v1.ClassifyRequestRequest
-	4,  // 36: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
-	6,  // 37: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
-	8,  // 38: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
-	10, // 39: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
-	12, // 40: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
-	14, // 41: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
-	16, // 42: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
-	18, // 43: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
-	20, // 44: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
-	22, // 45: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
-	24, // 46: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
-	26, // 47: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
-	28, // 48: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
-	30, // 49: services.request.v1.RequestService.DismissRequest:output_type -> services.request.v1.DismissRequestResponse
-	32, // 50: services.request.v1.RequestService.CountUnreadForOrganization:output_type -> services.request.v1.CountUnreadForOrganizationResponse
-	34, // 51: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
-	36, // [36:52] is the sub-list for method output_type
-	20, // [20:36] is the sub-list for method input_type
-	20, // [20:20] is the sub-list for extension type_name
-	20, // [20:20] is the sub-list for extension extendee
-	0,  // [0:20] is the sub-list for field type_name
+	0,  // 20: services.request.v1.GetUserRequestCountsRequest.type:type_name -> services.request.v1.RequestType
+	3,  // 21: services.request.v1.RequestService.CreateRequest:input_type -> services.request.v1.CreateRequestRequest
+	5,  // 22: services.request.v1.RequestService.GetRequest:input_type -> services.request.v1.GetRequestRequest
+	7,  // 23: services.request.v1.RequestService.UpdateRequest:input_type -> services.request.v1.UpdateRequestRequest
+	9,  // 24: services.request.v1.RequestService.DeleteRequest:input_type -> services.request.v1.DeleteRequestRequest
+	11, // 25: services.request.v1.RequestService.ListRequests:input_type -> services.request.v1.ListRequestsRequest
+	13, // 26: services.request.v1.RequestService.SearchRequests:input_type -> services.request.v1.SearchRequestsRequest
+	15, // 27: services.request.v1.RequestService.ChangeStatus:input_type -> services.request.v1.ChangeStatusRequest
+	17, // 28: services.request.v1.RequestService.GetUserRequests:input_type -> services.request.v1.GetUserRequestsRequest
+	19, // 29: services.request.v1.RequestService.IncrementViews:input_type -> services.request.v1.IncrementViewsRequest
+	21, // 30: services.request.v1.RequestService.GetSuggestions:input_type -> services.request.v1.GetSuggestionsRequest
+	23, // 31: services.request.v1.RequestService.GetNewRequestsForOrganization:input_type -> services.request.v1.GetNewRequestsForOrganizationRequest
+	25, // 32: services.request.v1.RequestService.MarkRequestAsViewed:input_type -> services.request.v1.MarkRequestAsViewedRequest
+	27, // 33: services.request.v1.RequestService.IsRequestNew:input_type -> services.request.v1.IsRequestNewRequest
+	29, // 34: services.request.v1.RequestService.DismissRequest:input_type -> services.request.v1.DismissRequestRequest
+	31, // 35: services.request.v1.RequestService.CountUnreadForOrganization:input_type -> services.request.v1.CountUnreadForOrganizationRequest
+	33, // 36: services.request.v1.RequestService.ClassifyRequest:input_type -> services.request.v1.ClassifyRequestRequest
+	35, // 37: services.request.v1.RequestService.GetUserRequestCounts:input_type -> services.request.v1.GetUserRequestCountsRequest
+	4,  // 38: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
+	6,  // 39: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
+	8,  // 40: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
+	10, // 41: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
+	12, // 42: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
+	14, // 43: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
+	16, // 44: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
+	18, // 45: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
+	20, // 46: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
+	22, // 47: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
+	24, // 48: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
+	26, // 49: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
+	28, // 50: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
+	30, // 51: services.request.v1.RequestService.DismissRequest:output_type -> services.request.v1.DismissRequestResponse
+	32, // 52: services.request.v1.RequestService.CountUnreadForOrganization:output_type -> services.request.v1.CountUnreadForOrganizationResponse
+	34, // 53: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
+	36, // 54: services.request.v1.RequestService.GetUserRequestCounts:output_type -> services.request.v1.GetUserRequestCountsResponse
+	38, // [38:55] is the sub-list for method output_type
+	21, // [21:38] is the sub-list for method input_type
+	21, // [21:21] is the sub-list for extension type_name
+	21, // [21:21] is the sub-list for extension extendee
+	0,  // [0:21] is the sub-list for field type_name
 }
 
 func init() { file_services_request_request_proto_init() }
@@ -2678,7 +2815,7 @@ func file_services_request_request_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_request_request_proto_rawDesc), len(file_services_request_request_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   33,
+			NumMessages:   35,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
