@@ -117,6 +117,8 @@ const (
 	CRMService_DeleteWhatsAppTemplate_FullMethodName             = "/crm.v1.CRMService/DeleteWhatsAppTemplate"
 	CRMService_HandleWhatsAppWebhook_FullMethodName              = "/crm.v1.CRMService/HandleWhatsAppWebhook"
 	CRMService_UpsertCtwaAttribution_FullMethodName              = "/crm.v1.CRMService/UpsertCtwaAttribution"
+	CRMService_ListCtwaConversions_FullMethodName                = "/crm.v1.CRMService/ListCtwaConversions"
+	CRMService_ListCtwaNotDelivered_FullMethodName               = "/crm.v1.CRMService/ListCtwaNotDelivered"
 	CRMService_MarkWhatsAppChatRead_FullMethodName               = "/crm.v1.CRMService/MarkWhatsAppChatRead"
 	CRMService_ListWhatsAppChannels_FullMethodName               = "/crm.v1.CRMService/ListWhatsAppChannels"
 	CRMService_SendInstagramMessage_FullMethodName               = "/crm.v1.CRMService/SendInstagramMessage"
@@ -406,6 +408,16 @@ type CRMServiceClient interface {
 	// a Meta referral-bearing inbound for the ad number. Idempotent upsert on
 	// ctwa_clid. deal_id is always NULL at this stage.
 	UpsertCtwaAttribution(ctx context.Context, in *UpsertCtwaAttributionRequest, opts ...grpc.CallOption) (*UpsertCtwaAttributionResponse, error)
+	// ListCtwaConversions returns the read-only Meta-conversion monitoring feed
+	// (admin surface): which deals were synced to Meta Conversions, with event,
+	// sent/failed status, fbtrace_id, ad id and time. Pure read of
+	// ctwa_conversion_sends ⋈ deals ⋈ ctwa_attributions. Deploy-skew-safe: a
+	// caller rolled out before this server degrades to an empty response.
+	ListCtwaConversions(ctx context.Context, in *ListCtwaConversionsRequest, opts ...grpc.CallOption) (*ListCtwaConversionsResponse, error)
+	// ListCtwaNotDelivered returns deals that have a CTWA attribution bound to a
+	// deal but no successful 'sent' conversion row. Read-only admin surface;
+	// deploy-skew-safe (degrades to empty on Unimplemented).
+	ListCtwaNotDelivered(ctx context.Context, in *ListCtwaNotDeliveredRequest, opts ...grpc.CallOption) (*ListCtwaNotDeliveredResponse, error)
 	// MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
 	// given phone. Replaces the previous side-effect reset that fired on every
 	// ListWhatsAppMessages poll — that behaviour raced with incoming inbound
@@ -1539,6 +1551,26 @@ func (c *cRMServiceClient) UpsertCtwaAttribution(ctx context.Context, in *Upsert
 	return out, nil
 }
 
+func (c *cRMServiceClient) ListCtwaConversions(ctx context.Context, in *ListCtwaConversionsRequest, opts ...grpc.CallOption) (*ListCtwaConversionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCtwaConversionsResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListCtwaConversions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) ListCtwaNotDelivered(ctx context.Context, in *ListCtwaNotDeliveredRequest, opts ...grpc.CallOption) (*ListCtwaNotDeliveredResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCtwaNotDeliveredResponse)
+	err := c.cc.Invoke(ctx, CRMService_ListCtwaNotDelivered_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) MarkWhatsAppChatRead(ctx context.Context, in *MarkWhatsAppChatReadRequest, opts ...grpc.CallOption) (*MarkWhatsAppChatReadResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MarkWhatsAppChatReadResponse)
@@ -2312,6 +2344,16 @@ type CRMServiceServer interface {
 	// a Meta referral-bearing inbound for the ad number. Idempotent upsert on
 	// ctwa_clid. deal_id is always NULL at this stage.
 	UpsertCtwaAttribution(context.Context, *UpsertCtwaAttributionRequest) (*UpsertCtwaAttributionResponse, error)
+	// ListCtwaConversions returns the read-only Meta-conversion monitoring feed
+	// (admin surface): which deals were synced to Meta Conversions, with event,
+	// sent/failed status, fbtrace_id, ad id and time. Pure read of
+	// ctwa_conversion_sends ⋈ deals ⋈ ctwa_attributions. Deploy-skew-safe: a
+	// caller rolled out before this server degrades to an empty response.
+	ListCtwaConversions(context.Context, *ListCtwaConversionsRequest) (*ListCtwaConversionsResponse, error)
+	// ListCtwaNotDelivered returns deals that have a CTWA attribution bound to a
+	// deal but no successful 'sent' conversion row. Read-only admin surface;
+	// deploy-skew-safe (degrades to empty on Unimplemented).
+	ListCtwaNotDelivered(context.Context, *ListCtwaNotDeliveredRequest) (*ListCtwaNotDeliveredResponse, error)
 	// MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
 	// given phone. Replaces the previous side-effect reset that fired on every
 	// ListWhatsAppMessages poll — that behaviour raced with incoming inbound
@@ -2746,6 +2788,12 @@ func (UnimplementedCRMServiceServer) HandleWhatsAppWebhook(context.Context, *Wha
 }
 func (UnimplementedCRMServiceServer) UpsertCtwaAttribution(context.Context, *UpsertCtwaAttributionRequest) (*UpsertCtwaAttributionResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpsertCtwaAttribution not implemented")
+}
+func (UnimplementedCRMServiceServer) ListCtwaConversions(context.Context, *ListCtwaConversionsRequest) (*ListCtwaConversionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListCtwaConversions not implemented")
+}
+func (UnimplementedCRMServiceServer) ListCtwaNotDelivered(context.Context, *ListCtwaNotDeliveredRequest) (*ListCtwaNotDeliveredResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListCtwaNotDelivered not implemented")
 }
 func (UnimplementedCRMServiceServer) MarkWhatsAppChatRead(context.Context, *MarkWhatsAppChatReadRequest) (*MarkWhatsAppChatReadResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method MarkWhatsAppChatRead not implemented")
@@ -4694,6 +4742,42 @@ func _CRMService_UpsertCtwaAttribution_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_ListCtwaConversions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCtwaConversionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListCtwaConversions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListCtwaConversions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListCtwaConversions(ctx, req.(*ListCtwaConversionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_ListCtwaNotDelivered_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCtwaNotDeliveredRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).ListCtwaNotDelivered(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_ListCtwaNotDelivered_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).ListCtwaNotDelivered(ctx, req.(*ListCtwaNotDeliveredRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_MarkWhatsAppChatRead_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MarkWhatsAppChatReadRequest)
 	if err := dec(in); err != nil {
@@ -6064,6 +6148,14 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpsertCtwaAttribution",
 			Handler:    _CRMService_UpsertCtwaAttribution_Handler,
+		},
+		{
+			MethodName: "ListCtwaConversions",
+			Handler:    _CRMService_ListCtwaConversions_Handler,
+		},
+		{
+			MethodName: "ListCtwaNotDelivered",
+			Handler:    _CRMService_ListCtwaNotDelivered_Handler,
 		},
 		{
 			MethodName: "MarkWhatsAppChatRead",

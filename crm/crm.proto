@@ -244,6 +244,16 @@ service CRMService {
   // a Meta referral-bearing inbound for the ad number. Idempotent upsert on
   // ctwa_clid. deal_id is always NULL at this stage.
   rpc UpsertCtwaAttribution(UpsertCtwaAttributionRequest) returns (UpsertCtwaAttributionResponse);
+  // ListCtwaConversions returns the read-only Meta-conversion monitoring feed
+  // (admin surface): which deals were synced to Meta Conversions, with event,
+  // sent/failed status, fbtrace_id, ad id and time. Pure read of
+  // ctwa_conversion_sends ⋈ deals ⋈ ctwa_attributions. Deploy-skew-safe: a
+  // caller rolled out before this server degrades to an empty response.
+  rpc ListCtwaConversions(ListCtwaConversionsRequest) returns (ListCtwaConversionsResponse);
+  // ListCtwaNotDelivered returns deals that have a CTWA attribution bound to a
+  // deal but no successful 'sent' conversion row. Read-only admin surface;
+  // deploy-skew-safe (degrades to empty on Unimplemented).
+  rpc ListCtwaNotDelivered(ListCtwaNotDeliveredRequest) returns (ListCtwaNotDeliveredResponse);
   // MarkWhatsAppChatRead zeroes unread_wa_count on every deal linked to the
   // given phone. Replaces the previous side-effect reset that fired on every
   // ListWhatsAppMessages poll — that behaviour raced with incoming inbound
@@ -2476,6 +2486,74 @@ message UpsertCtwaAttributionRequest {
 
 message UpsertCtwaAttributionResponse {
   bool ok = 1;
+}
+
+// ListCtwaConversionsRequest filters the Meta-conversion monitoring feed.
+// All filters are optional except organization_id. summary (in the response)
+// always reflects the period + org + search but IGNORES the status and
+// event_name filters, so the cards keep showing the full sent/failed/per-event
+// breakdown; items + total_count honour ALL filters including status/event.
+message ListCtwaConversionsRequest {
+  string organization_id              = 1;
+  string status                       = 2;  // optional filter: "sent" | "failed" | "" = all
+  string event_name                   = 3;  // optional: AddToCart|InitiateCheckout|Purchase|"" = all
+  google.protobuf.Timestamp date_from = 4;  // filter on sent_at (lower bound; nil = none)
+  google.protobuf.Timestamp date_to   = 5;  // filter on sent_at (upper bound; nil = none)
+  string search                       = 6;  // matches deal title OR contact_phone (ILIKE)
+  int32  page                         = 7;  // 1-based; 0 -> default 1
+  int32  page_size                    = 8;  // 0 -> default 50, cap 200
+}
+
+message CtwaConversionItem {
+  string deal_id        = 1;
+  string deal_title     = 2;
+  string contact_name   = 3;  // reserved; currently always empty (no cg-users join)
+  string contact_phone  = 4;
+  string event_name     = 5;
+  string status         = 6;  // sent | failed
+  string fbtrace_id     = 7;
+  google.protobuf.Timestamp sent_at     = 8;
+  string ctwa_ad_id     = 9;
+  google.protobuf.Timestamp captured_at = 10;
+}
+
+message CtwaConversionsSummary {
+  int64 total             = 1;
+  int64 sent              = 2;
+  int64 failed            = 3;
+  int64 add_to_cart       = 4;
+  int64 initiate_checkout = 5;
+  int64 purchase          = 6;
+}
+
+message ListCtwaConversionsResponse {
+  repeated CtwaConversionItem items = 1;
+  int64 total_count                 = 2;  // filtered (all filters), pre-page
+  CtwaConversionsSummary summary    = 3;  // period totals ignoring status/event filters
+}
+
+// ListCtwaNotDeliveredRequest lists deals that have a CTWA attribution but no
+// successful 'sent' conversion row. Anchor table is ctwa_attributions.
+message ListCtwaNotDeliveredRequest {
+  string organization_id              = 1;
+  google.protobuf.Timestamp date_from = 2;  // filter on attribution captured_at
+  google.protobuf.Timestamp date_to   = 3;
+  string search                       = 4;
+  int32  page                         = 5;
+  int32  page_size                    = 6;
+}
+
+message CtwaNotDeliveredItem {
+  string deal_id        = 1;
+  string deal_title     = 2;
+  string contact_phone  = 3;
+  string ctwa_ad_id     = 4;
+  google.protobuf.Timestamp captured_at = 5;
+}
+
+message ListCtwaNotDeliveredResponse {
+  repeated CtwaNotDeliveredItem items = 1;
+  int64 total_count                   = 2;
 }
 
 // ListWhatsAppTemplates — fetch approved templates from Meta WABA.
