@@ -4,11 +4,15 @@ package agreement.agreement.v1;
 
 option go_package = "github.com/4ubak/cg-proto/gen/go/agreement/agreement;agreementv1";
 
-// AgreementService generates DOCX documents from templates
-// (contract and work-order). Pure template substitution — no business logic.
+// AgreementService generates DOCX/XLSX documents from templates
+// (contract, work-order, and AVR act). Pure template substitution — no business logic.
 service AgreementService {
   rpc GenerateContract(GenerateContractRequest) returns (GenerateDocResponse);
   rpc GenerateOrder(GenerateOrderRequest) returns (GenerateDocResponse);
+  // GenerateAVR renders the Акт выполненных работ (Form Р-1) as an XLSX/PDF
+  // using the avr.xlsx template. Sheet 1 = works act, Sheet 2 = spare parts
+  // invoice (omitted when parts list is empty). Pure data-in → file-out.
+  rpc GenerateAVR(GenerateAVRRequest) returns (GenerateDocResponse);
 }
 
 // GenerateDocResponse carries the rendered DOCX binary.
@@ -72,4 +76,72 @@ message GenerateOrderRequest {
   repeated WorkOrderItem works = 17;
   repeated WorkOrderItem paints = 18;
   repeated WorkOrderPartItem parts = 19;
+}
+
+// =============================================================================
+// AVR (Акт выполненных работ) generation
+// Fields mirror avr.xlsx template cells used in createServicesSheet /
+// fillPartsSheetData in legacy order_work_acceptance_act_generator.go.
+// =============================================================================
+
+// AVRWorkItem represents a single line on Sheet 1 (works act) or Sheet 2 (spare parts invoice).
+// For works: name = "Ремонт автомобиля <car>", quantity = 1, unit = "Услуга".
+// For parts: name = part name (may include [article] suffix), unit = "шт".
+message AVRWorkItem {
+  string name       = 1;  // Наименование работы / запчасти
+  string unit       = 2;  // Единица измерения ("Услуга" | "шт")
+  double quantity   = 3;  // Количество
+  int64  unit_price = 4;  // Цена за единицу, тенге
+  int64  amount     = 5;  // Итоговая сумма = quantity * unit_price, тенге
+}
+
+// AVRCar holds car identification fields written into the act header.
+message AVRCar {
+  string model      = 1;  // Car model string, e.g. "Toyota Camry 2020"  (CarName in legacy)
+  string gov_number = 2;  // State registration plate (GovNumber)
+  string vin        = 3;  // VIN (optional; empty when not captured)
+  int32  year       = 4;  // Year of manufacture (optional; 0 when unknown)
+  string color      = 5;  // Body color (optional)
+}
+
+// GenerateAVRRequest carries all data needed to render both sheets of avr.xlsx.
+message GenerateAVRRequest {
+  // Act header — Sheet 1 cells AH15, AM15
+  string act_number   = 1;  // Document number (= repair_order.id or order_work.id)
+  string act_date     = 2;  // Date string "DD.MM.YYYY" (defaults to today in generator)
+
+  // Org / contractor — Sheet 1 (implicit in template); Sheet 2 cells N9, AQ9
+  string org_name     = 3;  // Executor org name, e.g. "ТОО CTOparts"
+  string org_bin      = 4;  // БИН of executor org, e.g. "210340019728"
+
+  // Client / signer — Sheet 1 cells E9 (Lfm), AQ9 (Iin), AR31 (Lfm signature decode)
+  string owner_full_name = 5;  // Client full name (ФИО), written as Lfm in legacy
+  string signer_iin      = 6;  // Client ИИН (12 digits), used for ЭЦП and printed in act
+
+  // Car — Sheet 1 cell C20 ("Ремонт автомобиля <CarName>")
+  AVRCar car          = 7;
+
+  // Works — Sheet 1 rows starting at row 20.
+  // Typically a single entry: "Ремонт автомобиля <CarName>", unit="Услуга", qty=1.
+  repeated AVRWorkItem works = 8;
+
+  // Spare parts — Sheet 2 rows starting at row 24.
+  // When empty, Sheet 2 is omitted from the output (legacy behaviour).
+  repeated AVRWorkItem parts = 9;
+
+  // Totals — pre-computed by the caller so the generator does not need business logic.
+  int64 works_total   = 10; // SUM of works[*].amount
+  int64 parts_total   = 11; // SUM of parts[*].amount
+  int64 total_amount  = 12; // works_total + parts_total (printed as Итого and in words)
+
+  // Signer metadata — Sheet 1 cells F31 (position), R31 (name); Sheet 2 cells F30, R30
+  string signer_position = 13; // e.g. "Мастер-приёмщик"
+  string signer_name     = 14; // Master-receptionist full name (mapped from created_by in legacy)
+
+  // Completion date — Sheet 1 cell P20 (work done date).
+  // "DD.MM.YYYY"; falls back to act_date when empty.
+  string work_done_date  = 15;
+
+  // Output format hint. "pdf" requests Gotenberg conversion; anything else (or empty) = xlsx.
+  string output_format   = 16;
 }

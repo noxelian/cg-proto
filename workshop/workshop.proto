@@ -135,6 +135,16 @@ service WorkshopService {
   // Called by the mobile client after the workshop marks the order as DELIVERED.
   // Transitions the order to CLOSED_BY_CLIENT and optionally creates a review.
   rpc ConfirmOrderCompletionByClient(ConfirmOrderCompletionByClientRequest) returns (ConfirmOrderCompletionByClientResponse);
+
+  // --- AVR (Акт выполненных работ) ЭЦП signing ---
+  // RequestAVRSigningCode initiates the OTP/ЭЦП flow for the client to sign the AVR.
+  rpc RequestAVRSigningCode(RequestAVRSigningCodeRequest) returns (AVRSigningStatusResponse);
+  // VerifyAVRSigningCode submits the OTP/code received by the client and confirms signing.
+  rpc VerifyAVRSigningCode(VerifyAVRSigningCodeRequest) returns (AVRSigningStatusResponse);
+  // GetAVRSigningStatus returns the current signing state for a repair order.
+  rpc GetAVRSigningStatus(GetAVRSigningStatusRequest) returns (AVRSigningStatusResponse);
+  // DownloadSignedAVR returns the signed AVR document bytes after signing is complete.
+  rpc DownloadSignedAVR(DownloadSignedAVRRequest) returns (DownloadSignedAVRResponse);
 }
 
 // =============================================================================
@@ -319,6 +329,11 @@ message RepairOrder {
   // masters assigned to this order's car_works (STRING_AGG, "" if none). Lets
   // the foreman see who is on each order without opening the card.
   string assigned_master_names = 50;
+  // AVR signing state — populated by the ЭЦП (digital signature) integration.
+  // signing_session_id: opaque session token from the signing provider.
+  // signing_status: current state ("pending" | "signed" | "rejected" | "expired").
+  string signing_session_id = 51;
+  string signing_status = 52;
 }
 
 message MasterSummary {
@@ -1588,4 +1603,38 @@ message RejectEstimateRequest {
 
 message RejectEstimateResponse {
   RepairOrder order = 1;
+}
+
+// =============================================================================
+// AVR ЭЦП Signing RPCs
+// =============================================================================
+
+// AVRSigningStatusResponse is the shared response for signing state queries.
+message AVRSigningStatusResponse {
+  string signing_session_id = 1;  // Opaque session token from the signing provider.
+  string signing_status     = 2;  // "pending" | "signed" | "rejected" | "expired"
+  bool   signed             = 3;  // Shortcut: true when signing_status == "signed".
+}
+
+message RequestAVRSigningCodeRequest {
+  string repair_order_id = 1;
+}
+
+message VerifyAVRSigningCodeRequest {
+  string repair_order_id = 1;
+  string code            = 2;  // OTP or verification code submitted by the client.
+}
+
+message GetAVRSigningStatusRequest {
+  string repair_order_id = 1;
+}
+
+message DownloadSignedAVRRequest {
+  string repair_order_id = 1;
+}
+
+message DownloadSignedAVRResponse {
+  bytes  content      = 1;  // Signed document binary (PDF or XLSX).
+  string filename     = 2;  // Suggested filename, e.g. "AVR_12345_signed.pdf".
+  string content_type = 3;  // MIME type, e.g. "application/pdf".
 }

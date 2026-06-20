@@ -529,6 +529,340 @@ func (x *GenerateOrderRequest) GetParts() []*WorkOrderPartItem {
 	return nil
 }
 
+// AVRWorkItem represents a single line on Sheet 1 (works act) or Sheet 2 (spare parts invoice).
+// For works: name = "Ремонт автомобиля <car>", quantity = 1, unit = "Услуга".
+// For parts: name = part name (may include [article] suffix), unit = "шт".
+type AVRWorkItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`                             // Наименование работы / запчасти
+	Unit          string                 `protobuf:"bytes,2,opt,name=unit,proto3" json:"unit,omitempty"`                             // Единица измерения ("Услуга" | "шт")
+	Quantity      float64                `protobuf:"fixed64,3,opt,name=quantity,proto3" json:"quantity,omitempty"`                   // Количество
+	UnitPrice     int64                  `protobuf:"varint,4,opt,name=unit_price,json=unitPrice,proto3" json:"unit_price,omitempty"` // Цена за единицу, тенге
+	Amount        int64                  `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`                        // Итоговая сумма = quantity * unit_price, тенге
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AVRWorkItem) Reset() {
+	*x = AVRWorkItem{}
+	mi := &file_agreement_agreement_v1_agreement_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AVRWorkItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AVRWorkItem) ProtoMessage() {}
+
+func (x *AVRWorkItem) ProtoReflect() protoreflect.Message {
+	mi := &file_agreement_agreement_v1_agreement_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AVRWorkItem.ProtoReflect.Descriptor instead.
+func (*AVRWorkItem) Descriptor() ([]byte, []int) {
+	return file_agreement_agreement_v1_agreement_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *AVRWorkItem) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *AVRWorkItem) GetUnit() string {
+	if x != nil {
+		return x.Unit
+	}
+	return ""
+}
+
+func (x *AVRWorkItem) GetQuantity() float64 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *AVRWorkItem) GetUnitPrice() int64 {
+	if x != nil {
+		return x.UnitPrice
+	}
+	return 0
+}
+
+func (x *AVRWorkItem) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+// AVRCar holds car identification fields written into the act header.
+type AVRCar struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Model         string                 `protobuf:"bytes,1,opt,name=model,proto3" json:"model,omitempty"`                          // Car model string, e.g. "Toyota Camry 2020"  (CarName in legacy)
+	GovNumber     string                 `protobuf:"bytes,2,opt,name=gov_number,json=govNumber,proto3" json:"gov_number,omitempty"` // State registration plate (GovNumber)
+	Vin           string                 `protobuf:"bytes,3,opt,name=vin,proto3" json:"vin,omitempty"`                              // VIN (optional; empty when not captured)
+	Year          int32                  `protobuf:"varint,4,opt,name=year,proto3" json:"year,omitempty"`                           // Year of manufacture (optional; 0 when unknown)
+	Color         string                 `protobuf:"bytes,5,opt,name=color,proto3" json:"color,omitempty"`                          // Body color (optional)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AVRCar) Reset() {
+	*x = AVRCar{}
+	mi := &file_agreement_agreement_v1_agreement_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AVRCar) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AVRCar) ProtoMessage() {}
+
+func (x *AVRCar) ProtoReflect() protoreflect.Message {
+	mi := &file_agreement_agreement_v1_agreement_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AVRCar.ProtoReflect.Descriptor instead.
+func (*AVRCar) Descriptor() ([]byte, []int) {
+	return file_agreement_agreement_v1_agreement_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *AVRCar) GetModel() string {
+	if x != nil {
+		return x.Model
+	}
+	return ""
+}
+
+func (x *AVRCar) GetGovNumber() string {
+	if x != nil {
+		return x.GovNumber
+	}
+	return ""
+}
+
+func (x *AVRCar) GetVin() string {
+	if x != nil {
+		return x.Vin
+	}
+	return ""
+}
+
+func (x *AVRCar) GetYear() int32 {
+	if x != nil {
+		return x.Year
+	}
+	return 0
+}
+
+func (x *AVRCar) GetColor() string {
+	if x != nil {
+		return x.Color
+	}
+	return ""
+}
+
+// GenerateAVRRequest carries all data needed to render both sheets of avr.xlsx.
+type GenerateAVRRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Act header — Sheet 1 cells AH15, AM15
+	ActNumber string `protobuf:"bytes,1,opt,name=act_number,json=actNumber,proto3" json:"act_number,omitempty"` // Document number (= repair_order.id or order_work.id)
+	ActDate   string `protobuf:"bytes,2,opt,name=act_date,json=actDate,proto3" json:"act_date,omitempty"`       // Date string "DD.MM.YYYY" (defaults to today in generator)
+	// Org / contractor — Sheet 1 (implicit in template); Sheet 2 cells N9, AQ9
+	OrgName string `protobuf:"bytes,3,opt,name=org_name,json=orgName,proto3" json:"org_name,omitempty"` // Executor org name, e.g. "ТОО CTOparts"
+	OrgBin  string `protobuf:"bytes,4,opt,name=org_bin,json=orgBin,proto3" json:"org_bin,omitempty"`    // БИН of executor org, e.g. "210340019728"
+	// Client / signer — Sheet 1 cells E9 (Lfm), AQ9 (Iin), AR31 (Lfm signature decode)
+	OwnerFullName string `protobuf:"bytes,5,opt,name=owner_full_name,json=ownerFullName,proto3" json:"owner_full_name,omitempty"` // Client full name (ФИО), written as Lfm in legacy
+	SignerIin     string `protobuf:"bytes,6,opt,name=signer_iin,json=signerIin,proto3" json:"signer_iin,omitempty"`               // Client ИИН (12 digits), used for ЭЦП and printed in act
+	// Car — Sheet 1 cell C20 ("Ремонт автомобиля <CarName>")
+	Car *AVRCar `protobuf:"bytes,7,opt,name=car,proto3" json:"car,omitempty"`
+	// Works — Sheet 1 rows starting at row 20.
+	// Typically a single entry: "Ремонт автомобиля <CarName>", unit="Услуга", qty=1.
+	Works []*AVRWorkItem `protobuf:"bytes,8,rep,name=works,proto3" json:"works,omitempty"`
+	// Spare parts — Sheet 2 rows starting at row 24.
+	// When empty, Sheet 2 is omitted from the output (legacy behaviour).
+	Parts []*AVRWorkItem `protobuf:"bytes,9,rep,name=parts,proto3" json:"parts,omitempty"`
+	// Totals — pre-computed by the caller so the generator does not need business logic.
+	WorksTotal  int64 `protobuf:"varint,10,opt,name=works_total,json=worksTotal,proto3" json:"works_total,omitempty"`    // SUM of works[*].amount
+	PartsTotal  int64 `protobuf:"varint,11,opt,name=parts_total,json=partsTotal,proto3" json:"parts_total,omitempty"`    // SUM of parts[*].amount
+	TotalAmount int64 `protobuf:"varint,12,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"` // works_total + parts_total (printed as Итого and in words)
+	// Signer metadata — Sheet 1 cells F31 (position), R31 (name); Sheet 2 cells F30, R30
+	SignerPosition string `protobuf:"bytes,13,opt,name=signer_position,json=signerPosition,proto3" json:"signer_position,omitempty"` // e.g. "Мастер-приёмщик"
+	SignerName     string `protobuf:"bytes,14,opt,name=signer_name,json=signerName,proto3" json:"signer_name,omitempty"`             // Master-receptionist full name (mapped from created_by in legacy)
+	// Completion date — Sheet 1 cell P20 (work done date).
+	// "DD.MM.YYYY"; falls back to act_date when empty.
+	WorkDoneDate string `protobuf:"bytes,15,opt,name=work_done_date,json=workDoneDate,proto3" json:"work_done_date,omitempty"`
+	// Output format hint. "pdf" requests Gotenberg conversion; anything else (or empty) = xlsx.
+	OutputFormat  string `protobuf:"bytes,16,opt,name=output_format,json=outputFormat,proto3" json:"output_format,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GenerateAVRRequest) Reset() {
+	*x = GenerateAVRRequest{}
+	mi := &file_agreement_agreement_v1_agreement_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GenerateAVRRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GenerateAVRRequest) ProtoMessage() {}
+
+func (x *GenerateAVRRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_agreement_agreement_v1_agreement_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GenerateAVRRequest.ProtoReflect.Descriptor instead.
+func (*GenerateAVRRequest) Descriptor() ([]byte, []int) {
+	return file_agreement_agreement_v1_agreement_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GenerateAVRRequest) GetActNumber() string {
+	if x != nil {
+		return x.ActNumber
+	}
+	return ""
+}
+
+func (x *GenerateAVRRequest) GetActDate() string {
+	if x != nil {
+		return x.ActDate
+	}
+	return ""
+}
+
+func (x *GenerateAVRRequest) GetOrgName() string {
+	if x != nil {
+		return x.OrgName
+	}
+	return ""
+}
+
+func (x *GenerateAVRRequest) GetOrgBin() string {
+	if x != nil {
+		return x.OrgBin
+	}
+	return ""
+}
+
+func (x *GenerateAVRRequest) GetOwnerFullName() string {
+	if x != nil {
+		return x.OwnerFullName
+	}
+	return ""
+}
+
+func (x *GenerateAVRRequest) GetSignerIin() string {
+	if x != nil {
+		return x.SignerIin
+	}
+	return ""
+}
+
+func (x *GenerateAVRRequest) GetCar() *AVRCar {
+	if x != nil {
+		return x.Car
+	}
+	return nil
+}
+
+func (x *GenerateAVRRequest) GetWorks() []*AVRWorkItem {
+	if x != nil {
+		return x.Works
+	}
+	return nil
+}
+
+func (x *GenerateAVRRequest) GetParts() []*AVRWorkItem {
+	if x != nil {
+		return x.Parts
+	}
+	return nil
+}
+
+func (x *GenerateAVRRequest) GetWorksTotal() int64 {
+	if x != nil {
+		return x.WorksTotal
+	}
+	return 0
+}
+
+func (x *GenerateAVRRequest) GetPartsTotal() int64 {
+	if x != nil {
+		return x.PartsTotal
+	}
+	return 0
+}
+
+func (x *GenerateAVRRequest) GetTotalAmount() int64 {
+	if x != nil {
+		return x.TotalAmount
+	}
+	return 0
+}
+
+func (x *GenerateAVRRequest) GetSignerPosition() string {
+	if x != nil {
+		return x.SignerPosition
+	}
+	return ""
+}
+
+func (x *GenerateAVRRequest) GetSignerName() string {
+	if x != nil {
+		return x.SignerName
+	}
+	return ""
+}
+
+func (x *GenerateAVRRequest) GetWorkDoneDate() string {
+	if x != nil {
+		return x.WorkDoneDate
+	}
+	return ""
+}
+
+func (x *GenerateAVRRequest) GetOutputFormat() string {
+	if x != nil {
+		return x.OutputFormat
+	}
+	return ""
+}
+
 var File_agreement_agreement_v1_agreement_proto protoreflect.FileDescriptor
 
 const file_agreement_agreement_v1_agreement_proto_rawDesc = "" +
@@ -590,10 +924,48 @@ const file_agreement_agreement_v1_agreement_proto_rawDesc = "" +
 	"\x05works\x18\x11 \x03(\v2%.agreement.agreement.v1.WorkOrderItemR\x05works\x12=\n" +
 	"\x06paints\x18\x12 \x03(\v2%.agreement.agreement.v1.WorkOrderItemR\x06paints\x12?\n" +
 	"\x05parts\x18\x13 \x03(\v2).agreement.agreement.v1.WorkOrderPartItemR\x05partsB\r\n" +
-	"\v_priceparts2\xf0\x01\n" +
+	"\v_priceparts\"\x88\x01\n" +
+	"\vAVRWorkItem\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
+	"\x04unit\x18\x02 \x01(\tR\x04unit\x12\x1a\n" +
+	"\bquantity\x18\x03 \x01(\x01R\bquantity\x12\x1d\n" +
+	"\n" +
+	"unit_price\x18\x04 \x01(\x03R\tunitPrice\x12\x16\n" +
+	"\x06amount\x18\x05 \x01(\x03R\x06amount\"y\n" +
+	"\x06AVRCar\x12\x14\n" +
+	"\x05model\x18\x01 \x01(\tR\x05model\x12\x1d\n" +
+	"\n" +
+	"gov_number\x18\x02 \x01(\tR\tgovNumber\x12\x10\n" +
+	"\x03vin\x18\x03 \x01(\tR\x03vin\x12\x12\n" +
+	"\x04year\x18\x04 \x01(\x05R\x04year\x12\x14\n" +
+	"\x05color\x18\x05 \x01(\tR\x05color\"\xeb\x04\n" +
+	"\x12GenerateAVRRequest\x12\x1d\n" +
+	"\n" +
+	"act_number\x18\x01 \x01(\tR\tactNumber\x12\x19\n" +
+	"\bact_date\x18\x02 \x01(\tR\aactDate\x12\x19\n" +
+	"\borg_name\x18\x03 \x01(\tR\aorgName\x12\x17\n" +
+	"\aorg_bin\x18\x04 \x01(\tR\x06orgBin\x12&\n" +
+	"\x0fowner_full_name\x18\x05 \x01(\tR\rownerFullName\x12\x1d\n" +
+	"\n" +
+	"signer_iin\x18\x06 \x01(\tR\tsignerIin\x120\n" +
+	"\x03car\x18\a \x01(\v2\x1e.agreement.agreement.v1.AVRCarR\x03car\x129\n" +
+	"\x05works\x18\b \x03(\v2#.agreement.agreement.v1.AVRWorkItemR\x05works\x129\n" +
+	"\x05parts\x18\t \x03(\v2#.agreement.agreement.v1.AVRWorkItemR\x05parts\x12\x1f\n" +
+	"\vworks_total\x18\n" +
+	" \x01(\x03R\n" +
+	"worksTotal\x12\x1f\n" +
+	"\vparts_total\x18\v \x01(\x03R\n" +
+	"partsTotal\x12!\n" +
+	"\ftotal_amount\x18\f \x01(\x03R\vtotalAmount\x12'\n" +
+	"\x0fsigner_position\x18\r \x01(\tR\x0esignerPosition\x12\x1f\n" +
+	"\vsigner_name\x18\x0e \x01(\tR\n" +
+	"signerName\x12$\n" +
+	"\x0ework_done_date\x18\x0f \x01(\tR\fworkDoneDate\x12#\n" +
+	"\routput_format\x18\x10 \x01(\tR\foutputFormat2\xd8\x02\n" +
 	"\x10AgreementService\x12p\n" +
 	"\x10GenerateContract\x12/.agreement.agreement.v1.GenerateContractRequest\x1a+.agreement.agreement.v1.GenerateDocResponse\x12j\n" +
-	"\rGenerateOrder\x12,.agreement.agreement.v1.GenerateOrderRequest\x1a+.agreement.agreement.v1.GenerateDocResponseBBZ@github.com/4ubak/cg-proto/gen/go/agreement/agreement;agreementv1b\x06proto3"
+	"\rGenerateOrder\x12,.agreement.agreement.v1.GenerateOrderRequest\x1a+.agreement.agreement.v1.GenerateDocResponse\x12f\n" +
+	"\vGenerateAVR\x12*.agreement.agreement.v1.GenerateAVRRequest\x1a+.agreement.agreement.v1.GenerateDocResponseBBZ@github.com/4ubak/cg-proto/gen/go/agreement/agreement;agreementv1b\x06proto3"
 
 var (
 	file_agreement_agreement_v1_agreement_proto_rawDescOnce sync.Once
@@ -607,27 +979,35 @@ func file_agreement_agreement_v1_agreement_proto_rawDescGZIP() []byte {
 	return file_agreement_agreement_v1_agreement_proto_rawDescData
 }
 
-var file_agreement_agreement_v1_agreement_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_agreement_agreement_v1_agreement_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_agreement_agreement_v1_agreement_proto_goTypes = []any{
 	(*GenerateDocResponse)(nil),     // 0: agreement.agreement.v1.GenerateDocResponse
 	(*GenerateContractRequest)(nil), // 1: agreement.agreement.v1.GenerateContractRequest
 	(*WorkOrderItem)(nil),           // 2: agreement.agreement.v1.WorkOrderItem
 	(*WorkOrderPartItem)(nil),       // 3: agreement.agreement.v1.WorkOrderPartItem
 	(*GenerateOrderRequest)(nil),    // 4: agreement.agreement.v1.GenerateOrderRequest
+	(*AVRWorkItem)(nil),             // 5: agreement.agreement.v1.AVRWorkItem
+	(*AVRCar)(nil),                  // 6: agreement.agreement.v1.AVRCar
+	(*GenerateAVRRequest)(nil),      // 7: agreement.agreement.v1.GenerateAVRRequest
 }
 var file_agreement_agreement_v1_agreement_proto_depIdxs = []int32{
 	2, // 0: agreement.agreement.v1.GenerateOrderRequest.works:type_name -> agreement.agreement.v1.WorkOrderItem
 	2, // 1: agreement.agreement.v1.GenerateOrderRequest.paints:type_name -> agreement.agreement.v1.WorkOrderItem
 	3, // 2: agreement.agreement.v1.GenerateOrderRequest.parts:type_name -> agreement.agreement.v1.WorkOrderPartItem
-	1, // 3: agreement.agreement.v1.AgreementService.GenerateContract:input_type -> agreement.agreement.v1.GenerateContractRequest
-	4, // 4: agreement.agreement.v1.AgreementService.GenerateOrder:input_type -> agreement.agreement.v1.GenerateOrderRequest
-	0, // 5: agreement.agreement.v1.AgreementService.GenerateContract:output_type -> agreement.agreement.v1.GenerateDocResponse
-	0, // 6: agreement.agreement.v1.AgreementService.GenerateOrder:output_type -> agreement.agreement.v1.GenerateDocResponse
-	5, // [5:7] is the sub-list for method output_type
-	3, // [3:5] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	6, // 3: agreement.agreement.v1.GenerateAVRRequest.car:type_name -> agreement.agreement.v1.AVRCar
+	5, // 4: agreement.agreement.v1.GenerateAVRRequest.works:type_name -> agreement.agreement.v1.AVRWorkItem
+	5, // 5: agreement.agreement.v1.GenerateAVRRequest.parts:type_name -> agreement.agreement.v1.AVRWorkItem
+	1, // 6: agreement.agreement.v1.AgreementService.GenerateContract:input_type -> agreement.agreement.v1.GenerateContractRequest
+	4, // 7: agreement.agreement.v1.AgreementService.GenerateOrder:input_type -> agreement.agreement.v1.GenerateOrderRequest
+	7, // 8: agreement.agreement.v1.AgreementService.GenerateAVR:input_type -> agreement.agreement.v1.GenerateAVRRequest
+	0, // 9: agreement.agreement.v1.AgreementService.GenerateContract:output_type -> agreement.agreement.v1.GenerateDocResponse
+	0, // 10: agreement.agreement.v1.AgreementService.GenerateOrder:output_type -> agreement.agreement.v1.GenerateDocResponse
+	0, // 11: agreement.agreement.v1.AgreementService.GenerateAVR:output_type -> agreement.agreement.v1.GenerateDocResponse
+	9, // [9:12] is the sub-list for method output_type
+	6, // [6:9] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_agreement_agreement_v1_agreement_proto_init() }
@@ -643,7 +1023,7 @@ func file_agreement_agreement_v1_agreement_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_agreement_agreement_v1_agreement_proto_rawDesc), len(file_agreement_agreement_v1_agreement_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

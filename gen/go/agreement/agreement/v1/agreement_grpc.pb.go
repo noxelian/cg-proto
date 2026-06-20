@@ -21,17 +21,22 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	AgreementService_GenerateContract_FullMethodName = "/agreement.agreement.v1.AgreementService/GenerateContract"
 	AgreementService_GenerateOrder_FullMethodName    = "/agreement.agreement.v1.AgreementService/GenerateOrder"
+	AgreementService_GenerateAVR_FullMethodName      = "/agreement.agreement.v1.AgreementService/GenerateAVR"
 )
 
 // AgreementServiceClient is the client API for AgreementService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// AgreementService generates DOCX documents from templates
-// (contract and work-order). Pure template substitution — no business logic.
+// AgreementService generates DOCX/XLSX documents from templates
+// (contract, work-order, and AVR act). Pure template substitution — no business logic.
 type AgreementServiceClient interface {
 	GenerateContract(ctx context.Context, in *GenerateContractRequest, opts ...grpc.CallOption) (*GenerateDocResponse, error)
 	GenerateOrder(ctx context.Context, in *GenerateOrderRequest, opts ...grpc.CallOption) (*GenerateDocResponse, error)
+	// GenerateAVR renders the Акт выполненных работ (Form Р-1) as an XLSX/PDF
+	// using the avr.xlsx template. Sheet 1 = works act, Sheet 2 = spare parts
+	// invoice (omitted when parts list is empty). Pure data-in → file-out.
+	GenerateAVR(ctx context.Context, in *GenerateAVRRequest, opts ...grpc.CallOption) (*GenerateDocResponse, error)
 }
 
 type agreementServiceClient struct {
@@ -62,15 +67,29 @@ func (c *agreementServiceClient) GenerateOrder(ctx context.Context, in *Generate
 	return out, nil
 }
 
+func (c *agreementServiceClient) GenerateAVR(ctx context.Context, in *GenerateAVRRequest, opts ...grpc.CallOption) (*GenerateDocResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GenerateDocResponse)
+	err := c.cc.Invoke(ctx, AgreementService_GenerateAVR_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AgreementServiceServer is the server API for AgreementService service.
 // All implementations must embed UnimplementedAgreementServiceServer
 // for forward compatibility.
 //
-// AgreementService generates DOCX documents from templates
-// (contract and work-order). Pure template substitution — no business logic.
+// AgreementService generates DOCX/XLSX documents from templates
+// (contract, work-order, and AVR act). Pure template substitution — no business logic.
 type AgreementServiceServer interface {
 	GenerateContract(context.Context, *GenerateContractRequest) (*GenerateDocResponse, error)
 	GenerateOrder(context.Context, *GenerateOrderRequest) (*GenerateDocResponse, error)
+	// GenerateAVR renders the Акт выполненных работ (Form Р-1) as an XLSX/PDF
+	// using the avr.xlsx template. Sheet 1 = works act, Sheet 2 = spare parts
+	// invoice (omitted when parts list is empty). Pure data-in → file-out.
+	GenerateAVR(context.Context, *GenerateAVRRequest) (*GenerateDocResponse, error)
 	mustEmbedUnimplementedAgreementServiceServer()
 }
 
@@ -86,6 +105,9 @@ func (UnimplementedAgreementServiceServer) GenerateContract(context.Context, *Ge
 }
 func (UnimplementedAgreementServiceServer) GenerateOrder(context.Context, *GenerateOrderRequest) (*GenerateDocResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GenerateOrder not implemented")
+}
+func (UnimplementedAgreementServiceServer) GenerateAVR(context.Context, *GenerateAVRRequest) (*GenerateDocResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GenerateAVR not implemented")
 }
 func (UnimplementedAgreementServiceServer) mustEmbedUnimplementedAgreementServiceServer() {}
 func (UnimplementedAgreementServiceServer) testEmbeddedByValue()                          {}
@@ -144,6 +166,24 @@ func _AgreementService_GenerateOrder_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AgreementService_GenerateAVR_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateAVRRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgreementServiceServer).GenerateAVR(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgreementService_GenerateAVR_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgreementServiceServer).GenerateAVR(ctx, req.(*GenerateAVRRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AgreementService_ServiceDesc is the grpc.ServiceDesc for AgreementService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -158,6 +198,10 @@ var AgreementService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenerateOrder",
 			Handler:    _AgreementService_GenerateOrder_Handler,
+		},
+		{
+			MethodName: "GenerateAVR",
+			Handler:    _AgreementService_GenerateAVR_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -99,6 +99,10 @@ const (
 	WorkshopService_GetPaymentHistory_FullMethodName              = "/workshop.v1.WorkshopService/GetPaymentHistory"
 	WorkshopService_GetWarrantyOrders_FullMethodName              = "/workshop.v1.WorkshopService/GetWarrantyOrders"
 	WorkshopService_ConfirmOrderCompletionByClient_FullMethodName = "/workshop.v1.WorkshopService/ConfirmOrderCompletionByClient"
+	WorkshopService_RequestAVRSigningCode_FullMethodName          = "/workshop.v1.WorkshopService/RequestAVRSigningCode"
+	WorkshopService_VerifyAVRSigningCode_FullMethodName           = "/workshop.v1.WorkshopService/VerifyAVRSigningCode"
+	WorkshopService_GetAVRSigningStatus_FullMethodName            = "/workshop.v1.WorkshopService/GetAVRSigningStatus"
+	WorkshopService_DownloadSignedAVR_FullMethodName              = "/workshop.v1.WorkshopService/DownloadSignedAVR"
 )
 
 // WorkshopServiceClient is the client API for WorkshopService service.
@@ -210,6 +214,15 @@ type WorkshopServiceClient interface {
 	// Called by the mobile client after the workshop marks the order as DELIVERED.
 	// Transitions the order to CLOSED_BY_CLIENT and optionally creates a review.
 	ConfirmOrderCompletionByClient(ctx context.Context, in *ConfirmOrderCompletionByClientRequest, opts ...grpc.CallOption) (*ConfirmOrderCompletionByClientResponse, error)
+	// --- AVR (Акт выполненных работ) ЭЦП signing ---
+	// RequestAVRSigningCode initiates the OTP/ЭЦП flow for the client to sign the AVR.
+	RequestAVRSigningCode(ctx context.Context, in *RequestAVRSigningCodeRequest, opts ...grpc.CallOption) (*AVRSigningStatusResponse, error)
+	// VerifyAVRSigningCode submits the OTP/code received by the client and confirms signing.
+	VerifyAVRSigningCode(ctx context.Context, in *VerifyAVRSigningCodeRequest, opts ...grpc.CallOption) (*AVRSigningStatusResponse, error)
+	// GetAVRSigningStatus returns the current signing state for a repair order.
+	GetAVRSigningStatus(ctx context.Context, in *GetAVRSigningStatusRequest, opts ...grpc.CallOption) (*AVRSigningStatusResponse, error)
+	// DownloadSignedAVR returns the signed AVR document bytes after signing is complete.
+	DownloadSignedAVR(ctx context.Context, in *DownloadSignedAVRRequest, opts ...grpc.CallOption) (*DownloadSignedAVRResponse, error)
 }
 
 type workshopServiceClient struct {
@@ -1020,6 +1033,46 @@ func (c *workshopServiceClient) ConfirmOrderCompletionByClient(ctx context.Conte
 	return out, nil
 }
 
+func (c *workshopServiceClient) RequestAVRSigningCode(ctx context.Context, in *RequestAVRSigningCodeRequest, opts ...grpc.CallOption) (*AVRSigningStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AVRSigningStatusResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_RequestAVRSigningCode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) VerifyAVRSigningCode(ctx context.Context, in *VerifyAVRSigningCodeRequest, opts ...grpc.CallOption) (*AVRSigningStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AVRSigningStatusResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_VerifyAVRSigningCode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) GetAVRSigningStatus(ctx context.Context, in *GetAVRSigningStatusRequest, opts ...grpc.CallOption) (*AVRSigningStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AVRSigningStatusResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_GetAVRSigningStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) DownloadSignedAVR(ctx context.Context, in *DownloadSignedAVRRequest, opts ...grpc.CallOption) (*DownloadSignedAVRResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DownloadSignedAVRResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_DownloadSignedAVR_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkshopServiceServer is the server API for WorkshopService service.
 // All implementations must embed UnimplementedWorkshopServiceServer
 // for forward compatibility.
@@ -1129,6 +1182,15 @@ type WorkshopServiceServer interface {
 	// Called by the mobile client after the workshop marks the order as DELIVERED.
 	// Transitions the order to CLOSED_BY_CLIENT and optionally creates a review.
 	ConfirmOrderCompletionByClient(context.Context, *ConfirmOrderCompletionByClientRequest) (*ConfirmOrderCompletionByClientResponse, error)
+	// --- AVR (Акт выполненных работ) ЭЦП signing ---
+	// RequestAVRSigningCode initiates the OTP/ЭЦП flow for the client to sign the AVR.
+	RequestAVRSigningCode(context.Context, *RequestAVRSigningCodeRequest) (*AVRSigningStatusResponse, error)
+	// VerifyAVRSigningCode submits the OTP/code received by the client and confirms signing.
+	VerifyAVRSigningCode(context.Context, *VerifyAVRSigningCodeRequest) (*AVRSigningStatusResponse, error)
+	// GetAVRSigningStatus returns the current signing state for a repair order.
+	GetAVRSigningStatus(context.Context, *GetAVRSigningStatusRequest) (*AVRSigningStatusResponse, error)
+	// DownloadSignedAVR returns the signed AVR document bytes after signing is complete.
+	DownloadSignedAVR(context.Context, *DownloadSignedAVRRequest) (*DownloadSignedAVRResponse, error)
 	mustEmbedUnimplementedWorkshopServiceServer()
 }
 
@@ -1378,6 +1440,18 @@ func (UnimplementedWorkshopServiceServer) GetWarrantyOrders(context.Context, *Ge
 }
 func (UnimplementedWorkshopServiceServer) ConfirmOrderCompletionByClient(context.Context, *ConfirmOrderCompletionByClientRequest) (*ConfirmOrderCompletionByClientResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ConfirmOrderCompletionByClient not implemented")
+}
+func (UnimplementedWorkshopServiceServer) RequestAVRSigningCode(context.Context, *RequestAVRSigningCodeRequest) (*AVRSigningStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RequestAVRSigningCode not implemented")
+}
+func (UnimplementedWorkshopServiceServer) VerifyAVRSigningCode(context.Context, *VerifyAVRSigningCodeRequest) (*AVRSigningStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method VerifyAVRSigningCode not implemented")
+}
+func (UnimplementedWorkshopServiceServer) GetAVRSigningStatus(context.Context, *GetAVRSigningStatusRequest) (*AVRSigningStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAVRSigningStatus not implemented")
+}
+func (UnimplementedWorkshopServiceServer) DownloadSignedAVR(context.Context, *DownloadSignedAVRRequest) (*DownloadSignedAVRResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DownloadSignedAVR not implemented")
 }
 func (UnimplementedWorkshopServiceServer) mustEmbedUnimplementedWorkshopServiceServer() {}
 func (UnimplementedWorkshopServiceServer) testEmbeddedByValue()                         {}
@@ -2840,6 +2914,78 @@ func _WorkshopService_ConfirmOrderCompletionByClient_Handler(srv interface{}, ct
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkshopService_RequestAVRSigningCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestAVRSigningCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).RequestAVRSigningCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_RequestAVRSigningCode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).RequestAVRSigningCode(ctx, req.(*RequestAVRSigningCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_VerifyAVRSigningCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyAVRSigningCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).VerifyAVRSigningCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_VerifyAVRSigningCode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).VerifyAVRSigningCode(ctx, req.(*VerifyAVRSigningCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_GetAVRSigningStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAVRSigningStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).GetAVRSigningStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_GetAVRSigningStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).GetAVRSigningStatus(ctx, req.(*GetAVRSigningStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_DownloadSignedAVR_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DownloadSignedAVRRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).DownloadSignedAVR(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_DownloadSignedAVR_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).DownloadSignedAVR(ctx, req.(*DownloadSignedAVRRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WorkshopService_ServiceDesc is the grpc.ServiceDesc for WorkshopService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3166,6 +3312,22 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConfirmOrderCompletionByClient",
 			Handler:    _WorkshopService_ConfirmOrderCompletionByClient_Handler,
+		},
+		{
+			MethodName: "RequestAVRSigningCode",
+			Handler:    _WorkshopService_RequestAVRSigningCode_Handler,
+		},
+		{
+			MethodName: "VerifyAVRSigningCode",
+			Handler:    _WorkshopService_VerifyAVRSigningCode_Handler,
+		},
+		{
+			MethodName: "GetAVRSigningStatus",
+			Handler:    _WorkshopService_GetAVRSigningStatus_Handler,
+		},
+		{
+			MethodName: "DownloadSignedAVR",
+			Handler:    _WorkshopService_DownloadSignedAVR_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

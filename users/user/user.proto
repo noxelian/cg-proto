@@ -173,6 +173,9 @@ message User {
   string instagram_username = 11;
   // Original cg_api.usr id when user was migrated from legacy API.
   optional int64 legacy_id = 12;
+  // ИИН (Individual Identification Number) — 12-digit Kazakh national ID.
+  // Used for ЭЦП (digital signature) flows such as AVR signing.
+  optional string iin = 13;
 }
 
 message UserCounters {

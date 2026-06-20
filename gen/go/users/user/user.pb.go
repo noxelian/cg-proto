@@ -105,7 +105,10 @@ type User struct {
 	InstagramId       string `protobuf:"bytes,10,opt,name=instagram_id,json=instagramId,proto3" json:"instagram_id,omitempty"`
 	InstagramUsername string `protobuf:"bytes,11,opt,name=instagram_username,json=instagramUsername,proto3" json:"instagram_username,omitempty"`
 	// Original cg_api.usr id when user was migrated from legacy API.
-	LegacyId      *int64 `protobuf:"varint,12,opt,name=legacy_id,json=legacyId,proto3,oneof" json:"legacy_id,omitempty"`
+	LegacyId *int64 `protobuf:"varint,12,opt,name=legacy_id,json=legacyId,proto3,oneof" json:"legacy_id,omitempty"`
+	// ИИН (Individual Identification Number) — 12-digit Kazakh national ID.
+	// Used for ЭЦП (digital signature) flows such as AVR signing.
+	Iin           *string `protobuf:"bytes,13,opt,name=iin,proto3,oneof" json:"iin,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -222,6 +225,13 @@ func (x *User) GetLegacyId() int64 {
 		return *x.LegacyId
 	}
 	return 0
+}
+
+func (x *User) GetIin() string {
+	if x != nil && x.Iin != nil {
+		return *x.Iin
+	}
+	return ""
 }
 
 type UserCounters struct {
@@ -4825,7 +4835,7 @@ var File_users_user_user_proto protoreflect.FileDescriptor
 
 const file_users_user_user_proto_rawDesc = "" +
 	"\n" +
-	"\x15users/user/user.proto\x12\rusers.user.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa7\x03\n" +
+	"\x15users/user/user.proto\x12\rusers.user.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc6\x03\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x12\n" +
@@ -4843,9 +4853,11 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\finstagram_id\x18\n" +
 	" \x01(\tR\vinstagramId\x12-\n" +
 	"\x12instagram_username\x18\v \x01(\tR\x11instagramUsername\x12 \n" +
-	"\tlegacy_id\x18\f \x01(\x03H\x00R\blegacyId\x88\x01\x01B\f\n" +
+	"\tlegacy_id\x18\f \x01(\x03H\x00R\blegacyId\x88\x01\x01\x12\x15\n" +
+	"\x03iin\x18\r \x01(\tH\x01R\x03iin\x88\x01\x01B\f\n" +
 	"\n" +
-	"_legacy_id\"\xa2\x01\n" +
+	"_legacy_idB\x06\n" +
+	"\x04_iin\"\xa2\x01\n" +
 	"\fUserCounters\x12\x1b\n" +
 	"\tads_count\x18\x01 \x01(\x03R\badsCount\x12#\n" +
 	"\rreviews_count\x18\x02 \x01(\x03R\freviewsCount\x12'\n" +
