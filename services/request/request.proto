@@ -140,6 +140,10 @@ message Request {
   // UUID of org the customer paused "for" (mirrors legacy paused_by_service_id);
   // empty when self-paused.
   optional string paused_by_org_id = 25;
+  // Legacy ad.id (numeric) this request was migrated from — bridges still-legacy
+  // cg_web flows (reviews, chat responses, notifications) that key off the old id.
+  // 0/absent for natively-created requests.
+  optional int64 legacy_id = 26;
 }
 
 // CreateRequest

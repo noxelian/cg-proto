@@ -171,6 +171,10 @@ type Request struct {
 	// UUID of org the customer paused "for" (mirrors legacy paused_by_service_id);
 	// empty when self-paused.
 	PausedByOrgId *string `protobuf:"bytes,25,opt,name=paused_by_org_id,json=pausedByOrgId,proto3,oneof" json:"paused_by_org_id,omitempty"`
+	// Legacy ad.id (numeric) this request was migrated from — bridges still-legacy
+	// cg_web flows (reviews, chat responses, notifications) that key off the old id.
+	// 0/absent for natively-created requests.
+	LegacyId      *int64 `protobuf:"varint,26,opt,name=legacy_id,json=legacyId,proto3,oneof" json:"legacy_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -378,6 +382,13 @@ func (x *Request) GetPausedByOrgId() string {
 		return *x.PausedByOrgId
 	}
 	return ""
+}
+
+func (x *Request) GetLegacyId() int64 {
+	if x != nil && x.LegacyId != nil {
+		return *x.LegacyId
+	}
+	return 0
 }
 
 // CreateRequest
@@ -2685,7 +2696,7 @@ var File_services_request_request_proto protoreflect.FileDescriptor
 
 const file_services_request_request_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/request/request.proto\x12\x13services.request.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x90\b\n" +
+	"\x1eservices/request/request.proto\x12\x13services.request.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc0\b\n" +
 	"\aRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x124\n" +
 	"\x04type\x18\x02 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12:\n" +
@@ -2716,14 +2727,17 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\n" +
 	"bids_count\x18\x17 \x01(\x05R\tbidsCount\x12<\n" +
 	"\tpaused_at\x18\x18 \x01(\v2\x1a.google.protobuf.TimestampH\x04R\bpausedAt\x88\x01\x01\x12,\n" +
-	"\x10paused_by_org_id\x18\x19 \x01(\tH\x05R\rpausedByOrgId\x88\x01\x01B\x14\n" +
+	"\x10paused_by_org_id\x18\x19 \x01(\tH\x05R\rpausedByOrgId\x88\x01\x01\x12 \n" +
+	"\tlegacy_id\x18\x1a \x01(\x03H\x06R\blegacyId\x88\x01\x01B\x14\n" +
 	"\x12_car_generation_idB\x0f\n" +
 	"\r_published_atB\x12\n" +
 	"\x10_repair_order_idB\t\n" +
 	"\a_org_idB\f\n" +
 	"\n" +
 	"_paused_atB\x13\n" +
-	"\x11_paused_by_org_id\"\xdb\x04\n" +
+	"\x11_paused_by_org_idB\f\n" +
+	"\n" +
+	"_legacy_id\"\xdb\x04\n" +
 	"\x14CreateRequestRequest\x124\n" +
 	"\x04type\x18\x01 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
