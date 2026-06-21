@@ -144,6 +144,7 @@ const (
 	PaymentProvider_PAYMENT_PROVIDER_UNSPECIFIED PaymentProvider = 0
 	PaymentProvider_PAYMENT_PROVIDER_IOKA        PaymentProvider = 1
 	PaymentProvider_PAYMENT_PROVIDER_KASPI       PaymentProvider = 2
+	PaymentProvider_PAYMENT_PROVIDER_FREEDOMPAY  PaymentProvider = 3
 )
 
 // Enum value maps for PaymentProvider.
@@ -152,11 +153,13 @@ var (
 		0: "PAYMENT_PROVIDER_UNSPECIFIED",
 		1: "PAYMENT_PROVIDER_IOKA",
 		2: "PAYMENT_PROVIDER_KASPI",
+		3: "PAYMENT_PROVIDER_FREEDOMPAY",
 	}
 	PaymentProvider_value = map[string]int32{
 		"PAYMENT_PROVIDER_UNSPECIFIED": 0,
 		"PAYMENT_PROVIDER_IOKA":        1,
 		"PAYMENT_PROVIDER_KASPI":       2,
+		"PAYMENT_PROVIDER_FREEDOMPAY":  3,
 	}
 )
 
@@ -2447,11 +2450,12 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x17TRANSACTION_TYPE_CHARGE\x10\x01\x12\x1b\n" +
 	"\x17TRANSACTION_TYPE_REFUND\x10\x02\x12 \n" +
 	"\x1cTRANSACTION_TYPE_ESCROW_HOLD\x10\x03\x12#\n" +
-	"\x1fTRANSACTION_TYPE_ESCROW_RELEASE\x10\x04*j\n" +
+	"\x1fTRANSACTION_TYPE_ESCROW_RELEASE\x10\x04*\x8b\x01\n" +
 	"\x0fPaymentProvider\x12 \n" +
 	"\x1cPAYMENT_PROVIDER_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15PAYMENT_PROVIDER_IOKA\x10\x01\x12\x1a\n" +
-	"\x16PAYMENT_PROVIDER_KASPI\x10\x02*\x9f\x01\n" +
+	"\x16PAYMENT_PROVIDER_KASPI\x10\x02\x12\x1f\n" +
+	"\x1bPAYMENT_PROVIDER_FREEDOMPAY\x10\x03*\x9f\x01\n" +
 	"\rPaymentMethod\x12\x1e\n" +
 	"\x1aPAYMENT_METHOD_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13PAYMENT_METHOD_CARD\x10\x01\x12\x1c\n" +
