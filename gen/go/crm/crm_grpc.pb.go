@@ -173,6 +173,7 @@ const (
 	CRMService_ListExternalCalls_FullMethodName                  = "/crm.v1.CRMService/ListExternalCalls"
 	CRMService_CountExternalCallsByUser_FullMethodName           = "/crm.v1.CRMService/CountExternalCallsByUser"
 	CRMService_DeleteExternalCall_FullMethodName                 = "/crm.v1.CRMService/DeleteExternalCall"
+	CRMService_CreateCustomerActionLead_FullMethodName           = "/crm.v1.CRMService/CreateCustomerActionLead"
 )
 
 // CRMServiceClient is the client API for CRMService service.
@@ -549,6 +550,12 @@ type CRMServiceClient interface {
 	ListExternalCalls(ctx context.Context, in *ListExternalCallsRequest, opts ...grpc.CallOption) (*ListExternalCallsResponse, error)
 	CountExternalCallsByUser(ctx context.Context, in *CountExternalCallsByUserRequest, opts ...grpc.CallOption) (*CountExternalCallsByUserResponse, error)
 	DeleteExternalCall(ctx context.Context, in *DeleteExternalCallRequest, opts ...grpc.CallOption) (*DeleteExternalCallResponse, error)
+	// CreateCustomerActionLead records a customer-initiated action on an order
+	// (legacy GET v1/crm/client/{id}) as a CRM lead in the org that owns the
+	// order's workshop. user_id is the cg-users id derived from the JWT by the
+	// BFF (never spoofable by the client). Idempotent per
+	// (organization_id, user_id, order_id, action_type) within a short window.
+	CreateCustomerActionLead(ctx context.Context, in *CreateCustomerActionLeadRequest, opts ...grpc.CallOption) (*CreateCustomerActionLeadResponse, error)
 }
 
 type cRMServiceClient struct {
@@ -2111,6 +2118,16 @@ func (c *cRMServiceClient) DeleteExternalCall(ctx context.Context, in *DeleteExt
 	return out, nil
 }
 
+func (c *cRMServiceClient) CreateCustomerActionLead(ctx context.Context, in *CreateCustomerActionLeadRequest, opts ...grpc.CallOption) (*CreateCustomerActionLeadResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateCustomerActionLeadResponse)
+	err := c.cc.Invoke(ctx, CRMService_CreateCustomerActionLead_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CRMServiceServer is the server API for CRMService service.
 // All implementations must embed UnimplementedCRMServiceServer
 // for forward compatibility.
@@ -2485,6 +2502,12 @@ type CRMServiceServer interface {
 	ListExternalCalls(context.Context, *ListExternalCallsRequest) (*ListExternalCallsResponse, error)
 	CountExternalCallsByUser(context.Context, *CountExternalCallsByUserRequest) (*CountExternalCallsByUserResponse, error)
 	DeleteExternalCall(context.Context, *DeleteExternalCallRequest) (*DeleteExternalCallResponse, error)
+	// CreateCustomerActionLead records a customer-initiated action on an order
+	// (legacy GET v1/crm/client/{id}) as a CRM lead in the org that owns the
+	// order's workshop. user_id is the cg-users id derived from the JWT by the
+	// BFF (never spoofable by the client). Idempotent per
+	// (organization_id, user_id, order_id, action_type) within a short window.
+	CreateCustomerActionLead(context.Context, *CreateCustomerActionLeadRequest) (*CreateCustomerActionLeadResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
 
@@ -2956,6 +2979,9 @@ func (UnimplementedCRMServiceServer) CountExternalCallsByUser(context.Context, *
 }
 func (UnimplementedCRMServiceServer) DeleteExternalCall(context.Context, *DeleteExternalCallRequest) (*DeleteExternalCallResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteExternalCall not implemented")
+}
+func (UnimplementedCRMServiceServer) CreateCustomerActionLead(context.Context, *CreateCustomerActionLeadRequest) (*CreateCustomerActionLeadResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateCustomerActionLead not implemented")
 }
 func (UnimplementedCRMServiceServer) mustEmbedUnimplementedCRMServiceServer() {}
 func (UnimplementedCRMServiceServer) testEmbeddedByValue()                    {}
@@ -5750,6 +5776,24 @@ func _CRMService_DeleteExternalCall_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_CreateCustomerActionLead_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCustomerActionLeadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).CreateCustomerActionLead(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_CreateCustomerActionLead_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).CreateCustomerActionLead(ctx, req.(*CreateCustomerActionLeadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CRMService_ServiceDesc is the grpc.ServiceDesc for CRMService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -6372,6 +6416,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteExternalCall",
 			Handler:    _CRMService_DeleteExternalCall_Handler,
+		},
+		{
+			MethodName: "CreateCustomerActionLead",
+			Handler:    _CRMService_CreateCustomerActionLead_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -48,6 +48,19 @@ message Chat {
   string caller_role = 11;
   // caller_unread_count is the unread count for the caller's role.
   int32 caller_unread_count = 12;
+
+  // --- Legacy s_ad enrichment (cg_web parity). Populated server-side from the
+  // seller org (cg-users organization) + the chat context entity. Avatar is a
+  // RELATIVE path; the BFF prefixes /fs/ before returning to the client. ---
+  string counterparty_name    = 13; // legacy s_ad.usr_name — seller org/user display name
+  string counterparty_avatar  = 14; // legacy s_ad.ava — relative path
+  string counterparty_address = 15; // legacy s_ad.address — seller org address
+  string context_title        = 16; // legacy s_ad.note — short title of the ad/service
+  int64  context_price        = 17; // legacy s_ad.price — tiyins; 0 = unset
+  // Split unread counters (legacy client_new_msg_count / server_new_msg_count).
+  // Coexist with unread_count(8) and caller_unread_count(12); do not touch those.
+  int32  unread_for_buyer     = 18; // legacy client_new_msg_count
+  int32  unread_for_seller    = 19; // legacy server_new_msg_count
 }
 
 message Message {

@@ -334,6 +334,11 @@ message RepairOrder {
   // signing_status: current state ("pending" | "signed" | "rejected" | "expired").
   string signing_session_id = 51;
   string signing_status = 52;
+  // Workshop display name (legacy order_work.service_name / created_by_name).
+  // Populated by List/Get queries via JOIN workshops w ON w.id = workshop_id.
+  // Empty when not resolved. Lets the client "my orders" list show the shop
+  // name without a second round-trip. (cg_web userOrdersService order_work card.)
+  string workshop_name = 53;
 }
 
 message MasterSummary {

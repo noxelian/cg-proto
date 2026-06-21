@@ -99,8 +99,20 @@ type Chat struct {
 	CallerRole string `protobuf:"bytes,11,opt,name=caller_role,json=callerRole,proto3" json:"caller_role,omitempty"`
 	// caller_unread_count is the unread count for the caller's role.
 	CallerUnreadCount int32 `protobuf:"varint,12,opt,name=caller_unread_count,json=callerUnreadCount,proto3" json:"caller_unread_count,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	// --- Legacy s_ad enrichment (cg_web parity). Populated server-side from the
+	// seller org (cg-users organization) + the chat context entity. Avatar is a
+	// RELATIVE path; the BFF prefixes /fs/ before returning to the client. ---
+	CounterpartyName    string `protobuf:"bytes,13,opt,name=counterparty_name,json=counterpartyName,proto3" json:"counterparty_name,omitempty"`          // legacy s_ad.usr_name — seller org/user display name
+	CounterpartyAvatar  string `protobuf:"bytes,14,opt,name=counterparty_avatar,json=counterpartyAvatar,proto3" json:"counterparty_avatar,omitempty"`    // legacy s_ad.ava — relative path
+	CounterpartyAddress string `protobuf:"bytes,15,opt,name=counterparty_address,json=counterpartyAddress,proto3" json:"counterparty_address,omitempty"` // legacy s_ad.address — seller org address
+	ContextTitle        string `protobuf:"bytes,16,opt,name=context_title,json=contextTitle,proto3" json:"context_title,omitempty"`                      // legacy s_ad.note — short title of the ad/service
+	ContextPrice        int64  `protobuf:"varint,17,opt,name=context_price,json=contextPrice,proto3" json:"context_price,omitempty"`                     // legacy s_ad.price — tiyins; 0 = unset
+	// Split unread counters (legacy client_new_msg_count / server_new_msg_count).
+	// Coexist with unread_count(8) and caller_unread_count(12); do not touch those.
+	UnreadForBuyer  int32 `protobuf:"varint,18,opt,name=unread_for_buyer,json=unreadForBuyer,proto3" json:"unread_for_buyer,omitempty"`    // legacy client_new_msg_count
+	UnreadForSeller int32 `protobuf:"varint,19,opt,name=unread_for_seller,json=unreadForSeller,proto3" json:"unread_for_seller,omitempty"` // legacy server_new_msg_count
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *Chat) Reset() {
@@ -213,6 +225,55 @@ func (x *Chat) GetCallerRole() string {
 func (x *Chat) GetCallerUnreadCount() int32 {
 	if x != nil {
 		return x.CallerUnreadCount
+	}
+	return 0
+}
+
+func (x *Chat) GetCounterpartyName() string {
+	if x != nil {
+		return x.CounterpartyName
+	}
+	return ""
+}
+
+func (x *Chat) GetCounterpartyAvatar() string {
+	if x != nil {
+		return x.CounterpartyAvatar
+	}
+	return ""
+}
+
+func (x *Chat) GetCounterpartyAddress() string {
+	if x != nil {
+		return x.CounterpartyAddress
+	}
+	return ""
+}
+
+func (x *Chat) GetContextTitle() string {
+	if x != nil {
+		return x.ContextTitle
+	}
+	return ""
+}
+
+func (x *Chat) GetContextPrice() int64 {
+	if x != nil {
+		return x.ContextPrice
+	}
+	return 0
+}
+
+func (x *Chat) GetUnreadForBuyer() int32 {
+	if x != nil {
+		return x.UnreadForBuyer
+	}
+	return 0
+}
+
+func (x *Chat) GetUnreadForSeller() int32 {
+	if x != nil {
+		return x.UnreadForSeller
 	}
 	return 0
 }
@@ -1420,7 +1481,7 @@ var File_communication_chat_chat_proto protoreflect.FileDescriptor
 
 const file_communication_chat_chat_proto_rawDesc = "" +
 	"\n" +
-	"\x1dcommunication/chat/chat.proto\x12\x15communication.chat.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x89\x04\n" +
+	"\x1dcommunication/chat/chat.proto\x12\x15communication.chat.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xba\x06\n" +
 	"\x04Chat\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12I\n" +
 	"\fcontext_type\x18\x02 \x01(\x0e2&.communication.chat.v1.ChatContextTypeR\vcontextType\x12\x1d\n" +
@@ -1438,7 +1499,14 @@ const file_communication_chat_chat_proto_rawDesc = "" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1f\n" +
 	"\vcaller_role\x18\v \x01(\tR\n" +
 	"callerRole\x12.\n" +
-	"\x13caller_unread_count\x18\f \x01(\x05R\x11callerUnreadCount\"\xe0\x01\n" +
+	"\x13caller_unread_count\x18\f \x01(\x05R\x11callerUnreadCount\x12+\n" +
+	"\x11counterparty_name\x18\r \x01(\tR\x10counterpartyName\x12/\n" +
+	"\x13counterparty_avatar\x18\x0e \x01(\tR\x12counterpartyAvatar\x121\n" +
+	"\x14counterparty_address\x18\x0f \x01(\tR\x13counterpartyAddress\x12#\n" +
+	"\rcontext_title\x18\x10 \x01(\tR\fcontextTitle\x12#\n" +
+	"\rcontext_price\x18\x11 \x01(\x03R\fcontextPrice\x12(\n" +
+	"\x10unread_for_buyer\x18\x12 \x01(\x05R\x0eunreadForBuyer\x12*\n" +
+	"\x11unread_for_seller\x18\x13 \x01(\x05R\x0funreadForSeller\"\xe0\x01\n" +
 	"\aMessage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\achat_id\x18\x02 \x01(\tR\x06chatId\x12\x1b\n" +

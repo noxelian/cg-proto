@@ -864,8 +864,13 @@ type RepairOrder struct {
 	// signing_status: current state ("pending" | "signed" | "rejected" | "expired").
 	SigningSessionId string `protobuf:"bytes,51,opt,name=signing_session_id,json=signingSessionId,proto3" json:"signing_session_id,omitempty"`
 	SigningStatus    string `protobuf:"bytes,52,opt,name=signing_status,json=signingStatus,proto3" json:"signing_status,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// Workshop display name (legacy order_work.service_name / created_by_name).
+	// Populated by List/Get queries via JOIN workshops w ON w.id = workshop_id.
+	// Empty when not resolved. Lets the client "my orders" list show the shop
+	// name without a second round-trip. (cg_web userOrdersService order_work card.)
+	WorkshopName  string `protobuf:"bytes,53,opt,name=workshop_name,json=workshopName,proto3" json:"workshop_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RepairOrder) Reset() {
@@ -1244,6 +1249,13 @@ func (x *RepairOrder) GetSigningSessionId() string {
 func (x *RepairOrder) GetSigningStatus() string {
 	if x != nil {
 		return x.SigningStatus
+	}
+	return ""
+}
+
+func (x *RepairOrder) GetWorkshopName() string {
+	if x != nil {
+		return x.WorkshopName
 	}
 	return ""
 }
@@ -13210,7 +13222,7 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\vlegacy_name\x18\n" +
 	" \x01(\tH\x00R\n" +
 	"legacyName\x88\x01\x01B\x0e\n" +
-	"\f_legacy_name\"\xa3\x0f\n" +
+	"\f_legacy_name\"\xc8\x0f\n" +
 	"\vRepairOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vworkshop_id\x18\x02 \x01(\x03R\n" +
@@ -13279,7 +13291,8 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"totalHours\x122\n" +
 	"\x15assigned_master_names\x182 \x01(\tR\x13assignedMasterNames\x12,\n" +
 	"\x12signing_session_id\x183 \x01(\tR\x10signingSessionId\x12%\n" +
-	"\x0esigning_status\x184 \x01(\tR\rsigningStatusB\x12\n" +
+	"\x0esigning_status\x184 \x01(\tR\rsigningStatus\x12#\n" +
+	"\rworkshop_name\x185 \x01(\tR\fworkshopNameB\x12\n" +
 	"\x10_parent_order_idJ\x04\b(\x10)J\x04\b)\x10*R\x10parts_request_idR\fparts_bid_id\"`\n" +
 	"\rMasterSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
