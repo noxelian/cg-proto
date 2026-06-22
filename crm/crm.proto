@@ -3869,6 +3869,13 @@ message DealContextBundle {
   // newest first. Shows the judge that the manager is actively working the deal —
   // a «Записан на осмотр» stage with pending follow-up tasks is NOT "abandoned".
   repeated DealTask tasks = 14;
+
+  // The CALL's pipeline id (telephony_calls.pipeline_id, else matched-entity
+  // pipeline). Populated even for deal-less calls so the analyzer can scope its
+  // expensive LLM judge to one pipeline (e.g. Продажи) and skip call-center / HR /
+  // parts calls it never surfaces. Empty when the call's pipeline is unknown —
+  // consumers must fail-open (analyze) rather than drop on an empty value.
+  string call_pipeline_id = 15;
 }
 
 // DealTask — one task a manager recorded on the deal (cg_crm.tasks).

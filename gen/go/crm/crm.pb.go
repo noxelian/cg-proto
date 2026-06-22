@@ -25703,9 +25703,15 @@ type DealContextBundle struct {
 	// Manager's tasks on the deal (follow-ups / reminders the manager recorded),
 	// newest first. Shows the judge that the manager is actively working the deal —
 	// a «Записан на осмотр» stage with pending follow-up tasks is NOT "abandoned".
-	Tasks         []*DealTask `protobuf:"bytes,14,rep,name=tasks,proto3" json:"tasks,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Tasks []*DealTask `protobuf:"bytes,14,rep,name=tasks,proto3" json:"tasks,omitempty"`
+	// The CALL's pipeline id (telephony_calls.pipeline_id, else matched-entity
+	// pipeline). Populated even for deal-less calls so the analyzer can scope its
+	// expensive LLM judge to one pipeline (e.g. Продажи) and skip call-center / HR /
+	// parts calls it never surfaces. Empty when the call's pipeline is unknown —
+	// consumers must fail-open (analyze) rather than drop on an empty value.
+	CallPipelineId string `protobuf:"bytes,15,opt,name=call_pipeline_id,json=callPipelineId,proto3" json:"call_pipeline_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *DealContextBundle) Reset() {
@@ -25834,6 +25840,13 @@ func (x *DealContextBundle) GetTasks() []*DealTask {
 		return x.Tasks
 	}
 	return nil
+}
+
+func (x *DealContextBundle) GetCallPipelineId() string {
+	if x != nil {
+		return x.CallPipelineId
+	}
+	return ""
 }
 
 // DealTask — one task a manager recorded on the deal (cg_crm.tasks).
@@ -28306,7 +28319,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\acall_id\x18\x02 \x01(\tR\x06callId\"Q\n" +
 	"\x1cGetDealContextBundleResponse\x121\n" +
-	"\x06bundle\x18\x01 \x01(\v2\x19.crm.v1.DealContextBundleR\x06bundle\"\xb2\x05\n" +
+	"\x06bundle\x18\x01 \x01(\v2\x19.crm.v1.DealContextBundleR\x06bundle\"\xdc\x05\n" +
 	"\x11DealContextBundle\x12\x19\n" +
 	"\bhas_deal\x18\x01 \x01(\bR\ahasDeal\x12\x17\n" +
 	"\adeal_id\x18\x02 \x01(\tR\x06dealId\x12'\n" +
@@ -28322,7 +28335,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\bmessages\x18\v \x03(\v2\x13.crm.v1.DealMessageR\bmessages\x12+\n" +
 	"\aai_chat\x18\f \x03(\v2\x12.crm.v1.AiChatTurnR\x06aiChat\x12$\n" +
 	"\x0ehas_work_order\x18\r \x01(\bR\fhasWorkOrder\x12&\n" +
-	"\x05tasks\x18\x0e \x03(\v2\x10.crm.v1.DealTaskR\x05tasks\"\x87\x02\n" +
+	"\x05tasks\x18\x0e \x03(\v2\x10.crm.v1.DealTaskR\x05tasks\x12(\n" +
+	"\x10call_pipeline_id\x18\x0f \x01(\tR\x0ecallPipelineId\"\x87\x02\n" +
 	"\bDealTask\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +
