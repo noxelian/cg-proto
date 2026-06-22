@@ -129,6 +129,33 @@ service UserService {
   // ListModules returns the static list of UI/API modules that can be
   // assigned to roles via allowed_modules.
   rpc ListModules(ListModulesRequest) returns (ListModulesResponse);
+
+  // ==== Primary phone change (self-service, OTP-gated) ====
+  //
+  // Two-step flow: RequestPhoneChange sends an OTP to new_phone, then
+  // ConfirmPhoneChange verifies it and swaps users.phone in one transaction.
+  // Because phone is embedded in every JWT, ConfirmPhoneChange re-issues a
+  // fresh token pair so the client can keep its session without a logout.
+  //
+  // Both RPCs require an authenticated JWT (user_id is taken from the JWT,
+  // never from the request body).
+
+  // RequestPhoneChange validates new_phone (E.164, not taken), then sends
+  // an OTP SMS to it. Reuses the auth SendCode Redis key-space so the
+  // existing 3-per-hour rate-limit applies.
+  rpc RequestPhoneChange(RequestPhoneChangeRequest) returns (RequestPhoneChangeResponse);
+
+  // ConfirmPhoneChange verifies the OTP, updates users.phone, and returns
+  // fresh access+refresh tokens so the in-memory session stays valid.
+  rpc ConfirmPhoneChange(ConfirmPhoneChangeRequest) returns (ConfirmPhoneChangeResponse);
+
+  // ==== Referral/account promocode activation (account-level bonus) ====
+  //
+  // Activates a one-time promocode for the authenticated user. Validates
+  // that the code exists, is active, and has not already been used by this
+  // user. Credits the user's wallet balance with promo.amount (tenge).
+  // Returns ActivatePromocodeResponse.amount — the bonus amount credited.
+  rpc ActivatePromocode(ActivatePromocodeRequest) returns (ActivatePromocodeResponse);
 }
 
 // AdminUserService provides admin-only RPCs for managing any user's data.
@@ -666,4 +693,50 @@ message AdminCar {
   string color = 8;
   bool is_primary = 9;
   google.protobuf.Timestamp created_at = 10;
+}
+
+// ==== Primary phone change ====
+
+message RequestPhoneChangeRequest {
+  // new_phone is the target phone in E.164 format (+7XXXXXXXXXX).
+  // Validated server-side: must be valid E.164 and not already owned by
+  // another user.
+  string new_phone = 1;
+}
+
+message RequestPhoneChangeResponse {
+  bool success = 1;
+  // retry_after is seconds until a new OTP may be requested (0 when success).
+  int32 retry_after = 2;
+}
+
+message ConfirmPhoneChangeRequest {
+  // new_phone must match the phone the OTP was sent to.
+  string new_phone = 1;
+  // code is the 4-digit OTP received by SMS.
+  string code = 2;
+}
+
+message ConfirmPhoneChangeResponse {
+  bool success = 1;
+  // New tokens reflecting the updated phone claim. The client MUST replace
+  // its stored tokens with these to avoid 401s on the next request.
+  string access_token = 2;
+  string refresh_token = 3;
+  google.protobuf.Timestamp expires_at = 4;
+}
+
+// ==== Promocode activation ====
+
+message ActivatePromocodeRequest {
+  // code is the promocode string (case-insensitive; normalised to UPPER server-side).
+  string code = 1;
+}
+
+message ActivatePromocodeResponse {
+  bool success = 1;
+  // amount is the bonus credited to the user's wallet (in tenge).
+  int64 amount = 2;
+  // message is an optional human-readable confirmation (e.g. "Бонус за промокод").
+  string message = 3;
 }
