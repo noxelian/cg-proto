@@ -4849,6 +4849,337 @@ func (x *AdminCar) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+type RequestPhoneChangeRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// new_phone is the target phone in E.164 format (+7XXXXXXXXXX).
+	// Validated server-side: must be valid E.164 and not already owned by
+	// another user.
+	NewPhone      string `protobuf:"bytes,1,opt,name=new_phone,json=newPhone,proto3" json:"new_phone,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RequestPhoneChangeRequest) Reset() {
+	*x = RequestPhoneChangeRequest{}
+	mi := &file_users_user_user_proto_msgTypes[88]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RequestPhoneChangeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RequestPhoneChangeRequest) ProtoMessage() {}
+
+func (x *RequestPhoneChangeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[88]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RequestPhoneChangeRequest.ProtoReflect.Descriptor instead.
+func (*RequestPhoneChangeRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{88}
+}
+
+func (x *RequestPhoneChangeRequest) GetNewPhone() string {
+	if x != nil {
+		return x.NewPhone
+	}
+	return ""
+}
+
+type RequestPhoneChangeResponse struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Success bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	// retry_after is seconds until a new OTP may be requested (0 when success).
+	RetryAfter    int32 `protobuf:"varint,2,opt,name=retry_after,json=retryAfter,proto3" json:"retry_after,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RequestPhoneChangeResponse) Reset() {
+	*x = RequestPhoneChangeResponse{}
+	mi := &file_users_user_user_proto_msgTypes[89]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RequestPhoneChangeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RequestPhoneChangeResponse) ProtoMessage() {}
+
+func (x *RequestPhoneChangeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[89]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RequestPhoneChangeResponse.ProtoReflect.Descriptor instead.
+func (*RequestPhoneChangeResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{89}
+}
+
+func (x *RequestPhoneChangeResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *RequestPhoneChangeResponse) GetRetryAfter() int32 {
+	if x != nil {
+		return x.RetryAfter
+	}
+	return 0
+}
+
+type ConfirmPhoneChangeRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// new_phone must match the phone the OTP was sent to.
+	NewPhone string `protobuf:"bytes,1,opt,name=new_phone,json=newPhone,proto3" json:"new_phone,omitempty"`
+	// code is the 4-digit OTP received by SMS.
+	Code          string `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmPhoneChangeRequest) Reset() {
+	*x = ConfirmPhoneChangeRequest{}
+	mi := &file_users_user_user_proto_msgTypes[90]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmPhoneChangeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmPhoneChangeRequest) ProtoMessage() {}
+
+func (x *ConfirmPhoneChangeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[90]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmPhoneChangeRequest.ProtoReflect.Descriptor instead.
+func (*ConfirmPhoneChangeRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{90}
+}
+
+func (x *ConfirmPhoneChangeRequest) GetNewPhone() string {
+	if x != nil {
+		return x.NewPhone
+	}
+	return ""
+}
+
+func (x *ConfirmPhoneChangeRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+type ConfirmPhoneChangeResponse struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Success bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	// New tokens reflecting the updated phone claim. The client MUST replace
+	// its stored tokens with these to avoid 401s on the next request.
+	AccessToken   string                 `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken  string                 `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	ExpiresAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmPhoneChangeResponse) Reset() {
+	*x = ConfirmPhoneChangeResponse{}
+	mi := &file_users_user_user_proto_msgTypes[91]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmPhoneChangeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmPhoneChangeResponse) ProtoMessage() {}
+
+func (x *ConfirmPhoneChangeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[91]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmPhoneChangeResponse.ProtoReflect.Descriptor instead.
+func (*ConfirmPhoneChangeResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{91}
+}
+
+func (x *ConfirmPhoneChangeResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *ConfirmPhoneChangeResponse) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *ConfirmPhoneChangeResponse) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+func (x *ConfirmPhoneChangeResponse) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
+}
+
+type ActivatePromocodeRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// code is the promocode string (case-insensitive; normalised to UPPER server-side).
+	Code          string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ActivatePromocodeRequest) Reset() {
+	*x = ActivatePromocodeRequest{}
+	mi := &file_users_user_user_proto_msgTypes[92]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ActivatePromocodeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ActivatePromocodeRequest) ProtoMessage() {}
+
+func (x *ActivatePromocodeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[92]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ActivatePromocodeRequest.ProtoReflect.Descriptor instead.
+func (*ActivatePromocodeRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{92}
+}
+
+func (x *ActivatePromocodeRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+type ActivatePromocodeResponse struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Success bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	// amount is the bonus credited to the user's wallet (in tenge).
+	Amount int64 `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	// message is an optional human-readable confirmation (e.g. "Бонус за промокод").
+	Message       string `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ActivatePromocodeResponse) Reset() {
+	*x = ActivatePromocodeResponse{}
+	mi := &file_users_user_user_proto_msgTypes[93]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ActivatePromocodeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ActivatePromocodeResponse) ProtoMessage() {}
+
+func (x *ActivatePromocodeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[93]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ActivatePromocodeResponse.ProtoReflect.Descriptor instead.
+func (*ActivatePromocodeResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{93}
+}
+
+func (x *ActivatePromocodeResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *ActivatePromocodeResponse) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *ActivatePromocodeResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_users_user_user_proto protoreflect.FileDescriptor
 
 const file_users_user_user_proto_rawDesc = "" +
@@ -5189,7 +5520,28 @@ const file_users_user_user_proto_rawDesc = "" +
 	"is_primary\x18\t \x01(\bR\tisPrimary\x129\n" +
 	"\n" +
 	"created_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt*\xa6\x02\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"8\n" +
+	"\x19RequestPhoneChangeRequest\x12\x1b\n" +
+	"\tnew_phone\x18\x01 \x01(\tR\bnewPhone\"W\n" +
+	"\x1aRequestPhoneChangeResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x1f\n" +
+	"\vretry_after\x18\x02 \x01(\x05R\n" +
+	"retryAfter\"L\n" +
+	"\x19ConfirmPhoneChangeRequest\x12\x1b\n" +
+	"\tnew_phone\x18\x01 \x01(\tR\bnewPhone\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\"\xb9\x01\n" +
+	"\x1aConfirmPhoneChangeResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12!\n" +
+	"\faccess_token\x18\x02 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\x129\n" +
+	"\n" +
+	"expires_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\".\n" +
+	"\x18ActivatePromocodeRequest\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\tR\x04code\"g\n" +
+	"\x19ActivatePromocodeResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x16\n" +
+	"\x06amount\x18\x02 \x01(\x03R\x06amount\x12\x18\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage*\xa6\x02\n" +
 	"\fPlatformRole\x12\x1d\n" +
 	"\x19PLATFORM_ROLE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16PLATFORM_ROLE_MECHANIC\x10\x01\x12\x1e\n" +
@@ -5199,7 +5551,7 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x1bPLATFORM_ROLE_SALES_MANAGER\x10\x05\x12\x1b\n" +
 	"\x17PLATFORM_ROLE_RECRUITER\x10\x06\x12\"\n" +
 	"\x1ePLATFORM_ROLE_AUTOBODY_MANAGER\x10\a\x12\x1f\n" +
-	"\x1bPLATFORM_ROLE_HEAD_OF_SALES\x10\b2\x99\x1d\n" +
+	"\x1bPLATFORM_ROLE_HEAD_OF_SALES\x10\b2\xd7\x1f\n" +
 	"\vUserService\x12Q\n" +
 	"\n" +
 	"GetProfile\x12 .users.user.v1.GetProfileRequest\x1a!.users.user.v1.GetProfileResponse\x12Z\n" +
@@ -5241,7 +5593,10 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x15CreatePlatformRoleDef\x12+.users.user.v1.CreatePlatformRoleDefRequest\x1a,.users.user.v1.CreatePlatformRoleDefResponse\x12r\n" +
 	"\x15UpdatePlatformRoleDef\x12+.users.user.v1.UpdatePlatformRoleDefRequest\x1a,.users.user.v1.UpdatePlatformRoleDefResponse\x12r\n" +
 	"\x15DeletePlatformRoleDef\x12+.users.user.v1.DeletePlatformRoleDefRequest\x1a,.users.user.v1.DeletePlatformRoleDefResponse\x12T\n" +
-	"\vListModules\x12!.users.user.v1.ListModulesRequest\x1a\".users.user.v1.ListModulesResponse2\xbb\x02\n" +
+	"\vListModules\x12!.users.user.v1.ListModulesRequest\x1a\".users.user.v1.ListModulesResponse\x12i\n" +
+	"\x12RequestPhoneChange\x12(.users.user.v1.RequestPhoneChangeRequest\x1a).users.user.v1.RequestPhoneChangeResponse\x12i\n" +
+	"\x12ConfirmPhoneChange\x12(.users.user.v1.ConfirmPhoneChangeRequest\x1a).users.user.v1.ConfirmPhoneChangeResponse\x12f\n" +
+	"\x11ActivatePromocode\x12'.users.user.v1.ActivatePromocodeRequest\x1a(.users.user.v1.ActivatePromocodeResponse2\xbb\x02\n" +
 	"\x10AdminUserService\x12`\n" +
 	"\x0fAdminGetProfile\x12%.users.user.v1.AdminGetProfileRequest\x1a&.users.user.v1.AdminGetProfileResponse\x12i\n" +
 	"\x12AdminUpdateProfile\x12(.users.user.v1.AdminUpdateProfileRequest\x1a).users.user.v1.AdminUpdateProfileResponse\x12Z\n" +
@@ -5260,7 +5615,7 @@ func file_users_user_user_proto_rawDescGZIP() []byte {
 }
 
 var file_users_user_user_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_users_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 88)
+var file_users_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 94)
 var file_users_user_user_proto_goTypes = []any{
 	(PlatformRole)(0),                            // 0: users.user.v1.PlatformRole
 	(*User)(nil),                                 // 1: users.user.v1.User
@@ -5351,11 +5706,17 @@ var file_users_user_user_proto_goTypes = []any{
 	(*AdminListCarsRequest)(nil),                 // 86: users.user.v1.AdminListCarsRequest
 	(*AdminListCarsResponse)(nil),                // 87: users.user.v1.AdminListCarsResponse
 	(*AdminCar)(nil),                             // 88: users.user.v1.AdminCar
-	(*timestamppb.Timestamp)(nil),                // 89: google.protobuf.Timestamp
+	(*RequestPhoneChangeRequest)(nil),            // 89: users.user.v1.RequestPhoneChangeRequest
+	(*RequestPhoneChangeResponse)(nil),           // 90: users.user.v1.RequestPhoneChangeResponse
+	(*ConfirmPhoneChangeRequest)(nil),            // 91: users.user.v1.ConfirmPhoneChangeRequest
+	(*ConfirmPhoneChangeResponse)(nil),           // 92: users.user.v1.ConfirmPhoneChangeResponse
+	(*ActivatePromocodeRequest)(nil),             // 93: users.user.v1.ActivatePromocodeRequest
+	(*ActivatePromocodeResponse)(nil),            // 94: users.user.v1.ActivatePromocodeResponse
+	(*timestamppb.Timestamp)(nil),                // 95: google.protobuf.Timestamp
 }
 var file_users_user_user_proto_depIdxs = []int32{
-	89, // 0: users.user.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	89, // 1: users.user.v1.User.updated_at:type_name -> google.protobuf.Timestamp
+	95, // 0: users.user.v1.User.created_at:type_name -> google.protobuf.Timestamp
+	95, // 1: users.user.v1.User.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 2: users.user.v1.GetProfileResponse.user:type_name -> users.user.v1.User
 	2,  // 3: users.user.v1.GetProfileResponse.counters:type_name -> users.user.v1.UserCounters
 	1,  // 4: users.user.v1.UpdateProfileResponse.user:type_name -> users.user.v1.User
@@ -5369,8 +5730,8 @@ var file_users_user_user_proto_depIdxs = []int32{
 	1,  // 12: users.user.v1.FindOrCreateByPhoneResponse.user:type_name -> users.user.v1.User
 	23, // 13: users.user.v1.GetSettingsResponse.settings:type_name -> users.user.v1.UserSettings
 	23, // 14: users.user.v1.UpdateSettingsResponse.settings:type_name -> users.user.v1.UserSettings
-	89, // 15: users.user.v1.Device.created_at:type_name -> google.protobuf.Timestamp
-	89, // 16: users.user.v1.Device.last_used_at:type_name -> google.protobuf.Timestamp
+	95, // 15: users.user.v1.Device.created_at:type_name -> google.protobuf.Timestamp
+	95, // 16: users.user.v1.Device.last_used_at:type_name -> google.protobuf.Timestamp
 	28, // 17: users.user.v1.GetDevicesResponse.devices:type_name -> users.user.v1.Device
 	0,  // 18: users.user.v1.SetPlatformRolesRequest.roles:type_name -> users.user.v1.PlatformRole
 	0,  // 19: users.user.v1.GetPlatformRolesResponse.roles:type_name -> users.user.v1.PlatformRole
@@ -5379,14 +5740,14 @@ var file_users_user_user_proto_depIdxs = []int32{
 	0,  // 22: users.user.v1.PlatformMember.roles:type_name -> users.user.v1.PlatformRole
 	0,  // 23: users.user.v1.ListUsersByPlatformRolesRequest.roles:type_name -> users.user.v1.PlatformRole
 	53, // 24: users.user.v1.ListUsersByPlatformRolesResponse.members:type_name -> users.user.v1.PlatformMember
-	89, // 25: users.user.v1.UserPhone.created_at:type_name -> google.protobuf.Timestamp
-	89, // 26: users.user.v1.UserPhone.updated_at:type_name -> google.protobuf.Timestamp
+	95, // 25: users.user.v1.UserPhone.created_at:type_name -> google.protobuf.Timestamp
+	95, // 26: users.user.v1.UserPhone.updated_at:type_name -> google.protobuf.Timestamp
 	57, // 27: users.user.v1.ListPhonesResponse.phones:type_name -> users.user.v1.UserPhone
 	57, // 28: users.user.v1.AddPhoneResponse.phone:type_name -> users.user.v1.UserPhone
 	57, // 29: users.user.v1.SetPrimaryPhoneResponse.phone:type_name -> users.user.v1.UserPhone
 	57, // 30: users.user.v1.RelabelPhoneResponse.phone:type_name -> users.user.v1.UserPhone
-	89, // 31: users.user.v1.PlatformRoleDef.created_at:type_name -> google.protobuf.Timestamp
-	89, // 32: users.user.v1.PlatformRoleDef.updated_at:type_name -> google.protobuf.Timestamp
+	95, // 31: users.user.v1.PlatformRoleDef.created_at:type_name -> google.protobuf.Timestamp
+	95, // 32: users.user.v1.PlatformRoleDef.updated_at:type_name -> google.protobuf.Timestamp
 	68, // 33: users.user.v1.ListPlatformRoleDefsResponse.roles:type_name -> users.user.v1.PlatformRoleDef
 	68, // 34: users.user.v1.GetPlatformRoleDefResponse.role:type_name -> users.user.v1.PlatformRoleDef
 	68, // 35: users.user.v1.CreatePlatformRoleDefResponse.role:type_name -> users.user.v1.PlatformRoleDef
@@ -5396,92 +5757,99 @@ var file_users_user_user_proto_depIdxs = []int32{
 	2,  // 39: users.user.v1.AdminGetProfileResponse.counters:type_name -> users.user.v1.UserCounters
 	1,  // 40: users.user.v1.AdminUpdateProfileResponse.user:type_name -> users.user.v1.User
 	88, // 41: users.user.v1.AdminListCarsResponse.cars:type_name -> users.user.v1.AdminCar
-	89, // 42: users.user.v1.AdminCar.created_at:type_name -> google.protobuf.Timestamp
-	3,  // 43: users.user.v1.UserService.GetProfile:input_type -> users.user.v1.GetProfileRequest
-	5,  // 44: users.user.v1.UserService.UpdateProfile:input_type -> users.user.v1.UpdateProfileRequest
-	7,  // 45: users.user.v1.UserService.GetUserByID:input_type -> users.user.v1.GetUserByIDRequest
-	13, // 46: users.user.v1.UserService.GetUserByPhone:input_type -> users.user.v1.GetUserByPhoneRequest
-	15, // 47: users.user.v1.UserService.GetUserByLegacyID:input_type -> users.user.v1.GetUserByLegacyIDRequest
-	17, // 48: users.user.v1.UserService.CreateUser:input_type -> users.user.v1.CreateUserRequest
-	9,  // 49: users.user.v1.UserService.GetUsersByIDs:input_type -> users.user.v1.GetUsersByIDsRequest
-	11, // 50: users.user.v1.UserService.GetUsersByPhones:input_type -> users.user.v1.GetUsersByPhonesRequest
-	21, // 51: users.user.v1.UserService.FindOrCreateByPhone:input_type -> users.user.v1.FindOrCreateByPhoneRequest
-	19, // 52: users.user.v1.UserService.FindOrCreateByInstagramID:input_type -> users.user.v1.FindOrCreateByInstagramIDRequest
-	24, // 53: users.user.v1.UserService.GetSettings:input_type -> users.user.v1.GetSettingsRequest
-	26, // 54: users.user.v1.UserService.UpdateSettings:input_type -> users.user.v1.UpdateSettingsRequest
-	29, // 55: users.user.v1.UserService.RegisterDevice:input_type -> users.user.v1.RegisterDeviceRequest
-	31, // 56: users.user.v1.UserService.UnregisterDevice:input_type -> users.user.v1.UnregisterDeviceRequest
-	33, // 57: users.user.v1.UserService.GetDevices:input_type -> users.user.v1.GetDevicesRequest
-	35, // 58: users.user.v1.UserService.DeleteAccount:input_type -> users.user.v1.DeleteAccountRequest
-	51, // 59: users.user.v1.UserService.ListUsers:input_type -> users.user.v1.ListUsersRequest
-	37, // 60: users.user.v1.UserService.SetPlatformRoles:input_type -> users.user.v1.SetPlatformRolesRequest
-	39, // 61: users.user.v1.UserService.GetPlatformRoles:input_type -> users.user.v1.GetPlatformRolesRequest
-	41, // 62: users.user.v1.UserService.CheckPlatformRoles:input_type -> users.user.v1.CheckPlatformRolesRequest
-	43, // 63: users.user.v1.UserService.SetPlatformOrgAccess:input_type -> users.user.v1.SetPlatformOrgAccessRequest
-	45, // 64: users.user.v1.UserService.GetPlatformOrgAccess:input_type -> users.user.v1.GetPlatformOrgAccessRequest
-	47, // 65: users.user.v1.UserService.RemovePlatformOrgAccess:input_type -> users.user.v1.RemovePlatformOrgAccessRequest
-	49, // 66: users.user.v1.UserService.AddPlatformOrgAccess:input_type -> users.user.v1.AddPlatformOrgAccessRequest
-	54, // 67: users.user.v1.UserService.ListUsersByPlatformRoles:input_type -> users.user.v1.ListUsersByPlatformRolesRequest
-	56, // 68: users.user.v1.UserService.ListUsersByPlatformRolesInOrg:input_type -> users.user.v1.ListUsersByPlatformRolesInOrgRequest
-	58, // 69: users.user.v1.UserService.ListPhones:input_type -> users.user.v1.ListPhonesRequest
-	60, // 70: users.user.v1.UserService.AddPhone:input_type -> users.user.v1.AddPhoneRequest
-	62, // 71: users.user.v1.UserService.RemovePhone:input_type -> users.user.v1.RemovePhoneRequest
-	64, // 72: users.user.v1.UserService.SetPrimaryPhone:input_type -> users.user.v1.SetPrimaryPhoneRequest
-	66, // 73: users.user.v1.UserService.RelabelPhone:input_type -> users.user.v1.RelabelPhoneRequest
-	69, // 74: users.user.v1.UserService.ListPlatformRoleDefs:input_type -> users.user.v1.ListPlatformRoleDefsRequest
-	71, // 75: users.user.v1.UserService.GetPlatformRoleDef:input_type -> users.user.v1.GetPlatformRoleDefRequest
-	73, // 76: users.user.v1.UserService.CreatePlatformRoleDef:input_type -> users.user.v1.CreatePlatformRoleDefRequest
-	75, // 77: users.user.v1.UserService.UpdatePlatformRoleDef:input_type -> users.user.v1.UpdatePlatformRoleDefRequest
-	77, // 78: users.user.v1.UserService.DeletePlatformRoleDef:input_type -> users.user.v1.DeletePlatformRoleDefRequest
-	80, // 79: users.user.v1.UserService.ListModules:input_type -> users.user.v1.ListModulesRequest
-	82, // 80: users.user.v1.AdminUserService.AdminGetProfile:input_type -> users.user.v1.AdminGetProfileRequest
-	84, // 81: users.user.v1.AdminUserService.AdminUpdateProfile:input_type -> users.user.v1.AdminUpdateProfileRequest
-	86, // 82: users.user.v1.AdminUserService.AdminListCars:input_type -> users.user.v1.AdminListCarsRequest
-	4,  // 83: users.user.v1.UserService.GetProfile:output_type -> users.user.v1.GetProfileResponse
-	6,  // 84: users.user.v1.UserService.UpdateProfile:output_type -> users.user.v1.UpdateProfileResponse
-	8,  // 85: users.user.v1.UserService.GetUserByID:output_type -> users.user.v1.GetUserByIDResponse
-	14, // 86: users.user.v1.UserService.GetUserByPhone:output_type -> users.user.v1.GetUserByPhoneResponse
-	16, // 87: users.user.v1.UserService.GetUserByLegacyID:output_type -> users.user.v1.GetUserByLegacyIDResponse
-	18, // 88: users.user.v1.UserService.CreateUser:output_type -> users.user.v1.CreateUserResponse
-	10, // 89: users.user.v1.UserService.GetUsersByIDs:output_type -> users.user.v1.GetUsersByIDsResponse
-	12, // 90: users.user.v1.UserService.GetUsersByPhones:output_type -> users.user.v1.GetUsersByPhonesResponse
-	22, // 91: users.user.v1.UserService.FindOrCreateByPhone:output_type -> users.user.v1.FindOrCreateByPhoneResponse
-	20, // 92: users.user.v1.UserService.FindOrCreateByInstagramID:output_type -> users.user.v1.FindOrCreateByInstagramIDResponse
-	25, // 93: users.user.v1.UserService.GetSettings:output_type -> users.user.v1.GetSettingsResponse
-	27, // 94: users.user.v1.UserService.UpdateSettings:output_type -> users.user.v1.UpdateSettingsResponse
-	30, // 95: users.user.v1.UserService.RegisterDevice:output_type -> users.user.v1.RegisterDeviceResponse
-	32, // 96: users.user.v1.UserService.UnregisterDevice:output_type -> users.user.v1.UnregisterDeviceResponse
-	34, // 97: users.user.v1.UserService.GetDevices:output_type -> users.user.v1.GetDevicesResponse
-	36, // 98: users.user.v1.UserService.DeleteAccount:output_type -> users.user.v1.DeleteAccountResponse
-	52, // 99: users.user.v1.UserService.ListUsers:output_type -> users.user.v1.ListUsersResponse
-	38, // 100: users.user.v1.UserService.SetPlatformRoles:output_type -> users.user.v1.SetPlatformRolesResponse
-	40, // 101: users.user.v1.UserService.GetPlatformRoles:output_type -> users.user.v1.GetPlatformRolesResponse
-	42, // 102: users.user.v1.UserService.CheckPlatformRoles:output_type -> users.user.v1.CheckPlatformRolesResponse
-	44, // 103: users.user.v1.UserService.SetPlatformOrgAccess:output_type -> users.user.v1.SetPlatformOrgAccessResponse
-	46, // 104: users.user.v1.UserService.GetPlatformOrgAccess:output_type -> users.user.v1.GetPlatformOrgAccessResponse
-	48, // 105: users.user.v1.UserService.RemovePlatformOrgAccess:output_type -> users.user.v1.RemovePlatformOrgAccessResponse
-	50, // 106: users.user.v1.UserService.AddPlatformOrgAccess:output_type -> users.user.v1.AddPlatformOrgAccessResponse
-	55, // 107: users.user.v1.UserService.ListUsersByPlatformRoles:output_type -> users.user.v1.ListUsersByPlatformRolesResponse
-	55, // 108: users.user.v1.UserService.ListUsersByPlatformRolesInOrg:output_type -> users.user.v1.ListUsersByPlatformRolesResponse
-	59, // 109: users.user.v1.UserService.ListPhones:output_type -> users.user.v1.ListPhonesResponse
-	61, // 110: users.user.v1.UserService.AddPhone:output_type -> users.user.v1.AddPhoneResponse
-	63, // 111: users.user.v1.UserService.RemovePhone:output_type -> users.user.v1.RemovePhoneResponse
-	65, // 112: users.user.v1.UserService.SetPrimaryPhone:output_type -> users.user.v1.SetPrimaryPhoneResponse
-	67, // 113: users.user.v1.UserService.RelabelPhone:output_type -> users.user.v1.RelabelPhoneResponse
-	70, // 114: users.user.v1.UserService.ListPlatformRoleDefs:output_type -> users.user.v1.ListPlatformRoleDefsResponse
-	72, // 115: users.user.v1.UserService.GetPlatformRoleDef:output_type -> users.user.v1.GetPlatformRoleDefResponse
-	74, // 116: users.user.v1.UserService.CreatePlatformRoleDef:output_type -> users.user.v1.CreatePlatformRoleDefResponse
-	76, // 117: users.user.v1.UserService.UpdatePlatformRoleDef:output_type -> users.user.v1.UpdatePlatformRoleDefResponse
-	78, // 118: users.user.v1.UserService.DeletePlatformRoleDef:output_type -> users.user.v1.DeletePlatformRoleDefResponse
-	81, // 119: users.user.v1.UserService.ListModules:output_type -> users.user.v1.ListModulesResponse
-	83, // 120: users.user.v1.AdminUserService.AdminGetProfile:output_type -> users.user.v1.AdminGetProfileResponse
-	85, // 121: users.user.v1.AdminUserService.AdminUpdateProfile:output_type -> users.user.v1.AdminUpdateProfileResponse
-	87, // 122: users.user.v1.AdminUserService.AdminListCars:output_type -> users.user.v1.AdminListCarsResponse
-	83, // [83:123] is the sub-list for method output_type
-	43, // [43:83] is the sub-list for method input_type
-	43, // [43:43] is the sub-list for extension type_name
-	43, // [43:43] is the sub-list for extension extendee
-	0,  // [0:43] is the sub-list for field type_name
+	95, // 42: users.user.v1.AdminCar.created_at:type_name -> google.protobuf.Timestamp
+	95, // 43: users.user.v1.ConfirmPhoneChangeResponse.expires_at:type_name -> google.protobuf.Timestamp
+	3,  // 44: users.user.v1.UserService.GetProfile:input_type -> users.user.v1.GetProfileRequest
+	5,  // 45: users.user.v1.UserService.UpdateProfile:input_type -> users.user.v1.UpdateProfileRequest
+	7,  // 46: users.user.v1.UserService.GetUserByID:input_type -> users.user.v1.GetUserByIDRequest
+	13, // 47: users.user.v1.UserService.GetUserByPhone:input_type -> users.user.v1.GetUserByPhoneRequest
+	15, // 48: users.user.v1.UserService.GetUserByLegacyID:input_type -> users.user.v1.GetUserByLegacyIDRequest
+	17, // 49: users.user.v1.UserService.CreateUser:input_type -> users.user.v1.CreateUserRequest
+	9,  // 50: users.user.v1.UserService.GetUsersByIDs:input_type -> users.user.v1.GetUsersByIDsRequest
+	11, // 51: users.user.v1.UserService.GetUsersByPhones:input_type -> users.user.v1.GetUsersByPhonesRequest
+	21, // 52: users.user.v1.UserService.FindOrCreateByPhone:input_type -> users.user.v1.FindOrCreateByPhoneRequest
+	19, // 53: users.user.v1.UserService.FindOrCreateByInstagramID:input_type -> users.user.v1.FindOrCreateByInstagramIDRequest
+	24, // 54: users.user.v1.UserService.GetSettings:input_type -> users.user.v1.GetSettingsRequest
+	26, // 55: users.user.v1.UserService.UpdateSettings:input_type -> users.user.v1.UpdateSettingsRequest
+	29, // 56: users.user.v1.UserService.RegisterDevice:input_type -> users.user.v1.RegisterDeviceRequest
+	31, // 57: users.user.v1.UserService.UnregisterDevice:input_type -> users.user.v1.UnregisterDeviceRequest
+	33, // 58: users.user.v1.UserService.GetDevices:input_type -> users.user.v1.GetDevicesRequest
+	35, // 59: users.user.v1.UserService.DeleteAccount:input_type -> users.user.v1.DeleteAccountRequest
+	51, // 60: users.user.v1.UserService.ListUsers:input_type -> users.user.v1.ListUsersRequest
+	37, // 61: users.user.v1.UserService.SetPlatformRoles:input_type -> users.user.v1.SetPlatformRolesRequest
+	39, // 62: users.user.v1.UserService.GetPlatformRoles:input_type -> users.user.v1.GetPlatformRolesRequest
+	41, // 63: users.user.v1.UserService.CheckPlatformRoles:input_type -> users.user.v1.CheckPlatformRolesRequest
+	43, // 64: users.user.v1.UserService.SetPlatformOrgAccess:input_type -> users.user.v1.SetPlatformOrgAccessRequest
+	45, // 65: users.user.v1.UserService.GetPlatformOrgAccess:input_type -> users.user.v1.GetPlatformOrgAccessRequest
+	47, // 66: users.user.v1.UserService.RemovePlatformOrgAccess:input_type -> users.user.v1.RemovePlatformOrgAccessRequest
+	49, // 67: users.user.v1.UserService.AddPlatformOrgAccess:input_type -> users.user.v1.AddPlatformOrgAccessRequest
+	54, // 68: users.user.v1.UserService.ListUsersByPlatformRoles:input_type -> users.user.v1.ListUsersByPlatformRolesRequest
+	56, // 69: users.user.v1.UserService.ListUsersByPlatformRolesInOrg:input_type -> users.user.v1.ListUsersByPlatformRolesInOrgRequest
+	58, // 70: users.user.v1.UserService.ListPhones:input_type -> users.user.v1.ListPhonesRequest
+	60, // 71: users.user.v1.UserService.AddPhone:input_type -> users.user.v1.AddPhoneRequest
+	62, // 72: users.user.v1.UserService.RemovePhone:input_type -> users.user.v1.RemovePhoneRequest
+	64, // 73: users.user.v1.UserService.SetPrimaryPhone:input_type -> users.user.v1.SetPrimaryPhoneRequest
+	66, // 74: users.user.v1.UserService.RelabelPhone:input_type -> users.user.v1.RelabelPhoneRequest
+	69, // 75: users.user.v1.UserService.ListPlatformRoleDefs:input_type -> users.user.v1.ListPlatformRoleDefsRequest
+	71, // 76: users.user.v1.UserService.GetPlatformRoleDef:input_type -> users.user.v1.GetPlatformRoleDefRequest
+	73, // 77: users.user.v1.UserService.CreatePlatformRoleDef:input_type -> users.user.v1.CreatePlatformRoleDefRequest
+	75, // 78: users.user.v1.UserService.UpdatePlatformRoleDef:input_type -> users.user.v1.UpdatePlatformRoleDefRequest
+	77, // 79: users.user.v1.UserService.DeletePlatformRoleDef:input_type -> users.user.v1.DeletePlatformRoleDefRequest
+	80, // 80: users.user.v1.UserService.ListModules:input_type -> users.user.v1.ListModulesRequest
+	89, // 81: users.user.v1.UserService.RequestPhoneChange:input_type -> users.user.v1.RequestPhoneChangeRequest
+	91, // 82: users.user.v1.UserService.ConfirmPhoneChange:input_type -> users.user.v1.ConfirmPhoneChangeRequest
+	93, // 83: users.user.v1.UserService.ActivatePromocode:input_type -> users.user.v1.ActivatePromocodeRequest
+	82, // 84: users.user.v1.AdminUserService.AdminGetProfile:input_type -> users.user.v1.AdminGetProfileRequest
+	84, // 85: users.user.v1.AdminUserService.AdminUpdateProfile:input_type -> users.user.v1.AdminUpdateProfileRequest
+	86, // 86: users.user.v1.AdminUserService.AdminListCars:input_type -> users.user.v1.AdminListCarsRequest
+	4,  // 87: users.user.v1.UserService.GetProfile:output_type -> users.user.v1.GetProfileResponse
+	6,  // 88: users.user.v1.UserService.UpdateProfile:output_type -> users.user.v1.UpdateProfileResponse
+	8,  // 89: users.user.v1.UserService.GetUserByID:output_type -> users.user.v1.GetUserByIDResponse
+	14, // 90: users.user.v1.UserService.GetUserByPhone:output_type -> users.user.v1.GetUserByPhoneResponse
+	16, // 91: users.user.v1.UserService.GetUserByLegacyID:output_type -> users.user.v1.GetUserByLegacyIDResponse
+	18, // 92: users.user.v1.UserService.CreateUser:output_type -> users.user.v1.CreateUserResponse
+	10, // 93: users.user.v1.UserService.GetUsersByIDs:output_type -> users.user.v1.GetUsersByIDsResponse
+	12, // 94: users.user.v1.UserService.GetUsersByPhones:output_type -> users.user.v1.GetUsersByPhonesResponse
+	22, // 95: users.user.v1.UserService.FindOrCreateByPhone:output_type -> users.user.v1.FindOrCreateByPhoneResponse
+	20, // 96: users.user.v1.UserService.FindOrCreateByInstagramID:output_type -> users.user.v1.FindOrCreateByInstagramIDResponse
+	25, // 97: users.user.v1.UserService.GetSettings:output_type -> users.user.v1.GetSettingsResponse
+	27, // 98: users.user.v1.UserService.UpdateSettings:output_type -> users.user.v1.UpdateSettingsResponse
+	30, // 99: users.user.v1.UserService.RegisterDevice:output_type -> users.user.v1.RegisterDeviceResponse
+	32, // 100: users.user.v1.UserService.UnregisterDevice:output_type -> users.user.v1.UnregisterDeviceResponse
+	34, // 101: users.user.v1.UserService.GetDevices:output_type -> users.user.v1.GetDevicesResponse
+	36, // 102: users.user.v1.UserService.DeleteAccount:output_type -> users.user.v1.DeleteAccountResponse
+	52, // 103: users.user.v1.UserService.ListUsers:output_type -> users.user.v1.ListUsersResponse
+	38, // 104: users.user.v1.UserService.SetPlatformRoles:output_type -> users.user.v1.SetPlatformRolesResponse
+	40, // 105: users.user.v1.UserService.GetPlatformRoles:output_type -> users.user.v1.GetPlatformRolesResponse
+	42, // 106: users.user.v1.UserService.CheckPlatformRoles:output_type -> users.user.v1.CheckPlatformRolesResponse
+	44, // 107: users.user.v1.UserService.SetPlatformOrgAccess:output_type -> users.user.v1.SetPlatformOrgAccessResponse
+	46, // 108: users.user.v1.UserService.GetPlatformOrgAccess:output_type -> users.user.v1.GetPlatformOrgAccessResponse
+	48, // 109: users.user.v1.UserService.RemovePlatformOrgAccess:output_type -> users.user.v1.RemovePlatformOrgAccessResponse
+	50, // 110: users.user.v1.UserService.AddPlatformOrgAccess:output_type -> users.user.v1.AddPlatformOrgAccessResponse
+	55, // 111: users.user.v1.UserService.ListUsersByPlatformRoles:output_type -> users.user.v1.ListUsersByPlatformRolesResponse
+	55, // 112: users.user.v1.UserService.ListUsersByPlatformRolesInOrg:output_type -> users.user.v1.ListUsersByPlatformRolesResponse
+	59, // 113: users.user.v1.UserService.ListPhones:output_type -> users.user.v1.ListPhonesResponse
+	61, // 114: users.user.v1.UserService.AddPhone:output_type -> users.user.v1.AddPhoneResponse
+	63, // 115: users.user.v1.UserService.RemovePhone:output_type -> users.user.v1.RemovePhoneResponse
+	65, // 116: users.user.v1.UserService.SetPrimaryPhone:output_type -> users.user.v1.SetPrimaryPhoneResponse
+	67, // 117: users.user.v1.UserService.RelabelPhone:output_type -> users.user.v1.RelabelPhoneResponse
+	70, // 118: users.user.v1.UserService.ListPlatformRoleDefs:output_type -> users.user.v1.ListPlatformRoleDefsResponse
+	72, // 119: users.user.v1.UserService.GetPlatformRoleDef:output_type -> users.user.v1.GetPlatformRoleDefResponse
+	74, // 120: users.user.v1.UserService.CreatePlatformRoleDef:output_type -> users.user.v1.CreatePlatformRoleDefResponse
+	76, // 121: users.user.v1.UserService.UpdatePlatformRoleDef:output_type -> users.user.v1.UpdatePlatformRoleDefResponse
+	78, // 122: users.user.v1.UserService.DeletePlatformRoleDef:output_type -> users.user.v1.DeletePlatformRoleDefResponse
+	81, // 123: users.user.v1.UserService.ListModules:output_type -> users.user.v1.ListModulesResponse
+	90, // 124: users.user.v1.UserService.RequestPhoneChange:output_type -> users.user.v1.RequestPhoneChangeResponse
+	92, // 125: users.user.v1.UserService.ConfirmPhoneChange:output_type -> users.user.v1.ConfirmPhoneChangeResponse
+	94, // 126: users.user.v1.UserService.ActivatePromocode:output_type -> users.user.v1.ActivatePromocodeResponse
+	83, // 127: users.user.v1.AdminUserService.AdminGetProfile:output_type -> users.user.v1.AdminGetProfileResponse
+	85, // 128: users.user.v1.AdminUserService.AdminUpdateProfile:output_type -> users.user.v1.AdminUpdateProfileResponse
+	87, // 129: users.user.v1.AdminUserService.AdminListCars:output_type -> users.user.v1.AdminListCarsResponse
+	87, // [87:130] is the sub-list for method output_type
+	44, // [44:87] is the sub-list for method input_type
+	44, // [44:44] is the sub-list for extension type_name
+	44, // [44:44] is the sub-list for extension extendee
+	0,  // [0:44] is the sub-list for field type_name
 }
 
 func init() { file_users_user_user_proto_init() }
@@ -5500,7 +5868,7 @@ func file_users_user_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_users_user_user_proto_rawDesc), len(file_users_user_user_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   88,
+			NumMessages:   94,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

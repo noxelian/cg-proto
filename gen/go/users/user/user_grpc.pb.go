@@ -56,6 +56,9 @@ const (
 	UserService_UpdatePlatformRoleDef_FullMethodName         = "/users.user.v1.UserService/UpdatePlatformRoleDef"
 	UserService_DeletePlatformRoleDef_FullMethodName         = "/users.user.v1.UserService/DeletePlatformRoleDef"
 	UserService_ListModules_FullMethodName                   = "/users.user.v1.UserService/ListModules"
+	UserService_RequestPhoneChange_FullMethodName            = "/users.user.v1.UserService/RequestPhoneChange"
+	UserService_ConfirmPhoneChange_FullMethodName            = "/users.user.v1.UserService/ConfirmPhoneChange"
+	UserService_ActivatePromocode_FullMethodName             = "/users.user.v1.UserService/ActivatePromocode"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -153,6 +156,20 @@ type UserServiceClient interface {
 	// ListModules returns the static list of UI/API modules that can be
 	// assigned to roles via allowed_modules.
 	ListModules(ctx context.Context, in *ListModulesRequest, opts ...grpc.CallOption) (*ListModulesResponse, error)
+	// RequestPhoneChange validates new_phone (E.164, not taken), then sends
+	// an OTP SMS to it. Reuses the auth SendCode Redis key-space so the
+	// existing 3-per-hour rate-limit applies.
+	RequestPhoneChange(ctx context.Context, in *RequestPhoneChangeRequest, opts ...grpc.CallOption) (*RequestPhoneChangeResponse, error)
+	// ConfirmPhoneChange verifies the OTP, updates users.phone, and returns
+	// fresh access+refresh tokens so the in-memory session stays valid.
+	ConfirmPhoneChange(ctx context.Context, in *ConfirmPhoneChangeRequest, opts ...grpc.CallOption) (*ConfirmPhoneChangeResponse, error)
+	// ==== Referral/account promocode activation (account-level bonus) ====
+	//
+	// Activates a one-time promocode for the authenticated user. Validates
+	// that the code exists, is active, and has not already been used by this
+	// user. Credits the user's wallet balance with promo.amount (tenge).
+	// Returns ActivatePromocodeResponse.amount — the bonus amount credited.
+	ActivatePromocode(ctx context.Context, in *ActivatePromocodeRequest, opts ...grpc.CallOption) (*ActivatePromocodeResponse, error)
 }
 
 type userServiceClient struct {
@@ -533,6 +550,36 @@ func (c *userServiceClient) ListModules(ctx context.Context, in *ListModulesRequ
 	return out, nil
 }
 
+func (c *userServiceClient) RequestPhoneChange(ctx context.Context, in *RequestPhoneChangeRequest, opts ...grpc.CallOption) (*RequestPhoneChangeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RequestPhoneChangeResponse)
+	err := c.cc.Invoke(ctx, UserService_RequestPhoneChange_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ConfirmPhoneChange(ctx context.Context, in *ConfirmPhoneChangeRequest, opts ...grpc.CallOption) (*ConfirmPhoneChangeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConfirmPhoneChangeResponse)
+	err := c.cc.Invoke(ctx, UserService_ConfirmPhoneChange_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ActivatePromocode(ctx context.Context, in *ActivatePromocodeRequest, opts ...grpc.CallOption) (*ActivatePromocodeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ActivatePromocodeResponse)
+	err := c.cc.Invoke(ctx, UserService_ActivatePromocode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -628,6 +675,20 @@ type UserServiceServer interface {
 	// ListModules returns the static list of UI/API modules that can be
 	// assigned to roles via allowed_modules.
 	ListModules(context.Context, *ListModulesRequest) (*ListModulesResponse, error)
+	// RequestPhoneChange validates new_phone (E.164, not taken), then sends
+	// an OTP SMS to it. Reuses the auth SendCode Redis key-space so the
+	// existing 3-per-hour rate-limit applies.
+	RequestPhoneChange(context.Context, *RequestPhoneChangeRequest) (*RequestPhoneChangeResponse, error)
+	// ConfirmPhoneChange verifies the OTP, updates users.phone, and returns
+	// fresh access+refresh tokens so the in-memory session stays valid.
+	ConfirmPhoneChange(context.Context, *ConfirmPhoneChangeRequest) (*ConfirmPhoneChangeResponse, error)
+	// ==== Referral/account promocode activation (account-level bonus) ====
+	//
+	// Activates a one-time promocode for the authenticated user. Validates
+	// that the code exists, is active, and has not already been used by this
+	// user. Credits the user's wallet balance with promo.amount (tenge).
+	// Returns ActivatePromocodeResponse.amount — the bonus amount credited.
+	ActivatePromocode(context.Context, *ActivatePromocodeRequest) (*ActivatePromocodeResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -748,6 +809,15 @@ func (UnimplementedUserServiceServer) DeletePlatformRoleDef(context.Context, *De
 }
 func (UnimplementedUserServiceServer) ListModules(context.Context, *ListModulesRequest) (*ListModulesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListModules not implemented")
+}
+func (UnimplementedUserServiceServer) RequestPhoneChange(context.Context, *RequestPhoneChangeRequest) (*RequestPhoneChangeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RequestPhoneChange not implemented")
+}
+func (UnimplementedUserServiceServer) ConfirmPhoneChange(context.Context, *ConfirmPhoneChangeRequest) (*ConfirmPhoneChangeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ConfirmPhoneChange not implemented")
+}
+func (UnimplementedUserServiceServer) ActivatePromocode(context.Context, *ActivatePromocodeRequest) (*ActivatePromocodeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ActivatePromocode not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -1436,6 +1506,60 @@ func _UserService_ListModules_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_RequestPhoneChange_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestPhoneChangeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).RequestPhoneChange(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_RequestPhoneChange_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).RequestPhoneChange(ctx, req.(*RequestPhoneChangeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ConfirmPhoneChange_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfirmPhoneChangeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ConfirmPhoneChange(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ConfirmPhoneChange_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ConfirmPhoneChange(ctx, req.(*ConfirmPhoneChangeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ActivatePromocode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ActivatePromocodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ActivatePromocode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ActivatePromocode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ActivatePromocode(ctx, req.(*ActivatePromocodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1590,6 +1714,18 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListModules",
 			Handler:    _UserService_ListModules_Handler,
+		},
+		{
+			MethodName: "RequestPhoneChange",
+			Handler:    _UserService_RequestPhoneChange_Handler,
+		},
+		{
+			MethodName: "ConfirmPhoneChange",
+			Handler:    _UserService_ConfirmPhoneChange_Handler,
+		},
+		{
+			MethodName: "ActivatePromocode",
+			Handler:    _UserService_ActivatePromocode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
