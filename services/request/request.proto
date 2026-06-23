@@ -144,6 +144,10 @@ message Request {
   // cg_web flows (reviews, chat responses, notifications) that key off the old id.
   // 0/absent for natively-created requests.
   optional int64 legacy_id = 26;
+  // Garage car (cg-users garage) this request was created for. Persisted so
+  // request history can be queried per specific car, beyond the make/model/year
+  // snapshot. Absent for requests created without a garage car.
+  optional int64 garage_car_id = 27;
 }
 
 // CreateRequest
@@ -172,6 +176,11 @@ message CreateRequestRequest {
   // Workshop integration (parts request from repair order)
   optional int64 repair_order_id = 16;  // Linked repair order in cg-workshop
   optional string org_id = 17;          // Organization UUID creating the request
+
+  // Garage car (cg-users garage) the request is created for. The BFF also uses
+  // it to fill car_make_id/model/year, but it is persisted so request history
+  // can be queried per specific car.
+  optional int64 garage_car_id = 18;
 }
 
 message CreateRequestResponse {

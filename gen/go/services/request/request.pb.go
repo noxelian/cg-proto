@@ -174,7 +174,11 @@ type Request struct {
 	// Legacy ad.id (numeric) this request was migrated from — bridges still-legacy
 	// cg_web flows (reviews, chat responses, notifications) that key off the old id.
 	// 0/absent for natively-created requests.
-	LegacyId      *int64 `protobuf:"varint,26,opt,name=legacy_id,json=legacyId,proto3,oneof" json:"legacy_id,omitempty"`
+	LegacyId *int64 `protobuf:"varint,26,opt,name=legacy_id,json=legacyId,proto3,oneof" json:"legacy_id,omitempty"`
+	// Garage car (cg-users garage) this request was created for. Persisted so
+	// request history can be queried per specific car, beyond the make/model/year
+	// snapshot. Absent for requests created without a garage car.
+	GarageCarId   *int64 `protobuf:"varint,27,opt,name=garage_car_id,json=garageCarId,proto3,oneof" json:"garage_car_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -391,6 +395,13 @@ func (x *Request) GetLegacyId() int64 {
 	return 0
 }
 
+func (x *Request) GetGarageCarId() int64 {
+	if x != nil && x.GarageCarId != nil {
+		return *x.GarageCarId
+	}
+	return 0
+}
+
 // CreateRequest
 type CreateRequestRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
@@ -412,6 +423,10 @@ type CreateRequestRequest struct {
 	// Workshop integration (parts request from repair order)
 	RepairOrderId *int64  `protobuf:"varint,16,opt,name=repair_order_id,json=repairOrderId,proto3,oneof" json:"repair_order_id,omitempty"` // Linked repair order in cg-workshop
 	OrgId         *string `protobuf:"bytes,17,opt,name=org_id,json=orgId,proto3,oneof" json:"org_id,omitempty"`                            // Organization UUID creating the request
+	// Garage car (cg-users garage) the request is created for. The BFF also uses
+	// it to fill car_make_id/model/year, but it is persisted so request history
+	// can be queried per specific car.
+	GarageCarId   *int64 `protobuf:"varint,18,opt,name=garage_car_id,json=garageCarId,proto3,oneof" json:"garage_car_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -563,6 +578,13 @@ func (x *CreateRequestRequest) GetOrgId() string {
 		return *x.OrgId
 	}
 	return ""
+}
+
+func (x *CreateRequestRequest) GetGarageCarId() int64 {
+	if x != nil && x.GarageCarId != nil {
+		return *x.GarageCarId
+	}
+	return 0
 }
 
 type CreateRequestResponse struct {
@@ -2696,7 +2718,7 @@ var File_services_request_request_proto protoreflect.FileDescriptor
 
 const file_services_request_request_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/request/request.proto\x12\x13services.request.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc0\b\n" +
+	"\x1eservices/request/request.proto\x12\x13services.request.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfb\b\n" +
 	"\aRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x124\n" +
 	"\x04type\x18\x02 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12:\n" +
@@ -2728,7 +2750,8 @@ const file_services_request_request_proto_rawDesc = "" +
 	"bids_count\x18\x17 \x01(\x05R\tbidsCount\x12<\n" +
 	"\tpaused_at\x18\x18 \x01(\v2\x1a.google.protobuf.TimestampH\x04R\bpausedAt\x88\x01\x01\x12,\n" +
 	"\x10paused_by_org_id\x18\x19 \x01(\tH\x05R\rpausedByOrgId\x88\x01\x01\x12 \n" +
-	"\tlegacy_id\x18\x1a \x01(\x03H\x06R\blegacyId\x88\x01\x01B\x14\n" +
+	"\tlegacy_id\x18\x1a \x01(\x03H\x06R\blegacyId\x88\x01\x01\x12'\n" +
+	"\rgarage_car_id\x18\x1b \x01(\x03H\aR\vgarageCarId\x88\x01\x01B\x14\n" +
 	"\x12_car_generation_idB\x0f\n" +
 	"\r_published_atB\x12\n" +
 	"\x10_repair_order_idB\t\n" +
@@ -2737,7 +2760,8 @@ const file_services_request_request_proto_rawDesc = "" +
 	"_paused_atB\x13\n" +
 	"\x11_paused_by_org_idB\f\n" +
 	"\n" +
-	"_legacy_id\"\xdb\x04\n" +
+	"_legacy_idB\x10\n" +
+	"\x0e_garage_car_id\"\x96\x05\n" +
 	"\x14CreateRequestRequest\x124\n" +
 	"\x04type\x18\x01 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
@@ -2757,10 +2781,12 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\tlongitude\x18\x0e \x01(\x01R\tlongitude\x12\x18\n" +
 	"\apublish\x18\x0f \x01(\bR\apublish\x12+\n" +
 	"\x0frepair_order_id\x18\x10 \x01(\x03H\x01R\rrepairOrderId\x88\x01\x01\x12\x1a\n" +
-	"\x06org_id\x18\x11 \x01(\tH\x02R\x05orgId\x88\x01\x01B\x14\n" +
+	"\x06org_id\x18\x11 \x01(\tH\x02R\x05orgId\x88\x01\x01\x12'\n" +
+	"\rgarage_car_id\x18\x12 \x01(\x03H\x03R\vgarageCarId\x88\x01\x01B\x14\n" +
 	"\x12_car_generation_idB\x12\n" +
 	"\x10_repair_order_idB\t\n" +
-	"\a_org_id\"O\n" +
+	"\a_org_idB\x10\n" +
+	"\x0e_garage_car_id\"O\n" +
 	"\x15CreateRequestResponse\x126\n" +
 	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"2\n" +
 	"\x11GetRequestRequest\x12\x1d\n" +
