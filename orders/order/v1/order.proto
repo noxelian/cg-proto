@@ -28,6 +28,12 @@ service OrderService {
   rpc PurchaseBid(PurchaseBidRequest) returns (PurchaseBidResponse);
   rpc GetBidPurchasePrice(GetBidPurchasePriceRequest) returns (GetBidPurchasePriceResponse);
 
+  // === Bid purchase prices (admin CRUD) ===
+  rpc ListBidPurchasePrices(ListBidPurchasePricesRequest) returns (ListBidPurchasePricesResponse);
+  rpc CreateBidPurchasePrice(CreateBidPurchasePriceRequest) returns (CreateBidPurchasePriceResponse);
+  rpc UpdateBidPurchasePrice(UpdateBidPurchasePriceRequest) returns (UpdateBidPurchasePriceResponse);
+  rpc DeleteBidPurchasePrice(DeleteBidPurchasePriceRequest) returns (DeleteBidPurchasePriceResponse);
+
   // === Orders (parts marketplace) ===
   rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
   rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
@@ -413,6 +419,54 @@ message GetBidPurchasePriceResponse {
   int64 price_amount = 1;
   string currency = 2;
 }
+
+// BidPurchasePrice is a single configurable price for one-time bid purchases,
+// keyed by NSI org-type group. Managed by admins via the gwa (bff-admin) API.
+message BidPurchasePrice {
+  int64 id = 1;
+  string org_type = 2;
+  int64 group_id = 3;
+  int64 price_amount = 4;
+  string currency = 5;
+  bool is_active = 6;
+}
+
+message ListBidPurchasePricesRequest {}
+
+message ListBidPurchasePricesResponse {
+  repeated BidPurchasePrice items = 1;
+}
+
+message CreateBidPurchasePriceRequest {
+  string org_type = 1;
+  int64 group_id = 2;
+  int64 price_amount = 3;
+  string currency = 4;
+  bool is_active = 5;
+}
+
+message CreateBidPurchasePriceResponse {
+  BidPurchasePrice item = 1;
+}
+
+message UpdateBidPurchasePriceRequest {
+  int64 id = 1;
+  string org_type = 2;
+  int64 group_id = 3;
+  int64 price_amount = 4;
+  string currency = 5;
+  bool is_active = 6;
+}
+
+message UpdateBidPurchasePriceResponse {
+  BidPurchasePrice item = 1;
+}
+
+message DeleteBidPurchasePriceRequest {
+  int64 id = 1;
+}
+
+message DeleteBidPurchasePriceResponse {}
 
 // =============================================
 // Order RPCs
