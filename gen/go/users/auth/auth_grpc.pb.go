@@ -29,6 +29,7 @@ const (
 	AuthService_SelectOrg_FullMethodName              = "/users.auth.v1.AuthService/SelectOrg"
 	AuthService_GetSendCodeRateLimit_FullMethodName   = "/users.auth.v1.AuthService/GetSendCodeRateLimit"
 	AuthService_ResetSendCodeRateLimit_FullMethodName = "/users.auth.v1.AuthService/ResetSendCodeRateLimit"
+	AuthService_IssueServiceToken_FullMethodName      = "/users.auth.v1.AuthService/IssueServiceToken"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -62,6 +63,17 @@ type AuthServiceClient interface {
 	// ResetSendCodeRateLimit clears the SendCode rate-limit counters for a phone
 	// (and its per-IP entry if provided) so the user can request a code again.
 	ResetSendCodeRateLimit(ctx context.Context, in *ResetSendCodeRateLimitRequest, opts ...grpc.CallOption) (*ResetSendCodeRateLimitResponse, error)
+	// IssueServiceToken mints a short-lived RS256 service JWT for a calling
+	// microservice (central-issuer model of the HS256->RS256 migration). Only
+	// cg-users holds the signing key; every other service obtains its
+	// service-to-service tokens here instead of minting locally.
+	//
+	// Caller identity is established by mTLS (verified client-cert CN), NOT by any
+	// payload field. The requested `subject` is authorized against the
+	// authenticated peer, and `act_as_user_id` > 0 (act-as-user) is permitted
+	// only for explicitly whitelisted callers (cg-bff external analytics, cg-crm
+	// owner-scoped lookups).
+	IssueServiceToken(ctx context.Context, in *IssueServiceTokenRequest, opts ...grpc.CallOption) (*IssueServiceTokenResponse, error)
 }
 
 type authServiceClient struct {
@@ -172,6 +184,16 @@ func (c *authServiceClient) ResetSendCodeRateLimit(ctx context.Context, in *Rese
 	return out, nil
 }
 
+func (c *authServiceClient) IssueServiceToken(ctx context.Context, in *IssueServiceTokenRequest, opts ...grpc.CallOption) (*IssueServiceTokenResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IssueServiceTokenResponse)
+	err := c.cc.Invoke(ctx, AuthService_IssueServiceToken_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -203,6 +225,17 @@ type AuthServiceServer interface {
 	// ResetSendCodeRateLimit clears the SendCode rate-limit counters for a phone
 	// (and its per-IP entry if provided) so the user can request a code again.
 	ResetSendCodeRateLimit(context.Context, *ResetSendCodeRateLimitRequest) (*ResetSendCodeRateLimitResponse, error)
+	// IssueServiceToken mints a short-lived RS256 service JWT for a calling
+	// microservice (central-issuer model of the HS256->RS256 migration). Only
+	// cg-users holds the signing key; every other service obtains its
+	// service-to-service tokens here instead of minting locally.
+	//
+	// Caller identity is established by mTLS (verified client-cert CN), NOT by any
+	// payload field. The requested `subject` is authorized against the
+	// authenticated peer, and `act_as_user_id` > 0 (act-as-user) is permitted
+	// only for explicitly whitelisted callers (cg-bff external analytics, cg-crm
+	// owner-scoped lookups).
+	IssueServiceToken(context.Context, *IssueServiceTokenRequest) (*IssueServiceTokenResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -242,6 +275,9 @@ func (UnimplementedAuthServiceServer) GetSendCodeRateLimit(context.Context, *Get
 }
 func (UnimplementedAuthServiceServer) ResetSendCodeRateLimit(context.Context, *ResetSendCodeRateLimitRequest) (*ResetSendCodeRateLimitResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResetSendCodeRateLimit not implemented")
+}
+func (UnimplementedAuthServiceServer) IssueServiceToken(context.Context, *IssueServiceTokenRequest) (*IssueServiceTokenResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method IssueServiceToken not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -444,6 +480,24 @@ func _AuthService_ResetSendCodeRateLimit_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_IssueServiceToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IssueServiceTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).IssueServiceToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_IssueServiceToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).IssueServiceToken(ctx, req.(*IssueServiceTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -490,6 +544,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResetSendCodeRateLimit",
 			Handler:    _AuthService_ResetSendCodeRateLimit_Handler,
+		},
+		{
+			MethodName: "IssueServiceToken",
+			Handler:    _AuthService_IssueServiceToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

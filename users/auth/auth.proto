@@ -43,6 +43,18 @@ service AuthService {
   // ResetSendCodeRateLimit clears the SendCode rate-limit counters for a phone
   // (and its per-IP entry if provided) so the user can request a code again.
   rpc ResetSendCodeRateLimit(ResetSendCodeRateLimitRequest) returns (ResetSendCodeRateLimitResponse);
+
+  // IssueServiceToken mints a short-lived RS256 service JWT for a calling
+  // microservice (central-issuer model of the HS256->RS256 migration). Only
+  // cg-users holds the signing key; every other service obtains its
+  // service-to-service tokens here instead of minting locally.
+  //
+  // Caller identity is established by mTLS (verified client-cert CN), NOT by any
+  // payload field. The requested `subject` is authorized against the
+  // authenticated peer, and `act_as_user_id` > 0 (act-as-user) is permitted
+  // only for explicitly whitelisted callers (cg-bff external analytics, cg-crm
+  // owner-scoped lookups).
+  rpc IssueServiceToken(IssueServiceTokenRequest) returns (IssueServiceTokenResponse);
 }
 
 message GetSendCodeRateLimitRequest {
@@ -62,6 +74,24 @@ message ResetSendCodeRateLimitRequest {
 
 message ResetSendCodeRateLimitResponse {
   bool success = 1;
+}
+
+message IssueServiceTokenRequest {
+  // subject is the literal phone/identity to embed in the minted token
+  // (e.g. "cg-orders", "chatbot-service"). It MUST match what the caller used
+  // under HS256 so verify-side gates (serviceauth, cg-crm allowlist) keep
+  // working byte-for-byte.
+  string subject = 1;
+  // act_as_user_id: 0 = pure service token (userID=0); > 0 = act-as-user,
+  // permitted only for whitelisted callers (cg-bff, cg-crm).
+  int64 act_as_user_id = 2;
+  // device_id: optional; defaults to subject when empty.
+  string device_id = 3;
+}
+
+message IssueServiceTokenResponse {
+  string access_token = 1;
+  google.protobuf.Timestamp expires_at = 2;
 }
 
 message SendCodeRequest {
