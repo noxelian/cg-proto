@@ -23,6 +23,7 @@ const (
 	CounterService_IncrementCounter_FullMethodName = "/platform.counter.v1.CounterService/IncrementCounter"
 	CounterService_DecrementCounter_FullMethodName = "/platform.counter.v1.CounterService/DecrementCounter"
 	CounterService_SetCounter_FullMethodName       = "/platform.counter.v1.CounterService/SetCounter"
+	CounterService_GetBadgeTotal_FullMethodName    = "/platform.counter.v1.CounterService/GetBadgeTotal"
 )
 
 // CounterServiceClient is the client API for CounterService service.
@@ -33,6 +34,7 @@ type CounterServiceClient interface {
 	IncrementCounter(ctx context.Context, in *IncrementCounterRequest, opts ...grpc.CallOption) (*IncrementCounterResponse, error)
 	DecrementCounter(ctx context.Context, in *DecrementCounterRequest, opts ...grpc.CallOption) (*DecrementCounterResponse, error)
 	SetCounter(ctx context.Context, in *SetCounterRequest, opts ...grpc.CallOption) (*SetCounterResponse, error)
+	GetBadgeTotal(ctx context.Context, in *GetBadgeTotalRequest, opts ...grpc.CallOption) (*GetBadgeTotalResponse, error)
 }
 
 type counterServiceClient struct {
@@ -83,6 +85,16 @@ func (c *counterServiceClient) SetCounter(ctx context.Context, in *SetCounterReq
 	return out, nil
 }
 
+func (c *counterServiceClient) GetBadgeTotal(ctx context.Context, in *GetBadgeTotalRequest, opts ...grpc.CallOption) (*GetBadgeTotalResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBadgeTotalResponse)
+	err := c.cc.Invoke(ctx, CounterService_GetBadgeTotal_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CounterServiceServer is the server API for CounterService service.
 // All implementations must embed UnimplementedCounterServiceServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type CounterServiceServer interface {
 	IncrementCounter(context.Context, *IncrementCounterRequest) (*IncrementCounterResponse, error)
 	DecrementCounter(context.Context, *DecrementCounterRequest) (*DecrementCounterResponse, error)
 	SetCounter(context.Context, *SetCounterRequest) (*SetCounterResponse, error)
+	GetBadgeTotal(context.Context, *GetBadgeTotalRequest) (*GetBadgeTotalResponse, error)
 	mustEmbedUnimplementedCounterServiceServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedCounterServiceServer) DecrementCounter(context.Context, *Decr
 }
 func (UnimplementedCounterServiceServer) SetCounter(context.Context, *SetCounterRequest) (*SetCounterResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetCounter not implemented")
+}
+func (UnimplementedCounterServiceServer) GetBadgeTotal(context.Context, *GetBadgeTotalRequest) (*GetBadgeTotalResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBadgeTotal not implemented")
 }
 func (UnimplementedCounterServiceServer) mustEmbedUnimplementedCounterServiceServer() {}
 func (UnimplementedCounterServiceServer) testEmbeddedByValue()                        {}
@@ -206,6 +222,24 @@ func _CounterService_SetCounter_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CounterService_GetBadgeTotal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBadgeTotalRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CounterServiceServer).GetBadgeTotal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CounterService_GetBadgeTotal_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CounterServiceServer).GetBadgeTotal(ctx, req.(*GetBadgeTotalRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CounterService_ServiceDesc is the grpc.ServiceDesc for CounterService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var CounterService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetCounter",
 			Handler:    _CounterService_SetCounter_Handler,
+		},
+		{
+			MethodName: "GetBadgeTotal",
+			Handler:    _CounterService_GetBadgeTotal_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

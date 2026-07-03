@@ -9,6 +9,7 @@ service CounterService {
   rpc IncrementCounter(IncrementCounterRequest) returns (IncrementCounterResponse);
   rpc DecrementCounter(DecrementCounterRequest) returns (DecrementCounterResponse);
   rpc SetCounter(SetCounterRequest) returns (SetCounterResponse);
+  rpc GetBadgeTotal(GetBadgeTotalRequest) returns (GetBadgeTotalResponse);
 }
 
 message UserCounters {
@@ -57,5 +58,14 @@ message SetCounterRequest {
 
 message SetCounterResponse {
   bool success = 1;
+}
+
+message GetBadgeTotalRequest {
+  int64 user_id = 1;
+}
+
+message GetBadgeTotalResponse {
+  int32 total = 1;                  // min(cap, сумма max(0,src)); кап на чтении
+  map<string, int32> breakdown = 2; // без капа
 }
 
