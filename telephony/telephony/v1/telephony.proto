@@ -1,0 +1,191 @@
+syntax = "proto3";
+
+package telephony.telephony.v1;
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/telephony/telephony/v1;telephonyv1";
+
+import "google/protobuf/timestamp.proto";
+
+// TelephonyService — Asterisk/ARI control-plane extracted from bff-admin.
+// Owns live call control (originate/hangup/status), softphone credentials,
+// and provisioning mutations that render+deploy PJSIP/dialplan to pbx-01.
+// Pure reads (call history, analytics, list DID/extensions) stay in bff-admin
+// against cg-crm directly; this service is only for Asterisk-touching ops.
+// State of truth for telephony_* tables remains cg-crm (this service is a
+// cg-crm gRPC client). Realtime call.* events are published to Kafka
+// admin.events directly by this service (not via gRPC).
+service TelephonyService {
+  // --- Live call control ---
+  rpc Originate(OriginateRequest) returns (OriginateResponse);
+  rpc Hangup(HangupRequest) returns (HangupResponse);
+  rpc GetCallStatus(GetCallStatusRequest) returns (GetCallStatusResponse);
+
+  // --- Softphone bootstrap ---
+  rpc GetSipCredentials(GetSipCredentialsRequest) returns (GetSipCredentialsResponse);
+
+  // --- Provisioning (Asterisk side-effect: PJSIP/dialplan/WAV deploy) ---
+  rpc UpsertUserExtension(UpsertUserExtensionRequest) returns (UserExtensionResponse);
+  rpc DeleteUserExtension(DeleteUserExtensionRequest) returns (DeleteUserExtensionResponse);
+  rpc ToggleUserExtensionDND(ToggleUserExtensionDNDRequest) returns (UserExtensionResponse);
+  rpc UpsertPipelineDID(UpsertPipelineDIDRequest) returns (PipelineDIDResponse);
+  rpc DeletePipelineDID(DeletePipelineDIDRequest) returns (DeletePipelineDIDResponse);
+  rpc SaveIVRConfig(SaveIVRConfigRequest) returns (SaveIVRConfigResponse);
+  rpc SaveBusinessHours(SaveBusinessHoursRequest) returns (SaveBusinessHoursResponse);
+  rpc UploadIVRGreeting(UploadIVRGreetingRequest) returns (UploadIVRGreetingResponse);
+}
+
+enum CallDirection {
+  CALL_DIRECTION_UNSPECIFIED = 0;
+  CALL_DIRECTION_INBOUND = 1;
+  CALL_DIRECTION_OUTBOUND = 2;
+}
+
+enum CallStatus {
+  CALL_STATUS_UNSPECIFIED = 0;
+  CALL_STATUS_RINGING = 1;
+  CALL_STATUS_ANSWERED = 2;
+  CALL_STATUS_MISSED = 3;
+  CALL_STATUS_BUSY = 4;
+  CALL_STATUS_CANCELLED = 5;
+  CALL_STATUS_ENDED = 6;
+  CALL_STATUS_ORIGINATING = 7;
+}
+
+// ---- Originate ----
+message OriginateRequest {
+  string organization_id = 1;   // from bound auth ctx / ?org_id (never trusted from body)
+  string user_id = 2;           // caller (manager) — resolved to extension server-side
+  string to_number = 3;         // required
+  string pipeline_id = 4;       // required (D-22)
+  string deal_id = 5;           // optional
+  string contact_id = 6;        // optional
+  string lead_id = 7;           // optional
+  string caller_role_code = 8;  // org-scoped role, resolved by bff or here for RBAC
+}
+message OriginateResponse {
+  string call_id = 1;
+  CallStatus status = 2;        // ORIGINATING on success
+}
+
+// ---- Hangup ----
+message HangupRequest {
+  string organization_id = 1;
+  string call_id = 2;
+}
+message HangupResponse { bool success = 1; }
+
+// ---- Call status (watchdog) ----
+message GetCallStatusRequest {
+  string organization_id = 1;
+  string call_id = 2;
+}
+message GetCallStatusResponse {
+  string call_id = 1;
+  CallStatus status = 2;                          // UNSPECIFIED → HTTP maps to "unknown"/200
+  google.protobuf.Timestamp ended_at = 3;
+}
+
+// ---- SIP credentials ----
+message GetSipCredentialsRequest {
+  string organization_id = 1;
+  string user_id = 2;
+}
+message IceServer {
+  repeated string urls = 1;      // D-06: FE reads urls as string(s)
+  string username = 2;
+  string credential = 3;
+}
+message GetSipCredentialsResponse {
+  string extension = 1;
+  string password = 2;
+  string wss_url = 3;
+  repeated IceServer ice_servers = 4;
+  google.protobuf.Timestamp expires_at = 5;      // FE reads unix
+}
+
+// ---- User extension provisioning ----
+message UserExtension {
+  string id = 1;
+  string organization_id = 2;
+  string user_id = 3;
+  string provider = 4;
+  string extension = 5;
+  bool dnd = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+message UpsertUserExtensionRequest {
+  string organization_id = 1;
+  string user_id = 2;
+  string extension = 3;          // validated 3-5 digits (anti-injection T-12-10)
+  string provider = 4;
+}
+message UserExtensionResponse { UserExtension extension = 1; }
+message DeleteUserExtensionRequest { string organization_id = 1; string id = 2; }
+message DeleteUserExtensionResponse { bool success = 1; }
+message ToggleUserExtensionDNDRequest { string organization_id = 1; string user_id = 2; bool dnd = 3; }
+
+// ---- Pipeline DID provisioning ----
+message PipelineDID {
+  string id = 1;
+  string organization_id = 2;
+  string pipeline_id = 3;
+  string provider = 4;
+  string did = 5;
+  bool is_inbound_owner = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+message UpsertPipelineDIDRequest {
+  string organization_id = 1;
+  string pipeline_id = 2;
+  string did = 3;
+  string provider = 4;
+  bool is_inbound_owner = 5;
+  string id = 6;                 // empty = create
+}
+message PipelineDIDResponse { PipelineDID did = 1; }
+message DeletePipelineDIDRequest { string organization_id = 1; string id = 2; }
+message DeletePipelineDIDResponse { bool success = 1; }
+
+// ---- IVR / business-hours / greeting ----
+message IVRConfigRow {
+  string id = 1;
+  string organization_id = 2;
+  string pipeline_id = 3;
+  string dtmf_key = 4;
+  string target_pipeline_id = 5;
+  int32 sort_order = 6;
+}
+message SaveIVRConfigRequest {
+  string organization_id = 1;
+  string pipeline_id = 2;
+  repeated IVRConfigRow configs = 3;
+}
+message SaveIVRConfigResponse { repeated IVRConfigRow configs = 1; }
+
+message BusinessHoursEntry {
+  string id = 1;
+  string pipeline_id = 2;
+  int32 day_of_week = 3;
+  bool enabled = 4;
+  string start_time = 5;         // "09:00"
+  string end_time = 6;           // "18:00"
+}
+message SaveBusinessHoursRequest {
+  string organization_id = 1;
+  string pipeline_id = 2;
+  repeated BusinessHoursEntry schedule = 3;
+}
+message SaveBusinessHoursResponse { repeated BusinessHoursEntry schedule = 1; }
+
+message UploadIVRGreetingRequest {
+  string organization_id = 1;
+  string pipeline_id = 2;
+  bytes wav = 3;                 // validated WAV; deployed to pbx-01
+  string filename = 4;
+}
+message UploadIVRGreetingResponse {
+  string id = 1;
+  string pipeline_id = 2;
+  string filename = 3;
+  bool deployed = 4;
+}
