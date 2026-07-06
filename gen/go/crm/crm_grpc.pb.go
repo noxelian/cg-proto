@@ -104,6 +104,8 @@ const (
 	CRMService_GetAttributionCoverage_FullMethodName             = "/crm.v1.CRMService/GetAttributionCoverage"
 	CRMService_ListAgents_FullMethodName                         = "/crm.v1.CRMService/ListAgents"
 	CRMService_ListCallAnalyses_FullMethodName                   = "/crm.v1.CRMService/ListCallAnalyses"
+	CRMService_GetNPSAnalytics_FullMethodName                    = "/crm.v1.CRMService/GetNPSAnalytics"
+	CRMService_GetPartsNPSAnalytics_FullMethodName               = "/crm.v1.CRMService/GetPartsNPSAnalytics"
 	CRMService_CreateNote_FullMethodName                         = "/crm.v1.CRMService/CreateNote"
 	CRMService_UpdateNote_FullMethodName                         = "/crm.v1.CRMService/UpdateNote"
 	CRMService_ListNotes_FullMethodName                          = "/crm.v1.CRMService/ListNotes"
@@ -378,6 +380,16 @@ type CRMServiceClient interface {
 	// in SkipMethods (evidence quotes carry transcript PII, T-14-07) — this is a
 	// different auth posture than the service-internal GetCallAnalysis (worker).
 	ListCallAnalyses(ctx context.Context, in *ListCallAnalysesRequest, opts ...grpc.CallOption) (*ListCallAnalysesResponse, error)
+	// NPS computed-metrics RPCs (telephony-extraction Track B) — moves the
+	// Promoter/Passive/Detractor bucketing + (%P-%D)*100 scoring compute-core
+	// out of bff-admin (external/nps_compute.go) into cg-crm, byte-for-byte.
+	// Response messages mirror the existing bff JSON DTO 1:1 so both bff
+	// callers (external service-key path + web user-JWT path) become thin
+	// proxies. scope_mode selects the auth posture: SERVICE_ORGWIDE for the
+	// trusted external caller (bound-admin, org-wide), FORWARDED_JWT for the
+	// cg-crm-web caller (own/pipeline_membership scoping per forwarded claims).
+	GetNPSAnalytics(ctx context.Context, in *GetNPSAnalyticsRequest, opts ...grpc.CallOption) (*GetNPSAnalyticsResponse, error)
+	GetPartsNPSAnalytics(ctx context.Context, in *GetPartsNPSAnalyticsRequest, opts ...grpc.CallOption) (*GetPartsNPSAnalyticsResponse, error)
 	// Notes RPCs
 	CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error)
 	UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error)
@@ -1428,6 +1440,26 @@ func (c *cRMServiceClient) ListCallAnalyses(ctx context.Context, in *ListCallAna
 	return out, nil
 }
 
+func (c *cRMServiceClient) GetNPSAnalytics(ctx context.Context, in *GetNPSAnalyticsRequest, opts ...grpc.CallOption) (*GetNPSAnalyticsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetNPSAnalyticsResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetNPSAnalytics_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cRMServiceClient) GetPartsNPSAnalytics(ctx context.Context, in *GetPartsNPSAnalyticsRequest, opts ...grpc.CallOption) (*GetPartsNPSAnalyticsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPartsNPSAnalyticsResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetPartsNPSAnalytics_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cRMServiceClient) CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateNoteResponse)
@@ -2330,6 +2362,16 @@ type CRMServiceServer interface {
 	// in SkipMethods (evidence quotes carry transcript PII, T-14-07) — this is a
 	// different auth posture than the service-internal GetCallAnalysis (worker).
 	ListCallAnalyses(context.Context, *ListCallAnalysesRequest) (*ListCallAnalysesResponse, error)
+	// NPS computed-metrics RPCs (telephony-extraction Track B) — moves the
+	// Promoter/Passive/Detractor bucketing + (%P-%D)*100 scoring compute-core
+	// out of bff-admin (external/nps_compute.go) into cg-crm, byte-for-byte.
+	// Response messages mirror the existing bff JSON DTO 1:1 so both bff
+	// callers (external service-key path + web user-JWT path) become thin
+	// proxies. scope_mode selects the auth posture: SERVICE_ORGWIDE for the
+	// trusted external caller (bound-admin, org-wide), FORWARDED_JWT for the
+	// cg-crm-web caller (own/pipeline_membership scoping per forwarded claims).
+	GetNPSAnalytics(context.Context, *GetNPSAnalyticsRequest) (*GetNPSAnalyticsResponse, error)
+	GetPartsNPSAnalytics(context.Context, *GetPartsNPSAnalyticsRequest) (*GetPartsNPSAnalyticsResponse, error)
 	// Notes RPCs
 	CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error)
 	UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error)
@@ -2772,6 +2814,12 @@ func (UnimplementedCRMServiceServer) ListAgents(context.Context, *ListAgentsRequ
 }
 func (UnimplementedCRMServiceServer) ListCallAnalyses(context.Context, *ListCallAnalysesRequest) (*ListCallAnalysesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCallAnalyses not implemented")
+}
+func (UnimplementedCRMServiceServer) GetNPSAnalytics(context.Context, *GetNPSAnalyticsRequest) (*GetNPSAnalyticsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetNPSAnalytics not implemented")
+}
+func (UnimplementedCRMServiceServer) GetPartsNPSAnalytics(context.Context, *GetPartsNPSAnalyticsRequest) (*GetPartsNPSAnalyticsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPartsNPSAnalytics not implemented")
 }
 func (UnimplementedCRMServiceServer) CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateNote not implemented")
@@ -4534,6 +4582,42 @@ func _CRMService_ListCallAnalyses_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_GetNPSAnalytics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNPSAnalyticsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetNPSAnalytics(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetNPSAnalytics_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetNPSAnalytics(ctx, req.(*GetNPSAnalyticsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CRMService_GetPartsNPSAnalytics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPartsNPSAnalyticsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetPartsNPSAnalytics(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetPartsNPSAnalytics_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetPartsNPSAnalytics(ctx, req.(*GetPartsNPSAnalyticsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CRMService_CreateNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateNoteRequest)
 	if err := dec(in); err != nil {
@@ -6140,6 +6224,14 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListCallAnalyses",
 			Handler:    _CRMService_ListCallAnalyses_Handler,
+		},
+		{
+			MethodName: "GetNPSAnalytics",
+			Handler:    _CRMService_GetNPSAnalytics_Handler,
+		},
+		{
+			MethodName: "GetPartsNPSAnalytics",
+			Handler:    _CRMService_GetPartsNPSAnalytics_Handler,
 		},
 		{
 			MethodName: "CreateNote",

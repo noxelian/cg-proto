@@ -212,6 +212,17 @@ service CRMService {
   // different auth posture than the service-internal GetCallAnalysis (worker).
   rpc ListCallAnalyses(ListCallAnalysesRequest)             returns (ListCallAnalysesResponse);
 
+  // NPS computed-metrics RPCs (telephony-extraction Track B) — moves the
+  // Promoter/Passive/Detractor bucketing + (%P-%D)*100 scoring compute-core
+  // out of bff-admin (external/nps_compute.go) into cg-crm, byte-for-byte.
+  // Response messages mirror the existing bff JSON DTO 1:1 so both bff
+  // callers (external service-key path + web user-JWT path) become thin
+  // proxies. scope_mode selects the auth posture: SERVICE_ORGWIDE for the
+  // trusted external caller (bound-admin, org-wide), FORWARDED_JWT for the
+  // cg-crm-web caller (own/pipeline_membership scoping per forwarded claims).
+  rpc GetNPSAnalytics(GetNPSAnalyticsRequest) returns (GetNPSAnalyticsResponse);
+  rpc GetPartsNPSAnalytics(GetPartsNPSAnalyticsRequest) returns (GetPartsNPSAnalyticsResponse);
+
   // Notes RPCs
   rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse);
   rpc UpdateNote(UpdateNoteRequest) returns (UpdateNoteResponse);
@@ -2289,6 +2300,154 @@ message AgentRefProto {
 
 message ListAgentsResponse {
   repeated AgentRefProto agents = 1;
+}
+
+// ==================== NPS Analytics (telephony-extraction Track B) ====================
+//
+// Mirrors the bff-admin external/nps_analytics.go + web/nps_analytics.go
+// JSON DTO 1:1 (NPSAnalyticsResponse/NPSAggregate/NPSRow/NPSBuckets +
+// parts variant PartsNPSAnalyticsResponse/PartsNPSAggregate/PartsNPSRow).
+// Bucketing (5=promoter/4=passive/1-3=detractor), nps_score=(%P-%D)*100,
+// is_remake, deadlines-truthy-CSV, source-assignee override, and
+// wrote_review_rows all transfer byte-for-byte — see cg-bff
+// external/nps_compute.go for the reference implementation being moved.
+// `source_deal_id`/`deep_link_url` are required (external CEO-bot parses
+// them by string key, unversioned).
+
+enum NPSAnalyticsScopeMode {
+  NPS_ANALYTICS_SCOPE_MODE_UNSPECIFIED = 0;
+  // SERVICE_ORGWIDE: trusted external caller (bound-admin service JWT,
+  // e.g. cg-mini-jake via bff-admin external/*) — org-wide, no membership
+  // filtering beyond organization_id.
+  NPS_ANALYTICS_SCOPE_MODE_SERVICE_ORGWIDE = 1;
+  // FORWARDED_JWT: bff forwards the end-user's JWT (cg-crm-web caller) —
+  // scoped to own/pipeline_membership per the forwarded claims (D-05).
+  NPS_ANALYTICS_SCOPE_MODE_FORWARDED_JWT = 2;
+}
+
+message NPSPeriod {
+  string from = 1;
+  string to   = 2;
+}
+
+message NPSBuckets {
+  int32 promoters  = 1;
+  int32 passives   = 2;
+  int32 detractors = 3;
+}
+
+message NPSAssignee {
+  int64  user_id = 1;
+  string name    = 2;
+}
+
+message NPSRowFields {
+  string recommendation = 1;
+  string quality        = 2;
+  string communication   = 3;
+  string deadlines_kept  = 4;
+  string comment         = 5;
+}
+
+message NPSRow {
+  string deal_id         = 1;
+  string source_deal_id  = 2;
+  string title           = 3;
+  string contact_name    = 4;
+  string contact_phone   = 5;
+  NPSAssignee assigned_to = 6;
+  string passed_nps_at   = 7;
+  bool   is_remake       = 8;
+  NPSRowFields fields    = 9;
+  string deep_link_url   = 10;
+}
+
+message NPSAggregate {
+  int32  count_completed    = 1;
+  int32  count_in_work      = 2;
+  double avg_recommendation = 3;
+  double avg_quality        = 4;
+  double avg_communication  = 5;
+  double pct_deadlines_met  = 6;
+  double nps_score          = 7;
+  NPSBuckets bucket_breakdown = 8;
+  int32  count_remakes      = 9;
+  double pct_remakes        = 10;
+  int32  count_wrote_review = 11;
+}
+
+message GetNPSAnalyticsRequest {
+  string organization_id = 1;
+  // pipeline_id — optional; empty = cg-crm-side configured QC pipeline
+  // default (org-scoped config block, see PLAN §4.2/§8 Q5).
+  string pipeline_id = 2;
+  // manager_id — optional (0 = no filter); scopes both completed rows and
+  // count_in_work by the effective filler (see cg-bff computeNPSAnalytics).
+  int64  manager_id  = 3;
+  google.protobuf.Timestamp date_from = 4;
+  google.protobuf.Timestamp date_to   = 5;
+  NPSAnalyticsScopeMode scope_mode = 6;
+}
+
+message GetNPSAnalyticsResponse {
+  NPSPeriod    period    = 1;
+  NPSAggregate aggregate = 2;
+  repeated NPSRow rows   = 3;
+  // wrote_review_rows — separate surface: deals whose stage_change →
+  // WroteReviewStageID timestamp falls in the requested period (not
+  // npsCompletedAt as the main rows use). See cg-bff computeNPSAnalytics
+  // 260525-gya for the exact scoping rule being preserved.
+  repeated NPSRow wrote_review_rows = 4;
+}
+
+message PartsNPSRowFields {
+  string recommendation = 1;
+  string accuracy       = 2;
+  string quality        = 3;
+  string deadline       = 4;
+  string comment        = 5;
+}
+
+message PartsNPSRow {
+  string deal_id         = 1;
+  string source_deal_id  = 2;
+  string title           = 3;
+  string contact_name    = 4;
+  string contact_phone   = 5;
+  NPSAssignee assigned_to = 6;
+  string passed_at       = 7;
+  PartsNPSRowFields fields = 8;
+  string deep_link_url   = 9;
+}
+
+message PartsNPSAggregate {
+  int32  count_completed    = 1;
+  int32  count_in_work      = 2;
+  double avg_recommendation = 3;
+  double avg_accuracy       = 4;
+  double avg_quality        = 5;
+  double pct_deadlines_met  = 6;
+  double nps_score          = 7;
+  NPSBuckets bucket_breakdown = 8;
+}
+
+message GetPartsNPSAnalyticsRequest {
+  string organization_id = 1;
+  string pipeline_id = 2;
+  int64  manager_id  = 3;
+  google.protobuf.Timestamp date_from = 4;
+  google.protobuf.Timestamp date_to   = 5;
+  NPSAnalyticsScopeMode scope_mode = 6;
+}
+
+// GetPartsNPSAnalyticsResponse — parts-delivery NPS variant. No
+// wrote_review_rows (parts flow has no separate "wrote a review" stage
+// gate, unlike the main КК NPS flow) — matches bff-admin
+// PartsNPSAnalyticsResponse 1:1 (see parts_nps_analytics.go).
+message GetPartsNPSAnalyticsResponse {
+  NPSPeriod         period    = 1;
+  PartsNPSAggregate aggregate = 2;
+  repeated PartsNPSRow rows   = 3;
 }
 
 // ==================== Notes ====================
