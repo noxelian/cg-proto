@@ -34,7 +34,7 @@ Top-level: `buf.yaml`, `buf.gen.yaml`, `go.mod`, `gen/`.
 | `agreement` | cg-bff, cg-orders, cg-workshop |
 | `subscriptions` | cg-bff, cg-billing |
 | `signing` | cg-bff, cg-workshop (АВР/ЭЦП via cg-signing) |
-| `telephony` | cg-bff (bff-admin thin-proxy) via cg-communication/services/telephony (Asterisk/ARI control-plane) |
+| `telephony` | cg-bff (bff-admin thin-proxy) via cg-asterisk (Asterisk/ARI control-plane, Go service in repo root) |
 
 ## Domain rules (locked)
 
