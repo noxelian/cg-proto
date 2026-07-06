@@ -4,13 +4,13 @@ Entry point for a new Claude session in this repo. Read before editing.
 
 ## What this is
 
-**Centralized Protocol Buffers definitions for all CTOgram services.** Module: `github.com/4ubak/cg-proto`. One package per domain. Generated Go code in `gen/`. Consumers pin a tagged release (e.g. `v1.41.0`) in their `go.mod`.
+**Centralized Protocol Buffers definitions for all CTOgram services.** Module: `github.com/4ubak/cg-proto`. One package per domain. Generated Go code under `gen/go/`. Consumers pin a tagged release (latest is `v1.271.0` as of 2026-07-06) in their `go.mod`.
 
 ## Layout
 
-One subdir per domain — each contains `.proto` files and (after `buf generate`) the corresponding `gen/<domain>/v1/*.pb.go`:
+One subdir per domain — each contains `.proto` files and (after `buf generate`) the corresponding `gen/go/<domain>/**/*.pb.go` (version suffix varies — most are `.../v1/`, some subpackages have none):
 
-`agents/`, `agreement/`, `ai/`, `billing/`, `booking/`, `communication/`, `crm/`, `jobs/`, `orders/`, `parser/`, `parts/`, `payments/`, `platform/`, `services/`, `subscriptions/`, `users/`, `warehouse/`, `workshop/`
+`agents/`, `agreement/`, `ai/`, `billing/`, `booking/`, `communication/`, `crm/`, `jobs/`, `orders/`, `parser/`, `parts/`, `payments/`, `platform/`, `services/`, `signing/`, `subscriptions/`, `telephony/`, `users/`, `warehouse/`, `workshop/`
 
 Top-level: `buf.yaml`, `buf.gen.yaml`, `go.mod`, `gen/`.
 
@@ -33,6 +33,8 @@ Top-level: `buf.yaml`, `buf.gen.yaml`, `go.mod`, `gen/`.
 | `booking` | cg-bff, cg-services |
 | `agreement` | cg-bff, cg-orders, cg-workshop |
 | `subscriptions` | cg-bff, cg-billing |
+| `signing` | cg-bff, cg-workshop (АВР/ЭЦП via cg-signing) |
+| `telephony` | cg-bff (bff-admin thin-proxy) via cg-communication/services/telephony (Asterisk/ARI control-plane) |
 
 ## Domain rules (locked)
 
@@ -68,13 +70,13 @@ go mod tidy && go build ./... && go vet ./...
 - `buf generate` must run from repo root, not from a subdir.
 - After regen, `git status` should show `gen/...` changes — these are committed (not gitignored).
 - If a consumer's CI fails with "missing go.sum entry," they forgot `go mod tidy`.
-- Adding a new domain dir requires updating `buf.yaml` (modules list) before `buf generate` will pick it up.
+- New domain dirs are auto-discovered — `buf.yaml` is a single `version: v1` module with no modules list to edit. Just add `<domain>/**/*.proto` and run `buf generate` (output lands under `gen/go/` per `buf.gen.yaml`).
 
 ## Critical files
 
 - `buf.yaml`, `buf.gen.yaml` — codegen config
 - `<domain>/v1/*.proto` — actual contracts
-- `gen/<domain>/v1/*.pb.go` — generated; never edit by hand
+- `gen/go/<domain>/**/*.pb.go` — generated; never edit by hand
 
 ## Commands
 
