@@ -31,6 +31,7 @@ const (
 	OrderService_CalculateSubscriptionPrice_FullMethodName     = "/orders.order.v1.OrderService/CalculateSubscriptionPrice"
 	OrderService_GetSubscriptionStatus_FullMethodName          = "/orders.order.v1.OrderService/GetSubscriptionStatus"
 	OrderService_PurchaseBid_FullMethodName                    = "/orders.order.v1.OrderService/PurchaseBid"
+	OrderService_GetBidPurchase_FullMethodName                 = "/orders.order.v1.OrderService/GetBidPurchase"
 	OrderService_GetBidPurchasePrice_FullMethodName            = "/orders.order.v1.OrderService/GetBidPurchasePrice"
 	OrderService_ListBidPurchasePrices_FullMethodName          = "/orders.order.v1.OrderService/ListBidPurchasePrices"
 	OrderService_CreateBidPurchasePrice_FullMethodName         = "/orders.order.v1.OrderService/CreateBidPurchasePrice"
@@ -77,6 +78,7 @@ type OrderServiceClient interface {
 	GetSubscriptionStatus(ctx context.Context, in *GetSubscriptionStatusRequest, opts ...grpc.CallOption) (*GetSubscriptionStatusResponse, error)
 	// === Bid purchases ===
 	PurchaseBid(ctx context.Context, in *PurchaseBidRequest, opts ...grpc.CallOption) (*PurchaseBidResponse, error)
+	GetBidPurchase(ctx context.Context, in *GetBidPurchaseRequest, opts ...grpc.CallOption) (*GetBidPurchaseResponse, error)
 	GetBidPurchasePrice(ctx context.Context, in *GetBidPurchasePriceRequest, opts ...grpc.CallOption) (*GetBidPurchasePriceResponse, error)
 	// === Bid purchase prices (admin CRUD) ===
 	ListBidPurchasePrices(ctx context.Context, in *ListBidPurchasePricesRequest, opts ...grpc.CallOption) (*ListBidPurchasePricesResponse, error)
@@ -227,6 +229,16 @@ func (c *orderServiceClient) PurchaseBid(ctx context.Context, in *PurchaseBidReq
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PurchaseBidResponse)
 	err := c.cc.Invoke(ctx, OrderService_PurchaseBid_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) GetBidPurchase(ctx context.Context, in *GetBidPurchaseRequest, opts ...grpc.CallOption) (*GetBidPurchaseResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBidPurchaseResponse)
+	err := c.cc.Invoke(ctx, OrderService_GetBidPurchase_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -475,6 +487,7 @@ type OrderServiceServer interface {
 	GetSubscriptionStatus(context.Context, *GetSubscriptionStatusRequest) (*GetSubscriptionStatusResponse, error)
 	// === Bid purchases ===
 	PurchaseBid(context.Context, *PurchaseBidRequest) (*PurchaseBidResponse, error)
+	GetBidPurchase(context.Context, *GetBidPurchaseRequest) (*GetBidPurchaseResponse, error)
 	GetBidPurchasePrice(context.Context, *GetBidPurchasePriceRequest) (*GetBidPurchasePriceResponse, error)
 	// === Bid purchase prices (admin CRUD) ===
 	ListBidPurchasePrices(context.Context, *ListBidPurchasePricesRequest) (*ListBidPurchasePricesResponse, error)
@@ -546,6 +559,9 @@ func (UnimplementedOrderServiceServer) GetSubscriptionStatus(context.Context, *G
 }
 func (UnimplementedOrderServiceServer) PurchaseBid(context.Context, *PurchaseBidRequest) (*PurchaseBidResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method PurchaseBid not implemented")
+}
+func (UnimplementedOrderServiceServer) GetBidPurchase(context.Context, *GetBidPurchaseRequest) (*GetBidPurchaseResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBidPurchase not implemented")
 }
 func (UnimplementedOrderServiceServer) GetBidPurchasePrice(context.Context, *GetBidPurchasePriceRequest) (*GetBidPurchasePriceResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetBidPurchasePrice not implemented")
@@ -846,6 +862,24 @@ func _OrderService_PurchaseBid_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OrderServiceServer).PurchaseBid(ctx, req.(*PurchaseBidRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_GetBidPurchase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBidPurchaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).GetBidPurchase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_GetBidPurchase_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).GetBidPurchase(ctx, req.(*GetBidPurchaseRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1300,6 +1334,10 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PurchaseBid",
 			Handler:    _OrderService_PurchaseBid_Handler,
+		},
+		{
+			MethodName: "GetBidPurchase",
+			Handler:    _OrderService_GetBidPurchase_Handler,
 		},
 		{
 			MethodName: "GetBidPurchasePrice",

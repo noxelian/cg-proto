@@ -26,6 +26,7 @@ service OrderService {
 
   // === Bid purchases ===
   rpc PurchaseBid(PurchaseBidRequest) returns (PurchaseBidResponse);
+  rpc GetBidPurchase(GetBidPurchaseRequest) returns (GetBidPurchaseResponse);
   rpc GetBidPurchasePrice(GetBidPurchasePriceRequest) returns (GetBidPurchasePriceResponse);
 
   // === Bid purchase prices (admin CRUD) ===
@@ -407,6 +408,14 @@ message PurchaseBidRequest {
 }
 
 message PurchaseBidResponse {
+  BidPurchase bid_purchase = 1;
+}
+
+message GetBidPurchaseRequest {
+  int64 bid_purchase_id = 1;
+}
+
+message GetBidPurchaseResponse {
   BidPurchase bid_purchase = 1;
 }
 
