@@ -97,6 +97,10 @@ message IssueServiceTokenResponse {
 message SendCodeRequest {
   string phone = 1;
   string device_id = 2;
+  // hash_code is the Android SMS Retriever app signature (11 chars). When set,
+  // it is appended to the SMS body so Google Play services can auto-read the
+  // code without SMS-read permission. Empty on iOS / web.
+  string hash_code = 3;
 }
 
 message SendCodeResponse {

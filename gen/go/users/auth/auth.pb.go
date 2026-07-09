@@ -342,9 +342,13 @@ func (x *IssueServiceTokenResponse) GetExpiresAt() *timestamppb.Timestamp {
 }
 
 type SendCodeRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Phone         string                 `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
-	DeviceId      string                 `protobuf:"bytes,2,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	Phone    string                 `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
+	DeviceId string                 `protobuf:"bytes,2,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
+	// hash_code is the Android SMS Retriever app signature (11 chars). When set,
+	// it is appended to the SMS body so Google Play services can auto-read the
+	// code without SMS-read permission. Empty on iOS / web.
+	HashCode      string `protobuf:"bytes,3,opt,name=hash_code,json=hashCode,proto3" json:"hash_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -389,6 +393,13 @@ func (x *SendCodeRequest) GetPhone() string {
 func (x *SendCodeRequest) GetDeviceId() string {
 	if x != nil {
 		return x.DeviceId
+	}
+	return ""
+}
+
+func (x *SendCodeRequest) GetHashCode() string {
+	if x != nil {
+		return x.HashCode
 	}
 	return ""
 }
@@ -1418,10 +1429,11 @@ const file_users_auth_auth_proto_rawDesc = "" +
 	"\x19IssueServiceTokenResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x129\n" +
 	"\n" +
-	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"D\n" +
+	"expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"a\n" +
 	"\x0fSendCodeRequest\x12\x14\n" +
 	"\x05phone\x18\x01 \x01(\tR\x05phone\x12\x1b\n" +
-	"\tdevice_id\x18\x02 \x01(\tR\bdeviceId\"g\n" +
+	"\tdevice_id\x18\x02 \x01(\tR\bdeviceId\x12\x1b\n" +
+	"\thash_code\x18\x03 \x01(\tR\bhashCode\"g\n" +
 	"\x10SendCodeResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x1f\n" +
 	"\vretry_after\x18\x02 \x01(\x05R\n" +

@@ -562,8 +562,12 @@ type AppVersion struct {
 	CurrentVersion string                 `protobuf:"bytes,3,opt,name=current_version,json=currentVersion,proto3" json:"current_version,omitempty"`
 	ForceUpdate    bool                   `protobuf:"varint,4,opt,name=force_update,json=forceUpdate,proto3" json:"force_update,omitempty"`
 	UpdateUrl      string                 `protobuf:"bytes,5,opt,name=update_url,json=updateUrl,proto3" json:"update_url,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// app distinguishes the consuming application (e.g. "client", "partner") so
+	// the pro/partner app can carry force-update versions independent of the
+	// client app. Empty is treated as "client" for backward compatibility.
+	App           string `protobuf:"bytes,6,opt,name=app,proto3" json:"app,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AppVersion) Reset() {
@@ -627,6 +631,13 @@ func (x *AppVersion) GetForceUpdate() bool {
 func (x *AppVersion) GetUpdateUrl() string {
 	if x != nil {
 		return x.UpdateUrl
+	}
+	return ""
+}
+
+func (x *AppVersion) GetApp() string {
+	if x != nil {
+		return x.App
 	}
 	return ""
 }
@@ -1264,8 +1275,11 @@ func (x *GetCategoryResponse) GetCategory() *Category {
 }
 
 type GetAppVersionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Platform      string                 `protobuf:"bytes,1,opt,name=platform,proto3" json:"platform,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	Platform string                 `protobuf:"bytes,1,opt,name=platform,proto3" json:"platform,omitempty"`
+	// app selects which application's version row to return ("client" default,
+	// "partner" for the pro app). Empty is treated as "client".
+	App           string `protobuf:"bytes,2,opt,name=app,proto3" json:"app,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1303,6 +1317,13 @@ func (*GetAppVersionRequest) Descriptor() ([]byte, []int) {
 func (x *GetAppVersionRequest) GetPlatform() string {
 	if x != nil {
 		return x.Platform
+	}
+	return ""
+}
+
+func (x *GetAppVersionRequest) GetApp() string {
+	if x != nil {
+		return x.App
 	}
 	return ""
 }
@@ -3747,7 +3768,7 @@ const file_platform_nsi_nsi_proto_rawDesc = "" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
 	"\x04slug\x18\x04 \x01(\tR\x04slug\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\x05 \x01(\x05R\tsortOrder\"\xb4\x01\n" +
+	"sort_order\x18\x05 \x01(\x05R\tsortOrder\"\xc6\x01\n" +
 	"\n" +
 	"AppVersion\x12\x1a\n" +
 	"\bplatform\x18\x01 \x01(\tR\bplatform\x12\x1f\n" +
@@ -3756,7 +3777,8 @@ const file_platform_nsi_nsi_proto_rawDesc = "" +
 	"\x0fcurrent_version\x18\x03 \x01(\tR\x0ecurrentVersion\x12!\n" +
 	"\fforce_update\x18\x04 \x01(\bR\vforceUpdate\x12\x1d\n" +
 	"\n" +
-	"update_url\x18\x05 \x01(\tR\tupdateUrl\"X\n" +
+	"update_url\x18\x05 \x01(\tR\tupdateUrl\x12\x10\n" +
+	"\x03app\x18\x06 \x01(\tR\x03app\"X\n" +
 	"\x10GetCitiesRequest\x12\x14\n" +
 	"\x05query\x18\x01 \x01(\tR\x05query\x12\x18\n" +
 	"\acountry\x18\x02 \x01(\tR\acountry\x12\x14\n" +
@@ -3789,9 +3811,10 @@ const file_platform_nsi_nsi_proto_rawDesc = "" +
 	"\vcategory_id\x18\x01 \x01(\x05R\n" +
 	"categoryId\"L\n" +
 	"\x13GetCategoryResponse\x125\n" +
-	"\bcategory\x18\x01 \x01(\v2\x19.platform.nsi.v1.CategoryR\bcategory\"2\n" +
+	"\bcategory\x18\x01 \x01(\v2\x19.platform.nsi.v1.CategoryR\bcategory\"D\n" +
 	"\x14GetAppVersionRequest\x12\x1a\n" +
-	"\bplatform\x18\x01 \x01(\tR\bplatform\"N\n" +
+	"\bplatform\x18\x01 \x01(\tR\bplatform\x12\x10\n" +
+	"\x03app\x18\x02 \x01(\tR\x03app\"N\n" +
 	"\x15GetAppVersionResponse\x125\n" +
 	"\aversion\x18\x01 \x01(\v2\x1b.platform.nsi.v1.AppVersionR\aversion\"$\n" +
 	"\x10GetConfigRequest\x12\x10\n" +

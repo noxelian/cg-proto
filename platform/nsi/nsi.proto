@@ -119,6 +119,10 @@ message AppVersion {
   string current_version = 3;
   bool force_update = 4;
   string update_url = 5;
+  // app distinguishes the consuming application (e.g. "client", "partner") so
+  // the pro/partner app can carry force-update versions independent of the
+  // client app. Empty is treated as "client" for backward compatibility.
+  string app = 6;
 }
 
 message GetCitiesRequest {
@@ -181,6 +185,9 @@ message GetCategoryResponse {
 
 message GetAppVersionRequest {
   string platform = 1;
+  // app selects which application's version row to return ("client" default,
+  // "partner" for the pro app). Empty is treated as "client".
+  string app = 2;
 }
 
 message GetAppVersionResponse {
