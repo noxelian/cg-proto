@@ -55,6 +55,15 @@ service AuthService {
   // only for explicitly whitelisted callers (cg-bff external analytics, cg-crm
   // owner-scoped lookups).
   rpc IssueServiceToken(IssueServiceTokenRequest) returns (IssueServiceTokenResponse);
+
+  // IssueTokenPair mints a user access/refresh pair for trusted internal
+  // cg-users services that already completed the domain-side state mutation
+  // (for example user-service ConfirmPhoneChange after users.phone changes).
+  //
+  // This is served only on the dedicated mTLS listener and is restricted by
+  // client-cert CN in auth-service. It exists so auth-service remains the only
+  // holder of JWT signing material during the RS256-only cutover.
+  rpc IssueTokenPair(IssueTokenPairRequest) returns (IssueTokenPairResponse);
 }
 
 message GetSendCodeRateLimitRequest {
@@ -92,6 +101,20 @@ message IssueServiceTokenRequest {
 message IssueServiceTokenResponse {
   string access_token = 1;
   google.protobuf.Timestamp expires_at = 2;
+}
+
+message IssueTokenPairRequest {
+  int64 user_id = 1;
+  string phone = 2;
+  // device_id is embedded into both access and refresh tokens. For
+  // ConfirmPhoneChange callers use "phone-change".
+  string device_id = 3;
+}
+
+message IssueTokenPairResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  google.protobuf.Timestamp expires_at = 3;
 }
 
 message SendCodeRequest {

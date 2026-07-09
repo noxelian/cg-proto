@@ -30,6 +30,7 @@ const (
 	AuthService_GetSendCodeRateLimit_FullMethodName   = "/users.auth.v1.AuthService/GetSendCodeRateLimit"
 	AuthService_ResetSendCodeRateLimit_FullMethodName = "/users.auth.v1.AuthService/ResetSendCodeRateLimit"
 	AuthService_IssueServiceToken_FullMethodName      = "/users.auth.v1.AuthService/IssueServiceToken"
+	AuthService_IssueTokenPair_FullMethodName         = "/users.auth.v1.AuthService/IssueTokenPair"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -74,6 +75,14 @@ type AuthServiceClient interface {
 	// only for explicitly whitelisted callers (cg-bff external analytics, cg-crm
 	// owner-scoped lookups).
 	IssueServiceToken(ctx context.Context, in *IssueServiceTokenRequest, opts ...grpc.CallOption) (*IssueServiceTokenResponse, error)
+	// IssueTokenPair mints a user access/refresh pair for trusted internal
+	// cg-users services that already completed the domain-side state mutation
+	// (for example user-service ConfirmPhoneChange after users.phone changes).
+	//
+	// This is served only on the dedicated mTLS listener and is restricted by
+	// client-cert CN in auth-service. It exists so auth-service remains the only
+	// holder of JWT signing material during the RS256-only cutover.
+	IssueTokenPair(ctx context.Context, in *IssueTokenPairRequest, opts ...grpc.CallOption) (*IssueTokenPairResponse, error)
 }
 
 type authServiceClient struct {
@@ -194,6 +203,16 @@ func (c *authServiceClient) IssueServiceToken(ctx context.Context, in *IssueServ
 	return out, nil
 }
 
+func (c *authServiceClient) IssueTokenPair(ctx context.Context, in *IssueTokenPairRequest, opts ...grpc.CallOption) (*IssueTokenPairResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IssueTokenPairResponse)
+	err := c.cc.Invoke(ctx, AuthService_IssueTokenPair_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -236,6 +255,14 @@ type AuthServiceServer interface {
 	// only for explicitly whitelisted callers (cg-bff external analytics, cg-crm
 	// owner-scoped lookups).
 	IssueServiceToken(context.Context, *IssueServiceTokenRequest) (*IssueServiceTokenResponse, error)
+	// IssueTokenPair mints a user access/refresh pair for trusted internal
+	// cg-users services that already completed the domain-side state mutation
+	// (for example user-service ConfirmPhoneChange after users.phone changes).
+	//
+	// This is served only on the dedicated mTLS listener and is restricted by
+	// client-cert CN in auth-service. It exists so auth-service remains the only
+	// holder of JWT signing material during the RS256-only cutover.
+	IssueTokenPair(context.Context, *IssueTokenPairRequest) (*IssueTokenPairResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -278,6 +305,9 @@ func (UnimplementedAuthServiceServer) ResetSendCodeRateLimit(context.Context, *R
 }
 func (UnimplementedAuthServiceServer) IssueServiceToken(context.Context, *IssueServiceTokenRequest) (*IssueServiceTokenResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method IssueServiceToken not implemented")
+}
+func (UnimplementedAuthServiceServer) IssueTokenPair(context.Context, *IssueTokenPairRequest) (*IssueTokenPairResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method IssueTokenPair not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -498,6 +528,24 @@ func _AuthService_IssueServiceToken_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_IssueTokenPair_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IssueTokenPairRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).IssueTokenPair(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_IssueTokenPair_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).IssueTokenPair(ctx, req.(*IssueTokenPairRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -548,6 +596,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IssueServiceToken",
 			Handler:    _AuthService_IssueServiceToken_Handler,
+		},
+		{
+			MethodName: "IssueTokenPair",
+			Handler:    _AuthService_IssueTokenPair_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
