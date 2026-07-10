@@ -722,16 +722,24 @@ func (x *GetRequestResponse) GetRequest() *Request {
 
 // UpdateRequest
 type UpdateRequestRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"` // UUID string
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Note          *string                `protobuf:"bytes,3,opt,name=note,proto3,oneof" json:"note,omitempty"`
-	Photos        []string               `protobuf:"bytes,4,rep,name=photos,proto3" json:"photos,omitempty"`
-	Address       *string                `protobuf:"bytes,5,opt,name=address,proto3,oneof" json:"address,omitempty"`
-	Latitude      *float64               `protobuf:"fixed64,6,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
-	Longitude     *float64               `protobuf:"fixed64,7,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	RequestId string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"` // UUID string
+	UserId    int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Note      *string                `protobuf:"bytes,3,opt,name=note,proto3,oneof" json:"note,omitempty"`
+	Photos    []string               `protobuf:"bytes,4,rep,name=photos,proto3" json:"photos,omitempty"`
+	Address   *string                `protobuf:"bytes,5,opt,name=address,proto3,oneof" json:"address,omitempty"`
+	Latitude  *float64               `protobuf:"fixed64,6,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
+	Longitude *float64               `protobuf:"fixed64,7,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
+	// Car identity — editable so a manager can set the vehicle on a parts request
+	// that was created without one (customer is contacted, car specified in admin).
+	// Each is optional: absent = leave unchanged.
+	CarMakeId       *int64 `protobuf:"varint,8,opt,name=car_make_id,json=carMakeId,proto3,oneof" json:"car_make_id,omitempty"`
+	CarModelId      *int64 `protobuf:"varint,9,opt,name=car_model_id,json=carModelId,proto3,oneof" json:"car_model_id,omitempty"`
+	CarGenerationId *int64 `protobuf:"varint,10,opt,name=car_generation_id,json=carGenerationId,proto3,oneof" json:"car_generation_id,omitempty"`
+	Year            *int32 `protobuf:"varint,11,opt,name=year,proto3,oneof" json:"year,omitempty"`
+	GarageCarId     *int64 `protobuf:"varint,12,opt,name=garage_car_id,json=garageCarId,proto3,oneof" json:"garage_car_id,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *UpdateRequestRequest) Reset() {
@@ -809,6 +817,41 @@ func (x *UpdateRequestRequest) GetLatitude() float64 {
 func (x *UpdateRequestRequest) GetLongitude() float64 {
 	if x != nil && x.Longitude != nil {
 		return *x.Longitude
+	}
+	return 0
+}
+
+func (x *UpdateRequestRequest) GetCarMakeId() int64 {
+	if x != nil && x.CarMakeId != nil {
+		return *x.CarMakeId
+	}
+	return 0
+}
+
+func (x *UpdateRequestRequest) GetCarModelId() int64 {
+	if x != nil && x.CarModelId != nil {
+		return *x.CarModelId
+	}
+	return 0
+}
+
+func (x *UpdateRequestRequest) GetCarGenerationId() int64 {
+	if x != nil && x.CarGenerationId != nil {
+		return *x.CarGenerationId
+	}
+	return 0
+}
+
+func (x *UpdateRequestRequest) GetYear() int32 {
+	if x != nil && x.Year != nil {
+		return *x.Year
+	}
+	return 0
+}
+
+func (x *UpdateRequestRequest) GetGarageCarId() int64 {
+	if x != nil && x.GarageCarId != nil {
+		return *x.GarageCarId
 	}
 	return 0
 }
@@ -2793,7 +2836,7 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\"L\n" +
 	"\x12GetRequestResponse\x126\n" +
-	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\x92\x02\n" +
+	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\xa3\x04\n" +
 	"\x14UpdateRequestRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x17\n" +
@@ -2802,13 +2845,25 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x06photos\x18\x04 \x03(\tR\x06photos\x12\x1d\n" +
 	"\aaddress\x18\x05 \x01(\tH\x01R\aaddress\x88\x01\x01\x12\x1f\n" +
 	"\blatitude\x18\x06 \x01(\x01H\x02R\blatitude\x88\x01\x01\x12!\n" +
-	"\tlongitude\x18\a \x01(\x01H\x03R\tlongitude\x88\x01\x01B\a\n" +
+	"\tlongitude\x18\a \x01(\x01H\x03R\tlongitude\x88\x01\x01\x12#\n" +
+	"\vcar_make_id\x18\b \x01(\x03H\x04R\tcarMakeId\x88\x01\x01\x12%\n" +
+	"\fcar_model_id\x18\t \x01(\x03H\x05R\n" +
+	"carModelId\x88\x01\x01\x12/\n" +
+	"\x11car_generation_id\x18\n" +
+	" \x01(\x03H\x06R\x0fcarGenerationId\x88\x01\x01\x12\x17\n" +
+	"\x04year\x18\v \x01(\x05H\aR\x04year\x88\x01\x01\x12'\n" +
+	"\rgarage_car_id\x18\f \x01(\x03H\bR\vgarageCarId\x88\x01\x01B\a\n" +
 	"\x05_noteB\n" +
 	"\n" +
 	"\b_addressB\v\n" +
 	"\t_latitudeB\f\n" +
 	"\n" +
-	"_longitude\"O\n" +
+	"_longitudeB\x0e\n" +
+	"\f_car_make_idB\x0f\n" +
+	"\r_car_model_idB\x14\n" +
+	"\x12_car_generation_idB\a\n" +
+	"\x05_yearB\x10\n" +
+	"\x0e_garage_car_id\"O\n" +
 	"\x15UpdateRequestResponse\x126\n" +
 	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"N\n" +
 	"\x14DeleteRequestRequest\x12\x1d\n" +

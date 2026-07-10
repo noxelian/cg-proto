@@ -200,13 +200,22 @@ message GetRequestResponse {
 message UpdateRequestRequest {
   string request_id = 1;  // UUID string
   int64 user_id = 2;
-  
+
   optional string note = 3;
   repeated string photos = 4;
-  
+
   optional string address = 5;
   optional double latitude = 6;
   optional double longitude = 7;
+
+  // Car identity — editable so a manager can set the vehicle on a parts request
+  // that was created without one (customer is contacted, car specified in admin).
+  // Each is optional: absent = leave unchanged.
+  optional int64 car_make_id = 8;
+  optional int64 car_model_id = 9;
+  optional int64 car_generation_id = 10;
+  optional int32 year = 11;
+  optional int64 garage_car_id = 12;
 }
 
 message UpdateRequestResponse {
