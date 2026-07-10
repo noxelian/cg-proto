@@ -298,6 +298,11 @@ message GetUserRequestsRequest {
   RequestStatus status = 2;
   int32 page = 3;
   int32 page_size = 4;
+  // Multi-status filter (server-side IN); when non-empty it wins over `status`.
+  // Enables correct tab bucketing (active = moderation+published+paused,
+  // completed = deleted+closed) with correct pagination/meta — the old
+  // single-status field forced clients/BFF to post-filter after pagination.
+  repeated RequestStatus statuses = 5;
 }
 
 message GetUserRequestsResponse {

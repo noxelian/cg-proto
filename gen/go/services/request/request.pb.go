@@ -1494,11 +1494,16 @@ func (x *ChangeStatusResponse) GetRequest() *Request {
 
 // GetUserRequests
 type GetUserRequestsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Status        RequestStatus          `protobuf:"varint,2,opt,name=status,proto3,enum=services.request.v1.RequestStatus" json:"status,omitempty"`
-	Page          int32                  `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
-	PageSize      int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	UserId   int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Status   RequestStatus          `protobuf:"varint,2,opt,name=status,proto3,enum=services.request.v1.RequestStatus" json:"status,omitempty"`
+	Page     int32                  `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// Multi-status filter (server-side IN); when non-empty it wins over `status`.
+	// Enables correct tab bucketing (active = moderation+published+paused,
+	// completed = deleted+closed) with correct pagination/meta — the old
+	// single-status field forced clients/BFF to post-filter after pagination.
+	Statuses      []RequestStatus `protobuf:"varint,5,rep,packed,name=statuses,proto3,enum=services.request.v1.RequestStatus" json:"statuses,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1559,6 +1564,13 @@ func (x *GetUserRequestsRequest) GetPageSize() int32 {
 		return x.PageSize
 	}
 	return 0
+}
+
+func (x *GetUserRequestsRequest) GetStatuses() []RequestStatus {
+	if x != nil {
+		return x.Statuses
+	}
+	return nil
 }
 
 type GetUserRequestsResponse struct {
@@ -2947,12 +2959,13 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x06status\x18\x02 \x01(\x0e2\".services.request.v1.RequestStatusR\x06status\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\"N\n" +
 	"\x14ChangeStatusResponse\x126\n" +
-	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\x9e\x01\n" +
+	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\xde\x01\n" +
 	"\x16GetUserRequestsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12:\n" +
 	"\x06status\x18\x02 \x01(\x0e2\".services.request.v1.RequestStatusR\x06status\x12\x12\n" +
 	"\x04page\x18\x03 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"i\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12>\n" +
+	"\bstatuses\x18\x05 \x03(\x0e2\".services.request.v1.RequestStatusR\bstatuses\"i\n" +
 	"\x17GetUserRequestsResponse\x128\n" +
 	"\brequests\x18\x01 \x03(\v2\x1c.services.request.v1.RequestR\brequests\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"6\n" +
@@ -3146,55 +3159,56 @@ var file_services_request_request_proto_depIdxs = []int32{
 	1,  // 15: services.request.v1.ChangeStatusRequest.status:type_name -> services.request.v1.RequestStatus
 	2,  // 16: services.request.v1.ChangeStatusResponse.request:type_name -> services.request.v1.Request
 	1,  // 17: services.request.v1.GetUserRequestsRequest.status:type_name -> services.request.v1.RequestStatus
-	2,  // 18: services.request.v1.GetUserRequestsResponse.requests:type_name -> services.request.v1.Request
-	0,  // 19: services.request.v1.CountUnreadForOrganizationRequest.type:type_name -> services.request.v1.RequestType
-	2,  // 20: services.request.v1.ClassifyRequestResponse.request:type_name -> services.request.v1.Request
-	0,  // 21: services.request.v1.GetUserRequestCountsRequest.type:type_name -> services.request.v1.RequestType
-	2,  // 22: services.request.v1.PauseRequestResponse.request:type_name -> services.request.v1.Request
-	2,  // 23: services.request.v1.UnpauseRequestResponse.request:type_name -> services.request.v1.Request
-	3,  // 24: services.request.v1.RequestService.CreateRequest:input_type -> services.request.v1.CreateRequestRequest
-	5,  // 25: services.request.v1.RequestService.GetRequest:input_type -> services.request.v1.GetRequestRequest
-	7,  // 26: services.request.v1.RequestService.UpdateRequest:input_type -> services.request.v1.UpdateRequestRequest
-	9,  // 27: services.request.v1.RequestService.DeleteRequest:input_type -> services.request.v1.DeleteRequestRequest
-	11, // 28: services.request.v1.RequestService.ListRequests:input_type -> services.request.v1.ListRequestsRequest
-	13, // 29: services.request.v1.RequestService.SearchRequests:input_type -> services.request.v1.SearchRequestsRequest
-	15, // 30: services.request.v1.RequestService.ChangeStatus:input_type -> services.request.v1.ChangeStatusRequest
-	17, // 31: services.request.v1.RequestService.GetUserRequests:input_type -> services.request.v1.GetUserRequestsRequest
-	19, // 32: services.request.v1.RequestService.IncrementViews:input_type -> services.request.v1.IncrementViewsRequest
-	21, // 33: services.request.v1.RequestService.GetSuggestions:input_type -> services.request.v1.GetSuggestionsRequest
-	23, // 34: services.request.v1.RequestService.GetNewRequestsForOrganization:input_type -> services.request.v1.GetNewRequestsForOrganizationRequest
-	25, // 35: services.request.v1.RequestService.MarkRequestAsViewed:input_type -> services.request.v1.MarkRequestAsViewedRequest
-	27, // 36: services.request.v1.RequestService.IsRequestNew:input_type -> services.request.v1.IsRequestNewRequest
-	29, // 37: services.request.v1.RequestService.DismissRequest:input_type -> services.request.v1.DismissRequestRequest
-	31, // 38: services.request.v1.RequestService.CountUnreadForOrganization:input_type -> services.request.v1.CountUnreadForOrganizationRequest
-	33, // 39: services.request.v1.RequestService.ClassifyRequest:input_type -> services.request.v1.ClassifyRequestRequest
-	35, // 40: services.request.v1.RequestService.GetUserRequestCounts:input_type -> services.request.v1.GetUserRequestCountsRequest
-	37, // 41: services.request.v1.RequestService.PauseRequest:input_type -> services.request.v1.PauseRequestRequest
-	39, // 42: services.request.v1.RequestService.UnpauseRequest:input_type -> services.request.v1.UnpauseRequestRequest
-	4,  // 43: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
-	6,  // 44: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
-	8,  // 45: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
-	10, // 46: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
-	12, // 47: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
-	14, // 48: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
-	16, // 49: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
-	18, // 50: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
-	20, // 51: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
-	22, // 52: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
-	24, // 53: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
-	26, // 54: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
-	28, // 55: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
-	30, // 56: services.request.v1.RequestService.DismissRequest:output_type -> services.request.v1.DismissRequestResponse
-	32, // 57: services.request.v1.RequestService.CountUnreadForOrganization:output_type -> services.request.v1.CountUnreadForOrganizationResponse
-	34, // 58: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
-	36, // 59: services.request.v1.RequestService.GetUserRequestCounts:output_type -> services.request.v1.GetUserRequestCountsResponse
-	38, // 60: services.request.v1.RequestService.PauseRequest:output_type -> services.request.v1.PauseRequestResponse
-	40, // 61: services.request.v1.RequestService.UnpauseRequest:output_type -> services.request.v1.UnpauseRequestResponse
-	43, // [43:62] is the sub-list for method output_type
-	24, // [24:43] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	1,  // 18: services.request.v1.GetUserRequestsRequest.statuses:type_name -> services.request.v1.RequestStatus
+	2,  // 19: services.request.v1.GetUserRequestsResponse.requests:type_name -> services.request.v1.Request
+	0,  // 20: services.request.v1.CountUnreadForOrganizationRequest.type:type_name -> services.request.v1.RequestType
+	2,  // 21: services.request.v1.ClassifyRequestResponse.request:type_name -> services.request.v1.Request
+	0,  // 22: services.request.v1.GetUserRequestCountsRequest.type:type_name -> services.request.v1.RequestType
+	2,  // 23: services.request.v1.PauseRequestResponse.request:type_name -> services.request.v1.Request
+	2,  // 24: services.request.v1.UnpauseRequestResponse.request:type_name -> services.request.v1.Request
+	3,  // 25: services.request.v1.RequestService.CreateRequest:input_type -> services.request.v1.CreateRequestRequest
+	5,  // 26: services.request.v1.RequestService.GetRequest:input_type -> services.request.v1.GetRequestRequest
+	7,  // 27: services.request.v1.RequestService.UpdateRequest:input_type -> services.request.v1.UpdateRequestRequest
+	9,  // 28: services.request.v1.RequestService.DeleteRequest:input_type -> services.request.v1.DeleteRequestRequest
+	11, // 29: services.request.v1.RequestService.ListRequests:input_type -> services.request.v1.ListRequestsRequest
+	13, // 30: services.request.v1.RequestService.SearchRequests:input_type -> services.request.v1.SearchRequestsRequest
+	15, // 31: services.request.v1.RequestService.ChangeStatus:input_type -> services.request.v1.ChangeStatusRequest
+	17, // 32: services.request.v1.RequestService.GetUserRequests:input_type -> services.request.v1.GetUserRequestsRequest
+	19, // 33: services.request.v1.RequestService.IncrementViews:input_type -> services.request.v1.IncrementViewsRequest
+	21, // 34: services.request.v1.RequestService.GetSuggestions:input_type -> services.request.v1.GetSuggestionsRequest
+	23, // 35: services.request.v1.RequestService.GetNewRequestsForOrganization:input_type -> services.request.v1.GetNewRequestsForOrganizationRequest
+	25, // 36: services.request.v1.RequestService.MarkRequestAsViewed:input_type -> services.request.v1.MarkRequestAsViewedRequest
+	27, // 37: services.request.v1.RequestService.IsRequestNew:input_type -> services.request.v1.IsRequestNewRequest
+	29, // 38: services.request.v1.RequestService.DismissRequest:input_type -> services.request.v1.DismissRequestRequest
+	31, // 39: services.request.v1.RequestService.CountUnreadForOrganization:input_type -> services.request.v1.CountUnreadForOrganizationRequest
+	33, // 40: services.request.v1.RequestService.ClassifyRequest:input_type -> services.request.v1.ClassifyRequestRequest
+	35, // 41: services.request.v1.RequestService.GetUserRequestCounts:input_type -> services.request.v1.GetUserRequestCountsRequest
+	37, // 42: services.request.v1.RequestService.PauseRequest:input_type -> services.request.v1.PauseRequestRequest
+	39, // 43: services.request.v1.RequestService.UnpauseRequest:input_type -> services.request.v1.UnpauseRequestRequest
+	4,  // 44: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
+	6,  // 45: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
+	8,  // 46: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
+	10, // 47: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
+	12, // 48: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
+	14, // 49: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
+	16, // 50: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
+	18, // 51: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
+	20, // 52: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
+	22, // 53: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
+	24, // 54: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
+	26, // 55: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
+	28, // 56: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
+	30, // 57: services.request.v1.RequestService.DismissRequest:output_type -> services.request.v1.DismissRequestResponse
+	32, // 58: services.request.v1.RequestService.CountUnreadForOrganization:output_type -> services.request.v1.CountUnreadForOrganizationResponse
+	34, // 59: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
+	36, // 60: services.request.v1.RequestService.GetUserRequestCounts:output_type -> services.request.v1.GetUserRequestCountsResponse
+	38, // 61: services.request.v1.RequestService.PauseRequest:output_type -> services.request.v1.PauseRequestResponse
+	40, // 62: services.request.v1.RequestService.UnpauseRequest:output_type -> services.request.v1.UnpauseRequestResponse
+	44, // [44:63] is the sub-list for method output_type
+	25, // [25:44] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_services_request_request_proto_init() }
