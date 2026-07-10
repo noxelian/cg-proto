@@ -216,6 +216,14 @@ message UpdateRequestRequest {
   optional int64 car_generation_id = 10;
   optional int32 year = 11;
   optional int64 garage_car_id = 12;
+
+  // NSI classification — editable so a manager can correct the group (СТО/
+  // кузовные/запчасти) and categories of a request. group_id is optional
+  // (absent = unchanged); category_ids replaces the set when has_category_ids
+  // is true (allows clearing to empty).
+  optional int64 group_id = 13;
+  repeated int64 category_ids = 14;
+  bool has_category_ids = 15;
 }
 
 message UpdateRequestResponse {

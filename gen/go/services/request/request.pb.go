@@ -738,8 +738,15 @@ type UpdateRequestRequest struct {
 	CarGenerationId *int64 `protobuf:"varint,10,opt,name=car_generation_id,json=carGenerationId,proto3,oneof" json:"car_generation_id,omitempty"`
 	Year            *int32 `protobuf:"varint,11,opt,name=year,proto3,oneof" json:"year,omitempty"`
 	GarageCarId     *int64 `protobuf:"varint,12,opt,name=garage_car_id,json=garageCarId,proto3,oneof" json:"garage_car_id,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// NSI classification — editable so a manager can correct the group (СТО/
+	// кузовные/запчасти) and categories of a request. group_id is optional
+	// (absent = unchanged); category_ids replaces the set when has_category_ids
+	// is true (allows clearing to empty).
+	GroupId        *int64  `protobuf:"varint,13,opt,name=group_id,json=groupId,proto3,oneof" json:"group_id,omitempty"`
+	CategoryIds    []int64 `protobuf:"varint,14,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
+	HasCategoryIds bool    `protobuf:"varint,15,opt,name=has_category_ids,json=hasCategoryIds,proto3" json:"has_category_ids,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *UpdateRequestRequest) Reset() {
@@ -854,6 +861,27 @@ func (x *UpdateRequestRequest) GetGarageCarId() int64 {
 		return *x.GarageCarId
 	}
 	return 0
+}
+
+func (x *UpdateRequestRequest) GetGroupId() int64 {
+	if x != nil && x.GroupId != nil {
+		return *x.GroupId
+	}
+	return 0
+}
+
+func (x *UpdateRequestRequest) GetCategoryIds() []int64 {
+	if x != nil {
+		return x.CategoryIds
+	}
+	return nil
+}
+
+func (x *UpdateRequestRequest) GetHasCategoryIds() bool {
+	if x != nil {
+		return x.HasCategoryIds
+	}
+	return false
 }
 
 type UpdateRequestResponse struct {
@@ -2836,7 +2864,7 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\"L\n" +
 	"\x12GetRequestResponse\x126\n" +
-	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\xa3\x04\n" +
+	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\x9d\x05\n" +
 	"\x14UpdateRequestRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x17\n" +
@@ -2852,7 +2880,10 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x11car_generation_id\x18\n" +
 	" \x01(\x03H\x06R\x0fcarGenerationId\x88\x01\x01\x12\x17\n" +
 	"\x04year\x18\v \x01(\x05H\aR\x04year\x88\x01\x01\x12'\n" +
-	"\rgarage_car_id\x18\f \x01(\x03H\bR\vgarageCarId\x88\x01\x01B\a\n" +
+	"\rgarage_car_id\x18\f \x01(\x03H\bR\vgarageCarId\x88\x01\x01\x12\x1e\n" +
+	"\bgroup_id\x18\r \x01(\x03H\tR\agroupId\x88\x01\x01\x12!\n" +
+	"\fcategory_ids\x18\x0e \x03(\x03R\vcategoryIds\x12(\n" +
+	"\x10has_category_ids\x18\x0f \x01(\bR\x0ehasCategoryIdsB\a\n" +
 	"\x05_noteB\n" +
 	"\n" +
 	"\b_addressB\v\n" +
@@ -2863,7 +2894,8 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\r_car_model_idB\x14\n" +
 	"\x12_car_generation_idB\a\n" +
 	"\x05_yearB\x10\n" +
-	"\x0e_garage_car_id\"O\n" +
+	"\x0e_garage_car_idB\v\n" +
+	"\t_group_id\"O\n" +
 	"\x15UpdateRequestResponse\x126\n" +
 	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"N\n" +
 	"\x14DeleteRequestRequest\x12\x1d\n" +
