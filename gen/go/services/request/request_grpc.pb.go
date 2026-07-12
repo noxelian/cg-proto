@@ -24,6 +24,7 @@ const (
 	RequestService_UpdateRequest_FullMethodName                 = "/services.request.v1.RequestService/UpdateRequest"
 	RequestService_DeleteRequest_FullMethodName                 = "/services.request.v1.RequestService/DeleteRequest"
 	RequestService_ListRequests_FullMethodName                  = "/services.request.v1.RequestService/ListRequests"
+	RequestService_ListPublishedPreviews_FullMethodName         = "/services.request.v1.RequestService/ListPublishedPreviews"
 	RequestService_SearchRequests_FullMethodName                = "/services.request.v1.RequestService/SearchRequests"
 	RequestService_ChangeStatus_FullMethodName                  = "/services.request.v1.RequestService/ChangeStatus"
 	RequestService_GetUserRequests_FullMethodName               = "/services.request.v1.RequestService/GetUserRequests"
@@ -54,6 +55,10 @@ type RequestServiceClient interface {
 	DeleteRequest(ctx context.Context, in *DeleteRequestRequest, opts ...grpc.CallOption) (*DeleteRequestResponse, error)
 	// ListRequests lists requests with filters
 	ListRequests(ctx context.Context, in *ListRequestsRequest, opts ...grpc.CallOption) (*ListRequestsResponse, error)
+	// ListPublishedPreviews exposes the safe, read-only marketplace discovery
+	// projection before sign-in. Unlike ListRequests it never includes user,
+	// address, geo, organization or lifecycle-private fields.
+	ListPublishedPreviews(ctx context.Context, in *ListPublishedPreviewsRequest, opts ...grpc.CallOption) (*ListPublishedPreviewsResponse, error)
 	// SearchRequests searches requests via Postgres
 	SearchRequests(ctx context.Context, in *SearchRequestsRequest, opts ...grpc.CallOption) (*SearchRequestsResponse, error)
 	// ChangeStatus changes request status (moderation, published, deleted)
@@ -146,6 +151,16 @@ func (c *requestServiceClient) ListRequests(ctx context.Context, in *ListRequest
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListRequestsResponse)
 	err := c.cc.Invoke(ctx, RequestService_ListRequests_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestServiceClient) ListPublishedPreviews(ctx context.Context, in *ListPublishedPreviewsRequest, opts ...grpc.CallOption) (*ListPublishedPreviewsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPublishedPreviewsResponse)
+	err := c.cc.Invoke(ctx, RequestService_ListPublishedPreviews_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -306,6 +321,10 @@ type RequestServiceServer interface {
 	DeleteRequest(context.Context, *DeleteRequestRequest) (*DeleteRequestResponse, error)
 	// ListRequests lists requests with filters
 	ListRequests(context.Context, *ListRequestsRequest) (*ListRequestsResponse, error)
+	// ListPublishedPreviews exposes the safe, read-only marketplace discovery
+	// projection before sign-in. Unlike ListRequests it never includes user,
+	// address, geo, organization or lifecycle-private fields.
+	ListPublishedPreviews(context.Context, *ListPublishedPreviewsRequest) (*ListPublishedPreviewsResponse, error)
 	// SearchRequests searches requests via Postgres
 	SearchRequests(context.Context, *SearchRequestsRequest) (*SearchRequestsResponse, error)
 	// ChangeStatus changes request status (moderation, published, deleted)
@@ -368,6 +387,9 @@ func (UnimplementedRequestServiceServer) DeleteRequest(context.Context, *DeleteR
 }
 func (UnimplementedRequestServiceServer) ListRequests(context.Context, *ListRequestsRequest) (*ListRequestsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListRequests not implemented")
+}
+func (UnimplementedRequestServiceServer) ListPublishedPreviews(context.Context, *ListPublishedPreviewsRequest) (*ListPublishedPreviewsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPublishedPreviews not implemented")
 }
 func (UnimplementedRequestServiceServer) SearchRequests(context.Context, *SearchRequestsRequest) (*SearchRequestsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SearchRequests not implemented")
@@ -518,6 +540,24 @@ func _RequestService_ListRequests_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RequestServiceServer).ListRequests(ctx, req.(*ListRequestsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestService_ListPublishedPreviews_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPublishedPreviewsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).ListPublishedPreviews(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_ListPublishedPreviews_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).ListPublishedPreviews(ctx, req.(*ListPublishedPreviewsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -800,6 +840,10 @@ var RequestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListRequests",
 			Handler:    _RequestService_ListRequests_Handler,
+		},
+		{
+			MethodName: "ListPublishedPreviews",
+			Handler:    _RequestService_ListPublishedPreviews_Handler,
 		},
 		{
 			MethodName: "SearchRequests",

@@ -21,6 +21,11 @@ service RequestService {
   
   // ListRequests lists requests with filters
   rpc ListRequests(ListRequestsRequest) returns (ListRequestsResponse);
+
+  // ListPublishedPreviews exposes the safe, read-only marketplace discovery
+  // projection before sign-in. Unlike ListRequests it never includes user,
+  // address, geo, organization or lifecycle-private fields.
+  rpc ListPublishedPreviews(ListPublishedPreviewsRequest) returns (ListPublishedPreviewsResponse);
   
   // SearchRequests searches requests via Postgres
   rpc SearchRequests(SearchRequestsRequest) returns (SearchRequestsResponse);
@@ -261,6 +266,35 @@ message ListRequestsResponse {
   int32 total = 2;
 }
 
+// ListPublishedPreviews
+message ListPublishedPreviewsRequest {
+  int64 category_id = 1;
+  int64 city_id = 2;
+  int64 car_make_id = 3;
+  int32 page = 4;
+  int32 page_size = 5;
+}
+
+// PublishedRequestPreview intentionally contains only marketplace-card data.
+message PublishedRequestPreview {
+  string id = 1;
+  RequestType type = 2;
+  int64 group_id = 3;
+  repeated int64 category_ids = 4;
+  int64 car_make_id = 5;
+  int64 car_model_id = 6;
+  int32 year = 7;
+  string note = 8;
+  repeated string photos = 9;
+  int64 city_id = 10;
+  google.protobuf.Timestamp published_at = 11;
+}
+
+message ListPublishedPreviewsResponse {
+  repeated PublishedRequestPreview requests = 1;
+  int32 total = 2;
+}
+
 // SearchRequests
 message SearchRequestsRequest {
   string query = 1;
@@ -441,4 +475,3 @@ message UnpauseRequestRequest {
 message UnpauseRequestResponse {
   Request request = 1;
 }
-
