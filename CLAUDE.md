@@ -4,7 +4,7 @@ Entry point for a new Claude session in this repo. Read before editing.
 
 ## What this is
 
-**Centralized Protocol Buffers definitions for all CTOgram services.** Module: `github.com/4ubak/cg-proto`. One package per domain. Generated Go code under `gen/go/`. Consumers pin a tagged release (latest is `v1.271.0` as of 2026-07-06) in their `go.mod`.
+**Centralized Protocol Buffers definitions for all CTOgram services.** Module: `github.com/4ubak/cg-proto`. One package per domain. Generated Go code under `gen/go/`. Consumers pin a tagged release (latest is `v1.278.0` as of 2026-07-12) in their `go.mod`.
 
 ## Layout
 
@@ -40,6 +40,9 @@ Top-level: `buf.yaml`, `buf.gen.yaml`, `go.mod`, `gen/`.
 
 - **One coherent package per domain.** Don't cross-define: orders proto cannot import workshop proto types — duplicate the fields or reference them via well-known scalar IDs.
 - **Backward compatibility**: never delete/renumber fields. Only add new ones with new tags.
+- Payment request fields that are retained only for wire compatibility must be
+  marked `deprecated`; comments must name the authoritative service/JWT source
+  instead of implying that a client-provided financial or identity value is trusted.
 - **Tag every release**: `v1.X.Y` SemVer, then push with `--tags` to GitHub.
 - **Consumers never use local `replace` directives.** `replace github.com/4ubak/cg-proto => /Users/...` breaks CI. Direct GitHub pin only.
 - `GOPRIVATE=github.com/4ubak/*` required in consumer envs and CI.

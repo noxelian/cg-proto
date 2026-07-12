@@ -1917,16 +1917,28 @@ func (x *PayOption) GetPaySessionToken() string {
 type InitPaymentRequest struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
 	EntityType PayEntityType          `protobuf:"varint,1,opt,name=entity_type,json=entityType,proto3,enum=payments.payment.v1.PayEntityType" json:"entity_type,omitempty"`
-	EntityId   int64                  `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"` // 0 is valid for entity types that create an
-	// internal payment_request on the fly
-	Amount   int64  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`    // tiyn; required
-	Currency string `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"` // default "KZT"
-	UserId   int64  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	// Optional contextual fields forwarded from CombinedPayModel.
-	City  string `protobuf:"bytes,6,opt,name=city,proto3" json:"city,omitempty"`
+	EntityId   int64                  `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"` // Required positive ID resolved by the entity owner.
+	// Deprecated request financial facts. cg-payments ignores these fields and
+	// resolves amount, currency and organization from the owning service before
+	// minting a pay-session token.
+	//
+	// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
+	Amount int64 `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
+	// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
+	Currency string `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
+	// Deprecated identity copy. The verified JWT is authoritative.
+	//
+	// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
+	UserId int64 `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// Deprecated legacy CombinedPayModel context; cg-payments ignores it.
+	//
+	// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
+	City string `protobuf:"bytes,6,opt,name=city,proto3" json:"city,omitempty"`
+	// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
 	Phone string `protobuf:"bytes,7,opt,name=phone,proto3" json:"phone,omitempty"`
-	Note  string `protobuf:"bytes,8,opt,name=note,proto3" json:"note,omitempty"`
-	// delivery_amount is added to amount when computing the total.
+	// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
+	Note string `protobuf:"bytes,8,opt,name=note,proto3" json:"note,omitempty"`
+	// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
 	DeliveryAmount int64 `protobuf:"varint,9,opt,name=delivery_amount,json=deliveryAmount,proto3" json:"delivery_amount,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
@@ -1976,6 +1988,7 @@ func (x *InitPaymentRequest) GetEntityId() int64 {
 	return 0
 }
 
+// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
 func (x *InitPaymentRequest) GetAmount() int64 {
 	if x != nil {
 		return x.Amount
@@ -1983,6 +1996,7 @@ func (x *InitPaymentRequest) GetAmount() int64 {
 	return 0
 }
 
+// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
 func (x *InitPaymentRequest) GetCurrency() string {
 	if x != nil {
 		return x.Currency
@@ -1990,6 +2004,7 @@ func (x *InitPaymentRequest) GetCurrency() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
 func (x *InitPaymentRequest) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
@@ -1997,6 +2012,7 @@ func (x *InitPaymentRequest) GetUserId() int64 {
 	return 0
 }
 
+// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
 func (x *InitPaymentRequest) GetCity() string {
 	if x != nil {
 		return x.City
@@ -2004,6 +2020,7 @@ func (x *InitPaymentRequest) GetCity() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
 func (x *InitPaymentRequest) GetPhone() string {
 	if x != nil {
 		return x.Phone
@@ -2011,6 +2028,7 @@ func (x *InitPaymentRequest) GetPhone() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
 func (x *InitPaymentRequest) GetNote() string {
 	if x != nil {
 		return x.Note
@@ -2018,6 +2036,7 @@ func (x *InitPaymentRequest) GetNote() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
 func (x *InitPaymentRequest) GetDeliveryAmount() int64 {
 	if x != nil {
 		return x.DeliveryAmount
@@ -2035,7 +2054,7 @@ type InitPaymentResponse struct {
 	WalletEligible bool `protobuf:"varint,3,opt,name=wallet_eligible,json=walletEligible,proto3" json:"wallet_eligible,omitempty"`
 	// wallet_balance_tiyn is the current deductible wallet balance; 0 when ineligible.
 	WalletBalanceTiyn int64 `protobuf:"varint,4,opt,name=wallet_balance_tiyn,json=walletBalanceTiyn,proto3" json:"wallet_balance_tiyn,omitempty"`
-	// total_amount_tiyn is amount + delivery_amount as confirmed by the service.
+	// total_amount_tiyn is the authoritative amount resolved by the entity owner.
 	TotalAmountTiyn int64 `protobuf:"varint,5,opt,name=total_amount_tiyn,json=totalAmountTiyn,proto3" json:"total_amount_tiyn,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -2406,18 +2425,18 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x0ecashback_title\x18\x04 \x01(\tR\rcashbackTitle\x12\x19\n" +
 	"\bicon_url\x18\x05 \x01(\tR\aiconUrl\x126\n" +
 	"\x04kind\x18\x06 \x01(\x0e2\".payments.payment.v1.PayOptionKindR\x04kind\x12*\n" +
-	"\x11pay_session_token\x18\a \x01(\tR\x0fpaySessionToken\"\xaa\x02\n" +
+	"\x11pay_session_token\x18\a \x01(\tR\x0fpaySessionToken\"\xc6\x02\n" +
 	"\x12InitPaymentRequest\x12C\n" +
 	"\ventity_type\x18\x01 \x01(\x0e2\".payments.payment.v1.PayEntityTypeR\n" +
 	"entityType\x12\x1b\n" +
-	"\tentity_id\x18\x02 \x01(\x03R\bentityId\x12\x16\n" +
-	"\x06amount\x18\x03 \x01(\x03R\x06amount\x12\x1a\n" +
-	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12\x17\n" +
-	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x12\n" +
-	"\x04city\x18\x06 \x01(\tR\x04city\x12\x14\n" +
-	"\x05phone\x18\a \x01(\tR\x05phone\x12\x12\n" +
-	"\x04note\x18\b \x01(\tR\x04note\x12'\n" +
-	"\x0fdelivery_amount\x18\t \x01(\x03R\x0edeliveryAmount\"\xb8\x02\n" +
+	"\tentity_id\x18\x02 \x01(\x03R\bentityId\x12\x1a\n" +
+	"\x06amount\x18\x03 \x01(\x03B\x02\x18\x01R\x06amount\x12\x1e\n" +
+	"\bcurrency\x18\x04 \x01(\tB\x02\x18\x01R\bcurrency\x12\x1b\n" +
+	"\auser_id\x18\x05 \x01(\x03B\x02\x18\x01R\x06userId\x12\x16\n" +
+	"\x04city\x18\x06 \x01(\tB\x02\x18\x01R\x04city\x12\x18\n" +
+	"\x05phone\x18\a \x01(\tB\x02\x18\x01R\x05phone\x12\x16\n" +
+	"\x04note\x18\b \x01(\tB\x02\x18\x01R\x04note\x12+\n" +
+	"\x0fdelivery_amount\x18\t \x01(\x03B\x02\x18\x01R\x0edeliveryAmount\"\xb8\x02\n" +
 	"\x13InitPaymentResponse\x12K\n" +
 	"\x11available_options\x18\x01 \x03(\v2\x1e.payments.payment.v1.PayOptionR\x10availableOptions\x12O\n" +
 	"\x13installment_options\x18\x02 \x03(\v2\x1e.payments.payment.v1.PayOptionR\x12installmentOptions\x12'\n" +

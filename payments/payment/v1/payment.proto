@@ -317,17 +317,19 @@ message PayOption {
 
 message InitPaymentRequest {
   PayEntityType entity_type = 1;
-  int64 entity_id = 2;        // 0 is valid for entity types that create an
-                              // internal payment_request on the fly
-  int64 amount = 3;           // tiyn; required
-  string currency = 4;        // default "KZT"
-  int64 user_id = 5;
-  // Optional contextual fields forwarded from CombinedPayModel.
-  string city = 6;
-  string phone = 7;
-  string note = 8;
-  // delivery_amount is added to amount when computing the total.
-  int64 delivery_amount = 9;
+  int64 entity_id = 2; // Required positive ID resolved by the entity owner.
+  // Deprecated request financial facts. cg-payments ignores these fields and
+  // resolves amount, currency and organization from the owning service before
+  // minting a pay-session token.
+  int64 amount = 3 [deprecated = true];
+  string currency = 4 [deprecated = true];
+  // Deprecated identity copy. The verified JWT is authoritative.
+  int64 user_id = 5 [deprecated = true];
+  // Deprecated legacy CombinedPayModel context; cg-payments ignores it.
+  string city = 6 [deprecated = true];
+  string phone = 7 [deprecated = true];
+  string note = 8 [deprecated = true];
+  int64 delivery_amount = 9 [deprecated = true];
 }
 
 message InitPaymentResponse {
@@ -339,7 +341,7 @@ message InitPaymentResponse {
   bool wallet_eligible = 3;
   // wallet_balance_tiyn is the current deductible wallet balance; 0 when ineligible.
   int64 wallet_balance_tiyn = 4;
-  // total_amount_tiyn is amount + delivery_amount as confirmed by the service.
+  // total_amount_tiyn is the authoritative amount resolved by the entity owner.
   int64 total_amount_tiyn = 5;
 }
 
