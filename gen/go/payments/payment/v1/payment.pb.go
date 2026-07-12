@@ -269,6 +269,7 @@ const (
 	PayEntityType_PAY_ENTITY_TYPE_ORDER            PayEntityType = 22 // new_cg: marketplace order
 	PayEntityType_PAY_ENTITY_TYPE_BOOKING          PayEntityType = 23 // new_cg: car-wash booking
 	PayEntityType_PAY_ENTITY_TYPE_CART_CHECKOUT    PayEntityType = 24 // new_cg: cart_checkout
+	PayEntityType_PAY_ENTITY_TYPE_REPAIR_ORDER     PayEntityType = 25 // new_cg: cg-workshop repair_order
 )
 
 // Enum value maps for PayEntityType.
@@ -292,6 +293,7 @@ var (
 		22: "PAY_ENTITY_TYPE_ORDER",
 		23: "PAY_ENTITY_TYPE_BOOKING",
 		24: "PAY_ENTITY_TYPE_CART_CHECKOUT",
+		25: "PAY_ENTITY_TYPE_REPAIR_ORDER",
 	}
 	PayEntityType_value = map[string]int32{
 		"PAY_ENTITY_TYPE_UNSPECIFIED":      0,
@@ -312,6 +314,7 @@ var (
 		"PAY_ENTITY_TYPE_ORDER":            22,
 		"PAY_ENTITY_TYPE_BOOKING":          23,
 		"PAY_ENTITY_TYPE_CART_CHECKOUT":    24,
+		"PAY_ENTITY_TYPE_REPAIR_ORDER":     25,
 	}
 )
 
@@ -795,18 +798,20 @@ func (x *AuditLogEntry) GetCreatedAt() *timestamppb.Timestamp {
 }
 
 type CreateTransactionRequest struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	EntityType       string                 `protobuf:"bytes,1,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"` // "subscription", "bid_purchase", "order", "booking"
-	EntityId         int64                  `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
-	OrganizationId   string                 `protobuf:"bytes,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	UserId           int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Amount           int64                  `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`
-	Currency         string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`
-	Provider         PaymentProvider        `protobuf:"varint,7,opt,name=provider,proto3,enum=payments.payment.v1.PaymentProvider" json:"provider,omitempty"`
-	PaymentMethod    PaymentMethod          `protobuf:"varint,8,opt,name=payment_method,json=paymentMethod,proto3,enum=payments.payment.v1.PaymentMethod" json:"payment_method,omitempty"`
-	IdempotencyKey   string                 `protobuf:"bytes,9,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
-	CommissionAmount int64                  `protobuf:"varint,10,opt,name=commission_amount,json=commissionAmount,proto3" json:"commission_amount,omitempty"`
-	ReturnUrl        string                 `protobuf:"bytes,11,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"` // optional HTTPS redirect URL after payment (must be HTTPS, no private IPs)
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// cg-payments binds each entity_type to one signed service identity. The
+	// current owner-service path is cg-orders -> cart_checkout.
+	EntityType       string          `protobuf:"bytes,1,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
+	EntityId         int64           `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
+	OrganizationId   string          `protobuf:"bytes,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	UserId           int64           `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // authoritative payer selected by the owner service
+	Amount           int64           `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`               // authoritative amount in minor units (tiyn for KZT)
+	Currency         string          `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`
+	Provider         PaymentProvider `protobuf:"varint,7,opt,name=provider,proto3,enum=payments.payment.v1.PaymentProvider" json:"provider,omitempty"`
+	PaymentMethod    PaymentMethod   `protobuf:"varint,8,opt,name=payment_method,json=paymentMethod,proto3,enum=payments.payment.v1.PaymentMethod" json:"payment_method,omitempty"`
+	IdempotencyKey   string          `protobuf:"bytes,9,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	CommissionAmount int64           `protobuf:"varint,10,opt,name=commission_amount,json=commissionAmount,proto3" json:"commission_amount,omitempty"`
+	ReturnUrl        string          `protobuf:"bytes,11,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"` // optional HTTPS redirect URL after payment (must be HTTPS, no private IPs)
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -2480,7 +2485,7 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x13PAYMENT_METHOD_CARD\x10\x01\x12\x1c\n" +
 	"\x18PAYMENT_METHOD_APPLE_PAY\x10\x02\x12\x1d\n" +
 	"\x19PAYMENT_METHOD_GOOGLE_PAY\x10\x03\x12\x18\n" +
-	"\x14PAYMENT_METHOD_KASPI\x10\x04*\xd2\x04\n" +
+	"\x14PAYMENT_METHOD_KASPI\x10\x04*\xf4\x04\n" +
 	"\rPayEntityType\x12\x1f\n" +
 	"\x1bPAY_ENTITY_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13PAY_ENTITY_TYPE_ADS\x10\x01\x12\x1a\n" +
@@ -2499,7 +2504,8 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x1cPAY_ENTITY_TYPE_BID_PURCHASE\x10\x15\x12\x19\n" +
 	"\x15PAY_ENTITY_TYPE_ORDER\x10\x16\x12\x1b\n" +
 	"\x17PAY_ENTITY_TYPE_BOOKING\x10\x17\x12!\n" +
-	"\x1dPAY_ENTITY_TYPE_CART_CHECKOUT\x10\x18*\xa2\x01\n" +
+	"\x1dPAY_ENTITY_TYPE_CART_CHECKOUT\x10\x18\x12 \n" +
+	"\x1cPAY_ENTITY_TYPE_REPAIR_ORDER\x10\x19*\xa2\x01\n" +
 	"\rPayOptionKind\x12\x1f\n" +
 	"\x1bPAY_OPTION_KIND_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14PAY_OPTION_KIND_CARD\x10\x01\x12\x19\n" +

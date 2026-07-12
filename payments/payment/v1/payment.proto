@@ -7,10 +7,12 @@ option go_package = "github.com/4ubak/cg-proto/gen/go/payments/payment;paymentv1
 import "google/protobuf/timestamp.proto";
 
 // PaymentService handles payment processing, transactions, refunds, and webhooks.
-// Domain services (orders, bookings) create entities first, then BFF calls
-// CreateTransaction to initiate payment via the appropriate provider.
 service PaymentService {
   // === Transactions ===
+  // CreateTransaction accepts an authoritative payment intent only from the
+  // service that owns entity_type. It is not a human/BFF checkout endpoint.
+  // User-facing checkout uses InitPayment + StartPayment so cg-payments can
+  // resolve amount and ownership from the entity owner.
   rpc CreateTransaction(CreateTransactionRequest) returns (CreateTransactionResponse);
   rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse);
   rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
@@ -102,6 +104,7 @@ enum PayEntityType {
   PAY_ENTITY_TYPE_ORDER = 22;            // new_cg: marketplace order
   PAY_ENTITY_TYPE_BOOKING = 23;          // new_cg: car-wash booking
   PAY_ENTITY_TYPE_CART_CHECKOUT = 24;    // new_cg: cart_checkout
+  PAY_ENTITY_TYPE_REPAIR_ORDER = 25;     // new_cg: cg-workshop repair_order
 }
 
 // PayOptionKind is the installment / BNPL flavour of a payment option.
@@ -163,15 +166,17 @@ message AuditLogEntry {
 }
 
 // =============================================
-// CreateTransaction — initiates a payment for any entity
+// CreateTransaction — owner-service authoritative payment intent
 // =============================================
 
 message CreateTransactionRequest {
-  string entity_type = 1;       // "subscription", "bid_purchase", "order", "booking"
+  // cg-payments binds each entity_type to one signed service identity. The
+  // current owner-service path is cg-orders -> cart_checkout.
+  string entity_type = 1;
   int64 entity_id = 2;
   string organization_id = 3;
-  int64 user_id = 4;
-  int64 amount = 5;
+  int64 user_id = 4;            // authoritative payer selected by the owner service
+  int64 amount = 5;             // authoritative amount in minor units (tiyn for KZT)
   string currency = 6;
   PaymentProvider provider = 7;
   PaymentMethod payment_method = 8;

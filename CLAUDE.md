@@ -4,7 +4,7 @@ Entry point for a new Claude session in this repo. Read before editing.
 
 ## What this is
 
-**Centralized Protocol Buffers definitions for all CTOgram services.** Module: `github.com/4ubak/cg-proto`. One package per domain. Generated Go code under `gen/go/`. Consumers pin a tagged release (latest is `v1.278.0` as of 2026-07-12) in their `go.mod`.
+**Centralized Protocol Buffers definitions for all CTOgram services.** Module: `github.com/4ubak/cg-proto`. One package per domain. Generated Go code under `gen/go/`. Consumers pin a tagged release (latest is `v1.280.0` as of 2026-07-12) in their `go.mod`.
 
 ## Layout
 

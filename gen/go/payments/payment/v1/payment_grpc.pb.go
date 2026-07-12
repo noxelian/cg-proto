@@ -36,10 +36,12 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // PaymentService handles payment processing, transactions, refunds, and webhooks.
-// Domain services (orders, bookings) create entities first, then BFF calls
-// CreateTransaction to initiate payment via the appropriate provider.
 type PaymentServiceClient interface {
 	// === Transactions ===
+	// CreateTransaction accepts an authoritative payment intent only from the
+	// service that owns entity_type. It is not a human/BFF checkout endpoint.
+	// User-facing checkout uses InitPayment + StartPayment so cg-payments can
+	// resolve amount and ownership from the entity owner.
 	CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*CreateTransactionResponse, error)
 	ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error)
 	GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error)
@@ -177,10 +179,12 @@ func (c *paymentServiceClient) StartPayment(ctx context.Context, in *StartPaymen
 // for forward compatibility.
 //
 // PaymentService handles payment processing, transactions, refunds, and webhooks.
-// Domain services (orders, bookings) create entities first, then BFF calls
-// CreateTransaction to initiate payment via the appropriate provider.
 type PaymentServiceServer interface {
 	// === Transactions ===
+	// CreateTransaction accepts an authoritative payment intent only from the
+	// service that owns entity_type. It is not a human/BFF checkout endpoint.
+	// User-facing checkout uses InitPayment + StartPayment so cg-payments can
+	// resolve amount and ownership from the entity owner.
 	CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionResponse, error)
 	ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error)
 	GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error)
