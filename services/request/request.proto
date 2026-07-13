@@ -259,6 +259,7 @@ message ListRequestsRequest {
   string sort_by = 10;  // created_at, published_at, unread_first
   optional int64 repair_order_id = 11;  // Filter by linked repair order
   optional string organization_id = 12;  // When set, enriches results with is_new flag; enables sort_by=unread_first
+  optional string owner_organization_id = 13;  // Filters requests whose authoritative org_id matches this organization
 }
 
 message ListRequestsResponse {

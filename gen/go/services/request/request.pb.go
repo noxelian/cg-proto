@@ -1027,21 +1027,22 @@ func (x *DeleteRequestResponse) GetSuccess() bool {
 
 // ListRequests
 type ListRequestsRequest struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Type           RequestType            `protobuf:"varint,1,opt,name=type,proto3,enum=services.request.v1.RequestType" json:"type,omitempty"`
-	Status         RequestStatus          `protobuf:"varint,2,opt,name=status,proto3,enum=services.request.v1.RequestStatus" json:"status,omitempty"`
-	UserId         int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	GroupId        int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	CategoryId     int64                  `protobuf:"varint,5,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // Фильтр по одной категории
-	CityId         int64                  `protobuf:"varint,6,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
-	CarMakeId      int64                  `protobuf:"varint,7,opt,name=car_make_id,json=carMakeId,proto3" json:"car_make_id,omitempty"`
-	Page           int32                  `protobuf:"varint,8,opt,name=page,proto3" json:"page,omitempty"`
-	PageSize       int32                  `protobuf:"varint,9,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	SortBy         string                 `protobuf:"bytes,10,opt,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"`                               // created_at, published_at, unread_first
-	RepairOrderId  *int64                 `protobuf:"varint,11,opt,name=repair_order_id,json=repairOrderId,proto3,oneof" json:"repair_order_id,omitempty"` // Filter by linked repair order
-	OrganizationId *string                `protobuf:"bytes,12,opt,name=organization_id,json=organizationId,proto3,oneof" json:"organization_id,omitempty"` // When set, enriches results with is_new flag; enables sort_by=unread_first
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	Type                RequestType            `protobuf:"varint,1,opt,name=type,proto3,enum=services.request.v1.RequestType" json:"type,omitempty"`
+	Status              RequestStatus          `protobuf:"varint,2,opt,name=status,proto3,enum=services.request.v1.RequestStatus" json:"status,omitempty"`
+	UserId              int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	GroupId             int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	CategoryId          int64                  `protobuf:"varint,5,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // Фильтр по одной категории
+	CityId              int64                  `protobuf:"varint,6,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
+	CarMakeId           int64                  `protobuf:"varint,7,opt,name=car_make_id,json=carMakeId,proto3" json:"car_make_id,omitempty"`
+	Page                int32                  `protobuf:"varint,8,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize            int32                  `protobuf:"varint,9,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	SortBy              string                 `protobuf:"bytes,10,opt,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"`                                                // created_at, published_at, unread_first
+	RepairOrderId       *int64                 `protobuf:"varint,11,opt,name=repair_order_id,json=repairOrderId,proto3,oneof" json:"repair_order_id,omitempty"`                  // Filter by linked repair order
+	OrganizationId      *string                `protobuf:"bytes,12,opt,name=organization_id,json=organizationId,proto3,oneof" json:"organization_id,omitempty"`                  // When set, enriches results with is_new flag; enables sort_by=unread_first
+	OwnerOrganizationId *string                `protobuf:"bytes,13,opt,name=owner_organization_id,json=ownerOrganizationId,proto3,oneof" json:"owner_organization_id,omitempty"` // Filters requests whose authoritative org_id matches this organization
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *ListRequestsRequest) Reset() {
@@ -1154,6 +1155,13 @@ func (x *ListRequestsRequest) GetRepairOrderId() int64 {
 func (x *ListRequestsRequest) GetOrganizationId() string {
 	if x != nil && x.OrganizationId != nil {
 		return *x.OrganizationId
+	}
+	return ""
+}
+
+func (x *ListRequestsRequest) GetOwnerOrganizationId() string {
+	if x != nil && x.OwnerOrganizationId != nil {
+		return *x.OwnerOrganizationId
 	}
 	return ""
 }
@@ -3169,7 +3177,7 @@ const file_services_request_request_proto_rawDesc = "" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\"1\n" +
 	"\x15DeleteRequestResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xe2\x03\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xb5\x04\n" +
 	"\x13ListRequestsRequest\x124\n" +
 	"\x04type\x18\x01 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12:\n" +
 	"\x06status\x18\x02 \x01(\x0e2\".services.request.v1.RequestStatusR\x06status\x12\x17\n" +
@@ -3184,9 +3192,11 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\asort_by\x18\n" +
 	" \x01(\tR\x06sortBy\x12+\n" +
 	"\x0frepair_order_id\x18\v \x01(\x03H\x00R\rrepairOrderId\x88\x01\x01\x12,\n" +
-	"\x0forganization_id\x18\f \x01(\tH\x01R\x0eorganizationId\x88\x01\x01B\x12\n" +
+	"\x0forganization_id\x18\f \x01(\tH\x01R\x0eorganizationId\x88\x01\x01\x127\n" +
+	"\x15owner_organization_id\x18\r \x01(\tH\x02R\x13ownerOrganizationId\x88\x01\x01B\x12\n" +
 	"\x10_repair_order_idB\x12\n" +
-	"\x10_organization_id\"f\n" +
+	"\x10_organization_idB\x18\n" +
+	"\x16_owner_organization_id\"f\n" +
 	"\x14ListRequestsResponse\x128\n" +
 	"\brequests\x18\x01 \x03(\v2\x1c.services.request.v1.RequestR\brequests\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"\xa9\x01\n" +
