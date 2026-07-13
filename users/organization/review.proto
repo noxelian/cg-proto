@@ -15,9 +15,9 @@ syntax = "proto3";
 // so cg-services/request can transition matching repair requests to CLOSED.
 package users.organization.v1;
 
-option go_package = "github.com/4ubak/cg-proto/gen/go/users/organization;organizationv1";
-
 import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/users/organization;organizationv1";
 
 service ReviewService {
   // Create a top-level customer review. Requires eligibility (completed
@@ -68,8 +68,8 @@ message Review {
   string text = 7;
 
   // Optional context — captured from the legacy ad_comment schema.
-  string work = 8;          // free-text "what was done"
-  string car = 9;           // free-text car description
+  string work = 8; // free-text "what was done"
+  string car = 9; // free-text car description
   optional int64 car_id = 10;
   optional int64 order_amount = 11;
   // Linked completed request that authorized this review. Empty for legacy
@@ -83,6 +83,12 @@ message Review {
   optional int64 legacy_id = 15;
   google.protobuf.Timestamp created_at = 16;
   google.protobuf.Timestamp updated_at = 17;
+  // Exact workshop order that authorized this review. Mutually exclusive
+  // with request_id and parts_order_id.
+  optional int64 repair_order_id = 18;
+  // Exact marketplace parts order that authorized this review. Mutually
+  // exclusive with request_id and repair_order_id.
+  optional int64 parts_order_id = 19;
 }
 
 message CreateReviewRequest {
@@ -93,19 +99,24 @@ message CreateReviewRequest {
   // with this org. Optional when `source` = "workshop_order" — eligibility is
   // proven via repair_order_id + DELIVERED check instead.
   string request_id = 4;
-  int32 rate = 5;            // 1..5
+  int32 rate = 5; // 1..5
   string text = 6;
   string work = 7;
   string car = 8;
   optional int64 car_id = 9;
   optional int64 order_amount = 10;
   repeated string photos = 11;
-  // Source identifies the origin flow. Known values: "workshop_order".
+  // Source identifies the origin flow. Known values: "workshop_order",
+  // "parts_order".
   // Empty = legacy default (request_id-based eligibility).
   optional string source = 12;
   // Repair order id for source="workshop_order". Required in that mode,
   // ignored otherwise. Eligibility verified via cg-workshop DELIVERED check.
   int64 repair_order_id = 13;
+  // Marketplace parts order id for source="parts_order". Required in that
+  // mode, ignored otherwise. Eligibility is verified against the exact
+  // cg-orders record (buyer, seller, type, and terminal-positive status).
+  int64 parts_order_id = 14;
 }
 
 message CreateReviewResponse {
@@ -113,8 +124,8 @@ message CreateReviewResponse {
 }
 
 message ReplyReviewRequest {
-  string reply_to_id = 1;    // top-level review id
-  int64 author_user_id = 2;  // must be the org owner
+  string reply_to_id = 1; // top-level review id
+  int64 author_user_id = 2; // must be the org owner
   string author_name = 3;
   string text = 4;
   repeated string photos = 5;
@@ -127,8 +138,8 @@ message ReplyReviewResponse {
 message UpdateReviewRequest {
   string id = 1;
   int64 caller_user_id = 2;
-  bool is_moderator = 3;     // bypass author/edit-window check
-  optional int32 rate = 4;   // 1..5; only allowed for top-level reviews
+  bool is_moderator = 3; // bypass author/edit-window check
+  optional int32 rate = 4; // 1..5; only allowed for top-level reviews
   optional string text = 5;
   // Replace photos with this list. Empty list clears photos.
   // Use absence (not the field) to indicate "no change".
@@ -158,11 +169,11 @@ message ListReviewsRequest {
   // Filters
   int64 author_user_id = 2;
   bool include_replies = 3;
-  int32 min_rate = 4;        // 0 = no bound
-  int32 max_rate = 5;        // 0 = no bound
+  int32 min_rate = 4; // 0 = no bound
+  int32 max_rate = 5; // 0 = no bound
   // Pagination
   int32 page = 6;
-  int32 limit = 7;           // <=100
+  int32 limit = 7; // <=100
 }
 
 message ListReviewsResponse {
@@ -201,9 +212,9 @@ message GetRateDistributionRequest {
 }
 
 message RateBucket {
-  int32 rate = 1;            // 1..5
+  int32 rate = 1; // 1..5
   int64 count = 2;
-  double percentage = 3;     // 0..1
+  double percentage = 3; // 0..1
 }
 
 message GetRateDistributionResponse {

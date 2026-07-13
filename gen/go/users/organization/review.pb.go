@@ -60,11 +60,17 @@ type Review struct {
 	// imports and owner replies.
 	RequestId string `protobuf:"bytes,12,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	// Up to 5 photo URLs, ordered.
-	Photos        []string               `protobuf:"bytes,13,rep,name=photos,proto3" json:"photos,omitempty"`
-	IsNew         bool                   `protobuf:"varint,14,opt,name=is_new,json=isNew,proto3" json:"is_new,omitempty"`
-	LegacyId      *int64                 `protobuf:"varint,15,opt,name=legacy_id,json=legacyId,proto3,oneof" json:"legacy_id,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Photos    []string               `protobuf:"bytes,13,rep,name=photos,proto3" json:"photos,omitempty"`
+	IsNew     bool                   `protobuf:"varint,14,opt,name=is_new,json=isNew,proto3" json:"is_new,omitempty"`
+	LegacyId  *int64                 `protobuf:"varint,15,opt,name=legacy_id,json=legacyId,proto3,oneof" json:"legacy_id,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// Exact workshop order that authorized this review. Mutually exclusive
+	// with request_id and parts_order_id.
+	RepairOrderId *int64 `protobuf:"varint,18,opt,name=repair_order_id,json=repairOrderId,proto3,oneof" json:"repair_order_id,omitempty"`
+	// Exact marketplace parts order that authorized this review. Mutually
+	// exclusive with request_id and repair_order_id.
+	PartsOrderId  *int64 `protobuf:"varint,19,opt,name=parts_order_id,json=partsOrderId,proto3,oneof" json:"parts_order_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -218,6 +224,20 @@ func (x *Review) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Review) GetRepairOrderId() int64 {
+	if x != nil && x.RepairOrderId != nil {
+		return *x.RepairOrderId
+	}
+	return 0
+}
+
+func (x *Review) GetPartsOrderId() int64 {
+	if x != nil && x.PartsOrderId != nil {
+		return *x.PartsOrderId
+	}
+	return 0
+}
+
 type CreateReviewRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
@@ -234,12 +254,17 @@ type CreateReviewRequest struct {
 	CarId       *int64   `protobuf:"varint,9,opt,name=car_id,json=carId,proto3,oneof" json:"car_id,omitempty"`
 	OrderAmount *int64   `protobuf:"varint,10,opt,name=order_amount,json=orderAmount,proto3,oneof" json:"order_amount,omitempty"`
 	Photos      []string `protobuf:"bytes,11,rep,name=photos,proto3" json:"photos,omitempty"`
-	// Source identifies the origin flow. Known values: "workshop_order".
+	// Source identifies the origin flow. Known values: "workshop_order",
+	// "parts_order".
 	// Empty = legacy default (request_id-based eligibility).
 	Source *string `protobuf:"bytes,12,opt,name=source,proto3,oneof" json:"source,omitempty"`
 	// Repair order id for source="workshop_order". Required in that mode,
 	// ignored otherwise. Eligibility verified via cg-workshop DELIVERED check.
 	RepairOrderId int64 `protobuf:"varint,13,opt,name=repair_order_id,json=repairOrderId,proto3" json:"repair_order_id,omitempty"`
+	// Marketplace parts order id for source="parts_order". Required in that
+	// mode, ignored otherwise. Eligibility is verified against the exact
+	// cg-orders record (buyer, seller, type, and terminal-positive status).
+	PartsOrderId  int64 `protobuf:"varint,14,opt,name=parts_order_id,json=partsOrderId,proto3" json:"parts_order_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -361,6 +386,13 @@ func (x *CreateReviewRequest) GetSource() string {
 func (x *CreateReviewRequest) GetRepairOrderId() int64 {
 	if x != nil {
 		return x.RepairOrderId
+	}
+	return 0
+}
+
+func (x *CreateReviewRequest) GetPartsOrderId() int64 {
+	if x != nil {
+		return x.PartsOrderId
 	}
 	return 0
 }
@@ -1373,7 +1405,7 @@ var File_users_organization_review_proto protoreflect.FileDescriptor
 
 const file_users_organization_review_proto_rawDesc = "" +
 	"\n" +
-	"\x1fusers/organization/review.proto\x12\x15users.organization.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xca\x04\n" +
+	"\x1fusers/organization/review.proto\x12\x15users.organization.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc9\x05\n" +
 	"\x06Review\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12$\n" +
@@ -1396,11 +1428,15 @@ const file_users_organization_review_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\t\n" +
+	"updated_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12+\n" +
+	"\x0frepair_order_id\x18\x12 \x01(\x03H\x03R\rrepairOrderId\x88\x01\x01\x12)\n" +
+	"\x0eparts_order_id\x18\x13 \x01(\x03H\x04R\fpartsOrderId\x88\x01\x01B\t\n" +
 	"\a_car_idB\x0f\n" +
 	"\r_order_amountB\f\n" +
 	"\n" +
-	"_legacy_id\"\xba\x03\n" +
+	"_legacy_idB\x12\n" +
+	"\x10_repair_order_idB\x11\n" +
+	"\x0f_parts_order_id\"\xe0\x03\n" +
 	"\x13CreateReviewRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12$\n" +
 	"\x0eauthor_user_id\x18\x02 \x01(\x03R\fauthorUserId\x12\x1f\n" +
@@ -1417,7 +1453,8 @@ const file_users_organization_review_proto_rawDesc = "" +
 	" \x01(\x03H\x01R\vorderAmount\x88\x01\x01\x12\x16\n" +
 	"\x06photos\x18\v \x03(\tR\x06photos\x12\x1b\n" +
 	"\x06source\x18\f \x01(\tH\x02R\x06source\x88\x01\x01\x12&\n" +
-	"\x0frepair_order_id\x18\r \x01(\x03R\rrepairOrderIdB\t\n" +
+	"\x0frepair_order_id\x18\r \x01(\x03R\rrepairOrderId\x12$\n" +
+	"\x0eparts_order_id\x18\x0e \x01(\x03R\fpartsOrderIdB\t\n" +
 	"\a_car_idB\x0f\n" +
 	"\r_order_amountB\t\n" +
 	"\a_source\"M\n" +
