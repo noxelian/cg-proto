@@ -65,6 +65,11 @@ service RequestService {
   // Used by AI classify service after auto-classification.
   rpc ClassifyRequest(ClassifyRequestRequest) returns (ClassifyRequestResponse);
 
+  // GetRequestForClassification returns only the user-authored text required by
+  // classify-service. The owning service authorizes the exact service identity;
+  // request.created events intentionally do not carry this PII.
+  rpc GetRequestForClassification(GetRequestForClassificationRequest) returns (GetRequestForClassificationResponse);
+
   // GetUserRequestCounts returns the user's request counts grouped by state in
   // one call (legacy ads/count: total / active(PUBLISHED) / moderation /
   // inactive(DELETED+CLOSED)). Optional type filter (0 = all).
@@ -438,6 +443,14 @@ message ClassifyRequestRequest {
 
 message ClassifyRequestResponse {
   Request request = 1;
+}
+
+message GetRequestForClassificationRequest {
+  string request_id = 1;
+}
+
+message GetRequestForClassificationResponse {
+  string note = 1;
 }
 
 // GetUserRequestCounts — per-state counts of a user's requests (legacy ads/count).
