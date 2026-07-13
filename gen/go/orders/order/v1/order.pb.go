@@ -883,6 +883,10 @@ type Subscription struct {
 	Plan               *Plan                  `protobuf:"bytes,14,opt,name=plan,proto3" json:"plan,omitempty"`
 	PriceAmount        int64                  `protobuf:"varint,15,opt,name=price_amount,json=priceAmount,proto3" json:"price_amount,omitempty"`
 	Currency           string                 `protobuf:"bytes,16,opt,name=currency,proto3" json:"currency,omitempty"`
+	// Exact payable amount in the currency minor unit (tiyn for KZT). This is
+	// the financial source of truth; price_amount remains the whole-unit display
+	// projection for backward compatibility.
+	PayableAmountMinor int64 `protobuf:"varint,17,opt,name=payable_amount_minor,json=payableAmountMinor,proto3" json:"payable_amount_minor,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -1027,6 +1031,13 @@ func (x *Subscription) GetCurrency() string {
 		return x.Currency
 	}
 	return ""
+}
+
+func (x *Subscription) GetPayableAmountMinor() int64 {
+	if x != nil {
+		return x.PayableAmountMinor
+	}
+	return 0
 }
 
 type Order struct {
@@ -5779,7 +5790,7 @@ const file_orders_order_v1_order_proto_rawDesc = "" +
 	"\fprice_amount\x18\x05 \x01(\x03R\vpriceAmount\x12\x1a\n" +
 	"\bcurrency\x18\x06 \x01(\tR\bcurrency\x12\x1e\n" +
 	"\vis_per_unit\x18\a \x01(\bR\tisPerUnit\x126\n" +
-	"\x17rental_discount_percent\x18\b \x01(\x05R\x15rentalDiscountPercent\"\xdb\x06\n" +
+	"\x17rental_discount_percent\x18\b \x01(\x05R\x15rentalDiscountPercent\"\x8d\a\n" +
 	"\fSubscription\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x17\n" +
@@ -5800,7 +5811,8 @@ const file_orders_order_v1_order_proto_rawDesc = "" +
 	"updated_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12)\n" +
 	"\x04plan\x18\x0e \x01(\v2\x15.orders.order.v1.PlanR\x04plan\x12!\n" +
 	"\fprice_amount\x18\x0f \x01(\x03R\vpriceAmount\x12\x1a\n" +
-	"\bcurrency\x18\x10 \x01(\tR\bcurrency\x1aA\n" +
+	"\bcurrency\x18\x10 \x01(\tR\bcurrency\x120\n" +
+	"\x14payable_amount_minor\x18\x11 \x01(\x03R\x12payableAmountMinor\x1aA\n" +
 	"\x13TierAttributesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe7\x06\n" +

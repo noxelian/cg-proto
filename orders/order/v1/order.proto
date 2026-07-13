@@ -195,6 +195,10 @@ message Subscription {
   Plan plan = 14;
   int64 price_amount = 15;
   string currency = 16;
+  // Exact payable amount in the currency minor unit (tiyn for KZT). This is
+  // the financial source of truth; price_amount remains the whole-unit display
+  // projection for backward compatibility.
+  int64 payable_amount_minor = 17;
 }
 
 message Order {
