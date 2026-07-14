@@ -824,6 +824,10 @@ message SearchOrganizationsRequest {
 
   // Sorting.
   OrganizationSortBy sort_by = 11;
+
+  // Rating filters (insurance-request targeting). Unset = no rating filter.
+  optional double min_rating = 12;
+  optional int32 min_raters_count = 13;
 }
 
 // OrganizationSearchResult is one ranked organization, aligned to

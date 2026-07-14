@@ -19,20 +19,25 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	BillingService_RecordLedgerEntry_FullMethodName    = "/billing.billing.v1.BillingService/RecordLedgerEntry"
-	BillingService_ListLedgerEntries_FullMethodName    = "/billing.billing.v1.BillingService/ListLedgerEntries"
-	BillingService_GetOrgBalance_FullMethodName        = "/billing.billing.v1.BillingService/GetOrgBalance"
-	BillingService_InitiatePayout_FullMethodName       = "/billing.billing.v1.BillingService/InitiatePayout"
-	BillingService_GetPayoutHistory_FullMethodName     = "/billing.billing.v1.BillingService/GetPayoutHistory"
-	BillingService_ReconcileTransaction_FullMethodName = "/billing.billing.v1.BillingService/ReconcileTransaction"
-	BillingService_GetOrgStatement_FullMethodName      = "/billing.billing.v1.BillingService/GetOrgStatement"
-	BillingService_GetRevenueStats_FullMethodName      = "/billing.billing.v1.BillingService/GetRevenueStats"
-	BillingService_GetStatement_FullMethodName         = "/billing.billing.v1.BillingService/GetStatement"
-	BillingService_GetUserBalance_FullMethodName       = "/billing.billing.v1.BillingService/GetUserBalance"
-	BillingService_ListSpending_FullMethodName         = "/billing.billing.v1.BillingService/ListSpending"
-	BillingService_GetWalletBalance_FullMethodName     = "/billing.billing.v1.BillingService/GetWalletBalance"
-	BillingService_DebitWallet_FullMethodName          = "/billing.billing.v1.BillingService/DebitWallet"
-	BillingService_CreditWallet_FullMethodName         = "/billing.billing.v1.BillingService/CreditWallet"
+	BillingService_RecordLedgerEntry_FullMethodName      = "/billing.billing.v1.BillingService/RecordLedgerEntry"
+	BillingService_ListLedgerEntries_FullMethodName      = "/billing.billing.v1.BillingService/ListLedgerEntries"
+	BillingService_GetOrgBalance_FullMethodName          = "/billing.billing.v1.BillingService/GetOrgBalance"
+	BillingService_InitiatePayout_FullMethodName         = "/billing.billing.v1.BillingService/InitiatePayout"
+	BillingService_GetPayoutHistory_FullMethodName       = "/billing.billing.v1.BillingService/GetPayoutHistory"
+	BillingService_ReconcileTransaction_FullMethodName   = "/billing.billing.v1.BillingService/ReconcileTransaction"
+	BillingService_GetOrgStatement_FullMethodName        = "/billing.billing.v1.BillingService/GetOrgStatement"
+	BillingService_GetRevenueStats_FullMethodName        = "/billing.billing.v1.BillingService/GetRevenueStats"
+	BillingService_GetStatement_FullMethodName           = "/billing.billing.v1.BillingService/GetStatement"
+	BillingService_GetUserBalance_FullMethodName         = "/billing.billing.v1.BillingService/GetUserBalance"
+	BillingService_ListSpending_FullMethodName           = "/billing.billing.v1.BillingService/ListSpending"
+	BillingService_GetWalletBalance_FullMethodName       = "/billing.billing.v1.BillingService/GetWalletBalance"
+	BillingService_DebitWallet_FullMethodName            = "/billing.billing.v1.BillingService/DebitWallet"
+	BillingService_CreditWallet_FullMethodName           = "/billing.billing.v1.BillingService/CreditWallet"
+	BillingService_CreditOrgBalance_FullMethodName       = "/billing.billing.v1.BillingService/CreditOrgBalance"
+	BillingService_InitiateOrgCardBinding_FullMethodName = "/billing.billing.v1.BillingService/InitiateOrgCardBinding"
+	BillingService_ConfirmOrgCardBinding_FullMethodName  = "/billing.billing.v1.BillingService/ConfirmOrgCardBinding"
+	BillingService_ListOrgCards_FullMethodName           = "/billing.billing.v1.BillingService/ListOrgCards"
+	BillingService_DeleteOrgCard_FullMethodName          = "/billing.billing.v1.BillingService/DeleteOrgCard"
 )
 
 // BillingServiceClient is the client API for BillingService service.
@@ -74,6 +79,17 @@ type BillingServiceClient interface {
 	// CreditWallet adds bonus/cashback to the user's wallet. Idempotent on
 	// idempotency_key. Called by the payment_confirmed Kafka consumer.
 	CreditWallet(ctx context.Context, in *CreditWalletRequest, opts ...grpc.CallOption) (*CreditWalletResponse, error)
+	// CreditOrgBalance credits an organization's available balance directly
+	// (insurance-order payout or manual adjustment). Idempotent on idempotency_key.
+	CreditOrgBalance(ctx context.Context, in *CreditOrgBalanceRequest, opts ...grpc.CallOption) (*CreditOrgBalanceResponse, error)
+	// InitiateOrgCardBinding starts a card-binding flow and returns a redirect URL.
+	InitiateOrgCardBinding(ctx context.Context, in *InitiateOrgCardBindingRequest, opts ...grpc.CallOption) (*InitiateOrgCardBindingResponse, error)
+	// ConfirmOrgCardBinding finalizes a card binding after the provider callback.
+	ConfirmOrgCardBinding(ctx context.Context, in *ConfirmOrgCardBindingRequest, opts ...grpc.CallOption) (*ConfirmOrgCardBindingResponse, error)
+	// ListOrgCards returns an organization's payout cards.
+	ListOrgCards(ctx context.Context, in *ListOrgCardsRequest, opts ...grpc.CallOption) (*ListOrgCardsResponse, error)
+	// DeleteOrgCard soft-deletes a payout card (status -> "deleted").
+	DeleteOrgCard(ctx context.Context, in *DeleteOrgCardRequest, opts ...grpc.CallOption) (*DeleteOrgCardResponse, error)
 }
 
 type billingServiceClient struct {
@@ -224,6 +240,56 @@ func (c *billingServiceClient) CreditWallet(ctx context.Context, in *CreditWalle
 	return out, nil
 }
 
+func (c *billingServiceClient) CreditOrgBalance(ctx context.Context, in *CreditOrgBalanceRequest, opts ...grpc.CallOption) (*CreditOrgBalanceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreditOrgBalanceResponse)
+	err := c.cc.Invoke(ctx, BillingService_CreditOrgBalance_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) InitiateOrgCardBinding(ctx context.Context, in *InitiateOrgCardBindingRequest, opts ...grpc.CallOption) (*InitiateOrgCardBindingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(InitiateOrgCardBindingResponse)
+	err := c.cc.Invoke(ctx, BillingService_InitiateOrgCardBinding_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) ConfirmOrgCardBinding(ctx context.Context, in *ConfirmOrgCardBindingRequest, opts ...grpc.CallOption) (*ConfirmOrgCardBindingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConfirmOrgCardBindingResponse)
+	err := c.cc.Invoke(ctx, BillingService_ConfirmOrgCardBinding_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) ListOrgCards(ctx context.Context, in *ListOrgCardsRequest, opts ...grpc.CallOption) (*ListOrgCardsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListOrgCardsResponse)
+	err := c.cc.Invoke(ctx, BillingService_ListOrgCards_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) DeleteOrgCard(ctx context.Context, in *DeleteOrgCardRequest, opts ...grpc.CallOption) (*DeleteOrgCardResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteOrgCardResponse)
+	err := c.cc.Invoke(ctx, BillingService_DeleteOrgCard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BillingServiceServer is the server API for BillingService service.
 // All implementations must embed UnimplementedBillingServiceServer
 // for forward compatibility.
@@ -263,6 +329,17 @@ type BillingServiceServer interface {
 	// CreditWallet adds bonus/cashback to the user's wallet. Idempotent on
 	// idempotency_key. Called by the payment_confirmed Kafka consumer.
 	CreditWallet(context.Context, *CreditWalletRequest) (*CreditWalletResponse, error)
+	// CreditOrgBalance credits an organization's available balance directly
+	// (insurance-order payout or manual adjustment). Idempotent on idempotency_key.
+	CreditOrgBalance(context.Context, *CreditOrgBalanceRequest) (*CreditOrgBalanceResponse, error)
+	// InitiateOrgCardBinding starts a card-binding flow and returns a redirect URL.
+	InitiateOrgCardBinding(context.Context, *InitiateOrgCardBindingRequest) (*InitiateOrgCardBindingResponse, error)
+	// ConfirmOrgCardBinding finalizes a card binding after the provider callback.
+	ConfirmOrgCardBinding(context.Context, *ConfirmOrgCardBindingRequest) (*ConfirmOrgCardBindingResponse, error)
+	// ListOrgCards returns an organization's payout cards.
+	ListOrgCards(context.Context, *ListOrgCardsRequest) (*ListOrgCardsResponse, error)
+	// DeleteOrgCard soft-deletes a payout card (status -> "deleted").
+	DeleteOrgCard(context.Context, *DeleteOrgCardRequest) (*DeleteOrgCardResponse, error)
 	mustEmbedUnimplementedBillingServiceServer()
 }
 
@@ -314,6 +391,21 @@ func (UnimplementedBillingServiceServer) DebitWallet(context.Context, *DebitWall
 }
 func (UnimplementedBillingServiceServer) CreditWallet(context.Context, *CreditWalletRequest) (*CreditWalletResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreditWallet not implemented")
+}
+func (UnimplementedBillingServiceServer) CreditOrgBalance(context.Context, *CreditOrgBalanceRequest) (*CreditOrgBalanceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreditOrgBalance not implemented")
+}
+func (UnimplementedBillingServiceServer) InitiateOrgCardBinding(context.Context, *InitiateOrgCardBindingRequest) (*InitiateOrgCardBindingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method InitiateOrgCardBinding not implemented")
+}
+func (UnimplementedBillingServiceServer) ConfirmOrgCardBinding(context.Context, *ConfirmOrgCardBindingRequest) (*ConfirmOrgCardBindingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ConfirmOrgCardBinding not implemented")
+}
+func (UnimplementedBillingServiceServer) ListOrgCards(context.Context, *ListOrgCardsRequest) (*ListOrgCardsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListOrgCards not implemented")
+}
+func (UnimplementedBillingServiceServer) DeleteOrgCard(context.Context, *DeleteOrgCardRequest) (*DeleteOrgCardResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteOrgCard not implemented")
 }
 func (UnimplementedBillingServiceServer) mustEmbedUnimplementedBillingServiceServer() {}
 func (UnimplementedBillingServiceServer) testEmbeddedByValue()                        {}
@@ -588,6 +680,96 @@ func _BillingService_CreditWallet_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BillingService_CreditOrgBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreditOrgBalanceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).CreditOrgBalance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_CreditOrgBalance_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).CreditOrgBalance(ctx, req.(*CreditOrgBalanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_InitiateOrgCardBinding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InitiateOrgCardBindingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).InitiateOrgCardBinding(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_InitiateOrgCardBinding_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).InitiateOrgCardBinding(ctx, req.(*InitiateOrgCardBindingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_ConfirmOrgCardBinding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfirmOrgCardBindingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).ConfirmOrgCardBinding(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_ConfirmOrgCardBinding_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).ConfirmOrgCardBinding(ctx, req.(*ConfirmOrgCardBindingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_ListOrgCards_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOrgCardsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).ListOrgCards(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_ListOrgCards_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).ListOrgCards(ctx, req.(*ListOrgCardsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_DeleteOrgCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteOrgCardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).DeleteOrgCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_DeleteOrgCard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).DeleteOrgCard(ctx, req.(*DeleteOrgCardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BillingService_ServiceDesc is the grpc.ServiceDesc for BillingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -650,6 +832,26 @@ var BillingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreditWallet",
 			Handler:    _BillingService_CreditWallet_Handler,
+		},
+		{
+			MethodName: "CreditOrgBalance",
+			Handler:    _BillingService_CreditOrgBalance_Handler,
+		},
+		{
+			MethodName: "InitiateOrgCardBinding",
+			Handler:    _BillingService_InitiateOrgCardBinding_Handler,
+		},
+		{
+			MethodName: "ConfirmOrgCardBinding",
+			Handler:    _BillingService_ConfirmOrgCardBinding_Handler,
+		},
+		{
+			MethodName: "ListOrgCards",
+			Handler:    _BillingService_ListOrgCards_Handler,
+		},
+		{
+			MethodName: "DeleteOrgCard",
+			Handler:    _BillingService_DeleteOrgCard_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

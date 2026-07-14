@@ -5919,9 +5919,12 @@ type SearchOrganizationsRequest struct {
 	Page     int32 `protobuf:"varint,9,opt,name=page,proto3" json:"page,omitempty"`
 	PageSize int32 `protobuf:"varint,10,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// Sorting.
-	SortBy        OrganizationSortBy `protobuf:"varint,11,opt,name=sort_by,json=sortBy,proto3,enum=users.organization.v1.OrganizationSortBy" json:"sort_by,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	SortBy OrganizationSortBy `protobuf:"varint,11,opt,name=sort_by,json=sortBy,proto3,enum=users.organization.v1.OrganizationSortBy" json:"sort_by,omitempty"`
+	// Rating filters (insurance-request targeting). Unset = no rating filter.
+	MinRating      *float64 `protobuf:"fixed64,12,opt,name=min_rating,json=minRating,proto3,oneof" json:"min_rating,omitempty"`
+	MinRatersCount *int32   `protobuf:"varint,13,opt,name=min_raters_count,json=minRatersCount,proto3,oneof" json:"min_raters_count,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *SearchOrganizationsRequest) Reset() {
@@ -6029,6 +6032,20 @@ func (x *SearchOrganizationsRequest) GetSortBy() OrganizationSortBy {
 		return x.SortBy
 	}
 	return OrganizationSortBy_ORGANIZATION_SORT_BY_UNSPECIFIED
+}
+
+func (x *SearchOrganizationsRequest) GetMinRating() float64 {
+	if x != nil && x.MinRating != nil {
+		return *x.MinRating
+	}
+	return 0
+}
+
+func (x *SearchOrganizationsRequest) GetMinRatersCount() int32 {
+	if x != nil && x.MinRatersCount != nil {
+		return *x.MinRatersCount
+	}
+	return 0
 }
 
 // OrganizationSearchResult is one ranked organization, aligned to
@@ -7623,7 +7640,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12$\n" +
 	"\x0ecaller_user_id\x18\x02 \x01(\x03R\fcallerUserId\"5\n" +
 	"\x19RequestActivationResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xf5\x02\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xec\x03\n" +
 	"\x1aSearchOrganizationsRequest\x12\x14\n" +
 	"\x05query\x18\x01 \x01(\tR\x05query\x12\x17\n" +
 	"\acity_id\x18\x02 \x01(\x03R\x06cityId\x12\x19\n" +
@@ -7636,7 +7653,12 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x04page\x18\t \x01(\x05R\x04page\x12\x1b\n" +
 	"\tpage_size\x18\n" +
 	" \x01(\x05R\bpageSize\x12B\n" +
-	"\asort_by\x18\v \x01(\x0e2).users.organization.v1.OrganizationSortByR\x06sortBy\"\xa2\a\n" +
+	"\asort_by\x18\v \x01(\x0e2).users.organization.v1.OrganizationSortByR\x06sortBy\x12\"\n" +
+	"\n" +
+	"min_rating\x18\f \x01(\x01H\x00R\tminRating\x88\x01\x01\x12-\n" +
+	"\x10min_raters_count\x18\r \x01(\x05H\x01R\x0eminRatersCount\x88\x01\x01B\r\n" +
+	"\v_min_ratingB\x13\n" +
+	"\x11_min_raters_count\"\xa2\a\n" +
 	"\x18OrganizationSearchResult\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12;\n" +
@@ -8138,6 +8160,7 @@ func file_users_organization_organization_proto_init() {
 	file_users_organization_organization_proto_msgTypes[53].OneofWrappers = []any{}
 	file_users_organization_organization_proto_msgTypes[54].OneofWrappers = []any{}
 	file_users_organization_organization_proto_msgTypes[69].OneofWrappers = []any{}
+	file_users_organization_organization_proto_msgTypes[91].OneofWrappers = []any{}
 	file_users_organization_organization_proto_msgTypes[92].OneofWrappers = []any{}
 	file_users_organization_organization_proto_msgTypes[93].OneofWrappers = []any{}
 	file_users_organization_organization_proto_msgTypes[96].OneofWrappers = []any{}

@@ -83,6 +83,20 @@ service RequestService {
   // UnpauseRequest restores a paused request back to PUBLISHED, clearing
   // paused_at / paused_by_org_id. Only the request owner may call this.
   rpc UnpauseRequest(UnpauseRequestRequest) returns (UnpauseRequestResponse);
+
+  // GetRequestInsuranceInfo returns the admin-only insurance details (client
+  // price X, client contacts, targeting snapshot) for an insurance request.
+  // Never exposed to СТО — the owning service authorizes a platform-admin caller.
+  rpc GetRequestInsuranceInfo(GetRequestInsuranceInfoRequest) returns (GetRequestInsuranceInfoResponse);
+
+  // ClaimInsuranceRequest lets a targeted org claim an ASSIGNMENT_MODE_AUTO_FIRST
+  // insurance request. The first successful claim wins; later claims return
+  // claimed=false with the winning org in claimed_by_org_id.
+  rpc ClaimInsuranceRequest(ClaimInsuranceRequestRequest) returns (ClaimInsuranceRequestResponse);
+
+  // IsOrgTargeted reports whether org_id is in the request's target audience
+  // snapshot (target_org_ids). Gates feed visibility of insurance requests.
+  rpc IsOrgTargeted(IsOrgTargetedRequest) returns (IsOrgTargetedResponse);
 }
 
 enum RequestType {
@@ -102,6 +116,31 @@ enum RequestStatus {
   // Temporarily hidden by the customer ("на паузе"). Stays classified and can
   // be republished at any time (→ PUBLISHED). Invisible to the org/СТО feed.
   REQUEST_STATUS_PAUSED = 5;
+}
+
+// RequestKind distinguishes a regular marketplace request from an insurance
+// request (created by an admin on behalf of an insurer). Default UNSPECIFIED is
+// treated as REGULAR by consumers.
+enum RequestKind {
+  REQUEST_KIND_UNSPECIFIED = 0;
+  REQUEST_KIND_REGULAR = 1;
+  REQUEST_KIND_INSURANCE = 2;
+}
+
+// AssignmentMode controls how an insurance request is assigned to a СТО:
+// MANUAL — admin picks the org; AUTO_FIRST — the first targeted org to claim wins.
+enum AssignmentMode {
+  ASSIGNMENT_MODE_UNSPECIFIED = 0;
+  ASSIGNMENT_MODE_MANUAL = 1;
+  ASSIGNMENT_MODE_AUTO_FIRST = 2;
+}
+
+// EstimateItem is one line of the pre-agreed insurance repair estimate (смета).
+message EstimateItem {
+  string name = 1;   // работа
+  double hours = 2;  // нормо-часы
+  int64 price = 3;   // тиыны, за позицию
+  int32 qty = 4;
 }
 
 message Request {
@@ -158,6 +197,18 @@ message Request {
   // request history can be queried per specific car, beyond the make/model/year
   // snapshot. Absent for requests created without a garage car.
   optional int64 garage_car_id = 27;
+
+  // Insurance-request fields — meaningful only when kind == REQUEST_KIND_INSURANCE.
+  // Regular requests leave kind UNSPECIFIED (consumers treat that as REGULAR).
+  // NB: insurance_price (X) and client contacts are admin-only and intentionally
+  // NOT carried here — fetch them via GetRequestInsuranceInfo (RequestInsuranceInfo).
+  RequestKind kind = 28;
+  // Публичная выплата СТО (Y), тиыны — safe to show in the СТО feed.
+  optional int64 payout_price = 29;
+  optional google.protobuf.Timestamp deadline = 30;
+  AssignmentMode assignment_mode = 31;
+  optional int64 work_order_id = 32;  // RepairOrder.id из cg-workshop
+  repeated EstimateItem estimate_items = 33;
 }
 
 // CreateRequest
@@ -191,6 +242,16 @@ message CreateRequestRequest {
   // it to fill car_make_id/model/year, but it is persisted so request history
   // can be queried per specific car.
   optional int64 garage_car_id = 18;
+
+  // Insurance-request creation — set only when kind == REQUEST_KIND_INSURANCE.
+  RequestKind kind = 19;
+  optional int64 payout_price = 20;   // Y, тиыны — публичная выплата СТО
+  optional google.protobuf.Timestamp deadline = 21;
+  AssignmentMode assignment_mode = 22;
+  optional int64 work_order_id = 23;  // RepairOrder.id из cg-workshop
+  repeated EstimateItem estimate_items = 24;
+  repeated string target_org_ids = 25;              // snapshot аудитории (org UUIDs)
+  optional InsuranceInfoInput insurance_info = 26;  // админ-only: X + контакты клиента
 }
 
 message CreateRequestResponse {
@@ -488,4 +549,65 @@ message UnpauseRequestRequest {
 
 message UnpauseRequestResponse {
   Request request = 1;
+}
+
+// =============================================
+// Insurance requests (admin-only data + claim)
+// =============================================
+
+// InsuranceInfoInput carries the admin-only data supplied when creating an
+// insurance request: the price the client pays (X), the insurer and client
+// contacts, plus the targeting-criteria snapshot kept for audit/history.
+message InsuranceInfoInput {
+  int64 insurance_price = 1;   // X, тиыны — админ-only
+  string insurance_company = 2;
+  string client_name = 3;
+  string client_phone = 4;
+  double min_rating = 5;        // критерии snapshot'а (для истории/аудита)
+  int32 min_raters_count = 6;
+}
+
+// RequestInsuranceInfo is the persisted admin-only projection returned by
+// GetRequestInsuranceInfo: client price (X), contacts, the targeting snapshot
+// and the winning org once claimed.
+message RequestInsuranceInfo {
+  string request_id = 1;
+  int64 insurance_price = 2;
+  string insurance_company = 3;
+  string client_name = 4;
+  string client_phone = 5;
+  double min_rating = 6;
+  int32 min_raters_count = 7;
+  repeated string target_org_ids = 8;
+  optional string claimed_by_org_id = 9;
+}
+
+// GetRequestInsuranceInfo
+message GetRequestInsuranceInfoRequest {
+  string request_id = 1;  // UUID string
+}
+
+message GetRequestInsuranceInfoResponse {
+  RequestInsuranceInfo info = 1;
+}
+
+// ClaimInsuranceRequest
+message ClaimInsuranceRequestRequest {
+  string request_id = 1;  // UUID string
+  string org_id = 2;      // UUID from organization-service
+}
+
+message ClaimInsuranceRequestResponse {
+  bool claimed = 1;
+  string claimed_by_org_id = 2;
+}
+
+// IsOrgTargeted
+message IsOrgTargetedRequest {
+  string request_id = 1;  // UUID string
+  string org_id = 2;      // UUID from organization-service
+}
+
+message IsOrgTargetedResponse {
+  bool targeted = 1;
 }

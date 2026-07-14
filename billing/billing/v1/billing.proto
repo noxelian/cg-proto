@@ -55,6 +55,26 @@ service BillingService {
   // CreditWallet adds bonus/cashback to the user's wallet. Idempotent on
   // idempotency_key. Called by the payment_confirmed Kafka consumer.
   rpc CreditWallet(CreditWalletRequest) returns (CreditWalletResponse);
+
+  // === Org balance credit (insurance orders / manual) ===
+
+  // CreditOrgBalance credits an organization's available balance directly
+  // (insurance-order payout or manual adjustment). Idempotent on idempotency_key.
+  rpc CreditOrgBalance(CreditOrgBalanceRequest) returns (CreditOrgBalanceResponse);
+
+  // === Org payout cards (partners_pay) ===
+
+  // InitiateOrgCardBinding starts a card-binding flow and returns a redirect URL.
+  rpc InitiateOrgCardBinding(InitiateOrgCardBindingRequest) returns (InitiateOrgCardBindingResponse);
+
+  // ConfirmOrgCardBinding finalizes a card binding after the provider callback.
+  rpc ConfirmOrgCardBinding(ConfirmOrgCardBindingRequest) returns (ConfirmOrgCardBindingResponse);
+
+  // ListOrgCards returns an organization's payout cards.
+  rpc ListOrgCards(ListOrgCardsRequest) returns (ListOrgCardsResponse);
+
+  // DeleteOrgCard soft-deletes a payout card (status -> "deleted").
+  rpc DeleteOrgCard(DeleteOrgCardRequest) returns (DeleteOrgCardResponse);
 }
 
 // =============================================
@@ -259,6 +279,8 @@ message InitiatePayoutRequest {
   string bank_account = 4;
   string bank_name = 5;
   string idempotency_key = 6;
+  optional string provider = 7;  // "" = ledger-only/default, "partners_pay"
+  optional string card_id = 8;   // OrgPayoutCard.id when provider = "partners_pay"
 }
 
 message InitiatePayoutResponse {
@@ -416,4 +438,77 @@ message CreditWalletResponse {
   UserWallet wallet_after = 1;
   LedgerEntry ledger_entry = 2;
   bool idempotent = 3;
+}
+
+// =============================================
+// Org balance credit (insurance orders / manual)
+// =============================================
+
+message CreditOrgBalanceRequest {
+  string organization_id = 1;
+  int64 amount = 2;            // тиыны, > 0
+  string currency = 3;         // "KZT"
+  string reason_type = 4;      // "insurance_order" | "manual"
+  string reference_id = 5;     // request_id/order_id для сверки, optional
+  string comment = 6;
+  string idempotency_key = 7;  // обязательный
+  int64 initiated_by = 8;      // admin user id (для аудита)
+}
+
+message CreditOrgBalanceResponse {
+  int64 available_balance_after = 1;
+  bool idempotent_replay = 2;
+}
+
+// =============================================
+// Org payout cards (partners_pay)
+// =============================================
+
+message OrgPayoutCard {
+  string id = 1;
+  string organization_id = 2;
+  string provider = 3;          // "partners_pay"
+  string provider_card_id = 4;
+  string masked_number = 5;
+  string payment_system = 6;
+  string status = 7;            // "active" | "deleted"
+  google.protobuf.Timestamp created_at = 8;
+}
+
+message InitiateOrgCardBindingRequest {
+  string organization_id = 1;
+  string phone = 2;
+  string success_url = 3;
+  string fail_url = 4;
+}
+
+message InitiateOrgCardBindingResponse {
+  string binding_url = 1;
+  string binding_order_id = 2;
+}
+
+message ConfirmOrgCardBindingRequest {
+  string organization_id = 1;
+  string binding_order_id = 2;
+}
+
+message ConfirmOrgCardBindingResponse {
+  OrgPayoutCard card = 1;
+}
+
+message ListOrgCardsRequest {
+  string organization_id = 1;
+}
+
+message ListOrgCardsResponse {
+  repeated OrgPayoutCard cards = 1;
+}
+
+message DeleteOrgCardRequest {
+  string organization_id = 1;
+  string card_id = 2;
+}
+
+message DeleteOrgCardResponse {
+  bool deleted = 1;
 }

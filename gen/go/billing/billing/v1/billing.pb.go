@@ -1456,6 +1456,8 @@ type InitiatePayoutRequest struct {
 	BankAccount    string                 `protobuf:"bytes,4,opt,name=bank_account,json=bankAccount,proto3" json:"bank_account,omitempty"`
 	BankName       string                 `protobuf:"bytes,5,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
 	IdempotencyKey string                 `protobuf:"bytes,6,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	Provider       *string                `protobuf:"bytes,7,opt,name=provider,proto3,oneof" json:"provider,omitempty"`           // "" = ledger-only/default, "partners_pay"
+	CardId         *string                `protobuf:"bytes,8,opt,name=card_id,json=cardId,proto3,oneof" json:"card_id,omitempty"` // OrgPayoutCard.id when provider = "partners_pay"
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1528,6 +1530,20 @@ func (x *InitiatePayoutRequest) GetBankName() string {
 func (x *InitiatePayoutRequest) GetIdempotencyKey() string {
 	if x != nil {
 		return x.IdempotencyKey
+	}
+	return ""
+}
+
+func (x *InitiatePayoutRequest) GetProvider() string {
+	if x != nil && x.Provider != nil {
+		return *x.Provider
+	}
+	return ""
+}
+
+func (x *InitiatePayoutRequest) GetCardId() string {
+	if x != nil && x.CardId != nil {
+		return *x.CardId
 	}
 	return ""
 }
@@ -2863,6 +2879,658 @@ func (x *CreditWalletResponse) GetIdempotent() bool {
 	return false
 }
 
+type CreditOrgBalanceRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	Amount         int64                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`                             // тиыны, > 0
+	Currency       string                 `protobuf:"bytes,3,opt,name=currency,proto3" json:"currency,omitempty"`                          // "KZT"
+	ReasonType     string                 `protobuf:"bytes,4,opt,name=reason_type,json=reasonType,proto3" json:"reason_type,omitempty"`    // "insurance_order" | "manual"
+	ReferenceId    string                 `protobuf:"bytes,5,opt,name=reference_id,json=referenceId,proto3" json:"reference_id,omitempty"` // request_id/order_id для сверки, optional
+	Comment        string                 `protobuf:"bytes,6,opt,name=comment,proto3" json:"comment,omitempty"`
+	IdempotencyKey string                 `protobuf:"bytes,7,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"` // обязательный
+	InitiatedBy    int64                  `protobuf:"varint,8,opt,name=initiated_by,json=initiatedBy,proto3" json:"initiated_by,omitempty"`         // admin user id (для аудита)
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *CreditOrgBalanceRequest) Reset() {
+	*x = CreditOrgBalanceRequest{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreditOrgBalanceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreditOrgBalanceRequest) ProtoMessage() {}
+
+func (x *CreditOrgBalanceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreditOrgBalanceRequest.ProtoReflect.Descriptor instead.
+func (*CreditOrgBalanceRequest) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *CreditOrgBalanceRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *CreditOrgBalanceRequest) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *CreditOrgBalanceRequest) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *CreditOrgBalanceRequest) GetReasonType() string {
+	if x != nil {
+		return x.ReasonType
+	}
+	return ""
+}
+
+func (x *CreditOrgBalanceRequest) GetReferenceId() string {
+	if x != nil {
+		return x.ReferenceId
+	}
+	return ""
+}
+
+func (x *CreditOrgBalanceRequest) GetComment() string {
+	if x != nil {
+		return x.Comment
+	}
+	return ""
+}
+
+func (x *CreditOrgBalanceRequest) GetIdempotencyKey() string {
+	if x != nil {
+		return x.IdempotencyKey
+	}
+	return ""
+}
+
+func (x *CreditOrgBalanceRequest) GetInitiatedBy() int64 {
+	if x != nil {
+		return x.InitiatedBy
+	}
+	return 0
+}
+
+type CreditOrgBalanceResponse struct {
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	AvailableBalanceAfter int64                  `protobuf:"varint,1,opt,name=available_balance_after,json=availableBalanceAfter,proto3" json:"available_balance_after,omitempty"`
+	IdempotentReplay      bool                   `protobuf:"varint,2,opt,name=idempotent_replay,json=idempotentReplay,proto3" json:"idempotent_replay,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *CreditOrgBalanceResponse) Reset() {
+	*x = CreditOrgBalanceResponse{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreditOrgBalanceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreditOrgBalanceResponse) ProtoMessage() {}
+
+func (x *CreditOrgBalanceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreditOrgBalanceResponse.ProtoReflect.Descriptor instead.
+func (*CreditOrgBalanceResponse) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *CreditOrgBalanceResponse) GetAvailableBalanceAfter() int64 {
+	if x != nil {
+		return x.AvailableBalanceAfter
+	}
+	return 0
+}
+
+func (x *CreditOrgBalanceResponse) GetIdempotentReplay() bool {
+	if x != nil {
+		return x.IdempotentReplay
+	}
+	return false
+}
+
+type OrgPayoutCard struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	OrganizationId string                 `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	Provider       string                 `protobuf:"bytes,3,opt,name=provider,proto3" json:"provider,omitempty"` // "partners_pay"
+	ProviderCardId string                 `protobuf:"bytes,4,opt,name=provider_card_id,json=providerCardId,proto3" json:"provider_card_id,omitempty"`
+	MaskedNumber   string                 `protobuf:"bytes,5,opt,name=masked_number,json=maskedNumber,proto3" json:"masked_number,omitempty"`
+	PaymentSystem  string                 `protobuf:"bytes,6,opt,name=payment_system,json=paymentSystem,proto3" json:"payment_system,omitempty"`
+	Status         string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"` // "active" | "deleted"
+	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *OrgPayoutCard) Reset() {
+	*x = OrgPayoutCard{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrgPayoutCard) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrgPayoutCard) ProtoMessage() {}
+
+func (x *OrgPayoutCard) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrgPayoutCard.ProtoReflect.Descriptor instead.
+func (*OrgPayoutCard) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *OrgPayoutCard) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *OrgPayoutCard) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *OrgPayoutCard) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *OrgPayoutCard) GetProviderCardId() string {
+	if x != nil {
+		return x.ProviderCardId
+	}
+	return ""
+}
+
+func (x *OrgPayoutCard) GetMaskedNumber() string {
+	if x != nil {
+		return x.MaskedNumber
+	}
+	return ""
+}
+
+func (x *OrgPayoutCard) GetPaymentSystem() string {
+	if x != nil {
+		return x.PaymentSystem
+	}
+	return ""
+}
+
+func (x *OrgPayoutCard) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *OrgPayoutCard) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type InitiateOrgCardBindingRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	Phone          string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
+	SuccessUrl     string                 `protobuf:"bytes,3,opt,name=success_url,json=successUrl,proto3" json:"success_url,omitempty"`
+	FailUrl        string                 `protobuf:"bytes,4,opt,name=fail_url,json=failUrl,proto3" json:"fail_url,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *InitiateOrgCardBindingRequest) Reset() {
+	*x = InitiateOrgCardBindingRequest{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InitiateOrgCardBindingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InitiateOrgCardBindingRequest) ProtoMessage() {}
+
+func (x *InitiateOrgCardBindingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InitiateOrgCardBindingRequest.ProtoReflect.Descriptor instead.
+func (*InitiateOrgCardBindingRequest) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *InitiateOrgCardBindingRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *InitiateOrgCardBindingRequest) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *InitiateOrgCardBindingRequest) GetSuccessUrl() string {
+	if x != nil {
+		return x.SuccessUrl
+	}
+	return ""
+}
+
+func (x *InitiateOrgCardBindingRequest) GetFailUrl() string {
+	if x != nil {
+		return x.FailUrl
+	}
+	return ""
+}
+
+type InitiateOrgCardBindingResponse struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	BindingUrl     string                 `protobuf:"bytes,1,opt,name=binding_url,json=bindingUrl,proto3" json:"binding_url,omitempty"`
+	BindingOrderId string                 `protobuf:"bytes,2,opt,name=binding_order_id,json=bindingOrderId,proto3" json:"binding_order_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *InitiateOrgCardBindingResponse) Reset() {
+	*x = InitiateOrgCardBindingResponse{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InitiateOrgCardBindingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InitiateOrgCardBindingResponse) ProtoMessage() {}
+
+func (x *InitiateOrgCardBindingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InitiateOrgCardBindingResponse.ProtoReflect.Descriptor instead.
+func (*InitiateOrgCardBindingResponse) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *InitiateOrgCardBindingResponse) GetBindingUrl() string {
+	if x != nil {
+		return x.BindingUrl
+	}
+	return ""
+}
+
+func (x *InitiateOrgCardBindingResponse) GetBindingOrderId() string {
+	if x != nil {
+		return x.BindingOrderId
+	}
+	return ""
+}
+
+type ConfirmOrgCardBindingRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	BindingOrderId string                 `protobuf:"bytes,2,opt,name=binding_order_id,json=bindingOrderId,proto3" json:"binding_order_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ConfirmOrgCardBindingRequest) Reset() {
+	*x = ConfirmOrgCardBindingRequest{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmOrgCardBindingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmOrgCardBindingRequest) ProtoMessage() {}
+
+func (x *ConfirmOrgCardBindingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmOrgCardBindingRequest.ProtoReflect.Descriptor instead.
+func (*ConfirmOrgCardBindingRequest) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *ConfirmOrgCardBindingRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *ConfirmOrgCardBindingRequest) GetBindingOrderId() string {
+	if x != nil {
+		return x.BindingOrderId
+	}
+	return ""
+}
+
+type ConfirmOrgCardBindingResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Card          *OrgPayoutCard         `protobuf:"bytes,1,opt,name=card,proto3" json:"card,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmOrgCardBindingResponse) Reset() {
+	*x = ConfirmOrgCardBindingResponse{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmOrgCardBindingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmOrgCardBindingResponse) ProtoMessage() {}
+
+func (x *ConfirmOrgCardBindingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmOrgCardBindingResponse.ProtoReflect.Descriptor instead.
+func (*ConfirmOrgCardBindingResponse) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *ConfirmOrgCardBindingResponse) GetCard() *OrgPayoutCard {
+	if x != nil {
+		return x.Card
+	}
+	return nil
+}
+
+type ListOrgCardsRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ListOrgCardsRequest) Reset() {
+	*x = ListOrgCardsRequest{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListOrgCardsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListOrgCardsRequest) ProtoMessage() {}
+
+func (x *ListOrgCardsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListOrgCardsRequest.ProtoReflect.Descriptor instead.
+func (*ListOrgCardsRequest) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *ListOrgCardsRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+type ListOrgCardsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Cards         []*OrgPayoutCard       `protobuf:"bytes,1,rep,name=cards,proto3" json:"cards,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListOrgCardsResponse) Reset() {
+	*x = ListOrgCardsResponse{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListOrgCardsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListOrgCardsResponse) ProtoMessage() {}
+
+func (x *ListOrgCardsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListOrgCardsResponse.ProtoReflect.Descriptor instead.
+func (*ListOrgCardsResponse) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *ListOrgCardsResponse) GetCards() []*OrgPayoutCard {
+	if x != nil {
+		return x.Cards
+	}
+	return nil
+}
+
+type DeleteOrgCardRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	CardId         string                 `protobuf:"bytes,2,opt,name=card_id,json=cardId,proto3" json:"card_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *DeleteOrgCardRequest) Reset() {
+	*x = DeleteOrgCardRequest{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteOrgCardRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteOrgCardRequest) ProtoMessage() {}
+
+func (x *DeleteOrgCardRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteOrgCardRequest.ProtoReflect.Descriptor instead.
+func (*DeleteOrgCardRequest) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *DeleteOrgCardRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *DeleteOrgCardRequest) GetCardId() string {
+	if x != nil {
+		return x.CardId
+	}
+	return ""
+}
+
+type DeleteOrgCardResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Deleted       bool                   `protobuf:"varint,1,opt,name=deleted,proto3" json:"deleted,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteOrgCardResponse) Reset() {
+	*x = DeleteOrgCardResponse{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteOrgCardResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteOrgCardResponse) ProtoMessage() {}
+
+func (x *DeleteOrgCardResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteOrgCardResponse.ProtoReflect.Descriptor instead.
+func (*DeleteOrgCardResponse) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *DeleteOrgCardResponse) GetDeleted() bool {
+	if x != nil {
+		return x.Deleted
+	}
+	return false
+}
+
 var File_billing_billing_v1_billing_proto protoreflect.FileDescriptor
 
 const file_billing_billing_v1_billing_proto_rawDesc = "" +
@@ -2989,14 +3657,19 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\x14GetOrgBalanceRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\"Q\n" +
 	"\x15GetOrgBalanceResponse\x128\n" +
-	"\abalance\x18\x01 \x01(\v2\x1e.billing.billing.v1.OrgBalanceR\abalance\"\xdd\x01\n" +
+	"\abalance\x18\x01 \x01(\v2\x1e.billing.billing.v1.OrgBalanceR\abalance\"\xb5\x02\n" +
 	"\x15InitiatePayoutRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x16\n" +
 	"\x06amount\x18\x02 \x01(\x03R\x06amount\x12\x1a\n" +
 	"\bcurrency\x18\x03 \x01(\tR\bcurrency\x12!\n" +
 	"\fbank_account\x18\x04 \x01(\tR\vbankAccount\x12\x1b\n" +
 	"\tbank_name\x18\x05 \x01(\tR\bbankName\x12'\n" +
-	"\x0fidempotency_key\x18\x06 \x01(\tR\x0eidempotencyKey\"L\n" +
+	"\x0fidempotency_key\x18\x06 \x01(\tR\x0eidempotencyKey\x12\x1f\n" +
+	"\bprovider\x18\a \x01(\tH\x00R\bprovider\x88\x01\x01\x12\x1c\n" +
+	"\acard_id\x18\b \x01(\tH\x01R\x06cardId\x88\x01\x01B\v\n" +
+	"\t_providerB\n" +
+	"\n" +
+	"\b_card_id\"L\n" +
 	"\x16InitiatePayoutResponse\x122\n" +
 	"\x06payout\x18\x01 \x01(\v2\x1a.billing.billing.v1.PayoutR\x06payout\"\xad\x01\n" +
 	"\x17GetPayoutHistoryRequest\x12'\n" +
@@ -3102,7 +3775,54 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\fledger_entry\x18\x02 \x01(\v2\x1f.billing.billing.v1.LedgerEntryR\vledgerEntry\x12\x1e\n" +
 	"\n" +
 	"idempotent\x18\x03 \x01(\bR\n" +
-	"idempotent*\xbe\x04\n" +
+	"idempotent\"\xa0\x02\n" +
+	"\x17CreditOrgBalanceRequest\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x16\n" +
+	"\x06amount\x18\x02 \x01(\x03R\x06amount\x12\x1a\n" +
+	"\bcurrency\x18\x03 \x01(\tR\bcurrency\x12\x1f\n" +
+	"\vreason_type\x18\x04 \x01(\tR\n" +
+	"reasonType\x12!\n" +
+	"\freference_id\x18\x05 \x01(\tR\vreferenceId\x12\x18\n" +
+	"\acomment\x18\x06 \x01(\tR\acomment\x12'\n" +
+	"\x0fidempotency_key\x18\a \x01(\tR\x0eidempotencyKey\x12!\n" +
+	"\finitiated_by\x18\b \x01(\x03R\vinitiatedBy\"\x7f\n" +
+	"\x18CreditOrgBalanceResponse\x126\n" +
+	"\x17available_balance_after\x18\x01 \x01(\x03R\x15availableBalanceAfter\x12+\n" +
+	"\x11idempotent_replay\x18\x02 \x01(\bR\x10idempotentReplay\"\xad\x02\n" +
+	"\rOrgPayoutCard\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
+	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x1a\n" +
+	"\bprovider\x18\x03 \x01(\tR\bprovider\x12(\n" +
+	"\x10provider_card_id\x18\x04 \x01(\tR\x0eproviderCardId\x12#\n" +
+	"\rmasked_number\x18\x05 \x01(\tR\fmaskedNumber\x12%\n" +
+	"\x0epayment_system\x18\x06 \x01(\tR\rpaymentSystem\x12\x16\n" +
+	"\x06status\x18\a \x01(\tR\x06status\x129\n" +
+	"\n" +
+	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x9a\x01\n" +
+	"\x1dInitiateOrgCardBindingRequest\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
+	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x1f\n" +
+	"\vsuccess_url\x18\x03 \x01(\tR\n" +
+	"successUrl\x12\x19\n" +
+	"\bfail_url\x18\x04 \x01(\tR\afailUrl\"k\n" +
+	"\x1eInitiateOrgCardBindingResponse\x12\x1f\n" +
+	"\vbinding_url\x18\x01 \x01(\tR\n" +
+	"bindingUrl\x12(\n" +
+	"\x10binding_order_id\x18\x02 \x01(\tR\x0ebindingOrderId\"q\n" +
+	"\x1cConfirmOrgCardBindingRequest\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12(\n" +
+	"\x10binding_order_id\x18\x02 \x01(\tR\x0ebindingOrderId\"V\n" +
+	"\x1dConfirmOrgCardBindingResponse\x125\n" +
+	"\x04card\x18\x01 \x01(\v2!.billing.billing.v1.OrgPayoutCardR\x04card\">\n" +
+	"\x13ListOrgCardsRequest\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\"O\n" +
+	"\x14ListOrgCardsResponse\x127\n" +
+	"\x05cards\x18\x01 \x03(\v2!.billing.billing.v1.OrgPayoutCardR\x05cards\"X\n" +
+	"\x14DeleteOrgCardRequest\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
+	"\acard_id\x18\x02 \x01(\tR\x06cardId\"1\n" +
+	"\x15DeleteOrgCardResponse\x12\x18\n" +
+	"\adeleted\x18\x01 \x01(\bR\adeleted*\xbe\x04\n" +
 	"\x0fLedgerEntryType\x12!\n" +
 	"\x1dLEDGER_ENTRY_TYPE_UNSPECIFIED\x10\x00\x12&\n" +
 	"\"LEDGER_ENTRY_TYPE_PAYMENT_RECEIVED\x10\x01\x12'\n" +
@@ -3136,7 +3856,7 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\vSubjectType\x12\x1c\n" +
 	"\x18SUBJECT_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11SUBJECT_TYPE_USER\x10\x01\x12\x1d\n" +
-	"\x19SUBJECT_TYPE_ORGANIZATION\x10\x022\xe6\v\n" +
+	"\x19SUBJECT_TYPE_ORGANIZATION\x10\x022\x9d\x10\n" +
 	"\x0eBillingService\x12p\n" +
 	"\x11RecordLedgerEntry\x12,.billing.billing.v1.RecordLedgerEntryRequest\x1a-.billing.billing.v1.RecordLedgerEntryResponse\x12p\n" +
 	"\x11ListLedgerEntries\x12,.billing.billing.v1.ListLedgerEntriesRequest\x1a-.billing.billing.v1.ListLedgerEntriesResponse\x12d\n" +
@@ -3151,7 +3871,12 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\fListSpending\x12'.billing.billing.v1.ListSpendingRequest\x1a(.billing.billing.v1.ListSpendingResponse\x12m\n" +
 	"\x10GetWalletBalance\x12+.billing.billing.v1.GetWalletBalanceRequest\x1a,.billing.billing.v1.GetWalletBalanceResponse\x12^\n" +
 	"\vDebitWallet\x12&.billing.billing.v1.DebitWalletRequest\x1a'.billing.billing.v1.DebitWalletResponse\x12a\n" +
-	"\fCreditWallet\x12'.billing.billing.v1.CreditWalletRequest\x1a(.billing.billing.v1.CreditWalletResponseB<Z:github.com/4ubak/cg-proto/gen/go/billing/billing;billingv1b\x06proto3"
+	"\fCreditWallet\x12'.billing.billing.v1.CreditWalletRequest\x1a(.billing.billing.v1.CreditWalletResponse\x12m\n" +
+	"\x10CreditOrgBalance\x12+.billing.billing.v1.CreditOrgBalanceRequest\x1a,.billing.billing.v1.CreditOrgBalanceResponse\x12\x7f\n" +
+	"\x16InitiateOrgCardBinding\x121.billing.billing.v1.InitiateOrgCardBindingRequest\x1a2.billing.billing.v1.InitiateOrgCardBindingResponse\x12|\n" +
+	"\x15ConfirmOrgCardBinding\x120.billing.billing.v1.ConfirmOrgCardBindingRequest\x1a1.billing.billing.v1.ConfirmOrgCardBindingResponse\x12a\n" +
+	"\fListOrgCards\x12'.billing.billing.v1.ListOrgCardsRequest\x1a(.billing.billing.v1.ListOrgCardsResponse\x12d\n" +
+	"\rDeleteOrgCard\x12(.billing.billing.v1.DeleteOrgCardRequest\x1a).billing.billing.v1.DeleteOrgCardResponseB<Z:github.com/4ubak/cg-proto/gen/go/billing/billing;billingv1b\x06proto3"
 
 var (
 	file_billing_billing_v1_billing_proto_rawDescOnce sync.Once
@@ -3166,126 +3891,150 @@ func file_billing_billing_v1_billing_proto_rawDescGZIP() []byte {
 }
 
 var file_billing_billing_v1_billing_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_billing_billing_v1_billing_proto_msgTypes = make([]protoimpl.MessageInfo, 35)
+var file_billing_billing_v1_billing_proto_msgTypes = make([]protoimpl.MessageInfo, 46)
 var file_billing_billing_v1_billing_proto_goTypes = []any{
-	(LedgerEntryType)(0),                 // 0: billing.billing.v1.LedgerEntryType
-	(PayoutStatus)(0),                    // 1: billing.billing.v1.PayoutStatus
-	(ReconciliationStatus)(0),            // 2: billing.billing.v1.ReconciliationStatus
-	(SubjectType)(0),                     // 3: billing.billing.v1.SubjectType
-	(*LedgerEntry)(nil),                  // 4: billing.billing.v1.LedgerEntry
-	(*OrgBalance)(nil),                   // 5: billing.billing.v1.OrgBalance
-	(*UserBalance)(nil),                  // 6: billing.billing.v1.UserBalance
-	(*UserWallet)(nil),                   // 7: billing.billing.v1.UserWallet
-	(*Payout)(nil),                       // 8: billing.billing.v1.Payout
-	(*RevenueDataPoint)(nil),             // 9: billing.billing.v1.RevenueDataPoint
-	(*SpendingEntry)(nil),                // 10: billing.billing.v1.SpendingEntry
-	(*RecordLedgerEntryRequest)(nil),     // 11: billing.billing.v1.RecordLedgerEntryRequest
-	(*RecordLedgerEntryResponse)(nil),    // 12: billing.billing.v1.RecordLedgerEntryResponse
-	(*ListLedgerEntriesRequest)(nil),     // 13: billing.billing.v1.ListLedgerEntriesRequest
-	(*ListLedgerEntriesResponse)(nil),    // 14: billing.billing.v1.ListLedgerEntriesResponse
-	(*GetOrgBalanceRequest)(nil),         // 15: billing.billing.v1.GetOrgBalanceRequest
-	(*GetOrgBalanceResponse)(nil),        // 16: billing.billing.v1.GetOrgBalanceResponse
-	(*InitiatePayoutRequest)(nil),        // 17: billing.billing.v1.InitiatePayoutRequest
-	(*InitiatePayoutResponse)(nil),       // 18: billing.billing.v1.InitiatePayoutResponse
-	(*GetPayoutHistoryRequest)(nil),      // 19: billing.billing.v1.GetPayoutHistoryRequest
-	(*GetPayoutHistoryResponse)(nil),     // 20: billing.billing.v1.GetPayoutHistoryResponse
-	(*ReconcileTransactionRequest)(nil),  // 21: billing.billing.v1.ReconcileTransactionRequest
-	(*ReconcileTransactionResponse)(nil), // 22: billing.billing.v1.ReconcileTransactionResponse
-	(*GetOrgStatementRequest)(nil),       // 23: billing.billing.v1.GetOrgStatementRequest
-	(*GetOrgStatementResponse)(nil),      // 24: billing.billing.v1.GetOrgStatementResponse
-	(*GetRevenueStatsRequest)(nil),       // 25: billing.billing.v1.GetRevenueStatsRequest
-	(*GetRevenueStatsResponse)(nil),      // 26: billing.billing.v1.GetRevenueStatsResponse
-	(*GetStatementRequest)(nil),          // 27: billing.billing.v1.GetStatementRequest
-	(*GetStatementResponse)(nil),         // 28: billing.billing.v1.GetStatementResponse
-	(*GetUserBalanceRequest)(nil),        // 29: billing.billing.v1.GetUserBalanceRequest
-	(*GetUserBalanceResponse)(nil),       // 30: billing.billing.v1.GetUserBalanceResponse
-	(*ListSpendingRequest)(nil),          // 31: billing.billing.v1.ListSpendingRequest
-	(*ListSpendingResponse)(nil),         // 32: billing.billing.v1.ListSpendingResponse
-	(*GetWalletBalanceRequest)(nil),      // 33: billing.billing.v1.GetWalletBalanceRequest
-	(*GetWalletBalanceResponse)(nil),     // 34: billing.billing.v1.GetWalletBalanceResponse
-	(*DebitWalletRequest)(nil),           // 35: billing.billing.v1.DebitWalletRequest
-	(*DebitWalletResponse)(nil),          // 36: billing.billing.v1.DebitWalletResponse
-	(*CreditWalletRequest)(nil),          // 37: billing.billing.v1.CreditWalletRequest
-	(*CreditWalletResponse)(nil),         // 38: billing.billing.v1.CreditWalletResponse
-	(*timestamppb.Timestamp)(nil),        // 39: google.protobuf.Timestamp
+	(LedgerEntryType)(0),                   // 0: billing.billing.v1.LedgerEntryType
+	(PayoutStatus)(0),                      // 1: billing.billing.v1.PayoutStatus
+	(ReconciliationStatus)(0),              // 2: billing.billing.v1.ReconciliationStatus
+	(SubjectType)(0),                       // 3: billing.billing.v1.SubjectType
+	(*LedgerEntry)(nil),                    // 4: billing.billing.v1.LedgerEntry
+	(*OrgBalance)(nil),                     // 5: billing.billing.v1.OrgBalance
+	(*UserBalance)(nil),                    // 6: billing.billing.v1.UserBalance
+	(*UserWallet)(nil),                     // 7: billing.billing.v1.UserWallet
+	(*Payout)(nil),                         // 8: billing.billing.v1.Payout
+	(*RevenueDataPoint)(nil),               // 9: billing.billing.v1.RevenueDataPoint
+	(*SpendingEntry)(nil),                  // 10: billing.billing.v1.SpendingEntry
+	(*RecordLedgerEntryRequest)(nil),       // 11: billing.billing.v1.RecordLedgerEntryRequest
+	(*RecordLedgerEntryResponse)(nil),      // 12: billing.billing.v1.RecordLedgerEntryResponse
+	(*ListLedgerEntriesRequest)(nil),       // 13: billing.billing.v1.ListLedgerEntriesRequest
+	(*ListLedgerEntriesResponse)(nil),      // 14: billing.billing.v1.ListLedgerEntriesResponse
+	(*GetOrgBalanceRequest)(nil),           // 15: billing.billing.v1.GetOrgBalanceRequest
+	(*GetOrgBalanceResponse)(nil),          // 16: billing.billing.v1.GetOrgBalanceResponse
+	(*InitiatePayoutRequest)(nil),          // 17: billing.billing.v1.InitiatePayoutRequest
+	(*InitiatePayoutResponse)(nil),         // 18: billing.billing.v1.InitiatePayoutResponse
+	(*GetPayoutHistoryRequest)(nil),        // 19: billing.billing.v1.GetPayoutHistoryRequest
+	(*GetPayoutHistoryResponse)(nil),       // 20: billing.billing.v1.GetPayoutHistoryResponse
+	(*ReconcileTransactionRequest)(nil),    // 21: billing.billing.v1.ReconcileTransactionRequest
+	(*ReconcileTransactionResponse)(nil),   // 22: billing.billing.v1.ReconcileTransactionResponse
+	(*GetOrgStatementRequest)(nil),         // 23: billing.billing.v1.GetOrgStatementRequest
+	(*GetOrgStatementResponse)(nil),        // 24: billing.billing.v1.GetOrgStatementResponse
+	(*GetRevenueStatsRequest)(nil),         // 25: billing.billing.v1.GetRevenueStatsRequest
+	(*GetRevenueStatsResponse)(nil),        // 26: billing.billing.v1.GetRevenueStatsResponse
+	(*GetStatementRequest)(nil),            // 27: billing.billing.v1.GetStatementRequest
+	(*GetStatementResponse)(nil),           // 28: billing.billing.v1.GetStatementResponse
+	(*GetUserBalanceRequest)(nil),          // 29: billing.billing.v1.GetUserBalanceRequest
+	(*GetUserBalanceResponse)(nil),         // 30: billing.billing.v1.GetUserBalanceResponse
+	(*ListSpendingRequest)(nil),            // 31: billing.billing.v1.ListSpendingRequest
+	(*ListSpendingResponse)(nil),           // 32: billing.billing.v1.ListSpendingResponse
+	(*GetWalletBalanceRequest)(nil),        // 33: billing.billing.v1.GetWalletBalanceRequest
+	(*GetWalletBalanceResponse)(nil),       // 34: billing.billing.v1.GetWalletBalanceResponse
+	(*DebitWalletRequest)(nil),             // 35: billing.billing.v1.DebitWalletRequest
+	(*DebitWalletResponse)(nil),            // 36: billing.billing.v1.DebitWalletResponse
+	(*CreditWalletRequest)(nil),            // 37: billing.billing.v1.CreditWalletRequest
+	(*CreditWalletResponse)(nil),           // 38: billing.billing.v1.CreditWalletResponse
+	(*CreditOrgBalanceRequest)(nil),        // 39: billing.billing.v1.CreditOrgBalanceRequest
+	(*CreditOrgBalanceResponse)(nil),       // 40: billing.billing.v1.CreditOrgBalanceResponse
+	(*OrgPayoutCard)(nil),                  // 41: billing.billing.v1.OrgPayoutCard
+	(*InitiateOrgCardBindingRequest)(nil),  // 42: billing.billing.v1.InitiateOrgCardBindingRequest
+	(*InitiateOrgCardBindingResponse)(nil), // 43: billing.billing.v1.InitiateOrgCardBindingResponse
+	(*ConfirmOrgCardBindingRequest)(nil),   // 44: billing.billing.v1.ConfirmOrgCardBindingRequest
+	(*ConfirmOrgCardBindingResponse)(nil),  // 45: billing.billing.v1.ConfirmOrgCardBindingResponse
+	(*ListOrgCardsRequest)(nil),            // 46: billing.billing.v1.ListOrgCardsRequest
+	(*ListOrgCardsResponse)(nil),           // 47: billing.billing.v1.ListOrgCardsResponse
+	(*DeleteOrgCardRequest)(nil),           // 48: billing.billing.v1.DeleteOrgCardRequest
+	(*DeleteOrgCardResponse)(nil),          // 49: billing.billing.v1.DeleteOrgCardResponse
+	(*timestamppb.Timestamp)(nil),          // 50: google.protobuf.Timestamp
 }
 var file_billing_billing_v1_billing_proto_depIdxs = []int32{
 	0,  // 0: billing.billing.v1.LedgerEntry.entry_type:type_name -> billing.billing.v1.LedgerEntryType
-	39, // 1: billing.billing.v1.LedgerEntry.created_at:type_name -> google.protobuf.Timestamp
+	50, // 1: billing.billing.v1.LedgerEntry.created_at:type_name -> google.protobuf.Timestamp
 	3,  // 2: billing.billing.v1.LedgerEntry.subject_type:type_name -> billing.billing.v1.SubjectType
-	39, // 3: billing.billing.v1.OrgBalance.updated_at:type_name -> google.protobuf.Timestamp
-	39, // 4: billing.billing.v1.UserBalance.last_transaction_at:type_name -> google.protobuf.Timestamp
-	39, // 5: billing.billing.v1.UserBalance.updated_at:type_name -> google.protobuf.Timestamp
-	39, // 6: billing.billing.v1.UserWallet.updated_at:type_name -> google.protobuf.Timestamp
+	50, // 3: billing.billing.v1.OrgBalance.updated_at:type_name -> google.protobuf.Timestamp
+	50, // 4: billing.billing.v1.UserBalance.last_transaction_at:type_name -> google.protobuf.Timestamp
+	50, // 5: billing.billing.v1.UserBalance.updated_at:type_name -> google.protobuf.Timestamp
+	50, // 6: billing.billing.v1.UserWallet.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 7: billing.billing.v1.Payout.status:type_name -> billing.billing.v1.PayoutStatus
-	39, // 8: billing.billing.v1.Payout.requested_at:type_name -> google.protobuf.Timestamp
-	39, // 9: billing.billing.v1.Payout.completed_at:type_name -> google.protobuf.Timestamp
-	39, // 10: billing.billing.v1.SpendingEntry.created_at:type_name -> google.protobuf.Timestamp
+	50, // 8: billing.billing.v1.Payout.requested_at:type_name -> google.protobuf.Timestamp
+	50, // 9: billing.billing.v1.Payout.completed_at:type_name -> google.protobuf.Timestamp
+	50, // 10: billing.billing.v1.SpendingEntry.created_at:type_name -> google.protobuf.Timestamp
 	0,  // 11: billing.billing.v1.SpendingEntry.entry_type:type_name -> billing.billing.v1.LedgerEntryType
 	0,  // 12: billing.billing.v1.RecordLedgerEntryRequest.entry_type:type_name -> billing.billing.v1.LedgerEntryType
 	3,  // 13: billing.billing.v1.RecordLedgerEntryRequest.subject_type:type_name -> billing.billing.v1.SubjectType
 	4,  // 14: billing.billing.v1.RecordLedgerEntryResponse.entry:type_name -> billing.billing.v1.LedgerEntry
 	0,  // 15: billing.billing.v1.ListLedgerEntriesRequest.entry_type:type_name -> billing.billing.v1.LedgerEntryType
-	39, // 16: billing.billing.v1.ListLedgerEntriesRequest.from:type_name -> google.protobuf.Timestamp
-	39, // 17: billing.billing.v1.ListLedgerEntriesRequest.to:type_name -> google.protobuf.Timestamp
+	50, // 16: billing.billing.v1.ListLedgerEntriesRequest.from:type_name -> google.protobuf.Timestamp
+	50, // 17: billing.billing.v1.ListLedgerEntriesRequest.to:type_name -> google.protobuf.Timestamp
 	4,  // 18: billing.billing.v1.ListLedgerEntriesResponse.entries:type_name -> billing.billing.v1.LedgerEntry
 	5,  // 19: billing.billing.v1.GetOrgBalanceResponse.balance:type_name -> billing.billing.v1.OrgBalance
 	8,  // 20: billing.billing.v1.InitiatePayoutResponse.payout:type_name -> billing.billing.v1.Payout
 	1,  // 21: billing.billing.v1.GetPayoutHistoryRequest.status:type_name -> billing.billing.v1.PayoutStatus
 	8,  // 22: billing.billing.v1.GetPayoutHistoryResponse.payouts:type_name -> billing.billing.v1.Payout
 	2,  // 23: billing.billing.v1.ReconcileTransactionResponse.status:type_name -> billing.billing.v1.ReconciliationStatus
-	39, // 24: billing.billing.v1.GetOrgStatementRequest.from:type_name -> google.protobuf.Timestamp
-	39, // 25: billing.billing.v1.GetOrgStatementRequest.to:type_name -> google.protobuf.Timestamp
+	50, // 24: billing.billing.v1.GetOrgStatementRequest.from:type_name -> google.protobuf.Timestamp
+	50, // 25: billing.billing.v1.GetOrgStatementRequest.to:type_name -> google.protobuf.Timestamp
 	4,  // 26: billing.billing.v1.GetOrgStatementResponse.entries:type_name -> billing.billing.v1.LedgerEntry
-	39, // 27: billing.billing.v1.GetRevenueStatsRequest.from:type_name -> google.protobuf.Timestamp
-	39, // 28: billing.billing.v1.GetRevenueStatsRequest.to:type_name -> google.protobuf.Timestamp
+	50, // 27: billing.billing.v1.GetRevenueStatsRequest.from:type_name -> google.protobuf.Timestamp
+	50, // 28: billing.billing.v1.GetRevenueStatsRequest.to:type_name -> google.protobuf.Timestamp
 	9,  // 29: billing.billing.v1.GetRevenueStatsResponse.data_points:type_name -> billing.billing.v1.RevenueDataPoint
 	3,  // 30: billing.billing.v1.GetStatementRequest.subject_type:type_name -> billing.billing.v1.SubjectType
-	39, // 31: billing.billing.v1.GetStatementRequest.from:type_name -> google.protobuf.Timestamp
-	39, // 32: billing.billing.v1.GetStatementRequest.to:type_name -> google.protobuf.Timestamp
+	50, // 31: billing.billing.v1.GetStatementRequest.from:type_name -> google.protobuf.Timestamp
+	50, // 32: billing.billing.v1.GetStatementRequest.to:type_name -> google.protobuf.Timestamp
 	4,  // 33: billing.billing.v1.GetStatementResponse.entries:type_name -> billing.billing.v1.LedgerEntry
 	6,  // 34: billing.billing.v1.GetUserBalanceResponse.balance:type_name -> billing.billing.v1.UserBalance
-	39, // 35: billing.billing.v1.ListSpendingRequest.from:type_name -> google.protobuf.Timestamp
-	39, // 36: billing.billing.v1.ListSpendingRequest.to:type_name -> google.protobuf.Timestamp
+	50, // 35: billing.billing.v1.ListSpendingRequest.from:type_name -> google.protobuf.Timestamp
+	50, // 36: billing.billing.v1.ListSpendingRequest.to:type_name -> google.protobuf.Timestamp
 	10, // 37: billing.billing.v1.ListSpendingResponse.entries:type_name -> billing.billing.v1.SpendingEntry
 	7,  // 38: billing.billing.v1.GetWalletBalanceResponse.wallet:type_name -> billing.billing.v1.UserWallet
 	7,  // 39: billing.billing.v1.DebitWalletResponse.wallet_after:type_name -> billing.billing.v1.UserWallet
 	4,  // 40: billing.billing.v1.DebitWalletResponse.ledger_entry:type_name -> billing.billing.v1.LedgerEntry
 	7,  // 41: billing.billing.v1.CreditWalletResponse.wallet_after:type_name -> billing.billing.v1.UserWallet
 	4,  // 42: billing.billing.v1.CreditWalletResponse.ledger_entry:type_name -> billing.billing.v1.LedgerEntry
-	11, // 43: billing.billing.v1.BillingService.RecordLedgerEntry:input_type -> billing.billing.v1.RecordLedgerEntryRequest
-	13, // 44: billing.billing.v1.BillingService.ListLedgerEntries:input_type -> billing.billing.v1.ListLedgerEntriesRequest
-	15, // 45: billing.billing.v1.BillingService.GetOrgBalance:input_type -> billing.billing.v1.GetOrgBalanceRequest
-	17, // 46: billing.billing.v1.BillingService.InitiatePayout:input_type -> billing.billing.v1.InitiatePayoutRequest
-	19, // 47: billing.billing.v1.BillingService.GetPayoutHistory:input_type -> billing.billing.v1.GetPayoutHistoryRequest
-	21, // 48: billing.billing.v1.BillingService.ReconcileTransaction:input_type -> billing.billing.v1.ReconcileTransactionRequest
-	23, // 49: billing.billing.v1.BillingService.GetOrgStatement:input_type -> billing.billing.v1.GetOrgStatementRequest
-	25, // 50: billing.billing.v1.BillingService.GetRevenueStats:input_type -> billing.billing.v1.GetRevenueStatsRequest
-	27, // 51: billing.billing.v1.BillingService.GetStatement:input_type -> billing.billing.v1.GetStatementRequest
-	29, // 52: billing.billing.v1.BillingService.GetUserBalance:input_type -> billing.billing.v1.GetUserBalanceRequest
-	31, // 53: billing.billing.v1.BillingService.ListSpending:input_type -> billing.billing.v1.ListSpendingRequest
-	33, // 54: billing.billing.v1.BillingService.GetWalletBalance:input_type -> billing.billing.v1.GetWalletBalanceRequest
-	35, // 55: billing.billing.v1.BillingService.DebitWallet:input_type -> billing.billing.v1.DebitWalletRequest
-	37, // 56: billing.billing.v1.BillingService.CreditWallet:input_type -> billing.billing.v1.CreditWalletRequest
-	12, // 57: billing.billing.v1.BillingService.RecordLedgerEntry:output_type -> billing.billing.v1.RecordLedgerEntryResponse
-	14, // 58: billing.billing.v1.BillingService.ListLedgerEntries:output_type -> billing.billing.v1.ListLedgerEntriesResponse
-	16, // 59: billing.billing.v1.BillingService.GetOrgBalance:output_type -> billing.billing.v1.GetOrgBalanceResponse
-	18, // 60: billing.billing.v1.BillingService.InitiatePayout:output_type -> billing.billing.v1.InitiatePayoutResponse
-	20, // 61: billing.billing.v1.BillingService.GetPayoutHistory:output_type -> billing.billing.v1.GetPayoutHistoryResponse
-	22, // 62: billing.billing.v1.BillingService.ReconcileTransaction:output_type -> billing.billing.v1.ReconcileTransactionResponse
-	24, // 63: billing.billing.v1.BillingService.GetOrgStatement:output_type -> billing.billing.v1.GetOrgStatementResponse
-	26, // 64: billing.billing.v1.BillingService.GetRevenueStats:output_type -> billing.billing.v1.GetRevenueStatsResponse
-	28, // 65: billing.billing.v1.BillingService.GetStatement:output_type -> billing.billing.v1.GetStatementResponse
-	30, // 66: billing.billing.v1.BillingService.GetUserBalance:output_type -> billing.billing.v1.GetUserBalanceResponse
-	32, // 67: billing.billing.v1.BillingService.ListSpending:output_type -> billing.billing.v1.ListSpendingResponse
-	34, // 68: billing.billing.v1.BillingService.GetWalletBalance:output_type -> billing.billing.v1.GetWalletBalanceResponse
-	36, // 69: billing.billing.v1.BillingService.DebitWallet:output_type -> billing.billing.v1.DebitWalletResponse
-	38, // 70: billing.billing.v1.BillingService.CreditWallet:output_type -> billing.billing.v1.CreditWalletResponse
-	57, // [57:71] is the sub-list for method output_type
-	43, // [43:57] is the sub-list for method input_type
-	43, // [43:43] is the sub-list for extension type_name
-	43, // [43:43] is the sub-list for extension extendee
-	0,  // [0:43] is the sub-list for field type_name
+	50, // 43: billing.billing.v1.OrgPayoutCard.created_at:type_name -> google.protobuf.Timestamp
+	41, // 44: billing.billing.v1.ConfirmOrgCardBindingResponse.card:type_name -> billing.billing.v1.OrgPayoutCard
+	41, // 45: billing.billing.v1.ListOrgCardsResponse.cards:type_name -> billing.billing.v1.OrgPayoutCard
+	11, // 46: billing.billing.v1.BillingService.RecordLedgerEntry:input_type -> billing.billing.v1.RecordLedgerEntryRequest
+	13, // 47: billing.billing.v1.BillingService.ListLedgerEntries:input_type -> billing.billing.v1.ListLedgerEntriesRequest
+	15, // 48: billing.billing.v1.BillingService.GetOrgBalance:input_type -> billing.billing.v1.GetOrgBalanceRequest
+	17, // 49: billing.billing.v1.BillingService.InitiatePayout:input_type -> billing.billing.v1.InitiatePayoutRequest
+	19, // 50: billing.billing.v1.BillingService.GetPayoutHistory:input_type -> billing.billing.v1.GetPayoutHistoryRequest
+	21, // 51: billing.billing.v1.BillingService.ReconcileTransaction:input_type -> billing.billing.v1.ReconcileTransactionRequest
+	23, // 52: billing.billing.v1.BillingService.GetOrgStatement:input_type -> billing.billing.v1.GetOrgStatementRequest
+	25, // 53: billing.billing.v1.BillingService.GetRevenueStats:input_type -> billing.billing.v1.GetRevenueStatsRequest
+	27, // 54: billing.billing.v1.BillingService.GetStatement:input_type -> billing.billing.v1.GetStatementRequest
+	29, // 55: billing.billing.v1.BillingService.GetUserBalance:input_type -> billing.billing.v1.GetUserBalanceRequest
+	31, // 56: billing.billing.v1.BillingService.ListSpending:input_type -> billing.billing.v1.ListSpendingRequest
+	33, // 57: billing.billing.v1.BillingService.GetWalletBalance:input_type -> billing.billing.v1.GetWalletBalanceRequest
+	35, // 58: billing.billing.v1.BillingService.DebitWallet:input_type -> billing.billing.v1.DebitWalletRequest
+	37, // 59: billing.billing.v1.BillingService.CreditWallet:input_type -> billing.billing.v1.CreditWalletRequest
+	39, // 60: billing.billing.v1.BillingService.CreditOrgBalance:input_type -> billing.billing.v1.CreditOrgBalanceRequest
+	42, // 61: billing.billing.v1.BillingService.InitiateOrgCardBinding:input_type -> billing.billing.v1.InitiateOrgCardBindingRequest
+	44, // 62: billing.billing.v1.BillingService.ConfirmOrgCardBinding:input_type -> billing.billing.v1.ConfirmOrgCardBindingRequest
+	46, // 63: billing.billing.v1.BillingService.ListOrgCards:input_type -> billing.billing.v1.ListOrgCardsRequest
+	48, // 64: billing.billing.v1.BillingService.DeleteOrgCard:input_type -> billing.billing.v1.DeleteOrgCardRequest
+	12, // 65: billing.billing.v1.BillingService.RecordLedgerEntry:output_type -> billing.billing.v1.RecordLedgerEntryResponse
+	14, // 66: billing.billing.v1.BillingService.ListLedgerEntries:output_type -> billing.billing.v1.ListLedgerEntriesResponse
+	16, // 67: billing.billing.v1.BillingService.GetOrgBalance:output_type -> billing.billing.v1.GetOrgBalanceResponse
+	18, // 68: billing.billing.v1.BillingService.InitiatePayout:output_type -> billing.billing.v1.InitiatePayoutResponse
+	20, // 69: billing.billing.v1.BillingService.GetPayoutHistory:output_type -> billing.billing.v1.GetPayoutHistoryResponse
+	22, // 70: billing.billing.v1.BillingService.ReconcileTransaction:output_type -> billing.billing.v1.ReconcileTransactionResponse
+	24, // 71: billing.billing.v1.BillingService.GetOrgStatement:output_type -> billing.billing.v1.GetOrgStatementResponse
+	26, // 72: billing.billing.v1.BillingService.GetRevenueStats:output_type -> billing.billing.v1.GetRevenueStatsResponse
+	28, // 73: billing.billing.v1.BillingService.GetStatement:output_type -> billing.billing.v1.GetStatementResponse
+	30, // 74: billing.billing.v1.BillingService.GetUserBalance:output_type -> billing.billing.v1.GetUserBalanceResponse
+	32, // 75: billing.billing.v1.BillingService.ListSpending:output_type -> billing.billing.v1.ListSpendingResponse
+	34, // 76: billing.billing.v1.BillingService.GetWalletBalance:output_type -> billing.billing.v1.GetWalletBalanceResponse
+	36, // 77: billing.billing.v1.BillingService.DebitWallet:output_type -> billing.billing.v1.DebitWalletResponse
+	38, // 78: billing.billing.v1.BillingService.CreditWallet:output_type -> billing.billing.v1.CreditWalletResponse
+	40, // 79: billing.billing.v1.BillingService.CreditOrgBalance:output_type -> billing.billing.v1.CreditOrgBalanceResponse
+	43, // 80: billing.billing.v1.BillingService.InitiateOrgCardBinding:output_type -> billing.billing.v1.InitiateOrgCardBindingResponse
+	45, // 81: billing.billing.v1.BillingService.ConfirmOrgCardBinding:output_type -> billing.billing.v1.ConfirmOrgCardBindingResponse
+	47, // 82: billing.billing.v1.BillingService.ListOrgCards:output_type -> billing.billing.v1.ListOrgCardsResponse
+	49, // 83: billing.billing.v1.BillingService.DeleteOrgCard:output_type -> billing.billing.v1.DeleteOrgCardResponse
+	65, // [65:84] is the sub-list for method output_type
+	46, // [46:65] is the sub-list for method input_type
+	46, // [46:46] is the sub-list for extension type_name
+	46, // [46:46] is the sub-list for extension extendee
+	0,  // [0:46] is the sub-list for field type_name
 }
 
 func init() { file_billing_billing_v1_billing_proto_init() }
@@ -3293,13 +4042,14 @@ func file_billing_billing_v1_billing_proto_init() {
 	if File_billing_billing_v1_billing_proto != nil {
 		return
 	}
+	file_billing_billing_v1_billing_proto_msgTypes[13].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_billing_billing_v1_billing_proto_rawDesc), len(file_billing_billing_v1_billing_proto_rawDesc)),
 			NumEnums:      4,
-			NumMessages:   35,
+			NumMessages:   46,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
