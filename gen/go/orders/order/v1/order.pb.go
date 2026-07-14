@@ -524,6 +524,7 @@ const (
 	MaintenanceQuoteStatus_MAINTENANCE_QUOTE_STATUS_PENDING     MaintenanceQuoteStatus = 1
 	MaintenanceQuoteStatus_MAINTENANCE_QUOTE_STATUS_PAID        MaintenanceQuoteStatus = 2
 	MaintenanceQuoteStatus_MAINTENANCE_QUOTE_STATUS_CANCELLED   MaintenanceQuoteStatus = 3
+	MaintenanceQuoteStatus_MAINTENANCE_QUOTE_STATUS_EXPIRED     MaintenanceQuoteStatus = 4
 )
 
 // Enum value maps for MaintenanceQuoteStatus.
@@ -533,12 +534,14 @@ var (
 		1: "MAINTENANCE_QUOTE_STATUS_PENDING",
 		2: "MAINTENANCE_QUOTE_STATUS_PAID",
 		3: "MAINTENANCE_QUOTE_STATUS_CANCELLED",
+		4: "MAINTENANCE_QUOTE_STATUS_EXPIRED",
 	}
 	MaintenanceQuoteStatus_value = map[string]int32{
 		"MAINTENANCE_QUOTE_STATUS_UNSPECIFIED": 0,
 		"MAINTENANCE_QUOTE_STATUS_PENDING":     1,
 		"MAINTENANCE_QUOTE_STATUS_PAID":        2,
 		"MAINTENANCE_QUOTE_STATUS_CANCELLED":   3,
+		"MAINTENANCE_QUOTE_STATUS_EXPIRED":     4,
 	}
 )
 
@@ -7141,12 +7144,13 @@ const file_orders_order_v1_order_proto_rawDesc = "" +
 	"\x17DELIVERY_STATUS_SHIPPED\x10\x02\x12\x1d\n" +
 	"\x19DELIVERY_STATUS_DELIVERED\x10\x03\x12\x1d\n" +
 	"\x19DELIVERY_STATUS_INSTALLED\x10\x04\x12\x1d\n" +
-	"\x19DELIVERY_STATUS_CANCELLED\x10\x05*\xb3\x01\n" +
+	"\x19DELIVERY_STATUS_CANCELLED\x10\x05*\xd9\x01\n" +
 	"\x16MaintenanceQuoteStatus\x12(\n" +
 	"$MAINTENANCE_QUOTE_STATUS_UNSPECIFIED\x10\x00\x12$\n" +
 	" MAINTENANCE_QUOTE_STATUS_PENDING\x10\x01\x12!\n" +
 	"\x1dMAINTENANCE_QUOTE_STATUS_PAID\x10\x02\x12&\n" +
-	"\"MAINTENANCE_QUOTE_STATUS_CANCELLED\x10\x032\xa8 \n" +
+	"\"MAINTENANCE_QUOTE_STATUS_CANCELLED\x10\x03\x12$\n" +
+	" MAINTENANCE_QUOTE_STATUS_EXPIRED\x10\x042\xa8 \n" +
 	"\fOrderService\x12R\n" +
 	"\tListPlans\x12!.orders.order.v1.ListPlansRequest\x1a\".orders.order.v1.ListPlansResponse\x12U\n" +
 	"\n" +
