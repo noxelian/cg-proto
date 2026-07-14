@@ -326,6 +326,7 @@ message ListRequestsRequest {
   optional int64 repair_order_id = 11;  // Filter by linked repair order
   optional string organization_id = 12;  // When set, enriches results with is_new flag; enables sort_by=unread_first
   optional string owner_organization_id = 13;  // Filters requests whose authoritative org_id matches this organization
+  optional RequestKind kind = 14;  // Filter by request kind (admin list: e.g. only insurance requests)
 }
 
 message ListRequestsResponse {
