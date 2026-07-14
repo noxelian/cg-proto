@@ -53,6 +53,7 @@ const (
 	OrganizationService_UpdateOrganizationInfo_FullMethodName           = "/users.organization.v1.OrganizationService/UpdateOrganizationInfo"
 	OrganizationService_RequestActivation_FullMethodName                = "/users.organization.v1.OrganizationService/RequestActivation"
 	OrganizationService_SearchOrganizations_FullMethodName              = "/users.organization.v1.OrganizationService/SearchOrganizations"
+	OrganizationService_FindMatchingOrganizations_FullMethodName        = "/users.organization.v1.OrganizationService/FindMatchingOrganizations"
 	OrganizationService_SetOrganizationMarketplaceFields_FullMethodName = "/users.organization.v1.OrganizationService/SetOrganizationMarketplaceFields"
 	OrganizationService_SetPlatformRole_FullMethodName                  = "/users.organization.v1.OrganizationService/SetPlatformRole"
 	OrganizationService_GetPlatformRole_FullMethodName                  = "/users.organization.v1.OrganizationService/GetPlatformRole"
@@ -126,6 +127,12 @@ type OrganizationServiceClient interface {
 	// mirrors services.search.v1.SearchOrganizationsRequest so BFF mapping stays
 	// trivial during the ES cutover.
 	SearchOrganizations(ctx context.Context, in *SearchOrganizationsRequest, opts ...grpc.CallOption) (*SearchOrganizationsResponse, error)
+	// FindMatchingOrganizations returns active marketplace candidates for an
+	// authenticated request-owner flow. Unlike SearchOrganizations, it does not
+	// apply the public catalog visibility gate (show_in_catalog / paid PAF).
+	// Keeping this as a distinct RPC prevents public catalog callers from
+	// switching into the broader matching audience with a request flag.
+	FindMatchingOrganizations(ctx context.Context, in *FindMatchingOrganizationsRequest, opts ...grpc.CallOption) (*FindMatchingOrganizationsResponse, error)
 	// SetOrganizationMarketplaceFields lets platform admins/moderators edit the
 	// marketplace ranking flags (is_reviewed, is_dealer, expert_for_carmake_ids,
 	// expert_for_category_ids) on an organization. Each field is optional —
@@ -498,6 +505,16 @@ func (c *organizationServiceClient) SearchOrganizations(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *organizationServiceClient) FindMatchingOrganizations(ctx context.Context, in *FindMatchingOrganizationsRequest, opts ...grpc.CallOption) (*FindMatchingOrganizationsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FindMatchingOrganizationsResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_FindMatchingOrganizations_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *organizationServiceClient) SetOrganizationMarketplaceFields(ctx context.Context, in *SetOrganizationMarketplaceFieldsRequest, opts ...grpc.CallOption) (*SetOrganizationMarketplaceFieldsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SetOrganizationMarketplaceFieldsResponse)
@@ -628,6 +645,12 @@ type OrganizationServiceServer interface {
 	// mirrors services.search.v1.SearchOrganizationsRequest so BFF mapping stays
 	// trivial during the ES cutover.
 	SearchOrganizations(context.Context, *SearchOrganizationsRequest) (*SearchOrganizationsResponse, error)
+	// FindMatchingOrganizations returns active marketplace candidates for an
+	// authenticated request-owner flow. Unlike SearchOrganizations, it does not
+	// apply the public catalog visibility gate (show_in_catalog / paid PAF).
+	// Keeping this as a distinct RPC prevents public catalog callers from
+	// switching into the broader matching audience with a request flag.
+	FindMatchingOrganizations(context.Context, *FindMatchingOrganizationsRequest) (*FindMatchingOrganizationsResponse, error)
 	// SetOrganizationMarketplaceFields lets platform admins/moderators edit the
 	// marketplace ranking flags (is_reviewed, is_dealer, expert_for_carmake_ids,
 	// expert_for_category_ids) on an organization. Each field is optional —
@@ -761,6 +784,9 @@ func (UnimplementedOrganizationServiceServer) RequestActivation(context.Context,
 }
 func (UnimplementedOrganizationServiceServer) SearchOrganizations(context.Context, *SearchOrganizationsRequest) (*SearchOrganizationsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SearchOrganizations not implemented")
+}
+func (UnimplementedOrganizationServiceServer) FindMatchingOrganizations(context.Context, *FindMatchingOrganizationsRequest) (*FindMatchingOrganizationsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method FindMatchingOrganizations not implemented")
 }
 func (UnimplementedOrganizationServiceServer) SetOrganizationMarketplaceFields(context.Context, *SetOrganizationMarketplaceFieldsRequest) (*SetOrganizationMarketplaceFieldsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetOrganizationMarketplaceFields not implemented")
@@ -1413,6 +1439,24 @@ func _OrganizationService_SearchOrganizations_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationService_FindMatchingOrganizations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindMatchingOrganizationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).FindMatchingOrganizations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_FindMatchingOrganizations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).FindMatchingOrganizations(ctx, req.(*FindMatchingOrganizationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrganizationService_SetOrganizationMarketplaceFields_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetOrganizationMarketplaceFieldsRequest)
 	if err := dec(in); err != nil {
@@ -1663,6 +1707,10 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SearchOrganizations",
 			Handler:    _OrganizationService_SearchOrganizations_Handler,
+		},
+		{
+			MethodName: "FindMatchingOrganizations",
+			Handler:    _OrganizationService_FindMatchingOrganizations_Handler,
 		},
 		{
 			MethodName: "SetOrganizationMarketplaceFields",

@@ -90,6 +90,13 @@ service OrganizationService {
   // trivial during the ES cutover.
   rpc SearchOrganizations(SearchOrganizationsRequest) returns (SearchOrganizationsResponse);
 
+  // FindMatchingOrganizations returns active marketplace candidates for an
+  // authenticated request-owner flow. Unlike SearchOrganizations, it does not
+  // apply the public catalog visibility gate (show_in_catalog / paid PAF).
+  // Keeping this as a distinct RPC prevents public catalog callers from
+  // switching into the broader matching audience with a request flag.
+  rpc FindMatchingOrganizations(FindMatchingOrganizationsRequest) returns (FindMatchingOrganizationsResponse);
+
   // SetOrganizationMarketplaceFields lets platform admins/moderators edit the
   // marketplace ranking flags (is_reviewed, is_dealer, expert_for_carmake_ids,
   // expert_for_category_ids) on an organization. Each field is optional —
@@ -830,6 +837,21 @@ message SearchOrganizationsRequest {
   optional int32 min_raters_count = 13;
 }
 
+// FindMatchingOrganizationsRequest carries only the filters used by the
+// marketplace matching projection. The server always applies matching
+// relevance order and active-status eligibility; callers cannot opt into
+// public-catalog semantics through sort or visibility parameters.
+message FindMatchingOrganizationsRequest {
+  int64 city_id = 1;               // 0 = any city
+  int64 group_id = 2;              // NSI service group ID; 0 = any group
+  repeated int64 category_ids = 3; // Empty = any; otherwise overlap is required
+  int64 car_make_id = 4;           // 0 = any make
+  double latitude = 5;             // Optional, used only to compute distance
+  double longitude = 6;            // Optional, used only to compute distance
+  int32 page = 7;
+  int32 page_size = 8;
+}
+
 // OrganizationSearchResult is one ranked organization, aligned to
 // model.CandidateResult (the embedded model.Organization plus the two
 // relevance-match booleans).
@@ -883,6 +905,11 @@ message SearchOrganizationsResponse {
   repeated OrganizationSearchResult organizations = 1;
   int32 total = 2;
   optional OrganizationSearchFacets facets = 3;
+}
+
+message FindMatchingOrganizationsResponse {
+  repeated OrganizationSearchResult organizations = 1;
+  int32 total = 2;
 }
 
 // OrganizationSearchFacets mirrors services.search.v1.OrganizationFacets.
