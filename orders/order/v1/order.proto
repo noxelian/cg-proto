@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package orders.order.v1;
 
-option go_package = "github.com/4ubak/cg-proto/gen/go/orders/order;orderv1";
-
 import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/orders/order;orderv1";
 
 // OrderService handles plans, subscriptions, bid purchases, and marketplace orders.
 // Payment initiation is delegated to PaymentService via BFF orchestration.
@@ -54,6 +54,11 @@ service OrderService {
   rpc DeleteOrderItem(DeleteOrderItemRequest) returns (DeleteOrderItemResponse);
   rpc UpdateDeliveryStatus(UpdateDeliveryStatusRequest) returns (UpdateDeliveryStatusResponse);
   rpc SetOrderStatus(SetOrderStatusRequest) returns (SetOrderStatusResponse);
+
+  // === Maintenance offers and payable quotes ===
+  rpc ListMaintenanceOffers(ListMaintenanceOffersRequest) returns (ListMaintenanceOffersResponse);
+  rpc CreateMaintenanceQuote(CreateMaintenanceQuoteRequest) returns (CreateMaintenanceQuoteResponse);
+  rpc GetMaintenanceQuote(GetMaintenanceQuoteRequest) returns (GetMaintenanceQuoteResponse);
 
   // === Admin analytics ===
   rpc GetSubscriptionStats(GetSubscriptionStatsRequest) returns (GetSubscriptionStatsResponse);
@@ -115,8 +120,8 @@ enum OrderType {
 
 enum ItemSource {
   ITEM_SOURCE_UNSPECIFIED = 0;
-  ITEM_SOURCE_WORKSHOP = 1;  // Part sourced by workshop (has price)
-  ITEM_SOURCE_CLIENT = 2;    // Part brought by client (price=0, no warranty)
+  ITEM_SOURCE_WORKSHOP = 1; // Part sourced by workshop (has price)
+  ITEM_SOURCE_CLIENT = 2; // Part brought by client (price=0, no warranty)
 }
 
 enum ItemCondition {
@@ -220,8 +225,8 @@ message Order {
   string notes = 16;
   google.protobuf.Timestamp created_at = 17;
   google.protobuf.Timestamp updated_at = 18;
-  OrderType order_type = 19;          // MARKETPLACE or WORKSHOP
-  int64 repair_order_id = 20;         // For WORKSHOP orders: linked repair order in cg-workshop
+  OrderType order_type = 19; // MARKETPLACE or WORKSHOP
+  int64 repair_order_id = 20; // For WORKSHOP orders: linked repair order in cg-workshop
 }
 
 message OrderItem {
@@ -234,12 +239,12 @@ message OrderItem {
   int64 total_price = 7;
   string condition = 8;
   string currency = 9;
-  ItemSource source = 10;             // WORKSHOP or CLIENT
+  ItemSource source = 10; // WORKSHOP or CLIENT
   DeliveryStatus delivery_status = 11; // Delivery tracking for workshop items
-  ItemCondition item_condition = 12;   // NEW, USED, REFURBISHED (replaces string condition for workshop)
+  ItemCondition item_condition = 12; // NEW, USED, REFURBISHED (replaces string condition for workshop)
   google.protobuf.Timestamp deleted_at = 13; // Soft delete timestamp (null = active)
-  optional int64 bid_id = 14;         // Bid ID this item was created from (nil if manually added)
-  optional int64 bid_part_id = 15;   // Bid part ID for per-part idempotency
+  optional int64 bid_id = 14; // Bid ID this item was created from (nil if manually added)
+  optional int64 bid_part_id = 15; // Bid part ID for per-part idempotency
 }
 
 message BidPurchase {
@@ -379,7 +384,7 @@ message CheckBidAccessRequest {
 
 message CheckBidAccessResponse {
   bool has_access = 1;
-  string access_type = 2;  // "subscription" or "bid_purchase"
+  string access_type = 2; // "subscription" or "bid_purchase"
 }
 
 message CalculateSubscriptionPriceRequest {
@@ -590,21 +595,21 @@ message GetSubscriptionStatsResponse {
 // =============================================
 
 message CreateWorkshopOrderRequest {
-  int64 repair_order_id = 1;           // Linked repair order ID in cg-workshop
-  int64 created_by_user_id = 2;        // User creating the order (MP or MZ)
+  int64 repair_order_id = 1; // Linked repair order ID in cg-workshop
+  int64 created_by_user_id = 2; // User creating the order (MP or MZ)
   repeated WorkshopOrderItemInput items = 3; // Initial items (at least one required)
-  string seller_org_id = 4;            // Supplier organization UUID (one order per supplier)
+  string seller_org_id = 4; // Supplier organization UUID (one order per supplier)
 }
 
 message WorkshopOrderItemInput {
   string part_name = 1;
   string part_number = 2;
   int32 quantity = 3;
-  int64 unit_price = 4;               // In tenge (minor units); 0 for CLIENT source
-  ItemSource source = 5;               // WORKSHOP or CLIENT
-  ItemCondition condition = 6;         // NEW, USED, REFURBISHED
-  optional int64 bid_id = 7;          // Bid ID for idempotency tracking (nil if manually added)
-  optional int64 bid_part_id = 8;    // Bid part ID for per-part idempotency
+  int64 unit_price = 4; // In tenge (minor units); 0 for CLIENT source
+  ItemSource source = 5; // WORKSHOP or CLIENT
+  ItemCondition condition = 6; // NEW, USED, REFURBISHED
+  optional int64 bid_id = 7; // Bid ID for idempotency tracking (nil if manually added)
+  optional int64 bid_part_id = 8; // Bid part ID for per-part idempotency
 }
 
 message CreateWorkshopOrderResponse {
@@ -616,7 +621,7 @@ message GetOrderByRepairOrderIdRequest {
 }
 
 message GetOrderByRepairOrderIdResponse {
-  Order order = 1;                     // null if no parts order exists for this repair order
+  Order order = 1; // null if no parts order exists for this repair order
 }
 
 message GetOrderByRepairOrderAndSellerRequest {
@@ -642,7 +647,7 @@ message AddOrderItemRequest {
 }
 
 message AddOrderItemResponse {
-  Order order = 1;                     // Full order with updated items list
+  Order order = 1; // Full order with updated items list
 }
 
 message UpdateOrderItemRequest {
@@ -660,7 +665,7 @@ message UpdateOrderItemResponse {
 }
 
 message DeleteOrderItemRequest {
-  int64 item_id = 1;                   // Soft-delete: sets deleted_at timestamp
+  int64 item_id = 1; // Soft-delete: sets deleted_at timestamp
 }
 
 message DeleteOrderItemResponse {
@@ -669,7 +674,7 @@ message DeleteOrderItemResponse {
 
 message UpdateDeliveryStatusRequest {
   int64 item_id = 1;
-  DeliveryStatus delivery_status = 2;  // Forward-only: ORDERED->SHIPPED->DELIVERED->INSTALLED or ->CANCELLED
+  DeliveryStatus delivery_status = 2; // Forward-only: ORDERED->SHIPPED->DELIVERED->INSTALLED or ->CANCELLED
 }
 
 message UpdateDeliveryStatusResponse {
@@ -695,7 +700,100 @@ message GetSubscriptionStatusRequest {
 
 message GetSubscriptionStatusResponse {
   bool has_active_subscription = 1;
-  Subscription active_subscription = 2;     // null when no active subscription
+  Subscription active_subscription = 2; // null when no active subscription
   int32 bid_purchases_remaining = 3;
   google.protobuf.Timestamp valid_until = 4; // expiry of active subscription, if any
+}
+
+// =============================================
+// Maintenance offers and payable quotes
+// =============================================
+
+enum MaintenanceQuoteStatus {
+  MAINTENANCE_QUOTE_STATUS_UNSPECIFIED = 0;
+  MAINTENANCE_QUOTE_STATUS_PENDING = 1;
+  MAINTENANCE_QUOTE_STATUS_PAID = 2;
+  MAINTENANCE_QUOTE_STATUS_CANCELLED = 3;
+}
+
+message MaintenanceOfferItem {
+  string code = 1;
+  string title = 2;
+  int32 quantity = 3;
+  int64 unit_amount_minor = 4; // Currency minor unit; tiyn for KZT.
+  int32 sort_order = 5;
+}
+
+message MaintenanceOffer {
+  string id = 1; // UUID of the immutable offer version.
+  string code = 2;
+  int32 version = 3;
+  string title = 4;
+  string description = 5;
+  int32 make_id = 6; // 0 means any make.
+  int32 model_id = 7; // 0 means any model.
+  int32 year_from = 8; // 0 means unbounded.
+  int32 year_to = 9; // 0 means unbounded.
+  int32 mileage_from = 10; // Inclusive; 0 means unbounded.
+  int32 mileage_to = 11; // Inclusive; 0 means unbounded.
+  string currency = 12;
+  int64 total_amount_minor = 13;
+  repeated MaintenanceOfferItem items = 14;
+}
+
+message MaintenanceCarSnapshot {
+  int64 car_id = 1;
+  int32 make_id = 2;
+  int32 model_id = 3;
+  int32 generation_id = 4;
+  int32 year = 5;
+  int32 mileage = 6;
+  string license_plate = 7;
+  string vin = 8;
+}
+
+message MaintenanceQuote {
+  string id = 1; // UUID aggregate ID.
+  int64 payment_entity_id = 2; // Stable identity used by combined-pay.
+  int64 user_id = 3;
+  int64 car_id = 4;
+  string offer_id = 5;
+  int32 offer_version = 6;
+  MaintenanceQuoteStatus status = 7;
+  int64 total_amount_minor = 8;
+  string currency = 9;
+  repeated MaintenanceOfferItem items = 10;
+  MaintenanceCarSnapshot car = 11;
+  google.protobuf.Timestamp expires_at = 12;
+  google.protobuf.Timestamp paid_at = 13;
+  google.protobuf.Timestamp created_at = 14;
+  google.protobuf.Timestamp updated_at = 15;
+}
+
+message ListMaintenanceOffersRequest {
+  int64 car_id = 1;
+}
+
+message ListMaintenanceOffersResponse {
+  repeated MaintenanceOffer offers = 1;
+  MaintenanceCarSnapshot car = 2;
+}
+
+message CreateMaintenanceQuoteRequest {
+  int64 car_id = 1;
+  string offer_id = 2;
+  string idempotency_key = 3;
+}
+
+message CreateMaintenanceQuoteResponse {
+  MaintenanceQuote quote = 1;
+  bool idempotent_replay = 2;
+}
+
+message GetMaintenanceQuoteRequest {
+  int64 payment_entity_id = 1;
+}
+
+message GetMaintenanceQuoteResponse {
+  MaintenanceQuote quote = 1;
 }

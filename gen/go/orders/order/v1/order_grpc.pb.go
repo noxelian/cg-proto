@@ -53,6 +53,9 @@ const (
 	OrderService_DeleteOrderItem_FullMethodName                = "/orders.order.v1.OrderService/DeleteOrderItem"
 	OrderService_UpdateDeliveryStatus_FullMethodName           = "/orders.order.v1.OrderService/UpdateDeliveryStatus"
 	OrderService_SetOrderStatus_FullMethodName                 = "/orders.order.v1.OrderService/SetOrderStatus"
+	OrderService_ListMaintenanceOffers_FullMethodName          = "/orders.order.v1.OrderService/ListMaintenanceOffers"
+	OrderService_CreateMaintenanceQuote_FullMethodName         = "/orders.order.v1.OrderService/CreateMaintenanceQuote"
+	OrderService_GetMaintenanceQuote_FullMethodName            = "/orders.order.v1.OrderService/GetMaintenanceQuote"
 	OrderService_GetSubscriptionStats_FullMethodName           = "/orders.order.v1.OrderService/GetSubscriptionStats"
 )
 
@@ -103,6 +106,10 @@ type OrderServiceClient interface {
 	DeleteOrderItem(ctx context.Context, in *DeleteOrderItemRequest, opts ...grpc.CallOption) (*DeleteOrderItemResponse, error)
 	UpdateDeliveryStatus(ctx context.Context, in *UpdateDeliveryStatusRequest, opts ...grpc.CallOption) (*UpdateDeliveryStatusResponse, error)
 	SetOrderStatus(ctx context.Context, in *SetOrderStatusRequest, opts ...grpc.CallOption) (*SetOrderStatusResponse, error)
+	// === Maintenance offers and payable quotes ===
+	ListMaintenanceOffers(ctx context.Context, in *ListMaintenanceOffersRequest, opts ...grpc.CallOption) (*ListMaintenanceOffersResponse, error)
+	CreateMaintenanceQuote(ctx context.Context, in *CreateMaintenanceQuoteRequest, opts ...grpc.CallOption) (*CreateMaintenanceQuoteResponse, error)
+	GetMaintenanceQuote(ctx context.Context, in *GetMaintenanceQuoteRequest, opts ...grpc.CallOption) (*GetMaintenanceQuoteResponse, error)
 	// === Admin analytics ===
 	GetSubscriptionStats(ctx context.Context, in *GetSubscriptionStatsRequest, opts ...grpc.CallOption) (*GetSubscriptionStatsResponse, error)
 }
@@ -455,6 +462,36 @@ func (c *orderServiceClient) SetOrderStatus(ctx context.Context, in *SetOrderSta
 	return out, nil
 }
 
+func (c *orderServiceClient) ListMaintenanceOffers(ctx context.Context, in *ListMaintenanceOffersRequest, opts ...grpc.CallOption) (*ListMaintenanceOffersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMaintenanceOffersResponse)
+	err := c.cc.Invoke(ctx, OrderService_ListMaintenanceOffers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) CreateMaintenanceQuote(ctx context.Context, in *CreateMaintenanceQuoteRequest, opts ...grpc.CallOption) (*CreateMaintenanceQuoteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateMaintenanceQuoteResponse)
+	err := c.cc.Invoke(ctx, OrderService_CreateMaintenanceQuote_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) GetMaintenanceQuote(ctx context.Context, in *GetMaintenanceQuoteRequest, opts ...grpc.CallOption) (*GetMaintenanceQuoteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMaintenanceQuoteResponse)
+	err := c.cc.Invoke(ctx, OrderService_GetMaintenanceQuote_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *orderServiceClient) GetSubscriptionStats(ctx context.Context, in *GetSubscriptionStatsRequest, opts ...grpc.CallOption) (*GetSubscriptionStatsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSubscriptionStatsResponse)
@@ -512,6 +549,10 @@ type OrderServiceServer interface {
 	DeleteOrderItem(context.Context, *DeleteOrderItemRequest) (*DeleteOrderItemResponse, error)
 	UpdateDeliveryStatus(context.Context, *UpdateDeliveryStatusRequest) (*UpdateDeliveryStatusResponse, error)
 	SetOrderStatus(context.Context, *SetOrderStatusRequest) (*SetOrderStatusResponse, error)
+	// === Maintenance offers and payable quotes ===
+	ListMaintenanceOffers(context.Context, *ListMaintenanceOffersRequest) (*ListMaintenanceOffersResponse, error)
+	CreateMaintenanceQuote(context.Context, *CreateMaintenanceQuoteRequest) (*CreateMaintenanceQuoteResponse, error)
+	GetMaintenanceQuote(context.Context, *GetMaintenanceQuoteRequest) (*GetMaintenanceQuoteResponse, error)
 	// === Admin analytics ===
 	GetSubscriptionStats(context.Context, *GetSubscriptionStatsRequest) (*GetSubscriptionStatsResponse, error)
 	mustEmbedUnimplementedOrderServiceServer()
@@ -625,6 +666,15 @@ func (UnimplementedOrderServiceServer) UpdateDeliveryStatus(context.Context, *Up
 }
 func (UnimplementedOrderServiceServer) SetOrderStatus(context.Context, *SetOrderStatusRequest) (*SetOrderStatusResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetOrderStatus not implemented")
+}
+func (UnimplementedOrderServiceServer) ListMaintenanceOffers(context.Context, *ListMaintenanceOffersRequest) (*ListMaintenanceOffersResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMaintenanceOffers not implemented")
+}
+func (UnimplementedOrderServiceServer) CreateMaintenanceQuote(context.Context, *CreateMaintenanceQuoteRequest) (*CreateMaintenanceQuoteResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateMaintenanceQuote not implemented")
+}
+func (UnimplementedOrderServiceServer) GetMaintenanceQuote(context.Context, *GetMaintenanceQuoteRequest) (*GetMaintenanceQuoteResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMaintenanceQuote not implemented")
 }
 func (UnimplementedOrderServiceServer) GetSubscriptionStats(context.Context, *GetSubscriptionStatsRequest) (*GetSubscriptionStatsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSubscriptionStats not implemented")
@@ -1262,6 +1312,60 @@ func _OrderService_SetOrderStatus_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_ListMaintenanceOffers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMaintenanceOffersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).ListMaintenanceOffers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_ListMaintenanceOffers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).ListMaintenanceOffers(ctx, req.(*ListMaintenanceOffersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_CreateMaintenanceQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateMaintenanceQuoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).CreateMaintenanceQuote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_CreateMaintenanceQuote_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).CreateMaintenanceQuote(ctx, req.(*CreateMaintenanceQuoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_GetMaintenanceQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMaintenanceQuoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).GetMaintenanceQuote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_GetMaintenanceQuote_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).GetMaintenanceQuote(ctx, req.(*GetMaintenanceQuoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrderService_GetSubscriptionStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSubscriptionStatsRequest)
 	if err := dec(in); err != nil {
@@ -1422,6 +1526,18 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetOrderStatus",
 			Handler:    _OrderService_SetOrderStatus_Handler,
+		},
+		{
+			MethodName: "ListMaintenanceOffers",
+			Handler:    _OrderService_ListMaintenanceOffers_Handler,
+		},
+		{
+			MethodName: "CreateMaintenanceQuote",
+			Handler:    _OrderService_CreateMaintenanceQuote_Handler,
+		},
+		{
+			MethodName: "GetMaintenanceQuote",
+			Handler:    _OrderService_GetMaintenanceQuote_Handler,
 		},
 		{
 			MethodName: "GetSubscriptionStats",
