@@ -19,20 +19,23 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	BidService_CreateBid_FullMethodName                  = "/services.bid.v1.BidService/CreateBid"
-	BidService_GetBid_FullMethodName                     = "/services.bid.v1.BidService/GetBid"
-	BidService_UpdateBid_FullMethodName                  = "/services.bid.v1.BidService/UpdateBid"
-	BidService_DeleteBid_FullMethodName                  = "/services.bid.v1.BidService/DeleteBid"
-	BidService_ListBids_FullMethodName                   = "/services.bid.v1.BidService/ListBids"
-	BidService_GetBidsByRequest_FullMethodName           = "/services.bid.v1.BidService/GetBidsByRequest"
-	BidService_GetBidsByOrganization_FullMethodName      = "/services.bid.v1.BidService/GetBidsByOrganization"
-	BidService_AcceptBid_FullMethodName                  = "/services.bid.v1.BidService/AcceptBid"
-	BidService_RejectBid_FullMethodName                  = "/services.bid.v1.BidService/RejectBid"
-	BidService_CancelBid_FullMethodName                  = "/services.bid.v1.BidService/CancelBid"
-	BidService_MarkPartsPurchased_FullMethodName         = "/services.bid.v1.BidService/MarkPartsPurchased"
-	BidService_GetBidPartPrices_FullMethodName           = "/services.bid.v1.BidService/GetBidPartPrices"
-	BidService_MarkBidRead_FullMethodName                = "/services.bid.v1.BidService/MarkBidRead"
-	BidService_GetRequestResponsesSummary_FullMethodName = "/services.bid.v1.BidService/GetRequestResponsesSummary"
+	BidService_CreateBid_FullMethodName                     = "/services.bid.v1.BidService/CreateBid"
+	BidService_GetBid_FullMethodName                        = "/services.bid.v1.BidService/GetBid"
+	BidService_UpdateBid_FullMethodName                     = "/services.bid.v1.BidService/UpdateBid"
+	BidService_DeleteBid_FullMethodName                     = "/services.bid.v1.BidService/DeleteBid"
+	BidService_ListBids_FullMethodName                      = "/services.bid.v1.BidService/ListBids"
+	BidService_GetBidsByRequest_FullMethodName              = "/services.bid.v1.BidService/GetBidsByRequest"
+	BidService_GetBidsByOrganization_FullMethodName         = "/services.bid.v1.BidService/GetBidsByOrganization"
+	BidService_AcceptBid_FullMethodName                     = "/services.bid.v1.BidService/AcceptBid"
+	BidService_RejectBid_FullMethodName                     = "/services.bid.v1.BidService/RejectBid"
+	BidService_CancelBid_FullMethodName                     = "/services.bid.v1.BidService/CancelBid"
+	BidService_MarkPartsPurchased_FullMethodName            = "/services.bid.v1.BidService/MarkPartsPurchased"
+	BidService_GetBidPartPrices_FullMethodName              = "/services.bid.v1.BidService/GetBidPartPrices"
+	BidService_MarkBidRead_FullMethodName                   = "/services.bid.v1.BidService/MarkBidRead"
+	BidService_GetRequestResponsesSummary_FullMethodName    = "/services.bid.v1.BidService/GetRequestResponsesSummary"
+	BidService_GetBidForBuyer_FullMethodName                = "/services.bid.v1.BidService/GetBidForBuyer"
+	BidService_ListBidsForBuyer_FullMethodName              = "/services.bid.v1.BidService/ListBidsForBuyer"
+	BidService_HasAcceptedBidForOrganization_FullMethodName = "/services.bid.v1.BidService/HasAcceptedBidForOrganization"
 )
 
 // BidServiceClient is the client API for BidService service.
@@ -69,6 +72,13 @@ type BidServiceClient interface {
 	// GetRequestResponsesSummary returns per-request aggregates (total responses,
 	// unread count, last_response_at) for a set of request IDs owned by a user.
 	GetRequestResponsesSummary(ctx context.Context, in *GetRequestResponsesSummaryRequest, opts ...grpc.CallOption) (*GetRequestResponsesSummaryResponse, error)
+	// Buyer-scoped parts projections for chatbot-service. Bid-service validates
+	// buyer_user_id against the authoritative request owner before returning a bid.
+	GetBidForBuyer(ctx context.Context, in *GetBidForBuyerRequest, opts ...grpc.CallOption) (*GetBidForBuyerResponse, error)
+	ListBidsForBuyer(ctx context.Context, in *ListBidsForBuyerRequest, opts ...grpc.CallOption) (*ListBidsForBuyerResponse, error)
+	// Review-eligibility projection for organization-service. It exposes only
+	// whether one organization has an accepted bid on one request.
+	HasAcceptedBidForOrganization(ctx context.Context, in *HasAcceptedBidForOrganizationRequest, opts ...grpc.CallOption) (*HasAcceptedBidForOrganizationResponse, error)
 }
 
 type bidServiceClient struct {
@@ -219,6 +229,36 @@ func (c *bidServiceClient) GetRequestResponsesSummary(ctx context.Context, in *G
 	return out, nil
 }
 
+func (c *bidServiceClient) GetBidForBuyer(ctx context.Context, in *GetBidForBuyerRequest, opts ...grpc.CallOption) (*GetBidForBuyerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBidForBuyerResponse)
+	err := c.cc.Invoke(ctx, BidService_GetBidForBuyer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bidServiceClient) ListBidsForBuyer(ctx context.Context, in *ListBidsForBuyerRequest, opts ...grpc.CallOption) (*ListBidsForBuyerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListBidsForBuyerResponse)
+	err := c.cc.Invoke(ctx, BidService_ListBidsForBuyer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bidServiceClient) HasAcceptedBidForOrganization(ctx context.Context, in *HasAcceptedBidForOrganizationRequest, opts ...grpc.CallOption) (*HasAcceptedBidForOrganizationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(HasAcceptedBidForOrganizationResponse)
+	err := c.cc.Invoke(ctx, BidService_HasAcceptedBidForOrganization_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BidServiceServer is the server API for BidService service.
 // All implementations must embed UnimplementedBidServiceServer
 // for forward compatibility.
@@ -253,6 +293,13 @@ type BidServiceServer interface {
 	// GetRequestResponsesSummary returns per-request aggregates (total responses,
 	// unread count, last_response_at) for a set of request IDs owned by a user.
 	GetRequestResponsesSummary(context.Context, *GetRequestResponsesSummaryRequest) (*GetRequestResponsesSummaryResponse, error)
+	// Buyer-scoped parts projections for chatbot-service. Bid-service validates
+	// buyer_user_id against the authoritative request owner before returning a bid.
+	GetBidForBuyer(context.Context, *GetBidForBuyerRequest) (*GetBidForBuyerResponse, error)
+	ListBidsForBuyer(context.Context, *ListBidsForBuyerRequest) (*ListBidsForBuyerResponse, error)
+	// Review-eligibility projection for organization-service. It exposes only
+	// whether one organization has an accepted bid on one request.
+	HasAcceptedBidForOrganization(context.Context, *HasAcceptedBidForOrganizationRequest) (*HasAcceptedBidForOrganizationResponse, error)
 	mustEmbedUnimplementedBidServiceServer()
 }
 
@@ -304,6 +351,15 @@ func (UnimplementedBidServiceServer) MarkBidRead(context.Context, *MarkBidReadRe
 }
 func (UnimplementedBidServiceServer) GetRequestResponsesSummary(context.Context, *GetRequestResponsesSummaryRequest) (*GetRequestResponsesSummaryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRequestResponsesSummary not implemented")
+}
+func (UnimplementedBidServiceServer) GetBidForBuyer(context.Context, *GetBidForBuyerRequest) (*GetBidForBuyerResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBidForBuyer not implemented")
+}
+func (UnimplementedBidServiceServer) ListBidsForBuyer(context.Context, *ListBidsForBuyerRequest) (*ListBidsForBuyerResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListBidsForBuyer not implemented")
+}
+func (UnimplementedBidServiceServer) HasAcceptedBidForOrganization(context.Context, *HasAcceptedBidForOrganizationRequest) (*HasAcceptedBidForOrganizationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method HasAcceptedBidForOrganization not implemented")
 }
 func (UnimplementedBidServiceServer) mustEmbedUnimplementedBidServiceServer() {}
 func (UnimplementedBidServiceServer) testEmbeddedByValue()                    {}
@@ -578,6 +634,60 @@ func _BidService_GetRequestResponsesSummary_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BidService_GetBidForBuyer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBidForBuyerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BidServiceServer).GetBidForBuyer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BidService_GetBidForBuyer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BidServiceServer).GetBidForBuyer(ctx, req.(*GetBidForBuyerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BidService_ListBidsForBuyer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListBidsForBuyerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BidServiceServer).ListBidsForBuyer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BidService_ListBidsForBuyer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BidServiceServer).ListBidsForBuyer(ctx, req.(*ListBidsForBuyerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BidService_HasAcceptedBidForOrganization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HasAcceptedBidForOrganizationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BidServiceServer).HasAcceptedBidForOrganization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BidService_HasAcceptedBidForOrganization_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BidServiceServer).HasAcceptedBidForOrganization(ctx, req.(*HasAcceptedBidForOrganizationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BidService_ServiceDesc is the grpc.ServiceDesc for BidService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -640,6 +750,18 @@ var BidService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRequestResponsesSummary",
 			Handler:    _BidService_GetRequestResponsesSummary_Handler,
+		},
+		{
+			MethodName: "GetBidForBuyer",
+			Handler:    _BidService_GetBidForBuyer_Handler,
+		},
+		{
+			MethodName: "ListBidsForBuyer",
+			Handler:    _BidService_ListBidsForBuyer_Handler,
+		},
+		{
+			MethodName: "HasAcceptedBidForOrganization",
+			Handler:    _BidService_HasAcceptedBidForOrganization_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

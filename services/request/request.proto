@@ -70,6 +70,11 @@ service RequestService {
   // request.created events intentionally do not carry this PII.
   rpc GetRequestForClassification(GetRequestForClassificationRequest) returns (GetRequestForClassificationResponse);
 
+  // GetRequestEligibilityInfo returns only the fields required by
+  // organization-service to decide review eligibility. It is not a general
+  // full-request read and is exact-service authorized by request-service.
+  rpc GetRequestEligibilityInfo(GetRequestEligibilityInfoRequest) returns (GetRequestEligibilityInfoResponse);
+
   // GetUserRequestCounts returns the user's request counts grouped by state in
   // one call (legacy ads/count: total / active(PUBLISHED) / moderation /
   // inactive(DELETED+CLOSED)). Optional type filter (0 = all).
@@ -523,6 +528,16 @@ message GetRequestForClassificationRequest {
 
 message GetRequestForClassificationResponse {
   string note = 1;
+}
+
+message GetRequestEligibilityInfoRequest {
+  string request_id = 1;
+}
+
+message GetRequestEligibilityInfoResponse {
+  int64 user_id = 1;
+  RequestType type = 2;
+  optional int64 repair_order_id = 3;
 }
 
 // GetUserRequestCounts — per-state counts of a user's requests (legacy ads/count).

@@ -37,6 +37,7 @@ const (
 	RequestService_CountUnreadForOrganization_FullMethodName    = "/services.request.v1.RequestService/CountUnreadForOrganization"
 	RequestService_ClassifyRequest_FullMethodName               = "/services.request.v1.RequestService/ClassifyRequest"
 	RequestService_GetRequestForClassification_FullMethodName   = "/services.request.v1.RequestService/GetRequestForClassification"
+	RequestService_GetRequestEligibilityInfo_FullMethodName     = "/services.request.v1.RequestService/GetRequestEligibilityInfo"
 	RequestService_GetUserRequestCounts_FullMethodName          = "/services.request.v1.RequestService/GetUserRequestCounts"
 	RequestService_PauseRequest_FullMethodName                  = "/services.request.v1.RequestService/PauseRequest"
 	RequestService_UnpauseRequest_FullMethodName                = "/services.request.v1.RequestService/UnpauseRequest"
@@ -94,6 +95,10 @@ type RequestServiceClient interface {
 	// classify-service. The owning service authorizes the exact service identity;
 	// request.created events intentionally do not carry this PII.
 	GetRequestForClassification(ctx context.Context, in *GetRequestForClassificationRequest, opts ...grpc.CallOption) (*GetRequestForClassificationResponse, error)
+	// GetRequestEligibilityInfo returns only the fields required by
+	// organization-service to decide review eligibility. It is not a general
+	// full-request read and is exact-service authorized by request-service.
+	GetRequestEligibilityInfo(ctx context.Context, in *GetRequestEligibilityInfoRequest, opts ...grpc.CallOption) (*GetRequestEligibilityInfoResponse, error)
 	// GetUserRequestCounts returns the user's request counts grouped by state in
 	// one call (legacy ads/count: total / active(PUBLISHED) / moderation /
 	// inactive(DELETED+CLOSED)). Optional type filter (0 = all).
@@ -306,6 +311,16 @@ func (c *requestServiceClient) GetRequestForClassification(ctx context.Context, 
 	return out, nil
 }
 
+func (c *requestServiceClient) GetRequestEligibilityInfo(ctx context.Context, in *GetRequestEligibilityInfoRequest, opts ...grpc.CallOption) (*GetRequestEligibilityInfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRequestEligibilityInfoResponse)
+	err := c.cc.Invoke(ctx, RequestService_GetRequestEligibilityInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *requestServiceClient) GetUserRequestCounts(ctx context.Context, in *GetUserRequestCountsRequest, opts ...grpc.CallOption) (*GetUserRequestCountsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserRequestCountsResponse)
@@ -415,6 +430,10 @@ type RequestServiceServer interface {
 	// classify-service. The owning service authorizes the exact service identity;
 	// request.created events intentionally do not carry this PII.
 	GetRequestForClassification(context.Context, *GetRequestForClassificationRequest) (*GetRequestForClassificationResponse, error)
+	// GetRequestEligibilityInfo returns only the fields required by
+	// organization-service to decide review eligibility. It is not a general
+	// full-request read and is exact-service authorized by request-service.
+	GetRequestEligibilityInfo(context.Context, *GetRequestEligibilityInfoRequest) (*GetRequestEligibilityInfoResponse, error)
 	// GetUserRequestCounts returns the user's request counts grouped by state in
 	// one call (legacy ads/count: total / active(PUBLISHED) / moderation /
 	// inactive(DELETED+CLOSED)). Optional type filter (0 = all).
@@ -500,6 +519,9 @@ func (UnimplementedRequestServiceServer) ClassifyRequest(context.Context, *Class
 }
 func (UnimplementedRequestServiceServer) GetRequestForClassification(context.Context, *GetRequestForClassificationRequest) (*GetRequestForClassificationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRequestForClassification not implemented")
+}
+func (UnimplementedRequestServiceServer) GetRequestEligibilityInfo(context.Context, *GetRequestEligibilityInfoRequest) (*GetRequestEligibilityInfoResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetRequestEligibilityInfo not implemented")
 }
 func (UnimplementedRequestServiceServer) GetUserRequestCounts(context.Context, *GetUserRequestCountsRequest) (*GetUserRequestCountsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserRequestCounts not implemented")
@@ -864,6 +886,24 @@ func _RequestService_GetRequestForClassification_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestService_GetRequestEligibilityInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRequestEligibilityInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).GetRequestEligibilityInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_GetRequestEligibilityInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).GetRequestEligibilityInfo(ctx, req.(*GetRequestEligibilityInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RequestService_GetUserRequestCounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserRequestCountsRequest)
 	if err := dec(in); err != nil {
@@ -1050,6 +1090,10 @@ var RequestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRequestForClassification",
 			Handler:    _RequestService_GetRequestForClassification_Handler,
+		},
+		{
+			MethodName: "GetRequestEligibilityInfo",
+			Handler:    _RequestService_GetRequestEligibilityInfo_Handler,
 		},
 		{
 			MethodName: "GetUserRequestCounts",

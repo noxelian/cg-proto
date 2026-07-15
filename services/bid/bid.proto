@@ -49,6 +49,15 @@ service BidService {
   // GetRequestResponsesSummary returns per-request aggregates (total responses,
   // unread count, last_response_at) for a set of request IDs owned by a user.
   rpc GetRequestResponsesSummary(GetRequestResponsesSummaryRequest) returns (GetRequestResponsesSummaryResponse);
+
+  // Buyer-scoped parts projections for chatbot-service. Bid-service validates
+  // buyer_user_id against the authoritative request owner before returning a bid.
+  rpc GetBidForBuyer(GetBidForBuyerRequest) returns (GetBidForBuyerResponse);
+  rpc ListBidsForBuyer(ListBidsForBuyerRequest) returns (ListBidsForBuyerResponse);
+
+  // Review-eligibility projection for organization-service. It exposes only
+  // whether one organization has an accepted bid on one request.
+  rpc HasAcceptedBidForOrganization(HasAcceptedBidForOrganizationRequest) returns (HasAcceptedBidForOrganizationResponse);
 }
 
 enum BidType {
@@ -145,6 +154,33 @@ message GetBidRequest {
 
 message GetBidResponse {
   Bid bid = 1;
+}
+
+message GetBidForBuyerRequest {
+  int64 bid_id = 1;
+  int64 buyer_user_id = 2;
+}
+
+message GetBidForBuyerResponse {
+  Bid bid = 1;
+}
+
+message ListBidsForBuyerRequest {
+  string request_id = 1;
+  int64 buyer_user_id = 2;
+}
+
+message ListBidsForBuyerResponse {
+  repeated Bid bids = 1;
+}
+
+message HasAcceptedBidForOrganizationRequest {
+  string request_id = 1;
+  string organization_id = 2;
+}
+
+message HasAcceptedBidForOrganizationResponse {
+  bool accepted = 1;
 }
 
 // UpdateBid
