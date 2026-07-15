@@ -1990,16 +1990,21 @@ type BidPartPriceResult struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	BidId     int64                  `protobuf:"varint,1,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
 	BidPartId int64                  `protobuf:"varint,2,opt,name=bid_part_id,json=bidPartId,proto3" json:"bid_part_id,omitempty"`
-	// unit_price is the current price in minor currency units (tenge).
+	// Legacy price in whole KZT, kept for rolling-deploy compatibility.
+	// New payment/cart consumers must use unit_price_minor.
 	UnitPrice int64 `protobuf:"varint,3,opt,name=unit_price,json=unitPrice,proto3" json:"unit_price,omitempty"`
 	// is_valid is false when the bid is expired, cancelled, or the part is unavailable.
 	IsValid bool `protobuf:"varint,4,opt,name=is_valid,json=isValid,proto3" json:"is_valid,omitempty"`
 	// invalid_reason is set when is_valid = false. Examples: "bid_expired", "bid_cancelled", "part_unavailable".
 	InvalidReason string `protobuf:"bytes,5,opt,name=invalid_reason,json=invalidReason,proto3" json:"invalid_reason,omitempty"`
 	// availability reflects the current stock status: in_stock, on_order, unavailable.
-	Availability  string `protobuf:"bytes,6,opt,name=availability,proto3" json:"availability,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Availability string `protobuf:"bytes,6,opt,name=availability,proto3" json:"availability,omitempty"`
+	// Authoritative current price in the currency minor unit (tiyn for KZT).
+	// Populated together with unit_price so old and new consumers can coexist
+	// during a rolling deployment.
+	UnitPriceMinor int64 `protobuf:"varint,7,opt,name=unit_price_minor,json=unitPriceMinor,proto3" json:"unit_price_minor,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *BidPartPriceResult) Reset() {
@@ -2072,6 +2077,13 @@ func (x *BidPartPriceResult) GetAvailability() string {
 		return x.Availability
 	}
 	return ""
+}
+
+func (x *BidPartPriceResult) GetUnitPriceMinor() int64 {
+	if x != nil {
+		return x.UnitPriceMinor
+	}
+	return 0
 }
 
 type GetBidPartPricesRequest struct {
@@ -2675,7 +2687,7 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\x03bid\x18\x01 \x01(\v2\x14.services.bid.v1.BidR\x03bid\"J\n" +
 	"\x11BidPartPriceQuery\x12\x15\n" +
 	"\x06bid_id\x18\x01 \x01(\x03R\x05bidId\x12\x1e\n" +
-	"\vbid_part_id\x18\x02 \x01(\x03R\tbidPartId\"\xd0\x01\n" +
+	"\vbid_part_id\x18\x02 \x01(\x03R\tbidPartId\"\xfa\x01\n" +
 	"\x12BidPartPriceResult\x12\x15\n" +
 	"\x06bid_id\x18\x01 \x01(\x03R\x05bidId\x12\x1e\n" +
 	"\vbid_part_id\x18\x02 \x01(\x03R\tbidPartId\x12\x1d\n" +
@@ -2683,7 +2695,8 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"unit_price\x18\x03 \x01(\x03R\tunitPrice\x12\x19\n" +
 	"\bis_valid\x18\x04 \x01(\bR\aisValid\x12%\n" +
 	"\x0einvalid_reason\x18\x05 \x01(\tR\rinvalidReason\x12\"\n" +
-	"\favailability\x18\x06 \x01(\tR\favailability\"S\n" +
+	"\favailability\x18\x06 \x01(\tR\favailability\x12(\n" +
+	"\x10unit_price_minor\x18\a \x01(\x03R\x0eunitPriceMinor\"S\n" +
 	"\x17GetBidPartPricesRequest\x128\n" +
 	"\x05items\x18\x01 \x03(\v2\".services.bid.v1.BidPartPriceQueryR\x05items\"Y\n" +
 	"\x18GetBidPartPricesResponse\x12=\n" +

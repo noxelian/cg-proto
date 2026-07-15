@@ -282,7 +282,8 @@ type CartItem struct {
 	PartName   string `protobuf:"bytes,6,opt,name=part_name,json=partName,proto3" json:"part_name,omitempty"`
 	PartNumber string `protobuf:"bytes,7,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
 	Quantity   int32  `protobuf:"varint,8,opt,name=quantity,proto3" json:"quantity,omitempty"`
-	// unit_price is the current confirmed price in minor currency units (tenge).
+	// unit_price is the current confirmed price in minor currency units
+	// (tiyn for KZT).
 	UnitPrice int64 `protobuf:"varint,9,opt,name=unit_price,json=unitPrice,proto3" json:"unit_price,omitempty"`
 	// original_price is the price at the time the item was added.
 	OriginalPrice int64 `protobuf:"varint,10,opt,name=original_price,json=originalPrice,proto3" json:"original_price,omitempty"`
@@ -483,7 +484,7 @@ type SupplierGroup struct {
 	SellerRating       float64                `protobuf:"fixed64,3,opt,name=seller_rating,json=sellerRating,proto3" json:"seller_rating,omitempty"`
 	SellerReviewsCount int32                  `protobuf:"varint,4,opt,name=seller_reviews_count,json=sellerReviewsCount,proto3" json:"seller_reviews_count,omitempty"`
 	Items              []*CartItem            `protobuf:"bytes,5,rep,name=items,proto3" json:"items,omitempty"`
-	// Financials in minor currency units (tenge).
+	// Financials in minor currency units (tiyn for KZT).
 	Subtotal              int64            `protobuf:"varint,6,opt,name=subtotal,proto3" json:"subtotal,omitempty"`
 	DeliveryCost          int64            `protobuf:"varint,7,opt,name=delivery_cost,json=deliveryCost,proto3" json:"delivery_cost,omitempty"`
 	FreeDeliveryThreshold int64            `protobuf:"varint,8,opt,name=free_delivery_threshold,json=freeDeliveryThreshold,proto3" json:"free_delivery_threshold,omitempty"` // Order threshold to qualify for free delivery (0 = no threshold).
@@ -607,7 +608,7 @@ func (x *SupplierGroup) GetCommissionAmount() int64 {
 type CartSummary struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	SupplierGroups []*SupplierGroup       `protobuf:"bytes,1,rep,name=supplier_groups,json=supplierGroups,proto3" json:"supplier_groups,omitempty"`
-	// Aggregated totals in minor currency units (tenge).
+	// Aggregated totals in minor currency units (tiyn for KZT).
 	GrandTotal int64 `protobuf:"varint,2,opt,name=grand_total,json=grandTotal,proto3" json:"grand_total,omitempty"`
 	ItemsCount int32 `protobuf:"varint,3,opt,name=items_count,json=itemsCount,proto3" json:"items_count,omitempty"`
 	// stale_count is the number of items flagged as stale (price changed, out of stock, etc.).

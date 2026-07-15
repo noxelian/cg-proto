@@ -112,7 +112,8 @@ message CartItem {
   string part_number = 7;
   int32 quantity = 8;
 
-  // unit_price is the current confirmed price in minor currency units (tenge).
+  // unit_price is the current confirmed price in minor currency units
+  // (tiyn for KZT).
   int64 unit_price = 9;
 
   // original_price is the price at the time the item was added.
@@ -149,7 +150,7 @@ message SupplierGroup {
 
   repeated CartItem items = 5;
 
-  // Financials in minor currency units (tenge).
+  // Financials in minor currency units (tiyn for KZT).
   int64 subtotal = 6;
   int64 delivery_cost = 7;
   int64 free_delivery_threshold = 8;  // Order threshold to qualify for free delivery (0 = no threshold).
@@ -166,7 +167,7 @@ message SupplierGroup {
 message CartSummary {
   repeated SupplierGroup supplier_groups = 1;
 
-  // Aggregated totals in minor currency units (tenge).
+  // Aggregated totals in minor currency units (tiyn for KZT).
   int64 grand_total = 2;
 
   int32 items_count = 3;

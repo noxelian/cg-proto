@@ -295,7 +295,8 @@ message BidPartPriceResult {
   int64 bid_id = 1;
   int64 bid_part_id = 2;
 
-  // unit_price is the current price in minor currency units (tenge).
+  // Legacy price in whole KZT, kept for rolling-deploy compatibility.
+  // New payment/cart consumers must use unit_price_minor.
   int64 unit_price = 3;
 
   // is_valid is false when the bid is expired, cancelled, or the part is unavailable.
@@ -306,6 +307,11 @@ message BidPartPriceResult {
 
   // availability reflects the current stock status: in_stock, on_order, unavailable.
   string availability = 6;
+
+  // Authoritative current price in the currency minor unit (tiyn for KZT).
+  // Populated together with unit_price so old and new consumers can coexist
+  // during a rolling deployment.
+  int64 unit_price_minor = 7;
 }
 
 message GetBidPartPricesRequest {
