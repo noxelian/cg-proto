@@ -257,6 +257,11 @@ message CreateRequestRequest {
   repeated EstimateItem estimate_items = 24;
   repeated string target_org_ids = 25;              // snapshot аудитории (org UUIDs)
   optional InsuranceInfoInput insurance_info = 26;  // админ-only: X + контакты клиента
+
+  // Caller-generated token for safely retrying an ambiguous create. The owner
+  // service scopes it to the authenticated principal and rejects reuse with a
+  // different payload. Maximum 255 bytes; empty keeps legacy behavior.
+  string idempotency_key = 27;
 }
 
 message CreateRequestResponse {

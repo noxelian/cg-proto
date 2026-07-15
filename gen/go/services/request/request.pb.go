@@ -673,6 +673,10 @@ type CreateRequestRequest struct {
 	EstimateItems  []*EstimateItem        `protobuf:"bytes,24,rep,name=estimate_items,json=estimateItems,proto3" json:"estimate_items,omitempty"`
 	TargetOrgIds   []string               `protobuf:"bytes,25,rep,name=target_org_ids,json=targetOrgIds,proto3" json:"target_org_ids,omitempty"`        // snapshot аудитории (org UUIDs)
 	InsuranceInfo  *InsuranceInfoInput    `protobuf:"bytes,26,opt,name=insurance_info,json=insuranceInfo,proto3,oneof" json:"insurance_info,omitempty"` // админ-only: X + контакты клиента
+	// Caller-generated token for safely retrying an ambiguous create. The owner
+	// service scopes it to the authenticated principal and rejects reuse with a
+	// different payload. Maximum 255 bytes; empty keeps legacy behavior.
+	IdempotencyKey string `protobuf:"bytes,27,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -887,6 +891,13 @@ func (x *CreateRequestRequest) GetInsuranceInfo() *InsuranceInfoInput {
 		return x.InsuranceInfo
 	}
 	return nil
+}
+
+func (x *CreateRequestRequest) GetIdempotencyKey() string {
+	if x != nil {
+		return x.IdempotencyKey
+	}
+	return ""
 }
 
 type CreateRequestResponse struct {
@@ -4010,7 +4021,7 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\r_payout_priceB\v\n" +
 	"\t_deadlineB\x10\n" +
 	"\x0e_work_order_idB\x14\n" +
-	"\x12_claimed_by_org_id\"\xb0\t\n" +
+	"\x12_claimed_by_org_id\"\xd9\t\n" +
 	"\x14CreateRequestRequest\x124\n" +
 	"\x04type\x18\x01 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
@@ -4039,7 +4050,8 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\rwork_order_id\x18\x17 \x01(\x03H\x06R\vworkOrderId\x88\x01\x01\x12H\n" +
 	"\x0eestimate_items\x18\x18 \x03(\v2!.services.request.v1.EstimateItemR\restimateItems\x12$\n" +
 	"\x0etarget_org_ids\x18\x19 \x03(\tR\ftargetOrgIds\x12S\n" +
-	"\x0einsurance_info\x18\x1a \x01(\v2'.services.request.v1.InsuranceInfoInputH\aR\rinsuranceInfo\x88\x01\x01B\x14\n" +
+	"\x0einsurance_info\x18\x1a \x01(\v2'.services.request.v1.InsuranceInfoInputH\aR\rinsuranceInfo\x88\x01\x01\x12'\n" +
+	"\x0fidempotency_key\x18\x1b \x01(\tR\x0eidempotencyKeyB\x14\n" +
 	"\x12_car_generation_idB\x12\n" +
 	"\x10_repair_order_idB\t\n" +
 	"\a_org_idB\x10\n" +
