@@ -5675,9 +5675,33 @@ type ListDealsRequest struct {
 	// Multi-select city filter — OR semantics across deals.custom_fields->>'city'.
 	// Powers /kanban mega-filter combobox «Город» section (CITY_OPTIONS, 19 cities).
 	// Empty/nil = no filter.
-	Cities        []string `protobuf:"bytes,24,rep,name=cities,proto3" json:"cities,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Cities []string `protobuf:"bytes,24,rep,name=cities,proto3" json:"cities,omitempty"`
+	// Multi-select marketing-source filter — OR semantics across
+	// deals.custom_fields->>'marketing_source'. Powers /kanban mega-filter
+	// combobox «Источник лида» section (MARKETING_SOURCE_OPTIONS, 34 values).
+	// Empty/nil = no filter.
+	//
+	// NOT the same as `sources` (23): that one filters deals.source — WHICH
+	// SYSTEM created the deal (admin_panel/fa-ai/freedom_naimi, derived from
+	// the api key). This one is the MARKETING attribution — WHERE THE LEAD
+	// CAME FROM (Instagram, 2Gis, «ОГПО Freedom Insurance», …).
+	//
+	// The value list has TWO independent writers — a filter value that matches
+	// neither returns zero deals silently:
+	//  1. Admin dropdown cg_fe .../order_work/OrderWorkCE.vue (sourceOptions,
+	//     value === label, 30 values) — written by the admin ЗН
+	//     (new_order order_work.go) and by the Freedom ОГПО landing
+	//     (new_order cg_crm_freedom.go).
+	//  2. fa-ai-main-mcp (app/handlers/tool_handler.py, keyed on platform;
+	//     app/services/ctogram_service.py default) — «CTOgram AI»,
+	//     «WhatsApp Autobody», «Telegram Bot», + legacy «CTOgram AI Pro».
+	//     These have no UI anywhere; they reach the field via
+	//     new_order cg_crm_ctogram.go and land in the Запчасти pipeline.
+	//
+	// Filter values must match both writers byte-for-byte.
+	MarketingSources []string `protobuf:"bytes,25,rep,name=marketing_sources,json=marketingSources,proto3" json:"marketing_sources,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ListDealsRequest) Reset() {
@@ -5874,6 +5898,13 @@ func (x *ListDealsRequest) GetSources() []string {
 func (x *ListDealsRequest) GetCities() []string {
 	if x != nil {
 		return x.Cities
+	}
+	return nil
+}
+
+func (x *ListDealsRequest) GetMarketingSources() []string {
+	if x != nil {
+		return x.MarketingSources
 	}
 	return nil
 }
@@ -27799,7 +27830,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\"8\n" +
 	"\x0fGetDealResponse\x12%\n" +
-	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\xe2\a\n" +
+	"\x04deal\x18\x01 \x01(\v2\x11.crm.v1.DealProtoR\x04deal\"\x8f\b\n" +
 	"\x10ListDealsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -27829,7 +27860,8 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\x0eassigned_at_to\x18\x15 \x01(\v2\x1a.google.protobuf.TimestampR\fassignedAtTo\x12!\n" +
 	"\fclose_reason\x18\x16 \x01(\tR\vcloseReason\x12\x18\n" +
 	"\asources\x18\x17 \x03(\tR\asources\x12\x16\n" +
-	"\x06cities\x18\x18 \x03(\tR\x06cities\"R\n" +
+	"\x06cities\x18\x18 \x03(\tR\x06cities\x12+\n" +
+	"\x11marketing_sources\x18\x19 \x03(\tR\x10marketingSources\"R\n" +
 	"\x11ListDealsResponse\x12'\n" +
 	"\x05deals\x18\x01 \x03(\v2\x11.crm.v1.DealProtoR\x05deals\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\"\xb7\x03\n" +

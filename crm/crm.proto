@@ -1303,6 +1303,30 @@ message ListDealsRequest {
   // Powers /kanban mega-filter combobox «Город» section (CITY_OPTIONS, 19 cities).
   // Empty/nil = no filter.
   repeated string cities                     = 24;
+
+  // Multi-select marketing-source filter — OR semantics across
+  // deals.custom_fields->>'marketing_source'. Powers /kanban mega-filter
+  // combobox «Источник лида» section (MARKETING_SOURCE_OPTIONS, 34 values).
+  // Empty/nil = no filter.
+  //
+  // NOT the same as `sources` (23): that one filters deals.source — WHICH
+  // SYSTEM created the deal (admin_panel/fa-ai/freedom_naimi, derived from
+  // the api key). This one is the MARKETING attribution — WHERE THE LEAD
+  // CAME FROM (Instagram, 2Gis, «ОГПО Freedom Insurance», …).
+  //
+  // The value list has TWO independent writers — a filter value that matches
+  // neither returns zero deals silently:
+  //   1. Admin dropdown cg_fe .../order_work/OrderWorkCE.vue (sourceOptions,
+  //      value === label, 30 values) — written by the admin ЗН
+  //      (new_order order_work.go) and by the Freedom ОГПО landing
+  //      (new_order cg_crm_freedom.go).
+  //   2. fa-ai-main-mcp (app/handlers/tool_handler.py, keyed on platform;
+  //      app/services/ctogram_service.py default) — «CTOgram AI»,
+  //      «WhatsApp Autobody», «Telegram Bot», + legacy «CTOgram AI Pro».
+  //      These have no UI anywhere; they reach the field via
+  //      new_order cg_crm_ctogram.go and land in the Запчасти pipeline.
+  // Filter values must match both writers byte-for-byte.
+  repeated string marketing_sources          = 25;
 }
 
 message ListDealsResponse {
