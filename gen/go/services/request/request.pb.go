@@ -362,6 +362,11 @@ type Request struct {
 	AssignmentMode AssignmentMode         `protobuf:"varint,31,opt,name=assignment_mode,json=assignmentMode,proto3,enum=services.request.v1.AssignmentMode" json:"assignment_mode,omitempty"`
 	WorkOrderId    *int64                 `protobuf:"varint,32,opt,name=work_order_id,json=workOrderId,proto3,oneof" json:"work_order_id,omitempty"` // RepairOrder.id из cg-workshop
 	EstimateItems  []*EstimateItem        `protobuf:"bytes,33,rep,name=estimate_items,json=estimateItems,proto3" json:"estimate_items,omitempty"`
+	// Winning org once the insurance request is claimed (auto_first CAS or
+	// manual accept). Not sensitive — the claim outcome is already visible to
+	// partners; admin UIs use it to render "В работе" while request_status
+	// itself stays 'published' (there is no matched-like status in the enum).
+	ClaimedByOrgId *string `protobuf:"bytes,34,opt,name=claimed_by_org_id,json=claimedByOrgId,proto3,oneof" json:"claimed_by_org_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -625,6 +630,13 @@ func (x *Request) GetEstimateItems() []*EstimateItem {
 		return x.EstimateItems
 	}
 	return nil
+}
+
+func (x *Request) GetClaimedByOrgId() string {
+	if x != nil && x.ClaimedByOrgId != nil {
+		return *x.ClaimedByOrgId
+	}
+	return ""
 }
 
 // CreateRequest
@@ -3943,7 +3955,7 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05hours\x18\x02 \x01(\x01R\x05hours\x12\x14\n" +
 	"\x05price\x18\x03 \x01(\x03R\x05price\x12\x10\n" +
-	"\x03qty\x18\x04 \x01(\x05R\x03qty\"\x87\f\n" +
+	"\x03qty\x18\x04 \x01(\x05R\x03qty\"\xcd\f\n" +
 	"\aRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x124\n" +
 	"\x04type\x18\x02 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12:\n" +
@@ -3983,7 +3995,8 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x0fassignment_mode\x18\x1f \x01(\x0e2#.services.request.v1.AssignmentModeR\x0eassignmentMode\x12'\n" +
 	"\rwork_order_id\x18  \x01(\x03H\n" +
 	"R\vworkOrderId\x88\x01\x01\x12H\n" +
-	"\x0eestimate_items\x18! \x03(\v2!.services.request.v1.EstimateItemR\restimateItemsB\x14\n" +
+	"\x0eestimate_items\x18! \x03(\v2!.services.request.v1.EstimateItemR\restimateItems\x12.\n" +
+	"\x11claimed_by_org_id\x18\" \x01(\tH\vR\x0eclaimedByOrgId\x88\x01\x01B\x14\n" +
 	"\x12_car_generation_idB\x0f\n" +
 	"\r_published_atB\x12\n" +
 	"\x10_repair_order_idB\t\n" +
@@ -3996,7 +4009,8 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x0e_garage_car_idB\x0f\n" +
 	"\r_payout_priceB\v\n" +
 	"\t_deadlineB\x10\n" +
-	"\x0e_work_order_id\"\xb0\t\n" +
+	"\x0e_work_order_idB\x14\n" +
+	"\x12_claimed_by_org_id\"\xb0\t\n" +
 	"\x14CreateRequestRequest\x124\n" +
 	"\x04type\x18\x01 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +

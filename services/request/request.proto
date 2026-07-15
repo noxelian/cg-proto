@@ -209,6 +209,11 @@ message Request {
   AssignmentMode assignment_mode = 31;
   optional int64 work_order_id = 32;  // RepairOrder.id из cg-workshop
   repeated EstimateItem estimate_items = 33;
+  // Winning org once the insurance request is claimed (auto_first CAS or
+  // manual accept). Not sensitive — the claim outcome is already visible to
+  // partners; admin UIs use it to render "В работе" while request_status
+  // itself stays 'published' (there is no matched-like status in the enum).
+  optional string claimed_by_org_id = 34;
 }
 
 // CreateRequest
