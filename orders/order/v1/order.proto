@@ -227,6 +227,9 @@ message Order {
   google.protobuf.Timestamp updated_at = 18;
   OrderType order_type = 19; // MARKETPLACE or WORKSHOP
   int64 repair_order_id = 20; // For WORKSHOP orders: linked repair order in cg-workshop
+  // Exact payable amount in the currency minor unit (tiyn for KZT).
+  // total_amount remains the whole-unit display amount for compatibility.
+  int64 total_amount_minor = 21;
 }
 
 message OrderItem {

@@ -1117,6 +1117,9 @@ type Order struct {
 	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,18,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	OrderType        OrderType              `protobuf:"varint,19,opt,name=order_type,json=orderType,proto3,enum=orders.order.v1.OrderType" json:"order_type,omitempty"` // MARKETPLACE or WORKSHOP
 	RepairOrderId    int64                  `protobuf:"varint,20,opt,name=repair_order_id,json=repairOrderId,proto3" json:"repair_order_id,omitempty"`                  // For WORKSHOP orders: linked repair order in cg-workshop
+	// Exact payable amount in the currency minor unit (tiyn for KZT).
+	// total_amount remains the whole-unit display amount for compatibility.
+	TotalAmountMinor int64 `protobuf:"varint,21,opt,name=total_amount_minor,json=totalAmountMinor,proto3" json:"total_amount_minor,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1287,6 +1290,13 @@ func (x *Order) GetOrderType() OrderType {
 func (x *Order) GetRepairOrderId() int64 {
 	if x != nil {
 		return x.RepairOrderId
+	}
+	return 0
+}
+
+func (x *Order) GetTotalAmountMinor() int64 {
+	if x != nil {
+		return x.TotalAmountMinor
 	}
 	return 0
 }
@@ -6646,7 +6656,7 @@ const file_orders_order_v1_order_proto_rawDesc = "" +
 	"\x14payable_amount_minor\x18\x11 \x01(\x03R\x12payableAmountMinor\x1aA\n" +
 	"\x13TierAttributesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe7\x06\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x95\a\n" +
 	"\x05Order\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
 	"\forder_number\x18\x02 \x01(\tR\vorderNumber\x12\"\n" +
@@ -6671,7 +6681,8 @@ const file_orders_order_v1_order_proto_rawDesc = "" +
 	"updated_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x129\n" +
 	"\n" +
 	"order_type\x18\x13 \x01(\x0e2\x1a.orders.order.v1.OrderTypeR\torderType\x12&\n" +
-	"\x0frepair_order_id\x18\x14 \x01(\x03R\rrepairOrderId\"\xe7\x04\n" +
+	"\x0frepair_order_id\x18\x14 \x01(\x03R\rrepairOrderId\x12,\n" +
+	"\x12total_amount_minor\x18\x15 \x01(\x03R\x10totalAmountMinor\"\xe7\x04\n" +
 	"\tOrderItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\border_id\x18\x02 \x01(\x03R\aorderId\x12\x1b\n" +
