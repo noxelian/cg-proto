@@ -156,6 +156,10 @@ message SupplierGroup {
   int64 total = 9;
 
   CartDeliveryType delivery_type = 10;
+
+  // Platform commission included in total. Exposed before checkout so the
+  // buyer never sees a different payable amount after pressing Pay.
+  int64 commission_amount = 11;
 }
 
 // CartSummary contains full grouped cart content with aggregated totals.
@@ -172,6 +176,9 @@ message CartSummary {
 
   // unconfirmed_count is the number of items with price changes not yet confirmed by buyer.
   int32 unconfirmed_count = 5;
+
+  // Aggregated platform commission already included in grand_total.
+  int64 commission_amount = 6;
 }
 
 // SupplierCheckoutBreakdown holds per-supplier payment details for the checkout summary.
@@ -182,6 +189,7 @@ message SupplierCheckoutBreakdown {
   int64 delivery_cost = 4;
   int64 total = 5;
   CartDeliveryType delivery_type = 6;
+  int64 commission_amount = 7;
 }
 
 // =============================================

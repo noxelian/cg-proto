@@ -489,8 +489,11 @@ type SupplierGroup struct {
 	FreeDeliveryThreshold int64            `protobuf:"varint,8,opt,name=free_delivery_threshold,json=freeDeliveryThreshold,proto3" json:"free_delivery_threshold,omitempty"` // Order threshold to qualify for free delivery (0 = no threshold).
 	Total                 int64            `protobuf:"varint,9,opt,name=total,proto3" json:"total,omitempty"`
 	DeliveryType          CartDeliveryType `protobuf:"varint,10,opt,name=delivery_type,json=deliveryType,proto3,enum=orders.cart.v1.CartDeliveryType" json:"delivery_type,omitempty"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
+	// Platform commission included in total. Exposed before checkout so the
+	// buyer never sees a different payable amount after pressing Pay.
+	CommissionAmount int64 `protobuf:"varint,11,opt,name=commission_amount,json=commissionAmount,proto3" json:"commission_amount,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *SupplierGroup) Reset() {
@@ -593,6 +596,13 @@ func (x *SupplierGroup) GetDeliveryType() CartDeliveryType {
 	return CartDeliveryType_CART_DELIVERY_TYPE_UNSPECIFIED
 }
 
+func (x *SupplierGroup) GetCommissionAmount() int64 {
+	if x != nil {
+		return x.CommissionAmount
+	}
+	return 0
+}
+
 // CartSummary contains full grouped cart content with aggregated totals.
 type CartSummary struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
@@ -604,6 +614,8 @@ type CartSummary struct {
 	StaleCount int32 `protobuf:"varint,4,opt,name=stale_count,json=staleCount,proto3" json:"stale_count,omitempty"`
 	// unconfirmed_count is the number of items with price changes not yet confirmed by buyer.
 	UnconfirmedCount int32 `protobuf:"varint,5,opt,name=unconfirmed_count,json=unconfirmedCount,proto3" json:"unconfirmed_count,omitempty"`
+	// Aggregated platform commission already included in grand_total.
+	CommissionAmount int64 `protobuf:"varint,6,opt,name=commission_amount,json=commissionAmount,proto3" json:"commission_amount,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -673,17 +685,25 @@ func (x *CartSummary) GetUnconfirmedCount() int32 {
 	return 0
 }
 
+func (x *CartSummary) GetCommissionAmount() int64 {
+	if x != nil {
+		return x.CommissionAmount
+	}
+	return 0
+}
+
 // SupplierCheckoutBreakdown holds per-supplier payment details for the checkout summary.
 type SupplierCheckoutBreakdown struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SellerOrgId   string                 `protobuf:"bytes,1,opt,name=seller_org_id,json=sellerOrgId,proto3" json:"seller_org_id,omitempty"`
-	SellerName    string                 `protobuf:"bytes,2,opt,name=seller_name,json=sellerName,proto3" json:"seller_name,omitempty"`
-	Subtotal      int64                  `protobuf:"varint,3,opt,name=subtotal,proto3" json:"subtotal,omitempty"`
-	DeliveryCost  int64                  `protobuf:"varint,4,opt,name=delivery_cost,json=deliveryCost,proto3" json:"delivery_cost,omitempty"`
-	Total         int64                  `protobuf:"varint,5,opt,name=total,proto3" json:"total,omitempty"`
-	DeliveryType  CartDeliveryType       `protobuf:"varint,6,opt,name=delivery_type,json=deliveryType,proto3,enum=orders.cart.v1.CartDeliveryType" json:"delivery_type,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	SellerOrgId      string                 `protobuf:"bytes,1,opt,name=seller_org_id,json=sellerOrgId,proto3" json:"seller_org_id,omitempty"`
+	SellerName       string                 `protobuf:"bytes,2,opt,name=seller_name,json=sellerName,proto3" json:"seller_name,omitempty"`
+	Subtotal         int64                  `protobuf:"varint,3,opt,name=subtotal,proto3" json:"subtotal,omitempty"`
+	DeliveryCost     int64                  `protobuf:"varint,4,opt,name=delivery_cost,json=deliveryCost,proto3" json:"delivery_cost,omitempty"`
+	Total            int64                  `protobuf:"varint,5,opt,name=total,proto3" json:"total,omitempty"`
+	DeliveryType     CartDeliveryType       `protobuf:"varint,6,opt,name=delivery_type,json=deliveryType,proto3,enum=orders.cart.v1.CartDeliveryType" json:"delivery_type,omitempty"`
+	CommissionAmount int64                  `protobuf:"varint,7,opt,name=commission_amount,json=commissionAmount,proto3" json:"commission_amount,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *SupplierCheckoutBreakdown) Reset() {
@@ -756,6 +776,13 @@ func (x *SupplierCheckoutBreakdown) GetDeliveryType() CartDeliveryType {
 		return x.DeliveryType
 	}
 	return CartDeliveryType_CART_DELIVERY_TYPE_UNSPECIFIED
+}
+
+func (x *SupplierCheckoutBreakdown) GetCommissionAmount() int64 {
+	if x != nil {
+		return x.CommissionAmount
+	}
+	return 0
 }
 
 type GetCartRequest struct {
@@ -2490,7 +2517,7 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\x0fidempotency_key\x18\x11 \x01(\tR\x0eidempotencyKey\x12\x19\n" +
 	"\bis_stale\x18\x12 \x01(\bR\aisStale\x12!\n" +
 	"\fstale_reason\x18\x13 \x01(\tR\vstaleReason\x125\n" +
-	"\badded_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\aaddedAt\"\xb1\x03\n" +
+	"\badded_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\aaddedAt\"\xde\x03\n" +
 	"\rSupplierGroup\x12\"\n" +
 	"\rseller_org_id\x18\x01 \x01(\tR\vsellerOrgId\x12\x1f\n" +
 	"\vseller_name\x18\x02 \x01(\tR\n" +
@@ -2503,7 +2530,8 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\x17free_delivery_threshold\x18\b \x01(\x03R\x15freeDeliveryThreshold\x12\x14\n" +
 	"\x05total\x18\t \x01(\x03R\x05total\x12E\n" +
 	"\rdelivery_type\x18\n" +
-	" \x01(\x0e2 .orders.cart.v1.CartDeliveryTypeR\fdeliveryType\"\xe5\x01\n" +
+	" \x01(\x0e2 .orders.cart.v1.CartDeliveryTypeR\fdeliveryType\x12+\n" +
+	"\x11commission_amount\x18\v \x01(\x03R\x10commissionAmount\"\x92\x02\n" +
 	"\vCartSummary\x12F\n" +
 	"\x0fsupplier_groups\x18\x01 \x03(\v2\x1d.orders.cart.v1.SupplierGroupR\x0esupplierGroups\x12\x1f\n" +
 	"\vgrand_total\x18\x02 \x01(\x03R\n" +
@@ -2512,7 +2540,8 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"itemsCount\x12\x1f\n" +
 	"\vstale_count\x18\x04 \x01(\x05R\n" +
 	"staleCount\x12+\n" +
-	"\x11unconfirmed_count\x18\x05 \x01(\x05R\x10unconfirmedCount\"\xfe\x01\n" +
+	"\x11unconfirmed_count\x18\x05 \x01(\x05R\x10unconfirmedCount\x12+\n" +
+	"\x11commission_amount\x18\x06 \x01(\x03R\x10commissionAmount\"\xab\x02\n" +
 	"\x19SupplierCheckoutBreakdown\x12\"\n" +
 	"\rseller_org_id\x18\x01 \x01(\tR\vsellerOrgId\x12\x1f\n" +
 	"\vseller_name\x18\x02 \x01(\tR\n" +
@@ -2520,7 +2549,8 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\bsubtotal\x18\x03 \x01(\x03R\bsubtotal\x12#\n" +
 	"\rdelivery_cost\x18\x04 \x01(\x03R\fdeliveryCost\x12\x14\n" +
 	"\x05total\x18\x05 \x01(\x03R\x05total\x12E\n" +
-	"\rdelivery_type\x18\x06 \x01(\x0e2 .orders.cart.v1.CartDeliveryTypeR\fdeliveryType\"4\n" +
+	"\rdelivery_type\x18\x06 \x01(\x0e2 .orders.cart.v1.CartDeliveryTypeR\fdeliveryType\x12+\n" +
+	"\x11commission_amount\x18\a \x01(\x03R\x10commissionAmount\"4\n" +
 	"\x0eGetCartRequest\x12\"\n" +
 	"\rbuyer_user_id\x18\x01 \x01(\x03R\vbuyerUserId\"r\n" +
 	"\x0fGetCartResponse\x12(\n" +
