@@ -1990,8 +1990,9 @@ type BidPartPriceResult struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	BidId     int64                  `protobuf:"varint,1,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
 	BidPartId int64                  `protobuf:"varint,2,opt,name=bid_part_id,json=bidPartId,proto3" json:"bid_part_id,omitempty"`
-	// Legacy price in whole KZT, kept for rolling-deploy compatibility.
-	// New payment/cart consumers must use unit_price_minor.
+	// Legacy current price in the currency minor unit (tiyn for KZT), kept for
+	// rolling-deploy compatibility. New consumers should prefer
+	// unit_price_minor because its unit is explicit in the field name.
 	UnitPrice int64 `protobuf:"varint,3,opt,name=unit_price,json=unitPrice,proto3" json:"unit_price,omitempty"`
 	// is_valid is false when the bid is expired, cancelled, or the part is unavailable.
 	IsValid bool `protobuf:"varint,4,opt,name=is_valid,json=isValid,proto3" json:"is_valid,omitempty"`
@@ -2000,8 +2001,8 @@ type BidPartPriceResult struct {
 	// availability reflects the current stock status: in_stock, on_order, unavailable.
 	Availability string `protobuf:"bytes,6,opt,name=availability,proto3" json:"availability,omitempty"`
 	// Authoritative current price in the currency minor unit (tiyn for KZT).
-	// Populated together with unit_price so old and new consumers can coexist
-	// during a rolling deployment.
+	// Populated with the same value as unit_price so old and new consumers can
+	// coexist during a rolling deployment.
 	UnitPriceMinor int64 `protobuf:"varint,7,opt,name=unit_price_minor,json=unitPriceMinor,proto3" json:"unit_price_minor,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
