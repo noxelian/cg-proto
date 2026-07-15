@@ -1117,8 +1117,8 @@ type Order struct {
 	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,18,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	OrderType        OrderType              `protobuf:"varint,19,opt,name=order_type,json=orderType,proto3,enum=orders.order.v1.OrderType" json:"order_type,omitempty"` // MARKETPLACE or WORKSHOP
 	RepairOrderId    int64                  `protobuf:"varint,20,opt,name=repair_order_id,json=repairOrderId,proto3" json:"repair_order_id,omitempty"`                  // For WORKSHOP orders: linked repair order in cg-workshop
-	// Exact payable amount in the currency minor unit (tiyn for KZT).
-	// total_amount remains the whole-unit display amount for compatibility.
+	// Explicit unit-stated alias of total_amount. Both fields contain the exact
+	// payable amount in the currency minor unit (tiyn for KZT).
 	TotalAmountMinor int64 `protobuf:"varint,21,opt,name=total_amount_minor,json=totalAmountMinor,proto3" json:"total_amount_minor,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
