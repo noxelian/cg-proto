@@ -309,6 +309,8 @@ message UpdateOrganizationRequest {
   repeated int64 category_ids = 16;
   // Replace photo gallery. Empty array = no change (same convention as category_ids).
   repeated string photos = 17;
+  // Move the storefront to another NSI city. Omitted = keep the current city.
+  optional int64 city_id = 18;
 }
 
 message UpdateOrganizationResponse {

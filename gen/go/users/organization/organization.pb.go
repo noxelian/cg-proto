@@ -1370,7 +1370,9 @@ type UpdateOrganizationRequest struct {
 	// Replace org categories. Empty array = no change (matches car_make_ids convention).
 	CategoryIds []int64 `protobuf:"varint,16,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
 	// Replace photo gallery. Empty array = no change (same convention as category_ids).
-	Photos        []string `protobuf:"bytes,17,rep,name=photos,proto3" json:"photos,omitempty"`
+	Photos []string `protobuf:"bytes,17,rep,name=photos,proto3" json:"photos,omitempty"`
+	// Move the storefront to another NSI city. Omitted = keep the current city.
+	CityId        *int64 `protobuf:"varint,18,opt,name=city_id,json=cityId,proto3,oneof" json:"city_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1522,6 +1524,13 @@ func (x *UpdateOrganizationRequest) GetPhotos() []string {
 		return x.Photos
 	}
 	return nil
+}
+
+func (x *UpdateOrganizationRequest) GetCityId() int64 {
+	if x != nil && x.CityId != nil {
+		return *x.CityId
+	}
+	return 0
 }
 
 type UpdateOrganizationResponse struct {
@@ -7443,7 +7452,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x16GetOrganizationRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\"b\n" +
 	"\x17GetOrganizationResponse\x12G\n" +
-	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"\xff\x05\n" +
+	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"\xa9\x06\n" +
 	"\x19UpdateOrganizationRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
@@ -7464,7 +7473,8 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"R\tlongitude\x88\x01\x01\x12\x1b\n" +
 	"\x06status\x18\x0f \x01(\tH\vR\x06status\x88\x01\x01\x12!\n" +
 	"\fcategory_ids\x18\x10 \x03(\x03R\vcategoryIds\x12\x16\n" +
-	"\x06photos\x18\x11 \x03(\tR\x06photosB\a\n" +
+	"\x06photos\x18\x11 \x03(\tR\x06photos\x12\x1c\n" +
+	"\acity_id\x18\x12 \x01(\x03H\fR\x06cityId\x88\x01\x01B\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\v\n" +
 	"\t_logo_urlB\n" +
@@ -7480,7 +7490,9 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\t_latitudeB\f\n" +
 	"\n" +
 	"_longitudeB\t\n" +
-	"\a_status\"e\n" +
+	"\a_statusB\n" +
+	"\n" +
+	"\b_city_id\"e\n" +
 	"\x1aUpdateOrganizationResponse\x12G\n" +
 	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"D\n" +
 	"\x19DeleteOrganizationRequest\x12'\n" +
