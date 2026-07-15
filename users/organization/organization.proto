@@ -852,6 +852,8 @@ message FindMatchingOrganizationsRequest {
   double longitude = 6;            // Optional, used only to compute distance
   int32 page = 7;
   int32 page_size = 8;
+  int64 car_model_id = 9;          // 0 = any model
+  int32 year = 10;                 // 0 = any year
 }
 
 // OrganizationSearchResult is one ranked organization, aligned to

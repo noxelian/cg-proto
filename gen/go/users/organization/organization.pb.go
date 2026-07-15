@@ -6071,6 +6071,8 @@ type FindMatchingOrganizationsRequest struct {
 	Longitude     float64                `protobuf:"fixed64,6,opt,name=longitude,proto3" json:"longitude,omitempty"`                              // Optional, used only to compute distance
 	Page          int32                  `protobuf:"varint,7,opt,name=page,proto3" json:"page,omitempty"`
 	PageSize      int32                  `protobuf:"varint,8,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	CarModelId    int64                  `protobuf:"varint,9,opt,name=car_model_id,json=carModelId,proto3" json:"car_model_id,omitempty"` // 0 = any model
+	Year          int32                  `protobuf:"varint,10,opt,name=year,proto3" json:"year,omitempty"`                                // 0 = any year
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6157,6 +6159,20 @@ func (x *FindMatchingOrganizationsRequest) GetPage() int32 {
 func (x *FindMatchingOrganizationsRequest) GetPageSize() int32 {
 	if x != nil {
 		return x.PageSize
+	}
+	return 0
+}
+
+func (x *FindMatchingOrganizationsRequest) GetCarModelId() int64 {
+	if x != nil {
+		return x.CarModelId
+	}
+	return 0
+}
+
+func (x *FindMatchingOrganizationsRequest) GetYear() int32 {
+	if x != nil {
+		return x.Year
 	}
 	return 0
 }
@@ -7826,7 +7842,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"min_rating\x18\f \x01(\x01H\x00R\tminRating\x88\x01\x01\x12-\n" +
 	"\x10min_raters_count\x18\r \x01(\x05H\x01R\x0eminRatersCount\x88\x01\x01B\r\n" +
 	"\v_min_ratingB\x13\n" +
-	"\x11_min_raters_count\"\x84\x02\n" +
+	"\x11_min_raters_count\"\xba\x02\n" +
 	" FindMatchingOrganizationsRequest\x12\x17\n" +
 	"\acity_id\x18\x01 \x01(\x03R\x06cityId\x12\x19\n" +
 	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12!\n" +
@@ -7835,7 +7851,11 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\blatitude\x18\x05 \x01(\x01R\blatitude\x12\x1c\n" +
 	"\tlongitude\x18\x06 \x01(\x01R\tlongitude\x12\x12\n" +
 	"\x04page\x18\a \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\b \x01(\x05R\bpageSize\"\xa2\a\n" +
+	"\tpage_size\x18\b \x01(\x05R\bpageSize\x12 \n" +
+	"\fcar_model_id\x18\t \x01(\x03R\n" +
+	"carModelId\x12\x12\n" +
+	"\x04year\x18\n" +
+	" \x01(\x05R\x04year\"\xa2\a\n" +
 	"\x18OrganizationSearchResult\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12;\n" +
