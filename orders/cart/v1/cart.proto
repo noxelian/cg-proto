@@ -139,6 +139,12 @@ message CartItem {
   string stale_reason = 19;  // e.g. "price_changed", "out_of_stock", "bid_expired"
 
   google.protobuf.Timestamp added_at = 20;
+
+  // catalog_quote_token retains the signed price token for CATALOG items so the
+  // refresh path can re-resolve/expire the authoritative price via
+  // parts-provider.ResolveCatalogQuote. Empty for BID items. Not a secret — it
+  // is a signed public price quote, safe to persist.
+  string catalog_quote_token = 21;
 }
 
 // SupplierGroup aggregates cart items from a single seller with delivery info and totals.
@@ -223,6 +229,11 @@ message AddItemRequest {
   string part_name = 6;
   string part_number = 7;
   int32 quantity = 8;
+  // unit_price is advisory for display only and is NOT the charge authority.
+  // For BID items order-service re-resolves the price from bid-service; for
+  // CATALOG items it is resolved from catalog_quote_token via
+  // parts-provider.ResolveCatalogQuote. The persisted price is always the
+  // server-resolved value in minor units (tiyn for KZT).
   int64 unit_price = 9;
   string condition = 10;
   string availability = 11;
@@ -233,6 +244,13 @@ message AddItemRequest {
 
   // Idempotency key to prevent duplicate adds on retry.
   string idempotency_key = 15;
+
+  // catalog_quote_token is the signed authoritative price token (from a
+  // parts-provider search result's Part.price_quote). Required when
+  // source_type = CATALOG: order-service calls
+  // parts-provider.ResolveCatalogQuote to obtain the authoritative price,
+  // seller and availability, ignoring unit_price above. Unused for BID.
+  string catalog_quote_token = 16;
 }
 
 message AddItemResponse {

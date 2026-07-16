@@ -22,6 +22,39 @@ service PartsProviderService {
 
   // StreamSearchParts performs a fan-out search and streams results as each provider completes.
   rpc StreamSearchParts(SearchPartsRequest) returns (stream StreamSearchPartsResponse);
+
+  // ResolveCatalogQuote verifies a signed price_quote token minted by
+  // SearchParts/SearchByProvider and returns the AUTHORITATIVE price for a
+  // CATALOG-sourced cart line. This service is the price authority for catalog
+  // items: consumers (e.g. order-service) must present the token and use the
+  // returned unit_price_minor instead of trusting any client-supplied amount.
+  // The token is self-contained and signed, so no server-side search cache is
+  // required to resolve it.
+  rpc ResolveCatalogQuote(ResolveCatalogQuoteRequest) returns (ResolveCatalogQuoteResponse);
+}
+
+// ResolveCatalogQuoteRequest carries the signed price_quote token taken from a
+// Part in a prior search response.
+message ResolveCatalogQuoteRequest {
+  string price_quote = 1;
+}
+
+// ResolveCatalogQuoteResponse is the authoritative price for a catalog item.
+message ResolveCatalogQuoteResponse {
+  // unit_price_minor is the authoritative unit price in minor currency units
+  // (tiyn for KZT), matching the order/cart money contract (int64 minor units).
+  int64 unit_price_minor = 1;
+  // currency is the ISO 4217 code, e.g. "KZT".
+  string currency = 2;
+  // seller_org_id is the authoritative seller organization UUID. Non-empty only
+  // for internal-warehouse parts; empty for external-supplier offers (which are
+  // not CTOgram organizations and are purchased through the bid flow instead).
+  string seller_org_id = 3;
+  bool available = 4;
+  int32 quantity = 5;
+  // valid is false when the token is malformed, expired, or tampered with.
+  bool valid = 6;
+  string invalid_reason = 7;
 }
 
 // SearchPartsRequest is the input for searching parts across providers.
@@ -101,6 +134,12 @@ message Part {
   // seller_org_id is the UUID string of the organization that owns the warehouse.
   // Non-empty only for parts from the internal warehouse provider.
   string seller_org_id = 29;
+  // price_quote is a signed, time-boxed authoritative price token minted by
+  // parts-provider for this exact offer (price in minor units, seller, TTL).
+  // A consumer presents it to ResolveCatalogQuote to obtain the authoritative
+  // price for a catalog cart line instead of trusting a client-supplied amount.
+  // Empty for providers/offers that cannot mint an authoritative quote.
+  string price_quote = 30;
 }
 
 // Installment holds installment payment details.

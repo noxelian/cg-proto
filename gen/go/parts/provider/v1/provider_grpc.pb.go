@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PartsProviderService_SearchParts_FullMethodName       = "/parts.provider.v1.PartsProviderService/SearchParts"
-	PartsProviderService_ListSearchHistory_FullMethodName = "/parts.provider.v1.PartsProviderService/ListSearchHistory"
-	PartsProviderService_GetSearchResult_FullMethodName   = "/parts.provider.v1.PartsProviderService/GetSearchResult"
-	PartsProviderService_SearchByProvider_FullMethodName  = "/parts.provider.v1.PartsProviderService/SearchByProvider"
-	PartsProviderService_StreamSearchParts_FullMethodName = "/parts.provider.v1.PartsProviderService/StreamSearchParts"
+	PartsProviderService_SearchParts_FullMethodName         = "/parts.provider.v1.PartsProviderService/SearchParts"
+	PartsProviderService_ListSearchHistory_FullMethodName   = "/parts.provider.v1.PartsProviderService/ListSearchHistory"
+	PartsProviderService_GetSearchResult_FullMethodName     = "/parts.provider.v1.PartsProviderService/GetSearchResult"
+	PartsProviderService_SearchByProvider_FullMethodName    = "/parts.provider.v1.PartsProviderService/SearchByProvider"
+	PartsProviderService_StreamSearchParts_FullMethodName   = "/parts.provider.v1.PartsProviderService/StreamSearchParts"
+	PartsProviderService_ResolveCatalogQuote_FullMethodName = "/parts.provider.v1.PartsProviderService/ResolveCatalogQuote"
 )
 
 // PartsProviderServiceClient is the client API for PartsProviderService service.
@@ -42,6 +43,14 @@ type PartsProviderServiceClient interface {
 	SearchByProvider(ctx context.Context, in *SearchByProviderRequest, opts ...grpc.CallOption) (*SearchByProviderResponse, error)
 	// StreamSearchParts performs a fan-out search and streams results as each provider completes.
 	StreamSearchParts(ctx context.Context, in *SearchPartsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamSearchPartsResponse], error)
+	// ResolveCatalogQuote verifies a signed price_quote token minted by
+	// SearchParts/SearchByProvider and returns the AUTHORITATIVE price for a
+	// CATALOG-sourced cart line. This service is the price authority for catalog
+	// items: consumers (e.g. order-service) must present the token and use the
+	// returned unit_price_minor instead of trusting any client-supplied amount.
+	// The token is self-contained and signed, so no server-side search cache is
+	// required to resolve it.
+	ResolveCatalogQuote(ctx context.Context, in *ResolveCatalogQuoteRequest, opts ...grpc.CallOption) (*ResolveCatalogQuoteResponse, error)
 }
 
 type partsProviderServiceClient struct {
@@ -111,6 +120,16 @@ func (c *partsProviderServiceClient) StreamSearchParts(ctx context.Context, in *
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type PartsProviderService_StreamSearchPartsClient = grpc.ServerStreamingClient[StreamSearchPartsResponse]
 
+func (c *partsProviderServiceClient) ResolveCatalogQuote(ctx context.Context, in *ResolveCatalogQuoteRequest, opts ...grpc.CallOption) (*ResolveCatalogQuoteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResolveCatalogQuoteResponse)
+	err := c.cc.Invoke(ctx, PartsProviderService_ResolveCatalogQuote_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PartsProviderServiceServer is the server API for PartsProviderService service.
 // All implementations must embed UnimplementedPartsProviderServiceServer
 // for forward compatibility.
@@ -127,6 +146,14 @@ type PartsProviderServiceServer interface {
 	SearchByProvider(context.Context, *SearchByProviderRequest) (*SearchByProviderResponse, error)
 	// StreamSearchParts performs a fan-out search and streams results as each provider completes.
 	StreamSearchParts(*SearchPartsRequest, grpc.ServerStreamingServer[StreamSearchPartsResponse]) error
+	// ResolveCatalogQuote verifies a signed price_quote token minted by
+	// SearchParts/SearchByProvider and returns the AUTHORITATIVE price for a
+	// CATALOG-sourced cart line. This service is the price authority for catalog
+	// items: consumers (e.g. order-service) must present the token and use the
+	// returned unit_price_minor instead of trusting any client-supplied amount.
+	// The token is self-contained and signed, so no server-side search cache is
+	// required to resolve it.
+	ResolveCatalogQuote(context.Context, *ResolveCatalogQuoteRequest) (*ResolveCatalogQuoteResponse, error)
 	mustEmbedUnimplementedPartsProviderServiceServer()
 }
 
@@ -151,6 +178,9 @@ func (UnimplementedPartsProviderServiceServer) SearchByProvider(context.Context,
 }
 func (UnimplementedPartsProviderServiceServer) StreamSearchParts(*SearchPartsRequest, grpc.ServerStreamingServer[StreamSearchPartsResponse]) error {
 	return status.Error(codes.Unimplemented, "method StreamSearchParts not implemented")
+}
+func (UnimplementedPartsProviderServiceServer) ResolveCatalogQuote(context.Context, *ResolveCatalogQuoteRequest) (*ResolveCatalogQuoteResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResolveCatalogQuote not implemented")
 }
 func (UnimplementedPartsProviderServiceServer) mustEmbedUnimplementedPartsProviderServiceServer() {}
 func (UnimplementedPartsProviderServiceServer) testEmbeddedByValue()                              {}
@@ -256,6 +286,24 @@ func _PartsProviderService_StreamSearchParts_Handler(srv interface{}, stream grp
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type PartsProviderService_StreamSearchPartsServer = grpc.ServerStreamingServer[StreamSearchPartsResponse]
 
+func _PartsProviderService_ResolveCatalogQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResolveCatalogQuoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PartsProviderServiceServer).ResolveCatalogQuote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PartsProviderService_ResolveCatalogQuote_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PartsProviderServiceServer).ResolveCatalogQuote(ctx, req.(*ResolveCatalogQuoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PartsProviderService_ServiceDesc is the grpc.ServiceDesc for PartsProviderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -278,6 +326,10 @@ var PartsProviderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SearchByProvider",
 			Handler:    _PartsProviderService_SearchByProvider_Handler,
+		},
+		{
+			MethodName: "ResolveCatalogQuote",
+			Handler:    _PartsProviderService_ResolveCatalogQuote_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

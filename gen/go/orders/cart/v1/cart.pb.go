@@ -299,11 +299,16 @@ type CartItem struct {
 	// Client-supplied idempotency key to prevent duplicate additions.
 	IdempotencyKey string `protobuf:"bytes,17,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
 	// Stale flags are set by RefreshPrices when the item is no longer valid.
-	IsStale       bool                   `protobuf:"varint,18,opt,name=is_stale,json=isStale,proto3" json:"is_stale,omitempty"`
-	StaleReason   string                 `protobuf:"bytes,19,opt,name=stale_reason,json=staleReason,proto3" json:"stale_reason,omitempty"` // e.g. "price_changed", "out_of_stock", "bid_expired"
-	AddedAt       *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=added_at,json=addedAt,proto3" json:"added_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	IsStale     bool                   `protobuf:"varint,18,opt,name=is_stale,json=isStale,proto3" json:"is_stale,omitempty"`
+	StaleReason string                 `protobuf:"bytes,19,opt,name=stale_reason,json=staleReason,proto3" json:"stale_reason,omitempty"` // e.g. "price_changed", "out_of_stock", "bid_expired"
+	AddedAt     *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=added_at,json=addedAt,proto3" json:"added_at,omitempty"`
+	// catalog_quote_token retains the signed price token for CATALOG items so the
+	// refresh path can re-resolve/expire the authoritative price via
+	// parts-provider.ResolveCatalogQuote. Empty for BID items. Not a secret — it
+	// is a signed public price quote, safe to persist.
+	CatalogQuoteToken string `protobuf:"bytes,21,opt,name=catalog_quote_token,json=catalogQuoteToken,proto3" json:"catalog_quote_token,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *CartItem) Reset() {
@@ -474,6 +479,13 @@ func (x *CartItem) GetAddedAt() *timestamppb.Timestamp {
 		return x.AddedAt
 	}
 	return nil
+}
+
+func (x *CartItem) GetCatalogQuoteToken() string {
+	if x != nil {
+		return x.CatalogQuoteToken
+	}
+	return ""
 }
 
 // SupplierGroup aggregates cart items from a single seller with delivery info and totals.
@@ -890,9 +902,14 @@ type AddItemRequest struct {
 	SourcePartId int64                  `protobuf:"varint,4,opt,name=source_part_id,json=sourcePartId,proto3" json:"source_part_id,omitempty"` // bid_part_id for BID source
 	SellerOrgId  string                 `protobuf:"bytes,5,opt,name=seller_org_id,json=sellerOrgId,proto3" json:"seller_org_id,omitempty"`
 	// Part details provided by the caller (from bid/catalog response).
-	PartName       string           `protobuf:"bytes,6,opt,name=part_name,json=partName,proto3" json:"part_name,omitempty"`
-	PartNumber     string           `protobuf:"bytes,7,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
-	Quantity       int32            `protobuf:"varint,8,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	PartName   string `protobuf:"bytes,6,opt,name=part_name,json=partName,proto3" json:"part_name,omitempty"`
+	PartNumber string `protobuf:"bytes,7,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
+	Quantity   int32  `protobuf:"varint,8,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	// unit_price is advisory for display only and is NOT the charge authority.
+	// For BID items order-service re-resolves the price from bid-service; for
+	// CATALOG items it is resolved from catalog_quote_token via
+	// parts-provider.ResolveCatalogQuote. The persisted price is always the
+	// server-resolved value in minor units (tiyn for KZT).
 	UnitPrice      int64            `protobuf:"varint,9,opt,name=unit_price,json=unitPrice,proto3" json:"unit_price,omitempty"`
 	Condition      string           `protobuf:"bytes,10,opt,name=condition,proto3" json:"condition,omitempty"`
 	Availability   string           `protobuf:"bytes,11,opt,name=availability,proto3" json:"availability,omitempty"`
@@ -901,8 +918,14 @@ type AddItemRequest struct {
 	DeliveryCityId int64            `protobuf:"varint,14,opt,name=delivery_city_id,json=deliveryCityId,proto3" json:"delivery_city_id,omitempty"`
 	// Idempotency key to prevent duplicate adds on retry.
 	IdempotencyKey string `protobuf:"bytes,15,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// catalog_quote_token is the signed authoritative price token (from a
+	// parts-provider search result's Part.price_quote). Required when
+	// source_type = CATALOG: order-service calls
+	// parts-provider.ResolveCatalogQuote to obtain the authoritative price,
+	// seller and availability, ignoring unit_price above. Unused for BID.
+	CatalogQuoteToken string `protobuf:"bytes,16,opt,name=catalog_quote_token,json=catalogQuoteToken,proto3" json:"catalog_quote_token,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *AddItemRequest) Reset() {
@@ -1036,6 +1059,13 @@ func (x *AddItemRequest) GetDeliveryCityId() int64 {
 func (x *AddItemRequest) GetIdempotencyKey() string {
 	if x != nil {
 		return x.IdempotencyKey
+	}
+	return ""
+}
+
+func (x *AddItemRequest) GetCatalogQuoteToken() string {
+	if x != nil {
+		return x.CatalogQuoteToken
 	}
 	return ""
 }
@@ -2493,7 +2523,7 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x85\x06\n" +
+	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xb5\x06\n" +
 	"\bCartItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12C\n" +
 	"\vsource_type\x18\x02 \x01(\x0e2\".orders.cart.v1.CartItemSourceTypeR\n" +
@@ -2518,7 +2548,8 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\x0fidempotency_key\x18\x11 \x01(\tR\x0eidempotencyKey\x12\x19\n" +
 	"\bis_stale\x18\x12 \x01(\bR\aisStale\x12!\n" +
 	"\fstale_reason\x18\x13 \x01(\tR\vstaleReason\x125\n" +
-	"\badded_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\aaddedAt\"\xde\x03\n" +
+	"\badded_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\aaddedAt\x12.\n" +
+	"\x13catalog_quote_token\x18\x15 \x01(\tR\x11catalogQuoteToken\"\xde\x03\n" +
 	"\rSupplierGroup\x12\"\n" +
 	"\rseller_org_id\x18\x01 \x01(\tR\vsellerOrgId\x12\x1f\n" +
 	"\vseller_name\x18\x02 \x01(\tR\n" +
@@ -2556,7 +2587,7 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\rbuyer_user_id\x18\x01 \x01(\x03R\vbuyerUserId\"r\n" +
 	"\x0fGetCartResponse\x12(\n" +
 	"\x04cart\x18\x01 \x01(\v2\x14.orders.cart.v1.CartR\x04cart\x125\n" +
-	"\asummary\x18\x02 \x01(\v2\x1b.orders.cart.v1.CartSummaryR\asummary\"\xda\x04\n" +
+	"\asummary\x18\x02 \x01(\v2\x1b.orders.cart.v1.CartSummaryR\asummary\"\x8a\x05\n" +
 	"\x0eAddItemRequest\x12\"\n" +
 	"\rbuyer_user_id\x18\x01 \x01(\x03R\vbuyerUserId\x12C\n" +
 	"\vsource_type\x18\x02 \x01(\x0e2\".orders.cart.v1.CartItemSourceTypeR\n" +
@@ -2576,7 +2607,8 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\rdelivery_type\x18\f \x01(\x0e2 .orders.cart.v1.CartDeliveryTypeR\fdeliveryType\x12#\n" +
 	"\rdelivery_cost\x18\r \x01(\x03R\fdeliveryCost\x12(\n" +
 	"\x10delivery_city_id\x18\x0e \x01(\x03R\x0edeliveryCityId\x12'\n" +
-	"\x0fidempotency_key\x18\x0f \x01(\tR\x0eidempotencyKey\"i\n" +
+	"\x0fidempotency_key\x18\x0f \x01(\tR\x0eidempotencyKey\x12.\n" +
+	"\x13catalog_quote_token\x18\x10 \x01(\tR\x11catalogQuoteToken\"i\n" +
 	"\x0fAddItemResponse\x12,\n" +
 	"\x04item\x18\x01 \x01(\v2\x18.orders.cart.v1.CartItemR\x04item\x12(\n" +
 	"\x04cart\x18\x02 \x01(\v2\x14.orders.cart.v1.CartR\x04cart\"}\n" +
