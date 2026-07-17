@@ -40,6 +40,15 @@ service CartService {
   // No orders are created at this stage.
   rpc Checkout(CheckoutRequest) returns (CheckoutResponse);
 
+  // CancelCheckout is the buyer-initiated escape from a stuck checkout: it
+  // reverts the buyer's awaiting_payment cart back to active (dropping the
+  // pending checkout attempt) so the cart can be edited and re-checked-out.
+  // Without it an abandoned payment page locked the cart until expiry —
+  // ProcessPaymentFailure fires only when the PSP reports a failure.
+  // A later success webhook for the cancelled attempt finds the cart no
+  // longer awaiting_payment and creates no orders (fail-closed).
+  rpc CancelCheckout(CancelCheckoutRequest) returns (CancelCheckoutResponse);
+
   // GetCartSummary returns a lightweight summary (item count + total) for UI badge display.
   rpc GetCartSummary(GetCartSummaryRequest) returns (GetCartSummaryResponse);
 
@@ -290,6 +299,16 @@ message ClearCartRequest {
 
 message ClearCartResponse {
   Cart cart = 1;
+}
+
+// --- CancelCheckout ---
+
+message CancelCheckoutRequest {
+  int64 buyer_user_id = 1;
+}
+
+message CancelCheckoutResponse {
+  Cart cart = 1; // the reopened (active) cart with its items intact
 }
 
 // --- RefreshPrices ---

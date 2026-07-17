@@ -1418,6 +1418,94 @@ func (x *ClearCartResponse) GetCart() *Cart {
 	return nil
 }
 
+type CancelCheckoutRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BuyerUserId   int64                  `protobuf:"varint,1,opt,name=buyer_user_id,json=buyerUserId,proto3" json:"buyer_user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelCheckoutRequest) Reset() {
+	*x = CancelCheckoutRequest{}
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelCheckoutRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelCheckoutRequest) ProtoMessage() {}
+
+func (x *CancelCheckoutRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelCheckoutRequest.ProtoReflect.Descriptor instead.
+func (*CancelCheckoutRequest) Descriptor() ([]byte, []int) {
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *CancelCheckoutRequest) GetBuyerUserId() int64 {
+	if x != nil {
+		return x.BuyerUserId
+	}
+	return 0
+}
+
+type CancelCheckoutResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Cart          *Cart                  `protobuf:"bytes,1,opt,name=cart,proto3" json:"cart,omitempty"` // the reopened (active) cart with its items intact
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelCheckoutResponse) Reset() {
+	*x = CancelCheckoutResponse{}
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelCheckoutResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelCheckoutResponse) ProtoMessage() {}
+
+func (x *CancelCheckoutResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelCheckoutResponse.ProtoReflect.Descriptor instead.
+func (*CancelCheckoutResponse) Descriptor() ([]byte, []int) {
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *CancelCheckoutResponse) GetCart() *Cart {
+	if x != nil {
+		return x.Cart
+	}
+	return nil
+}
+
 type RefreshPricesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BuyerUserId   int64                  `protobuf:"varint,1,opt,name=buyer_user_id,json=buyerUserId,proto3" json:"buyer_user_id,omitempty"`
@@ -1427,7 +1515,7 @@ type RefreshPricesRequest struct {
 
 func (x *RefreshPricesRequest) Reset() {
 	*x = RefreshPricesRequest{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[15]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1439,7 +1527,7 @@ func (x *RefreshPricesRequest) String() string {
 func (*RefreshPricesRequest) ProtoMessage() {}
 
 func (x *RefreshPricesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[15]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1452,7 +1540,7 @@ func (x *RefreshPricesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshPricesRequest.ProtoReflect.Descriptor instead.
 func (*RefreshPricesRequest) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{15}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *RefreshPricesRequest) GetBuyerUserId() int64 {
@@ -1478,7 +1566,7 @@ type PriceChangeResult struct {
 
 func (x *PriceChangeResult) Reset() {
 	*x = PriceChangeResult{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[16]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1490,7 +1578,7 @@ func (x *PriceChangeResult) String() string {
 func (*PriceChangeResult) ProtoMessage() {}
 
 func (x *PriceChangeResult) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[16]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1503,7 +1591,7 @@ func (x *PriceChangeResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PriceChangeResult.ProtoReflect.Descriptor instead.
 func (*PriceChangeResult) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{16}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *PriceChangeResult) GetCartItemId() int64 {
@@ -1561,7 +1649,7 @@ type RefreshPricesResponse struct {
 
 func (x *RefreshPricesResponse) Reset() {
 	*x = RefreshPricesResponse{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[17]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1573,7 +1661,7 @@ func (x *RefreshPricesResponse) String() string {
 func (*RefreshPricesResponse) ProtoMessage() {}
 
 func (x *RefreshPricesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[17]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1586,7 +1674,7 @@ func (x *RefreshPricesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshPricesResponse.ProtoReflect.Descriptor instead.
 func (*RefreshPricesResponse) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{17}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *RefreshPricesResponse) GetSummary() *CartSummary {
@@ -1622,7 +1710,7 @@ type ConfirmPriceChangesRequest struct {
 
 func (x *ConfirmPriceChangesRequest) Reset() {
 	*x = ConfirmPriceChangesRequest{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[18]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1634,7 +1722,7 @@ func (x *ConfirmPriceChangesRequest) String() string {
 func (*ConfirmPriceChangesRequest) ProtoMessage() {}
 
 func (x *ConfirmPriceChangesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[18]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1647,7 +1735,7 @@ func (x *ConfirmPriceChangesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConfirmPriceChangesRequest.ProtoReflect.Descriptor instead.
 func (*ConfirmPriceChangesRequest) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{18}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ConfirmPriceChangesRequest) GetBuyerUserId() int64 {
@@ -1673,7 +1761,7 @@ type ConfirmPriceChangesResponse struct {
 
 func (x *ConfirmPriceChangesResponse) Reset() {
 	*x = ConfirmPriceChangesResponse{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[19]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1685,7 +1773,7 @@ func (x *ConfirmPriceChangesResponse) String() string {
 func (*ConfirmPriceChangesResponse) ProtoMessage() {}
 
 func (x *ConfirmPriceChangesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[19]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1698,7 +1786,7 @@ func (x *ConfirmPriceChangesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConfirmPriceChangesResponse.ProtoReflect.Descriptor instead.
 func (*ConfirmPriceChangesResponse) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{19}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ConfirmPriceChangesResponse) GetSummary() *CartSummary {
@@ -1721,7 +1809,7 @@ type SetDeliveryOptionRequest struct {
 
 func (x *SetDeliveryOptionRequest) Reset() {
 	*x = SetDeliveryOptionRequest{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[20]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1733,7 +1821,7 @@ func (x *SetDeliveryOptionRequest) String() string {
 func (*SetDeliveryOptionRequest) ProtoMessage() {}
 
 func (x *SetDeliveryOptionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[20]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1746,7 +1834,7 @@ func (x *SetDeliveryOptionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetDeliveryOptionRequest.ProtoReflect.Descriptor instead.
 func (*SetDeliveryOptionRequest) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{20}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *SetDeliveryOptionRequest) GetBuyerUserId() int64 {
@@ -1787,7 +1875,7 @@ type SetDeliveryOptionResponse struct {
 
 func (x *SetDeliveryOptionResponse) Reset() {
 	*x = SetDeliveryOptionResponse{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[21]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1799,7 +1887,7 @@ func (x *SetDeliveryOptionResponse) String() string {
 func (*SetDeliveryOptionResponse) ProtoMessage() {}
 
 func (x *SetDeliveryOptionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[21]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1812,7 +1900,7 @@ func (x *SetDeliveryOptionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetDeliveryOptionResponse.ProtoReflect.Descriptor instead.
 func (*SetDeliveryOptionResponse) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{21}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *SetDeliveryOptionResponse) GetSupplierGroup() *SupplierGroup {
@@ -1846,7 +1934,7 @@ type CheckoutRequest struct {
 
 func (x *CheckoutRequest) Reset() {
 	*x = CheckoutRequest{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[22]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1858,7 +1946,7 @@ func (x *CheckoutRequest) String() string {
 func (*CheckoutRequest) ProtoMessage() {}
 
 func (x *CheckoutRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[22]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1871,7 +1959,7 @@ func (x *CheckoutRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckoutRequest.ProtoReflect.Descriptor instead.
 func (*CheckoutRequest) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{22}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *CheckoutRequest) GetBuyerUserId() int64 {
@@ -1921,7 +2009,7 @@ type CheckoutResponse struct {
 
 func (x *CheckoutResponse) Reset() {
 	*x = CheckoutResponse{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[23]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1933,7 +2021,7 @@ func (x *CheckoutResponse) String() string {
 func (*CheckoutResponse) ProtoMessage() {}
 
 func (x *CheckoutResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[23]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1946,7 +2034,7 @@ func (x *CheckoutResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckoutResponse.ProtoReflect.Descriptor instead.
 func (*CheckoutResponse) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{23}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *CheckoutResponse) GetPaymentUrl() string {
@@ -2007,7 +2095,7 @@ type GetCartSummaryRequest struct {
 
 func (x *GetCartSummaryRequest) Reset() {
 	*x = GetCartSummaryRequest{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[24]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2019,7 +2107,7 @@ func (x *GetCartSummaryRequest) String() string {
 func (*GetCartSummaryRequest) ProtoMessage() {}
 
 func (x *GetCartSummaryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[24]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2032,7 +2120,7 @@ func (x *GetCartSummaryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCartSummaryRequest.ProtoReflect.Descriptor instead.
 func (*GetCartSummaryRequest) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{24}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *GetCartSummaryRequest) GetBuyerUserId() int64 {
@@ -2054,7 +2142,7 @@ type GetCartSummaryResponse struct {
 
 func (x *GetCartSummaryResponse) Reset() {
 	*x = GetCartSummaryResponse{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[25]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2066,7 +2154,7 @@ func (x *GetCartSummaryResponse) String() string {
 func (*GetCartSummaryResponse) ProtoMessage() {}
 
 func (x *GetCartSummaryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[25]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2079,7 +2167,7 @@ func (x *GetCartSummaryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCartSummaryResponse.ProtoReflect.Descriptor instead.
 func (*GetCartSummaryResponse) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{25}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *GetCartSummaryResponse) GetItemsCount() int32 {
@@ -2116,7 +2204,7 @@ type ProcessPaymentSuccessRequest struct {
 
 func (x *ProcessPaymentSuccessRequest) Reset() {
 	*x = ProcessPaymentSuccessRequest{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[26]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2128,7 +2216,7 @@ func (x *ProcessPaymentSuccessRequest) String() string {
 func (*ProcessPaymentSuccessRequest) ProtoMessage() {}
 
 func (x *ProcessPaymentSuccessRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[26]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2141,7 +2229,7 @@ func (x *ProcessPaymentSuccessRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProcessPaymentSuccessRequest.ProtoReflect.Descriptor instead.
 func (*ProcessPaymentSuccessRequest) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{26}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ProcessPaymentSuccessRequest) GetBuyerUserId() int64 {
@@ -2177,7 +2265,7 @@ type ProcessPaymentSuccessResponse struct {
 
 func (x *ProcessPaymentSuccessResponse) Reset() {
 	*x = ProcessPaymentSuccessResponse{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[27]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2189,7 +2277,7 @@ func (x *ProcessPaymentSuccessResponse) String() string {
 func (*ProcessPaymentSuccessResponse) ProtoMessage() {}
 
 func (x *ProcessPaymentSuccessResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[27]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2202,7 +2290,7 @@ func (x *ProcessPaymentSuccessResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProcessPaymentSuccessResponse.ProtoReflect.Descriptor instead.
 func (*ProcessPaymentSuccessResponse) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{27}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ProcessPaymentSuccessResponse) GetCreatedOrderIds() map[string]int64 {
@@ -2236,7 +2324,7 @@ type ListAllCartsRequest struct {
 
 func (x *ListAllCartsRequest) Reset() {
 	*x = ListAllCartsRequest{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[28]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2248,7 +2336,7 @@ func (x *ListAllCartsRequest) String() string {
 func (*ListAllCartsRequest) ProtoMessage() {}
 
 func (x *ListAllCartsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[28]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2261,7 +2349,7 @@ func (x *ListAllCartsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAllCartsRequest.ProtoReflect.Descriptor instead.
 func (*ListAllCartsRequest) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{28}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *ListAllCartsRequest) GetStatus() string {
@@ -2331,7 +2419,7 @@ type ListAllCartsResponse struct {
 
 func (x *ListAllCartsResponse) Reset() {
 	*x = ListAllCartsResponse{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[29]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2343,7 +2431,7 @@ func (x *ListAllCartsResponse) String() string {
 func (*ListAllCartsResponse) ProtoMessage() {}
 
 func (x *ListAllCartsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[29]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2356,7 +2444,7 @@ func (x *ListAllCartsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAllCartsResponse.ProtoReflect.Descriptor instead.
 func (*ListAllCartsResponse) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{29}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *ListAllCartsResponse) GetCarts() []*CartAdminSummaryItem {
@@ -2402,7 +2490,7 @@ type CartAdminSummaryItem struct {
 
 func (x *CartAdminSummaryItem) Reset() {
 	*x = CartAdminSummaryItem{}
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[30]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2414,7 +2502,7 @@ func (x *CartAdminSummaryItem) String() string {
 func (*CartAdminSummaryItem) ProtoMessage() {}
 
 func (x *CartAdminSummaryItem) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_cart_v1_cart_proto_msgTypes[30]
+	mi := &file_orders_cart_v1_cart_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2427,7 +2515,7 @@ func (x *CartAdminSummaryItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CartAdminSummaryItem.ProtoReflect.Descriptor instead.
 func (*CartAdminSummaryItem) Descriptor() ([]byte, []int) {
-	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{30}
+	return file_orders_cart_v1_cart_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *CartAdminSummaryItem) GetId() int64 {
@@ -2629,6 +2717,10 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\x10ClearCartRequest\x12\"\n" +
 	"\rbuyer_user_id\x18\x01 \x01(\x03R\vbuyerUserId\"=\n" +
 	"\x11ClearCartResponse\x12(\n" +
+	"\x04cart\x18\x01 \x01(\v2\x14.orders.cart.v1.CartR\x04cart\";\n" +
+	"\x15CancelCheckoutRequest\x12\"\n" +
+	"\rbuyer_user_id\x18\x01 \x01(\x03R\vbuyerUserId\"B\n" +
+	"\x16CancelCheckoutResponse\x12(\n" +
 	"\x04cart\x18\x01 \x01(\v2\x14.orders.cart.v1.CartR\x04cart\":\n" +
 	"\x14RefreshPricesRequest\x12\"\n" +
 	"\rbuyer_user_id\x18\x01 \x01(\x03R\vbuyerUserId\"\xcc\x01\n" +
@@ -2740,7 +2832,7 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\x10CartDeliveryType\x12\"\n" +
 	"\x1eCART_DELIVERY_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19CART_DELIVERY_TYPE_PICKUP\x10\x01\x12\x1f\n" +
-	"\x1bCART_DELIVERY_TYPE_DELIVERY\x10\x022\xf2\b\n" +
+	"\x1bCART_DELIVERY_TYPE_DELIVERY\x10\x022\xd3\t\n" +
 	"\vCartService\x12J\n" +
 	"\aGetCart\x12\x1e.orders.cart.v1.GetCartRequest\x1a\x1f.orders.cart.v1.GetCartResponse\x12J\n" +
 	"\aAddItem\x12\x1e.orders.cart.v1.AddItemRequest\x1a\x1f.orders.cart.v1.AddItemResponse\x12k\n" +
@@ -2752,6 +2844,7 @@ const file_orders_cart_v1_cart_proto_rawDesc = "" +
 	"\x13ConfirmPriceChanges\x12*.orders.cart.v1.ConfirmPriceChangesRequest\x1a+.orders.cart.v1.ConfirmPriceChangesResponse\x12h\n" +
 	"\x11SetDeliveryOption\x12(.orders.cart.v1.SetDeliveryOptionRequest\x1a).orders.cart.v1.SetDeliveryOptionResponse\x12M\n" +
 	"\bCheckout\x12\x1f.orders.cart.v1.CheckoutRequest\x1a .orders.cart.v1.CheckoutResponse\x12_\n" +
+	"\x0eCancelCheckout\x12%.orders.cart.v1.CancelCheckoutRequest\x1a&.orders.cart.v1.CancelCheckoutResponse\x12_\n" +
 	"\x0eGetCartSummary\x12%.orders.cart.v1.GetCartSummaryRequest\x1a&.orders.cart.v1.GetCartSummaryResponse\x12t\n" +
 	"\x15ProcessPaymentSuccess\x12,.orders.cart.v1.ProcessPaymentSuccessRequest\x1a-.orders.cart.v1.ProcessPaymentSuccessResponse\x12Y\n" +
 	"\fListAllCarts\x12#.orders.cart.v1.ListAllCartsRequest\x1a$.orders.cart.v1.ListAllCartsResponseB5Z3github.com/4ubak/cg-proto/gen/go/orders/cart;cartv1b\x06proto3"
@@ -2769,7 +2862,7 @@ func file_orders_cart_v1_cart_proto_rawDescGZIP() []byte {
 }
 
 var file_orders_cart_v1_cart_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_orders_cart_v1_cart_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
+var file_orders_cart_v1_cart_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
 var file_orders_cart_v1_cart_proto_goTypes = []any{
 	(CartItemSourceType)(0),               // 0: orders.cart.v1.CartItemSourceType
 	(CartStatus)(0),                       // 1: orders.cart.v1.CartStatus
@@ -2789,33 +2882,35 @@ var file_orders_cart_v1_cart_proto_goTypes = []any{
 	(*RemoveItemResponse)(nil),            // 15: orders.cart.v1.RemoveItemResponse
 	(*ClearCartRequest)(nil),              // 16: orders.cart.v1.ClearCartRequest
 	(*ClearCartResponse)(nil),             // 17: orders.cart.v1.ClearCartResponse
-	(*RefreshPricesRequest)(nil),          // 18: orders.cart.v1.RefreshPricesRequest
-	(*PriceChangeResult)(nil),             // 19: orders.cart.v1.PriceChangeResult
-	(*RefreshPricesResponse)(nil),         // 20: orders.cart.v1.RefreshPricesResponse
-	(*ConfirmPriceChangesRequest)(nil),    // 21: orders.cart.v1.ConfirmPriceChangesRequest
-	(*ConfirmPriceChangesResponse)(nil),   // 22: orders.cart.v1.ConfirmPriceChangesResponse
-	(*SetDeliveryOptionRequest)(nil),      // 23: orders.cart.v1.SetDeliveryOptionRequest
-	(*SetDeliveryOptionResponse)(nil),     // 24: orders.cart.v1.SetDeliveryOptionResponse
-	(*CheckoutRequest)(nil),               // 25: orders.cart.v1.CheckoutRequest
-	(*CheckoutResponse)(nil),              // 26: orders.cart.v1.CheckoutResponse
-	(*GetCartSummaryRequest)(nil),         // 27: orders.cart.v1.GetCartSummaryRequest
-	(*GetCartSummaryResponse)(nil),        // 28: orders.cart.v1.GetCartSummaryResponse
-	(*ProcessPaymentSuccessRequest)(nil),  // 29: orders.cart.v1.ProcessPaymentSuccessRequest
-	(*ProcessPaymentSuccessResponse)(nil), // 30: orders.cart.v1.ProcessPaymentSuccessResponse
-	(*ListAllCartsRequest)(nil),           // 31: orders.cart.v1.ListAllCartsRequest
-	(*ListAllCartsResponse)(nil),          // 32: orders.cart.v1.ListAllCartsResponse
-	(*CartAdminSummaryItem)(nil),          // 33: orders.cart.v1.CartAdminSummaryItem
-	nil,                                   // 34: orders.cart.v1.ProcessPaymentSuccessResponse.CreatedOrderIdsEntry
-	(*timestamppb.Timestamp)(nil),         // 35: google.protobuf.Timestamp
+	(*CancelCheckoutRequest)(nil),         // 18: orders.cart.v1.CancelCheckoutRequest
+	(*CancelCheckoutResponse)(nil),        // 19: orders.cart.v1.CancelCheckoutResponse
+	(*RefreshPricesRequest)(nil),          // 20: orders.cart.v1.RefreshPricesRequest
+	(*PriceChangeResult)(nil),             // 21: orders.cart.v1.PriceChangeResult
+	(*RefreshPricesResponse)(nil),         // 22: orders.cart.v1.RefreshPricesResponse
+	(*ConfirmPriceChangesRequest)(nil),    // 23: orders.cart.v1.ConfirmPriceChangesRequest
+	(*ConfirmPriceChangesResponse)(nil),   // 24: orders.cart.v1.ConfirmPriceChangesResponse
+	(*SetDeliveryOptionRequest)(nil),      // 25: orders.cart.v1.SetDeliveryOptionRequest
+	(*SetDeliveryOptionResponse)(nil),     // 26: orders.cart.v1.SetDeliveryOptionResponse
+	(*CheckoutRequest)(nil),               // 27: orders.cart.v1.CheckoutRequest
+	(*CheckoutResponse)(nil),              // 28: orders.cart.v1.CheckoutResponse
+	(*GetCartSummaryRequest)(nil),         // 29: orders.cart.v1.GetCartSummaryRequest
+	(*GetCartSummaryResponse)(nil),        // 30: orders.cart.v1.GetCartSummaryResponse
+	(*ProcessPaymentSuccessRequest)(nil),  // 31: orders.cart.v1.ProcessPaymentSuccessRequest
+	(*ProcessPaymentSuccessResponse)(nil), // 32: orders.cart.v1.ProcessPaymentSuccessResponse
+	(*ListAllCartsRequest)(nil),           // 33: orders.cart.v1.ListAllCartsRequest
+	(*ListAllCartsResponse)(nil),          // 34: orders.cart.v1.ListAllCartsResponse
+	(*CartAdminSummaryItem)(nil),          // 35: orders.cart.v1.CartAdminSummaryItem
+	nil,                                   // 36: orders.cart.v1.ProcessPaymentSuccessResponse.CreatedOrderIdsEntry
+	(*timestamppb.Timestamp)(nil),         // 37: google.protobuf.Timestamp
 }
 var file_orders_cart_v1_cart_proto_depIdxs = []int32{
 	1,  // 0: orders.cart.v1.Cart.status:type_name -> orders.cart.v1.CartStatus
-	35, // 1: orders.cart.v1.Cart.expires_at:type_name -> google.protobuf.Timestamp
-	35, // 2: orders.cart.v1.Cart.created_at:type_name -> google.protobuf.Timestamp
-	35, // 3: orders.cart.v1.Cart.updated_at:type_name -> google.protobuf.Timestamp
+	37, // 1: orders.cart.v1.Cart.expires_at:type_name -> google.protobuf.Timestamp
+	37, // 2: orders.cart.v1.Cart.created_at:type_name -> google.protobuf.Timestamp
+	37, // 3: orders.cart.v1.Cart.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 4: orders.cart.v1.CartItem.source_type:type_name -> orders.cart.v1.CartItemSourceType
 	2,  // 5: orders.cart.v1.CartItem.delivery_type:type_name -> orders.cart.v1.CartDeliveryType
-	35, // 6: orders.cart.v1.CartItem.added_at:type_name -> google.protobuf.Timestamp
+	37, // 6: orders.cart.v1.CartItem.added_at:type_name -> google.protobuf.Timestamp
 	4,  // 7: orders.cart.v1.SupplierGroup.items:type_name -> orders.cart.v1.CartItem
 	2,  // 8: orders.cart.v1.SupplierGroup.delivery_type:type_name -> orders.cart.v1.CartDeliveryType
 	5,  // 9: orders.cart.v1.CartSummary.supplier_groups:type_name -> orders.cart.v1.SupplierGroup
@@ -2830,49 +2925,52 @@ var file_orders_cart_v1_cart_proto_depIdxs = []int32{
 	3,  // 18: orders.cart.v1.UpdateItemQuantityResponse.cart:type_name -> orders.cart.v1.Cart
 	3,  // 19: orders.cart.v1.RemoveItemResponse.cart:type_name -> orders.cart.v1.Cart
 	3,  // 20: orders.cart.v1.ClearCartResponse.cart:type_name -> orders.cart.v1.Cart
-	6,  // 21: orders.cart.v1.RefreshPricesResponse.summary:type_name -> orders.cart.v1.CartSummary
-	19, // 22: orders.cart.v1.RefreshPricesResponse.price_changes:type_name -> orders.cart.v1.PriceChangeResult
-	6,  // 23: orders.cart.v1.ConfirmPriceChangesResponse.summary:type_name -> orders.cart.v1.CartSummary
-	2,  // 24: orders.cart.v1.SetDeliveryOptionRequest.delivery_type:type_name -> orders.cart.v1.CartDeliveryType
-	5,  // 25: orders.cart.v1.SetDeliveryOptionResponse.supplier_group:type_name -> orders.cart.v1.SupplierGroup
-	3,  // 26: orders.cart.v1.SetDeliveryOptionResponse.cart:type_name -> orders.cart.v1.Cart
-	7,  // 27: orders.cart.v1.CheckoutResponse.supplier_breakdowns:type_name -> orders.cart.v1.SupplierCheckoutBreakdown
-	34, // 28: orders.cart.v1.ProcessPaymentSuccessResponse.created_order_ids:type_name -> orders.cart.v1.ProcessPaymentSuccessResponse.CreatedOrderIdsEntry
-	35, // 29: orders.cart.v1.ListAllCartsRequest.created_from:type_name -> google.protobuf.Timestamp
-	35, // 30: orders.cart.v1.ListAllCartsRequest.created_to:type_name -> google.protobuf.Timestamp
-	33, // 31: orders.cart.v1.ListAllCartsResponse.carts:type_name -> orders.cart.v1.CartAdminSummaryItem
-	35, // 32: orders.cart.v1.CartAdminSummaryItem.created_at:type_name -> google.protobuf.Timestamp
-	35, // 33: orders.cart.v1.CartAdminSummaryItem.updated_at:type_name -> google.protobuf.Timestamp
-	35, // 34: orders.cart.v1.CartAdminSummaryItem.expires_at:type_name -> google.protobuf.Timestamp
-	8,  // 35: orders.cart.v1.CartService.GetCart:input_type -> orders.cart.v1.GetCartRequest
-	10, // 36: orders.cart.v1.CartService.AddItem:input_type -> orders.cart.v1.AddItemRequest
-	12, // 37: orders.cart.v1.CartService.UpdateItemQuantity:input_type -> orders.cart.v1.UpdateItemQuantityRequest
-	14, // 38: orders.cart.v1.CartService.RemoveItem:input_type -> orders.cart.v1.RemoveItemRequest
-	16, // 39: orders.cart.v1.CartService.ClearCart:input_type -> orders.cart.v1.ClearCartRequest
-	18, // 40: orders.cart.v1.CartService.RefreshPrices:input_type -> orders.cart.v1.RefreshPricesRequest
-	21, // 41: orders.cart.v1.CartService.ConfirmPriceChanges:input_type -> orders.cart.v1.ConfirmPriceChangesRequest
-	23, // 42: orders.cart.v1.CartService.SetDeliveryOption:input_type -> orders.cart.v1.SetDeliveryOptionRequest
-	25, // 43: orders.cart.v1.CartService.Checkout:input_type -> orders.cart.v1.CheckoutRequest
-	27, // 44: orders.cart.v1.CartService.GetCartSummary:input_type -> orders.cart.v1.GetCartSummaryRequest
-	29, // 45: orders.cart.v1.CartService.ProcessPaymentSuccess:input_type -> orders.cart.v1.ProcessPaymentSuccessRequest
-	31, // 46: orders.cart.v1.CartService.ListAllCarts:input_type -> orders.cart.v1.ListAllCartsRequest
-	9,  // 47: orders.cart.v1.CartService.GetCart:output_type -> orders.cart.v1.GetCartResponse
-	11, // 48: orders.cart.v1.CartService.AddItem:output_type -> orders.cart.v1.AddItemResponse
-	13, // 49: orders.cart.v1.CartService.UpdateItemQuantity:output_type -> orders.cart.v1.UpdateItemQuantityResponse
-	15, // 50: orders.cart.v1.CartService.RemoveItem:output_type -> orders.cart.v1.RemoveItemResponse
-	17, // 51: orders.cart.v1.CartService.ClearCart:output_type -> orders.cart.v1.ClearCartResponse
-	20, // 52: orders.cart.v1.CartService.RefreshPrices:output_type -> orders.cart.v1.RefreshPricesResponse
-	22, // 53: orders.cart.v1.CartService.ConfirmPriceChanges:output_type -> orders.cart.v1.ConfirmPriceChangesResponse
-	24, // 54: orders.cart.v1.CartService.SetDeliveryOption:output_type -> orders.cart.v1.SetDeliveryOptionResponse
-	26, // 55: orders.cart.v1.CartService.Checkout:output_type -> orders.cart.v1.CheckoutResponse
-	28, // 56: orders.cart.v1.CartService.GetCartSummary:output_type -> orders.cart.v1.GetCartSummaryResponse
-	30, // 57: orders.cart.v1.CartService.ProcessPaymentSuccess:output_type -> orders.cart.v1.ProcessPaymentSuccessResponse
-	32, // 58: orders.cart.v1.CartService.ListAllCarts:output_type -> orders.cart.v1.ListAllCartsResponse
-	47, // [47:59] is the sub-list for method output_type
-	35, // [35:47] is the sub-list for method input_type
-	35, // [35:35] is the sub-list for extension type_name
-	35, // [35:35] is the sub-list for extension extendee
-	0,  // [0:35] is the sub-list for field type_name
+	3,  // 21: orders.cart.v1.CancelCheckoutResponse.cart:type_name -> orders.cart.v1.Cart
+	6,  // 22: orders.cart.v1.RefreshPricesResponse.summary:type_name -> orders.cart.v1.CartSummary
+	21, // 23: orders.cart.v1.RefreshPricesResponse.price_changes:type_name -> orders.cart.v1.PriceChangeResult
+	6,  // 24: orders.cart.v1.ConfirmPriceChangesResponse.summary:type_name -> orders.cart.v1.CartSummary
+	2,  // 25: orders.cart.v1.SetDeliveryOptionRequest.delivery_type:type_name -> orders.cart.v1.CartDeliveryType
+	5,  // 26: orders.cart.v1.SetDeliveryOptionResponse.supplier_group:type_name -> orders.cart.v1.SupplierGroup
+	3,  // 27: orders.cart.v1.SetDeliveryOptionResponse.cart:type_name -> orders.cart.v1.Cart
+	7,  // 28: orders.cart.v1.CheckoutResponse.supplier_breakdowns:type_name -> orders.cart.v1.SupplierCheckoutBreakdown
+	36, // 29: orders.cart.v1.ProcessPaymentSuccessResponse.created_order_ids:type_name -> orders.cart.v1.ProcessPaymentSuccessResponse.CreatedOrderIdsEntry
+	37, // 30: orders.cart.v1.ListAllCartsRequest.created_from:type_name -> google.protobuf.Timestamp
+	37, // 31: orders.cart.v1.ListAllCartsRequest.created_to:type_name -> google.protobuf.Timestamp
+	35, // 32: orders.cart.v1.ListAllCartsResponse.carts:type_name -> orders.cart.v1.CartAdminSummaryItem
+	37, // 33: orders.cart.v1.CartAdminSummaryItem.created_at:type_name -> google.protobuf.Timestamp
+	37, // 34: orders.cart.v1.CartAdminSummaryItem.updated_at:type_name -> google.protobuf.Timestamp
+	37, // 35: orders.cart.v1.CartAdminSummaryItem.expires_at:type_name -> google.protobuf.Timestamp
+	8,  // 36: orders.cart.v1.CartService.GetCart:input_type -> orders.cart.v1.GetCartRequest
+	10, // 37: orders.cart.v1.CartService.AddItem:input_type -> orders.cart.v1.AddItemRequest
+	12, // 38: orders.cart.v1.CartService.UpdateItemQuantity:input_type -> orders.cart.v1.UpdateItemQuantityRequest
+	14, // 39: orders.cart.v1.CartService.RemoveItem:input_type -> orders.cart.v1.RemoveItemRequest
+	16, // 40: orders.cart.v1.CartService.ClearCart:input_type -> orders.cart.v1.ClearCartRequest
+	20, // 41: orders.cart.v1.CartService.RefreshPrices:input_type -> orders.cart.v1.RefreshPricesRequest
+	23, // 42: orders.cart.v1.CartService.ConfirmPriceChanges:input_type -> orders.cart.v1.ConfirmPriceChangesRequest
+	25, // 43: orders.cart.v1.CartService.SetDeliveryOption:input_type -> orders.cart.v1.SetDeliveryOptionRequest
+	27, // 44: orders.cart.v1.CartService.Checkout:input_type -> orders.cart.v1.CheckoutRequest
+	18, // 45: orders.cart.v1.CartService.CancelCheckout:input_type -> orders.cart.v1.CancelCheckoutRequest
+	29, // 46: orders.cart.v1.CartService.GetCartSummary:input_type -> orders.cart.v1.GetCartSummaryRequest
+	31, // 47: orders.cart.v1.CartService.ProcessPaymentSuccess:input_type -> orders.cart.v1.ProcessPaymentSuccessRequest
+	33, // 48: orders.cart.v1.CartService.ListAllCarts:input_type -> orders.cart.v1.ListAllCartsRequest
+	9,  // 49: orders.cart.v1.CartService.GetCart:output_type -> orders.cart.v1.GetCartResponse
+	11, // 50: orders.cart.v1.CartService.AddItem:output_type -> orders.cart.v1.AddItemResponse
+	13, // 51: orders.cart.v1.CartService.UpdateItemQuantity:output_type -> orders.cart.v1.UpdateItemQuantityResponse
+	15, // 52: orders.cart.v1.CartService.RemoveItem:output_type -> orders.cart.v1.RemoveItemResponse
+	17, // 53: orders.cart.v1.CartService.ClearCart:output_type -> orders.cart.v1.ClearCartResponse
+	22, // 54: orders.cart.v1.CartService.RefreshPrices:output_type -> orders.cart.v1.RefreshPricesResponse
+	24, // 55: orders.cart.v1.CartService.ConfirmPriceChanges:output_type -> orders.cart.v1.ConfirmPriceChangesResponse
+	26, // 56: orders.cart.v1.CartService.SetDeliveryOption:output_type -> orders.cart.v1.SetDeliveryOptionResponse
+	28, // 57: orders.cart.v1.CartService.Checkout:output_type -> orders.cart.v1.CheckoutResponse
+	19, // 58: orders.cart.v1.CartService.CancelCheckout:output_type -> orders.cart.v1.CancelCheckoutResponse
+	30, // 59: orders.cart.v1.CartService.GetCartSummary:output_type -> orders.cart.v1.GetCartSummaryResponse
+	32, // 60: orders.cart.v1.CartService.ProcessPaymentSuccess:output_type -> orders.cart.v1.ProcessPaymentSuccessResponse
+	34, // 61: orders.cart.v1.CartService.ListAllCarts:output_type -> orders.cart.v1.ListAllCartsResponse
+	49, // [49:62] is the sub-list for method output_type
+	36, // [36:49] is the sub-list for method input_type
+	36, // [36:36] is the sub-list for extension type_name
+	36, // [36:36] is the sub-list for extension extendee
+	0,  // [0:36] is the sub-list for field type_name
 }
 
 func init() { file_orders_cart_v1_cart_proto_init() }
@@ -2886,7 +2984,7 @@ func file_orders_cart_v1_cart_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_orders_cart_v1_cart_proto_rawDesc), len(file_orders_cart_v1_cart_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   32,
+			NumMessages:   34,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

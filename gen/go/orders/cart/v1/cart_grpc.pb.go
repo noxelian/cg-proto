@@ -28,6 +28,7 @@ const (
 	CartService_ConfirmPriceChanges_FullMethodName   = "/orders.cart.v1.CartService/ConfirmPriceChanges"
 	CartService_SetDeliveryOption_FullMethodName     = "/orders.cart.v1.CartService/SetDeliveryOption"
 	CartService_Checkout_FullMethodName              = "/orders.cart.v1.CartService/Checkout"
+	CartService_CancelCheckout_FullMethodName        = "/orders.cart.v1.CartService/CancelCheckout"
 	CartService_GetCartSummary_FullMethodName        = "/orders.cart.v1.CartService/GetCartSummary"
 	CartService_ProcessPaymentSuccess_FullMethodName = "/orders.cart.v1.CartService/ProcessPaymentSuccess"
 	CartService_ListAllCarts_FullMethodName          = "/orders.cart.v1.CartService/ListAllCarts"
@@ -62,6 +63,14 @@ type CartServiceClient interface {
 	// Checkout validates the cart, calculates totals, and returns payment info.
 	// No orders are created at this stage.
 	Checkout(ctx context.Context, in *CheckoutRequest, opts ...grpc.CallOption) (*CheckoutResponse, error)
+	// CancelCheckout is the buyer-initiated escape from a stuck checkout: it
+	// reverts the buyer's awaiting_payment cart back to active (dropping the
+	// pending checkout attempt) so the cart can be edited and re-checked-out.
+	// Without it an abandoned payment page locked the cart until expiry —
+	// ProcessPaymentFailure fires only when the PSP reports a failure.
+	// A later success webhook for the cancelled attempt finds the cart no
+	// longer awaiting_payment and creates no orders (fail-closed).
+	CancelCheckout(ctx context.Context, in *CancelCheckoutRequest, opts ...grpc.CallOption) (*CancelCheckoutResponse, error)
 	// GetCartSummary returns a lightweight summary (item count + total) for UI badge display.
 	GetCartSummary(ctx context.Context, in *GetCartSummaryRequest, opts ...grpc.CallOption) (*GetCartSummaryResponse, error)
 	// ProcessPaymentSuccess is called when payment is confirmed.
@@ -170,6 +179,16 @@ func (c *cartServiceClient) Checkout(ctx context.Context, in *CheckoutRequest, o
 	return out, nil
 }
 
+func (c *cartServiceClient) CancelCheckout(ctx context.Context, in *CancelCheckoutRequest, opts ...grpc.CallOption) (*CancelCheckoutResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CancelCheckoutResponse)
+	err := c.cc.Invoke(ctx, CartService_CancelCheckout_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cartServiceClient) GetCartSummary(ctx context.Context, in *GetCartSummaryRequest, opts ...grpc.CallOption) (*GetCartSummaryResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetCartSummaryResponse)
@@ -229,6 +248,14 @@ type CartServiceServer interface {
 	// Checkout validates the cart, calculates totals, and returns payment info.
 	// No orders are created at this stage.
 	Checkout(context.Context, *CheckoutRequest) (*CheckoutResponse, error)
+	// CancelCheckout is the buyer-initiated escape from a stuck checkout: it
+	// reverts the buyer's awaiting_payment cart back to active (dropping the
+	// pending checkout attempt) so the cart can be edited and re-checked-out.
+	// Without it an abandoned payment page locked the cart until expiry —
+	// ProcessPaymentFailure fires only when the PSP reports a failure.
+	// A later success webhook for the cancelled attempt finds the cart no
+	// longer awaiting_payment and creates no orders (fail-closed).
+	CancelCheckout(context.Context, *CancelCheckoutRequest) (*CancelCheckoutResponse, error)
 	// GetCartSummary returns a lightweight summary (item count + total) for UI badge display.
 	GetCartSummary(context.Context, *GetCartSummaryRequest) (*GetCartSummaryResponse, error)
 	// ProcessPaymentSuccess is called when payment is confirmed.
@@ -273,6 +300,9 @@ func (UnimplementedCartServiceServer) SetDeliveryOption(context.Context, *SetDel
 }
 func (UnimplementedCartServiceServer) Checkout(context.Context, *CheckoutRequest) (*CheckoutResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Checkout not implemented")
+}
+func (UnimplementedCartServiceServer) CancelCheckout(context.Context, *CancelCheckoutRequest) (*CancelCheckoutResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CancelCheckout not implemented")
 }
 func (UnimplementedCartServiceServer) GetCartSummary(context.Context, *GetCartSummaryRequest) (*GetCartSummaryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCartSummary not implemented")
@@ -466,6 +496,24 @@ func _CartService_Checkout_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CartService_CancelCheckout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelCheckoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CartServiceServer).CancelCheckout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CartService_CancelCheckout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CartServiceServer).CancelCheckout(ctx, req.(*CancelCheckoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CartService_GetCartSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetCartSummaryRequest)
 	if err := dec(in); err != nil {
@@ -562,6 +610,10 @@ var CartService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Checkout",
 			Handler:    _CartService_Checkout_Handler,
+		},
+		{
+			MethodName: "CancelCheckout",
+			Handler:    _CartService_CancelCheckout_Handler,
 		},
 		{
 			MethodName: "GetCartSummary",
