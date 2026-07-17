@@ -706,6 +706,12 @@ message GetSubscriptionStatusResponse {
   Subscription active_subscription = 2; // null when no active subscription
   int32 bid_purchases_remaining = 3;
   google.protobuf.Timestamp valid_until = 4; // expiry of active subscription, if any
+  // The organization's payable (pending) subscription, if any. An org may hold
+  // only one payable subscription at a time; while it exists CreateSubscription
+  // rejects materially different requests with AlreadyExists, so clients need
+  // its id here to resume checkout (payments InitPayment/StartPayment) or
+  // cancel it. Null when nothing is awaiting payment.
+  Subscription payable_subscription = 5;
 }
 
 // =============================================
