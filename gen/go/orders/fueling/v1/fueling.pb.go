@@ -95,6 +95,8 @@ type FuelStationSummary struct {
 	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	Address       string                 `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
 	City          *string                `protobuf:"bytes,4,opt,name=city,proto3,oneof" json:"city,omitempty"`
+	Latitude      *float64               `protobuf:"fixed64,5,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
+	Longitude     *float64               `protobuf:"fixed64,6,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -157,12 +159,28 @@ func (x *FuelStationSummary) GetCity() string {
 	return ""
 }
 
+func (x *FuelStationSummary) GetLatitude() float64 {
+	if x != nil && x.Latitude != nil {
+		return *x.Latitude
+	}
+	return 0
+}
+
+func (x *FuelStationSummary) GetLongitude() float64 {
+	if x != nil && x.Longitude != nil {
+		return *x.Longitude
+	}
+	return 0
+}
+
 type FuelStation struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	Address       string                 `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
 	Pumps         []*FuelPump            `protobuf:"bytes,4,rep,name=pumps,proto3" json:"pumps,omitempty"`
+	Latitude      *float64               `protobuf:"fixed64,5,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
+	Longitude     *float64               `protobuf:"fixed64,6,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -223,6 +241,20 @@ func (x *FuelStation) GetPumps() []*FuelPump {
 		return x.Pumps
 	}
 	return nil
+}
+
+func (x *FuelStation) GetLatitude() float64 {
+	if x != nil && x.Latitude != nil {
+		return *x.Latitude
+	}
+	return 0
+}
+
+func (x *FuelStation) GetLongitude() float64 {
+	if x != nil && x.Longitude != nil {
+		return *x.Longitude
+	}
+	return 0
 }
 
 type FuelPump struct {
@@ -1067,18 +1099,28 @@ var File_orders_fueling_v1_fueling_proto protoreflect.FileDescriptor
 
 const file_orders_fueling_v1_fueling_proto_rawDesc = "" +
 	"\n" +
-	"\x1forders/fueling/v1/fueling.proto\x12\x11orders.fueling.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"v\n" +
+	"\x1forders/fueling/v1/fueling.proto\x12\x11orders.fueling.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd5\x01\n" +
 	"\x12FuelStationSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x18\n" +
 	"\aaddress\x18\x03 \x01(\tR\aaddress\x12\x17\n" +
-	"\x04city\x18\x04 \x01(\tH\x00R\x04city\x88\x01\x01B\a\n" +
-	"\x05_city\"\x80\x01\n" +
+	"\x04city\x18\x04 \x01(\tH\x00R\x04city\x88\x01\x01\x12\x1f\n" +
+	"\blatitude\x18\x05 \x01(\x01H\x01R\blatitude\x88\x01\x01\x12!\n" +
+	"\tlongitude\x18\x06 \x01(\x01H\x02R\tlongitude\x88\x01\x01B\a\n" +
+	"\x05_cityB\v\n" +
+	"\t_latitudeB\f\n" +
+	"\n" +
+	"_longitude\"\xdf\x01\n" +
 	"\vFuelStation\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x18\n" +
 	"\aaddress\x18\x03 \x01(\tR\aaddress\x121\n" +
-	"\x05pumps\x18\x04 \x03(\v2\x1b.orders.fueling.v1.FuelPumpR\x05pumps\"R\n" +
+	"\x05pumps\x18\x04 \x03(\v2\x1b.orders.fueling.v1.FuelPumpR\x05pumps\x12\x1f\n" +
+	"\blatitude\x18\x05 \x01(\x01H\x00R\blatitude\x88\x01\x01\x12!\n" +
+	"\tlongitude\x18\x06 \x01(\x01H\x01R\tlongitude\x88\x01\x01B\v\n" +
+	"\t_latitudeB\f\n" +
+	"\n" +
+	"_longitude\"R\n" +
 	"\bFuelPump\x12\x17\n" +
 	"\apump_id\x18\x01 \x01(\tR\x06pumpId\x12-\n" +
 	"\x05fuels\x18\x02 \x03(\v2\x17.orders.fueling.v1.FuelR\x05fuels\"\xed\x02\n" +
@@ -1235,6 +1277,7 @@ func file_orders_fueling_v1_fueling_proto_init() {
 		return
 	}
 	file_orders_fueling_v1_fueling_proto_msgTypes[0].OneofWrappers = []any{}
+	file_orders_fueling_v1_fueling_proto_msgTypes[1].OneofWrappers = []any{}
 	file_orders_fueling_v1_fueling_proto_msgTypes[3].OneofWrappers = []any{}
 	file_orders_fueling_v1_fueling_proto_msgTypes[10].OneofWrappers = []any{}
 	type x struct{}

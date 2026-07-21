@@ -34,6 +34,8 @@ message FuelStationSummary {
   string title = 2;
   string address = 3;
   optional string city = 4;
+  optional double latitude = 5;
+  optional double longitude = 6;
 }
 
 message FuelStation {
@@ -41,6 +43,8 @@ message FuelStation {
   string title = 2;
   string address = 3;
   repeated FuelPump pumps = 4;
+  optional double latitude = 5;
+  optional double longitude = 6;
 }
 
 message FuelPump {
