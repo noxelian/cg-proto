@@ -1,0 +1,130 @@
+syntax = "proto3";
+
+package orders.fueling.v1;
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/orders/fueling/v1;fuelingv1";
+
+import "google/protobuf/timestamp.proto";
+
+// FuelingService exposes provider-neutral fuel station discovery. Every RPC
+// requires an authenticated end-user JWT. Smartgas credentials and provider
+// tokens never cross this boundary.
+service FuelingService {
+  rpc ListFuelStations(ListFuelStationsRequest) returns (ListFuelStationsResponse);
+  rpc GetFuelStation(GetFuelStationRequest) returns (GetFuelStationResponse);
+  rpc CheckFuelNozzle(CheckFuelNozzleRequest) returns (CheckFuelNozzleResponse);
+  rpc CreateFuelingOrder(CreateFuelingOrderRequest) returns (CreateFuelingOrderResponse);
+  rpc GetFuelingOrder(GetFuelingOrderRequest) returns (GetFuelingOrderResponse);
+}
+
+enum FuelingOrderStatus {
+  FUELING_ORDER_STATUS_UNSPECIFIED = 0;
+  FUELING_ORDER_STATUS_AWAITING_PAYMENT = 1;
+  FUELING_ORDER_STATUS_PAYMENT_FAILED = 2;
+  FUELING_ORDER_STATUS_SUBMISSION_PENDING = 3;
+  FUELING_ORDER_STATUS_ACCEPTED = 4;
+  FUELING_ORDER_STATUS_IN_PROGRESS = 5;
+  FUELING_ORDER_STATUS_COMPLETED = 6;
+  FUELING_ORDER_STATUS_CANCELLED = 7;
+  FUELING_ORDER_STATUS_SUBMISSION_FAILED = 8;
+}
+
+message FuelStationSummary {
+  int64 id = 1;
+  string title = 2;
+  string address = 3;
+  optional string city = 4;
+}
+
+message FuelStation {
+  int64 id = 1;
+  string title = 2;
+  string address = 3;
+  repeated FuelPump pumps = 4;
+}
+
+message FuelPump {
+  string pump_id = 1;
+  repeated Fuel fuels = 2;
+}
+
+message Fuel {
+  int64 id = 1;
+  string name = 2;
+  int64 price_per_liter_minor = 3;
+  string currency = 4;
+  optional int64 non_resident_price_per_liter_minor = 5;
+  optional int64 max_order_amount_minor = 6;
+  string ntin = 7;
+  string gtin = 8;
+}
+
+message ListFuelStationsRequest {}
+
+message ListFuelStationsResponse {
+  repeated FuelStationSummary stations = 1;
+}
+
+message GetFuelStationRequest {
+  int64 station_id = 1;
+}
+
+message GetFuelStationResponse {
+  FuelStation station = 1;
+}
+
+message CheckFuelNozzleRequest {
+  int64 station_id = 1;
+  string pump_id = 2;
+  int64 fuel_id = 3;
+}
+
+message CheckFuelNozzleResponse {
+  // False is a normal result and corresponds to Smartgas HTTP 428.
+  bool nozzle_removed = 1;
+}
+
+message FuelingOrder {
+  string id = 1;
+  int64 station_id = 2;
+  string station_title = 3;
+  string station_address = 4;
+  string pump_id = 5;
+  int64 fuel_id = 6;
+  string fuel_name = 7;
+  int64 price_per_liter_minor = 8;
+  int64 requested_amount_minor = 9;
+  optional int64 completed_amount_minor = 10;
+  optional int64 delivered_milliliters = 11;
+  string currency = 12;
+  FuelingOrderStatus status = 13;
+  int64 payment_transaction_id = 14;
+  google.protobuf.Timestamp created_at = 15;
+  google.protobuf.Timestamp updated_at = 16;
+  google.protobuf.Timestamp completed_at = 17;
+}
+
+message CreateFuelingOrderRequest {
+  int64 station_id = 1;
+  string pump_id = 2;
+  int64 fuel_id = 3;
+  int64 order_amount_minor = 4;
+  string idempotency_key = 5;
+  // Required. One of: card, kaspi, apple_pay, google_pay.
+  string payment_method = 6;
+  string return_url = 7;
+}
+
+message CreateFuelingOrderResponse {
+  FuelingOrder order = 1;
+  string payment_url = 2;
+  bool idempotent_replay = 3;
+}
+
+message GetFuelingOrderRequest {
+  string fueling_order_id = 1;
+}
+
+message GetFuelingOrderResponse {
+  FuelingOrder order = 1;
+}

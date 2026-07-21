@@ -171,7 +171,7 @@ message AuditLogEntry {
 
 message CreateTransactionRequest {
   // cg-payments binds each entity_type to one signed service identity. The
-  // current owner-service path is cg-orders -> cart_checkout.
+  // current owner-service paths are cg-orders -> cart_checkout/fueling_order.
   string entity_type = 1;
   int64 entity_id = 2;
   string organization_id = 3;
