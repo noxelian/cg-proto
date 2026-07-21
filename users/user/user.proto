@@ -203,6 +203,10 @@ message User {
   // ИИН (Individual Identification Number) — 12-digit Kazakh national ID.
   // Used for ЭЦП (digital signature) flows such as AVR signing.
   optional string iin = 13;
+  // Preferred application language. Empty means the user has not chosen a
+  // server-side preference yet and clients may use their local/device fallback.
+  // Supported values are "kk", "ru", and "en".
+  string language = 14;
 }
 
 message UserCounters {
@@ -231,6 +235,8 @@ message UpdateProfileRequest {
   optional string phone = 6;
   // 12-digit ИИН for ЭЦП document signing (АВР). Empty string clears it.
   optional string iin = 7;
+  // Preferred application language: "kk", "ru", or "en".
+  optional string language = 8;
 }
 
 message UpdateProfileResponse {

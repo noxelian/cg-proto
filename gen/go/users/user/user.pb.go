@@ -108,7 +108,11 @@ type User struct {
 	LegacyId *int64 `protobuf:"varint,12,opt,name=legacy_id,json=legacyId,proto3,oneof" json:"legacy_id,omitempty"`
 	// ИИН (Individual Identification Number) — 12-digit Kazakh national ID.
 	// Used for ЭЦП (digital signature) flows such as AVR signing.
-	Iin           *string `protobuf:"bytes,13,opt,name=iin,proto3,oneof" json:"iin,omitempty"`
+	Iin *string `protobuf:"bytes,13,opt,name=iin,proto3,oneof" json:"iin,omitempty"`
+	// Preferred application language. Empty means the user has not chosen a
+	// server-side preference yet and clients may use their local/device fallback.
+	// Supported values are "kk", "ru", and "en".
+	Language      string `protobuf:"bytes,14,opt,name=language,proto3" json:"language,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -230,6 +234,13 @@ func (x *User) GetLegacyId() int64 {
 func (x *User) GetIin() string {
 	if x != nil && x.Iin != nil {
 		return *x.Iin
+	}
+	return ""
+}
+
+func (x *User) GetLanguage() string {
+	if x != nil {
+		return x.Language
 	}
 	return ""
 }
@@ -402,7 +413,9 @@ type UpdateProfileRequest struct {
 	// Phone number change (admin-only). Returns ALREADY_EXISTS if phone is taken.
 	Phone *string `protobuf:"bytes,6,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
 	// 12-digit ИИН for ЭЦП document signing (АВР). Empty string clears it.
-	Iin           *string `protobuf:"bytes,7,opt,name=iin,proto3,oneof" json:"iin,omitempty"`
+	Iin *string `protobuf:"bytes,7,opt,name=iin,proto3,oneof" json:"iin,omitempty"`
+	// Preferred application language: "kk", "ru", or "en".
+	Language      *string `protobuf:"bytes,8,opt,name=language,proto3,oneof" json:"language,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -482,6 +495,13 @@ func (x *UpdateProfileRequest) GetPhone() string {
 func (x *UpdateProfileRequest) GetIin() string {
 	if x != nil && x.Iin != nil {
 		return *x.Iin
+	}
+	return ""
+}
+
+func (x *UpdateProfileRequest) GetLanguage() string {
+	if x != nil && x.Language != nil {
+		return *x.Language
 	}
 	return ""
 }
@@ -5184,7 +5204,7 @@ var File_users_user_user_proto protoreflect.FileDescriptor
 
 const file_users_user_user_proto_rawDesc = "" +
 	"\n" +
-	"\x15users/user/user.proto\x12\rusers.user.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc6\x03\n" +
+	"\x15users/user/user.proto\x12\rusers.user.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe2\x03\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x12\n" +
@@ -5203,7 +5223,8 @@ const file_users_user_user_proto_rawDesc = "" +
 	" \x01(\tR\vinstagramId\x12-\n" +
 	"\x12instagram_username\x18\v \x01(\tR\x11instagramUsername\x12 \n" +
 	"\tlegacy_id\x18\f \x01(\x03H\x00R\blegacyId\x88\x01\x01\x12\x15\n" +
-	"\x03iin\x18\r \x01(\tH\x01R\x03iin\x88\x01\x01B\f\n" +
+	"\x03iin\x18\r \x01(\tH\x01R\x03iin\x88\x01\x01\x12\x1a\n" +
+	"\blanguage\x18\x0e \x01(\tR\blanguageB\f\n" +
 	"\n" +
 	"_legacy_idB\x06\n" +
 	"\x04_iin\"\xa2\x01\n" +
@@ -5215,7 +5236,7 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x11GetProfileRequest\"v\n" +
 	"\x12GetProfileResponse\x12'\n" +
 	"\x04user\x18\x01 \x01(\v2\x13.users.user.v1.UserR\x04user\x127\n" +
-	"\bcounters\x18\x02 \x01(\v2\x1b.users.user.v1.UserCountersR\bcounters\"\xa8\x02\n" +
+	"\bcounters\x18\x02 \x01(\v2\x1b.users.user.v1.UserCountersR\bcounters\"\xd6\x02\n" +
 	"\x14UpdateProfileRequest\x12\x17\n" +
 	"\x04name\x18\x01 \x01(\tH\x00R\x04name\x88\x01\x01\x12\"\n" +
 	"\n" +
@@ -5224,7 +5245,8 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\acity_id\x18\x04 \x01(\x03H\x03R\x06cityId\x88\x01\x01\x12\x1c\n" +
 	"\auser_id\x18\x05 \x01(\x03H\x04R\x06userId\x88\x01\x01\x12\x19\n" +
 	"\x05phone\x18\x06 \x01(\tH\x05R\x05phone\x88\x01\x01\x12\x15\n" +
-	"\x03iin\x18\a \x01(\tH\x06R\x03iin\x88\x01\x01B\a\n" +
+	"\x03iin\x18\a \x01(\tH\x06R\x03iin\x88\x01\x01\x12\x1f\n" +
+	"\blanguage\x18\b \x01(\tH\aR\blanguage\x88\x01\x01B\a\n" +
 	"\x05_nameB\r\n" +
 	"\v_avatar_urlB\b\n" +
 	"\x06_emailB\n" +
@@ -5233,7 +5255,8 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\n" +
 	"\b_user_idB\b\n" +
 	"\x06_phoneB\x06\n" +
-	"\x04_iin\"@\n" +
+	"\x04_iinB\v\n" +
+	"\t_language\"@\n" +
 	"\x15UpdateProfileResponse\x12'\n" +
 	"\x04user\x18\x01 \x01(\v2\x13.users.user.v1.UserR\x04user\"-\n" +
 	"\x12GetUserByIDRequest\x12\x17\n" +
