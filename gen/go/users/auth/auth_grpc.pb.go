@@ -19,18 +19,19 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_SendCode_FullMethodName               = "/users.auth.v1.AuthService/SendCode"
-	AuthService_VerifyCode_FullMethodName             = "/users.auth.v1.AuthService/VerifyCode"
-	AuthService_RefreshToken_FullMethodName           = "/users.auth.v1.AuthService/RefreshToken"
-	AuthService_Logout_FullMethodName                 = "/users.auth.v1.AuthService/Logout"
-	AuthService_ValidateToken_FullMethodName          = "/users.auth.v1.AuthService/ValidateToken"
-	AuthService_GetSessions_FullMethodName            = "/users.auth.v1.AuthService/GetSessions"
-	AuthService_DeleteSessionsByUserID_FullMethodName = "/users.auth.v1.AuthService/DeleteSessionsByUserID"
-	AuthService_SelectOrg_FullMethodName              = "/users.auth.v1.AuthService/SelectOrg"
-	AuthService_GetSendCodeRateLimit_FullMethodName   = "/users.auth.v1.AuthService/GetSendCodeRateLimit"
-	AuthService_ResetSendCodeRateLimit_FullMethodName = "/users.auth.v1.AuthService/ResetSendCodeRateLimit"
-	AuthService_IssueServiceToken_FullMethodName      = "/users.auth.v1.AuthService/IssueServiceToken"
-	AuthService_IssueTokenPair_FullMethodName         = "/users.auth.v1.AuthService/IssueTokenPair"
+	AuthService_SendCode_FullMethodName                    = "/users.auth.v1.AuthService/SendCode"
+	AuthService_VerifyCode_FullMethodName                  = "/users.auth.v1.AuthService/VerifyCode"
+	AuthService_RefreshToken_FullMethodName                = "/users.auth.v1.AuthService/RefreshToken"
+	AuthService_Logout_FullMethodName                      = "/users.auth.v1.AuthService/Logout"
+	AuthService_ValidateToken_FullMethodName               = "/users.auth.v1.AuthService/ValidateToken"
+	AuthService_GetSessions_FullMethodName                 = "/users.auth.v1.AuthService/GetSessions"
+	AuthService_DeleteSessionsByUserID_FullMethodName      = "/users.auth.v1.AuthService/DeleteSessionsByUserID"
+	AuthService_SelectOrg_FullMethodName                   = "/users.auth.v1.AuthService/SelectOrg"
+	AuthService_GetSendCodeRateLimit_FullMethodName        = "/users.auth.v1.AuthService/GetSendCodeRateLimit"
+	AuthService_ResetSendCodeRateLimit_FullMethodName      = "/users.auth.v1.AuthService/ResetSendCodeRateLimit"
+	AuthService_IssueServiceToken_FullMethodName           = "/users.auth.v1.AuthService/IssueServiceToken"
+	AuthService_IssueTokenPair_FullMethodName              = "/users.auth.v1.AuthService/IssueTokenPair"
+	AuthService_IssueExternalLoginTokenPair_FullMethodName = "/users.auth.v1.AuthService/IssueExternalLoginTokenPair"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -83,6 +84,16 @@ type AuthServiceClient interface {
 	// client-cert CN in auth-service. It exists so auth-service remains the only
 	// holder of JWT signing material during the RS256-only cutover.
 	IssueTokenPair(ctx context.Context, in *IssueTokenPairRequest, opts ...grpc.CallOption) (*IssueTokenPairResponse, error)
+	// IssueExternalLoginTokenPair mints a login access/refresh pair and creates
+	// a refresh session for a user already authenticated by a trusted external
+	// identity provider (Boxo Connect SSO via auth-sapp today). Unlike
+	// IssueTokenPair it behaves like a normal login (the VerifyCode tail): it
+	// does NOT revoke the user's existing sessions, so a super-app login never
+	// logs the user out of the mobile/web apps.
+	//
+	// Served only on the dedicated mTLS listener; restricted by client-cert CN
+	// (default allowlist: auth-sapp).
+	IssueExternalLoginTokenPair(ctx context.Context, in *IssueExternalLoginTokenPairRequest, opts ...grpc.CallOption) (*IssueExternalLoginTokenPairResponse, error)
 }
 
 type authServiceClient struct {
@@ -213,6 +224,16 @@ func (c *authServiceClient) IssueTokenPair(ctx context.Context, in *IssueTokenPa
 	return out, nil
 }
 
+func (c *authServiceClient) IssueExternalLoginTokenPair(ctx context.Context, in *IssueExternalLoginTokenPairRequest, opts ...grpc.CallOption) (*IssueExternalLoginTokenPairResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IssueExternalLoginTokenPairResponse)
+	err := c.cc.Invoke(ctx, AuthService_IssueExternalLoginTokenPair_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -263,6 +284,16 @@ type AuthServiceServer interface {
 	// client-cert CN in auth-service. It exists so auth-service remains the only
 	// holder of JWT signing material during the RS256-only cutover.
 	IssueTokenPair(context.Context, *IssueTokenPairRequest) (*IssueTokenPairResponse, error)
+	// IssueExternalLoginTokenPair mints a login access/refresh pair and creates
+	// a refresh session for a user already authenticated by a trusted external
+	// identity provider (Boxo Connect SSO via auth-sapp today). Unlike
+	// IssueTokenPair it behaves like a normal login (the VerifyCode tail): it
+	// does NOT revoke the user's existing sessions, so a super-app login never
+	// logs the user out of the mobile/web apps.
+	//
+	// Served only on the dedicated mTLS listener; restricted by client-cert CN
+	// (default allowlist: auth-sapp).
+	IssueExternalLoginTokenPair(context.Context, *IssueExternalLoginTokenPairRequest) (*IssueExternalLoginTokenPairResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -308,6 +339,9 @@ func (UnimplementedAuthServiceServer) IssueServiceToken(context.Context, *IssueS
 }
 func (UnimplementedAuthServiceServer) IssueTokenPair(context.Context, *IssueTokenPairRequest) (*IssueTokenPairResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method IssueTokenPair not implemented")
+}
+func (UnimplementedAuthServiceServer) IssueExternalLoginTokenPair(context.Context, *IssueExternalLoginTokenPairRequest) (*IssueExternalLoginTokenPairResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method IssueExternalLoginTokenPair not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -546,6 +580,24 @@ func _AuthService_IssueTokenPair_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_IssueExternalLoginTokenPair_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IssueExternalLoginTokenPairRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).IssueExternalLoginTokenPair(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_IssueExternalLoginTokenPair_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).IssueExternalLoginTokenPair(ctx, req.(*IssueExternalLoginTokenPairRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -600,6 +652,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IssueTokenPair",
 			Handler:    _AuthService_IssueTokenPair_Handler,
+		},
+		{
+			MethodName: "IssueExternalLoginTokenPair",
+			Handler:    _AuthService_IssueExternalLoginTokenPair_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

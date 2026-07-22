@@ -64,6 +64,17 @@ service AuthService {
   // client-cert CN in auth-service. It exists so auth-service remains the only
   // holder of JWT signing material during the RS256-only cutover.
   rpc IssueTokenPair(IssueTokenPairRequest) returns (IssueTokenPairResponse);
+
+  // IssueExternalLoginTokenPair mints a login access/refresh pair and creates
+  // a refresh session for a user already authenticated by a trusted external
+  // identity provider (Boxo Connect SSO via auth-sapp today). Unlike
+  // IssueTokenPair it behaves like a normal login (the VerifyCode tail): it
+  // does NOT revoke the user's existing sessions, so a super-app login never
+  // logs the user out of the mobile/web apps.
+  //
+  // Served only on the dedicated mTLS listener; restricted by client-cert CN
+  // (default allowlist: auth-sapp).
+  rpc IssueExternalLoginTokenPair(IssueExternalLoginTokenPairRequest) returns (IssueExternalLoginTokenPairResponse);
 }
 
 message GetSendCodeRateLimitRequest {
@@ -112,6 +123,24 @@ message IssueTokenPairRequest {
 }
 
 message IssueTokenPairResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  google.protobuf.Timestamp expires_at = 3;
+}
+
+message IssueExternalLoginTokenPairRequest {
+  int64 user_id = 1;
+  // phone may be empty for reference-only users (host app withheld the
+  // number); the claim is then minted with an empty phone.
+  string phone = 2;
+  // device_id is embedded into both tokens; auth-sapp uses "boxo".
+  string device_id = 3;
+  // app is the audience claim enforced by the per-BFF auth middleware:
+  // "client", "partner", or "sapp". Unknown/empty falls back to "client".
+  string app = 4;
+}
+
+message IssueExternalLoginTokenPairResponse {
   string access_token = 1;
   string refresh_token = 2;
   google.protobuf.Timestamp expires_at = 3;
