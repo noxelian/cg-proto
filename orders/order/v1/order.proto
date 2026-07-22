@@ -60,6 +60,12 @@ service OrderService {
   rpc CreateMaintenanceQuote(CreateMaintenanceQuoteRequest) returns (CreateMaintenanceQuoteResponse);
   rpc GetMaintenanceQuote(GetMaintenanceQuoteRequest) returns (GetMaintenanceQuoteResponse);
 
+  // === Basket (parts cart) payable quote ===
+  // GetBasketQuote is the authoritative pricing projection for combined-pay
+  // entity_type=basket. payment_entity_id carries the cart ID. Amounts are in
+  // currency minor units (tiyn for KZT).
+  rpc GetBasketQuote(GetBasketQuoteRequest) returns (GetBasketQuoteResponse);
+
   // === Admin analytics ===
   rpc GetSubscriptionStats(GetSubscriptionStatsRequest) returns (GetSubscriptionStatsResponse);
 }
@@ -806,4 +812,37 @@ message GetMaintenanceQuoteRequest {
 
 message GetMaintenanceQuoteResponse {
   MaintenanceQuote quote = 1;
+}
+
+// =============================================
+// Basket (parts cart) payable quote
+// =============================================
+
+enum BasketQuoteStatus {
+  BASKET_QUOTE_STATUS_UNSPECIFIED = 0;
+  // PENDING: the cart is active and payable right now.
+  BASKET_QUOTE_STATUS_PENDING = 1;
+  // AWAITING_PAYMENT: another checkout session already claimed the cart.
+  BASKET_QUOTE_STATUS_AWAITING_PAYMENT = 2;
+  BASKET_QUOTE_STATUS_EXPIRED = 3;
+  // NOT_PAYABLE: the cart exists but cannot be paid (empty, stale items,
+  // or unconfirmed price changes).
+  BASKET_QUOTE_STATUS_NOT_PAYABLE = 4;
+}
+
+message BasketQuote {
+  int64 payment_entity_id = 1; // Cart ID used as combined-pay entity_id.
+  int64 user_id = 2;           // Buyer that owns the cart.
+  BasketQuoteStatus status = 3;
+  int64 total_amount_minor = 4; // Grand total incl. delivery and commission; tiyn for KZT.
+  string currency = 5;
+  int32 items_count = 6;
+}
+
+message GetBasketQuoteRequest {
+  int64 payment_entity_id = 1;
+}
+
+message GetBasketQuoteResponse {
+  BasketQuote quote = 1;
 }

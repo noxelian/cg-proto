@@ -56,6 +56,7 @@ const (
 	OrderService_ListMaintenanceOffers_FullMethodName          = "/orders.order.v1.OrderService/ListMaintenanceOffers"
 	OrderService_CreateMaintenanceQuote_FullMethodName         = "/orders.order.v1.OrderService/CreateMaintenanceQuote"
 	OrderService_GetMaintenanceQuote_FullMethodName            = "/orders.order.v1.OrderService/GetMaintenanceQuote"
+	OrderService_GetBasketQuote_FullMethodName                 = "/orders.order.v1.OrderService/GetBasketQuote"
 	OrderService_GetSubscriptionStats_FullMethodName           = "/orders.order.v1.OrderService/GetSubscriptionStats"
 )
 
@@ -110,6 +111,11 @@ type OrderServiceClient interface {
 	ListMaintenanceOffers(ctx context.Context, in *ListMaintenanceOffersRequest, opts ...grpc.CallOption) (*ListMaintenanceOffersResponse, error)
 	CreateMaintenanceQuote(ctx context.Context, in *CreateMaintenanceQuoteRequest, opts ...grpc.CallOption) (*CreateMaintenanceQuoteResponse, error)
 	GetMaintenanceQuote(ctx context.Context, in *GetMaintenanceQuoteRequest, opts ...grpc.CallOption) (*GetMaintenanceQuoteResponse, error)
+	// === Basket (parts cart) payable quote ===
+	// GetBasketQuote is the authoritative pricing projection for combined-pay
+	// entity_type=basket. payment_entity_id carries the cart ID. Amounts are in
+	// currency minor units (tiyn for KZT).
+	GetBasketQuote(ctx context.Context, in *GetBasketQuoteRequest, opts ...grpc.CallOption) (*GetBasketQuoteResponse, error)
 	// === Admin analytics ===
 	GetSubscriptionStats(ctx context.Context, in *GetSubscriptionStatsRequest, opts ...grpc.CallOption) (*GetSubscriptionStatsResponse, error)
 }
@@ -492,6 +498,16 @@ func (c *orderServiceClient) GetMaintenanceQuote(ctx context.Context, in *GetMai
 	return out, nil
 }
 
+func (c *orderServiceClient) GetBasketQuote(ctx context.Context, in *GetBasketQuoteRequest, opts ...grpc.CallOption) (*GetBasketQuoteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBasketQuoteResponse)
+	err := c.cc.Invoke(ctx, OrderService_GetBasketQuote_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *orderServiceClient) GetSubscriptionStats(ctx context.Context, in *GetSubscriptionStatsRequest, opts ...grpc.CallOption) (*GetSubscriptionStatsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSubscriptionStatsResponse)
@@ -553,6 +569,11 @@ type OrderServiceServer interface {
 	ListMaintenanceOffers(context.Context, *ListMaintenanceOffersRequest) (*ListMaintenanceOffersResponse, error)
 	CreateMaintenanceQuote(context.Context, *CreateMaintenanceQuoteRequest) (*CreateMaintenanceQuoteResponse, error)
 	GetMaintenanceQuote(context.Context, *GetMaintenanceQuoteRequest) (*GetMaintenanceQuoteResponse, error)
+	// === Basket (parts cart) payable quote ===
+	// GetBasketQuote is the authoritative pricing projection for combined-pay
+	// entity_type=basket. payment_entity_id carries the cart ID. Amounts are in
+	// currency minor units (tiyn for KZT).
+	GetBasketQuote(context.Context, *GetBasketQuoteRequest) (*GetBasketQuoteResponse, error)
 	// === Admin analytics ===
 	GetSubscriptionStats(context.Context, *GetSubscriptionStatsRequest) (*GetSubscriptionStatsResponse, error)
 	mustEmbedUnimplementedOrderServiceServer()
@@ -675,6 +696,9 @@ func (UnimplementedOrderServiceServer) CreateMaintenanceQuote(context.Context, *
 }
 func (UnimplementedOrderServiceServer) GetMaintenanceQuote(context.Context, *GetMaintenanceQuoteRequest) (*GetMaintenanceQuoteResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMaintenanceQuote not implemented")
+}
+func (UnimplementedOrderServiceServer) GetBasketQuote(context.Context, *GetBasketQuoteRequest) (*GetBasketQuoteResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBasketQuote not implemented")
 }
 func (UnimplementedOrderServiceServer) GetSubscriptionStats(context.Context, *GetSubscriptionStatsRequest) (*GetSubscriptionStatsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSubscriptionStats not implemented")
@@ -1366,6 +1390,24 @@ func _OrderService_GetMaintenanceQuote_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_GetBasketQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBasketQuoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).GetBasketQuote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_GetBasketQuote_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).GetBasketQuote(ctx, req.(*GetBasketQuoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrderService_GetSubscriptionStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSubscriptionStatsRequest)
 	if err := dec(in); err != nil {
@@ -1538,6 +1580,10 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMaintenanceQuote",
 			Handler:    _OrderService_GetMaintenanceQuote_Handler,
+		},
+		{
+			MethodName: "GetBasketQuote",
+			Handler:    _OrderService_GetBasketQuote_Handler,
 		},
 		{
 			MethodName: "GetSubscriptionStats",
