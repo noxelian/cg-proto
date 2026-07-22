@@ -72,6 +72,11 @@ enum PaymentProvider {
   PAYMENT_PROVIDER_IOKA = 1;
   PAYMENT_PROVIDER_KASPI = 2;
   PAYMENT_PROVIDER_FREEDOMPAY = 3;
+  // Boxo (bank super-app miniapp platform, docs.boxo.io). SDK-driven: there is
+  // no hosted redirect page — CreateTransactionResponse.payment_url carries the
+  // Boxo order_payment_id, which the miniapp frontend passes to
+  // appboxoSdk.pay(). Terminal status arrives via the Boxo webhook.
+  PAYMENT_PROVIDER_BOXO = 4;
 }
 
 enum PaymentMethod {

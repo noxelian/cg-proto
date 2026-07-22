@@ -41,6 +41,15 @@ service UserService {
   // Used by Instagram Direct AI to resolve the same contact across sessions.
   // If instagram_username is non-empty, it is always written (preserves a previously-stored handle).
   rpc FindOrCreateByInstagramID(FindOrCreateByInstagramIDRequest) returns (FindOrCreateByInstagramIDResponse);
+
+  // FindOrCreateByBoxoReference resolves a bank super-app user delivered via
+  // Boxo Connect SSO (host app POSTs to auth-sapp). Resolution order:
+  //   1. users.boxo_reference match — returning miniapp user;
+  //   2. bank-verified phone match — the reference is linked to the existing
+  //      CTOgram account (the bank owns phone verification);
+  //   3. otherwise a new user is created with the supplied phone/profile.
+  // Service-only: callable by auth-sapp.
+  rpc FindOrCreateByBoxoReference(FindOrCreateByBoxoReferenceRequest) returns (FindOrCreateByBoxoReferenceResponse);
   
   // GetSettings returns user notification settings
   rpc GetSettings(GetSettingsRequest) returns (GetSettingsResponse);
@@ -207,6 +216,9 @@ message User {
   // server-side preference yet and clients may use their local/device fallback.
   // Supported values are "kk", "ru", and "en".
   string language = 14;
+  // Stable host-app (bank) user id from Boxo Connect SSO. Empty for users
+  // that never entered through the bank super-app miniapp.
+  string boxo_reference = 15;
 }
 
 message UserCounters {
@@ -310,6 +322,28 @@ message FindOrCreateByInstagramIDRequest {
 }
 
 message FindOrCreateByInstagramIDResponse {
+  User user    = 1;
+  bool created = 2;
+}
+
+// FindOrCreateByBoxoReference (Boxo Connect SSO — bank super-app miniapp)
+message FindOrCreateByBoxoReferenceRequest {
+  // reference is required — the stable host-app user id, max 100 chars.
+  string reference = 1;
+  // phone is the bank-verified number in E.164; used to link the reference
+  // to an existing account when no boxo_reference match exists. May be empty
+  // if the host app withholds it — then resolution is reference-only.
+  string phone = 2;
+  // Optional profile data; applied to newly-created rows and to empty fields
+  // of an existing row (manager-edited values are preserved).
+  string email = 3;
+  string first_name = 4;
+  string last_name = 5;
+  // Raw custom_attributes JSON from Boxo, passed through for audit/debug.
+  string custom_attributes = 6;
+}
+
+message FindOrCreateByBoxoReferenceResponse {
   User user    = 1;
   bool created = 2;
 }

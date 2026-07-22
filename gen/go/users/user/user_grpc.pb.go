@@ -29,6 +29,7 @@ const (
 	UserService_GetUsersByPhones_FullMethodName              = "/users.user.v1.UserService/GetUsersByPhones"
 	UserService_FindOrCreateByPhone_FullMethodName           = "/users.user.v1.UserService/FindOrCreateByPhone"
 	UserService_FindOrCreateByInstagramID_FullMethodName     = "/users.user.v1.UserService/FindOrCreateByInstagramID"
+	UserService_FindOrCreateByBoxoReference_FullMethodName   = "/users.user.v1.UserService/FindOrCreateByBoxoReference"
 	UserService_GetSettings_FullMethodName                   = "/users.user.v1.UserService/GetSettings"
 	UserService_UpdateSettings_FullMethodName                = "/users.user.v1.UserService/UpdateSettings"
 	UserService_RegisterDevice_FullMethodName                = "/users.user.v1.UserService/RegisterDevice"
@@ -90,6 +91,15 @@ type UserServiceClient interface {
 	// Used by Instagram Direct AI to resolve the same contact across sessions.
 	// If instagram_username is non-empty, it is always written (preserves a previously-stored handle).
 	FindOrCreateByInstagramID(ctx context.Context, in *FindOrCreateByInstagramIDRequest, opts ...grpc.CallOption) (*FindOrCreateByInstagramIDResponse, error)
+	// FindOrCreateByBoxoReference resolves a bank super-app user delivered via
+	// Boxo Connect SSO (host app POSTs to auth-sapp). Resolution order:
+	//  1. users.boxo_reference match — returning miniapp user;
+	//  2. bank-verified phone match — the reference is linked to the existing
+	//     CTOgram account (the bank owns phone verification);
+	//  3. otherwise a new user is created with the supplied phone/profile.
+	//
+	// Service-only: callable by auth-sapp.
+	FindOrCreateByBoxoReference(ctx context.Context, in *FindOrCreateByBoxoReferenceRequest, opts ...grpc.CallOption) (*FindOrCreateByBoxoReferenceResponse, error)
 	// GetSettings returns user notification settings
 	GetSettings(ctx context.Context, in *GetSettingsRequest, opts ...grpc.CallOption) (*GetSettingsResponse, error)
 	// UpdateSettings updates user notification settings
@@ -274,6 +284,16 @@ func (c *userServiceClient) FindOrCreateByInstagramID(ctx context.Context, in *F
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(FindOrCreateByInstagramIDResponse)
 	err := c.cc.Invoke(ctx, UserService_FindOrCreateByInstagramID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) FindOrCreateByBoxoReference(ctx context.Context, in *FindOrCreateByBoxoReferenceRequest, opts ...grpc.CallOption) (*FindOrCreateByBoxoReferenceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FindOrCreateByBoxoReferenceResponse)
+	err := c.cc.Invoke(ctx, UserService_FindOrCreateByBoxoReference_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -609,6 +629,15 @@ type UserServiceServer interface {
 	// Used by Instagram Direct AI to resolve the same contact across sessions.
 	// If instagram_username is non-empty, it is always written (preserves a previously-stored handle).
 	FindOrCreateByInstagramID(context.Context, *FindOrCreateByInstagramIDRequest) (*FindOrCreateByInstagramIDResponse, error)
+	// FindOrCreateByBoxoReference resolves a bank super-app user delivered via
+	// Boxo Connect SSO (host app POSTs to auth-sapp). Resolution order:
+	//  1. users.boxo_reference match — returning miniapp user;
+	//  2. bank-verified phone match — the reference is linked to the existing
+	//     CTOgram account (the bank owns phone verification);
+	//  3. otherwise a new user is created with the supplied phone/profile.
+	//
+	// Service-only: callable by auth-sapp.
+	FindOrCreateByBoxoReference(context.Context, *FindOrCreateByBoxoReferenceRequest) (*FindOrCreateByBoxoReferenceResponse, error)
 	// GetSettings returns user notification settings
 	GetSettings(context.Context, *GetSettingsRequest) (*GetSettingsResponse, error)
 	// UpdateSettings updates user notification settings
@@ -728,6 +757,9 @@ func (UnimplementedUserServiceServer) FindOrCreateByPhone(context.Context, *Find
 }
 func (UnimplementedUserServiceServer) FindOrCreateByInstagramID(context.Context, *FindOrCreateByInstagramIDRequest) (*FindOrCreateByInstagramIDResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method FindOrCreateByInstagramID not implemented")
+}
+func (UnimplementedUserServiceServer) FindOrCreateByBoxoReference(context.Context, *FindOrCreateByBoxoReferenceRequest) (*FindOrCreateByBoxoReferenceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method FindOrCreateByBoxoReference not implemented")
 }
 func (UnimplementedUserServiceServer) GetSettings(context.Context, *GetSettingsRequest) (*GetSettingsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSettings not implemented")
@@ -1016,6 +1048,24 @@ func _UserService_FindOrCreateByInstagramID_Handler(srv interface{}, ctx context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).FindOrCreateByInstagramID(ctx, req.(*FindOrCreateByInstagramIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_FindOrCreateByBoxoReference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindOrCreateByBoxoReferenceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).FindOrCreateByBoxoReference(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_FindOrCreateByBoxoReference_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).FindOrCreateByBoxoReference(ctx, req.(*FindOrCreateByBoxoReferenceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1606,6 +1656,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindOrCreateByInstagramID",
 			Handler:    _UserService_FindOrCreateByInstagramID_Handler,
+		},
+		{
+			MethodName: "FindOrCreateByBoxoReference",
+			Handler:    _UserService_FindOrCreateByBoxoReference_Handler,
 		},
 		{
 			MethodName: "GetSettings",
