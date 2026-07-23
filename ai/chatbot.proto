@@ -276,8 +276,20 @@ message StreamResponseChunk {
     ActionsPayload actions = 5;
     ErrorPayload error = 6;
     ToolResultPayload tool_result = 7;
+    // text_reset discards every text_delta streamed so far for this turn.
+    // The agentic loop streams tokens live; when an iteration turns out to be
+    // non-terminal (it called a tool), whatever preamble it emitted must be
+    // dropped so the final answer does not appear duplicated. Consumers that
+    // do not understand this variant simply ignore it (oneof stays wire
+    // compatible), degrading to the previous buffered behaviour.
+    TextResetPayload text_reset = 8;
   }
 }
+
+// TextResetPayload instructs the consumer to clear the assistant text
+// accumulated for the current turn. It carries no data — the signal is the
+// message itself.
+message TextResetPayload {}
 
 // ToolResultPayload carries the JSON envelope returned by a tool handler
 // (e.g. {type:"work_list_proposal", works:[...]}) so the frontend can render
