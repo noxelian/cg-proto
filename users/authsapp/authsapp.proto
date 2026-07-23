@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package users.authsapp.v1;
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/users/authsapp;authsappv1";
+
+import "google/protobuf/timestamp.proto";
+
+// AuthSappService is the internal Boxo Connect SSO issuer for the bank
+// super-app miniapp. It is NOT public: the Boxo platform's "Get Auth Token"
+// webhook terminates at bff-sapp (which checks the Basic app_id:secret_key
+// credential), and bff-sapp forwards the user data here over gRPC. This
+// service holds the privileges the public BFF must not: it resolves the Boxo
+// identity in user-service and mints the login pair on auth's mTLS listener.
+service AuthSappService {
+  // IssueBoxoLoginToken resolves (or creates) the user behind a Boxo
+  // `reference` and mints a `sapp`-audience login pair. It behaves like a
+  // normal login and does NOT revoke the user's other sessions.
+  //
+  // Caller identity is enforced by the auth interceptor: only bff-sapp may
+  // call it. Phone may be empty (host app withheld the number) — the user is
+  // then created reference-only.
+  rpc IssueBoxoLoginToken(IssueBoxoLoginTokenRequest) returns (IssueBoxoLoginTokenResponse);
+}
+
+message IssueBoxoLoginTokenRequest {
+  // reference is Boxo's stable per-user id (the dedup key). Required.
+  string reference = 1;
+  string phone = 2;
+  string email = 3;
+  string first_name = 4;
+  string last_name = 5;
+  // custom_attributes carries the opaque Boxo custom_attributes JSON, if any.
+  string custom_attributes = 6;
+}
+
+message IssueBoxoLoginTokenResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  google.protobuf.Timestamp expires_at = 3;
+  // created is true when this login created a new user.
+  bool created = 4;
+}
