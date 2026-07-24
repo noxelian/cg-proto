@@ -40,6 +40,10 @@ service PaymentService {
 
   // === Combined-pay (cg_web migration) ===
 
+  // ListAvailablePaymentMethods returns only payment routes that are enabled
+  // for the requested product flow. It does not create a payment intent.
+  rpc ListAvailablePaymentMethods(ListAvailablePaymentMethodsRequest) returns (ListAvailablePaymentMethodsResponse);
+
   // InitPayment opens the CombinedPayModal: returns selectable payment methods,
   // wallet eligibility, and the session token used by StartPayment.
   rpc InitPayment(InitPaymentRequest) returns (InitPaymentResponse);
@@ -122,6 +126,13 @@ enum PayOptionKind {
   PAY_OPTION_KIND_KASPI = 2;       // Kaspi QR / Kaspi Pay direct
   PAY_OPTION_KIND_INSTALLMENT = 3; // BNPL / kaspi_pay installment
   PAY_OPTION_KIND_WALLET = 4;      // pay from bonus wallet balance
+}
+
+// PaymentUseCase scopes provider availability to one product flow. A provider
+// can be configured globally but intentionally unavailable for a specific flow.
+enum PaymentUseCase {
+  PAYMENT_USE_CASE_UNSPECIFIED = 0;
+  PAYMENT_USE_CASE_FUELING = 1;
 }
 
 // =============================================
@@ -322,6 +333,24 @@ message MarkPaidB2BResponse {
 // =============================================
 // Combined-pay (cg_web migration)
 // =============================================
+
+message ListAvailablePaymentMethodsRequest {
+  PaymentUseCase use_case = 1;
+}
+
+message AvailablePaymentMethod {
+  string id = 1;             // provider key: "ioka" | "kaspi"
+  string payment_method = 2; // exact value accepted by the product order API
+  string title = 3;
+  string sub_title = 4;
+  string cashback_title = 5;
+  string icon_url = 6;
+  PayOptionKind kind = 7;
+}
+
+message ListAvailablePaymentMethodsResponse {
+  repeated AvailablePaymentMethod payment_methods = 1;
+}
 
 // PayOption is a single selectable payment method shown in CombinedPayModal.
 message PayOption {
