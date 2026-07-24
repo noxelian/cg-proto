@@ -19,16 +19,17 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PaymentService_CreateTransaction_FullMethodName   = "/payments.payment.v1.PaymentService/CreateTransaction"
-	PaymentService_ListTransactions_FullMethodName    = "/payments.payment.v1.PaymentService/ListTransactions"
-	PaymentService_GetTransaction_FullMethodName      = "/payments.payment.v1.PaymentService/GetTransaction"
-	PaymentService_InitiateRefund_FullMethodName      = "/payments.payment.v1.PaymentService/InitiateRefund"
-	PaymentService_HandleIokaWebhook_FullMethodName   = "/payments.payment.v1.PaymentService/HandleIokaWebhook"
-	PaymentService_HandleKaspiCheckPay_FullMethodName = "/payments.payment.v1.PaymentService/HandleKaspiCheckPay"
-	PaymentService_GetPaymentAuditLog_FullMethodName  = "/payments.payment.v1.PaymentService/GetPaymentAuditLog"
-	PaymentService_MarkPaidB2B_FullMethodName         = "/payments.payment.v1.PaymentService/MarkPaidB2B"
-	PaymentService_InitPayment_FullMethodName         = "/payments.payment.v1.PaymentService/InitPayment"
-	PaymentService_StartPayment_FullMethodName        = "/payments.payment.v1.PaymentService/StartPayment"
+	PaymentService_CreateTransaction_FullMethodName         = "/payments.payment.v1.PaymentService/CreateTransaction"
+	PaymentService_ListTransactions_FullMethodName          = "/payments.payment.v1.PaymentService/ListTransactions"
+	PaymentService_GetTransaction_FullMethodName            = "/payments.payment.v1.PaymentService/GetTransaction"
+	PaymentService_InitiateRefund_FullMethodName            = "/payments.payment.v1.PaymentService/InitiateRefund"
+	PaymentService_HandleIokaWebhook_FullMethodName         = "/payments.payment.v1.PaymentService/HandleIokaWebhook"
+	PaymentService_HandleKaspiCheckPay_FullMethodName       = "/payments.payment.v1.PaymentService/HandleKaspiCheckPay"
+	PaymentService_HandleLegacyKaspiCallback_FullMethodName = "/payments.payment.v1.PaymentService/HandleLegacyKaspiCallback"
+	PaymentService_GetPaymentAuditLog_FullMethodName        = "/payments.payment.v1.PaymentService/GetPaymentAuditLog"
+	PaymentService_MarkPaidB2B_FullMethodName               = "/payments.payment.v1.PaymentService/MarkPaidB2B"
+	PaymentService_InitPayment_FullMethodName               = "/payments.payment.v1.PaymentService/InitPayment"
+	PaymentService_StartPayment_FullMethodName              = "/payments.payment.v1.PaymentService/StartPayment"
 )
 
 // PaymentServiceClient is the client API for PaymentService service.
@@ -50,6 +51,9 @@ type PaymentServiceClient interface {
 	// === Provider webhooks ===
 	HandleIokaWebhook(ctx context.Context, in *HandleIokaWebhookRequest, opts ...grpc.CallOption) (*HandleIokaWebhookResponse, error)
 	HandleKaspiCheckPay(ctx context.Context, in *HandleKaspiCheckPayRequest, opts ...grpc.CallOption) (*HandleKaspiCheckPayResponse, error)
+	// HandleLegacyKaspiCallback receives the authenticated completion callback
+	// forwarded by bff-mobile from the temporary legacy banks bridge.
+	HandleLegacyKaspiCallback(ctx context.Context, in *HandleLegacyKaspiCallbackRequest, opts ...grpc.CallOption) (*HandleLegacyKaspiCallbackResponse, error)
 	// === Admin ===
 	GetPaymentAuditLog(ctx context.Context, in *GetPaymentAuditLogRequest, opts ...grpc.CallOption) (*GetPaymentAuditLogResponse, error)
 	// MarkPaidB2B records an offline (invoice/cash) payment made on behalf
@@ -134,6 +138,16 @@ func (c *paymentServiceClient) HandleKaspiCheckPay(ctx context.Context, in *Hand
 	return out, nil
 }
 
+func (c *paymentServiceClient) HandleLegacyKaspiCallback(ctx context.Context, in *HandleLegacyKaspiCallbackRequest, opts ...grpc.CallOption) (*HandleLegacyKaspiCallbackResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(HandleLegacyKaspiCallbackResponse)
+	err := c.cc.Invoke(ctx, PaymentService_HandleLegacyKaspiCallback_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *paymentServiceClient) GetPaymentAuditLog(ctx context.Context, in *GetPaymentAuditLogRequest, opts ...grpc.CallOption) (*GetPaymentAuditLogResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPaymentAuditLogResponse)
@@ -193,6 +207,9 @@ type PaymentServiceServer interface {
 	// === Provider webhooks ===
 	HandleIokaWebhook(context.Context, *HandleIokaWebhookRequest) (*HandleIokaWebhookResponse, error)
 	HandleKaspiCheckPay(context.Context, *HandleKaspiCheckPayRequest) (*HandleKaspiCheckPayResponse, error)
+	// HandleLegacyKaspiCallback receives the authenticated completion callback
+	// forwarded by bff-mobile from the temporary legacy banks bridge.
+	HandleLegacyKaspiCallback(context.Context, *HandleLegacyKaspiCallbackRequest) (*HandleLegacyKaspiCallbackResponse, error)
 	// === Admin ===
 	GetPaymentAuditLog(context.Context, *GetPaymentAuditLogRequest) (*GetPaymentAuditLogResponse, error)
 	// MarkPaidB2B records an offline (invoice/cash) payment made on behalf
@@ -234,6 +251,9 @@ func (UnimplementedPaymentServiceServer) HandleIokaWebhook(context.Context, *Han
 }
 func (UnimplementedPaymentServiceServer) HandleKaspiCheckPay(context.Context, *HandleKaspiCheckPayRequest) (*HandleKaspiCheckPayResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HandleKaspiCheckPay not implemented")
+}
+func (UnimplementedPaymentServiceServer) HandleLegacyKaspiCallback(context.Context, *HandleLegacyKaspiCallbackRequest) (*HandleLegacyKaspiCallbackResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method HandleLegacyKaspiCallback not implemented")
 }
 func (UnimplementedPaymentServiceServer) GetPaymentAuditLog(context.Context, *GetPaymentAuditLogRequest) (*GetPaymentAuditLogResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPaymentAuditLog not implemented")
@@ -376,6 +396,24 @@ func _PaymentService_HandleKaspiCheckPay_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PaymentService_HandleLegacyKaspiCallback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HandleLegacyKaspiCallbackRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).HandleLegacyKaspiCallback(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_HandleLegacyKaspiCallback_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).HandleLegacyKaspiCallback(ctx, req.(*HandleLegacyKaspiCallbackRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PaymentService_GetPaymentAuditLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPaymentAuditLogRequest)
 	if err := dec(in); err != nil {
@@ -478,6 +516,10 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HandleKaspiCheckPay",
 			Handler:    _PaymentService_HandleKaspiCheckPay_Handler,
+		},
+		{
+			MethodName: "HandleLegacyKaspiCallback",
+			Handler:    _PaymentService_HandleLegacyKaspiCallback_Handler,
 		},
 		{
 			MethodName: "GetPaymentAuditLog",

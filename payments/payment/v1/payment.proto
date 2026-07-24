@@ -23,6 +23,9 @@ service PaymentService {
   // === Provider webhooks ===
   rpc HandleIokaWebhook(HandleIokaWebhookRequest) returns (HandleIokaWebhookResponse);
   rpc HandleKaspiCheckPay(HandleKaspiCheckPayRequest) returns (HandleKaspiCheckPayResponse);
+  // HandleLegacyKaspiCallback receives the authenticated completion callback
+  // forwarded by bff-mobile from the temporary legacy banks bridge.
+  rpc HandleLegacyKaspiCallback(HandleLegacyKaspiCallbackRequest) returns (HandleLegacyKaspiCallbackResponse);
 
   // === Admin ===
   rpc GetPaymentAuditLog(GetPaymentAuditLogRequest) returns (GetPaymentAuditLogResponse);
@@ -259,6 +262,15 @@ message HandleKaspiCheckPayRequest {
 
 message HandleKaspiCheckPayResponse {
   string xml_response = 1;
+}
+
+message HandleLegacyKaspiCallbackRequest {
+  string account = 1;
+  string signature = 2;
+}
+
+message HandleLegacyKaspiCallbackResponse {
+  bool success = 1;
 }
 
 // =============================================
