@@ -1,0 +1,510 @@
+syntax = "proto3";
+
+package orders.roadside.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/orders/roadside/v1;roadsidev1";
+
+// RoadsideService exposes the end-user roadside assistance flow through gwc.
+service RoadsideService {
+  // ListRoadsideServices returns active service types and body-type prices for
+  // a city. Any authenticated client may call it through gwc.
+  rpc ListRoadsideServices(ListRoadsideServicesRequest) returns (ListRoadsideServicesResponse);
+
+  // CalculateRoadsidePrice resolves the current price snapshot for a service,
+  // city, and body type. Any authenticated client may call it through gwc.
+  rpc CalculateRoadsidePrice(CalculateRoadsidePriceRequest) returns (CalculateRoadsidePriceResponse);
+
+  // CreateRoadsideOrder creates a payment-first order and starts payment.
+  // Only the authenticated client who owns the order may call it through gwc.
+  rpc CreateRoadsideOrder(CreateRoadsideOrderRequest) returns (CreateRoadsideOrderResponse);
+
+  // GetRoadsideOrder returns one order owned by the authenticated client.
+  // Only that client may call it through gwc.
+  rpc GetRoadsideOrder(GetRoadsideOrderRequest) returns (GetRoadsideOrderResponse);
+
+  // ListMyRoadsideOrders returns orders owned by the authenticated client.
+  // Only that client may call it through gwc.
+  rpc ListMyRoadsideOrders(ListMyRoadsideOrdersRequest) returns (ListMyRoadsideOrdersResponse);
+
+  // CancelRoadsideOrder cancels an eligible order before an active assignment.
+  // Only the authenticated client who owns the order may call it through gwc.
+  rpc CancelRoadsideOrder(CancelRoadsideOrderRequest) returns (CancelRoadsideOrderResponse);
+}
+
+// RoadsideDispatchService exposes operator dispatch and catalog management
+// through gwa. Its methods are intentionally separate from client methods.
+service RoadsideDispatchService {
+  // ListRoadsideOrders returns the filtered dispatch feed. Only an
+  // authenticated operator with roadside dispatch access may call it via gwa.
+  rpc ListRoadsideOrders(ListRoadsideOrdersRequest) returns (ListRoadsideOrdersResponse);
+
+  // GetRoadsideOrderCard returns an order with assignment history and its
+  // status timeline. Only an authorized roadside operator may call it via gwa.
+  rpc GetRoadsideOrderCard(GetRoadsideOrderCardRequest) returns (GetRoadsideOrderCardResponse);
+
+  // AssignRoadsideOrder assigns either a manual contractor or an organization.
+  // Only an authorized roadside operator may call it via gwa.
+  rpc AssignRoadsideOrder(AssignRoadsideOrderRequest) returns (AssignRoadsideOrderResponse);
+
+  // RevokeRoadsideAssignment revokes the active assignment with a reason.
+  // Only an authorized roadside operator may call it via gwa.
+  rpc RevokeRoadsideAssignment(RevokeRoadsideAssignmentRequest) returns (RevokeRoadsideAssignmentResponse);
+
+  // AdvanceRoadsideOrder advances an order along an allowed operator lifecycle
+  // edge. Only an authorized roadside operator may call it via gwa.
+  rpc AdvanceRoadsideOrder(AdvanceRoadsideOrderRequest) returns (AdvanceRoadsideOrderResponse);
+
+  // CancelRoadsideOrderByOperator cancels an order with a mandatory reason
+  // code. Only an authorized roadside operator may call it via gwa.
+  rpc CancelRoadsideOrderByOperator(CancelRoadsideOrderByOperatorRequest) returns (CancelRoadsideOrderByOperatorResponse);
+
+  // ListRoadsideServiceTypes returns service types, including inactive ones
+  // when requested. Only an authorized catalog operator may call it via gwa.
+  rpc ListRoadsideServiceTypes(ListRoadsideServiceTypesRequest) returns (ListRoadsideServiceTypesResponse);
+
+  // UpsertRoadsideServiceType creates or updates one service type. Only an
+  // authorized catalog operator may call it via gwa.
+  rpc UpsertRoadsideServiceType(UpsertRoadsideServiceTypeRequest) returns (UpsertRoadsideServiceTypeResponse);
+
+  // ListRoadsidePrices returns current and historical price rows. Only an
+  // authorized catalog operator may call it via gwa.
+  rpc ListRoadsidePrices(ListRoadsidePricesRequest) returns (ListRoadsidePricesResponse);
+
+  // SetRoadsidePrice replaces the active price by appending a new version.
+  // Only an authorized catalog operator may call it via gwa.
+  rpc SetRoadsidePrice(SetRoadsidePriceRequest) returns (SetRoadsidePriceResponse);
+}
+
+// RoadsidePartnerService exposes the PRO organization workflow through gwp.
+service RoadsidePartnerService {
+  // ListAvailableRoadsideOrders returns unassigned dispatching orders for a
+  // city. Authenticated roadside partner organization members may call it via
+  // gwp.
+  rpc ListAvailableRoadsideOrders(ListAvailableRoadsideOrdersRequest) returns (ListAvailableRoadsideOrdersResponse);
+
+  // ClaimRoadsideOrder atomically self-assigns an available order to the
+  // authenticated partner organization. Its members may call it via gwp.
+  rpc ClaimRoadsideOrder(ClaimRoadsideOrderRequest) returns (ClaimRoadsideOrderResponse);
+
+  // ListOrganizationRoadsideOrders returns orders assigned to the authenticated
+  // partner organization. Its members may call it via gwp.
+  rpc ListOrganizationRoadsideOrders(ListOrganizationRoadsideOrdersRequest) returns (ListOrganizationRoadsideOrdersResponse);
+
+  // AdvancePartnerRoadsideOrder advances an assigned order along an allowed
+  // partner lifecycle edge. Members of the assigned organization may call it
+  // via gwp.
+  rpc AdvancePartnerRoadsideOrder(AdvancePartnerRoadsideOrderRequest) returns (AdvancePartnerRoadsideOrderResponse);
+}
+
+// RoadsideOrderStatus mirrors the roadside_orders status CHECK constraint.
+enum RoadsideOrderStatus {
+  ROADSIDE_ORDER_STATUS_UNSPECIFIED = 0;
+  ROADSIDE_ORDER_STATUS_AWAITING_PAYMENT = 1;
+  ROADSIDE_ORDER_STATUS_PAYMENT_FAILED = 2;
+  ROADSIDE_ORDER_STATUS_DISPATCHING = 3;
+  ROADSIDE_ORDER_STATUS_ASSIGNED = 4;
+  ROADSIDE_ORDER_STATUS_EN_ROUTE = 5;
+  ROADSIDE_ORDER_STATUS_IN_PROGRESS = 6;
+  ROADSIDE_ORDER_STATUS_COMPLETED = 7;
+  ROADSIDE_ORDER_STATUS_CANCELLED_BY_CLIENT = 8;
+  ROADSIDE_ORDER_STATUS_CANCELLED_BY_OPERATOR = 9;
+}
+
+enum RoadsideAssigneeKind {
+  ROADSIDE_ASSIGNEE_KIND_UNSPECIFIED = 0;
+  ROADSIDE_ASSIGNEE_KIND_MANUAL = 1;
+  ROADSIDE_ASSIGNEE_KIND_ORGANIZATION = 2;
+}
+
+enum RoadsideAssignmentState {
+  ROADSIDE_ASSIGNMENT_STATE_UNSPECIFIED = 0;
+  ROADSIDE_ASSIGNMENT_STATE_ACTIVE = 1;
+  ROADSIDE_ASSIGNMENT_STATE_REVOKED = 2;
+  ROADSIDE_ASSIGNMENT_STATE_COMPLETED = 3;
+}
+
+enum RoadsideActorKind {
+  ROADSIDE_ACTOR_KIND_UNSPECIFIED = 0;
+  ROADSIDE_ACTOR_KIND_CLIENT = 1;
+  ROADSIDE_ACTOR_KIND_OPERATOR = 2;
+  ROADSIDE_ACTOR_KIND_SYSTEM = 3;
+  ROADSIDE_ACTOR_KIND_ORGANIZATION = 4;
+  ROADSIDE_ACTOR_KIND_PERFORMER = 5;
+}
+
+message RoadsideServiceType {
+  string code = 1;
+  string title_ru = 2;
+  string title_kk = 3;
+  string title_en = 4;
+  bool requires_destination = 5;
+  bool requires_body_type = 6;
+  int32 sort_order = 7;
+  bool is_active = 8;
+}
+
+message RoadsidePrice {
+  int64 id = 1;
+  string service_code = 2;
+  int64 city_id = 3;
+  string body_type = 4;
+  // Exact price in the currency minor unit.
+  int64 price_minor = 5;
+  string currency = 6;
+  int32 version = 7;
+  bool is_active = 8;
+  int64 created_by_user_id = 9;
+  google.protobuf.Timestamp created_at = 10;
+}
+
+message RoadsidePriceQuote {
+  int64 price_list_id = 1;
+  string service_code = 2;
+  int64 city_id = 3;
+  string body_type = 4;
+  // Exact price in the currency minor unit.
+  int64 price_minor = 5;
+  string currency = 6;
+  int32 version = 7;
+}
+
+message RoadsideServiceOffering {
+  RoadsideServiceType service_type = 1;
+  repeated RoadsidePriceQuote prices = 2;
+}
+
+message RoadsideOrder {
+  string id = 1;
+  string order_number = 2;
+  int64 payment_entity_id = 3;
+  int64 user_id = 4;
+  optional int64 car_id = 5;
+  string service_code = 6;
+  string service_title = 7;
+  int64 city_id = 8;
+  string city_name = 9;
+  string body_type = 10;
+  int64 price_list_id = 11;
+  // Exact order price in the currency minor unit.
+  int64 price_minor = 12;
+  string currency = 13;
+  bool requires_destination = 14;
+  string pickup_address = 15;
+  double pickup_latitude = 16;
+  double pickup_longitude = 17;
+  optional string destination_address = 18;
+  // Destination coordinates must be supplied together or both omitted.
+  optional double destination_latitude = 19;
+  optional double destination_longitude = 20;
+  RoadsideOrderStatus status = 21;
+  optional int64 payment_transaction_id = 22;
+  optional int64 refund_transaction_id = 23;
+  string cancel_reason_code = 24;
+  google.protobuf.Timestamp dispatch_deadline_at = 25;
+  google.protobuf.Timestamp payment_failed_at = 26;
+  google.protobuf.Timestamp dispatching_at = 27;
+  google.protobuf.Timestamp assigned_at = 28;
+  google.protobuf.Timestamp en_route_at = 29;
+  google.protobuf.Timestamp in_progress_at = 30;
+  google.protobuf.Timestamp completed_at = 31;
+  google.protobuf.Timestamp cancelled_at = 32;
+  google.protobuf.Timestamp created_at = 33;
+  google.protobuf.Timestamp updated_at = 34;
+}
+
+message RoadsideAssignment {
+  int64 id = 1;
+  string order_id = 2;
+  RoadsideAssigneeKind assignee_kind = 3;
+  string provider_name = 4;
+  optional string provider_phone = 5;
+  optional string organization_id = 6;
+  optional int64 performer_user_id = 7;
+  int64 assigned_by_user_id = 8;
+  string note = 9;
+  RoadsideAssignmentState state = 10;
+  google.protobuf.Timestamp assigned_at = 11;
+  google.protobuf.Timestamp revoked_at = 12;
+  string revoke_reason = 13;
+}
+
+message RoadsideOrderEvent {
+  string id = 1;
+  string order_id = 2;
+  optional RoadsideOrderStatus from_status = 3;
+  RoadsideOrderStatus to_status = 4;
+  RoadsideActorKind actor_kind = 5;
+  optional int64 actor_user_id = 6;
+  string reason_code = 7;
+  string comment = 8;
+  google.protobuf.Timestamp created_at = 9;
+}
+
+message RoadsideOrderCard {
+  RoadsideOrder order = 1;
+  repeated RoadsideAssignment assignments = 2;
+  repeated RoadsideOrderEvent timeline = 3;
+}
+
+// =============================================
+// Client RPCs
+// =============================================
+
+message ListRoadsideServicesRequest {
+  int64 city_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message ListRoadsideServicesResponse {
+  repeated RoadsideServiceOffering services = 1;
+  int32 total = 2;
+}
+
+message CalculateRoadsidePriceRequest {
+  string service_code = 1;
+  int64 city_id = 2;
+  string body_type = 3;
+}
+
+message CalculateRoadsidePriceResponse {
+  RoadsidePriceQuote quote = 1;
+}
+
+message CreateRoadsideOrderRequest {
+  optional int64 car_id = 1;
+  string service_code = 2;
+  int64 city_id = 3;
+  string body_type = 4;
+  string pickup_address = 5;
+  double pickup_latitude = 6;
+  double pickup_longitude = 7;
+  // Required when the selected service requires a destination.
+  optional string destination_address = 8;
+  // Destination coordinates must be supplied together or both omitted.
+  optional double destination_latitude = 9;
+  optional double destination_longitude = 10;
+  string idempotency_key = 11;
+  // Required. One of the payment methods supported by cg-payments.
+  string payment_method = 12;
+  string return_url = 13;
+}
+
+message CreateRoadsideOrderResponse {
+  RoadsideOrder order = 1;
+  string payment_url = 2;
+  bool idempotent_replay = 3;
+}
+
+message GetRoadsideOrderRequest {
+  string order_id = 1;
+}
+
+message GetRoadsideOrderResponse {
+  RoadsideOrder order = 1;
+}
+
+message ListMyRoadsideOrdersRequest {
+  RoadsideOrderStatus status = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message ListMyRoadsideOrdersResponse {
+  repeated RoadsideOrder orders = 1;
+  int32 total = 2;
+}
+
+message CancelRoadsideOrderRequest {
+  string order_id = 1;
+  string reason_code = 2;
+}
+
+message CancelRoadsideOrderResponse {
+  RoadsideOrder order = 1;
+}
+
+// =============================================
+// Dispatch RPCs
+// =============================================
+
+message ListRoadsideOrdersRequest {
+  RoadsideOrderStatus status = 1;
+  int64 city_id = 2;
+  string service_code = 3;
+  google.protobuf.Timestamp from = 4;
+  google.protobuf.Timestamp to = 5;
+  int32 page = 6;
+  int32 page_size = 7;
+}
+
+message ListRoadsideOrdersResponse {
+  repeated RoadsideOrder orders = 1;
+  int32 total = 2;
+}
+
+message GetRoadsideOrderCardRequest {
+  string order_id = 1;
+}
+
+message GetRoadsideOrderCardResponse {
+  RoadsideOrderCard card = 1;
+}
+
+message ManualRoadsideAssignee {
+  string provider_name = 1;
+  string provider_phone = 2;
+}
+
+message OrganizationRoadsideAssignee {
+  string organization_id = 1;
+  optional int64 performer_user_id = 2;
+}
+
+message AssignRoadsideOrderRequest {
+  string order_id = 1;
+  // The oneof mirrors the database assignee-shape CHECK constraint: a manual
+  // assignee has a name and phone, while an organization has no manual phone.
+  oneof assignee {
+    ManualRoadsideAssignee manual = 2;
+    OrganizationRoadsideAssignee organization = 3;
+  }
+  string note = 4;
+}
+
+message AssignRoadsideOrderResponse {
+  RoadsideOrder order = 1;
+  RoadsideAssignment assignment = 2;
+}
+
+message RevokeRoadsideAssignmentRequest {
+  string order_id = 1;
+  int64 assignment_id = 2;
+  string reason = 3;
+}
+
+message RevokeRoadsideAssignmentResponse {
+  RoadsideOrder order = 1;
+  RoadsideAssignment assignment = 2;
+}
+
+message AdvanceRoadsideOrderRequest {
+  string order_id = 1;
+  RoadsideOrderStatus target_status = 2;
+  string comment = 3;
+}
+
+message AdvanceRoadsideOrderResponse {
+  RoadsideOrder order = 1;
+}
+
+message CancelRoadsideOrderByOperatorRequest {
+  string order_id = 1;
+  string reason_code = 2;
+  string comment = 3;
+}
+
+message CancelRoadsideOrderByOperatorResponse {
+  RoadsideOrder order = 1;
+}
+
+message ListRoadsideServiceTypesRequest {
+  optional bool is_active = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message ListRoadsideServiceTypesResponse {
+  repeated RoadsideServiceType service_types = 1;
+  int32 total = 2;
+}
+
+message UpsertRoadsideServiceTypeRequest {
+  RoadsideServiceType service_type = 1;
+}
+
+message UpsertRoadsideServiceTypeResponse {
+  RoadsideServiceType service_type = 1;
+}
+
+message ListRoadsidePricesRequest {
+  string service_code = 1;
+  int64 city_id = 2;
+  string body_type = 3;
+  optional bool is_active = 4;
+  int32 page = 5;
+  int32 page_size = 6;
+}
+
+message ListRoadsidePricesResponse {
+  repeated RoadsidePrice prices = 1;
+  int32 total = 2;
+}
+
+message SetRoadsidePriceRequest {
+  string service_code = 1;
+  int64 city_id = 2;
+  string body_type = 3;
+  // Exact price in the currency minor unit.
+  int64 price_minor = 4;
+  string currency = 5;
+}
+
+message SetRoadsidePriceResponse {
+  RoadsidePrice price = 1;
+}
+
+// =============================================
+// Partner RPCs
+// =============================================
+
+message ListAvailableRoadsideOrdersRequest {
+  int64 city_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message ListAvailableRoadsideOrdersResponse {
+  repeated RoadsideOrder orders = 1;
+  int32 total = 2;
+}
+
+message ClaimRoadsideOrderRequest {
+  string order_id = 1;
+  // The service must bind this organization context to verified caller claims.
+  string organization_id = 2;
+  optional int64 performer_user_id = 3;
+  string note = 4;
+}
+
+message ClaimRoadsideOrderResponse {
+  RoadsideOrder order = 1;
+  RoadsideAssignment assignment = 2;
+}
+
+message ListOrganizationRoadsideOrdersRequest {
+  // The service must bind this organization context to verified caller claims.
+  string organization_id = 1;
+  RoadsideOrderStatus status = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message ListOrganizationRoadsideOrdersResponse {
+  repeated RoadsideOrder orders = 1;
+  int32 total = 2;
+}
+
+message AdvancePartnerRoadsideOrderRequest {
+  string order_id = 1;
+  // The service must bind this organization context to verified caller claims.
+  string organization_id = 2;
+  RoadsideOrderStatus target_status = 3;
+  string comment = 4;
+}
+
+message AdvancePartnerRoadsideOrderResponse {
+  RoadsideOrder order = 1;
+}

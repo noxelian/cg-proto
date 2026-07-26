@@ -75,6 +75,37 @@ service BillingService {
 
   // DeleteOrgCard soft-deletes a payout card (status -> "deleted").
   rpc DeleteOrgCard(DeleteOrgCardRequest) returns (DeleteOrgCardResponse);
+
+  // === Escrow delivery and disputes ===
+
+  // DeclareEscrowWork marks the service as delivered. Only an authenticated
+  // member of the recipient organization may call it.
+  rpc DeclareEscrowWork(DeclareEscrowWorkRequest) returns (DeclareEscrowWorkResponse);
+
+  // ConfirmEscrowDelivery confirms delivery and releases the escrowed amount.
+  // Only the authenticated payer may call it; service identities are forbidden.
+  rpc ConfirmEscrowDelivery(ConfirmEscrowDeliveryRequest) returns (ConfirmEscrowDeliveryResponse);
+
+  // AdminConfirmEscrowDelivery confirms delivery on behalf of the payer. Only
+  // the canonical cg-bff admin caller with a human admin identifier may call it.
+  rpc AdminConfirmEscrowDelivery(AdminConfirmEscrowDeliveryRequest) returns (AdminConfirmEscrowDeliveryResponse);
+
+  // OpenEscrowDispute stops auto-release and opens a dispute. Only the
+  // authenticated payer may call it.
+  rpc OpenEscrowDispute(OpenEscrowDisputeRequest) returns (OpenEscrowDisputeResponse);
+
+  // SettleEscrowDispute resolves a dispute with an exact release/return split.
+  // Only the canonical cg-bff admin caller with a human admin identifier may
+  // call it.
+  rpc SettleEscrowDispute(SettleEscrowDisputeRequest) returns (SettleEscrowDisputeResponse);
+
+  // GetEscrowDeal returns one deal. Only its payer, a member of its recipient
+  // organization, or an authorized admin may call it.
+  rpc GetEscrowDeal(GetEscrowDealRequest) returns (GetEscrowDealResponse);
+
+  // ListOrganizationEscrowDeals returns deals for an organization. Only a
+  // verified member of that organization or an authorized admin may call it.
+  rpc ListOrganizationEscrowDeals(ListOrganizationEscrowDealsRequest) returns (ListOrganizationEscrowDealsResponse);
 }
 
 // =============================================
@@ -120,6 +151,18 @@ enum SubjectType {
   SUBJECT_TYPE_UNSPECIFIED = 0;
   SUBJECT_TYPE_USER = 1;
   SUBJECT_TYPE_ORGANIZATION = 2;
+}
+
+// EscrowDealState mirrors the durable escrow_deals state constraint.
+enum EscrowDealState {
+  ESCROW_DEAL_STATE_UNSPECIFIED = 0;
+  ESCROW_DEAL_STATE_HELD = 1;
+  ESCROW_DEAL_STATE_WORK_DECLARED = 2;
+  ESCROW_DEAL_STATE_DISPUTED = 3;
+  ESCROW_DEAL_STATE_PARTIALLY_SETTLED = 4;
+  ESCROW_DEAL_STATE_RELEASED = 5;
+  ESCROW_DEAL_STATE_RETURNED = 6;
+  ESCROW_DEAL_STATE_SETTLED = 7;
 }
 
 // =============================================
@@ -511,4 +554,105 @@ message DeleteOrgCardRequest {
 
 message DeleteOrgCardResponse {
   bool deleted = 1;
+}
+
+// =============================================
+// Escrow delivery and disputes
+// =============================================
+
+// EscrowDeal is the immutable hold snapshot plus its cumulative settlement
+// state. Every amount is expressed in the currency minor unit.
+message EscrowDeal {
+  int64 id = 1;
+  int64 transaction_id = 2;
+  int64 hold_ledger_entry_id = 3;
+  string organization_id = 4;
+  int64 payer_user_id = 5;
+  string entity_type = 6;
+  int64 entity_id = 7;
+  string provider = 8;
+  string currency = 9;
+  int64 amount_gross = 10;
+  int64 commission_basis_points = 11;
+  int64 commission_amount = 12;
+  int64 released_total = 13;
+  int64 returned_total = 14;
+  int64 reserved_returning = 15;
+  int64 remaining_amount = 16;
+  int64 settlement_sequence = 17;
+  EscrowDealState state = 18;
+  google.protobuf.Timestamp auto_release_at = 19;
+  google.protobuf.Timestamp work_declared_at = 20;
+  google.protobuf.Timestamp confirmed_at = 21;
+  string confirmed_via = 22;
+  google.protobuf.Timestamp created_at = 23;
+  google.protobuf.Timestamp updated_at = 24;
+}
+
+message DeclareEscrowWorkRequest {
+  int64 deal_id = 1;
+}
+
+message DeclareEscrowWorkResponse {}
+
+message ConfirmEscrowDeliveryRequest {
+  int64 deal_id = 1;
+}
+
+message ConfirmEscrowDeliveryResponse {}
+
+message AdminConfirmEscrowDeliveryRequest {
+  int64 deal_id = 1;
+  // Required human administrator identifier for the audit log.
+  string admin_id = 2;
+  // Required. An empty or whitespace-only reason is invalid.
+  string reason = 3;
+  // Required communication channel used to verify the payer's confirmation.
+  string channel = 4;
+}
+
+message AdminConfirmEscrowDeliveryResponse {}
+
+message OpenEscrowDisputeRequest {
+  int64 deal_id = 1;
+  // Required. An empty or whitespace-only reason is invalid.
+  string reason = 2;
+}
+
+message OpenEscrowDisputeResponse {}
+
+message SettleEscrowDisputeRequest {
+  int64 deal_id = 1;
+  // Required human administrator identifier for the audit log.
+  string admin_id = 2;
+  // Non-negative amount released to the recipient, in currency minor units.
+  int64 release_amount = 3;
+  // Non-negative amount returned to the payer, in currency minor units.
+  int64 return_amount = 4;
+  // Required dispute resolution recorded in the audit log.
+  string resolution = 5;
+}
+
+message SettleEscrowDisputeResponse {}
+
+message GetEscrowDealRequest {
+  int64 deal_id = 1;
+}
+
+message GetEscrowDealResponse {
+  EscrowDeal deal = 1;
+}
+
+message ListOrganizationEscrowDealsRequest {
+  // The service must bind this organization context to verified caller claims
+  // unless the caller has explicit administrative access.
+  string organization_id = 1;
+  EscrowDealState state = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message ListOrganizationEscrowDealsResponse {
+  repeated EscrowDeal deals = 1;
+  int32 total = 2;
 }

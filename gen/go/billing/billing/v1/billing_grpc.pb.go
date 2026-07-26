@@ -19,25 +19,32 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	BillingService_RecordLedgerEntry_FullMethodName      = "/billing.billing.v1.BillingService/RecordLedgerEntry"
-	BillingService_ListLedgerEntries_FullMethodName      = "/billing.billing.v1.BillingService/ListLedgerEntries"
-	BillingService_GetOrgBalance_FullMethodName          = "/billing.billing.v1.BillingService/GetOrgBalance"
-	BillingService_InitiatePayout_FullMethodName         = "/billing.billing.v1.BillingService/InitiatePayout"
-	BillingService_GetPayoutHistory_FullMethodName       = "/billing.billing.v1.BillingService/GetPayoutHistory"
-	BillingService_ReconcileTransaction_FullMethodName   = "/billing.billing.v1.BillingService/ReconcileTransaction"
-	BillingService_GetOrgStatement_FullMethodName        = "/billing.billing.v1.BillingService/GetOrgStatement"
-	BillingService_GetRevenueStats_FullMethodName        = "/billing.billing.v1.BillingService/GetRevenueStats"
-	BillingService_GetStatement_FullMethodName           = "/billing.billing.v1.BillingService/GetStatement"
-	BillingService_GetUserBalance_FullMethodName         = "/billing.billing.v1.BillingService/GetUserBalance"
-	BillingService_ListSpending_FullMethodName           = "/billing.billing.v1.BillingService/ListSpending"
-	BillingService_GetWalletBalance_FullMethodName       = "/billing.billing.v1.BillingService/GetWalletBalance"
-	BillingService_DebitWallet_FullMethodName            = "/billing.billing.v1.BillingService/DebitWallet"
-	BillingService_CreditWallet_FullMethodName           = "/billing.billing.v1.BillingService/CreditWallet"
-	BillingService_CreditOrgBalance_FullMethodName       = "/billing.billing.v1.BillingService/CreditOrgBalance"
-	BillingService_InitiateOrgCardBinding_FullMethodName = "/billing.billing.v1.BillingService/InitiateOrgCardBinding"
-	BillingService_ConfirmOrgCardBinding_FullMethodName  = "/billing.billing.v1.BillingService/ConfirmOrgCardBinding"
-	BillingService_ListOrgCards_FullMethodName           = "/billing.billing.v1.BillingService/ListOrgCards"
-	BillingService_DeleteOrgCard_FullMethodName          = "/billing.billing.v1.BillingService/DeleteOrgCard"
+	BillingService_RecordLedgerEntry_FullMethodName           = "/billing.billing.v1.BillingService/RecordLedgerEntry"
+	BillingService_ListLedgerEntries_FullMethodName           = "/billing.billing.v1.BillingService/ListLedgerEntries"
+	BillingService_GetOrgBalance_FullMethodName               = "/billing.billing.v1.BillingService/GetOrgBalance"
+	BillingService_InitiatePayout_FullMethodName              = "/billing.billing.v1.BillingService/InitiatePayout"
+	BillingService_GetPayoutHistory_FullMethodName            = "/billing.billing.v1.BillingService/GetPayoutHistory"
+	BillingService_ReconcileTransaction_FullMethodName        = "/billing.billing.v1.BillingService/ReconcileTransaction"
+	BillingService_GetOrgStatement_FullMethodName             = "/billing.billing.v1.BillingService/GetOrgStatement"
+	BillingService_GetRevenueStats_FullMethodName             = "/billing.billing.v1.BillingService/GetRevenueStats"
+	BillingService_GetStatement_FullMethodName                = "/billing.billing.v1.BillingService/GetStatement"
+	BillingService_GetUserBalance_FullMethodName              = "/billing.billing.v1.BillingService/GetUserBalance"
+	BillingService_ListSpending_FullMethodName                = "/billing.billing.v1.BillingService/ListSpending"
+	BillingService_GetWalletBalance_FullMethodName            = "/billing.billing.v1.BillingService/GetWalletBalance"
+	BillingService_DebitWallet_FullMethodName                 = "/billing.billing.v1.BillingService/DebitWallet"
+	BillingService_CreditWallet_FullMethodName                = "/billing.billing.v1.BillingService/CreditWallet"
+	BillingService_CreditOrgBalance_FullMethodName            = "/billing.billing.v1.BillingService/CreditOrgBalance"
+	BillingService_InitiateOrgCardBinding_FullMethodName      = "/billing.billing.v1.BillingService/InitiateOrgCardBinding"
+	BillingService_ConfirmOrgCardBinding_FullMethodName       = "/billing.billing.v1.BillingService/ConfirmOrgCardBinding"
+	BillingService_ListOrgCards_FullMethodName                = "/billing.billing.v1.BillingService/ListOrgCards"
+	BillingService_DeleteOrgCard_FullMethodName               = "/billing.billing.v1.BillingService/DeleteOrgCard"
+	BillingService_DeclareEscrowWork_FullMethodName           = "/billing.billing.v1.BillingService/DeclareEscrowWork"
+	BillingService_ConfirmEscrowDelivery_FullMethodName       = "/billing.billing.v1.BillingService/ConfirmEscrowDelivery"
+	BillingService_AdminConfirmEscrowDelivery_FullMethodName  = "/billing.billing.v1.BillingService/AdminConfirmEscrowDelivery"
+	BillingService_OpenEscrowDispute_FullMethodName           = "/billing.billing.v1.BillingService/OpenEscrowDispute"
+	BillingService_SettleEscrowDispute_FullMethodName         = "/billing.billing.v1.BillingService/SettleEscrowDispute"
+	BillingService_GetEscrowDeal_FullMethodName               = "/billing.billing.v1.BillingService/GetEscrowDeal"
+	BillingService_ListOrganizationEscrowDeals_FullMethodName = "/billing.billing.v1.BillingService/ListOrganizationEscrowDeals"
 )
 
 // BillingServiceClient is the client API for BillingService service.
@@ -90,6 +97,28 @@ type BillingServiceClient interface {
 	ListOrgCards(ctx context.Context, in *ListOrgCardsRequest, opts ...grpc.CallOption) (*ListOrgCardsResponse, error)
 	// DeleteOrgCard soft-deletes a payout card (status -> "deleted").
 	DeleteOrgCard(ctx context.Context, in *DeleteOrgCardRequest, opts ...grpc.CallOption) (*DeleteOrgCardResponse, error)
+	// DeclareEscrowWork marks the service as delivered. Only an authenticated
+	// member of the recipient organization may call it.
+	DeclareEscrowWork(ctx context.Context, in *DeclareEscrowWorkRequest, opts ...grpc.CallOption) (*DeclareEscrowWorkResponse, error)
+	// ConfirmEscrowDelivery confirms delivery and releases the escrowed amount.
+	// Only the authenticated payer may call it; service identities are forbidden.
+	ConfirmEscrowDelivery(ctx context.Context, in *ConfirmEscrowDeliveryRequest, opts ...grpc.CallOption) (*ConfirmEscrowDeliveryResponse, error)
+	// AdminConfirmEscrowDelivery confirms delivery on behalf of the payer. Only
+	// the canonical cg-bff admin caller with a human admin identifier may call it.
+	AdminConfirmEscrowDelivery(ctx context.Context, in *AdminConfirmEscrowDeliveryRequest, opts ...grpc.CallOption) (*AdminConfirmEscrowDeliveryResponse, error)
+	// OpenEscrowDispute stops auto-release and opens a dispute. Only the
+	// authenticated payer may call it.
+	OpenEscrowDispute(ctx context.Context, in *OpenEscrowDisputeRequest, opts ...grpc.CallOption) (*OpenEscrowDisputeResponse, error)
+	// SettleEscrowDispute resolves a dispute with an exact release/return split.
+	// Only the canonical cg-bff admin caller with a human admin identifier may
+	// call it.
+	SettleEscrowDispute(ctx context.Context, in *SettleEscrowDisputeRequest, opts ...grpc.CallOption) (*SettleEscrowDisputeResponse, error)
+	// GetEscrowDeal returns one deal. Only its payer, a member of its recipient
+	// organization, or an authorized admin may call it.
+	GetEscrowDeal(ctx context.Context, in *GetEscrowDealRequest, opts ...grpc.CallOption) (*GetEscrowDealResponse, error)
+	// ListOrganizationEscrowDeals returns deals for an organization. Only a
+	// verified member of that organization or an authorized admin may call it.
+	ListOrganizationEscrowDeals(ctx context.Context, in *ListOrganizationEscrowDealsRequest, opts ...grpc.CallOption) (*ListOrganizationEscrowDealsResponse, error)
 }
 
 type billingServiceClient struct {
@@ -290,6 +319,76 @@ func (c *billingServiceClient) DeleteOrgCard(ctx context.Context, in *DeleteOrgC
 	return out, nil
 }
 
+func (c *billingServiceClient) DeclareEscrowWork(ctx context.Context, in *DeclareEscrowWorkRequest, opts ...grpc.CallOption) (*DeclareEscrowWorkResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeclareEscrowWorkResponse)
+	err := c.cc.Invoke(ctx, BillingService_DeclareEscrowWork_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) ConfirmEscrowDelivery(ctx context.Context, in *ConfirmEscrowDeliveryRequest, opts ...grpc.CallOption) (*ConfirmEscrowDeliveryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConfirmEscrowDeliveryResponse)
+	err := c.cc.Invoke(ctx, BillingService_ConfirmEscrowDelivery_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) AdminConfirmEscrowDelivery(ctx context.Context, in *AdminConfirmEscrowDeliveryRequest, opts ...grpc.CallOption) (*AdminConfirmEscrowDeliveryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminConfirmEscrowDeliveryResponse)
+	err := c.cc.Invoke(ctx, BillingService_AdminConfirmEscrowDelivery_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) OpenEscrowDispute(ctx context.Context, in *OpenEscrowDisputeRequest, opts ...grpc.CallOption) (*OpenEscrowDisputeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OpenEscrowDisputeResponse)
+	err := c.cc.Invoke(ctx, BillingService_OpenEscrowDispute_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) SettleEscrowDispute(ctx context.Context, in *SettleEscrowDisputeRequest, opts ...grpc.CallOption) (*SettleEscrowDisputeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SettleEscrowDisputeResponse)
+	err := c.cc.Invoke(ctx, BillingService_SettleEscrowDispute_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) GetEscrowDeal(ctx context.Context, in *GetEscrowDealRequest, opts ...grpc.CallOption) (*GetEscrowDealResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetEscrowDealResponse)
+	err := c.cc.Invoke(ctx, BillingService_GetEscrowDeal_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) ListOrganizationEscrowDeals(ctx context.Context, in *ListOrganizationEscrowDealsRequest, opts ...grpc.CallOption) (*ListOrganizationEscrowDealsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListOrganizationEscrowDealsResponse)
+	err := c.cc.Invoke(ctx, BillingService_ListOrganizationEscrowDeals_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BillingServiceServer is the server API for BillingService service.
 // All implementations must embed UnimplementedBillingServiceServer
 // for forward compatibility.
@@ -340,6 +439,28 @@ type BillingServiceServer interface {
 	ListOrgCards(context.Context, *ListOrgCardsRequest) (*ListOrgCardsResponse, error)
 	// DeleteOrgCard soft-deletes a payout card (status -> "deleted").
 	DeleteOrgCard(context.Context, *DeleteOrgCardRequest) (*DeleteOrgCardResponse, error)
+	// DeclareEscrowWork marks the service as delivered. Only an authenticated
+	// member of the recipient organization may call it.
+	DeclareEscrowWork(context.Context, *DeclareEscrowWorkRequest) (*DeclareEscrowWorkResponse, error)
+	// ConfirmEscrowDelivery confirms delivery and releases the escrowed amount.
+	// Only the authenticated payer may call it; service identities are forbidden.
+	ConfirmEscrowDelivery(context.Context, *ConfirmEscrowDeliveryRequest) (*ConfirmEscrowDeliveryResponse, error)
+	// AdminConfirmEscrowDelivery confirms delivery on behalf of the payer. Only
+	// the canonical cg-bff admin caller with a human admin identifier may call it.
+	AdminConfirmEscrowDelivery(context.Context, *AdminConfirmEscrowDeliveryRequest) (*AdminConfirmEscrowDeliveryResponse, error)
+	// OpenEscrowDispute stops auto-release and opens a dispute. Only the
+	// authenticated payer may call it.
+	OpenEscrowDispute(context.Context, *OpenEscrowDisputeRequest) (*OpenEscrowDisputeResponse, error)
+	// SettleEscrowDispute resolves a dispute with an exact release/return split.
+	// Only the canonical cg-bff admin caller with a human admin identifier may
+	// call it.
+	SettleEscrowDispute(context.Context, *SettleEscrowDisputeRequest) (*SettleEscrowDisputeResponse, error)
+	// GetEscrowDeal returns one deal. Only its payer, a member of its recipient
+	// organization, or an authorized admin may call it.
+	GetEscrowDeal(context.Context, *GetEscrowDealRequest) (*GetEscrowDealResponse, error)
+	// ListOrganizationEscrowDeals returns deals for an organization. Only a
+	// verified member of that organization or an authorized admin may call it.
+	ListOrganizationEscrowDeals(context.Context, *ListOrganizationEscrowDealsRequest) (*ListOrganizationEscrowDealsResponse, error)
 	mustEmbedUnimplementedBillingServiceServer()
 }
 
@@ -406,6 +527,27 @@ func (UnimplementedBillingServiceServer) ListOrgCards(context.Context, *ListOrgC
 }
 func (UnimplementedBillingServiceServer) DeleteOrgCard(context.Context, *DeleteOrgCardRequest) (*DeleteOrgCardResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteOrgCard not implemented")
+}
+func (UnimplementedBillingServiceServer) DeclareEscrowWork(context.Context, *DeclareEscrowWorkRequest) (*DeclareEscrowWorkResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeclareEscrowWork not implemented")
+}
+func (UnimplementedBillingServiceServer) ConfirmEscrowDelivery(context.Context, *ConfirmEscrowDeliveryRequest) (*ConfirmEscrowDeliveryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ConfirmEscrowDelivery not implemented")
+}
+func (UnimplementedBillingServiceServer) AdminConfirmEscrowDelivery(context.Context, *AdminConfirmEscrowDeliveryRequest) (*AdminConfirmEscrowDeliveryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminConfirmEscrowDelivery not implemented")
+}
+func (UnimplementedBillingServiceServer) OpenEscrowDispute(context.Context, *OpenEscrowDisputeRequest) (*OpenEscrowDisputeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method OpenEscrowDispute not implemented")
+}
+func (UnimplementedBillingServiceServer) SettleEscrowDispute(context.Context, *SettleEscrowDisputeRequest) (*SettleEscrowDisputeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SettleEscrowDispute not implemented")
+}
+func (UnimplementedBillingServiceServer) GetEscrowDeal(context.Context, *GetEscrowDealRequest) (*GetEscrowDealResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetEscrowDeal not implemented")
+}
+func (UnimplementedBillingServiceServer) ListOrganizationEscrowDeals(context.Context, *ListOrganizationEscrowDealsRequest) (*ListOrganizationEscrowDealsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListOrganizationEscrowDeals not implemented")
 }
 func (UnimplementedBillingServiceServer) mustEmbedUnimplementedBillingServiceServer() {}
 func (UnimplementedBillingServiceServer) testEmbeddedByValue()                        {}
@@ -770,6 +912,132 @@ func _BillingService_DeleteOrgCard_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BillingService_DeclareEscrowWork_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeclareEscrowWorkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).DeclareEscrowWork(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_DeclareEscrowWork_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).DeclareEscrowWork(ctx, req.(*DeclareEscrowWorkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_ConfirmEscrowDelivery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfirmEscrowDeliveryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).ConfirmEscrowDelivery(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_ConfirmEscrowDelivery_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).ConfirmEscrowDelivery(ctx, req.(*ConfirmEscrowDeliveryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_AdminConfirmEscrowDelivery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminConfirmEscrowDeliveryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).AdminConfirmEscrowDelivery(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_AdminConfirmEscrowDelivery_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).AdminConfirmEscrowDelivery(ctx, req.(*AdminConfirmEscrowDeliveryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_OpenEscrowDispute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OpenEscrowDisputeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).OpenEscrowDispute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_OpenEscrowDispute_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).OpenEscrowDispute(ctx, req.(*OpenEscrowDisputeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_SettleEscrowDispute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SettleEscrowDisputeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).SettleEscrowDispute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_SettleEscrowDispute_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).SettleEscrowDispute(ctx, req.(*SettleEscrowDisputeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_GetEscrowDeal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEscrowDealRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).GetEscrowDeal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_GetEscrowDeal_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).GetEscrowDeal(ctx, req.(*GetEscrowDealRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_ListOrganizationEscrowDeals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOrganizationEscrowDealsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).ListOrganizationEscrowDeals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_ListOrganizationEscrowDeals_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).ListOrganizationEscrowDeals(ctx, req.(*ListOrganizationEscrowDealsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BillingService_ServiceDesc is the grpc.ServiceDesc for BillingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -852,6 +1120,34 @@ var BillingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteOrgCard",
 			Handler:    _BillingService_DeleteOrgCard_Handler,
+		},
+		{
+			MethodName: "DeclareEscrowWork",
+			Handler:    _BillingService_DeclareEscrowWork_Handler,
+		},
+		{
+			MethodName: "ConfirmEscrowDelivery",
+			Handler:    _BillingService_ConfirmEscrowDelivery_Handler,
+		},
+		{
+			MethodName: "AdminConfirmEscrowDelivery",
+			Handler:    _BillingService_AdminConfirmEscrowDelivery_Handler,
+		},
+		{
+			MethodName: "OpenEscrowDispute",
+			Handler:    _BillingService_OpenEscrowDispute_Handler,
+		},
+		{
+			MethodName: "SettleEscrowDispute",
+			Handler:    _BillingService_SettleEscrowDispute_Handler,
+		},
+		{
+			MethodName: "GetEscrowDeal",
+			Handler:    _BillingService_GetEscrowDeal_Handler,
+		},
+		{
+			MethodName: "ListOrganizationEscrowDeals",
+			Handler:    _BillingService_ListOrganizationEscrowDeals_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
