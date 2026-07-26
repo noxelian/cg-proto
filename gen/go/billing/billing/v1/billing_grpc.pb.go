@@ -45,6 +45,7 @@ const (
 	BillingService_SettleEscrowDispute_FullMethodName         = "/billing.billing.v1.BillingService/SettleEscrowDispute"
 	BillingService_GetEscrowDeal_FullMethodName               = "/billing.billing.v1.BillingService/GetEscrowDeal"
 	BillingService_ListOrganizationEscrowDeals_FullMethodName = "/billing.billing.v1.BillingService/ListOrganizationEscrowDeals"
+	BillingService_BindEscrowPerformer_FullMethodName         = "/billing.billing.v1.BillingService/BindEscrowPerformer"
 )
 
 // BillingServiceClient is the client API for BillingService service.
@@ -119,6 +120,15 @@ type BillingServiceClient interface {
 	// ListOrganizationEscrowDeals returns deals for an organization. Only a
 	// verified member of that organization or an authorized admin may call it.
 	ListOrganizationEscrowDeals(ctx context.Context, in *ListOrganizationEscrowDealsRequest, opts ...grpc.CallOption) (*ListOrganizationEscrowDealsResponse, error)
+	// BindEscrowPerformer names the organization that will receive a deal whose
+	// performer was still unknown when the payer paid.
+	//
+	// Dispatched work (roadside assistance and other fixed-price services) is
+	// paid up front and only then offered to performers, so the hold cannot name
+	// a recipient at capture time. The owner service calls this once the order is
+	// assigned. Binding is single-shot: a deal that already names an organization
+	// rejects a second call, and a deal can never settle while unbound.
+	BindEscrowPerformer(ctx context.Context, in *BindEscrowPerformerRequest, opts ...grpc.CallOption) (*BindEscrowPerformerResponse, error)
 }
 
 type billingServiceClient struct {
@@ -389,6 +399,16 @@ func (c *billingServiceClient) ListOrganizationEscrowDeals(ctx context.Context, 
 	return out, nil
 }
 
+func (c *billingServiceClient) BindEscrowPerformer(ctx context.Context, in *BindEscrowPerformerRequest, opts ...grpc.CallOption) (*BindEscrowPerformerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BindEscrowPerformerResponse)
+	err := c.cc.Invoke(ctx, BillingService_BindEscrowPerformer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BillingServiceServer is the server API for BillingService service.
 // All implementations must embed UnimplementedBillingServiceServer
 // for forward compatibility.
@@ -461,6 +481,15 @@ type BillingServiceServer interface {
 	// ListOrganizationEscrowDeals returns deals for an organization. Only a
 	// verified member of that organization or an authorized admin may call it.
 	ListOrganizationEscrowDeals(context.Context, *ListOrganizationEscrowDealsRequest) (*ListOrganizationEscrowDealsResponse, error)
+	// BindEscrowPerformer names the organization that will receive a deal whose
+	// performer was still unknown when the payer paid.
+	//
+	// Dispatched work (roadside assistance and other fixed-price services) is
+	// paid up front and only then offered to performers, so the hold cannot name
+	// a recipient at capture time. The owner service calls this once the order is
+	// assigned. Binding is single-shot: a deal that already names an organization
+	// rejects a second call, and a deal can never settle while unbound.
+	BindEscrowPerformer(context.Context, *BindEscrowPerformerRequest) (*BindEscrowPerformerResponse, error)
 	mustEmbedUnimplementedBillingServiceServer()
 }
 
@@ -548,6 +577,9 @@ func (UnimplementedBillingServiceServer) GetEscrowDeal(context.Context, *GetEscr
 }
 func (UnimplementedBillingServiceServer) ListOrganizationEscrowDeals(context.Context, *ListOrganizationEscrowDealsRequest) (*ListOrganizationEscrowDealsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListOrganizationEscrowDeals not implemented")
+}
+func (UnimplementedBillingServiceServer) BindEscrowPerformer(context.Context, *BindEscrowPerformerRequest) (*BindEscrowPerformerResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method BindEscrowPerformer not implemented")
 }
 func (UnimplementedBillingServiceServer) mustEmbedUnimplementedBillingServiceServer() {}
 func (UnimplementedBillingServiceServer) testEmbeddedByValue()                        {}
@@ -1038,6 +1070,24 @@ func _BillingService_ListOrganizationEscrowDeals_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BillingService_BindEscrowPerformer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BindEscrowPerformerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).BindEscrowPerformer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_BindEscrowPerformer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).BindEscrowPerformer(ctx, req.(*BindEscrowPerformerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BillingService_ServiceDesc is the grpc.ServiceDesc for BillingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1148,6 +1198,10 @@ var BillingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListOrganizationEscrowDeals",
 			Handler:    _BillingService_ListOrganizationEscrowDeals_Handler,
+		},
+		{
+			MethodName: "BindEscrowPerformer",
+			Handler:    _BillingService_BindEscrowPerformer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

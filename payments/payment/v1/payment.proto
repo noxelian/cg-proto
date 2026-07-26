@@ -202,6 +202,21 @@ message CreateTransactionRequest {
   string idempotency_key = 9;
   int64 commission_amount = 10;
   string return_url = 11;       // optional HTTPS redirect URL after payment (must be HTTPS, no private IPs)
+  // settlement_mode decides where a successful payment lands. Unspecified is
+  // the direct path every existing caller already gets, so adding this field
+  // changes nothing for them.
+  SettlementMode settlement_mode = 12;
+}
+
+// SettlementMode selects how cg-billing posts a captured payment.
+enum SettlementMode {
+  // Direct: credit the recipient organization immediately. This is the
+  // historical behaviour and stays the default for every caller.
+  SETTLEMENT_MODE_UNSPECIFIED = 0;
+  SETTLEMENT_MODE_DIRECT = 1;
+  // Escrow: hold the money on the platform until the payer (or an admin on
+  // their behalf) confirms delivery, then release it minus commission.
+  SETTLEMENT_MODE_ESCROW = 2;
 }
 
 message CreateTransactionResponse {
