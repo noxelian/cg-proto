@@ -283,6 +283,11 @@ message StreamResponseChunk {
     // do not understand this variant simply ignore it (oneof stays wire
     // compatible), degrading to the previous buffered behaviour.
     TextResetPayload text_reset = 8;
+    // additional_text is copy that belongs BELOW the cards the client renders
+    // from tool_result. Carried separately because anything inside text_delta
+    // lands above them: the client draws answer, then cards, then this.
+    // Consumers that ignore the variant simply show no trailing copy.
+    AdditionalTextPayload additional_text = 9;
   }
 }
 
@@ -290,6 +295,20 @@ message StreamResponseChunk {
 // accumulated for the current turn. It carries no data — the signal is the
 // message itself.
 message TextResetPayload {}
+
+// AdditionalTextPayload carries the call-to-action shown after the cards, kept
+// out of the answer text so its position is a contract rather than a request
+// to the model.
+message AdditionalTextPayload {
+  repeated AdditionalTextItem items = 1;
+}
+
+message AdditionalTextItem {
+  // slug identifies the copy so clients can style or suppress it; the
+  // marketplace CTA uses "additional_text".
+  string slug = 1;
+  string text = 2;
+}
 
 // ToolResultPayload carries the JSON envelope returned by a tool handler
 // (e.g. {type:"work_list_proposal", works:[...]}) so the frontend can render

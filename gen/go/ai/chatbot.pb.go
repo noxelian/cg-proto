@@ -1577,6 +1577,7 @@ type StreamResponseChunk struct {
 	//	*StreamResponseChunk_Error
 	//	*StreamResponseChunk_ToolResult
 	//	*StreamResponseChunk_TextReset
+	//	*StreamResponseChunk_AdditionalText
 	Payload       isStreamResponseChunk_Payload `protobuf_oneof:"payload"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1687,6 +1688,15 @@ func (x *StreamResponseChunk) GetTextReset() *TextResetPayload {
 	return nil
 }
 
+func (x *StreamResponseChunk) GetAdditionalText() *AdditionalTextPayload {
+	if x != nil {
+		if x, ok := x.Payload.(*StreamResponseChunk_AdditionalText); ok {
+			return x.AdditionalText
+		}
+	}
+	return nil
+}
+
 type isStreamResponseChunk_Payload interface {
 	isStreamResponseChunk_Payload()
 }
@@ -1721,6 +1731,14 @@ type StreamResponseChunk_TextReset struct {
 	TextReset *TextResetPayload `protobuf:"bytes,8,opt,name=text_reset,json=textReset,proto3,oneof"`
 }
 
+type StreamResponseChunk_AdditionalText struct {
+	// additional_text is copy that belongs BELOW the cards the client renders
+	// from tool_result. Carried separately because anything inside text_delta
+	// lands above them: the client draws answer, then cards, then this.
+	// Consumers that ignore the variant simply show no trailing copy.
+	AdditionalText *AdditionalTextPayload `protobuf:"bytes,9,opt,name=additional_text,json=additionalText,proto3,oneof"`
+}
+
 func (*StreamResponseChunk_TextDelta) isStreamResponseChunk_Payload() {}
 
 func (*StreamResponseChunk_ToolStatus) isStreamResponseChunk_Payload() {}
@@ -1732,6 +1750,8 @@ func (*StreamResponseChunk_Error) isStreamResponseChunk_Payload() {}
 func (*StreamResponseChunk_ToolResult) isStreamResponseChunk_Payload() {}
 
 func (*StreamResponseChunk_TextReset) isStreamResponseChunk_Payload() {}
+
+func (*StreamResponseChunk_AdditionalText) isStreamResponseChunk_Payload() {}
 
 // TextResetPayload instructs the consumer to clear the assistant text
 // accumulated for the current turn. It carries no data — the signal is the
@@ -1772,6 +1792,107 @@ func (*TextResetPayload) Descriptor() ([]byte, []int) {
 	return file_ai_chatbot_proto_rawDescGZIP(), []int{12}
 }
 
+// AdditionalTextPayload carries the call-to-action shown after the cards, kept
+// out of the answer text so its position is a contract rather than a request
+// to the model.
+type AdditionalTextPayload struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*AdditionalTextItem  `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdditionalTextPayload) Reset() {
+	*x = AdditionalTextPayload{}
+	mi := &file_ai_chatbot_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdditionalTextPayload) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdditionalTextPayload) ProtoMessage() {}
+
+func (x *AdditionalTextPayload) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_chatbot_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdditionalTextPayload.ProtoReflect.Descriptor instead.
+func (*AdditionalTextPayload) Descriptor() ([]byte, []int) {
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *AdditionalTextPayload) GetItems() []*AdditionalTextItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+type AdditionalTextItem struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// slug identifies the copy so clients can style or suppress it; the
+	// marketplace CTA uses "additional_text".
+	Slug          string `protobuf:"bytes,1,opt,name=slug,proto3" json:"slug,omitempty"`
+	Text          string `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdditionalTextItem) Reset() {
+	*x = AdditionalTextItem{}
+	mi := &file_ai_chatbot_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdditionalTextItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdditionalTextItem) ProtoMessage() {}
+
+func (x *AdditionalTextItem) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_chatbot_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdditionalTextItem.ProtoReflect.Descriptor instead.
+func (*AdditionalTextItem) Descriptor() ([]byte, []int) {
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *AdditionalTextItem) GetSlug() string {
+	if x != nil {
+		return x.Slug
+	}
+	return ""
+}
+
+func (x *AdditionalTextItem) GetText() string {
+	if x != nil {
+		return x.Text
+	}
+	return ""
+}
+
 // ToolResultPayload carries the JSON envelope returned by a tool handler
 // (e.g. {type:"work_list_proposal", works:[...]}) so the frontend can render
 // it as a UI card without waiting for the final assistant text.
@@ -1785,7 +1906,7 @@ type ToolResultPayload struct {
 
 func (x *ToolResultPayload) Reset() {
 	*x = ToolResultPayload{}
-	mi := &file_ai_chatbot_proto_msgTypes[13]
+	mi := &file_ai_chatbot_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1797,7 +1918,7 @@ func (x *ToolResultPayload) String() string {
 func (*ToolResultPayload) ProtoMessage() {}
 
 func (x *ToolResultPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[13]
+	mi := &file_ai_chatbot_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1810,7 +1931,7 @@ func (x *ToolResultPayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ToolResultPayload.ProtoReflect.Descriptor instead.
 func (*ToolResultPayload) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{13}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ToolResultPayload) GetToolName() string {
@@ -1838,7 +1959,7 @@ type ToolStatus struct {
 
 func (x *ToolStatus) Reset() {
 	*x = ToolStatus{}
-	mi := &file_ai_chatbot_proto_msgTypes[14]
+	mi := &file_ai_chatbot_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1850,7 +1971,7 @@ func (x *ToolStatus) String() string {
 func (*ToolStatus) ProtoMessage() {}
 
 func (x *ToolStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[14]
+	mi := &file_ai_chatbot_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1863,7 +1984,7 @@ func (x *ToolStatus) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ToolStatus.ProtoReflect.Descriptor instead.
 func (*ToolStatus) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{14}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ToolStatus) GetToolName() string {
@@ -1897,7 +2018,7 @@ type ActionsPayload struct {
 
 func (x *ActionsPayload) Reset() {
 	*x = ActionsPayload{}
-	mi := &file_ai_chatbot_proto_msgTypes[15]
+	mi := &file_ai_chatbot_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1909,7 +2030,7 @@ func (x *ActionsPayload) String() string {
 func (*ActionsPayload) ProtoMessage() {}
 
 func (x *ActionsPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[15]
+	mi := &file_ai_chatbot_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1922,7 +2043,7 @@ func (x *ActionsPayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ActionsPayload.ProtoReflect.Descriptor instead.
 func (*ActionsPayload) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{15}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ActionsPayload) GetButtons() []*ActionButton {
@@ -1950,7 +2071,7 @@ type ActionButton struct {
 
 func (x *ActionButton) Reset() {
 	*x = ActionButton{}
-	mi := &file_ai_chatbot_proto_msgTypes[16]
+	mi := &file_ai_chatbot_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1962,7 +2083,7 @@ func (x *ActionButton) String() string {
 func (*ActionButton) ProtoMessage() {}
 
 func (x *ActionButton) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[16]
+	mi := &file_ai_chatbot_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1975,7 +2096,7 @@ func (x *ActionButton) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ActionButton.ProtoReflect.Descriptor instead.
 func (*ActionButton) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{16}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ActionButton) GetLabel() string {
@@ -2009,7 +2130,7 @@ type ErrorPayload struct {
 
 func (x *ErrorPayload) Reset() {
 	*x = ErrorPayload{}
-	mi := &file_ai_chatbot_proto_msgTypes[17]
+	mi := &file_ai_chatbot_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2021,7 +2142,7 @@ func (x *ErrorPayload) String() string {
 func (*ErrorPayload) ProtoMessage() {}
 
 func (x *ErrorPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[17]
+	mi := &file_ai_chatbot_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2034,7 +2155,7 @@ func (x *ErrorPayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ErrorPayload.ProtoReflect.Descriptor instead.
 func (*ErrorPayload) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{17}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ErrorPayload) GetCode() int32 {
@@ -2062,7 +2183,7 @@ type CreateSessionRequest struct {
 
 func (x *CreateSessionRequest) Reset() {
 	*x = CreateSessionRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[18]
+	mi := &file_ai_chatbot_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2074,7 +2195,7 @@ func (x *CreateSessionRequest) String() string {
 func (*CreateSessionRequest) ProtoMessage() {}
 
 func (x *CreateSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[18]
+	mi := &file_ai_chatbot_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2087,7 +2208,7 @@ func (x *CreateSessionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSessionRequest.ProtoReflect.Descriptor instead.
 func (*CreateSessionRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{18}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *CreateSessionRequest) GetUserId() int64 {
@@ -2120,7 +2241,7 @@ type CreateSessionResponse struct {
 
 func (x *CreateSessionResponse) Reset() {
 	*x = CreateSessionResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[19]
+	mi := &file_ai_chatbot_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2132,7 +2253,7 @@ func (x *CreateSessionResponse) String() string {
 func (*CreateSessionResponse) ProtoMessage() {}
 
 func (x *CreateSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[19]
+	mi := &file_ai_chatbot_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2145,7 +2266,7 @@ func (x *CreateSessionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSessionResponse.ProtoReflect.Descriptor instead.
 func (*CreateSessionResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{19}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *CreateSessionResponse) GetSession() *Session {
@@ -2164,7 +2285,7 @@ type GetSessionRequest struct {
 
 func (x *GetSessionRequest) Reset() {
 	*x = GetSessionRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[20]
+	mi := &file_ai_chatbot_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2176,7 +2297,7 @@ func (x *GetSessionRequest) String() string {
 func (*GetSessionRequest) ProtoMessage() {}
 
 func (x *GetSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[20]
+	mi := &file_ai_chatbot_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2189,7 +2310,7 @@ func (x *GetSessionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSessionRequest.ProtoReflect.Descriptor instead.
 func (*GetSessionRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{20}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *GetSessionRequest) GetSessionId() string {
@@ -2208,7 +2329,7 @@ type GetSessionResponse struct {
 
 func (x *GetSessionResponse) Reset() {
 	*x = GetSessionResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[21]
+	mi := &file_ai_chatbot_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2220,7 +2341,7 @@ func (x *GetSessionResponse) String() string {
 func (*GetSessionResponse) ProtoMessage() {}
 
 func (x *GetSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[21]
+	mi := &file_ai_chatbot_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2233,7 +2354,7 @@ func (x *GetSessionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSessionResponse.ProtoReflect.Descriptor instead.
 func (*GetSessionResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{21}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *GetSessionResponse) GetSession() *Session {
@@ -2255,7 +2376,7 @@ type ListSessionsRequest struct {
 
 func (x *ListSessionsRequest) Reset() {
 	*x = ListSessionsRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[22]
+	mi := &file_ai_chatbot_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2267,7 +2388,7 @@ func (x *ListSessionsRequest) String() string {
 func (*ListSessionsRequest) ProtoMessage() {}
 
 func (x *ListSessionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[22]
+	mi := &file_ai_chatbot_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2280,7 +2401,7 @@ func (x *ListSessionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSessionsRequest.ProtoReflect.Descriptor instead.
 func (*ListSessionsRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{22}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *ListSessionsRequest) GetUserId() int64 {
@@ -2321,7 +2442,7 @@ type ListSessionsResponse struct {
 
 func (x *ListSessionsResponse) Reset() {
 	*x = ListSessionsResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[23]
+	mi := &file_ai_chatbot_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2333,7 +2454,7 @@ func (x *ListSessionsResponse) String() string {
 func (*ListSessionsResponse) ProtoMessage() {}
 
 func (x *ListSessionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[23]
+	mi := &file_ai_chatbot_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2346,7 +2467,7 @@ func (x *ListSessionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSessionsResponse.ProtoReflect.Descriptor instead.
 func (*ListSessionsResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{23}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *ListSessionsResponse) GetSessions() []*Session {
@@ -2372,7 +2493,7 @@ type CloseSessionRequest struct {
 
 func (x *CloseSessionRequest) Reset() {
 	*x = CloseSessionRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[24]
+	mi := &file_ai_chatbot_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2384,7 +2505,7 @@ func (x *CloseSessionRequest) String() string {
 func (*CloseSessionRequest) ProtoMessage() {}
 
 func (x *CloseSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[24]
+	mi := &file_ai_chatbot_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2397,7 +2518,7 @@ func (x *CloseSessionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CloseSessionRequest.ProtoReflect.Descriptor instead.
 func (*CloseSessionRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{24}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *CloseSessionRequest) GetSessionId() string {
@@ -2416,7 +2537,7 @@ type CloseSessionResponse struct {
 
 func (x *CloseSessionResponse) Reset() {
 	*x = CloseSessionResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[25]
+	mi := &file_ai_chatbot_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2428,7 +2549,7 @@ func (x *CloseSessionResponse) String() string {
 func (*CloseSessionResponse) ProtoMessage() {}
 
 func (x *CloseSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[25]
+	mi := &file_ai_chatbot_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2441,7 +2562,7 @@ func (x *CloseSessionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CloseSessionResponse.ProtoReflect.Descriptor instead.
 func (*CloseSessionResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{25}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *CloseSessionResponse) GetSession() *Session {
@@ -2462,7 +2583,7 @@ type Attachment struct {
 
 func (x *Attachment) Reset() {
 	*x = Attachment{}
-	mi := &file_ai_chatbot_proto_msgTypes[26]
+	mi := &file_ai_chatbot_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2474,7 +2595,7 @@ func (x *Attachment) String() string {
 func (*Attachment) ProtoMessage() {}
 
 func (x *Attachment) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[26]
+	mi := &file_ai_chatbot_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2487,7 +2608,7 @@ func (x *Attachment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Attachment.ProtoReflect.Descriptor instead.
 func (*Attachment) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{26}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *Attachment) GetType() string {
@@ -2522,7 +2643,7 @@ type SendMessageRequest struct {
 
 func (x *SendMessageRequest) Reset() {
 	*x = SendMessageRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[27]
+	mi := &file_ai_chatbot_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2534,7 +2655,7 @@ func (x *SendMessageRequest) String() string {
 func (*SendMessageRequest) ProtoMessage() {}
 
 func (x *SendMessageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[27]
+	mi := &file_ai_chatbot_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2547,7 +2668,7 @@ func (x *SendMessageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendMessageRequest.ProtoReflect.Descriptor instead.
 func (*SendMessageRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{27}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *SendMessageRequest) GetSessionId() string {
@@ -2580,7 +2701,7 @@ type SendMessageResponse struct {
 
 func (x *SendMessageResponse) Reset() {
 	*x = SendMessageResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[28]
+	mi := &file_ai_chatbot_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2592,7 +2713,7 @@ func (x *SendMessageResponse) String() string {
 func (*SendMessageResponse) ProtoMessage() {}
 
 func (x *SendMessageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[28]
+	mi := &file_ai_chatbot_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2605,7 +2726,7 @@ func (x *SendMessageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendMessageResponse.ProtoReflect.Descriptor instead.
 func (*SendMessageResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{28}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *SendMessageResponse) GetMessage() *Message {
@@ -2625,7 +2746,7 @@ type StreamResponseRequest struct {
 
 func (x *StreamResponseRequest) Reset() {
 	*x = StreamResponseRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[29]
+	mi := &file_ai_chatbot_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2637,7 +2758,7 @@ func (x *StreamResponseRequest) String() string {
 func (*StreamResponseRequest) ProtoMessage() {}
 
 func (x *StreamResponseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[29]
+	mi := &file_ai_chatbot_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2650,7 +2771,7 @@ func (x *StreamResponseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamResponseRequest.ProtoReflect.Descriptor instead.
 func (*StreamResponseRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{29}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *StreamResponseRequest) GetSessionId() string {
@@ -2678,7 +2799,7 @@ type ListMessagesRequest struct {
 
 func (x *ListMessagesRequest) Reset() {
 	*x = ListMessagesRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[30]
+	mi := &file_ai_chatbot_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2690,7 +2811,7 @@ func (x *ListMessagesRequest) String() string {
 func (*ListMessagesRequest) ProtoMessage() {}
 
 func (x *ListMessagesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[30]
+	mi := &file_ai_chatbot_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2703,7 +2824,7 @@ func (x *ListMessagesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMessagesRequest.ProtoReflect.Descriptor instead.
 func (*ListMessagesRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{30}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ListMessagesRequest) GetConversationId() string {
@@ -2737,7 +2858,7 @@ type ListMessagesResponse struct {
 
 func (x *ListMessagesResponse) Reset() {
 	*x = ListMessagesResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[31]
+	mi := &file_ai_chatbot_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2749,7 +2870,7 @@ func (x *ListMessagesResponse) String() string {
 func (*ListMessagesResponse) ProtoMessage() {}
 
 func (x *ListMessagesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[31]
+	mi := &file_ai_chatbot_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2762,7 +2883,7 @@ func (x *ListMessagesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMessagesResponse.ProtoReflect.Descriptor instead.
 func (*ListMessagesResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{31}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *ListMessagesResponse) GetMessages() []*Message {
@@ -2789,7 +2910,7 @@ type TakeOverRequest struct {
 
 func (x *TakeOverRequest) Reset() {
 	*x = TakeOverRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[32]
+	mi := &file_ai_chatbot_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2801,7 +2922,7 @@ func (x *TakeOverRequest) String() string {
 func (*TakeOverRequest) ProtoMessage() {}
 
 func (x *TakeOverRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[32]
+	mi := &file_ai_chatbot_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2814,7 +2935,7 @@ func (x *TakeOverRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TakeOverRequest.ProtoReflect.Descriptor instead.
 func (*TakeOverRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{32}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *TakeOverRequest) GetAdminUserId() int64 {
@@ -2840,7 +2961,7 @@ type TakeOverResponse struct {
 
 func (x *TakeOverResponse) Reset() {
 	*x = TakeOverResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[33]
+	mi := &file_ai_chatbot_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2852,7 +2973,7 @@ func (x *TakeOverResponse) String() string {
 func (*TakeOverResponse) ProtoMessage() {}
 
 func (x *TakeOverResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[33]
+	mi := &file_ai_chatbot_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2865,7 +2986,7 @@ func (x *TakeOverResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TakeOverResponse.ProtoReflect.Descriptor instead.
 func (*TakeOverResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{33}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *TakeOverResponse) GetSession() *Session {
@@ -2884,7 +3005,7 @@ type ReturnToAIRequest struct {
 
 func (x *ReturnToAIRequest) Reset() {
 	*x = ReturnToAIRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[34]
+	mi := &file_ai_chatbot_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2896,7 +3017,7 @@ func (x *ReturnToAIRequest) String() string {
 func (*ReturnToAIRequest) ProtoMessage() {}
 
 func (x *ReturnToAIRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[34]
+	mi := &file_ai_chatbot_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2909,7 +3030,7 @@ func (x *ReturnToAIRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReturnToAIRequest.ProtoReflect.Descriptor instead.
 func (*ReturnToAIRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{34}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *ReturnToAIRequest) GetSessionId() string {
@@ -2928,7 +3049,7 @@ type ReturnToAIResponse struct {
 
 func (x *ReturnToAIResponse) Reset() {
 	*x = ReturnToAIResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[35]
+	mi := &file_ai_chatbot_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2940,7 +3061,7 @@ func (x *ReturnToAIResponse) String() string {
 func (*ReturnToAIResponse) ProtoMessage() {}
 
 func (x *ReturnToAIResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[35]
+	mi := &file_ai_chatbot_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2953,7 +3074,7 @@ func (x *ReturnToAIResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReturnToAIResponse.ProtoReflect.Descriptor instead.
 func (*ReturnToAIResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{35}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *ReturnToAIResponse) GetSession() *Session {
@@ -2974,7 +3095,7 @@ type SendAdminMessageRequest struct {
 
 func (x *SendAdminMessageRequest) Reset() {
 	*x = SendAdminMessageRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[36]
+	mi := &file_ai_chatbot_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2986,7 +3107,7 @@ func (x *SendAdminMessageRequest) String() string {
 func (*SendAdminMessageRequest) ProtoMessage() {}
 
 func (x *SendAdminMessageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[36]
+	mi := &file_ai_chatbot_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2999,7 +3120,7 @@ func (x *SendAdminMessageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendAdminMessageRequest.ProtoReflect.Descriptor instead.
 func (*SendAdminMessageRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{36}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *SendAdminMessageRequest) GetAdminUserId() int64 {
@@ -3032,7 +3153,7 @@ type SendAdminMessageResponse struct {
 
 func (x *SendAdminMessageResponse) Reset() {
 	*x = SendAdminMessageResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[37]
+	mi := &file_ai_chatbot_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3044,7 +3165,7 @@ func (x *SendAdminMessageResponse) String() string {
 func (*SendAdminMessageResponse) ProtoMessage() {}
 
 func (x *SendAdminMessageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[37]
+	mi := &file_ai_chatbot_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3057,7 +3178,7 @@ func (x *SendAdminMessageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendAdminMessageResponse.ProtoReflect.Descriptor instead.
 func (*SendAdminMessageResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{37}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *SendAdminMessageResponse) GetMessage() *Message {
@@ -3083,7 +3204,7 @@ type ListAllSessionsRequest struct {
 
 func (x *ListAllSessionsRequest) Reset() {
 	*x = ListAllSessionsRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[38]
+	mi := &file_ai_chatbot_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3095,7 +3216,7 @@ func (x *ListAllSessionsRequest) String() string {
 func (*ListAllSessionsRequest) ProtoMessage() {}
 
 func (x *ListAllSessionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[38]
+	mi := &file_ai_chatbot_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3108,7 +3229,7 @@ func (x *ListAllSessionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAllSessionsRequest.ProtoReflect.Descriptor instead.
 func (*ListAllSessionsRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{38}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ListAllSessionsRequest) GetStatus() string {
@@ -3177,7 +3298,7 @@ type ListAllSessionsResponse struct {
 
 func (x *ListAllSessionsResponse) Reset() {
 	*x = ListAllSessionsResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[39]
+	mi := &file_ai_chatbot_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3189,7 +3310,7 @@ func (x *ListAllSessionsResponse) String() string {
 func (*ListAllSessionsResponse) ProtoMessage() {}
 
 func (x *ListAllSessionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[39]
+	mi := &file_ai_chatbot_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3202,7 +3323,7 @@ func (x *ListAllSessionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAllSessionsResponse.ProtoReflect.Descriptor instead.
 func (*ListAllSessionsResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{39}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *ListAllSessionsResponse) GetSessions() []*Session {
@@ -3233,7 +3354,7 @@ type ListConversationsRequest struct {
 
 func (x *ListConversationsRequest) Reset() {
 	*x = ListConversationsRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[40]
+	mi := &file_ai_chatbot_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3245,7 +3366,7 @@ func (x *ListConversationsRequest) String() string {
 func (*ListConversationsRequest) ProtoMessage() {}
 
 func (x *ListConversationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[40]
+	mi := &file_ai_chatbot_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3258,7 +3379,7 @@ func (x *ListConversationsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListConversationsRequest.ProtoReflect.Descriptor instead.
 func (*ListConversationsRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{40}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *ListConversationsRequest) GetPlatform() string {
@@ -3313,7 +3434,7 @@ type ListConversationsResponse struct {
 
 func (x *ListConversationsResponse) Reset() {
 	*x = ListConversationsResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[41]
+	mi := &file_ai_chatbot_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3325,7 +3446,7 @@ func (x *ListConversationsResponse) String() string {
 func (*ListConversationsResponse) ProtoMessage() {}
 
 func (x *ListConversationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[41]
+	mi := &file_ai_chatbot_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3338,7 +3459,7 @@ func (x *ListConversationsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListConversationsResponse.ProtoReflect.Descriptor instead.
 func (*ListConversationsResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{41}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *ListConversationsResponse) GetConversations() []*Conversation {
@@ -3364,7 +3485,7 @@ type GetConversationRequest struct {
 
 func (x *GetConversationRequest) Reset() {
 	*x = GetConversationRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[42]
+	mi := &file_ai_chatbot_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3376,7 +3497,7 @@ func (x *GetConversationRequest) String() string {
 func (*GetConversationRequest) ProtoMessage() {}
 
 func (x *GetConversationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[42]
+	mi := &file_ai_chatbot_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3389,7 +3510,7 @@ func (x *GetConversationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetConversationRequest.ProtoReflect.Descriptor instead.
 func (*GetConversationRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{42}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *GetConversationRequest) GetConversationId() string {
@@ -3409,7 +3530,7 @@ type GetConversationResponse struct {
 
 func (x *GetConversationResponse) Reset() {
 	*x = GetConversationResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[43]
+	mi := &file_ai_chatbot_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3421,7 +3542,7 @@ func (x *GetConversationResponse) String() string {
 func (*GetConversationResponse) ProtoMessage() {}
 
 func (x *GetConversationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[43]
+	mi := &file_ai_chatbot_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3434,7 +3555,7 @@ func (x *GetConversationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetConversationResponse.ProtoReflect.Descriptor instead.
 func (*GetConversationResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{43}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *GetConversationResponse) GetConversation() *Conversation {
@@ -3464,7 +3585,7 @@ type CreatePromptSectionRequest struct {
 
 func (x *CreatePromptSectionRequest) Reset() {
 	*x = CreatePromptSectionRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[44]
+	mi := &file_ai_chatbot_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3476,7 +3597,7 @@ func (x *CreatePromptSectionRequest) String() string {
 func (*CreatePromptSectionRequest) ProtoMessage() {}
 
 func (x *CreatePromptSectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[44]
+	mi := &file_ai_chatbot_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3489,7 +3610,7 @@ func (x *CreatePromptSectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreatePromptSectionRequest.ProtoReflect.Descriptor instead.
 func (*CreatePromptSectionRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{44}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *CreatePromptSectionRequest) GetRole() string {
@@ -3536,7 +3657,7 @@ type CreatePromptSectionResponse struct {
 
 func (x *CreatePromptSectionResponse) Reset() {
 	*x = CreatePromptSectionResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[45]
+	mi := &file_ai_chatbot_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3548,7 +3669,7 @@ func (x *CreatePromptSectionResponse) String() string {
 func (*CreatePromptSectionResponse) ProtoMessage() {}
 
 func (x *CreatePromptSectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[45]
+	mi := &file_ai_chatbot_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3561,7 +3682,7 @@ func (x *CreatePromptSectionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreatePromptSectionResponse.ProtoReflect.Descriptor instead.
 func (*CreatePromptSectionResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{45}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *CreatePromptSectionResponse) GetPromptSection() *PromptSection {
@@ -3584,7 +3705,7 @@ type ListPromptSectionsRequest struct {
 
 func (x *ListPromptSectionsRequest) Reset() {
 	*x = ListPromptSectionsRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[46]
+	mi := &file_ai_chatbot_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3596,7 +3717,7 @@ func (x *ListPromptSectionsRequest) String() string {
 func (*ListPromptSectionsRequest) ProtoMessage() {}
 
 func (x *ListPromptSectionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[46]
+	mi := &file_ai_chatbot_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3609,7 +3730,7 @@ func (x *ListPromptSectionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPromptSectionsRequest.ProtoReflect.Descriptor instead.
 func (*ListPromptSectionsRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{46}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *ListPromptSectionsRequest) GetRole() string {
@@ -3657,7 +3778,7 @@ type ListPromptSectionsResponse struct {
 
 func (x *ListPromptSectionsResponse) Reset() {
 	*x = ListPromptSectionsResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[47]
+	mi := &file_ai_chatbot_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3669,7 +3790,7 @@ func (x *ListPromptSectionsResponse) String() string {
 func (*ListPromptSectionsResponse) ProtoMessage() {}
 
 func (x *ListPromptSectionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[47]
+	mi := &file_ai_chatbot_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3682,7 +3803,7 @@ func (x *ListPromptSectionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPromptSectionsResponse.ProtoReflect.Descriptor instead.
 func (*ListPromptSectionsResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{47}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *ListPromptSectionsResponse) GetPromptSections() []*PromptSection {
@@ -3709,7 +3830,7 @@ type ActivatePromptSectionRequest struct {
 
 func (x *ActivatePromptSectionRequest) Reset() {
 	*x = ActivatePromptSectionRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[48]
+	mi := &file_ai_chatbot_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3721,7 +3842,7 @@ func (x *ActivatePromptSectionRequest) String() string {
 func (*ActivatePromptSectionRequest) ProtoMessage() {}
 
 func (x *ActivatePromptSectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[48]
+	mi := &file_ai_chatbot_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3734,7 +3855,7 @@ func (x *ActivatePromptSectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ActivatePromptSectionRequest.ProtoReflect.Descriptor instead.
 func (*ActivatePromptSectionRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{48}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *ActivatePromptSectionRequest) GetPromptSectionId() string {
@@ -3760,7 +3881,7 @@ type ActivatePromptSectionResponse struct {
 
 func (x *ActivatePromptSectionResponse) Reset() {
 	*x = ActivatePromptSectionResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[49]
+	mi := &file_ai_chatbot_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3772,7 +3893,7 @@ func (x *ActivatePromptSectionResponse) String() string {
 func (*ActivatePromptSectionResponse) ProtoMessage() {}
 
 func (x *ActivatePromptSectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[49]
+	mi := &file_ai_chatbot_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3785,7 +3906,7 @@ func (x *ActivatePromptSectionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ActivatePromptSectionResponse.ProtoReflect.Descriptor instead.
 func (*ActivatePromptSectionResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{49}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *ActivatePromptSectionResponse) GetPromptSection() *PromptSection {
@@ -3807,7 +3928,7 @@ type CreateRoleRequest struct {
 
 func (x *CreateRoleRequest) Reset() {
 	*x = CreateRoleRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[50]
+	mi := &file_ai_chatbot_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3819,7 +3940,7 @@ func (x *CreateRoleRequest) String() string {
 func (*CreateRoleRequest) ProtoMessage() {}
 
 func (x *CreateRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[50]
+	mi := &file_ai_chatbot_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3832,7 +3953,7 @@ func (x *CreateRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRoleRequest.ProtoReflect.Descriptor instead.
 func (*CreateRoleRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{50}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *CreateRoleRequest) GetRole() string {
@@ -3872,7 +3993,7 @@ type CreateRoleResponse struct {
 
 func (x *CreateRoleResponse) Reset() {
 	*x = CreateRoleResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[51]
+	mi := &file_ai_chatbot_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3884,7 +4005,7 @@ func (x *CreateRoleResponse) String() string {
 func (*CreateRoleResponse) ProtoMessage() {}
 
 func (x *CreateRoleResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[51]
+	mi := &file_ai_chatbot_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3897,7 +4018,7 @@ func (x *CreateRoleResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRoleResponse.ProtoReflect.Descriptor instead.
 func (*CreateRoleResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{51}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *CreateRoleResponse) GetPromptRole() *PromptRole {
@@ -3915,7 +4036,7 @@ type ListRolesRequest struct {
 
 func (x *ListRolesRequest) Reset() {
 	*x = ListRolesRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[52]
+	mi := &file_ai_chatbot_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3927,7 +4048,7 @@ func (x *ListRolesRequest) String() string {
 func (*ListRolesRequest) ProtoMessage() {}
 
 func (x *ListRolesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[52]
+	mi := &file_ai_chatbot_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3940,7 +4061,7 @@ func (x *ListRolesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRolesRequest.ProtoReflect.Descriptor instead.
 func (*ListRolesRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{52}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{54}
 }
 
 type ListRolesResponse struct {
@@ -3952,7 +4073,7 @@ type ListRolesResponse struct {
 
 func (x *ListRolesResponse) Reset() {
 	*x = ListRolesResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[53]
+	mi := &file_ai_chatbot_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3964,7 +4085,7 @@ func (x *ListRolesResponse) String() string {
 func (*ListRolesResponse) ProtoMessage() {}
 
 func (x *ListRolesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[53]
+	mi := &file_ai_chatbot_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3977,7 +4098,7 @@ func (x *ListRolesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRolesResponse.ProtoReflect.Descriptor instead.
 func (*ListRolesResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{53}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *ListRolesResponse) GetPromptRoles() []*PromptRole {
@@ -3997,7 +4118,7 @@ type UpdateRoleToolsRequest struct {
 
 func (x *UpdateRoleToolsRequest) Reset() {
 	*x = UpdateRoleToolsRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[54]
+	mi := &file_ai_chatbot_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4009,7 +4130,7 @@ func (x *UpdateRoleToolsRequest) String() string {
 func (*UpdateRoleToolsRequest) ProtoMessage() {}
 
 func (x *UpdateRoleToolsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[54]
+	mi := &file_ai_chatbot_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4022,7 +4143,7 @@ func (x *UpdateRoleToolsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateRoleToolsRequest.ProtoReflect.Descriptor instead.
 func (*UpdateRoleToolsRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{54}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *UpdateRoleToolsRequest) GetRole() string {
@@ -4048,7 +4169,7 @@ type UpdateRoleToolsResponse struct {
 
 func (x *UpdateRoleToolsResponse) Reset() {
 	*x = UpdateRoleToolsResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[55]
+	mi := &file_ai_chatbot_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4060,7 +4181,7 @@ func (x *UpdateRoleToolsResponse) String() string {
 func (*UpdateRoleToolsResponse) ProtoMessage() {}
 
 func (x *UpdateRoleToolsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[55]
+	mi := &file_ai_chatbot_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4073,7 +4194,7 @@ func (x *UpdateRoleToolsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateRoleToolsResponse.ProtoReflect.Descriptor instead.
 func (*UpdateRoleToolsResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{55}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *UpdateRoleToolsResponse) GetPromptRole() *PromptRole {
@@ -4097,7 +4218,7 @@ type CreateExperimentRequest struct {
 
 func (x *CreateExperimentRequest) Reset() {
 	*x = CreateExperimentRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[56]
+	mi := &file_ai_chatbot_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4109,7 +4230,7 @@ func (x *CreateExperimentRequest) String() string {
 func (*CreateExperimentRequest) ProtoMessage() {}
 
 func (x *CreateExperimentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[56]
+	mi := &file_ai_chatbot_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4122,7 +4243,7 @@ func (x *CreateExperimentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateExperimentRequest.ProtoReflect.Descriptor instead.
 func (*CreateExperimentRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{56}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *CreateExperimentRequest) GetRole() string {
@@ -4176,7 +4297,7 @@ type CreateExperimentResponse struct {
 
 func (x *CreateExperimentResponse) Reset() {
 	*x = CreateExperimentResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[57]
+	mi := &file_ai_chatbot_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4188,7 +4309,7 @@ func (x *CreateExperimentResponse) String() string {
 func (*CreateExperimentResponse) ProtoMessage() {}
 
 func (x *CreateExperimentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[57]
+	mi := &file_ai_chatbot_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4201,7 +4322,7 @@ func (x *CreateExperimentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateExperimentResponse.ProtoReflect.Descriptor instead.
 func (*CreateExperimentResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{57}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *CreateExperimentResponse) GetExperiment() *Experiment {
@@ -4221,7 +4342,7 @@ type GetActiveExperimentRequest struct {
 
 func (x *GetActiveExperimentRequest) Reset() {
 	*x = GetActiveExperimentRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[58]
+	mi := &file_ai_chatbot_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4233,7 +4354,7 @@ func (x *GetActiveExperimentRequest) String() string {
 func (*GetActiveExperimentRequest) ProtoMessage() {}
 
 func (x *GetActiveExperimentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[58]
+	mi := &file_ai_chatbot_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4246,7 +4367,7 @@ func (x *GetActiveExperimentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActiveExperimentRequest.ProtoReflect.Descriptor instead.
 func (*GetActiveExperimentRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{58}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *GetActiveExperimentRequest) GetRole() string {
@@ -4272,7 +4393,7 @@ type GetActiveExperimentResponse struct {
 
 func (x *GetActiveExperimentResponse) Reset() {
 	*x = GetActiveExperimentResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[59]
+	mi := &file_ai_chatbot_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4284,7 +4405,7 @@ func (x *GetActiveExperimentResponse) String() string {
 func (*GetActiveExperimentResponse) ProtoMessage() {}
 
 func (x *GetActiveExperimentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[59]
+	mi := &file_ai_chatbot_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4297,7 +4418,7 @@ func (x *GetActiveExperimentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActiveExperimentResponse.ProtoReflect.Descriptor instead.
 func (*GetActiveExperimentResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{59}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *GetActiveExperimentResponse) GetExperiment() *Experiment {
@@ -4318,7 +4439,7 @@ type CompleteExperimentRequest struct {
 
 func (x *CompleteExperimentRequest) Reset() {
 	*x = CompleteExperimentRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[60]
+	mi := &file_ai_chatbot_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4330,7 +4451,7 @@ func (x *CompleteExperimentRequest) String() string {
 func (*CompleteExperimentRequest) ProtoMessage() {}
 
 func (x *CompleteExperimentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[60]
+	mi := &file_ai_chatbot_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4343,7 +4464,7 @@ func (x *CompleteExperimentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CompleteExperimentRequest.ProtoReflect.Descriptor instead.
 func (*CompleteExperimentRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{60}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *CompleteExperimentRequest) GetExperimentId() string {
@@ -4376,7 +4497,7 @@ type CompleteExperimentResponse struct {
 
 func (x *CompleteExperimentResponse) Reset() {
 	*x = CompleteExperimentResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[61]
+	mi := &file_ai_chatbot_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4388,7 +4509,7 @@ func (x *CompleteExperimentResponse) String() string {
 func (*CompleteExperimentResponse) ProtoMessage() {}
 
 func (x *CompleteExperimentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[61]
+	mi := &file_ai_chatbot_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4401,7 +4522,7 @@ func (x *CompleteExperimentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CompleteExperimentResponse.ProtoReflect.Descriptor instead.
 func (*CompleteExperimentResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{61}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *CompleteExperimentResponse) GetExperiment() *Experiment {
@@ -4423,7 +4544,7 @@ type TestPromptDraftRequest struct {
 
 func (x *TestPromptDraftRequest) Reset() {
 	*x = TestPromptDraftRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[62]
+	mi := &file_ai_chatbot_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4435,7 +4556,7 @@ func (x *TestPromptDraftRequest) String() string {
 func (*TestPromptDraftRequest) ProtoMessage() {}
 
 func (x *TestPromptDraftRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[62]
+	mi := &file_ai_chatbot_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4448,7 +4569,7 @@ func (x *TestPromptDraftRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TestPromptDraftRequest.ProtoReflect.Descriptor instead.
 func (*TestPromptDraftRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{62}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *TestPromptDraftRequest) GetRole() string {
@@ -4490,7 +4611,7 @@ type TestPromptDraftResponse struct {
 
 func (x *TestPromptDraftResponse) Reset() {
 	*x = TestPromptDraftResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[63]
+	mi := &file_ai_chatbot_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4502,7 +4623,7 @@ func (x *TestPromptDraftResponse) String() string {
 func (*TestPromptDraftResponse) ProtoMessage() {}
 
 func (x *TestPromptDraftResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[63]
+	mi := &file_ai_chatbot_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4515,7 +4636,7 @@ func (x *TestPromptDraftResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TestPromptDraftResponse.ProtoReflect.Descriptor instead.
 func (*TestPromptDraftResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{63}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *TestPromptDraftResponse) GetAiResponse() string {
@@ -4548,7 +4669,7 @@ type GetUserMemoryRequest struct {
 
 func (x *GetUserMemoryRequest) Reset() {
 	*x = GetUserMemoryRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[64]
+	mi := &file_ai_chatbot_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4560,7 +4681,7 @@ func (x *GetUserMemoryRequest) String() string {
 func (*GetUserMemoryRequest) ProtoMessage() {}
 
 func (x *GetUserMemoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[64]
+	mi := &file_ai_chatbot_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4573,7 +4694,7 @@ func (x *GetUserMemoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserMemoryRequest.ProtoReflect.Descriptor instead.
 func (*GetUserMemoryRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{64}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *GetUserMemoryRequest) GetUserId() int64 {
@@ -4592,7 +4713,7 @@ type GetUserMemoryResponse struct {
 
 func (x *GetUserMemoryResponse) Reset() {
 	*x = GetUserMemoryResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[65]
+	mi := &file_ai_chatbot_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4604,7 +4725,7 @@ func (x *GetUserMemoryResponse) String() string {
 func (*GetUserMemoryResponse) ProtoMessage() {}
 
 func (x *GetUserMemoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[65]
+	mi := &file_ai_chatbot_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4617,7 +4738,7 @@ func (x *GetUserMemoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserMemoryResponse.ProtoReflect.Descriptor instead.
 func (*GetUserMemoryResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{65}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *GetUserMemoryResponse) GetMemory() *UserMemory {
@@ -4637,7 +4758,7 @@ type UpdateUserMemoryRequest struct {
 
 func (x *UpdateUserMemoryRequest) Reset() {
 	*x = UpdateUserMemoryRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[66]
+	mi := &file_ai_chatbot_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4649,7 +4770,7 @@ func (x *UpdateUserMemoryRequest) String() string {
 func (*UpdateUserMemoryRequest) ProtoMessage() {}
 
 func (x *UpdateUserMemoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[66]
+	mi := &file_ai_chatbot_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4662,7 +4783,7 @@ func (x *UpdateUserMemoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserMemoryRequest.ProtoReflect.Descriptor instead.
 func (*UpdateUserMemoryRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{66}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *UpdateUserMemoryRequest) GetUserId() int64 {
@@ -4688,7 +4809,7 @@ type UpdateUserMemoryResponse struct {
 
 func (x *UpdateUserMemoryResponse) Reset() {
 	*x = UpdateUserMemoryResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[67]
+	mi := &file_ai_chatbot_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4700,7 +4821,7 @@ func (x *UpdateUserMemoryResponse) String() string {
 func (*UpdateUserMemoryResponse) ProtoMessage() {}
 
 func (x *UpdateUserMemoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[67]
+	mi := &file_ai_chatbot_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4713,7 +4834,7 @@ func (x *UpdateUserMemoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserMemoryResponse.ProtoReflect.Descriptor instead.
 func (*UpdateUserMemoryResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{67}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *UpdateUserMemoryResponse) GetMemory() *UserMemory {
@@ -4732,7 +4853,7 @@ type GetContactRequest struct {
 
 func (x *GetContactRequest) Reset() {
 	*x = GetContactRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[68]
+	mi := &file_ai_chatbot_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4744,7 +4865,7 @@ func (x *GetContactRequest) String() string {
 func (*GetContactRequest) ProtoMessage() {}
 
 func (x *GetContactRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[68]
+	mi := &file_ai_chatbot_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4757,7 +4878,7 @@ func (x *GetContactRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetContactRequest.ProtoReflect.Descriptor instead.
 func (*GetContactRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{68}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *GetContactRequest) GetContactId() string {
@@ -4776,7 +4897,7 @@ type GetContactResponse struct {
 
 func (x *GetContactResponse) Reset() {
 	*x = GetContactResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[69]
+	mi := &file_ai_chatbot_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4788,7 +4909,7 @@ func (x *GetContactResponse) String() string {
 func (*GetContactResponse) ProtoMessage() {}
 
 func (x *GetContactResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[69]
+	mi := &file_ai_chatbot_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4801,7 +4922,7 @@ func (x *GetContactResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetContactResponse.ProtoReflect.Descriptor instead.
 func (*GetContactResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{69}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *GetContactResponse) GetContact() *Contact {
@@ -4823,7 +4944,7 @@ type ListContactsRequest struct {
 
 func (x *ListContactsRequest) Reset() {
 	*x = ListContactsRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[70]
+	mi := &file_ai_chatbot_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4835,7 +4956,7 @@ func (x *ListContactsRequest) String() string {
 func (*ListContactsRequest) ProtoMessage() {}
 
 func (x *ListContactsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[70]
+	mi := &file_ai_chatbot_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4848,7 +4969,7 @@ func (x *ListContactsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListContactsRequest.ProtoReflect.Descriptor instead.
 func (*ListContactsRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{70}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *ListContactsRequest) GetSegment() ContactSegment {
@@ -4889,7 +5010,7 @@ type ListContactsResponse struct {
 
 func (x *ListContactsResponse) Reset() {
 	*x = ListContactsResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[71]
+	mi := &file_ai_chatbot_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4901,7 +5022,7 @@ func (x *ListContactsResponse) String() string {
 func (*ListContactsResponse) ProtoMessage() {}
 
 func (x *ListContactsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[71]
+	mi := &file_ai_chatbot_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4914,7 +5035,7 @@ func (x *ListContactsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListContactsResponse.ProtoReflect.Descriptor instead.
 func (*ListContactsResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{71}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *ListContactsResponse) GetContacts() []*Contact {
@@ -4941,7 +5062,7 @@ type UpdateContactSegmentRequest struct {
 
 func (x *UpdateContactSegmentRequest) Reset() {
 	*x = UpdateContactSegmentRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[72]
+	mi := &file_ai_chatbot_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4953,7 +5074,7 @@ func (x *UpdateContactSegmentRequest) String() string {
 func (*UpdateContactSegmentRequest) ProtoMessage() {}
 
 func (x *UpdateContactSegmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[72]
+	mi := &file_ai_chatbot_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4966,7 +5087,7 @@ func (x *UpdateContactSegmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateContactSegmentRequest.ProtoReflect.Descriptor instead.
 func (*UpdateContactSegmentRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{72}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *UpdateContactSegmentRequest) GetContactId() string {
@@ -4992,7 +5113,7 @@ type UpdateContactSegmentResponse struct {
 
 func (x *UpdateContactSegmentResponse) Reset() {
 	*x = UpdateContactSegmentResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[73]
+	mi := &file_ai_chatbot_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5004,7 +5125,7 @@ func (x *UpdateContactSegmentResponse) String() string {
 func (*UpdateContactSegmentResponse) ProtoMessage() {}
 
 func (x *UpdateContactSegmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[73]
+	mi := &file_ai_chatbot_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5017,7 +5138,7 @@ func (x *UpdateContactSegmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateContactSegmentResponse.ProtoReflect.Descriptor instead.
 func (*UpdateContactSegmentResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{73}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *UpdateContactSegmentResponse) GetContact() *Contact {
@@ -5039,7 +5160,7 @@ type ListFollowUpsRequest struct {
 
 func (x *ListFollowUpsRequest) Reset() {
 	*x = ListFollowUpsRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[74]
+	mi := &file_ai_chatbot_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5051,7 +5172,7 @@ func (x *ListFollowUpsRequest) String() string {
 func (*ListFollowUpsRequest) ProtoMessage() {}
 
 func (x *ListFollowUpsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[74]
+	mi := &file_ai_chatbot_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5064,7 +5185,7 @@ func (x *ListFollowUpsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFollowUpsRequest.ProtoReflect.Descriptor instead.
 func (*ListFollowUpsRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{74}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *ListFollowUpsRequest) GetSessionId() string {
@@ -5105,7 +5226,7 @@ type ListFollowUpsResponse struct {
 
 func (x *ListFollowUpsResponse) Reset() {
 	*x = ListFollowUpsResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[75]
+	mi := &file_ai_chatbot_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5117,7 +5238,7 @@ func (x *ListFollowUpsResponse) String() string {
 func (*ListFollowUpsResponse) ProtoMessage() {}
 
 func (x *ListFollowUpsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[75]
+	mi := &file_ai_chatbot_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5130,7 +5251,7 @@ func (x *ListFollowUpsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFollowUpsResponse.ProtoReflect.Descriptor instead.
 func (*ListFollowUpsResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{75}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *ListFollowUpsResponse) GetFollowUps() []*FollowUp {
@@ -5156,7 +5277,7 @@ type CancelFollowUpRequest struct {
 
 func (x *CancelFollowUpRequest) Reset() {
 	*x = CancelFollowUpRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[76]
+	mi := &file_ai_chatbot_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5168,7 +5289,7 @@ func (x *CancelFollowUpRequest) String() string {
 func (*CancelFollowUpRequest) ProtoMessage() {}
 
 func (x *CancelFollowUpRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[76]
+	mi := &file_ai_chatbot_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5181,7 +5302,7 @@ func (x *CancelFollowUpRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelFollowUpRequest.ProtoReflect.Descriptor instead.
 func (*CancelFollowUpRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{76}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *CancelFollowUpRequest) GetFollowUpId() string {
@@ -5200,7 +5321,7 @@ type CancelFollowUpResponse struct {
 
 func (x *CancelFollowUpResponse) Reset() {
 	*x = CancelFollowUpResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[77]
+	mi := &file_ai_chatbot_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5212,7 +5333,7 @@ func (x *CancelFollowUpResponse) String() string {
 func (*CancelFollowUpResponse) ProtoMessage() {}
 
 func (x *CancelFollowUpResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[77]
+	mi := &file_ai_chatbot_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5225,7 +5346,7 @@ func (x *CancelFollowUpResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelFollowUpResponse.ProtoReflect.Descriptor instead.
 func (*CancelFollowUpResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{77}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *CancelFollowUpResponse) GetFollowUp() *FollowUp {
@@ -5246,7 +5367,7 @@ type InitiateCallRequest struct {
 
 func (x *InitiateCallRequest) Reset() {
 	*x = InitiateCallRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[78]
+	mi := &file_ai_chatbot_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5258,7 +5379,7 @@ func (x *InitiateCallRequest) String() string {
 func (*InitiateCallRequest) ProtoMessage() {}
 
 func (x *InitiateCallRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[78]
+	mi := &file_ai_chatbot_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5271,7 +5392,7 @@ func (x *InitiateCallRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InitiateCallRequest.ProtoReflect.Descriptor instead.
 func (*InitiateCallRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{78}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{80}
 }
 
 func (x *InitiateCallRequest) GetContactId() string {
@@ -5304,7 +5425,7 @@ type InitiateCallResponse struct {
 
 func (x *InitiateCallResponse) Reset() {
 	*x = InitiateCallResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[79]
+	mi := &file_ai_chatbot_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5316,7 +5437,7 @@ func (x *InitiateCallResponse) String() string {
 func (*InitiateCallResponse) ProtoMessage() {}
 
 func (x *InitiateCallResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[79]
+	mi := &file_ai_chatbot_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5329,7 +5450,7 @@ func (x *InitiateCallResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InitiateCallResponse.ProtoReflect.Descriptor instead.
 func (*InitiateCallResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{79}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *InitiateCallResponse) GetCall() *CrmCall {
@@ -5350,7 +5471,7 @@ type ListCallsRequest struct {
 
 func (x *ListCallsRequest) Reset() {
 	*x = ListCallsRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[80]
+	mi := &file_ai_chatbot_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5362,7 +5483,7 @@ func (x *ListCallsRequest) String() string {
 func (*ListCallsRequest) ProtoMessage() {}
 
 func (x *ListCallsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[80]
+	mi := &file_ai_chatbot_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5375,7 +5496,7 @@ func (x *ListCallsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCallsRequest.ProtoReflect.Descriptor instead.
 func (*ListCallsRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{80}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *ListCallsRequest) GetContactId() string {
@@ -5409,7 +5530,7 @@ type ListCallsResponse struct {
 
 func (x *ListCallsResponse) Reset() {
 	*x = ListCallsResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[81]
+	mi := &file_ai_chatbot_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5421,7 +5542,7 @@ func (x *ListCallsResponse) String() string {
 func (*ListCallsResponse) ProtoMessage() {}
 
 func (x *ListCallsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[81]
+	mi := &file_ai_chatbot_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5434,7 +5555,7 @@ func (x *ListCallsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCallsResponse.ProtoReflect.Descriptor instead.
 func (*ListCallsResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{81}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *ListCallsResponse) GetCalls() []*CrmCall {
@@ -5463,7 +5584,7 @@ type DailyStat struct {
 
 func (x *DailyStat) Reset() {
 	*x = DailyStat{}
-	mi := &file_ai_chatbot_proto_msgTypes[82]
+	mi := &file_ai_chatbot_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5475,7 +5596,7 @@ func (x *DailyStat) String() string {
 func (*DailyStat) ProtoMessage() {}
 
 func (x *DailyStat) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[82]
+	mi := &file_ai_chatbot_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5488,7 +5609,7 @@ func (x *DailyStat) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DailyStat.ProtoReflect.Descriptor instead.
 func (*DailyStat) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{82}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *DailyStat) GetDate() string {
@@ -5531,7 +5652,7 @@ type GetAnalyticsDashboardRequest struct {
 
 func (x *GetAnalyticsDashboardRequest) Reset() {
 	*x = GetAnalyticsDashboardRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[83]
+	mi := &file_ai_chatbot_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5543,7 +5664,7 @@ func (x *GetAnalyticsDashboardRequest) String() string {
 func (*GetAnalyticsDashboardRequest) ProtoMessage() {}
 
 func (x *GetAnalyticsDashboardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[83]
+	mi := &file_ai_chatbot_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5556,7 +5677,7 @@ func (x *GetAnalyticsDashboardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAnalyticsDashboardRequest.ProtoReflect.Descriptor instead.
 func (*GetAnalyticsDashboardRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{83}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *GetAnalyticsDashboardRequest) GetDateFrom() string {
@@ -5603,7 +5724,7 @@ type GetAnalyticsDashboardResponse struct {
 
 func (x *GetAnalyticsDashboardResponse) Reset() {
 	*x = GetAnalyticsDashboardResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[84]
+	mi := &file_ai_chatbot_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5615,7 +5736,7 @@ func (x *GetAnalyticsDashboardResponse) String() string {
 func (*GetAnalyticsDashboardResponse) ProtoMessage() {}
 
 func (x *GetAnalyticsDashboardResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[84]
+	mi := &file_ai_chatbot_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5628,7 +5749,7 @@ func (x *GetAnalyticsDashboardResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAnalyticsDashboardResponse.ProtoReflect.Descriptor instead.
 func (*GetAnalyticsDashboardResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{84}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *GetAnalyticsDashboardResponse) GetActiveConversations() int32 {
@@ -5699,7 +5820,7 @@ type FunnelStage struct {
 
 func (x *FunnelStage) Reset() {
 	*x = FunnelStage{}
-	mi := &file_ai_chatbot_proto_msgTypes[85]
+	mi := &file_ai_chatbot_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5711,7 +5832,7 @@ func (x *FunnelStage) String() string {
 func (*FunnelStage) ProtoMessage() {}
 
 func (x *FunnelStage) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[85]
+	mi := &file_ai_chatbot_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5724,7 +5845,7 @@ func (x *FunnelStage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FunnelStage.ProtoReflect.Descriptor instead.
 func (*FunnelStage) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{85}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *FunnelStage) GetName() string {
@@ -5767,7 +5888,7 @@ type GetFunnelAnalyticsRequest struct {
 
 func (x *GetFunnelAnalyticsRequest) Reset() {
 	*x = GetFunnelAnalyticsRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[86]
+	mi := &file_ai_chatbot_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5779,7 +5900,7 @@ func (x *GetFunnelAnalyticsRequest) String() string {
 func (*GetFunnelAnalyticsRequest) ProtoMessage() {}
 
 func (x *GetFunnelAnalyticsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[86]
+	mi := &file_ai_chatbot_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5792,7 +5913,7 @@ func (x *GetFunnelAnalyticsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetFunnelAnalyticsRequest.ProtoReflect.Descriptor instead.
 func (*GetFunnelAnalyticsRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{86}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{88}
 }
 
 func (x *GetFunnelAnalyticsRequest) GetDateFrom() string {
@@ -5833,7 +5954,7 @@ type GetFunnelAnalyticsResponse struct {
 
 func (x *GetFunnelAnalyticsResponse) Reset() {
 	*x = GetFunnelAnalyticsResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[87]
+	mi := &file_ai_chatbot_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5845,7 +5966,7 @@ func (x *GetFunnelAnalyticsResponse) String() string {
 func (*GetFunnelAnalyticsResponse) ProtoMessage() {}
 
 func (x *GetFunnelAnalyticsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[87]
+	mi := &file_ai_chatbot_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5858,7 +5979,7 @@ func (x *GetFunnelAnalyticsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetFunnelAnalyticsResponse.ProtoReflect.Descriptor instead.
 func (*GetFunnelAnalyticsResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{87}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{89}
 }
 
 func (x *GetFunnelAnalyticsResponse) GetStages() []*FunnelStage {
@@ -5889,7 +6010,7 @@ type PromptPerformanceEntry struct {
 
 func (x *PromptPerformanceEntry) Reset() {
 	*x = PromptPerformanceEntry{}
-	mi := &file_ai_chatbot_proto_msgTypes[88]
+	mi := &file_ai_chatbot_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5901,7 +6022,7 @@ func (x *PromptPerformanceEntry) String() string {
 func (*PromptPerformanceEntry) ProtoMessage() {}
 
 func (x *PromptPerformanceEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[88]
+	mi := &file_ai_chatbot_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5914,7 +6035,7 @@ func (x *PromptPerformanceEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PromptPerformanceEntry.ProtoReflect.Descriptor instead.
 func (*PromptPerformanceEntry) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{88}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{90}
 }
 
 func (x *PromptPerformanceEntry) GetPromptVersion() int32 {
@@ -5971,7 +6092,7 @@ type GetPromptPerformanceRequest struct {
 
 func (x *GetPromptPerformanceRequest) Reset() {
 	*x = GetPromptPerformanceRequest{}
-	mi := &file_ai_chatbot_proto_msgTypes[89]
+	mi := &file_ai_chatbot_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5983,7 +6104,7 @@ func (x *GetPromptPerformanceRequest) String() string {
 func (*GetPromptPerformanceRequest) ProtoMessage() {}
 
 func (x *GetPromptPerformanceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[89]
+	mi := &file_ai_chatbot_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5996,7 +6117,7 @@ func (x *GetPromptPerformanceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPromptPerformanceRequest.ProtoReflect.Descriptor instead.
 func (*GetPromptPerformanceRequest) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{89}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{91}
 }
 
 func (x *GetPromptPerformanceRequest) GetRole() string {
@@ -6036,7 +6157,7 @@ type GetPromptPerformanceResponse struct {
 
 func (x *GetPromptPerformanceResponse) Reset() {
 	*x = GetPromptPerformanceResponse{}
-	mi := &file_ai_chatbot_proto_msgTypes[90]
+	mi := &file_ai_chatbot_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6048,7 +6169,7 @@ func (x *GetPromptPerformanceResponse) String() string {
 func (*GetPromptPerformanceResponse) ProtoMessage() {}
 
 func (x *GetPromptPerformanceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_chatbot_proto_msgTypes[90]
+	mi := &file_ai_chatbot_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6061,7 +6182,7 @@ func (x *GetPromptPerformanceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPromptPerformanceResponse.ProtoReflect.Descriptor instead.
 func (*GetPromptPerformanceResponse) Descriptor() ([]byte, []int) {
-	return file_ai_chatbot_proto_rawDescGZIP(), []int{90}
+	return file_ai_chatbot_proto_rawDescGZIP(), []int{92}
 }
 
 func (x *GetPromptPerformanceResponse) GetEntries() []*PromptPerformanceEntry {
@@ -6222,7 +6343,7 @@ const file_ai_chatbot_proto_rawDesc = "" +
 	"\x04type\x18\x03 \x01(\x0e2\x13.ai.v1.FollowUpTypeR\x04type\x12-\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x15.ai.v1.FollowUpStatusR\x06status\x12=\n" +
 	"\fscheduled_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\vscheduledAt\x123\n" +
-	"\asent_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x06sentAt\"\x86\x03\n" +
+	"\asent_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x06sentAt\"\xcf\x03\n" +
 	"\x13StreamResponseChunk\x12\x1d\n" +
 	"\n" +
 	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x17\n" +
@@ -6236,9 +6357,15 @@ const file_ai_chatbot_proto_rawDesc = "" +
 	"\vtool_result\x18\a \x01(\v2\x18.ai.v1.ToolResultPayloadH\x00R\n" +
 	"toolResult\x128\n" +
 	"\n" +
-	"text_reset\x18\b \x01(\v2\x17.ai.v1.TextResetPayloadH\x00R\ttextResetB\t\n" +
+	"text_reset\x18\b \x01(\v2\x17.ai.v1.TextResetPayloadH\x00R\ttextReset\x12G\n" +
+	"\x0fadditional_text\x18\t \x01(\v2\x1c.ai.v1.AdditionalTextPayloadH\x00R\x0eadditionalTextB\t\n" +
 	"\apayload\"\x12\n" +
 	"\x10TextResetPayload\"H\n" +
+	"\x15AdditionalTextPayload\x12/\n" +
+	"\x05items\x18\x01 \x03(\v2\x19.ai.v1.AdditionalTextItemR\x05items\"<\n" +
+	"\x12AdditionalTextItem\x12\x12\n" +
+	"\x04slug\x18\x01 \x01(\tR\x04slug\x12\x12\n" +
+	"\x04text\x18\x02 \x01(\tR\x04text\"H\n" +
 	"\x11ToolResultPayload\x12\x1b\n" +
 	"\ttool_name\x18\x01 \x01(\tR\btoolName\x12\x16\n" +
 	"\x06result\x18\x02 \x01(\tR\x06result\"w\n" +
@@ -6636,7 +6763,7 @@ func file_ai_chatbot_proto_rawDescGZIP() []byte {
 }
 
 var file_ai_chatbot_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
-var file_ai_chatbot_proto_msgTypes = make([]protoimpl.MessageInfo, 91)
+var file_ai_chatbot_proto_msgTypes = make([]protoimpl.MessageInfo, 93)
 var file_ai_chatbot_proto_goTypes = []any{
 	(SessionStatus)(0),                    // 0: ai.v1.SessionStatus
 	(MessageRole)(0),                      // 1: ai.v1.MessageRole
@@ -6658,240 +6785,244 @@ var file_ai_chatbot_proto_goTypes = []any{
 	(*FollowUp)(nil),                      // 17: ai.v1.FollowUp
 	(*StreamResponseChunk)(nil),           // 18: ai.v1.StreamResponseChunk
 	(*TextResetPayload)(nil),              // 19: ai.v1.TextResetPayload
-	(*ToolResultPayload)(nil),             // 20: ai.v1.ToolResultPayload
-	(*ToolStatus)(nil),                    // 21: ai.v1.ToolStatus
-	(*ActionsPayload)(nil),                // 22: ai.v1.ActionsPayload
-	(*ActionButton)(nil),                  // 23: ai.v1.ActionButton
-	(*ErrorPayload)(nil),                  // 24: ai.v1.ErrorPayload
-	(*CreateSessionRequest)(nil),          // 25: ai.v1.CreateSessionRequest
-	(*CreateSessionResponse)(nil),         // 26: ai.v1.CreateSessionResponse
-	(*GetSessionRequest)(nil),             // 27: ai.v1.GetSessionRequest
-	(*GetSessionResponse)(nil),            // 28: ai.v1.GetSessionResponse
-	(*ListSessionsRequest)(nil),           // 29: ai.v1.ListSessionsRequest
-	(*ListSessionsResponse)(nil),          // 30: ai.v1.ListSessionsResponse
-	(*CloseSessionRequest)(nil),           // 31: ai.v1.CloseSessionRequest
-	(*CloseSessionResponse)(nil),          // 32: ai.v1.CloseSessionResponse
-	(*Attachment)(nil),                    // 33: ai.v1.Attachment
-	(*SendMessageRequest)(nil),            // 34: ai.v1.SendMessageRequest
-	(*SendMessageResponse)(nil),           // 35: ai.v1.SendMessageResponse
-	(*StreamResponseRequest)(nil),         // 36: ai.v1.StreamResponseRequest
-	(*ListMessagesRequest)(nil),           // 37: ai.v1.ListMessagesRequest
-	(*ListMessagesResponse)(nil),          // 38: ai.v1.ListMessagesResponse
-	(*TakeOverRequest)(nil),               // 39: ai.v1.TakeOverRequest
-	(*TakeOverResponse)(nil),              // 40: ai.v1.TakeOverResponse
-	(*ReturnToAIRequest)(nil),             // 41: ai.v1.ReturnToAIRequest
-	(*ReturnToAIResponse)(nil),            // 42: ai.v1.ReturnToAIResponse
-	(*SendAdminMessageRequest)(nil),       // 43: ai.v1.SendAdminMessageRequest
-	(*SendAdminMessageResponse)(nil),      // 44: ai.v1.SendAdminMessageResponse
-	(*ListAllSessionsRequest)(nil),        // 45: ai.v1.ListAllSessionsRequest
-	(*ListAllSessionsResponse)(nil),       // 46: ai.v1.ListAllSessionsResponse
-	(*ListConversationsRequest)(nil),      // 47: ai.v1.ListConversationsRequest
-	(*ListConversationsResponse)(nil),     // 48: ai.v1.ListConversationsResponse
-	(*GetConversationRequest)(nil),        // 49: ai.v1.GetConversationRequest
-	(*GetConversationResponse)(nil),       // 50: ai.v1.GetConversationResponse
-	(*CreatePromptSectionRequest)(nil),    // 51: ai.v1.CreatePromptSectionRequest
-	(*CreatePromptSectionResponse)(nil),   // 52: ai.v1.CreatePromptSectionResponse
-	(*ListPromptSectionsRequest)(nil),     // 53: ai.v1.ListPromptSectionsRequest
-	(*ListPromptSectionsResponse)(nil),    // 54: ai.v1.ListPromptSectionsResponse
-	(*ActivatePromptSectionRequest)(nil),  // 55: ai.v1.ActivatePromptSectionRequest
-	(*ActivatePromptSectionResponse)(nil), // 56: ai.v1.ActivatePromptSectionResponse
-	(*CreateRoleRequest)(nil),             // 57: ai.v1.CreateRoleRequest
-	(*CreateRoleResponse)(nil),            // 58: ai.v1.CreateRoleResponse
-	(*ListRolesRequest)(nil),              // 59: ai.v1.ListRolesRequest
-	(*ListRolesResponse)(nil),             // 60: ai.v1.ListRolesResponse
-	(*UpdateRoleToolsRequest)(nil),        // 61: ai.v1.UpdateRoleToolsRequest
-	(*UpdateRoleToolsResponse)(nil),       // 62: ai.v1.UpdateRoleToolsResponse
-	(*CreateExperimentRequest)(nil),       // 63: ai.v1.CreateExperimentRequest
-	(*CreateExperimentResponse)(nil),      // 64: ai.v1.CreateExperimentResponse
-	(*GetActiveExperimentRequest)(nil),    // 65: ai.v1.GetActiveExperimentRequest
-	(*GetActiveExperimentResponse)(nil),   // 66: ai.v1.GetActiveExperimentResponse
-	(*CompleteExperimentRequest)(nil),     // 67: ai.v1.CompleteExperimentRequest
-	(*CompleteExperimentResponse)(nil),    // 68: ai.v1.CompleteExperimentResponse
-	(*TestPromptDraftRequest)(nil),        // 69: ai.v1.TestPromptDraftRequest
-	(*TestPromptDraftResponse)(nil),       // 70: ai.v1.TestPromptDraftResponse
-	(*GetUserMemoryRequest)(nil),          // 71: ai.v1.GetUserMemoryRequest
-	(*GetUserMemoryResponse)(nil),         // 72: ai.v1.GetUserMemoryResponse
-	(*UpdateUserMemoryRequest)(nil),       // 73: ai.v1.UpdateUserMemoryRequest
-	(*UpdateUserMemoryResponse)(nil),      // 74: ai.v1.UpdateUserMemoryResponse
-	(*GetContactRequest)(nil),             // 75: ai.v1.GetContactRequest
-	(*GetContactResponse)(nil),            // 76: ai.v1.GetContactResponse
-	(*ListContactsRequest)(nil),           // 77: ai.v1.ListContactsRequest
-	(*ListContactsResponse)(nil),          // 78: ai.v1.ListContactsResponse
-	(*UpdateContactSegmentRequest)(nil),   // 79: ai.v1.UpdateContactSegmentRequest
-	(*UpdateContactSegmentResponse)(nil),  // 80: ai.v1.UpdateContactSegmentResponse
-	(*ListFollowUpsRequest)(nil),          // 81: ai.v1.ListFollowUpsRequest
-	(*ListFollowUpsResponse)(nil),         // 82: ai.v1.ListFollowUpsResponse
-	(*CancelFollowUpRequest)(nil),         // 83: ai.v1.CancelFollowUpRequest
-	(*CancelFollowUpResponse)(nil),        // 84: ai.v1.CancelFollowUpResponse
-	(*InitiateCallRequest)(nil),           // 85: ai.v1.InitiateCallRequest
-	(*InitiateCallResponse)(nil),          // 86: ai.v1.InitiateCallResponse
-	(*ListCallsRequest)(nil),              // 87: ai.v1.ListCallsRequest
-	(*ListCallsResponse)(nil),             // 88: ai.v1.ListCallsResponse
-	(*DailyStat)(nil),                     // 89: ai.v1.DailyStat
-	(*GetAnalyticsDashboardRequest)(nil),  // 90: ai.v1.GetAnalyticsDashboardRequest
-	(*GetAnalyticsDashboardResponse)(nil), // 91: ai.v1.GetAnalyticsDashboardResponse
-	(*FunnelStage)(nil),                   // 92: ai.v1.FunnelStage
-	(*GetFunnelAnalyticsRequest)(nil),     // 93: ai.v1.GetFunnelAnalyticsRequest
-	(*GetFunnelAnalyticsResponse)(nil),    // 94: ai.v1.GetFunnelAnalyticsResponse
-	(*PromptPerformanceEntry)(nil),        // 95: ai.v1.PromptPerformanceEntry
-	(*GetPromptPerformanceRequest)(nil),   // 96: ai.v1.GetPromptPerformanceRequest
-	(*GetPromptPerformanceResponse)(nil),  // 97: ai.v1.GetPromptPerformanceResponse
-	(*timestamppb.Timestamp)(nil),         // 98: google.protobuf.Timestamp
+	(*AdditionalTextPayload)(nil),         // 20: ai.v1.AdditionalTextPayload
+	(*AdditionalTextItem)(nil),            // 21: ai.v1.AdditionalTextItem
+	(*ToolResultPayload)(nil),             // 22: ai.v1.ToolResultPayload
+	(*ToolStatus)(nil),                    // 23: ai.v1.ToolStatus
+	(*ActionsPayload)(nil),                // 24: ai.v1.ActionsPayload
+	(*ActionButton)(nil),                  // 25: ai.v1.ActionButton
+	(*ErrorPayload)(nil),                  // 26: ai.v1.ErrorPayload
+	(*CreateSessionRequest)(nil),          // 27: ai.v1.CreateSessionRequest
+	(*CreateSessionResponse)(nil),         // 28: ai.v1.CreateSessionResponse
+	(*GetSessionRequest)(nil),             // 29: ai.v1.GetSessionRequest
+	(*GetSessionResponse)(nil),            // 30: ai.v1.GetSessionResponse
+	(*ListSessionsRequest)(nil),           // 31: ai.v1.ListSessionsRequest
+	(*ListSessionsResponse)(nil),          // 32: ai.v1.ListSessionsResponse
+	(*CloseSessionRequest)(nil),           // 33: ai.v1.CloseSessionRequest
+	(*CloseSessionResponse)(nil),          // 34: ai.v1.CloseSessionResponse
+	(*Attachment)(nil),                    // 35: ai.v1.Attachment
+	(*SendMessageRequest)(nil),            // 36: ai.v1.SendMessageRequest
+	(*SendMessageResponse)(nil),           // 37: ai.v1.SendMessageResponse
+	(*StreamResponseRequest)(nil),         // 38: ai.v1.StreamResponseRequest
+	(*ListMessagesRequest)(nil),           // 39: ai.v1.ListMessagesRequest
+	(*ListMessagesResponse)(nil),          // 40: ai.v1.ListMessagesResponse
+	(*TakeOverRequest)(nil),               // 41: ai.v1.TakeOverRequest
+	(*TakeOverResponse)(nil),              // 42: ai.v1.TakeOverResponse
+	(*ReturnToAIRequest)(nil),             // 43: ai.v1.ReturnToAIRequest
+	(*ReturnToAIResponse)(nil),            // 44: ai.v1.ReturnToAIResponse
+	(*SendAdminMessageRequest)(nil),       // 45: ai.v1.SendAdminMessageRequest
+	(*SendAdminMessageResponse)(nil),      // 46: ai.v1.SendAdminMessageResponse
+	(*ListAllSessionsRequest)(nil),        // 47: ai.v1.ListAllSessionsRequest
+	(*ListAllSessionsResponse)(nil),       // 48: ai.v1.ListAllSessionsResponse
+	(*ListConversationsRequest)(nil),      // 49: ai.v1.ListConversationsRequest
+	(*ListConversationsResponse)(nil),     // 50: ai.v1.ListConversationsResponse
+	(*GetConversationRequest)(nil),        // 51: ai.v1.GetConversationRequest
+	(*GetConversationResponse)(nil),       // 52: ai.v1.GetConversationResponse
+	(*CreatePromptSectionRequest)(nil),    // 53: ai.v1.CreatePromptSectionRequest
+	(*CreatePromptSectionResponse)(nil),   // 54: ai.v1.CreatePromptSectionResponse
+	(*ListPromptSectionsRequest)(nil),     // 55: ai.v1.ListPromptSectionsRequest
+	(*ListPromptSectionsResponse)(nil),    // 56: ai.v1.ListPromptSectionsResponse
+	(*ActivatePromptSectionRequest)(nil),  // 57: ai.v1.ActivatePromptSectionRequest
+	(*ActivatePromptSectionResponse)(nil), // 58: ai.v1.ActivatePromptSectionResponse
+	(*CreateRoleRequest)(nil),             // 59: ai.v1.CreateRoleRequest
+	(*CreateRoleResponse)(nil),            // 60: ai.v1.CreateRoleResponse
+	(*ListRolesRequest)(nil),              // 61: ai.v1.ListRolesRequest
+	(*ListRolesResponse)(nil),             // 62: ai.v1.ListRolesResponse
+	(*UpdateRoleToolsRequest)(nil),        // 63: ai.v1.UpdateRoleToolsRequest
+	(*UpdateRoleToolsResponse)(nil),       // 64: ai.v1.UpdateRoleToolsResponse
+	(*CreateExperimentRequest)(nil),       // 65: ai.v1.CreateExperimentRequest
+	(*CreateExperimentResponse)(nil),      // 66: ai.v1.CreateExperimentResponse
+	(*GetActiveExperimentRequest)(nil),    // 67: ai.v1.GetActiveExperimentRequest
+	(*GetActiveExperimentResponse)(nil),   // 68: ai.v1.GetActiveExperimentResponse
+	(*CompleteExperimentRequest)(nil),     // 69: ai.v1.CompleteExperimentRequest
+	(*CompleteExperimentResponse)(nil),    // 70: ai.v1.CompleteExperimentResponse
+	(*TestPromptDraftRequest)(nil),        // 71: ai.v1.TestPromptDraftRequest
+	(*TestPromptDraftResponse)(nil),       // 72: ai.v1.TestPromptDraftResponse
+	(*GetUserMemoryRequest)(nil),          // 73: ai.v1.GetUserMemoryRequest
+	(*GetUserMemoryResponse)(nil),         // 74: ai.v1.GetUserMemoryResponse
+	(*UpdateUserMemoryRequest)(nil),       // 75: ai.v1.UpdateUserMemoryRequest
+	(*UpdateUserMemoryResponse)(nil),      // 76: ai.v1.UpdateUserMemoryResponse
+	(*GetContactRequest)(nil),             // 77: ai.v1.GetContactRequest
+	(*GetContactResponse)(nil),            // 78: ai.v1.GetContactResponse
+	(*ListContactsRequest)(nil),           // 79: ai.v1.ListContactsRequest
+	(*ListContactsResponse)(nil),          // 80: ai.v1.ListContactsResponse
+	(*UpdateContactSegmentRequest)(nil),   // 81: ai.v1.UpdateContactSegmentRequest
+	(*UpdateContactSegmentResponse)(nil),  // 82: ai.v1.UpdateContactSegmentResponse
+	(*ListFollowUpsRequest)(nil),          // 83: ai.v1.ListFollowUpsRequest
+	(*ListFollowUpsResponse)(nil),         // 84: ai.v1.ListFollowUpsResponse
+	(*CancelFollowUpRequest)(nil),         // 85: ai.v1.CancelFollowUpRequest
+	(*CancelFollowUpResponse)(nil),        // 86: ai.v1.CancelFollowUpResponse
+	(*InitiateCallRequest)(nil),           // 87: ai.v1.InitiateCallRequest
+	(*InitiateCallResponse)(nil),          // 88: ai.v1.InitiateCallResponse
+	(*ListCallsRequest)(nil),              // 89: ai.v1.ListCallsRequest
+	(*ListCallsResponse)(nil),             // 90: ai.v1.ListCallsResponse
+	(*DailyStat)(nil),                     // 91: ai.v1.DailyStat
+	(*GetAnalyticsDashboardRequest)(nil),  // 92: ai.v1.GetAnalyticsDashboardRequest
+	(*GetAnalyticsDashboardResponse)(nil), // 93: ai.v1.GetAnalyticsDashboardResponse
+	(*FunnelStage)(nil),                   // 94: ai.v1.FunnelStage
+	(*GetFunnelAnalyticsRequest)(nil),     // 95: ai.v1.GetFunnelAnalyticsRequest
+	(*GetFunnelAnalyticsResponse)(nil),    // 96: ai.v1.GetFunnelAnalyticsResponse
+	(*PromptPerformanceEntry)(nil),        // 97: ai.v1.PromptPerformanceEntry
+	(*GetPromptPerformanceRequest)(nil),   // 98: ai.v1.GetPromptPerformanceRequest
+	(*GetPromptPerformanceResponse)(nil),  // 99: ai.v1.GetPromptPerformanceResponse
+	(*timestamppb.Timestamp)(nil),         // 100: google.protobuf.Timestamp
 }
 var file_ai_chatbot_proto_depIdxs = []int32{
 	0,   // 0: ai.v1.Session.status:type_name -> ai.v1.SessionStatus
-	98,  // 1: ai.v1.Session.closed_at:type_name -> google.protobuf.Timestamp
-	98,  // 2: ai.v1.Session.created_at:type_name -> google.protobuf.Timestamp
-	98,  // 3: ai.v1.Session.updated_at:type_name -> google.protobuf.Timestamp
-	98,  // 4: ai.v1.Conversation.created_at:type_name -> google.protobuf.Timestamp
-	98,  // 5: ai.v1.Conversation.updated_at:type_name -> google.protobuf.Timestamp
+	100, // 1: ai.v1.Session.closed_at:type_name -> google.protobuf.Timestamp
+	100, // 2: ai.v1.Session.created_at:type_name -> google.protobuf.Timestamp
+	100, // 3: ai.v1.Session.updated_at:type_name -> google.protobuf.Timestamp
+	100, // 4: ai.v1.Conversation.created_at:type_name -> google.protobuf.Timestamp
+	100, // 5: ai.v1.Conversation.updated_at:type_name -> google.protobuf.Timestamp
 	1,   // 6: ai.v1.Message.role:type_name -> ai.v1.MessageRole
-	98,  // 7: ai.v1.Message.created_at:type_name -> google.protobuf.Timestamp
+	100, // 7: ai.v1.Message.created_at:type_name -> google.protobuf.Timestamp
 	2,   // 8: ai.v1.PromptSection.status:type_name -> ai.v1.PromptStatus
-	98,  // 9: ai.v1.PromptSection.activated_at:type_name -> google.protobuf.Timestamp
-	98,  // 10: ai.v1.PromptSection.created_at:type_name -> google.protobuf.Timestamp
-	98,  // 11: ai.v1.PromptSection.updated_at:type_name -> google.protobuf.Timestamp
-	98,  // 12: ai.v1.PromptRole.created_at:type_name -> google.protobuf.Timestamp
-	98,  // 13: ai.v1.PromptRole.updated_at:type_name -> google.protobuf.Timestamp
-	98,  // 14: ai.v1.Experiment.created_at:type_name -> google.protobuf.Timestamp
-	98,  // 15: ai.v1.Experiment.completed_at:type_name -> google.protobuf.Timestamp
+	100, // 9: ai.v1.PromptSection.activated_at:type_name -> google.protobuf.Timestamp
+	100, // 10: ai.v1.PromptSection.created_at:type_name -> google.protobuf.Timestamp
+	100, // 11: ai.v1.PromptSection.updated_at:type_name -> google.protobuf.Timestamp
+	100, // 12: ai.v1.PromptRole.created_at:type_name -> google.protobuf.Timestamp
+	100, // 13: ai.v1.PromptRole.updated_at:type_name -> google.protobuf.Timestamp
+	100, // 14: ai.v1.Experiment.created_at:type_name -> google.protobuf.Timestamp
+	100, // 15: ai.v1.Experiment.completed_at:type_name -> google.protobuf.Timestamp
 	14,  // 16: ai.v1.UserMemory.facts:type_name -> ai.v1.UserFact
-	98,  // 17: ai.v1.UserMemory.updated_at:type_name -> google.protobuf.Timestamp
-	98,  // 18: ai.v1.UserFact.created_at:type_name -> google.protobuf.Timestamp
+	100, // 17: ai.v1.UserMemory.updated_at:type_name -> google.protobuf.Timestamp
+	100, // 18: ai.v1.UserFact.created_at:type_name -> google.protobuf.Timestamp
 	3,   // 19: ai.v1.Contact.segment:type_name -> ai.v1.ContactSegment
-	98,  // 20: ai.v1.Contact.created_at:type_name -> google.protobuf.Timestamp
-	98,  // 21: ai.v1.Contact.updated_at:type_name -> google.protobuf.Timestamp
-	98,  // 22: ai.v1.Contact.last_conversation_at:type_name -> google.protobuf.Timestamp
-	98,  // 23: ai.v1.CrmCall.started_at:type_name -> google.protobuf.Timestamp
-	98,  // 24: ai.v1.CrmCall.ended_at:type_name -> google.protobuf.Timestamp
+	100, // 20: ai.v1.Contact.created_at:type_name -> google.protobuf.Timestamp
+	100, // 21: ai.v1.Contact.updated_at:type_name -> google.protobuf.Timestamp
+	100, // 22: ai.v1.Contact.last_conversation_at:type_name -> google.protobuf.Timestamp
+	100, // 23: ai.v1.CrmCall.started_at:type_name -> google.protobuf.Timestamp
+	100, // 24: ai.v1.CrmCall.ended_at:type_name -> google.protobuf.Timestamp
 	4,   // 25: ai.v1.FollowUp.type:type_name -> ai.v1.FollowUpType
 	5,   // 26: ai.v1.FollowUp.status:type_name -> ai.v1.FollowUpStatus
-	98,  // 27: ai.v1.FollowUp.scheduled_at:type_name -> google.protobuf.Timestamp
-	98,  // 28: ai.v1.FollowUp.sent_at:type_name -> google.protobuf.Timestamp
-	21,  // 29: ai.v1.StreamResponseChunk.tool_status:type_name -> ai.v1.ToolStatus
-	22,  // 30: ai.v1.StreamResponseChunk.actions:type_name -> ai.v1.ActionsPayload
-	24,  // 31: ai.v1.StreamResponseChunk.error:type_name -> ai.v1.ErrorPayload
-	20,  // 32: ai.v1.StreamResponseChunk.tool_result:type_name -> ai.v1.ToolResultPayload
+	100, // 27: ai.v1.FollowUp.scheduled_at:type_name -> google.protobuf.Timestamp
+	100, // 28: ai.v1.FollowUp.sent_at:type_name -> google.protobuf.Timestamp
+	23,  // 29: ai.v1.StreamResponseChunk.tool_status:type_name -> ai.v1.ToolStatus
+	24,  // 30: ai.v1.StreamResponseChunk.actions:type_name -> ai.v1.ActionsPayload
+	26,  // 31: ai.v1.StreamResponseChunk.error:type_name -> ai.v1.ErrorPayload
+	22,  // 32: ai.v1.StreamResponseChunk.tool_result:type_name -> ai.v1.ToolResultPayload
 	19,  // 33: ai.v1.StreamResponseChunk.text_reset:type_name -> ai.v1.TextResetPayload
-	6,   // 34: ai.v1.ToolStatus.status:type_name -> ai.v1.ToolExecutionStatus
-	23,  // 35: ai.v1.ActionsPayload.buttons:type_name -> ai.v1.ActionButton
-	7,   // 36: ai.v1.CreateSessionResponse.session:type_name -> ai.v1.Session
-	7,   // 37: ai.v1.GetSessionResponse.session:type_name -> ai.v1.Session
-	0,   // 38: ai.v1.ListSessionsRequest.status:type_name -> ai.v1.SessionStatus
-	7,   // 39: ai.v1.ListSessionsResponse.sessions:type_name -> ai.v1.Session
-	7,   // 40: ai.v1.CloseSessionResponse.session:type_name -> ai.v1.Session
-	33,  // 41: ai.v1.SendMessageRequest.attachments:type_name -> ai.v1.Attachment
-	9,   // 42: ai.v1.SendMessageResponse.message:type_name -> ai.v1.Message
-	9,   // 43: ai.v1.ListMessagesResponse.messages:type_name -> ai.v1.Message
-	7,   // 44: ai.v1.TakeOverResponse.session:type_name -> ai.v1.Session
-	7,   // 45: ai.v1.ReturnToAIResponse.session:type_name -> ai.v1.Session
-	9,   // 46: ai.v1.SendAdminMessageResponse.message:type_name -> ai.v1.Message
-	7,   // 47: ai.v1.ListAllSessionsResponse.sessions:type_name -> ai.v1.Session
-	0,   // 48: ai.v1.ListConversationsRequest.status:type_name -> ai.v1.SessionStatus
-	8,   // 49: ai.v1.ListConversationsResponse.conversations:type_name -> ai.v1.Conversation
-	8,   // 50: ai.v1.GetConversationResponse.conversation:type_name -> ai.v1.Conversation
-	9,   // 51: ai.v1.GetConversationResponse.messages:type_name -> ai.v1.Message
-	10,  // 52: ai.v1.CreatePromptSectionResponse.prompt_section:type_name -> ai.v1.PromptSection
-	2,   // 53: ai.v1.ListPromptSectionsRequest.status:type_name -> ai.v1.PromptStatus
-	10,  // 54: ai.v1.ListPromptSectionsResponse.prompt_sections:type_name -> ai.v1.PromptSection
-	10,  // 55: ai.v1.ActivatePromptSectionResponse.prompt_section:type_name -> ai.v1.PromptSection
-	11,  // 56: ai.v1.CreateRoleResponse.prompt_role:type_name -> ai.v1.PromptRole
-	11,  // 57: ai.v1.ListRolesResponse.prompt_roles:type_name -> ai.v1.PromptRole
-	11,  // 58: ai.v1.UpdateRoleToolsResponse.prompt_role:type_name -> ai.v1.PromptRole
-	12,  // 59: ai.v1.CreateExperimentResponse.experiment:type_name -> ai.v1.Experiment
-	12,  // 60: ai.v1.GetActiveExperimentResponse.experiment:type_name -> ai.v1.Experiment
-	12,  // 61: ai.v1.CompleteExperimentResponse.experiment:type_name -> ai.v1.Experiment
-	13,  // 62: ai.v1.GetUserMemoryResponse.memory:type_name -> ai.v1.UserMemory
-	14,  // 63: ai.v1.UpdateUserMemoryRequest.facts:type_name -> ai.v1.UserFact
-	13,  // 64: ai.v1.UpdateUserMemoryResponse.memory:type_name -> ai.v1.UserMemory
-	15,  // 65: ai.v1.GetContactResponse.contact:type_name -> ai.v1.Contact
-	3,   // 66: ai.v1.ListContactsRequest.segment:type_name -> ai.v1.ContactSegment
-	15,  // 67: ai.v1.ListContactsResponse.contacts:type_name -> ai.v1.Contact
-	3,   // 68: ai.v1.UpdateContactSegmentRequest.segment:type_name -> ai.v1.ContactSegment
-	15,  // 69: ai.v1.UpdateContactSegmentResponse.contact:type_name -> ai.v1.Contact
-	5,   // 70: ai.v1.ListFollowUpsRequest.status:type_name -> ai.v1.FollowUpStatus
-	17,  // 71: ai.v1.ListFollowUpsResponse.follow_ups:type_name -> ai.v1.FollowUp
-	17,  // 72: ai.v1.CancelFollowUpResponse.follow_up:type_name -> ai.v1.FollowUp
-	16,  // 73: ai.v1.InitiateCallResponse.call:type_name -> ai.v1.CrmCall
-	16,  // 74: ai.v1.ListCallsResponse.calls:type_name -> ai.v1.CrmCall
-	89,  // 75: ai.v1.GetAnalyticsDashboardResponse.daily_stats:type_name -> ai.v1.DailyStat
-	92,  // 76: ai.v1.GetFunnelAnalyticsResponse.stages:type_name -> ai.v1.FunnelStage
-	95,  // 77: ai.v1.GetPromptPerformanceResponse.entries:type_name -> ai.v1.PromptPerformanceEntry
-	25,  // 78: ai.v1.ChatbotService.CreateSession:input_type -> ai.v1.CreateSessionRequest
-	27,  // 79: ai.v1.ChatbotService.GetSession:input_type -> ai.v1.GetSessionRequest
-	29,  // 80: ai.v1.ChatbotService.ListSessions:input_type -> ai.v1.ListSessionsRequest
-	31,  // 81: ai.v1.ChatbotService.CloseSession:input_type -> ai.v1.CloseSessionRequest
-	34,  // 82: ai.v1.ChatbotService.SendMessage:input_type -> ai.v1.SendMessageRequest
-	36,  // 83: ai.v1.ChatbotService.StreamResponse:input_type -> ai.v1.StreamResponseRequest
-	37,  // 84: ai.v1.ChatbotService.ListMessages:input_type -> ai.v1.ListMessagesRequest
-	39,  // 85: ai.v1.ChatbotService.TakeOver:input_type -> ai.v1.TakeOverRequest
-	41,  // 86: ai.v1.ChatbotService.ReturnToAI:input_type -> ai.v1.ReturnToAIRequest
-	43,  // 87: ai.v1.ChatbotService.SendAdminMessage:input_type -> ai.v1.SendAdminMessageRequest
-	45,  // 88: ai.v1.ChatbotService.ListAllSessions:input_type -> ai.v1.ListAllSessionsRequest
-	47,  // 89: ai.v1.ChatbotService.ListConversations:input_type -> ai.v1.ListConversationsRequest
-	49,  // 90: ai.v1.ChatbotService.GetConversation:input_type -> ai.v1.GetConversationRequest
-	51,  // 91: ai.v1.ChatbotService.CreatePromptSection:input_type -> ai.v1.CreatePromptSectionRequest
-	53,  // 92: ai.v1.ChatbotService.ListPromptSections:input_type -> ai.v1.ListPromptSectionsRequest
-	55,  // 93: ai.v1.ChatbotService.ActivatePromptSection:input_type -> ai.v1.ActivatePromptSectionRequest
-	57,  // 94: ai.v1.ChatbotService.CreateRole:input_type -> ai.v1.CreateRoleRequest
-	59,  // 95: ai.v1.ChatbotService.ListRoles:input_type -> ai.v1.ListRolesRequest
-	61,  // 96: ai.v1.ChatbotService.UpdateRoleTools:input_type -> ai.v1.UpdateRoleToolsRequest
-	63,  // 97: ai.v1.ChatbotService.CreateExperiment:input_type -> ai.v1.CreateExperimentRequest
-	65,  // 98: ai.v1.ChatbotService.GetActiveExperiment:input_type -> ai.v1.GetActiveExperimentRequest
-	67,  // 99: ai.v1.ChatbotService.CompleteExperiment:input_type -> ai.v1.CompleteExperimentRequest
-	69,  // 100: ai.v1.ChatbotService.TestPromptDraft:input_type -> ai.v1.TestPromptDraftRequest
-	71,  // 101: ai.v1.ChatbotService.GetUserMemory:input_type -> ai.v1.GetUserMemoryRequest
-	73,  // 102: ai.v1.ChatbotService.UpdateUserMemory:input_type -> ai.v1.UpdateUserMemoryRequest
-	75,  // 103: ai.v1.ChatbotService.GetContact:input_type -> ai.v1.GetContactRequest
-	77,  // 104: ai.v1.ChatbotService.ListContacts:input_type -> ai.v1.ListContactsRequest
-	79,  // 105: ai.v1.ChatbotService.UpdateContactSegment:input_type -> ai.v1.UpdateContactSegmentRequest
-	85,  // 106: ai.v1.ChatbotService.InitiateCall:input_type -> ai.v1.InitiateCallRequest
-	87,  // 107: ai.v1.ChatbotService.ListCalls:input_type -> ai.v1.ListCallsRequest
-	90,  // 108: ai.v1.ChatbotService.GetAnalyticsDashboard:input_type -> ai.v1.GetAnalyticsDashboardRequest
-	93,  // 109: ai.v1.ChatbotService.GetFunnelAnalytics:input_type -> ai.v1.GetFunnelAnalyticsRequest
-	96,  // 110: ai.v1.ChatbotService.GetPromptPerformance:input_type -> ai.v1.GetPromptPerformanceRequest
-	81,  // 111: ai.v1.ChatbotService.ListFollowUps:input_type -> ai.v1.ListFollowUpsRequest
-	83,  // 112: ai.v1.ChatbotService.CancelFollowUp:input_type -> ai.v1.CancelFollowUpRequest
-	26,  // 113: ai.v1.ChatbotService.CreateSession:output_type -> ai.v1.CreateSessionResponse
-	28,  // 114: ai.v1.ChatbotService.GetSession:output_type -> ai.v1.GetSessionResponse
-	30,  // 115: ai.v1.ChatbotService.ListSessions:output_type -> ai.v1.ListSessionsResponse
-	32,  // 116: ai.v1.ChatbotService.CloseSession:output_type -> ai.v1.CloseSessionResponse
-	35,  // 117: ai.v1.ChatbotService.SendMessage:output_type -> ai.v1.SendMessageResponse
-	18,  // 118: ai.v1.ChatbotService.StreamResponse:output_type -> ai.v1.StreamResponseChunk
-	38,  // 119: ai.v1.ChatbotService.ListMessages:output_type -> ai.v1.ListMessagesResponse
-	40,  // 120: ai.v1.ChatbotService.TakeOver:output_type -> ai.v1.TakeOverResponse
-	42,  // 121: ai.v1.ChatbotService.ReturnToAI:output_type -> ai.v1.ReturnToAIResponse
-	44,  // 122: ai.v1.ChatbotService.SendAdminMessage:output_type -> ai.v1.SendAdminMessageResponse
-	46,  // 123: ai.v1.ChatbotService.ListAllSessions:output_type -> ai.v1.ListAllSessionsResponse
-	48,  // 124: ai.v1.ChatbotService.ListConversations:output_type -> ai.v1.ListConversationsResponse
-	50,  // 125: ai.v1.ChatbotService.GetConversation:output_type -> ai.v1.GetConversationResponse
-	52,  // 126: ai.v1.ChatbotService.CreatePromptSection:output_type -> ai.v1.CreatePromptSectionResponse
-	54,  // 127: ai.v1.ChatbotService.ListPromptSections:output_type -> ai.v1.ListPromptSectionsResponse
-	56,  // 128: ai.v1.ChatbotService.ActivatePromptSection:output_type -> ai.v1.ActivatePromptSectionResponse
-	58,  // 129: ai.v1.ChatbotService.CreateRole:output_type -> ai.v1.CreateRoleResponse
-	60,  // 130: ai.v1.ChatbotService.ListRoles:output_type -> ai.v1.ListRolesResponse
-	62,  // 131: ai.v1.ChatbotService.UpdateRoleTools:output_type -> ai.v1.UpdateRoleToolsResponse
-	64,  // 132: ai.v1.ChatbotService.CreateExperiment:output_type -> ai.v1.CreateExperimentResponse
-	66,  // 133: ai.v1.ChatbotService.GetActiveExperiment:output_type -> ai.v1.GetActiveExperimentResponse
-	68,  // 134: ai.v1.ChatbotService.CompleteExperiment:output_type -> ai.v1.CompleteExperimentResponse
-	70,  // 135: ai.v1.ChatbotService.TestPromptDraft:output_type -> ai.v1.TestPromptDraftResponse
-	72,  // 136: ai.v1.ChatbotService.GetUserMemory:output_type -> ai.v1.GetUserMemoryResponse
-	74,  // 137: ai.v1.ChatbotService.UpdateUserMemory:output_type -> ai.v1.UpdateUserMemoryResponse
-	76,  // 138: ai.v1.ChatbotService.GetContact:output_type -> ai.v1.GetContactResponse
-	78,  // 139: ai.v1.ChatbotService.ListContacts:output_type -> ai.v1.ListContactsResponse
-	80,  // 140: ai.v1.ChatbotService.UpdateContactSegment:output_type -> ai.v1.UpdateContactSegmentResponse
-	86,  // 141: ai.v1.ChatbotService.InitiateCall:output_type -> ai.v1.InitiateCallResponse
-	88,  // 142: ai.v1.ChatbotService.ListCalls:output_type -> ai.v1.ListCallsResponse
-	91,  // 143: ai.v1.ChatbotService.GetAnalyticsDashboard:output_type -> ai.v1.GetAnalyticsDashboardResponse
-	94,  // 144: ai.v1.ChatbotService.GetFunnelAnalytics:output_type -> ai.v1.GetFunnelAnalyticsResponse
-	97,  // 145: ai.v1.ChatbotService.GetPromptPerformance:output_type -> ai.v1.GetPromptPerformanceResponse
-	82,  // 146: ai.v1.ChatbotService.ListFollowUps:output_type -> ai.v1.ListFollowUpsResponse
-	84,  // 147: ai.v1.ChatbotService.CancelFollowUp:output_type -> ai.v1.CancelFollowUpResponse
-	113, // [113:148] is the sub-list for method output_type
-	78,  // [78:113] is the sub-list for method input_type
-	78,  // [78:78] is the sub-list for extension type_name
-	78,  // [78:78] is the sub-list for extension extendee
-	0,   // [0:78] is the sub-list for field type_name
+	20,  // 34: ai.v1.StreamResponseChunk.additional_text:type_name -> ai.v1.AdditionalTextPayload
+	21,  // 35: ai.v1.AdditionalTextPayload.items:type_name -> ai.v1.AdditionalTextItem
+	6,   // 36: ai.v1.ToolStatus.status:type_name -> ai.v1.ToolExecutionStatus
+	25,  // 37: ai.v1.ActionsPayload.buttons:type_name -> ai.v1.ActionButton
+	7,   // 38: ai.v1.CreateSessionResponse.session:type_name -> ai.v1.Session
+	7,   // 39: ai.v1.GetSessionResponse.session:type_name -> ai.v1.Session
+	0,   // 40: ai.v1.ListSessionsRequest.status:type_name -> ai.v1.SessionStatus
+	7,   // 41: ai.v1.ListSessionsResponse.sessions:type_name -> ai.v1.Session
+	7,   // 42: ai.v1.CloseSessionResponse.session:type_name -> ai.v1.Session
+	35,  // 43: ai.v1.SendMessageRequest.attachments:type_name -> ai.v1.Attachment
+	9,   // 44: ai.v1.SendMessageResponse.message:type_name -> ai.v1.Message
+	9,   // 45: ai.v1.ListMessagesResponse.messages:type_name -> ai.v1.Message
+	7,   // 46: ai.v1.TakeOverResponse.session:type_name -> ai.v1.Session
+	7,   // 47: ai.v1.ReturnToAIResponse.session:type_name -> ai.v1.Session
+	9,   // 48: ai.v1.SendAdminMessageResponse.message:type_name -> ai.v1.Message
+	7,   // 49: ai.v1.ListAllSessionsResponse.sessions:type_name -> ai.v1.Session
+	0,   // 50: ai.v1.ListConversationsRequest.status:type_name -> ai.v1.SessionStatus
+	8,   // 51: ai.v1.ListConversationsResponse.conversations:type_name -> ai.v1.Conversation
+	8,   // 52: ai.v1.GetConversationResponse.conversation:type_name -> ai.v1.Conversation
+	9,   // 53: ai.v1.GetConversationResponse.messages:type_name -> ai.v1.Message
+	10,  // 54: ai.v1.CreatePromptSectionResponse.prompt_section:type_name -> ai.v1.PromptSection
+	2,   // 55: ai.v1.ListPromptSectionsRequest.status:type_name -> ai.v1.PromptStatus
+	10,  // 56: ai.v1.ListPromptSectionsResponse.prompt_sections:type_name -> ai.v1.PromptSection
+	10,  // 57: ai.v1.ActivatePromptSectionResponse.prompt_section:type_name -> ai.v1.PromptSection
+	11,  // 58: ai.v1.CreateRoleResponse.prompt_role:type_name -> ai.v1.PromptRole
+	11,  // 59: ai.v1.ListRolesResponse.prompt_roles:type_name -> ai.v1.PromptRole
+	11,  // 60: ai.v1.UpdateRoleToolsResponse.prompt_role:type_name -> ai.v1.PromptRole
+	12,  // 61: ai.v1.CreateExperimentResponse.experiment:type_name -> ai.v1.Experiment
+	12,  // 62: ai.v1.GetActiveExperimentResponse.experiment:type_name -> ai.v1.Experiment
+	12,  // 63: ai.v1.CompleteExperimentResponse.experiment:type_name -> ai.v1.Experiment
+	13,  // 64: ai.v1.GetUserMemoryResponse.memory:type_name -> ai.v1.UserMemory
+	14,  // 65: ai.v1.UpdateUserMemoryRequest.facts:type_name -> ai.v1.UserFact
+	13,  // 66: ai.v1.UpdateUserMemoryResponse.memory:type_name -> ai.v1.UserMemory
+	15,  // 67: ai.v1.GetContactResponse.contact:type_name -> ai.v1.Contact
+	3,   // 68: ai.v1.ListContactsRequest.segment:type_name -> ai.v1.ContactSegment
+	15,  // 69: ai.v1.ListContactsResponse.contacts:type_name -> ai.v1.Contact
+	3,   // 70: ai.v1.UpdateContactSegmentRequest.segment:type_name -> ai.v1.ContactSegment
+	15,  // 71: ai.v1.UpdateContactSegmentResponse.contact:type_name -> ai.v1.Contact
+	5,   // 72: ai.v1.ListFollowUpsRequest.status:type_name -> ai.v1.FollowUpStatus
+	17,  // 73: ai.v1.ListFollowUpsResponse.follow_ups:type_name -> ai.v1.FollowUp
+	17,  // 74: ai.v1.CancelFollowUpResponse.follow_up:type_name -> ai.v1.FollowUp
+	16,  // 75: ai.v1.InitiateCallResponse.call:type_name -> ai.v1.CrmCall
+	16,  // 76: ai.v1.ListCallsResponse.calls:type_name -> ai.v1.CrmCall
+	91,  // 77: ai.v1.GetAnalyticsDashboardResponse.daily_stats:type_name -> ai.v1.DailyStat
+	94,  // 78: ai.v1.GetFunnelAnalyticsResponse.stages:type_name -> ai.v1.FunnelStage
+	97,  // 79: ai.v1.GetPromptPerformanceResponse.entries:type_name -> ai.v1.PromptPerformanceEntry
+	27,  // 80: ai.v1.ChatbotService.CreateSession:input_type -> ai.v1.CreateSessionRequest
+	29,  // 81: ai.v1.ChatbotService.GetSession:input_type -> ai.v1.GetSessionRequest
+	31,  // 82: ai.v1.ChatbotService.ListSessions:input_type -> ai.v1.ListSessionsRequest
+	33,  // 83: ai.v1.ChatbotService.CloseSession:input_type -> ai.v1.CloseSessionRequest
+	36,  // 84: ai.v1.ChatbotService.SendMessage:input_type -> ai.v1.SendMessageRequest
+	38,  // 85: ai.v1.ChatbotService.StreamResponse:input_type -> ai.v1.StreamResponseRequest
+	39,  // 86: ai.v1.ChatbotService.ListMessages:input_type -> ai.v1.ListMessagesRequest
+	41,  // 87: ai.v1.ChatbotService.TakeOver:input_type -> ai.v1.TakeOverRequest
+	43,  // 88: ai.v1.ChatbotService.ReturnToAI:input_type -> ai.v1.ReturnToAIRequest
+	45,  // 89: ai.v1.ChatbotService.SendAdminMessage:input_type -> ai.v1.SendAdminMessageRequest
+	47,  // 90: ai.v1.ChatbotService.ListAllSessions:input_type -> ai.v1.ListAllSessionsRequest
+	49,  // 91: ai.v1.ChatbotService.ListConversations:input_type -> ai.v1.ListConversationsRequest
+	51,  // 92: ai.v1.ChatbotService.GetConversation:input_type -> ai.v1.GetConversationRequest
+	53,  // 93: ai.v1.ChatbotService.CreatePromptSection:input_type -> ai.v1.CreatePromptSectionRequest
+	55,  // 94: ai.v1.ChatbotService.ListPromptSections:input_type -> ai.v1.ListPromptSectionsRequest
+	57,  // 95: ai.v1.ChatbotService.ActivatePromptSection:input_type -> ai.v1.ActivatePromptSectionRequest
+	59,  // 96: ai.v1.ChatbotService.CreateRole:input_type -> ai.v1.CreateRoleRequest
+	61,  // 97: ai.v1.ChatbotService.ListRoles:input_type -> ai.v1.ListRolesRequest
+	63,  // 98: ai.v1.ChatbotService.UpdateRoleTools:input_type -> ai.v1.UpdateRoleToolsRequest
+	65,  // 99: ai.v1.ChatbotService.CreateExperiment:input_type -> ai.v1.CreateExperimentRequest
+	67,  // 100: ai.v1.ChatbotService.GetActiveExperiment:input_type -> ai.v1.GetActiveExperimentRequest
+	69,  // 101: ai.v1.ChatbotService.CompleteExperiment:input_type -> ai.v1.CompleteExperimentRequest
+	71,  // 102: ai.v1.ChatbotService.TestPromptDraft:input_type -> ai.v1.TestPromptDraftRequest
+	73,  // 103: ai.v1.ChatbotService.GetUserMemory:input_type -> ai.v1.GetUserMemoryRequest
+	75,  // 104: ai.v1.ChatbotService.UpdateUserMemory:input_type -> ai.v1.UpdateUserMemoryRequest
+	77,  // 105: ai.v1.ChatbotService.GetContact:input_type -> ai.v1.GetContactRequest
+	79,  // 106: ai.v1.ChatbotService.ListContacts:input_type -> ai.v1.ListContactsRequest
+	81,  // 107: ai.v1.ChatbotService.UpdateContactSegment:input_type -> ai.v1.UpdateContactSegmentRequest
+	87,  // 108: ai.v1.ChatbotService.InitiateCall:input_type -> ai.v1.InitiateCallRequest
+	89,  // 109: ai.v1.ChatbotService.ListCalls:input_type -> ai.v1.ListCallsRequest
+	92,  // 110: ai.v1.ChatbotService.GetAnalyticsDashboard:input_type -> ai.v1.GetAnalyticsDashboardRequest
+	95,  // 111: ai.v1.ChatbotService.GetFunnelAnalytics:input_type -> ai.v1.GetFunnelAnalyticsRequest
+	98,  // 112: ai.v1.ChatbotService.GetPromptPerformance:input_type -> ai.v1.GetPromptPerformanceRequest
+	83,  // 113: ai.v1.ChatbotService.ListFollowUps:input_type -> ai.v1.ListFollowUpsRequest
+	85,  // 114: ai.v1.ChatbotService.CancelFollowUp:input_type -> ai.v1.CancelFollowUpRequest
+	28,  // 115: ai.v1.ChatbotService.CreateSession:output_type -> ai.v1.CreateSessionResponse
+	30,  // 116: ai.v1.ChatbotService.GetSession:output_type -> ai.v1.GetSessionResponse
+	32,  // 117: ai.v1.ChatbotService.ListSessions:output_type -> ai.v1.ListSessionsResponse
+	34,  // 118: ai.v1.ChatbotService.CloseSession:output_type -> ai.v1.CloseSessionResponse
+	37,  // 119: ai.v1.ChatbotService.SendMessage:output_type -> ai.v1.SendMessageResponse
+	18,  // 120: ai.v1.ChatbotService.StreamResponse:output_type -> ai.v1.StreamResponseChunk
+	40,  // 121: ai.v1.ChatbotService.ListMessages:output_type -> ai.v1.ListMessagesResponse
+	42,  // 122: ai.v1.ChatbotService.TakeOver:output_type -> ai.v1.TakeOverResponse
+	44,  // 123: ai.v1.ChatbotService.ReturnToAI:output_type -> ai.v1.ReturnToAIResponse
+	46,  // 124: ai.v1.ChatbotService.SendAdminMessage:output_type -> ai.v1.SendAdminMessageResponse
+	48,  // 125: ai.v1.ChatbotService.ListAllSessions:output_type -> ai.v1.ListAllSessionsResponse
+	50,  // 126: ai.v1.ChatbotService.ListConversations:output_type -> ai.v1.ListConversationsResponse
+	52,  // 127: ai.v1.ChatbotService.GetConversation:output_type -> ai.v1.GetConversationResponse
+	54,  // 128: ai.v1.ChatbotService.CreatePromptSection:output_type -> ai.v1.CreatePromptSectionResponse
+	56,  // 129: ai.v1.ChatbotService.ListPromptSections:output_type -> ai.v1.ListPromptSectionsResponse
+	58,  // 130: ai.v1.ChatbotService.ActivatePromptSection:output_type -> ai.v1.ActivatePromptSectionResponse
+	60,  // 131: ai.v1.ChatbotService.CreateRole:output_type -> ai.v1.CreateRoleResponse
+	62,  // 132: ai.v1.ChatbotService.ListRoles:output_type -> ai.v1.ListRolesResponse
+	64,  // 133: ai.v1.ChatbotService.UpdateRoleTools:output_type -> ai.v1.UpdateRoleToolsResponse
+	66,  // 134: ai.v1.ChatbotService.CreateExperiment:output_type -> ai.v1.CreateExperimentResponse
+	68,  // 135: ai.v1.ChatbotService.GetActiveExperiment:output_type -> ai.v1.GetActiveExperimentResponse
+	70,  // 136: ai.v1.ChatbotService.CompleteExperiment:output_type -> ai.v1.CompleteExperimentResponse
+	72,  // 137: ai.v1.ChatbotService.TestPromptDraft:output_type -> ai.v1.TestPromptDraftResponse
+	74,  // 138: ai.v1.ChatbotService.GetUserMemory:output_type -> ai.v1.GetUserMemoryResponse
+	76,  // 139: ai.v1.ChatbotService.UpdateUserMemory:output_type -> ai.v1.UpdateUserMemoryResponse
+	78,  // 140: ai.v1.ChatbotService.GetContact:output_type -> ai.v1.GetContactResponse
+	80,  // 141: ai.v1.ChatbotService.ListContacts:output_type -> ai.v1.ListContactsResponse
+	82,  // 142: ai.v1.ChatbotService.UpdateContactSegment:output_type -> ai.v1.UpdateContactSegmentResponse
+	88,  // 143: ai.v1.ChatbotService.InitiateCall:output_type -> ai.v1.InitiateCallResponse
+	90,  // 144: ai.v1.ChatbotService.ListCalls:output_type -> ai.v1.ListCallsResponse
+	93,  // 145: ai.v1.ChatbotService.GetAnalyticsDashboard:output_type -> ai.v1.GetAnalyticsDashboardResponse
+	96,  // 146: ai.v1.ChatbotService.GetFunnelAnalytics:output_type -> ai.v1.GetFunnelAnalyticsResponse
+	99,  // 147: ai.v1.ChatbotService.GetPromptPerformance:output_type -> ai.v1.GetPromptPerformanceResponse
+	84,  // 148: ai.v1.ChatbotService.ListFollowUps:output_type -> ai.v1.ListFollowUpsResponse
+	86,  // 149: ai.v1.ChatbotService.CancelFollowUp:output_type -> ai.v1.CancelFollowUpResponse
+	115, // [115:150] is the sub-list for method output_type
+	80,  // [80:115] is the sub-list for method input_type
+	80,  // [80:80] is the sub-list for extension type_name
+	80,  // [80:80] is the sub-list for extension extendee
+	0,   // [0:80] is the sub-list for field type_name
 }
 
 func init() { file_ai_chatbot_proto_init() }
@@ -6906,6 +7037,7 @@ func file_ai_chatbot_proto_init() {
 		(*StreamResponseChunk_Error)(nil),
 		(*StreamResponseChunk_ToolResult)(nil),
 		(*StreamResponseChunk_TextReset)(nil),
+		(*StreamResponseChunk_AdditionalText)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -6913,7 +7045,7 @@ func file_ai_chatbot_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ai_chatbot_proto_rawDesc), len(file_ai_chatbot_proto_rawDesc)),
 			NumEnums:      7,
-			NumMessages:   91,
+			NumMessages:   93,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
