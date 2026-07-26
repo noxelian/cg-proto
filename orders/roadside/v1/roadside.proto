@@ -212,6 +212,10 @@ message RoadsideOrder {
   google.protobuf.Timestamp cancelled_at = 32;
   google.protobuf.Timestamp created_at = 33;
   google.protobuf.Timestamp updated_at = 34;
+  // escrow_deal_id is set once the money held for this order has been bound to
+  // the performer. Zero means there is nothing to confirm yet: the client must
+  // not guess a deal id from the order, the transaction or the payment entity.
+  int64 escrow_deal_id = 35;
 }
 
 message RoadsideAssignment {

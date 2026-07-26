@@ -652,8 +652,12 @@ type RoadsideOrder struct {
 	CancelledAt          *timestamppb.Timestamp `protobuf:"bytes,32,opt,name=cancelled_at,json=cancelledAt,proto3" json:"cancelled_at,omitempty"`
 	CreatedAt            *timestamppb.Timestamp `protobuf:"bytes,33,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt            *timestamppb.Timestamp `protobuf:"bytes,34,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	// escrow_deal_id is set once the money held for this order has been bound to
+	// the performer. Zero means there is nothing to confirm yet: the client must
+	// not guess a deal id from the order, the transaction or the payment entity.
+	EscrowDealId  int64 `protobuf:"varint,35,opt,name=escrow_deal_id,json=escrowDealId,proto3" json:"escrow_deal_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RoadsideOrder) Reset() {
@@ -922,6 +926,13 @@ func (x *RoadsideOrder) GetUpdatedAt() *timestamppb.Timestamp {
 		return x.UpdatedAt
 	}
 	return nil
+}
+
+func (x *RoadsideOrder) GetEscrowDealId() int64 {
+	if x != nil {
+		return x.EscrowDealId
+	}
+	return 0
 }
 
 type RoadsideAssignment struct {
@@ -3720,7 +3731,7 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\aversion\x18\a \x01(\x05R\aversion\"\xa5\x01\n" +
 	"\x17RoadsideServiceOffering\x12J\n" +
 	"\fservice_type\x18\x01 \x01(\v2'.orders.roadside.v1.RoadsideServiceTypeR\vserviceType\x12>\n" +
-	"\x06prices\x18\x02 \x03(\v2&.orders.roadside.v1.RoadsidePriceQuoteR\x06prices\"\xeb\r\n" +
+	"\x06prices\x18\x02 \x03(\v2&.orders.roadside.v1.RoadsidePriceQuoteR\x06prices\"\x91\x0e\n" +
 	"\rRoadsideOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\forder_number\x18\x02 \x01(\tR\vorderNumber\x12*\n" +
@@ -3760,7 +3771,8 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18! \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\t\n" +
+	"updated_at\x18\" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12$\n" +
+	"\x0eescrow_deal_id\x18# \x01(\x03R\fescrowDealIdB\t\n" +
 	"\a_car_idB\x16\n" +
 	"\x14_destination_addressB\x17\n" +
 	"\x15_destination_latitudeB\x18\n" +
