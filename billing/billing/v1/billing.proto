@@ -94,6 +94,16 @@ service BillingService {
   // authenticated payer may call it.
   rpc OpenEscrowDispute(OpenEscrowDisputeRequest) returns (OpenEscrowDisputeResponse);
 
+  // ReleaseEscrowAdvance pays the recipient part of a held deal before the
+  // work is confirmed.
+  //
+  // Repair work needs materials bought up front, and until the flow has enough
+  // history to automate a split, a manager decides the amount after speaking to
+  // both sides. The deal stays open: the remainder is still held and still
+  // needs confirmation. Only the canonical cg-bff admin caller with a human
+  // admin identifier may call it.
+  rpc ReleaseEscrowAdvance(ReleaseEscrowAdvanceRequest) returns (ReleaseEscrowAdvanceResponse);
+
   // SettleEscrowDispute resolves a dispute with an exact release/return split.
   // Only the canonical cg-bff admin caller with a human admin identifier may
   // call it.
@@ -642,6 +652,23 @@ message OpenEscrowDisputeRequest {
 }
 
 message OpenEscrowDisputeResponse {}
+
+message ReleaseEscrowAdvanceRequest {
+  int64 deal_id = 1;
+  // Required human administrator identifier for the audit log.
+  string admin_id = 2;
+  // Positive amount released to the recipient now, in currency minor units.
+  // It must leave the deal within its settlement quota.
+  int64 amount = 3;
+  // Why the manager released it, recorded in the audit log.
+  string reason = 4;
+  // Caller-supplied key so a retried request cannot pay twice.
+  string idempotency_key = 5;
+}
+
+message ReleaseEscrowAdvanceResponse {
+  EscrowDeal deal = 1;
+}
 
 message SettleEscrowDisputeRequest {
   int64 deal_id = 1;

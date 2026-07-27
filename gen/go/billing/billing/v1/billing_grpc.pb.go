@@ -42,6 +42,7 @@ const (
 	BillingService_ConfirmEscrowDelivery_FullMethodName       = "/billing.billing.v1.BillingService/ConfirmEscrowDelivery"
 	BillingService_AdminConfirmEscrowDelivery_FullMethodName  = "/billing.billing.v1.BillingService/AdminConfirmEscrowDelivery"
 	BillingService_OpenEscrowDispute_FullMethodName           = "/billing.billing.v1.BillingService/OpenEscrowDispute"
+	BillingService_ReleaseEscrowAdvance_FullMethodName        = "/billing.billing.v1.BillingService/ReleaseEscrowAdvance"
 	BillingService_SettleEscrowDispute_FullMethodName         = "/billing.billing.v1.BillingService/SettleEscrowDispute"
 	BillingService_GetEscrowDeal_FullMethodName               = "/billing.billing.v1.BillingService/GetEscrowDeal"
 	BillingService_ListOrganizationEscrowDeals_FullMethodName = "/billing.billing.v1.BillingService/ListOrganizationEscrowDeals"
@@ -110,6 +111,15 @@ type BillingServiceClient interface {
 	// OpenEscrowDispute stops auto-release and opens a dispute. Only the
 	// authenticated payer may call it.
 	OpenEscrowDispute(ctx context.Context, in *OpenEscrowDisputeRequest, opts ...grpc.CallOption) (*OpenEscrowDisputeResponse, error)
+	// ReleaseEscrowAdvance pays the recipient part of a held deal before the
+	// work is confirmed.
+	//
+	// Repair work needs materials bought up front, and until the flow has enough
+	// history to automate a split, a manager decides the amount after speaking to
+	// both sides. The deal stays open: the remainder is still held and still
+	// needs confirmation. Only the canonical cg-bff admin caller with a human
+	// admin identifier may call it.
+	ReleaseEscrowAdvance(ctx context.Context, in *ReleaseEscrowAdvanceRequest, opts ...grpc.CallOption) (*ReleaseEscrowAdvanceResponse, error)
 	// SettleEscrowDispute resolves a dispute with an exact release/return split.
 	// Only the canonical cg-bff admin caller with a human admin identifier may
 	// call it.
@@ -369,6 +379,16 @@ func (c *billingServiceClient) OpenEscrowDispute(ctx context.Context, in *OpenEs
 	return out, nil
 }
 
+func (c *billingServiceClient) ReleaseEscrowAdvance(ctx context.Context, in *ReleaseEscrowAdvanceRequest, opts ...grpc.CallOption) (*ReleaseEscrowAdvanceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReleaseEscrowAdvanceResponse)
+	err := c.cc.Invoke(ctx, BillingService_ReleaseEscrowAdvance_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *billingServiceClient) SettleEscrowDispute(ctx context.Context, in *SettleEscrowDisputeRequest, opts ...grpc.CallOption) (*SettleEscrowDisputeResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SettleEscrowDisputeResponse)
@@ -471,6 +491,15 @@ type BillingServiceServer interface {
 	// OpenEscrowDispute stops auto-release and opens a dispute. Only the
 	// authenticated payer may call it.
 	OpenEscrowDispute(context.Context, *OpenEscrowDisputeRequest) (*OpenEscrowDisputeResponse, error)
+	// ReleaseEscrowAdvance pays the recipient part of a held deal before the
+	// work is confirmed.
+	//
+	// Repair work needs materials bought up front, and until the flow has enough
+	// history to automate a split, a manager decides the amount after speaking to
+	// both sides. The deal stays open: the remainder is still held and still
+	// needs confirmation. Only the canonical cg-bff admin caller with a human
+	// admin identifier may call it.
+	ReleaseEscrowAdvance(context.Context, *ReleaseEscrowAdvanceRequest) (*ReleaseEscrowAdvanceResponse, error)
 	// SettleEscrowDispute resolves a dispute with an exact release/return split.
 	// Only the canonical cg-bff admin caller with a human admin identifier may
 	// call it.
@@ -568,6 +597,9 @@ func (UnimplementedBillingServiceServer) AdminConfirmEscrowDelivery(context.Cont
 }
 func (UnimplementedBillingServiceServer) OpenEscrowDispute(context.Context, *OpenEscrowDisputeRequest) (*OpenEscrowDisputeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method OpenEscrowDispute not implemented")
+}
+func (UnimplementedBillingServiceServer) ReleaseEscrowAdvance(context.Context, *ReleaseEscrowAdvanceRequest) (*ReleaseEscrowAdvanceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReleaseEscrowAdvance not implemented")
 }
 func (UnimplementedBillingServiceServer) SettleEscrowDispute(context.Context, *SettleEscrowDisputeRequest) (*SettleEscrowDisputeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SettleEscrowDispute not implemented")
@@ -1016,6 +1048,24 @@ func _BillingService_OpenEscrowDispute_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BillingService_ReleaseEscrowAdvance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReleaseEscrowAdvanceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).ReleaseEscrowAdvance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_ReleaseEscrowAdvance_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).ReleaseEscrowAdvance(ctx, req.(*ReleaseEscrowAdvanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BillingService_SettleEscrowDispute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SettleEscrowDisputeRequest)
 	if err := dec(in); err != nil {
@@ -1186,6 +1236,10 @@ var BillingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OpenEscrowDispute",
 			Handler:    _BillingService_OpenEscrowDispute_Handler,
+		},
+		{
+			MethodName: "ReleaseEscrowAdvance",
+			Handler:    _BillingService_ReleaseEscrowAdvance_Handler,
 		},
 		{
 			MethodName: "SettleEscrowDispute",

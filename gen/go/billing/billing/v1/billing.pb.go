@@ -4281,6 +4281,131 @@ func (*OpenEscrowDisputeResponse) Descriptor() ([]byte, []int) {
 	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{56}
 }
 
+type ReleaseEscrowAdvanceRequest struct {
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	DealId int64                  `protobuf:"varint,1,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
+	// Required human administrator identifier for the audit log.
+	AdminId string `protobuf:"bytes,2,opt,name=admin_id,json=adminId,proto3" json:"admin_id,omitempty"`
+	// Positive amount released to the recipient now, in currency minor units.
+	// It must leave the deal within its settlement quota.
+	Amount int64 `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
+	// Why the manager released it, recorded in the audit log.
+	Reason string `protobuf:"bytes,4,opt,name=reason,proto3" json:"reason,omitempty"`
+	// Caller-supplied key so a retried request cannot pay twice.
+	IdempotencyKey string `protobuf:"bytes,5,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ReleaseEscrowAdvanceRequest) Reset() {
+	*x = ReleaseEscrowAdvanceRequest{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[57]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReleaseEscrowAdvanceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReleaseEscrowAdvanceRequest) ProtoMessage() {}
+
+func (x *ReleaseEscrowAdvanceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[57]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReleaseEscrowAdvanceRequest.ProtoReflect.Descriptor instead.
+func (*ReleaseEscrowAdvanceRequest) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{57}
+}
+
+func (x *ReleaseEscrowAdvanceRequest) GetDealId() int64 {
+	if x != nil {
+		return x.DealId
+	}
+	return 0
+}
+
+func (x *ReleaseEscrowAdvanceRequest) GetAdminId() string {
+	if x != nil {
+		return x.AdminId
+	}
+	return ""
+}
+
+func (x *ReleaseEscrowAdvanceRequest) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *ReleaseEscrowAdvanceRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *ReleaseEscrowAdvanceRequest) GetIdempotencyKey() string {
+	if x != nil {
+		return x.IdempotencyKey
+	}
+	return ""
+}
+
+type ReleaseEscrowAdvanceResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Deal          *EscrowDeal            `protobuf:"bytes,1,opt,name=deal,proto3" json:"deal,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReleaseEscrowAdvanceResponse) Reset() {
+	*x = ReleaseEscrowAdvanceResponse{}
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[58]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReleaseEscrowAdvanceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReleaseEscrowAdvanceResponse) ProtoMessage() {}
+
+func (x *ReleaseEscrowAdvanceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[58]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReleaseEscrowAdvanceResponse.ProtoReflect.Descriptor instead.
+func (*ReleaseEscrowAdvanceResponse) Descriptor() ([]byte, []int) {
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{58}
+}
+
+func (x *ReleaseEscrowAdvanceResponse) GetDeal() *EscrowDeal {
+	if x != nil {
+		return x.Deal
+	}
+	return nil
+}
+
 type SettleEscrowDisputeRequest struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	DealId int64                  `protobuf:"varint,1,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
@@ -4298,7 +4423,7 @@ type SettleEscrowDisputeRequest struct {
 
 func (x *SettleEscrowDisputeRequest) Reset() {
 	*x = SettleEscrowDisputeRequest{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[57]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4310,7 +4435,7 @@ func (x *SettleEscrowDisputeRequest) String() string {
 func (*SettleEscrowDisputeRequest) ProtoMessage() {}
 
 func (x *SettleEscrowDisputeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[57]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4323,7 +4448,7 @@ func (x *SettleEscrowDisputeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SettleEscrowDisputeRequest.ProtoReflect.Descriptor instead.
 func (*SettleEscrowDisputeRequest) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{57}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *SettleEscrowDisputeRequest) GetDealId() int64 {
@@ -4369,7 +4494,7 @@ type SettleEscrowDisputeResponse struct {
 
 func (x *SettleEscrowDisputeResponse) Reset() {
 	*x = SettleEscrowDisputeResponse{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[58]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4381,7 +4506,7 @@ func (x *SettleEscrowDisputeResponse) String() string {
 func (*SettleEscrowDisputeResponse) ProtoMessage() {}
 
 func (x *SettleEscrowDisputeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[58]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4394,7 +4519,7 @@ func (x *SettleEscrowDisputeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SettleEscrowDisputeResponse.ProtoReflect.Descriptor instead.
 func (*SettleEscrowDisputeResponse) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{58}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{60}
 }
 
 type GetEscrowDealRequest struct {
@@ -4406,7 +4531,7 @@ type GetEscrowDealRequest struct {
 
 func (x *GetEscrowDealRequest) Reset() {
 	*x = GetEscrowDealRequest{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[59]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4418,7 +4543,7 @@ func (x *GetEscrowDealRequest) String() string {
 func (*GetEscrowDealRequest) ProtoMessage() {}
 
 func (x *GetEscrowDealRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[59]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4431,7 +4556,7 @@ func (x *GetEscrowDealRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEscrowDealRequest.ProtoReflect.Descriptor instead.
 func (*GetEscrowDealRequest) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{59}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *GetEscrowDealRequest) GetDealId() int64 {
@@ -4450,7 +4575,7 @@ type GetEscrowDealResponse struct {
 
 func (x *GetEscrowDealResponse) Reset() {
 	*x = GetEscrowDealResponse{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[60]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4462,7 +4587,7 @@ func (x *GetEscrowDealResponse) String() string {
 func (*GetEscrowDealResponse) ProtoMessage() {}
 
 func (x *GetEscrowDealResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[60]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4475,7 +4600,7 @@ func (x *GetEscrowDealResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEscrowDealResponse.ProtoReflect.Descriptor instead.
 func (*GetEscrowDealResponse) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{60}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *GetEscrowDealResponse) GetDeal() *EscrowDeal {
@@ -4499,7 +4624,7 @@ type ListOrganizationEscrowDealsRequest struct {
 
 func (x *ListOrganizationEscrowDealsRequest) Reset() {
 	*x = ListOrganizationEscrowDealsRequest{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[61]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4511,7 +4636,7 @@ func (x *ListOrganizationEscrowDealsRequest) String() string {
 func (*ListOrganizationEscrowDealsRequest) ProtoMessage() {}
 
 func (x *ListOrganizationEscrowDealsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[61]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4524,7 +4649,7 @@ func (x *ListOrganizationEscrowDealsRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ListOrganizationEscrowDealsRequest.ProtoReflect.Descriptor instead.
 func (*ListOrganizationEscrowDealsRequest) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{61}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *ListOrganizationEscrowDealsRequest) GetOrganizationId() string {
@@ -4565,7 +4690,7 @@ type ListOrganizationEscrowDealsResponse struct {
 
 func (x *ListOrganizationEscrowDealsResponse) Reset() {
 	*x = ListOrganizationEscrowDealsResponse{}
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[62]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4577,7 +4702,7 @@ func (x *ListOrganizationEscrowDealsResponse) String() string {
 func (*ListOrganizationEscrowDealsResponse) ProtoMessage() {}
 
 func (x *ListOrganizationEscrowDealsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_billing_billing_v1_billing_proto_msgTypes[62]
+	mi := &file_billing_billing_v1_billing_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4590,7 +4715,7 @@ func (x *ListOrganizationEscrowDealsResponse) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use ListOrganizationEscrowDealsResponse.ProtoReflect.Descriptor instead.
 func (*ListOrganizationEscrowDealsResponse) Descriptor() ([]byte, []int) {
-	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{62}
+	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *ListOrganizationEscrowDealsResponse) GetDeals() []*EscrowDeal {
@@ -4949,7 +5074,15 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\x18OpenEscrowDisputeRequest\x12\x17\n" +
 	"\adeal_id\x18\x01 \x01(\x03R\x06dealId\x12\x16\n" +
 	"\x06reason\x18\x02 \x01(\tR\x06reason\"\x1b\n" +
-	"\x19OpenEscrowDisputeResponse\"\xbc\x01\n" +
+	"\x19OpenEscrowDisputeResponse\"\xaa\x01\n" +
+	"\x1bReleaseEscrowAdvanceRequest\x12\x17\n" +
+	"\adeal_id\x18\x01 \x01(\x03R\x06dealId\x12\x19\n" +
+	"\badmin_id\x18\x02 \x01(\tR\aadminId\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\x12\x16\n" +
+	"\x06reason\x18\x04 \x01(\tR\x06reason\x12'\n" +
+	"\x0fidempotency_key\x18\x05 \x01(\tR\x0eidempotencyKey\"R\n" +
+	"\x1cReleaseEscrowAdvanceResponse\x122\n" +
+	"\x04deal\x18\x01 \x01(\v2\x1e.billing.billing.v1.EscrowDealR\x04deal\"\xbc\x01\n" +
 	"\x1aSettleEscrowDisputeRequest\x12\x17\n" +
 	"\adeal_id\x18\x01 \x01(\x03R\x06dealId\x12\x19\n" +
 	"\badmin_id\x18\x02 \x01(\tR\aadminId\x12%\n" +
@@ -5013,7 +5146,7 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"#ESCROW_DEAL_STATE_PARTIALLY_SETTLED\x10\x04\x12\x1e\n" +
 	"\x1aESCROW_DEAL_STATE_RELEASED\x10\x05\x12\x1e\n" +
 	"\x1aESCROW_DEAL_STATE_RETURNED\x10\x06\x12\x1d\n" +
-	"\x19ESCROW_DEAL_STATE_SETTLED\x10\a2\xf4\x17\n" +
+	"\x19ESCROW_DEAL_STATE_SETTLED\x10\a2\xef\x18\n" +
 	"\x0eBillingService\x12p\n" +
 	"\x11RecordLedgerEntry\x12,.billing.billing.v1.RecordLedgerEntryRequest\x1a-.billing.billing.v1.RecordLedgerEntryResponse\x12p\n" +
 	"\x11ListLedgerEntries\x12,.billing.billing.v1.ListLedgerEntriesRequest\x1a-.billing.billing.v1.ListLedgerEntriesResponse\x12d\n" +
@@ -5037,7 +5170,8 @@ const file_billing_billing_v1_billing_proto_rawDesc = "" +
 	"\x11DeclareEscrowWork\x12,.billing.billing.v1.DeclareEscrowWorkRequest\x1a-.billing.billing.v1.DeclareEscrowWorkResponse\x12|\n" +
 	"\x15ConfirmEscrowDelivery\x120.billing.billing.v1.ConfirmEscrowDeliveryRequest\x1a1.billing.billing.v1.ConfirmEscrowDeliveryResponse\x12\x8b\x01\n" +
 	"\x1aAdminConfirmEscrowDelivery\x125.billing.billing.v1.AdminConfirmEscrowDeliveryRequest\x1a6.billing.billing.v1.AdminConfirmEscrowDeliveryResponse\x12p\n" +
-	"\x11OpenEscrowDispute\x12,.billing.billing.v1.OpenEscrowDisputeRequest\x1a-.billing.billing.v1.OpenEscrowDisputeResponse\x12v\n" +
+	"\x11OpenEscrowDispute\x12,.billing.billing.v1.OpenEscrowDisputeRequest\x1a-.billing.billing.v1.OpenEscrowDisputeResponse\x12y\n" +
+	"\x14ReleaseEscrowAdvance\x12/.billing.billing.v1.ReleaseEscrowAdvanceRequest\x1a0.billing.billing.v1.ReleaseEscrowAdvanceResponse\x12v\n" +
 	"\x13SettleEscrowDispute\x12..billing.billing.v1.SettleEscrowDisputeRequest\x1a/.billing.billing.v1.SettleEscrowDisputeResponse\x12d\n" +
 	"\rGetEscrowDeal\x12(.billing.billing.v1.GetEscrowDealRequest\x1a).billing.billing.v1.GetEscrowDealResponse\x12\x8e\x01\n" +
 	"\x1bListOrganizationEscrowDeals\x126.billing.billing.v1.ListOrganizationEscrowDealsRequest\x1a7.billing.billing.v1.ListOrganizationEscrowDealsResponse\x12v\n" +
@@ -5056,7 +5190,7 @@ func file_billing_billing_v1_billing_proto_rawDescGZIP() []byte {
 }
 
 var file_billing_billing_v1_billing_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_billing_billing_v1_billing_proto_msgTypes = make([]protoimpl.MessageInfo, 63)
+var file_billing_billing_v1_billing_proto_msgTypes = make([]protoimpl.MessageInfo, 65)
 var file_billing_billing_v1_billing_proto_goTypes = []any{
 	(LedgerEntryType)(0),                        // 0: billing.billing.v1.LedgerEntryType
 	(PayoutStatus)(0),                           // 1: billing.billing.v1.PayoutStatus
@@ -5120,130 +5254,135 @@ var file_billing_billing_v1_billing_proto_goTypes = []any{
 	(*AdminConfirmEscrowDeliveryResponse)(nil),  // 59: billing.billing.v1.AdminConfirmEscrowDeliveryResponse
 	(*OpenEscrowDisputeRequest)(nil),            // 60: billing.billing.v1.OpenEscrowDisputeRequest
 	(*OpenEscrowDisputeResponse)(nil),           // 61: billing.billing.v1.OpenEscrowDisputeResponse
-	(*SettleEscrowDisputeRequest)(nil),          // 62: billing.billing.v1.SettleEscrowDisputeRequest
-	(*SettleEscrowDisputeResponse)(nil),         // 63: billing.billing.v1.SettleEscrowDisputeResponse
-	(*GetEscrowDealRequest)(nil),                // 64: billing.billing.v1.GetEscrowDealRequest
-	(*GetEscrowDealResponse)(nil),               // 65: billing.billing.v1.GetEscrowDealResponse
-	(*ListOrganizationEscrowDealsRequest)(nil),  // 66: billing.billing.v1.ListOrganizationEscrowDealsRequest
-	(*ListOrganizationEscrowDealsResponse)(nil), // 67: billing.billing.v1.ListOrganizationEscrowDealsResponse
-	(*timestamppb.Timestamp)(nil),               // 68: google.protobuf.Timestamp
+	(*ReleaseEscrowAdvanceRequest)(nil),         // 62: billing.billing.v1.ReleaseEscrowAdvanceRequest
+	(*ReleaseEscrowAdvanceResponse)(nil),        // 63: billing.billing.v1.ReleaseEscrowAdvanceResponse
+	(*SettleEscrowDisputeRequest)(nil),          // 64: billing.billing.v1.SettleEscrowDisputeRequest
+	(*SettleEscrowDisputeResponse)(nil),         // 65: billing.billing.v1.SettleEscrowDisputeResponse
+	(*GetEscrowDealRequest)(nil),                // 66: billing.billing.v1.GetEscrowDealRequest
+	(*GetEscrowDealResponse)(nil),               // 67: billing.billing.v1.GetEscrowDealResponse
+	(*ListOrganizationEscrowDealsRequest)(nil),  // 68: billing.billing.v1.ListOrganizationEscrowDealsRequest
+	(*ListOrganizationEscrowDealsResponse)(nil), // 69: billing.billing.v1.ListOrganizationEscrowDealsResponse
+	(*timestamppb.Timestamp)(nil),               // 70: google.protobuf.Timestamp
 }
 var file_billing_billing_v1_billing_proto_depIdxs = []int32{
 	0,  // 0: billing.billing.v1.LedgerEntry.entry_type:type_name -> billing.billing.v1.LedgerEntryType
-	68, // 1: billing.billing.v1.LedgerEntry.created_at:type_name -> google.protobuf.Timestamp
+	70, // 1: billing.billing.v1.LedgerEntry.created_at:type_name -> google.protobuf.Timestamp
 	3,  // 2: billing.billing.v1.LedgerEntry.subject_type:type_name -> billing.billing.v1.SubjectType
-	68, // 3: billing.billing.v1.OrgBalance.updated_at:type_name -> google.protobuf.Timestamp
-	68, // 4: billing.billing.v1.UserBalance.last_transaction_at:type_name -> google.protobuf.Timestamp
-	68, // 5: billing.billing.v1.UserBalance.updated_at:type_name -> google.protobuf.Timestamp
-	68, // 6: billing.billing.v1.UserWallet.updated_at:type_name -> google.protobuf.Timestamp
+	70, // 3: billing.billing.v1.OrgBalance.updated_at:type_name -> google.protobuf.Timestamp
+	70, // 4: billing.billing.v1.UserBalance.last_transaction_at:type_name -> google.protobuf.Timestamp
+	70, // 5: billing.billing.v1.UserBalance.updated_at:type_name -> google.protobuf.Timestamp
+	70, // 6: billing.billing.v1.UserWallet.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 7: billing.billing.v1.Payout.status:type_name -> billing.billing.v1.PayoutStatus
-	68, // 8: billing.billing.v1.Payout.requested_at:type_name -> google.protobuf.Timestamp
-	68, // 9: billing.billing.v1.Payout.completed_at:type_name -> google.protobuf.Timestamp
-	68, // 10: billing.billing.v1.SpendingEntry.created_at:type_name -> google.protobuf.Timestamp
+	70, // 8: billing.billing.v1.Payout.requested_at:type_name -> google.protobuf.Timestamp
+	70, // 9: billing.billing.v1.Payout.completed_at:type_name -> google.protobuf.Timestamp
+	70, // 10: billing.billing.v1.SpendingEntry.created_at:type_name -> google.protobuf.Timestamp
 	0,  // 11: billing.billing.v1.SpendingEntry.entry_type:type_name -> billing.billing.v1.LedgerEntryType
 	0,  // 12: billing.billing.v1.RecordLedgerEntryRequest.entry_type:type_name -> billing.billing.v1.LedgerEntryType
 	3,  // 13: billing.billing.v1.RecordLedgerEntryRequest.subject_type:type_name -> billing.billing.v1.SubjectType
 	5,  // 14: billing.billing.v1.RecordLedgerEntryResponse.entry:type_name -> billing.billing.v1.LedgerEntry
 	0,  // 15: billing.billing.v1.ListLedgerEntriesRequest.entry_type:type_name -> billing.billing.v1.LedgerEntryType
-	68, // 16: billing.billing.v1.ListLedgerEntriesRequest.from:type_name -> google.protobuf.Timestamp
-	68, // 17: billing.billing.v1.ListLedgerEntriesRequest.to:type_name -> google.protobuf.Timestamp
+	70, // 16: billing.billing.v1.ListLedgerEntriesRequest.from:type_name -> google.protobuf.Timestamp
+	70, // 17: billing.billing.v1.ListLedgerEntriesRequest.to:type_name -> google.protobuf.Timestamp
 	5,  // 18: billing.billing.v1.ListLedgerEntriesResponse.entries:type_name -> billing.billing.v1.LedgerEntry
 	6,  // 19: billing.billing.v1.GetOrgBalanceResponse.balance:type_name -> billing.billing.v1.OrgBalance
 	9,  // 20: billing.billing.v1.InitiatePayoutResponse.payout:type_name -> billing.billing.v1.Payout
 	1,  // 21: billing.billing.v1.GetPayoutHistoryRequest.status:type_name -> billing.billing.v1.PayoutStatus
 	9,  // 22: billing.billing.v1.GetPayoutHistoryResponse.payouts:type_name -> billing.billing.v1.Payout
 	2,  // 23: billing.billing.v1.ReconcileTransactionResponse.status:type_name -> billing.billing.v1.ReconciliationStatus
-	68, // 24: billing.billing.v1.GetOrgStatementRequest.from:type_name -> google.protobuf.Timestamp
-	68, // 25: billing.billing.v1.GetOrgStatementRequest.to:type_name -> google.protobuf.Timestamp
+	70, // 24: billing.billing.v1.GetOrgStatementRequest.from:type_name -> google.protobuf.Timestamp
+	70, // 25: billing.billing.v1.GetOrgStatementRequest.to:type_name -> google.protobuf.Timestamp
 	5,  // 26: billing.billing.v1.GetOrgStatementResponse.entries:type_name -> billing.billing.v1.LedgerEntry
-	68, // 27: billing.billing.v1.GetRevenueStatsRequest.from:type_name -> google.protobuf.Timestamp
-	68, // 28: billing.billing.v1.GetRevenueStatsRequest.to:type_name -> google.protobuf.Timestamp
+	70, // 27: billing.billing.v1.GetRevenueStatsRequest.from:type_name -> google.protobuf.Timestamp
+	70, // 28: billing.billing.v1.GetRevenueStatsRequest.to:type_name -> google.protobuf.Timestamp
 	10, // 29: billing.billing.v1.GetRevenueStatsResponse.data_points:type_name -> billing.billing.v1.RevenueDataPoint
 	3,  // 30: billing.billing.v1.GetStatementRequest.subject_type:type_name -> billing.billing.v1.SubjectType
-	68, // 31: billing.billing.v1.GetStatementRequest.from:type_name -> google.protobuf.Timestamp
-	68, // 32: billing.billing.v1.GetStatementRequest.to:type_name -> google.protobuf.Timestamp
+	70, // 31: billing.billing.v1.GetStatementRequest.from:type_name -> google.protobuf.Timestamp
+	70, // 32: billing.billing.v1.GetStatementRequest.to:type_name -> google.protobuf.Timestamp
 	5,  // 33: billing.billing.v1.GetStatementResponse.entries:type_name -> billing.billing.v1.LedgerEntry
 	7,  // 34: billing.billing.v1.GetUserBalanceResponse.balance:type_name -> billing.billing.v1.UserBalance
-	68, // 35: billing.billing.v1.ListSpendingRequest.from:type_name -> google.protobuf.Timestamp
-	68, // 36: billing.billing.v1.ListSpendingRequest.to:type_name -> google.protobuf.Timestamp
+	70, // 35: billing.billing.v1.ListSpendingRequest.from:type_name -> google.protobuf.Timestamp
+	70, // 36: billing.billing.v1.ListSpendingRequest.to:type_name -> google.protobuf.Timestamp
 	11, // 37: billing.billing.v1.ListSpendingResponse.entries:type_name -> billing.billing.v1.SpendingEntry
 	8,  // 38: billing.billing.v1.GetWalletBalanceResponse.wallet:type_name -> billing.billing.v1.UserWallet
 	8,  // 39: billing.billing.v1.DebitWalletResponse.wallet_after:type_name -> billing.billing.v1.UserWallet
 	5,  // 40: billing.billing.v1.DebitWalletResponse.ledger_entry:type_name -> billing.billing.v1.LedgerEntry
 	8,  // 41: billing.billing.v1.CreditWalletResponse.wallet_after:type_name -> billing.billing.v1.UserWallet
 	5,  // 42: billing.billing.v1.CreditWalletResponse.ledger_entry:type_name -> billing.billing.v1.LedgerEntry
-	68, // 43: billing.billing.v1.OrgPayoutCard.created_at:type_name -> google.protobuf.Timestamp
+	70, // 43: billing.billing.v1.OrgPayoutCard.created_at:type_name -> google.protobuf.Timestamp
 	42, // 44: billing.billing.v1.ConfirmOrgCardBindingResponse.card:type_name -> billing.billing.v1.OrgPayoutCard
 	42, // 45: billing.billing.v1.ListOrgCardsResponse.cards:type_name -> billing.billing.v1.OrgPayoutCard
 	4,  // 46: billing.billing.v1.EscrowDeal.state:type_name -> billing.billing.v1.EscrowDealState
-	68, // 47: billing.billing.v1.EscrowDeal.auto_release_at:type_name -> google.protobuf.Timestamp
-	68, // 48: billing.billing.v1.EscrowDeal.work_declared_at:type_name -> google.protobuf.Timestamp
-	68, // 49: billing.billing.v1.EscrowDeal.confirmed_at:type_name -> google.protobuf.Timestamp
-	68, // 50: billing.billing.v1.EscrowDeal.created_at:type_name -> google.protobuf.Timestamp
-	68, // 51: billing.billing.v1.EscrowDeal.updated_at:type_name -> google.protobuf.Timestamp
+	70, // 47: billing.billing.v1.EscrowDeal.auto_release_at:type_name -> google.protobuf.Timestamp
+	70, // 48: billing.billing.v1.EscrowDeal.work_declared_at:type_name -> google.protobuf.Timestamp
+	70, // 49: billing.billing.v1.EscrowDeal.confirmed_at:type_name -> google.protobuf.Timestamp
+	70, // 50: billing.billing.v1.EscrowDeal.created_at:type_name -> google.protobuf.Timestamp
+	70, // 51: billing.billing.v1.EscrowDeal.updated_at:type_name -> google.protobuf.Timestamp
 	51, // 52: billing.billing.v1.BindEscrowPerformerResponse.deal:type_name -> billing.billing.v1.EscrowDeal
-	51, // 53: billing.billing.v1.GetEscrowDealResponse.deal:type_name -> billing.billing.v1.EscrowDeal
-	4,  // 54: billing.billing.v1.ListOrganizationEscrowDealsRequest.state:type_name -> billing.billing.v1.EscrowDealState
-	51, // 55: billing.billing.v1.ListOrganizationEscrowDealsResponse.deals:type_name -> billing.billing.v1.EscrowDeal
-	12, // 56: billing.billing.v1.BillingService.RecordLedgerEntry:input_type -> billing.billing.v1.RecordLedgerEntryRequest
-	14, // 57: billing.billing.v1.BillingService.ListLedgerEntries:input_type -> billing.billing.v1.ListLedgerEntriesRequest
-	16, // 58: billing.billing.v1.BillingService.GetOrgBalance:input_type -> billing.billing.v1.GetOrgBalanceRequest
-	18, // 59: billing.billing.v1.BillingService.InitiatePayout:input_type -> billing.billing.v1.InitiatePayoutRequest
-	20, // 60: billing.billing.v1.BillingService.GetPayoutHistory:input_type -> billing.billing.v1.GetPayoutHistoryRequest
-	22, // 61: billing.billing.v1.BillingService.ReconcileTransaction:input_type -> billing.billing.v1.ReconcileTransactionRequest
-	24, // 62: billing.billing.v1.BillingService.GetOrgStatement:input_type -> billing.billing.v1.GetOrgStatementRequest
-	26, // 63: billing.billing.v1.BillingService.GetRevenueStats:input_type -> billing.billing.v1.GetRevenueStatsRequest
-	28, // 64: billing.billing.v1.BillingService.GetStatement:input_type -> billing.billing.v1.GetStatementRequest
-	30, // 65: billing.billing.v1.BillingService.GetUserBalance:input_type -> billing.billing.v1.GetUserBalanceRequest
-	32, // 66: billing.billing.v1.BillingService.ListSpending:input_type -> billing.billing.v1.ListSpendingRequest
-	34, // 67: billing.billing.v1.BillingService.GetWalletBalance:input_type -> billing.billing.v1.GetWalletBalanceRequest
-	36, // 68: billing.billing.v1.BillingService.DebitWallet:input_type -> billing.billing.v1.DebitWalletRequest
-	38, // 69: billing.billing.v1.BillingService.CreditWallet:input_type -> billing.billing.v1.CreditWalletRequest
-	40, // 70: billing.billing.v1.BillingService.CreditOrgBalance:input_type -> billing.billing.v1.CreditOrgBalanceRequest
-	43, // 71: billing.billing.v1.BillingService.InitiateOrgCardBinding:input_type -> billing.billing.v1.InitiateOrgCardBindingRequest
-	45, // 72: billing.billing.v1.BillingService.ConfirmOrgCardBinding:input_type -> billing.billing.v1.ConfirmOrgCardBindingRequest
-	47, // 73: billing.billing.v1.BillingService.ListOrgCards:input_type -> billing.billing.v1.ListOrgCardsRequest
-	49, // 74: billing.billing.v1.BillingService.DeleteOrgCard:input_type -> billing.billing.v1.DeleteOrgCardRequest
-	54, // 75: billing.billing.v1.BillingService.DeclareEscrowWork:input_type -> billing.billing.v1.DeclareEscrowWorkRequest
-	56, // 76: billing.billing.v1.BillingService.ConfirmEscrowDelivery:input_type -> billing.billing.v1.ConfirmEscrowDeliveryRequest
-	58, // 77: billing.billing.v1.BillingService.AdminConfirmEscrowDelivery:input_type -> billing.billing.v1.AdminConfirmEscrowDeliveryRequest
-	60, // 78: billing.billing.v1.BillingService.OpenEscrowDispute:input_type -> billing.billing.v1.OpenEscrowDisputeRequest
-	62, // 79: billing.billing.v1.BillingService.SettleEscrowDispute:input_type -> billing.billing.v1.SettleEscrowDisputeRequest
-	64, // 80: billing.billing.v1.BillingService.GetEscrowDeal:input_type -> billing.billing.v1.GetEscrowDealRequest
-	66, // 81: billing.billing.v1.BillingService.ListOrganizationEscrowDeals:input_type -> billing.billing.v1.ListOrganizationEscrowDealsRequest
-	52, // 82: billing.billing.v1.BillingService.BindEscrowPerformer:input_type -> billing.billing.v1.BindEscrowPerformerRequest
-	13, // 83: billing.billing.v1.BillingService.RecordLedgerEntry:output_type -> billing.billing.v1.RecordLedgerEntryResponse
-	15, // 84: billing.billing.v1.BillingService.ListLedgerEntries:output_type -> billing.billing.v1.ListLedgerEntriesResponse
-	17, // 85: billing.billing.v1.BillingService.GetOrgBalance:output_type -> billing.billing.v1.GetOrgBalanceResponse
-	19, // 86: billing.billing.v1.BillingService.InitiatePayout:output_type -> billing.billing.v1.InitiatePayoutResponse
-	21, // 87: billing.billing.v1.BillingService.GetPayoutHistory:output_type -> billing.billing.v1.GetPayoutHistoryResponse
-	23, // 88: billing.billing.v1.BillingService.ReconcileTransaction:output_type -> billing.billing.v1.ReconcileTransactionResponse
-	25, // 89: billing.billing.v1.BillingService.GetOrgStatement:output_type -> billing.billing.v1.GetOrgStatementResponse
-	27, // 90: billing.billing.v1.BillingService.GetRevenueStats:output_type -> billing.billing.v1.GetRevenueStatsResponse
-	29, // 91: billing.billing.v1.BillingService.GetStatement:output_type -> billing.billing.v1.GetStatementResponse
-	31, // 92: billing.billing.v1.BillingService.GetUserBalance:output_type -> billing.billing.v1.GetUserBalanceResponse
-	33, // 93: billing.billing.v1.BillingService.ListSpending:output_type -> billing.billing.v1.ListSpendingResponse
-	35, // 94: billing.billing.v1.BillingService.GetWalletBalance:output_type -> billing.billing.v1.GetWalletBalanceResponse
-	37, // 95: billing.billing.v1.BillingService.DebitWallet:output_type -> billing.billing.v1.DebitWalletResponse
-	39, // 96: billing.billing.v1.BillingService.CreditWallet:output_type -> billing.billing.v1.CreditWalletResponse
-	41, // 97: billing.billing.v1.BillingService.CreditOrgBalance:output_type -> billing.billing.v1.CreditOrgBalanceResponse
-	44, // 98: billing.billing.v1.BillingService.InitiateOrgCardBinding:output_type -> billing.billing.v1.InitiateOrgCardBindingResponse
-	46, // 99: billing.billing.v1.BillingService.ConfirmOrgCardBinding:output_type -> billing.billing.v1.ConfirmOrgCardBindingResponse
-	48, // 100: billing.billing.v1.BillingService.ListOrgCards:output_type -> billing.billing.v1.ListOrgCardsResponse
-	50, // 101: billing.billing.v1.BillingService.DeleteOrgCard:output_type -> billing.billing.v1.DeleteOrgCardResponse
-	55, // 102: billing.billing.v1.BillingService.DeclareEscrowWork:output_type -> billing.billing.v1.DeclareEscrowWorkResponse
-	57, // 103: billing.billing.v1.BillingService.ConfirmEscrowDelivery:output_type -> billing.billing.v1.ConfirmEscrowDeliveryResponse
-	59, // 104: billing.billing.v1.BillingService.AdminConfirmEscrowDelivery:output_type -> billing.billing.v1.AdminConfirmEscrowDeliveryResponse
-	61, // 105: billing.billing.v1.BillingService.OpenEscrowDispute:output_type -> billing.billing.v1.OpenEscrowDisputeResponse
-	63, // 106: billing.billing.v1.BillingService.SettleEscrowDispute:output_type -> billing.billing.v1.SettleEscrowDisputeResponse
-	65, // 107: billing.billing.v1.BillingService.GetEscrowDeal:output_type -> billing.billing.v1.GetEscrowDealResponse
-	67, // 108: billing.billing.v1.BillingService.ListOrganizationEscrowDeals:output_type -> billing.billing.v1.ListOrganizationEscrowDealsResponse
-	53, // 109: billing.billing.v1.BillingService.BindEscrowPerformer:output_type -> billing.billing.v1.BindEscrowPerformerResponse
-	83, // [83:110] is the sub-list for method output_type
-	56, // [56:83] is the sub-list for method input_type
-	56, // [56:56] is the sub-list for extension type_name
-	56, // [56:56] is the sub-list for extension extendee
-	0,  // [0:56] is the sub-list for field type_name
+	51, // 53: billing.billing.v1.ReleaseEscrowAdvanceResponse.deal:type_name -> billing.billing.v1.EscrowDeal
+	51, // 54: billing.billing.v1.GetEscrowDealResponse.deal:type_name -> billing.billing.v1.EscrowDeal
+	4,  // 55: billing.billing.v1.ListOrganizationEscrowDealsRequest.state:type_name -> billing.billing.v1.EscrowDealState
+	51, // 56: billing.billing.v1.ListOrganizationEscrowDealsResponse.deals:type_name -> billing.billing.v1.EscrowDeal
+	12, // 57: billing.billing.v1.BillingService.RecordLedgerEntry:input_type -> billing.billing.v1.RecordLedgerEntryRequest
+	14, // 58: billing.billing.v1.BillingService.ListLedgerEntries:input_type -> billing.billing.v1.ListLedgerEntriesRequest
+	16, // 59: billing.billing.v1.BillingService.GetOrgBalance:input_type -> billing.billing.v1.GetOrgBalanceRequest
+	18, // 60: billing.billing.v1.BillingService.InitiatePayout:input_type -> billing.billing.v1.InitiatePayoutRequest
+	20, // 61: billing.billing.v1.BillingService.GetPayoutHistory:input_type -> billing.billing.v1.GetPayoutHistoryRequest
+	22, // 62: billing.billing.v1.BillingService.ReconcileTransaction:input_type -> billing.billing.v1.ReconcileTransactionRequest
+	24, // 63: billing.billing.v1.BillingService.GetOrgStatement:input_type -> billing.billing.v1.GetOrgStatementRequest
+	26, // 64: billing.billing.v1.BillingService.GetRevenueStats:input_type -> billing.billing.v1.GetRevenueStatsRequest
+	28, // 65: billing.billing.v1.BillingService.GetStatement:input_type -> billing.billing.v1.GetStatementRequest
+	30, // 66: billing.billing.v1.BillingService.GetUserBalance:input_type -> billing.billing.v1.GetUserBalanceRequest
+	32, // 67: billing.billing.v1.BillingService.ListSpending:input_type -> billing.billing.v1.ListSpendingRequest
+	34, // 68: billing.billing.v1.BillingService.GetWalletBalance:input_type -> billing.billing.v1.GetWalletBalanceRequest
+	36, // 69: billing.billing.v1.BillingService.DebitWallet:input_type -> billing.billing.v1.DebitWalletRequest
+	38, // 70: billing.billing.v1.BillingService.CreditWallet:input_type -> billing.billing.v1.CreditWalletRequest
+	40, // 71: billing.billing.v1.BillingService.CreditOrgBalance:input_type -> billing.billing.v1.CreditOrgBalanceRequest
+	43, // 72: billing.billing.v1.BillingService.InitiateOrgCardBinding:input_type -> billing.billing.v1.InitiateOrgCardBindingRequest
+	45, // 73: billing.billing.v1.BillingService.ConfirmOrgCardBinding:input_type -> billing.billing.v1.ConfirmOrgCardBindingRequest
+	47, // 74: billing.billing.v1.BillingService.ListOrgCards:input_type -> billing.billing.v1.ListOrgCardsRequest
+	49, // 75: billing.billing.v1.BillingService.DeleteOrgCard:input_type -> billing.billing.v1.DeleteOrgCardRequest
+	54, // 76: billing.billing.v1.BillingService.DeclareEscrowWork:input_type -> billing.billing.v1.DeclareEscrowWorkRequest
+	56, // 77: billing.billing.v1.BillingService.ConfirmEscrowDelivery:input_type -> billing.billing.v1.ConfirmEscrowDeliveryRequest
+	58, // 78: billing.billing.v1.BillingService.AdminConfirmEscrowDelivery:input_type -> billing.billing.v1.AdminConfirmEscrowDeliveryRequest
+	60, // 79: billing.billing.v1.BillingService.OpenEscrowDispute:input_type -> billing.billing.v1.OpenEscrowDisputeRequest
+	62, // 80: billing.billing.v1.BillingService.ReleaseEscrowAdvance:input_type -> billing.billing.v1.ReleaseEscrowAdvanceRequest
+	64, // 81: billing.billing.v1.BillingService.SettleEscrowDispute:input_type -> billing.billing.v1.SettleEscrowDisputeRequest
+	66, // 82: billing.billing.v1.BillingService.GetEscrowDeal:input_type -> billing.billing.v1.GetEscrowDealRequest
+	68, // 83: billing.billing.v1.BillingService.ListOrganizationEscrowDeals:input_type -> billing.billing.v1.ListOrganizationEscrowDealsRequest
+	52, // 84: billing.billing.v1.BillingService.BindEscrowPerformer:input_type -> billing.billing.v1.BindEscrowPerformerRequest
+	13, // 85: billing.billing.v1.BillingService.RecordLedgerEntry:output_type -> billing.billing.v1.RecordLedgerEntryResponse
+	15, // 86: billing.billing.v1.BillingService.ListLedgerEntries:output_type -> billing.billing.v1.ListLedgerEntriesResponse
+	17, // 87: billing.billing.v1.BillingService.GetOrgBalance:output_type -> billing.billing.v1.GetOrgBalanceResponse
+	19, // 88: billing.billing.v1.BillingService.InitiatePayout:output_type -> billing.billing.v1.InitiatePayoutResponse
+	21, // 89: billing.billing.v1.BillingService.GetPayoutHistory:output_type -> billing.billing.v1.GetPayoutHistoryResponse
+	23, // 90: billing.billing.v1.BillingService.ReconcileTransaction:output_type -> billing.billing.v1.ReconcileTransactionResponse
+	25, // 91: billing.billing.v1.BillingService.GetOrgStatement:output_type -> billing.billing.v1.GetOrgStatementResponse
+	27, // 92: billing.billing.v1.BillingService.GetRevenueStats:output_type -> billing.billing.v1.GetRevenueStatsResponse
+	29, // 93: billing.billing.v1.BillingService.GetStatement:output_type -> billing.billing.v1.GetStatementResponse
+	31, // 94: billing.billing.v1.BillingService.GetUserBalance:output_type -> billing.billing.v1.GetUserBalanceResponse
+	33, // 95: billing.billing.v1.BillingService.ListSpending:output_type -> billing.billing.v1.ListSpendingResponse
+	35, // 96: billing.billing.v1.BillingService.GetWalletBalance:output_type -> billing.billing.v1.GetWalletBalanceResponse
+	37, // 97: billing.billing.v1.BillingService.DebitWallet:output_type -> billing.billing.v1.DebitWalletResponse
+	39, // 98: billing.billing.v1.BillingService.CreditWallet:output_type -> billing.billing.v1.CreditWalletResponse
+	41, // 99: billing.billing.v1.BillingService.CreditOrgBalance:output_type -> billing.billing.v1.CreditOrgBalanceResponse
+	44, // 100: billing.billing.v1.BillingService.InitiateOrgCardBinding:output_type -> billing.billing.v1.InitiateOrgCardBindingResponse
+	46, // 101: billing.billing.v1.BillingService.ConfirmOrgCardBinding:output_type -> billing.billing.v1.ConfirmOrgCardBindingResponse
+	48, // 102: billing.billing.v1.BillingService.ListOrgCards:output_type -> billing.billing.v1.ListOrgCardsResponse
+	50, // 103: billing.billing.v1.BillingService.DeleteOrgCard:output_type -> billing.billing.v1.DeleteOrgCardResponse
+	55, // 104: billing.billing.v1.BillingService.DeclareEscrowWork:output_type -> billing.billing.v1.DeclareEscrowWorkResponse
+	57, // 105: billing.billing.v1.BillingService.ConfirmEscrowDelivery:output_type -> billing.billing.v1.ConfirmEscrowDeliveryResponse
+	59, // 106: billing.billing.v1.BillingService.AdminConfirmEscrowDelivery:output_type -> billing.billing.v1.AdminConfirmEscrowDeliveryResponse
+	61, // 107: billing.billing.v1.BillingService.OpenEscrowDispute:output_type -> billing.billing.v1.OpenEscrowDisputeResponse
+	63, // 108: billing.billing.v1.BillingService.ReleaseEscrowAdvance:output_type -> billing.billing.v1.ReleaseEscrowAdvanceResponse
+	65, // 109: billing.billing.v1.BillingService.SettleEscrowDispute:output_type -> billing.billing.v1.SettleEscrowDisputeResponse
+	67, // 110: billing.billing.v1.BillingService.GetEscrowDeal:output_type -> billing.billing.v1.GetEscrowDealResponse
+	69, // 111: billing.billing.v1.BillingService.ListOrganizationEscrowDeals:output_type -> billing.billing.v1.ListOrganizationEscrowDealsResponse
+	53, // 112: billing.billing.v1.BillingService.BindEscrowPerformer:output_type -> billing.billing.v1.BindEscrowPerformerResponse
+	85, // [85:113] is the sub-list for method output_type
+	57, // [57:85] is the sub-list for method input_type
+	57, // [57:57] is the sub-list for extension type_name
+	57, // [57:57] is the sub-list for extension extendee
+	0,  // [0:57] is the sub-list for field type_name
 }
 
 func init() { file_billing_billing_v1_billing_proto_init() }
@@ -5258,7 +5397,7 @@ func file_billing_billing_v1_billing_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_billing_billing_v1_billing_proto_rawDesc), len(file_billing_billing_v1_billing_proto_rawDesc)),
 			NumEnums:      5,
-			NumMessages:   63,
+			NumMessages:   65,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
