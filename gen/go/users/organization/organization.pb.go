@@ -302,8 +302,11 @@ type Organization struct {
 	IsDealer             bool    `protobuf:"varint,36,opt,name=is_dealer,json=isDealer,proto3" json:"is_dealer,omitempty"`
 	ExpertForCarmakeIds  []int64 `protobuf:"varint,37,rep,packed,name=expert_for_carmake_ids,json=expertForCarmakeIds,proto3" json:"expert_for_carmake_ids,omitempty"`
 	ExpertForCategoryIds []int64 `protobuf:"varint,38,rep,packed,name=expert_for_category_ids,json=expertForCategoryIds,proto3" json:"expert_for_category_ids,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	// Effective safe-payment state for this organization: its own flag OR the
+	// platform-wide switch. Read-only here — set it through UpdateOrganization.
+	EscrowEnabled bool `protobuf:"varint,39,opt,name=escrow_enabled,json=escrowEnabled,proto3" json:"escrow_enabled,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Organization) Reset() {
@@ -600,6 +603,13 @@ func (x *Organization) GetExpertForCategoryIds() []int64 {
 		return x.ExpertForCategoryIds
 	}
 	return nil
+}
+
+func (x *Organization) GetEscrowEnabled() bool {
+	if x != nil {
+		return x.EscrowEnabled
+	}
+	return false
 }
 
 type OrganizationSettings struct {
@@ -1372,7 +1382,10 @@ type UpdateOrganizationRequest struct {
 	// Replace photo gallery. Empty array = no change (same convention as category_ids).
 	Photos []string `protobuf:"bytes,17,rep,name=photos,proto3" json:"photos,omitempty"`
 	// Move the storefront to another NSI city. Omitted = keep the current city.
-	CityId        *int64 `protobuf:"varint,18,opt,name=city_id,json=cityId,proto3,oneof" json:"city_id,omitempty"`
+	CityId *int64 `protobuf:"varint,18,opt,name=city_id,json=cityId,proto3,oneof" json:"city_id,omitempty"`
+	// Turns safe payment on or off for this organization. Money control:
+	// administrators only, never the organization itself. Absent means unchanged.
+	EscrowEnabled *bool `protobuf:"varint,19,opt,name=escrow_enabled,json=escrowEnabled,proto3,oneof" json:"escrow_enabled,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1531,6 +1544,13 @@ func (x *UpdateOrganizationRequest) GetCityId() int64 {
 		return *x.CityId
 	}
 	return 0
+}
+
+func (x *UpdateOrganizationRequest) GetEscrowEnabled() bool {
+	if x != nil && x.EscrowEnabled != nil {
+		return *x.EscrowEnabled
+	}
+	return false
 }
 
 type UpdateOrganizationResponse struct {
@@ -7333,7 +7353,7 @@ var File_users_organization_organization_proto protoreflect.FileDescriptor
 
 const file_users_organization_organization_proto_rawDesc = "" +
 	"\n" +
-	"%users/organization/organization.proto\x12\x15users.organization.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xdc\v\n" +
+	"%users/organization/organization.proto\x12\x15users.organization.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\x83\f\n" +
 	"\fOrganization\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12;\n" +
@@ -7380,7 +7400,8 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"popularity\x12\x1b\n" +
 	"\tis_dealer\x18$ \x01(\bR\bisDealer\x123\n" +
 	"\x16expert_for_carmake_ids\x18% \x03(\x03R\x13expertForCarmakeIds\x125\n" +
-	"\x17expert_for_category_ids\x18& \x03(\x03R\x14expertForCategoryIdsB\f\n" +
+	"\x17expert_for_category_ids\x18& \x03(\x03R\x14expertForCategoryIds\x12%\n" +
+	"\x0eescrow_enabled\x18' \x01(\bR\rescrowEnabledB\f\n" +
 	"\n" +
 	"_legacy_idB\v\n" +
 	"\t_latitudeB\f\n" +
@@ -7468,7 +7489,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x16GetOrganizationRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\"b\n" +
 	"\x17GetOrganizationResponse\x12G\n" +
-	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"\xa9\x06\n" +
+	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"\xe8\x06\n" +
 	"\x19UpdateOrganizationRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
@@ -7490,7 +7511,8 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\x06status\x18\x0f \x01(\tH\vR\x06status\x88\x01\x01\x12!\n" +
 	"\fcategory_ids\x18\x10 \x03(\x03R\vcategoryIds\x12\x16\n" +
 	"\x06photos\x18\x11 \x03(\tR\x06photos\x12\x1c\n" +
-	"\acity_id\x18\x12 \x01(\x03H\fR\x06cityId\x88\x01\x01B\a\n" +
+	"\acity_id\x18\x12 \x01(\x03H\fR\x06cityId\x88\x01\x01\x12*\n" +
+	"\x0eescrow_enabled\x18\x13 \x01(\bH\rR\rescrowEnabled\x88\x01\x01B\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\v\n" +
 	"\t_logo_urlB\n" +
@@ -7508,7 +7530,8 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"_longitudeB\t\n" +
 	"\a_statusB\n" +
 	"\n" +
-	"\b_city_id\"e\n" +
+	"\b_city_idB\x11\n" +
+	"\x0f_escrow_enabled\"e\n" +
 	"\x1aUpdateOrganizationResponse\x12G\n" +
 	"\forganization\x18\x01 \x01(\v2#.users.organization.v1.OrganizationR\forganization\"D\n" +
 	"\x19DeleteOrganizationRequest\x12'\n" +

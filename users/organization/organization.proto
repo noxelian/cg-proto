@@ -200,6 +200,9 @@ message Organization {
   bool is_dealer = 36;
   repeated int64 expert_for_carmake_ids = 37;
   repeated int64 expert_for_category_ids = 38;
+  // Effective safe-payment state for this organization: its own flag OR the
+  // platform-wide switch. Read-only here — set it through UpdateOrganization.
+  bool escrow_enabled = 39;
 }
 
 message OrganizationSettings {
@@ -311,6 +314,10 @@ message UpdateOrganizationRequest {
   repeated string photos = 17;
   // Move the storefront to another NSI city. Omitted = keep the current city.
   optional int64 city_id = 18;
+
+  // Turns safe payment on or off for this organization. Money control:
+  // administrators only, never the organization itself. Absent means unchanged.
+  optional bool escrow_enabled = 19;
 }
 
 message UpdateOrganizationResponse {
