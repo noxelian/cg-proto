@@ -151,6 +151,11 @@ message RoadsideServiceType {
   //
   // Absent means true, keeping every existing roadside service unchanged.
   bool requires_pickup = 9;
+  // service_group decides which customer-facing section offers this service.
+  // The catalogue is shared, so without it every section shows every service:
+  // a car wash would appear under roadside assistance. Empty means "roadside",
+  // keeping every existing service exactly where it is today.
+  string service_group = 10;
 }
 
 message RoadsidePrice {
@@ -268,6 +273,9 @@ message ListRoadsideServicesRequest {
   int64 city_id = 1;
   int32 page = 2;
   int32 page_size = 3;
+  // Empty returns the roadside catalogue, which is what every existing caller
+  // already receives.
+  string service_group = 4;
 }
 
 message ListRoadsideServicesResponse {
@@ -426,6 +434,8 @@ message ListRoadsideServiceTypesRequest {
   optional bool is_active = 1;
   int32 page = 2;
   int32 page_size = 3;
+  // Empty returns every group, so the dispatcher catalogue stays complete.
+  string service_group = 4;
 }
 
 message ListRoadsideServiceTypesResponse {

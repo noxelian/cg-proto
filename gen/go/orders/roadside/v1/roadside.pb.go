@@ -270,8 +270,13 @@ type RoadsideServiceType struct {
 	//
 	// Absent means true, keeping every existing roadside service unchanged.
 	RequiresPickup bool `protobuf:"varint,9,opt,name=requires_pickup,json=requiresPickup,proto3" json:"requires_pickup,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// service_group decides which customer-facing section offers this service.
+	// The catalogue is shared, so without it every section shows every service:
+	// a car wash would appear under roadside assistance. Empty means "roadside",
+	// keeping every existing service exactly where it is today.
+	ServiceGroup  string `protobuf:"bytes,10,opt,name=service_group,json=serviceGroup,proto3" json:"service_group,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RoadsideServiceType) Reset() {
@@ -365,6 +370,13 @@ func (x *RoadsideServiceType) GetRequiresPickup() bool {
 		return x.RequiresPickup
 	}
 	return false
+}
+
+func (x *RoadsideServiceType) GetServiceGroup() string {
+	if x != nil {
+		return x.ServiceGroup
+	}
+	return ""
 }
 
 type RoadsidePrice struct {
@@ -1259,10 +1271,13 @@ func (x *RoadsideOrderCard) GetTimeline() []*RoadsideOrderEvent {
 }
 
 type ListRoadsideServicesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	CityId        int64                  `protobuf:"varint,1,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
-	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
-	PageSize      int32                  `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	CityId   int64                  `protobuf:"varint,1,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
+	Page     int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize int32                  `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// Empty returns the roadside catalogue, which is what every existing caller
+	// already receives.
+	ServiceGroup  string `protobuf:"bytes,4,opt,name=service_group,json=serviceGroup,proto3" json:"service_group,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1316,6 +1331,13 @@ func (x *ListRoadsideServicesRequest) GetPageSize() int32 {
 		return x.PageSize
 	}
 	return 0
+}
+
+func (x *ListRoadsideServicesRequest) GetServiceGroup() string {
+	if x != nil {
+		return x.ServiceGroup
+	}
+	return ""
 }
 
 type ListRoadsideServicesResponse struct {
@@ -2783,10 +2805,12 @@ func (x *CancelRoadsideOrderByOperatorResponse) GetOrder() *RoadsideOrder {
 }
 
 type ListRoadsideServiceTypesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	IsActive      *bool                  `protobuf:"varint,1,opt,name=is_active,json=isActive,proto3,oneof" json:"is_active,omitempty"`
-	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
-	PageSize      int32                  `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	IsActive *bool                  `protobuf:"varint,1,opt,name=is_active,json=isActive,proto3,oneof" json:"is_active,omitempty"`
+	Page     int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize int32                  `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// Empty returns every group, so the dispatcher catalogue stays complete.
+	ServiceGroup  string `protobuf:"bytes,4,opt,name=service_group,json=serviceGroup,proto3" json:"service_group,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2840,6 +2864,13 @@ func (x *ListRoadsideServiceTypesRequest) GetPageSize() int32 {
 		return x.PageSize
 	}
 	return 0
+}
+
+func (x *ListRoadsideServiceTypesRequest) GetServiceGroup() string {
+	if x != nil {
+		return x.ServiceGroup
+	}
+	return ""
 }
 
 type ListRoadsideServiceTypesResponse struct {
@@ -3710,7 +3741,7 @@ var File_orders_roadside_v1_roadside_proto protoreflect.FileDescriptor
 
 const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\n" +
-	"!orders/roadside/v1/roadside.proto\x12\x12orders.roadside.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc0\x02\n" +
+	"!orders/roadside/v1/roadside.proto\x12\x12orders.roadside.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe5\x02\n" +
 	"\x13RoadsideServiceType\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x19\n" +
 	"\btitle_ru\x18\x02 \x01(\tR\atitleRu\x12\x19\n" +
@@ -3721,7 +3752,9 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\n" +
 	"sort_order\x18\a \x01(\x05R\tsortOrder\x12\x1b\n" +
 	"\tis_active\x18\b \x01(\bR\bisActive\x12'\n" +
-	"\x0frequires_pickup\x18\t \x01(\bR\x0erequiresPickup\"\xd4\x02\n" +
+	"\x0frequires_pickup\x18\t \x01(\bR\x0erequiresPickup\x12#\n" +
+	"\rservice_group\x18\n" +
+	" \x01(\tR\fserviceGroup\"\xd4\x02\n" +
 	"\rRoadsidePrice\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
 	"\fservice_code\x18\x02 \x01(\tR\vserviceCode\x12\x17\n" +
@@ -3834,11 +3867,12 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\x11RoadsideOrderCard\x127\n" +
 	"\x05order\x18\x01 \x01(\v2!.orders.roadside.v1.RoadsideOrderR\x05order\x12H\n" +
 	"\vassignments\x18\x02 \x03(\v2&.orders.roadside.v1.RoadsideAssignmentR\vassignments\x12B\n" +
-	"\btimeline\x18\x03 \x03(\v2&.orders.roadside.v1.RoadsideOrderEventR\btimeline\"g\n" +
+	"\btimeline\x18\x03 \x03(\v2&.orders.roadside.v1.RoadsideOrderEventR\btimeline\"\x8c\x01\n" +
 	"\x1bListRoadsideServicesRequest\x12\x17\n" +
 	"\acity_id\x18\x01 \x01(\x03R\x06cityId\x12\x12\n" +
 	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\"}\n" +
+	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\x12#\n" +
+	"\rservice_group\x18\x04 \x01(\tR\fserviceGroup\"}\n" +
 	"\x1cListRoadsideServicesResponse\x12G\n" +
 	"\bservices\x18\x01 \x03(\v2+.orders.roadside.v1.RoadsideServiceOfferingR\bservices\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"x\n" +
@@ -3945,11 +3979,12 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"reasonCode\x12\x18\n" +
 	"\acomment\x18\x03 \x01(\tR\acomment\"`\n" +
 	"%CancelRoadsideOrderByOperatorResponse\x127\n" +
-	"\x05order\x18\x01 \x01(\v2!.orders.roadside.v1.RoadsideOrderR\x05order\"\x82\x01\n" +
+	"\x05order\x18\x01 \x01(\v2!.orders.roadside.v1.RoadsideOrderR\x05order\"\xa7\x01\n" +
 	"\x1fListRoadsideServiceTypesRequest\x12 \n" +
 	"\tis_active\x18\x01 \x01(\bH\x00R\bisActive\x88\x01\x01\x12\x12\n" +
 	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x03 \x01(\x05R\bpageSizeB\f\n" +
+	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\x12#\n" +
+	"\rservice_group\x18\x04 \x01(\tR\fserviceGroupB\f\n" +
 	"\n" +
 	"_is_active\"\x86\x01\n" +
 	" ListRoadsideServiceTypesResponse\x12L\n" +
