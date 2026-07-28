@@ -583,3 +583,207 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "payments/payment/v1/payment.proto",
 }
+
+const (
+	CreditService_CreateCreditApplication_FullMethodName = "/payments.payment.v1.CreditService/CreateCreditApplication"
+	CreditService_GetCreditApplication_FullMethodName    = "/payments.payment.v1.CreditService/GetCreditApplication"
+	CreditService_RefundCreditApplication_FullMethodName = "/payments.payment.v1.CreditService/RefundCreditApplication"
+)
+
+// CreditServiceClient is the client API for CreditService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// CreditService submits and tracks FFC2 credit/installment applications
+// (apply-lead-factoring) and their refunds (factoring-refund). Amounts are
+// tiyn everywhere in this API; cg-payments converts to tenge at the FFC
+// adapter boundary. Application/refund outcomes arrive asynchronously via
+// the FFC hook and are published as `credit.*` payment events.
+type CreditServiceClient interface {
+	// CreateCreditApplication accepts an authoritative credit intent only from
+	// the service that owns entity_type (owner-service mapping, like
+	// PaymentService.CreateTransaction). It creates the local application row
+	// first, then submits the FFC lead and binds uuid + redirect_url.
+	CreateCreditApplication(ctx context.Context, in *CreateCreditApplicationRequest, opts ...grpc.CallOption) (*CreateCreditApplicationResponse, error)
+	// GetCreditApplication resolves by FFC uuid or by (entity_type, entity_id).
+	GetCreditApplication(ctx context.Context, in *GetCreditApplicationRequest, opts ...grpc.CallOption) (*GetCreditApplicationResponse, error)
+	// RefundCreditApplication initiates a full or partial refund for an ISSUED
+	// application. The result is asynchronous (FFC hook, covlir_status).
+	RefundCreditApplication(ctx context.Context, in *RefundCreditApplicationRequest, opts ...grpc.CallOption) (*RefundCreditApplicationResponse, error)
+}
+
+type creditServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewCreditServiceClient(cc grpc.ClientConnInterface) CreditServiceClient {
+	return &creditServiceClient{cc}
+}
+
+func (c *creditServiceClient) CreateCreditApplication(ctx context.Context, in *CreateCreditApplicationRequest, opts ...grpc.CallOption) (*CreateCreditApplicationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateCreditApplicationResponse)
+	err := c.cc.Invoke(ctx, CreditService_CreateCreditApplication_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *creditServiceClient) GetCreditApplication(ctx context.Context, in *GetCreditApplicationRequest, opts ...grpc.CallOption) (*GetCreditApplicationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCreditApplicationResponse)
+	err := c.cc.Invoke(ctx, CreditService_GetCreditApplication_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *creditServiceClient) RefundCreditApplication(ctx context.Context, in *RefundCreditApplicationRequest, opts ...grpc.CallOption) (*RefundCreditApplicationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RefundCreditApplicationResponse)
+	err := c.cc.Invoke(ctx, CreditService_RefundCreditApplication_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CreditServiceServer is the server API for CreditService service.
+// All implementations must embed UnimplementedCreditServiceServer
+// for forward compatibility.
+//
+// CreditService submits and tracks FFC2 credit/installment applications
+// (apply-lead-factoring) and their refunds (factoring-refund). Amounts are
+// tiyn everywhere in this API; cg-payments converts to tenge at the FFC
+// adapter boundary. Application/refund outcomes arrive asynchronously via
+// the FFC hook and are published as `credit.*` payment events.
+type CreditServiceServer interface {
+	// CreateCreditApplication accepts an authoritative credit intent only from
+	// the service that owns entity_type (owner-service mapping, like
+	// PaymentService.CreateTransaction). It creates the local application row
+	// first, then submits the FFC lead and binds uuid + redirect_url.
+	CreateCreditApplication(context.Context, *CreateCreditApplicationRequest) (*CreateCreditApplicationResponse, error)
+	// GetCreditApplication resolves by FFC uuid or by (entity_type, entity_id).
+	GetCreditApplication(context.Context, *GetCreditApplicationRequest) (*GetCreditApplicationResponse, error)
+	// RefundCreditApplication initiates a full or partial refund for an ISSUED
+	// application. The result is asynchronous (FFC hook, covlir_status).
+	RefundCreditApplication(context.Context, *RefundCreditApplicationRequest) (*RefundCreditApplicationResponse, error)
+	mustEmbedUnimplementedCreditServiceServer()
+}
+
+// UnimplementedCreditServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedCreditServiceServer struct{}
+
+func (UnimplementedCreditServiceServer) CreateCreditApplication(context.Context, *CreateCreditApplicationRequest) (*CreateCreditApplicationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateCreditApplication not implemented")
+}
+func (UnimplementedCreditServiceServer) GetCreditApplication(context.Context, *GetCreditApplicationRequest) (*GetCreditApplicationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCreditApplication not implemented")
+}
+func (UnimplementedCreditServiceServer) RefundCreditApplication(context.Context, *RefundCreditApplicationRequest) (*RefundCreditApplicationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RefundCreditApplication not implemented")
+}
+func (UnimplementedCreditServiceServer) mustEmbedUnimplementedCreditServiceServer() {}
+func (UnimplementedCreditServiceServer) testEmbeddedByValue()                       {}
+
+// UnsafeCreditServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CreditServiceServer will
+// result in compilation errors.
+type UnsafeCreditServiceServer interface {
+	mustEmbedUnimplementedCreditServiceServer()
+}
+
+func RegisterCreditServiceServer(s grpc.ServiceRegistrar, srv CreditServiceServer) {
+	// If the following call panics, it indicates UnimplementedCreditServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&CreditService_ServiceDesc, srv)
+}
+
+func _CreditService_CreateCreditApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCreditApplicationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CreditServiceServer).CreateCreditApplication(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CreditService_CreateCreditApplication_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CreditServiceServer).CreateCreditApplication(ctx, req.(*CreateCreditApplicationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CreditService_GetCreditApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCreditApplicationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CreditServiceServer).GetCreditApplication(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CreditService_GetCreditApplication_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CreditServiceServer).GetCreditApplication(ctx, req.(*GetCreditApplicationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CreditService_RefundCreditApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefundCreditApplicationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CreditServiceServer).RefundCreditApplication(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CreditService_RefundCreditApplication_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CreditServiceServer).RefundCreditApplication(ctx, req.(*RefundCreditApplicationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// CreditService_ServiceDesc is the grpc.ServiceDesc for CreditService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var CreditService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "payments.payment.v1.CreditService",
+	HandlerType: (*CreditServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateCreditApplication",
+			Handler:    _CreditService_CreateCreditApplication_Handler,
+		},
+		{
+			MethodName: "GetCreditApplication",
+			Handler:    _CreditService_GetCreditApplication_Handler,
+		},
+		{
+			MethodName: "RefundCreditApplication",
+			Handler:    _CreditService_RefundCreditApplication_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "payments/payment/v1/payment.proto",
+}
