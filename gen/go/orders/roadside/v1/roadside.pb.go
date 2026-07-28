@@ -682,7 +682,11 @@ type RoadsideOrder struct {
 	// escrow_deal_id is set once the money held for this order has been bound to
 	// the performer. Zero means there is nothing to confirm yet: the client must
 	// not guess a deal id from the order, the transaction or the payment entity.
-	EscrowDealId  int64 `protobuf:"varint,35,opt,name=escrow_deal_id,json=escrowDealId,proto3" json:"escrow_deal_id,omitempty"`
+	EscrowDealId int64 `protobuf:"varint,35,opt,name=escrow_deal_id,json=escrowDealId,proto3" json:"escrow_deal_id,omitempty"`
+	// service_group is the immutable snapshot of the catalogue section this
+	// order was bought from. Empty means roadside assistance, which is what
+	// every order created before the sections existed is.
+	ServiceGroup  string `protobuf:"bytes,36,opt,name=service_group,json=serviceGroup,proto3" json:"service_group,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -960,6 +964,13 @@ func (x *RoadsideOrder) GetEscrowDealId() int64 {
 		return x.EscrowDealId
 	}
 	return 0
+}
+
+func (x *RoadsideOrder) GetServiceGroup() string {
+	if x != nil {
+		return x.ServiceGroup
+	}
+	return ""
 }
 
 type RoadsideAssignment struct {
@@ -1996,14 +2007,17 @@ func (x *CancelRoadsideOrderResponse) GetOrder() *RoadsideOrder {
 }
 
 type ListRoadsideOrdersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Status        RoadsideOrderStatus    `protobuf:"varint,1,opt,name=status,proto3,enum=orders.roadside.v1.RoadsideOrderStatus" json:"status,omitempty"`
-	CityId        int64                  `protobuf:"varint,2,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
-	ServiceCode   string                 `protobuf:"bytes,3,opt,name=service_code,json=serviceCode,proto3" json:"service_code,omitempty"`
-	From          *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=from,proto3" json:"from,omitempty"`
-	To            *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=to,proto3" json:"to,omitempty"`
-	Page          int32                  `protobuf:"varint,6,opt,name=page,proto3" json:"page,omitempty"`
-	PageSize      int32                  `protobuf:"varint,7,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Status      RoadsideOrderStatus    `protobuf:"varint,1,opt,name=status,proto3,enum=orders.roadside.v1.RoadsideOrderStatus" json:"status,omitempty"`
+	CityId      int64                  `protobuf:"varint,2,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
+	ServiceCode string                 `protobuf:"bytes,3,opt,name=service_code,json=serviceCode,proto3" json:"service_code,omitempty"`
+	From        *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=from,proto3" json:"from,omitempty"`
+	To          *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=to,proto3" json:"to,omitempty"`
+	Page        int32                  `protobuf:"varint,6,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize    int32                  `protobuf:"varint,7,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// Empty returns every section, so an existing dispatcher view keeps showing
+	// the whole queue.
+	ServiceGroup  string `protobuf:"bytes,8,opt,name=service_group,json=serviceGroup,proto3" json:"service_group,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2085,6 +2099,13 @@ func (x *ListRoadsideOrdersRequest) GetPageSize() int32 {
 		return x.PageSize
 	}
 	return 0
+}
+
+func (x *ListRoadsideOrdersRequest) GetServiceGroup() string {
+	if x != nil {
+		return x.ServiceGroup
+	}
+	return ""
 }
 
 type ListRoadsideOrdersResponse struct {
@@ -3780,7 +3801,7 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\aversion\x18\a \x01(\x05R\aversion\"\xa5\x01\n" +
 	"\x17RoadsideServiceOffering\x12J\n" +
 	"\fservice_type\x18\x01 \x01(\v2'.orders.roadside.v1.RoadsideServiceTypeR\vserviceType\x12>\n" +
-	"\x06prices\x18\x02 \x03(\v2&.orders.roadside.v1.RoadsidePriceQuoteR\x06prices\"\x91\x0e\n" +
+	"\x06prices\x18\x02 \x03(\v2&.orders.roadside.v1.RoadsidePriceQuoteR\x06prices\"\xb6\x0e\n" +
 	"\rRoadsideOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\forder_number\x18\x02 \x01(\tR\vorderNumber\x12*\n" +
@@ -3821,7 +3842,8 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"created_at\x18! \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12$\n" +
-	"\x0eescrow_deal_id\x18# \x01(\x03R\fescrowDealIdB\t\n" +
+	"\x0eescrow_deal_id\x18# \x01(\x03R\fescrowDealId\x12#\n" +
+	"\rservice_group\x18$ \x01(\tR\fserviceGroupB\t\n" +
 	"\a_car_idB\x16\n" +
 	"\x14_destination_addressB\x17\n" +
 	"\x15_destination_latitudeB\x18\n" +
@@ -3923,7 +3945,7 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\vreason_code\x18\x02 \x01(\tR\n" +
 	"reasonCode\"V\n" +
 	"\x1bCancelRoadsideOrderResponse\x127\n" +
-	"\x05order\x18\x01 \x01(\v2!.orders.roadside.v1.RoadsideOrderR\x05order\"\xa5\x02\n" +
+	"\x05order\x18\x01 \x01(\v2!.orders.roadside.v1.RoadsideOrderR\x05order\"\xca\x02\n" +
 	"\x19ListRoadsideOrdersRequest\x12?\n" +
 	"\x06status\x18\x01 \x01(\x0e2'.orders.roadside.v1.RoadsideOrderStatusR\x06status\x12\x17\n" +
 	"\acity_id\x18\x02 \x01(\x03R\x06cityId\x12!\n" +
@@ -3931,7 +3953,8 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\x04from\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
 	"\x02to\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x12\n" +
 	"\x04page\x18\x06 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\a \x01(\x05R\bpageSize\"m\n" +
+	"\tpage_size\x18\a \x01(\x05R\bpageSize\x12#\n" +
+	"\rservice_group\x18\b \x01(\tR\fserviceGroup\"m\n" +
 	"\x1aListRoadsideOrdersResponse\x129\n" +
 	"\x06orders\x18\x01 \x03(\v2!.orders.roadside.v1.RoadsideOrderR\x06orders\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"8\n" +

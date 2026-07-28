@@ -229,6 +229,10 @@ message RoadsideOrder {
   // the performer. Zero means there is nothing to confirm yet: the client must
   // not guess a deal id from the order, the transaction or the payment entity.
   int64 escrow_deal_id = 35;
+  // service_group is the immutable snapshot of the catalogue section this
+  // order was bought from. Empty means roadside assistance, which is what
+  // every order created before the sections existed is.
+  string service_group = 36;
 }
 
 message RoadsideAssignment {
@@ -358,6 +362,9 @@ message ListRoadsideOrdersRequest {
   google.protobuf.Timestamp to = 5;
   int32 page = 6;
   int32 page_size = 7;
+  // Empty returns every section, so an existing dispatcher view keeps showing
+  // the whole queue.
+  string service_group = 8;
 }
 
 message ListRoadsideOrdersResponse {
