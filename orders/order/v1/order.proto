@@ -40,6 +40,9 @@ service OrderService {
   rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
   rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse);
   rpc ConfirmShipment(ConfirmShipmentRequest) returns (ConfirmShipmentResponse);
+  // Seller transitions for repair/service orders (paid -> in_progress -> completed).
+  rpc StartWork(StartWorkRequest) returns (StartWorkResponse);
+  rpc CompleteWork(CompleteWorkRequest) returns (CompleteWorkResponse);
   rpc ConfirmReceipt(ConfirmReceiptRequest) returns (ConfirmReceiptResponse);
   rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse);
   rpc GetOrdersByCheckoutId(GetOrdersByCheckoutIdRequest) returns (GetOrdersByCheckoutIdResponse);
@@ -102,6 +105,9 @@ enum OrderStatus {
   ORDER_STATUS_CANCELLED = 8;
   ORDER_STATUS_DISPUTED = 9;
   ORDER_STATUS_REFUNDED = 10;
+  // Repair/service orders: the seller org took the job into work
+  // (paid -> in_progress -> completed).
+  ORDER_STATUS_IN_PROGRESS = 11;
 }
 
 enum EscrowStatus {
@@ -236,6 +242,13 @@ message Order {
   // Explicit unit-stated alias of total_amount. Both fields contain the exact
   // payable amount in the currency minor unit (tiyn for KZT).
   int64 total_amount_minor = 21;
+  // Marketplace-request lineage. Set when the order was created from an
+  // accepted bid (insurance/service repairs): bid_id is the accepted bid,
+  // request_id the originating request, request_kind its kind ("insurance";
+  // empty for plain parts/marketplace orders).
+  optional int64 bid_id = 22;
+  string request_id = 23;
+  string request_kind = 24;
 }
 
 message OrderItem {
@@ -696,6 +709,24 @@ message SetOrderStatusRequest {
 }
 
 message SetOrderStatusResponse {
+  Order order = 1;
+}
+
+message StartWorkRequest {
+  int64 order_id = 1;
+  string seller_org_id = 2;
+}
+
+message StartWorkResponse {
+  Order order = 1;
+}
+
+message CompleteWorkRequest {
+  int64 order_id = 1;
+  string seller_org_id = 2;
+}
+
+message CompleteWorkResponse {
   Order order = 1;
 }
 

@@ -41,6 +41,8 @@ const (
 	OrderService_GetOrder_FullMethodName                       = "/orders.order.v1.OrderService/GetOrder"
 	OrderService_ListOrders_FullMethodName                     = "/orders.order.v1.OrderService/ListOrders"
 	OrderService_ConfirmShipment_FullMethodName                = "/orders.order.v1.OrderService/ConfirmShipment"
+	OrderService_StartWork_FullMethodName                      = "/orders.order.v1.OrderService/StartWork"
+	OrderService_CompleteWork_FullMethodName                   = "/orders.order.v1.OrderService/CompleteWork"
 	OrderService_ConfirmReceipt_FullMethodName                 = "/orders.order.v1.OrderService/ConfirmReceipt"
 	OrderService_CancelOrder_FullMethodName                    = "/orders.order.v1.OrderService/CancelOrder"
 	OrderService_GetOrdersByCheckoutId_FullMethodName          = "/orders.order.v1.OrderService/GetOrdersByCheckoutId"
@@ -94,6 +96,9 @@ type OrderServiceClient interface {
 	GetOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*GetOrderResponse, error)
 	ListOrders(ctx context.Context, in *ListOrdersRequest, opts ...grpc.CallOption) (*ListOrdersResponse, error)
 	ConfirmShipment(ctx context.Context, in *ConfirmShipmentRequest, opts ...grpc.CallOption) (*ConfirmShipmentResponse, error)
+	// Seller transitions for repair/service orders (paid -> in_progress -> completed).
+	StartWork(ctx context.Context, in *StartWorkRequest, opts ...grpc.CallOption) (*StartWorkResponse, error)
+	CompleteWork(ctx context.Context, in *CompleteWorkRequest, opts ...grpc.CallOption) (*CompleteWorkResponse, error)
 	ConfirmReceipt(ctx context.Context, in *ConfirmReceiptRequest, opts ...grpc.CallOption) (*ConfirmReceiptResponse, error)
 	CancelOrder(ctx context.Context, in *CancelOrderRequest, opts ...grpc.CallOption) (*CancelOrderResponse, error)
 	GetOrdersByCheckoutId(ctx context.Context, in *GetOrdersByCheckoutIdRequest, opts ...grpc.CallOption) (*GetOrdersByCheckoutIdResponse, error)
@@ -348,6 +353,26 @@ func (c *orderServiceClient) ConfirmShipment(ctx context.Context, in *ConfirmShi
 	return out, nil
 }
 
+func (c *orderServiceClient) StartWork(ctx context.Context, in *StartWorkRequest, opts ...grpc.CallOption) (*StartWorkResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StartWorkResponse)
+	err := c.cc.Invoke(ctx, OrderService_StartWork_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) CompleteWork(ctx context.Context, in *CompleteWorkRequest, opts ...grpc.CallOption) (*CompleteWorkResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CompleteWorkResponse)
+	err := c.cc.Invoke(ctx, OrderService_CompleteWork_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *orderServiceClient) ConfirmReceipt(ctx context.Context, in *ConfirmReceiptRequest, opts ...grpc.CallOption) (*ConfirmReceiptResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ConfirmReceiptResponse)
@@ -552,6 +577,9 @@ type OrderServiceServer interface {
 	GetOrder(context.Context, *GetOrderRequest) (*GetOrderResponse, error)
 	ListOrders(context.Context, *ListOrdersRequest) (*ListOrdersResponse, error)
 	ConfirmShipment(context.Context, *ConfirmShipmentRequest) (*ConfirmShipmentResponse, error)
+	// Seller transitions for repair/service orders (paid -> in_progress -> completed).
+	StartWork(context.Context, *StartWorkRequest) (*StartWorkResponse, error)
+	CompleteWork(context.Context, *CompleteWorkRequest) (*CompleteWorkResponse, error)
 	ConfirmReceipt(context.Context, *ConfirmReceiptRequest) (*ConfirmReceiptResponse, error)
 	CancelOrder(context.Context, *CancelOrderRequest) (*CancelOrderResponse, error)
 	GetOrdersByCheckoutId(context.Context, *GetOrdersByCheckoutIdRequest) (*GetOrdersByCheckoutIdResponse, error)
@@ -651,6 +679,12 @@ func (UnimplementedOrderServiceServer) ListOrders(context.Context, *ListOrdersRe
 }
 func (UnimplementedOrderServiceServer) ConfirmShipment(context.Context, *ConfirmShipmentRequest) (*ConfirmShipmentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ConfirmShipment not implemented")
+}
+func (UnimplementedOrderServiceServer) StartWork(context.Context, *StartWorkRequest) (*StartWorkResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method StartWork not implemented")
+}
+func (UnimplementedOrderServiceServer) CompleteWork(context.Context, *CompleteWorkRequest) (*CompleteWorkResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CompleteWork not implemented")
 }
 func (UnimplementedOrderServiceServer) ConfirmReceipt(context.Context, *ConfirmReceiptRequest) (*ConfirmReceiptResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ConfirmReceipt not implemented")
@@ -1120,6 +1154,42 @@ func _OrderService_ConfirmShipment_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_StartWork_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartWorkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).StartWork(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_StartWork_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).StartWork(ctx, req.(*StartWorkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_CompleteWork_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CompleteWorkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).CompleteWork(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_CompleteWork_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).CompleteWork(ctx, req.(*CompleteWorkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrderService_ConfirmReceipt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ConfirmReceiptRequest)
 	if err := dec(in); err != nil {
@@ -1520,6 +1590,14 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConfirmShipment",
 			Handler:    _OrderService_ConfirmShipment_Handler,
+		},
+		{
+			MethodName: "StartWork",
+			Handler:    _OrderService_StartWork_Handler,
+		},
+		{
+			MethodName: "CompleteWork",
+			Handler:    _OrderService_CompleteWork_Handler,
 		},
 		{
 			MethodName: "ConfirmReceipt",
