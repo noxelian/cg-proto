@@ -262,8 +262,16 @@ type RoadsideServiceType struct {
 	RequiresBodyType    bool                   `protobuf:"varint,6,opt,name=requires_body_type,json=requiresBodyType,proto3" json:"requires_body_type,omitempty"`
 	SortOrder           int32                  `protobuf:"varint,7,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
 	IsActive            bool                   `protobuf:"varint,8,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	// requires_pickup is true for work performed where the customer stands —
+	// the performer drives to them, so an address is mandatory. It is false for
+	// services the customer drives to (a car wash): the manager picks the venue
+	// in the customer's city and confirms it by phone, so demanding an address
+	// up front would only add a step the customer cannot answer usefully.
+	//
+	// Absent means true, keeping every existing roadside service unchanged.
+	RequiresPickup bool `protobuf:"varint,9,opt,name=requires_pickup,json=requiresPickup,proto3" json:"requires_pickup,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *RoadsideServiceType) Reset() {
@@ -348,6 +356,13 @@ func (x *RoadsideServiceType) GetSortOrder() int32 {
 func (x *RoadsideServiceType) GetIsActive() bool {
 	if x != nil {
 		return x.IsActive
+	}
+	return false
+}
+
+func (x *RoadsideServiceType) GetRequiresPickup() bool {
+	if x != nil {
+		return x.RequiresPickup
 	}
 	return false
 }
@@ -3695,7 +3710,7 @@ var File_orders_roadside_v1_roadside_proto protoreflect.FileDescriptor
 
 const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\n" +
-	"!orders/roadside/v1/roadside.proto\x12\x12orders.roadside.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x97\x02\n" +
+	"!orders/roadside/v1/roadside.proto\x12\x12orders.roadside.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc0\x02\n" +
 	"\x13RoadsideServiceType\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x19\n" +
 	"\btitle_ru\x18\x02 \x01(\tR\atitleRu\x12\x19\n" +
@@ -3705,7 +3720,8 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\x12requires_body_type\x18\x06 \x01(\bR\x10requiresBodyType\x12\x1d\n" +
 	"\n" +
 	"sort_order\x18\a \x01(\x05R\tsortOrder\x12\x1b\n" +
-	"\tis_active\x18\b \x01(\bR\bisActive\"\xd4\x02\n" +
+	"\tis_active\x18\b \x01(\bR\bisActive\x12'\n" +
+	"\x0frequires_pickup\x18\t \x01(\bR\x0erequiresPickup\"\xd4\x02\n" +
 	"\rRoadsidePrice\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
 	"\fservice_code\x18\x02 \x01(\tR\vserviceCode\x12\x17\n" +

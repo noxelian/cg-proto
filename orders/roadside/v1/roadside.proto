@@ -143,6 +143,14 @@ message RoadsideServiceType {
   bool requires_body_type = 6;
   int32 sort_order = 7;
   bool is_active = 8;
+  // requires_pickup is true for work performed where the customer stands —
+  // the performer drives to them, so an address is mandatory. It is false for
+  // services the customer drives to (a car wash): the manager picks the venue
+  // in the customer's city and confirms it by phone, so demanding an address
+  // up front would only add a step the customer cannot answer usefully.
+  //
+  // Absent means true, keeping every existing roadside service unchanged.
+  bool requires_pickup = 9;
 }
 
 message RoadsidePrice {
