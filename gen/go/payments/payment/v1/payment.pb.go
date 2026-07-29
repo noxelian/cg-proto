@@ -2391,8 +2391,15 @@ type AvailablePaymentMethod struct {
 	CashbackTitle string                 `protobuf:"bytes,5,opt,name=cashback_title,json=cashbackTitle,proto3" json:"cashback_title,omitempty"`
 	IconUrl       string                 `protobuf:"bytes,6,opt,name=icon_url,json=iconUrl,proto3" json:"icon_url,omitempty"`
 	Kind          PayOptionKind          `protobuf:"varint,7,opt,name=kind,proto3,enum=payments.payment.v1.PayOptionKind" json:"kind,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// Cashback the payer earns on this route, in whole percent (5 = 5%). Zero
+	// means no cashback and clients must not render one.
+	//
+	// The rate is a product decision that changes without an app release, so it
+	// belongs here rather than in a client constant. It is per route, so one
+	// provider may carry a different rate in a different product flow.
+	CashbackPercent int32 `protobuf:"varint,8,opt,name=cashback_percent,json=cashbackPercent,proto3" json:"cashback_percent,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *AvailablePaymentMethod) Reset() {
@@ -2472,6 +2479,13 @@ func (x *AvailablePaymentMethod) GetKind() PayOptionKind {
 		return x.Kind
 	}
 	return PayOptionKind_PAY_OPTION_KIND_UNSPECIFIED
+}
+
+func (x *AvailablePaymentMethod) GetCashbackPercent() int32 {
+	if x != nil {
+		return x.CashbackPercent
+	}
+	return 0
 }
 
 type ListAvailablePaymentMethodsResponse struct {
@@ -4915,7 +4929,7 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"idempotent\x18\x02 \x01(\bR\n" +
 	"idempotent\"d\n" +
 	"\"ListAvailablePaymentMethodsRequest\x12>\n" +
-	"\buse_case\x18\x01 \x01(\x0e2#.payments.payment.v1.PaymentUseCaseR\auseCase\"\xfc\x01\n" +
+	"\buse_case\x18\x01 \x01(\x0e2#.payments.payment.v1.PaymentUseCaseR\auseCase\"\xa7\x02\n" +
 	"\x16AvailablePaymentMethod\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12%\n" +
 	"\x0epayment_method\x18\x02 \x01(\tR\rpaymentMethod\x12\x14\n" +
@@ -4923,7 +4937,8 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\tsub_title\x18\x04 \x01(\tR\bsubTitle\x12%\n" +
 	"\x0ecashback_title\x18\x05 \x01(\tR\rcashbackTitle\x12\x19\n" +
 	"\bicon_url\x18\x06 \x01(\tR\aiconUrl\x126\n" +
-	"\x04kind\x18\a \x01(\x0e2\".payments.payment.v1.PayOptionKindR\x04kind\"{\n" +
+	"\x04kind\x18\a \x01(\x0e2\".payments.payment.v1.PayOptionKindR\x04kind\x12)\n" +
+	"\x10cashback_percent\x18\b \x01(\x05R\x0fcashbackPercent\"{\n" +
 	"#ListAvailablePaymentMethodsResponse\x12T\n" +
 	"\x0fpayment_methods\x18\x01 \x03(\v2+.payments.payment.v1.AvailablePaymentMethodR\x0epaymentMethods\"\xf4\x01\n" +
 	"\tPayOption\x12\x0e\n" +

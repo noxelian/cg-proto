@@ -369,6 +369,13 @@ message AvailablePaymentMethod {
   string cashback_title = 5;
   string icon_url = 6;
   PayOptionKind kind = 7;
+  // Cashback the payer earns on this route, in whole percent (5 = 5%). Zero
+  // means no cashback and clients must not render one.
+  //
+  // The rate is a product decision that changes without an app release, so it
+  // belongs here rather than in a client constant. It is per route, so one
+  // provider may carry a different rate in a different product flow.
+  int32 cashback_percent = 8;
 }
 
 message ListAvailablePaymentMethodsResponse {
