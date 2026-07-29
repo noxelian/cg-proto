@@ -394,6 +394,11 @@ message PayOption {
   // to identify this option. Encodes entity_type + entity_id + provider +
   // idempotency_key without leaking internal IDs in plain text.
   string pay_session_token = 7;
+  // Cashback the payer earns on this option, in whole percent (5 = 5%). Zero
+  // means none. Same product-owned rate as
+  // AvailablePaymentMethod.cashback_percent: combined-pay flows (escrow, cart,
+  // invoices, banners) must show the same promise as the product checkouts.
+  int32 cashback_percent = 8;
 }
 
 message InitPaymentRequest {

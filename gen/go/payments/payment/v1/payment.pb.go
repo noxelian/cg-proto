@@ -2545,6 +2545,11 @@ type PayOption struct {
 	// to identify this option. Encodes entity_type + entity_id + provider +
 	// idempotency_key without leaking internal IDs in plain text.
 	PaySessionToken string `protobuf:"bytes,7,opt,name=pay_session_token,json=paySessionToken,proto3" json:"pay_session_token,omitempty"`
+	// Cashback the payer earns on this option, in whole percent (5 = 5%). Zero
+	// means none. Same product-owned rate as
+	// AvailablePaymentMethod.cashback_percent: combined-pay flows (escrow, cart,
+	// invoices, banners) must show the same promise as the product checkouts.
+	CashbackPercent int32 `protobuf:"varint,8,opt,name=cashback_percent,json=cashbackPercent,proto3" json:"cashback_percent,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -2626,6 +2631,13 @@ func (x *PayOption) GetPaySessionToken() string {
 		return x.PaySessionToken
 	}
 	return ""
+}
+
+func (x *PayOption) GetCashbackPercent() int32 {
+	if x != nil {
+		return x.CashbackPercent
+	}
+	return 0
 }
 
 type InitPaymentRequest struct {
@@ -4940,7 +4952,7 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x04kind\x18\a \x01(\x0e2\".payments.payment.v1.PayOptionKindR\x04kind\x12)\n" +
 	"\x10cashback_percent\x18\b \x01(\x05R\x0fcashbackPercent\"{\n" +
 	"#ListAvailablePaymentMethodsResponse\x12T\n" +
-	"\x0fpayment_methods\x18\x01 \x03(\v2+.payments.payment.v1.AvailablePaymentMethodR\x0epaymentMethods\"\xf4\x01\n" +
+	"\x0fpayment_methods\x18\x01 \x03(\v2+.payments.payment.v1.AvailablePaymentMethodR\x0epaymentMethods\"\x9f\x02\n" +
 	"\tPayOption\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x1b\n" +
@@ -4948,7 +4960,8 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x0ecashback_title\x18\x04 \x01(\tR\rcashbackTitle\x12\x19\n" +
 	"\bicon_url\x18\x05 \x01(\tR\aiconUrl\x126\n" +
 	"\x04kind\x18\x06 \x01(\x0e2\".payments.payment.v1.PayOptionKindR\x04kind\x12*\n" +
-	"\x11pay_session_token\x18\a \x01(\tR\x0fpaySessionToken\"\xc6\x02\n" +
+	"\x11pay_session_token\x18\a \x01(\tR\x0fpaySessionToken\x12)\n" +
+	"\x10cashback_percent\x18\b \x01(\x05R\x0fcashbackPercent\"\xc6\x02\n" +
 	"\x12InitPaymentRequest\x12C\n" +
 	"\ventity_type\x18\x01 \x01(\x0e2\".payments.payment.v1.PayEntityTypeR\n" +
 	"entityType\x12\x1b\n" +
