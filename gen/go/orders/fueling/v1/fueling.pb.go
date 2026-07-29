@@ -861,7 +861,7 @@ type CreateFuelingOrderRequest struct {
 	FuelId           int64                  `protobuf:"varint,3,opt,name=fuel_id,json=fuelId,proto3" json:"fuel_id,omitempty"`
 	OrderAmountMinor int64                  `protobuf:"varint,4,opt,name=order_amount_minor,json=orderAmountMinor,proto3" json:"order_amount_minor,omitempty"`
 	IdempotencyKey   string                 `protobuf:"bytes,5,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
-	// Required. One of: card, kaspi, apple_pay, google_pay.
+	// Required. One of: card, apple_pay, google_pay.
 	PaymentMethod string `protobuf:"bytes,6,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
 	ReturnUrl     string `protobuf:"bytes,7,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
 	unknownFields protoimpl.UnknownFields

@@ -118,7 +118,7 @@ message CreateFuelingOrderRequest {
   int64 fuel_id = 3;
   int64 order_amount_minor = 4;
   string idempotency_key = 5;
-  // Required. One of: card, kaspi, apple_pay, google_pay.
+  // Required. One of: card, apple_pay, google_pay.
   string payment_method = 6;
   string return_url = 7;
 }
