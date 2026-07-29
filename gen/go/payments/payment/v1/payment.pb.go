@@ -413,11 +413,18 @@ func (PayOptionKind) EnumDescriptor() ([]byte, []int) {
 
 // PaymentUseCase scopes provider availability to one product flow. A provider
 // can be configured globally but intentionally unavailable for a specific flow.
+//
+// Clients never send this enum: the mobile BFF derives it from the entity_type
+// of GET /mobile/payment/methods, so adding a flow here does not change the
+// public HTTP contract.
 type PaymentUseCase int32
 
 const (
 	PaymentUseCase_PAYMENT_USE_CASE_UNSPECIFIED PaymentUseCase = 0
 	PaymentUseCase_PAYMENT_USE_CASE_FUELING     PaymentUseCase = 1
+	// Roadside assistance and the dispatched fixed-price services sold through
+	// the same order API (POST /roadside/services).
+	PaymentUseCase_PAYMENT_USE_CASE_ROADSIDE PaymentUseCase = 2
 )
 
 // Enum value maps for PaymentUseCase.
@@ -425,10 +432,12 @@ var (
 	PaymentUseCase_name = map[int32]string{
 		0: "PAYMENT_USE_CASE_UNSPECIFIED",
 		1: "PAYMENT_USE_CASE_FUELING",
+		2: "PAYMENT_USE_CASE_ROADSIDE",
 	}
 	PaymentUseCase_value = map[string]int32{
 		"PAYMENT_USE_CASE_UNSPECIFIED": 0,
 		"PAYMENT_USE_CASE_FUELING":     1,
+		"PAYMENT_USE_CASE_ROADSIDE":    2,
 	}
 )
 
@@ -5171,10 +5180,11 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x14PAY_OPTION_KIND_CARD\x10\x01\x12\x19\n" +
 	"\x15PAY_OPTION_KIND_KASPI\x10\x02\x12\x1f\n" +
 	"\x1bPAY_OPTION_KIND_INSTALLMENT\x10\x03\x12\x1a\n" +
-	"\x16PAY_OPTION_KIND_WALLET\x10\x04*P\n" +
+	"\x16PAY_OPTION_KIND_WALLET\x10\x04*o\n" +
 	"\x0ePaymentUseCase\x12 \n" +
 	"\x1cPAYMENT_USE_CASE_UNSPECIFIED\x10\x00\x12\x1c\n" +
-	"\x18PAYMENT_USE_CASE_FUELING\x10\x01*i\n" +
+	"\x18PAYMENT_USE_CASE_FUELING\x10\x01\x12\x1d\n" +
+	"\x19PAYMENT_USE_CASE_ROADSIDE\x10\x02*i\n" +
 	"\x0eSettlementMode\x12\x1f\n" +
 	"\x1bSETTLEMENT_MODE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16SETTLEMENT_MODE_DIRECT\x10\x01\x12\x1a\n" +

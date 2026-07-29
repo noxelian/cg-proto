@@ -131,9 +131,16 @@ enum PayOptionKind {
 
 // PaymentUseCase scopes provider availability to one product flow. A provider
 // can be configured globally but intentionally unavailable for a specific flow.
+//
+// Clients never send this enum: the mobile BFF derives it from the entity_type
+// of GET /mobile/payment/methods, so adding a flow here does not change the
+// public HTTP contract.
 enum PaymentUseCase {
   PAYMENT_USE_CASE_UNSPECIFIED = 0;
   PAYMENT_USE_CASE_FUELING = 1;
+  // Roadside assistance and the dispatched fixed-price services sold through
+  // the same order API (POST /roadside/services).
+  PAYMENT_USE_CASE_ROADSIDE = 2;
 }
 
 // =============================================
