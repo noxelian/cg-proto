@@ -108,12 +108,11 @@ service BillingService {
   // authenticated payer may call it. No elapsed-time path releases escrow.
   rpc OpenEscrowDispute(OpenEscrowDisputeRequest) returns (OpenEscrowDisputeResponse);
 
-  // ReleaseEscrowAdvance is retained only for published v1 wire compatibility.
-  // New and upgraded servers always reject it with FAILED_PRECONDITION; safe
-  // payment releases only after protected confirmation or dispute resolution.
-  rpc ReleaseEscrowAdvance(ReleaseEscrowAdvanceRequest) returns (ReleaseEscrowAdvanceResponse) {
-    option deprecated = true;
-  }
+  // ReleaseEscrowAdvance pays the recipient part of a held deal before the
+  // work is confirmed. Only the canonical cg-bff admin caller with a human
+  // admin identifier may call it. Servers may refuse it for entity types whose
+  // policy requires protected confirmation first.
+  rpc ReleaseEscrowAdvance(ReleaseEscrowAdvanceRequest) returns (ReleaseEscrowAdvanceResponse);
 
   // SettleEscrowDispute resolves a dispute by either fully releasing the
   // remaining amount or fully returning it. Split settlement is not supported.
@@ -640,8 +639,6 @@ message DeleteOrgCardResponse {
 // EscrowDeal is the immutable hold snapshot plus its cumulative settlement
 // state. Every amount is expressed in the currency minor unit.
 message EscrowDeal {
-  reserved 19;
-
   int64 id = 1;
   int64 transaction_id = 2;
   int64 hold_ledger_entry_id = 3;
@@ -660,6 +657,7 @@ message EscrowDeal {
   int64 remaining_amount = 16;
   int64 settlement_sequence = 17;
   EscrowDealState state = 18;
+  google.protobuf.Timestamp auto_release_at = 19;
   google.protobuf.Timestamp work_declared_at = 20;
   google.protobuf.Timestamp confirmed_at = 21;
   string confirmed_via = 22;
@@ -730,8 +728,6 @@ message OpenEscrowDisputeResponse {}
 // Deprecated: retained only so previously generated v1 clients keep their wire
 // contract. The server never performs an advance release.
 message ReleaseEscrowAdvanceRequest {
-  option deprecated = true;
-
   int64 deal_id = 1;
   string admin_id = 2;
   int64 amount = 3;
@@ -740,8 +736,6 @@ message ReleaseEscrowAdvanceRequest {
 }
 
 message ReleaseEscrowAdvanceResponse {
-  option deprecated = true;
-
   EscrowDeal deal = 1;
 }
 

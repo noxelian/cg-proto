@@ -127,10 +127,10 @@ type BillingServiceClient interface {
 	// OpenEscrowDispute freezes ordinary settlement and opens a dispute. Only the
 	// authenticated payer may call it. No elapsed-time path releases escrow.
 	OpenEscrowDispute(ctx context.Context, in *OpenEscrowDisputeRequest, opts ...grpc.CallOption) (*OpenEscrowDisputeResponse, error)
-	// Deprecated: Do not use.
-	// ReleaseEscrowAdvance is retained only for published v1 wire compatibility.
-	// New and upgraded servers always reject it with FAILED_PRECONDITION; safe
-	// payment releases only after protected confirmation or dispute resolution.
+	// ReleaseEscrowAdvance pays the recipient part of a held deal before the
+	// work is confirmed. Only the canonical cg-bff admin caller with a human
+	// admin identifier may call it. Servers may refuse it for entity types whose
+	// policy requires protected confirmation first.
 	ReleaseEscrowAdvance(ctx context.Context, in *ReleaseEscrowAdvanceRequest, opts ...grpc.CallOption) (*ReleaseEscrowAdvanceResponse, error)
 	// SettleEscrowDispute resolves a dispute by either fully releasing the
 	// remaining amount or fully returning it. Split settlement is not supported.
@@ -430,7 +430,6 @@ func (c *billingServiceClient) OpenEscrowDispute(ctx context.Context, in *OpenEs
 	return out, nil
 }
 
-// Deprecated: Do not use.
 func (c *billingServiceClient) ReleaseEscrowAdvance(ctx context.Context, in *ReleaseEscrowAdvanceRequest, opts ...grpc.CallOption) (*ReleaseEscrowAdvanceResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ReleaseEscrowAdvanceResponse)
@@ -574,10 +573,10 @@ type BillingServiceServer interface {
 	// OpenEscrowDispute freezes ordinary settlement and opens a dispute. Only the
 	// authenticated payer may call it. No elapsed-time path releases escrow.
 	OpenEscrowDispute(context.Context, *OpenEscrowDisputeRequest) (*OpenEscrowDisputeResponse, error)
-	// Deprecated: Do not use.
-	// ReleaseEscrowAdvance is retained only for published v1 wire compatibility.
-	// New and upgraded servers always reject it with FAILED_PRECONDITION; safe
-	// payment releases only after protected confirmation or dispute resolution.
+	// ReleaseEscrowAdvance pays the recipient part of a held deal before the
+	// work is confirmed. Only the canonical cg-bff admin caller with a human
+	// admin identifier may call it. Servers may refuse it for entity types whose
+	// policy requires protected confirmation first.
 	ReleaseEscrowAdvance(context.Context, *ReleaseEscrowAdvanceRequest) (*ReleaseEscrowAdvanceResponse, error)
 	// SettleEscrowDispute resolves a dispute by either fully releasing the
 	// remaining amount or fully returning it. Split settlement is not supported.
