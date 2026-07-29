@@ -174,10 +174,19 @@ func (x *CarMark) GetIsPopular() bool {
 }
 
 type CarModel struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	MarkId        int32                  `protobuf:"varint,2,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	Id     int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	MarkId int32                  `protobuf:"varint,2,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	Name   string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	// body_type is the pricing class a customer's car falls into: "sedan",
+	// "crossover" or "suv". Several services are priced per class, and the
+	// garage carries no body type of its own, so the model is the only place
+	// the apps can learn it without asking the customer.
+	//
+	// Empty means unknown — commercial marks, "Другая модель", anything the
+	// catalogue has not been told about. Consumers must ask rather than guess:
+	// a wrong class quotes the wrong price.
+	BodyType      string `protobuf:"bytes,4,opt,name=body_type,json=bodyType,proto3" json:"body_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -229,6 +238,13 @@ func (x *CarModel) GetMarkId() int32 {
 func (x *CarModel) GetName() string {
 	if x != nil {
 		return x.Name
+	}
+	return ""
+}
+
+func (x *CarModel) GetBodyType() string {
+	if x != nil {
+		return x.BodyType
 	}
 	return ""
 }
@@ -3734,11 +3750,12 @@ const file_platform_nsi_nsi_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x19\n" +
 	"\blogo_url\x18\x03 \x01(\tR\alogoUrl\x12\x1d\n" +
 	"\n" +
-	"is_popular\x18\x04 \x01(\bR\tisPopular\"G\n" +
+	"is_popular\x18\x04 \x01(\bR\tisPopular\"d\n" +
 	"\bCarModel\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
 	"\amark_id\x18\x02 \x01(\x05R\x06markId\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\"\xa5\x01\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1b\n" +
+	"\tbody_type\x18\x04 \x01(\tR\bbodyType\"\xa5\x01\n" +
 	"\rCarGeneration\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x19\n" +
 	"\bmodel_id\x18\x02 \x01(\x05R\amodelId\x12\x12\n" +

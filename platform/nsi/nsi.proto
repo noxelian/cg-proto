@@ -75,6 +75,15 @@ message CarModel {
   int32 id = 1;
   int32 mark_id = 2;
   string name = 3;
+  // body_type is the pricing class a customer's car falls into: "sedan",
+  // "crossover" or "suv". Several services are priced per class, and the
+  // garage carries no body type of its own, so the model is the only place
+  // the apps can learn it without asking the customer.
+  //
+  // Empty means unknown — commercial marks, "Другая модель", anything the
+  // catalogue has not been told about. Consumers must ask rather than guess:
+  // a wrong class quotes the wrong price.
+  string body_type = 4;
 }
 
 message CarGeneration {
