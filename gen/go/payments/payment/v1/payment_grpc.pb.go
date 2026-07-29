@@ -588,6 +588,9 @@ const (
 	CreditService_CreateCreditApplication_FullMethodName = "/payments.payment.v1.CreditService/CreateCreditApplication"
 	CreditService_GetCreditApplication_FullMethodName    = "/payments.payment.v1.CreditService/GetCreditApplication"
 	CreditService_RefundCreditApplication_FullMethodName = "/payments.payment.v1.CreditService/RefundCreditApplication"
+	CreditService_ListCessionLoans_FullMethodName        = "/payments.payment.v1.CreditService/ListCessionLoans"
+	CreditService_SubmitCessionAgreement_FullMethodName  = "/payments.payment.v1.CreditService/SubmitCessionAgreement"
+	CreditService_GetCessionAgreement_FullMethodName     = "/payments.payment.v1.CreditService/GetCessionAgreement"
 )
 
 // CreditServiceClient is the client API for CreditService service.
@@ -610,6 +613,15 @@ type CreditServiceClient interface {
 	// RefundCreditApplication initiates a full or partial refund for an ISSUED
 	// application. The result is asynchronous (FFC hook, covlir_status).
 	RefundCreditApplication(ctx context.Context, in *RefundCreditApplicationRequest, opts ...grpc.CallOption) (*RefundCreditApplicationResponse, error)
+	// ListCessionLoans returns the loans issued on issue_date under our partner
+	// id together with the exact total the bank will validate. Use it to render
+	// the assignment agreement document.
+	ListCessionLoans(ctx context.Context, in *ListCessionLoansRequest, opts ...grpc.CallOption) (*ListCessionLoansResponse, error)
+	// SubmitCessionAgreement signs the supplied PDF with the partner EDS key and
+	// posts it to the conveyor. The final outcome arrives asynchronously on the
+	// partner-wide cession hook.
+	SubmitCessionAgreement(ctx context.Context, in *SubmitCessionAgreementRequest, opts ...grpc.CallOption) (*SubmitCessionAgreementResponse, error)
+	GetCessionAgreement(ctx context.Context, in *GetCessionAgreementRequest, opts ...grpc.CallOption) (*GetCessionAgreementResponse, error)
 }
 
 type creditServiceClient struct {
@@ -650,6 +662,36 @@ func (c *creditServiceClient) RefundCreditApplication(ctx context.Context, in *R
 	return out, nil
 }
 
+func (c *creditServiceClient) ListCessionLoans(ctx context.Context, in *ListCessionLoansRequest, opts ...grpc.CallOption) (*ListCessionLoansResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCessionLoansResponse)
+	err := c.cc.Invoke(ctx, CreditService_ListCessionLoans_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *creditServiceClient) SubmitCessionAgreement(ctx context.Context, in *SubmitCessionAgreementRequest, opts ...grpc.CallOption) (*SubmitCessionAgreementResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SubmitCessionAgreementResponse)
+	err := c.cc.Invoke(ctx, CreditService_SubmitCessionAgreement_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *creditServiceClient) GetCessionAgreement(ctx context.Context, in *GetCessionAgreementRequest, opts ...grpc.CallOption) (*GetCessionAgreementResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCessionAgreementResponse)
+	err := c.cc.Invoke(ctx, CreditService_GetCessionAgreement_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CreditServiceServer is the server API for CreditService service.
 // All implementations must embed UnimplementedCreditServiceServer
 // for forward compatibility.
@@ -670,6 +712,15 @@ type CreditServiceServer interface {
 	// RefundCreditApplication initiates a full or partial refund for an ISSUED
 	// application. The result is asynchronous (FFC hook, covlir_status).
 	RefundCreditApplication(context.Context, *RefundCreditApplicationRequest) (*RefundCreditApplicationResponse, error)
+	// ListCessionLoans returns the loans issued on issue_date under our partner
+	// id together with the exact total the bank will validate. Use it to render
+	// the assignment agreement document.
+	ListCessionLoans(context.Context, *ListCessionLoansRequest) (*ListCessionLoansResponse, error)
+	// SubmitCessionAgreement signs the supplied PDF with the partner EDS key and
+	// posts it to the conveyor. The final outcome arrives asynchronously on the
+	// partner-wide cession hook.
+	SubmitCessionAgreement(context.Context, *SubmitCessionAgreementRequest) (*SubmitCessionAgreementResponse, error)
+	GetCessionAgreement(context.Context, *GetCessionAgreementRequest) (*GetCessionAgreementResponse, error)
 	mustEmbedUnimplementedCreditServiceServer()
 }
 
@@ -688,6 +739,15 @@ func (UnimplementedCreditServiceServer) GetCreditApplication(context.Context, *G
 }
 func (UnimplementedCreditServiceServer) RefundCreditApplication(context.Context, *RefundCreditApplicationRequest) (*RefundCreditApplicationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RefundCreditApplication not implemented")
+}
+func (UnimplementedCreditServiceServer) ListCessionLoans(context.Context, *ListCessionLoansRequest) (*ListCessionLoansResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListCessionLoans not implemented")
+}
+func (UnimplementedCreditServiceServer) SubmitCessionAgreement(context.Context, *SubmitCessionAgreementRequest) (*SubmitCessionAgreementResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SubmitCessionAgreement not implemented")
+}
+func (UnimplementedCreditServiceServer) GetCessionAgreement(context.Context, *GetCessionAgreementRequest) (*GetCessionAgreementResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCessionAgreement not implemented")
 }
 func (UnimplementedCreditServiceServer) mustEmbedUnimplementedCreditServiceServer() {}
 func (UnimplementedCreditServiceServer) testEmbeddedByValue()                       {}
@@ -764,6 +824,60 @@ func _CreditService_RefundCreditApplication_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CreditService_ListCessionLoans_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCessionLoansRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CreditServiceServer).ListCessionLoans(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CreditService_ListCessionLoans_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CreditServiceServer).ListCessionLoans(ctx, req.(*ListCessionLoansRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CreditService_SubmitCessionAgreement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubmitCessionAgreementRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CreditServiceServer).SubmitCessionAgreement(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CreditService_SubmitCessionAgreement_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CreditServiceServer).SubmitCessionAgreement(ctx, req.(*SubmitCessionAgreementRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CreditService_GetCessionAgreement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCessionAgreementRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CreditServiceServer).GetCessionAgreement(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CreditService_GetCessionAgreement_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CreditServiceServer).GetCessionAgreement(ctx, req.(*GetCessionAgreementRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CreditService_ServiceDesc is the grpc.ServiceDesc for CreditService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -782,6 +896,18 @@ var CreditService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RefundCreditApplication",
 			Handler:    _CreditService_RefundCreditApplication_Handler,
+		},
+		{
+			MethodName: "ListCessionLoans",
+			Handler:    _CreditService_ListCessionLoans_Handler,
+		},
+		{
+			MethodName: "SubmitCessionAgreement",
+			Handler:    _CreditService_SubmitCessionAgreement_Handler,
+		},
+		{
+			MethodName: "GetCessionAgreement",
+			Handler:    _CreditService_GetCessionAgreement_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

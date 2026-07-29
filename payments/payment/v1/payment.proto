@@ -117,6 +117,7 @@ enum PayEntityType {
   PAY_ENTITY_TYPE_BOOKING = 23;          // new_cg: car-wash booking
   PAY_ENTITY_TYPE_CART_CHECKOUT = 24;    // new_cg: cart_checkout
   PAY_ENTITY_TYPE_REPAIR_ORDER = 25;     // new_cg: cg-workshop repair_order
+  PAY_ENTITY_TYPE_REQUEST_BID_ESCROW = 26; // request response with held settlement
 }
 
 // PayOptionKind is the installment / BNPL flavour of a payment option.
@@ -455,6 +456,22 @@ service CreditService {
   // RefundCreditApplication initiates a full or partial refund for an ISSUED
   // application. The result is asynchronous (FFC hook, covlir_status).
   rpc RefundCreditApplication(RefundCreditApplicationRequest) returns (RefundCreditApplicationResponse);
+
+  // === Cession (assignment of claims) ===
+  // The bank buys the partner's claims on the loans it issued each business
+  // day. Per the FFC2 contract we send one signed assignment agreement per
+  // issue date, every day except weekends; Friday/Saturday/Sunday are sent on
+  // Monday as three separate submissions.
+
+  // ListCessionLoans returns the loans issued on issue_date under our partner
+  // id together with the exact total the bank will validate. Use it to render
+  // the assignment agreement document.
+  rpc ListCessionLoans(ListCessionLoansRequest) returns (ListCessionLoansResponse);
+  // SubmitCessionAgreement signs the supplied PDF with the partner EDS key and
+  // posts it to the conveyor. The final outcome arrives asynchronously on the
+  // partner-wide cession hook.
+  rpc SubmitCessionAgreement(SubmitCessionAgreementRequest) returns (SubmitCessionAgreementResponse);
+  rpc GetCessionAgreement(GetCessionAgreementRequest) returns (GetCessionAgreementResponse);
 }
 
 enum CreditApplicationStatus {
@@ -566,4 +583,83 @@ message RefundCreditApplicationResponse {
   // application reflects the local state after the refund was accepted by FFC
   // (refund completion arrives later via the hook).
   CreditApplication application = 1;
+}
+
+enum CessionAgreementStatus {
+  CESSION_AGREEMENT_STATUS_UNSPECIFIED = 0;
+  // Loans for the date are aggregated locally; the signed document has not
+  // been submitted yet.
+  CESSION_AGREEMENT_STATUS_PENDING = 1;
+  // Accepted by the conveyor (HTTP 200); waiting for the cession hook.
+  CESSION_AGREEMENT_STATUS_SUBMITTED = 2;
+  CESSION_AGREEMENT_STATUS_CONFIRMED = 3;
+  CESSION_AGREEMENT_STATUS_FAILED = 4;
+}
+
+// CessionLoan is one issued credit application included in a day's assignment.
+message CessionLoan {
+  string uuid = 1;
+  string credit_contract = 2;
+  string entity_type = 3;
+  int64 entity_id = 4;
+  int64 user_id = 5;
+  int64 principal_tiyn = 6;
+  // iin_masked never carries the full IIN.
+  string iin_masked = 7;
+  google.protobuf.Timestamp issued_at = 8;
+}
+
+message ListCessionLoansRequest {
+  // issue_date is the loan issue date in YYYY-MM-DD (Asia/Almaty).
+  string issue_date = 1;
+}
+
+message ListCessionLoansResponse {
+  repeated CessionLoan loans = 1;
+  // total_amount_tiyn is the authoritative sum the bank validates against.
+  int64 total_amount_tiyn = 2;
+  CessionAgreement agreement = 3;
+}
+
+message CessionAgreement {
+  string issue_date = 1;
+  string contract_number = 2;
+  string signing_date = 3;
+  CessionAgreementStatus status = 4;
+  int64 total_amount_tiyn = 5;
+  int32 loan_count = 6;
+  // document_sha256 binds the submitted PDF to this record.
+  string document_sha256 = 7;
+  string failure_reason = 8;
+  google.protobuf.Timestamp submitted_at = 9;
+  google.protobuf.Timestamp confirmed_at = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+}
+
+message SubmitCessionAgreementRequest {
+  string issue_date = 1;
+  string contract_number = 2;
+  // signing_date is YYYY-MM-DD; defaults to today when empty.
+  string signing_date = 3;
+  // document_pdf is the rendered assignment agreement. cg-payments signs it
+  // with the partner EDS key — never accept a caller-supplied signature.
+  bytes document_pdf = 4;
+  // expected_total_tiyn is an optional cross-check: a mismatch with the
+  // locally aggregated total aborts before contacting the bank.
+  int64 expected_total_tiyn = 5;
+}
+
+message SubmitCessionAgreementResponse {
+  CessionAgreement agreement = 1;
+}
+
+message GetCessionAgreementRequest {
+  // Either issue_date or contract_number must be set.
+  string issue_date = 1;
+  string contract_number = 2;
+}
+
+message GetCessionAgreementResponse {
+  CessionAgreement agreement = 1;
 }
