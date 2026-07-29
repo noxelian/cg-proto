@@ -70,11 +70,12 @@ type AuthServiceClient interface {
 	// cg-users holds the signing key; every other service obtains its
 	// service-to-service tokens here instead of minting locally.
 	//
-	// Caller identity is established by mTLS (verified client-cert CN), NOT by any
-	// payload field. The requested `subject` is authorized against the
-	// authenticated peer, and `act_as_user_id` > 0 (act-as-user) is permitted
-	// only for explicitly whitelisted callers (cg-bff external analytics, cg-crm
-	// owner-scoped lookups).
+	// Caller identity is established outside the payload: either by the verified
+	// client-cert CN on the dedicated mTLS listener, or by a projected Kubernetes
+	// ServiceAccount token validated through TokenReview on the isolated workload
+	// listener. The requested `subject` is authorized against the authenticated
+	// peer. `act_as_user_id` > 0 (act-as-user) is permitted only for an explicit,
+	// transport-specific allowlist.
 	IssueServiceToken(ctx context.Context, in *IssueServiceTokenRequest, opts ...grpc.CallOption) (*IssueServiceTokenResponse, error)
 	// IssueTokenPair mints a user access/refresh pair for trusted internal
 	// cg-users services that already completed the domain-side state mutation
@@ -270,11 +271,12 @@ type AuthServiceServer interface {
 	// cg-users holds the signing key; every other service obtains its
 	// service-to-service tokens here instead of minting locally.
 	//
-	// Caller identity is established by mTLS (verified client-cert CN), NOT by any
-	// payload field. The requested `subject` is authorized against the
-	// authenticated peer, and `act_as_user_id` > 0 (act-as-user) is permitted
-	// only for explicitly whitelisted callers (cg-bff external analytics, cg-crm
-	// owner-scoped lookups).
+	// Caller identity is established outside the payload: either by the verified
+	// client-cert CN on the dedicated mTLS listener, or by a projected Kubernetes
+	// ServiceAccount token validated through TokenReview on the isolated workload
+	// listener. The requested `subject` is authorized against the authenticated
+	// peer. `act_as_user_id` > 0 (act-as-user) is permitted only for an explicit,
+	// transport-specific allowlist.
 	IssueServiceToken(context.Context, *IssueServiceTokenRequest) (*IssueServiceTokenResponse, error)
 	// IssueTokenPair mints a user access/refresh pair for trusted internal
 	// cg-users services that already completed the domain-side state mutation

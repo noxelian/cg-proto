@@ -91,27 +91,32 @@ service BillingService {
 
   // ConfirmEscrowDelivery confirms delivery and releases the escrowed amount.
   // Only the authenticated payer may call it; service identities are forbidden.
+  // Request/bid escrow additionally requires a one-time, expiring challenge
+  // bound server-side to payer + deal + amount + this exact action.
   rpc ConfirmEscrowDelivery(ConfirmEscrowDeliveryRequest) returns (ConfirmEscrowDeliveryResponse);
+
+  // StartEscrowReleaseChallenge sends the protected confirmation challenge to
+  // the authenticated payer's verified contact. The server resolves the payer
+  // and amount from the immutable deal snapshot; callers cannot supply either.
+  rpc StartEscrowReleaseChallenge(StartEscrowReleaseChallengeRequest) returns (StartEscrowReleaseChallengeResponse);
 
   // AdminConfirmEscrowDelivery confirms delivery on behalf of the payer. Only
   // the canonical cg-bff admin caller with a human admin identifier may call it.
   rpc AdminConfirmEscrowDelivery(AdminConfirmEscrowDeliveryRequest) returns (AdminConfirmEscrowDeliveryResponse);
 
-  // OpenEscrowDispute stops auto-release and opens a dispute. Only the
-  // authenticated payer may call it.
+  // OpenEscrowDispute freezes ordinary settlement and opens a dispute. Only the
+  // authenticated payer may call it. No elapsed-time path releases escrow.
   rpc OpenEscrowDispute(OpenEscrowDisputeRequest) returns (OpenEscrowDisputeResponse);
 
-  // ReleaseEscrowAdvance pays the recipient part of a held deal before the
-  // work is confirmed.
-  //
-  // Repair work needs materials bought up front, and until the flow has enough
-  // history to automate a split, a manager decides the amount after speaking to
-  // both sides. The deal stays open: the remainder is still held and still
-  // needs confirmation. Only the canonical cg-bff admin caller with a human
-  // admin identifier may call it.
-  rpc ReleaseEscrowAdvance(ReleaseEscrowAdvanceRequest) returns (ReleaseEscrowAdvanceResponse);
+  // ReleaseEscrowAdvance is retained only for published v1 wire compatibility.
+  // New and upgraded servers always reject it with FAILED_PRECONDITION; safe
+  // payment releases only after protected confirmation or dispute resolution.
+  rpc ReleaseEscrowAdvance(ReleaseEscrowAdvanceRequest) returns (ReleaseEscrowAdvanceResponse) {
+    option deprecated = true;
+  }
 
-  // SettleEscrowDispute resolves a dispute with an exact release/return split.
+  // SettleEscrowDispute resolves a dispute by either fully releasing the
+  // remaining amount or fully returning it. Split settlement is not supported.
   // Only the canonical cg-bff admin caller with a human admin identifier may
   // call it.
   rpc SettleEscrowDispute(SettleEscrowDisputeRequest) returns (SettleEscrowDisputeResponse);
@@ -123,6 +128,16 @@ service BillingService {
   // ListOrganizationEscrowDeals returns deals for an organization. Only a
   // verified member of that organization or an authorized admin may call it.
   rpc ListOrganizationEscrowDeals(ListOrganizationEscrowDealsRequest) returns (ListOrganizationEscrowDealsResponse);
+
+  // ListEscrowDeals is the global operational queue. It is service-token only;
+  // the admin BFF authenticates and authorizes the human platform administrator
+  // before adapting this projection.
+  rpc ListEscrowDeals(ListEscrowDealsRequest) returns (ListEscrowDealsResponse);
+
+  // ListPayerEscrowDeals returns the authenticated payer's safe-payment
+  // history. The service derives and verifies payer identity from the JWT;
+  // service identities may provide payer_user_id for admin/internal adapters.
+  rpc ListPayerEscrowDeals(ListPayerEscrowDealsRequest) returns (ListPayerEscrowDealsResponse);
 
   // BindEscrowPerformer names the organization that will receive a deal whose
   // performer was still unknown when the payer paid.
@@ -625,6 +640,8 @@ message DeleteOrgCardResponse {
 // EscrowDeal is the immutable hold snapshot plus its cumulative settlement
 // state. Every amount is expressed in the currency minor unit.
 message EscrowDeal {
+  reserved 19;
+
   int64 id = 1;
   int64 transaction_id = 2;
   int64 hold_ledger_entry_id = 3;
@@ -643,12 +660,21 @@ message EscrowDeal {
   int64 remaining_amount = 16;
   int64 settlement_sequence = 17;
   EscrowDealState state = 18;
-  google.protobuf.Timestamp auto_release_at = 19;
   google.protobuf.Timestamp work_declared_at = 20;
   google.protobuf.Timestamp confirmed_at = 21;
   string confirmed_via = 22;
   google.protobuf.Timestamp created_at = 23;
   google.protobuf.Timestamp updated_at = 24;
+  // Owner-service UUID and numeric response/bid identifier. entity_id remains
+  // the payment-system compatibility key and is not a substitute for this pair.
+  string request_id = 25;
+  int64 bid_id = 26;
+  // Monotonic evidence that a successful provider capture entered HELD.
+  // It never becomes false after dispute, refund or release.
+  bool ever_held = 27;
+  string settlement_mode = 28;
+  // Immutable policy identifier used to calculate commission at release.
+  string commission_policy = 29;
 }
 
 message BindEscrowPerformerRequest {
@@ -671,6 +697,9 @@ message DeclareEscrowWorkResponse {}
 
 message ConfirmEscrowDeliveryRequest {
   int64 deal_id = 1;
+  string challenge_id = 2;
+  string code = 3;
+  string idempotency_key = 4;
 }
 
 message ConfirmEscrowDeliveryResponse {}
@@ -683,6 +712,9 @@ message AdminConfirmEscrowDeliveryRequest {
   string reason = 3;
   // Required communication channel used to verify the payer's confirmation.
   string channel = 4;
+  // Required caller-generated key. Retrying the same audited action is safe;
+  // reusing it with a different payload is rejected.
+  string idempotency_key = 5;
 }
 
 message AdminConfirmEscrowDeliveryResponse {}
@@ -695,20 +727,21 @@ message OpenEscrowDisputeRequest {
 
 message OpenEscrowDisputeResponse {}
 
+// Deprecated: retained only so previously generated v1 clients keep their wire
+// contract. The server never performs an advance release.
 message ReleaseEscrowAdvanceRequest {
+  option deprecated = true;
+
   int64 deal_id = 1;
-  // Required human administrator identifier for the audit log.
   string admin_id = 2;
-  // Positive amount released to the recipient now, in currency minor units.
-  // It must leave the deal within its settlement quota.
   int64 amount = 3;
-  // Why the manager released it, recorded in the audit log.
   string reason = 4;
-  // Caller-supplied key so a retried request cannot pay twice.
   string idempotency_key = 5;
 }
 
 message ReleaseEscrowAdvanceResponse {
+  option deprecated = true;
+
   EscrowDeal deal = 1;
 }
 
@@ -716,12 +749,15 @@ message SettleEscrowDisputeRequest {
   int64 deal_id = 1;
   // Required human administrator identifier for the audit log.
   string admin_id = 2;
-  // Non-negative amount released to the recipient, in currency minor units.
+  // Either the complete remaining amount or zero.
   int64 release_amount = 3;
-  // Non-negative amount returned to the payer, in currency minor units.
+  // Either the complete remaining amount or zero.
   int64 return_amount = 4;
   // Required dispute resolution recorded in the audit log.
   string resolution = 5;
+  // Required caller-generated key. Reusing it with another settlement payload
+  // is rejected; replaying the same committed resolution is safe.
+  string idempotency_key = 6;
 }
 
 message SettleEscrowDisputeResponse {}
@@ -746,4 +782,41 @@ message ListOrganizationEscrowDealsRequest {
 message ListOrganizationEscrowDealsResponse {
   repeated EscrowDeal deals = 1;
   int32 total = 2;
+}
+
+message ListEscrowDealsRequest {
+  // Optional recipient filter. Empty means all organizations.
+  string organization_id = 1;
+  EscrowDealState state = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message ListEscrowDealsResponse {
+  repeated EscrowDeal deals = 1;
+  int32 total = 2;
+}
+
+message ListPayerEscrowDealsRequest {
+  int64 payer_user_id = 1;
+  EscrowDealState state = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message ListPayerEscrowDealsResponse {
+  repeated EscrowDeal deals = 1;
+  int32 total = 2;
+}
+
+message StartEscrowReleaseChallengeRequest {
+  int64 deal_id = 1;
+  string idempotency_key = 2;
+}
+
+message StartEscrowReleaseChallengeResponse {
+  string challenge_id = 1;
+  google.protobuf.Timestamp expires_at = 2;
+  int32 retry_after_seconds = 3;
+  string masked_destination = 4;
 }

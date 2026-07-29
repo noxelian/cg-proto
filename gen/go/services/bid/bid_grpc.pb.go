@@ -37,6 +37,8 @@ const (
 	BidService_ListBidsForBuyer_FullMethodName                 = "/services.bid.v1.BidService/ListBidsForBuyer"
 	BidService_HasAcceptedBidForOrganization_FullMethodName    = "/services.bid.v1.BidService/HasAcceptedBidForOrganization"
 	BidService_GetAcceptedInsuranceBidForPayout_FullMethodName = "/services.bid.v1.BidService/GetAcceptedInsuranceBidForPayout"
+	BidService_GetEscrowBidTerms_FullMethodName                = "/services.bid.v1.BidService/GetEscrowBidTerms"
+	BidService_GetBidSelectionTerms_FullMethodName             = "/services.bid.v1.BidService/GetBidSelectionTerms"
 )
 
 // BidServiceClient is the client API for BidService service.
@@ -83,6 +85,13 @@ type BidServiceClient interface {
 	// GetAcceptedInsuranceBidForPayout returns the single accepted STO bid used
 	// to authorize an insurance payout. Exact billing-service identity only.
 	GetAcceptedInsuranceBidForPayout(ctx context.Context, in *GetAcceptedInsuranceBidForPayoutRequest, opts ...grpc.CallOption) (*GetAcceptedInsuranceBidForPayoutResponse, error)
+	// GetEscrowBidTerms exposes accepted financial terms to the payment owner.
+	// Exact payment-service identity only.
+	GetEscrowBidTerms(ctx context.Context, in *GetEscrowBidTermsRequest, opts ...grpc.CallOption) (*GetEscrowBidTermsResponse, error)
+	// GetBidSelectionTerms exposes pending-or-accepted STO terms only to the
+	// request owner so it can reserve/finalize an acceptance handoff without
+	// trusting bid-service request-body fields.
+	GetBidSelectionTerms(ctx context.Context, in *GetBidSelectionTermsRequest, opts ...grpc.CallOption) (*GetBidSelectionTermsResponse, error)
 }
 
 type bidServiceClient struct {
@@ -273,6 +282,26 @@ func (c *bidServiceClient) GetAcceptedInsuranceBidForPayout(ctx context.Context,
 	return out, nil
 }
 
+func (c *bidServiceClient) GetEscrowBidTerms(ctx context.Context, in *GetEscrowBidTermsRequest, opts ...grpc.CallOption) (*GetEscrowBidTermsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetEscrowBidTermsResponse)
+	err := c.cc.Invoke(ctx, BidService_GetEscrowBidTerms_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bidServiceClient) GetBidSelectionTerms(ctx context.Context, in *GetBidSelectionTermsRequest, opts ...grpc.CallOption) (*GetBidSelectionTermsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBidSelectionTermsResponse)
+	err := c.cc.Invoke(ctx, BidService_GetBidSelectionTerms_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BidServiceServer is the server API for BidService service.
 // All implementations must embed UnimplementedBidServiceServer
 // for forward compatibility.
@@ -317,6 +346,13 @@ type BidServiceServer interface {
 	// GetAcceptedInsuranceBidForPayout returns the single accepted STO bid used
 	// to authorize an insurance payout. Exact billing-service identity only.
 	GetAcceptedInsuranceBidForPayout(context.Context, *GetAcceptedInsuranceBidForPayoutRequest) (*GetAcceptedInsuranceBidForPayoutResponse, error)
+	// GetEscrowBidTerms exposes accepted financial terms to the payment owner.
+	// Exact payment-service identity only.
+	GetEscrowBidTerms(context.Context, *GetEscrowBidTermsRequest) (*GetEscrowBidTermsResponse, error)
+	// GetBidSelectionTerms exposes pending-or-accepted STO terms only to the
+	// request owner so it can reserve/finalize an acceptance handoff without
+	// trusting bid-service request-body fields.
+	GetBidSelectionTerms(context.Context, *GetBidSelectionTermsRequest) (*GetBidSelectionTermsResponse, error)
 	mustEmbedUnimplementedBidServiceServer()
 }
 
@@ -380,6 +416,12 @@ func (UnimplementedBidServiceServer) HasAcceptedBidForOrganization(context.Conte
 }
 func (UnimplementedBidServiceServer) GetAcceptedInsuranceBidForPayout(context.Context, *GetAcceptedInsuranceBidForPayoutRequest) (*GetAcceptedInsuranceBidForPayoutResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAcceptedInsuranceBidForPayout not implemented")
+}
+func (UnimplementedBidServiceServer) GetEscrowBidTerms(context.Context, *GetEscrowBidTermsRequest) (*GetEscrowBidTermsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetEscrowBidTerms not implemented")
+}
+func (UnimplementedBidServiceServer) GetBidSelectionTerms(context.Context, *GetBidSelectionTermsRequest) (*GetBidSelectionTermsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBidSelectionTerms not implemented")
 }
 func (UnimplementedBidServiceServer) mustEmbedUnimplementedBidServiceServer() {}
 func (UnimplementedBidServiceServer) testEmbeddedByValue()                    {}
@@ -726,6 +768,42 @@ func _BidService_GetAcceptedInsuranceBidForPayout_Handler(srv interface{}, ctx c
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BidService_GetEscrowBidTerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEscrowBidTermsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BidServiceServer).GetEscrowBidTerms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BidService_GetEscrowBidTerms_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BidServiceServer).GetEscrowBidTerms(ctx, req.(*GetEscrowBidTermsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BidService_GetBidSelectionTerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBidSelectionTermsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BidServiceServer).GetBidSelectionTerms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BidService_GetBidSelectionTerms_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BidServiceServer).GetBidSelectionTerms(ctx, req.(*GetBidSelectionTermsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BidService_ServiceDesc is the grpc.ServiceDesc for BidService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -804,6 +882,14 @@ var BidService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAcceptedInsuranceBidForPayout",
 			Handler:    _BidService_GetAcceptedInsuranceBidForPayout_Handler,
+		},
+		{
+			MethodName: "GetEscrowBidTerms",
+			Handler:    _BidService_GetEscrowBidTerms_Handler,
+		},
+		{
+			MethodName: "GetBidSelectionTerms",
+			Handler:    _BidService_GetBidSelectionTerms_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

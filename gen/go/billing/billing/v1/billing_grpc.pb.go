@@ -42,12 +42,15 @@ const (
 	BillingService_DeleteOrgCard_FullMethodName                 = "/billing.billing.v1.BillingService/DeleteOrgCard"
 	BillingService_DeclareEscrowWork_FullMethodName             = "/billing.billing.v1.BillingService/DeclareEscrowWork"
 	BillingService_ConfirmEscrowDelivery_FullMethodName         = "/billing.billing.v1.BillingService/ConfirmEscrowDelivery"
+	BillingService_StartEscrowReleaseChallenge_FullMethodName   = "/billing.billing.v1.BillingService/StartEscrowReleaseChallenge"
 	BillingService_AdminConfirmEscrowDelivery_FullMethodName    = "/billing.billing.v1.BillingService/AdminConfirmEscrowDelivery"
 	BillingService_OpenEscrowDispute_FullMethodName             = "/billing.billing.v1.BillingService/OpenEscrowDispute"
 	BillingService_ReleaseEscrowAdvance_FullMethodName          = "/billing.billing.v1.BillingService/ReleaseEscrowAdvance"
 	BillingService_SettleEscrowDispute_FullMethodName           = "/billing.billing.v1.BillingService/SettleEscrowDispute"
 	BillingService_GetEscrowDeal_FullMethodName                 = "/billing.billing.v1.BillingService/GetEscrowDeal"
 	BillingService_ListOrganizationEscrowDeals_FullMethodName   = "/billing.billing.v1.BillingService/ListOrganizationEscrowDeals"
+	BillingService_ListEscrowDeals_FullMethodName               = "/billing.billing.v1.BillingService/ListEscrowDeals"
+	BillingService_ListPayerEscrowDeals_FullMethodName          = "/billing.billing.v1.BillingService/ListPayerEscrowDeals"
 	BillingService_BindEscrowPerformer_FullMethodName           = "/billing.billing.v1.BillingService/BindEscrowPerformer"
 )
 
@@ -111,23 +114,26 @@ type BillingServiceClient interface {
 	DeclareEscrowWork(ctx context.Context, in *DeclareEscrowWorkRequest, opts ...grpc.CallOption) (*DeclareEscrowWorkResponse, error)
 	// ConfirmEscrowDelivery confirms delivery and releases the escrowed amount.
 	// Only the authenticated payer may call it; service identities are forbidden.
+	// Request/bid escrow additionally requires a one-time, expiring challenge
+	// bound server-side to payer + deal + amount + this exact action.
 	ConfirmEscrowDelivery(ctx context.Context, in *ConfirmEscrowDeliveryRequest, opts ...grpc.CallOption) (*ConfirmEscrowDeliveryResponse, error)
+	// StartEscrowReleaseChallenge sends the protected confirmation challenge to
+	// the authenticated payer's verified contact. The server resolves the payer
+	// and amount from the immutable deal snapshot; callers cannot supply either.
+	StartEscrowReleaseChallenge(ctx context.Context, in *StartEscrowReleaseChallengeRequest, opts ...grpc.CallOption) (*StartEscrowReleaseChallengeResponse, error)
 	// AdminConfirmEscrowDelivery confirms delivery on behalf of the payer. Only
 	// the canonical cg-bff admin caller with a human admin identifier may call it.
 	AdminConfirmEscrowDelivery(ctx context.Context, in *AdminConfirmEscrowDeliveryRequest, opts ...grpc.CallOption) (*AdminConfirmEscrowDeliveryResponse, error)
-	// OpenEscrowDispute stops auto-release and opens a dispute. Only the
-	// authenticated payer may call it.
+	// OpenEscrowDispute freezes ordinary settlement and opens a dispute. Only the
+	// authenticated payer may call it. No elapsed-time path releases escrow.
 	OpenEscrowDispute(ctx context.Context, in *OpenEscrowDisputeRequest, opts ...grpc.CallOption) (*OpenEscrowDisputeResponse, error)
-	// ReleaseEscrowAdvance pays the recipient part of a held deal before the
-	// work is confirmed.
-	//
-	// Repair work needs materials bought up front, and until the flow has enough
-	// history to automate a split, a manager decides the amount after speaking to
-	// both sides. The deal stays open: the remainder is still held and still
-	// needs confirmation. Only the canonical cg-bff admin caller with a human
-	// admin identifier may call it.
+	// Deprecated: Do not use.
+	// ReleaseEscrowAdvance is retained only for published v1 wire compatibility.
+	// New and upgraded servers always reject it with FAILED_PRECONDITION; safe
+	// payment releases only after protected confirmation or dispute resolution.
 	ReleaseEscrowAdvance(ctx context.Context, in *ReleaseEscrowAdvanceRequest, opts ...grpc.CallOption) (*ReleaseEscrowAdvanceResponse, error)
-	// SettleEscrowDispute resolves a dispute with an exact release/return split.
+	// SettleEscrowDispute resolves a dispute by either fully releasing the
+	// remaining amount or fully returning it. Split settlement is not supported.
 	// Only the canonical cg-bff admin caller with a human admin identifier may
 	// call it.
 	SettleEscrowDispute(ctx context.Context, in *SettleEscrowDisputeRequest, opts ...grpc.CallOption) (*SettleEscrowDisputeResponse, error)
@@ -137,6 +143,14 @@ type BillingServiceClient interface {
 	// ListOrganizationEscrowDeals returns deals for an organization. Only a
 	// verified member of that organization or an authorized admin may call it.
 	ListOrganizationEscrowDeals(ctx context.Context, in *ListOrganizationEscrowDealsRequest, opts ...grpc.CallOption) (*ListOrganizationEscrowDealsResponse, error)
+	// ListEscrowDeals is the global operational queue. It is service-token only;
+	// the admin BFF authenticates and authorizes the human platform administrator
+	// before adapting this projection.
+	ListEscrowDeals(ctx context.Context, in *ListEscrowDealsRequest, opts ...grpc.CallOption) (*ListEscrowDealsResponse, error)
+	// ListPayerEscrowDeals returns the authenticated payer's safe-payment
+	// history. The service derives and verifies payer identity from the JWT;
+	// service identities may provide payer_user_id for admin/internal adapters.
+	ListPayerEscrowDeals(ctx context.Context, in *ListPayerEscrowDealsRequest, opts ...grpc.CallOption) (*ListPayerEscrowDealsResponse, error)
 	// BindEscrowPerformer names the organization that will receive a deal whose
 	// performer was still unknown when the payer paid.
 	//
@@ -386,6 +400,16 @@ func (c *billingServiceClient) ConfirmEscrowDelivery(ctx context.Context, in *Co
 	return out, nil
 }
 
+func (c *billingServiceClient) StartEscrowReleaseChallenge(ctx context.Context, in *StartEscrowReleaseChallengeRequest, opts ...grpc.CallOption) (*StartEscrowReleaseChallengeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StartEscrowReleaseChallengeResponse)
+	err := c.cc.Invoke(ctx, BillingService_StartEscrowReleaseChallenge_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *billingServiceClient) AdminConfirmEscrowDelivery(ctx context.Context, in *AdminConfirmEscrowDeliveryRequest, opts ...grpc.CallOption) (*AdminConfirmEscrowDeliveryResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminConfirmEscrowDeliveryResponse)
@@ -406,6 +430,7 @@ func (c *billingServiceClient) OpenEscrowDispute(ctx context.Context, in *OpenEs
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *billingServiceClient) ReleaseEscrowAdvance(ctx context.Context, in *ReleaseEscrowAdvanceRequest, opts ...grpc.CallOption) (*ReleaseEscrowAdvanceResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ReleaseEscrowAdvanceResponse)
@@ -440,6 +465,26 @@ func (c *billingServiceClient) ListOrganizationEscrowDeals(ctx context.Context, 
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListOrganizationEscrowDealsResponse)
 	err := c.cc.Invoke(ctx, BillingService_ListOrganizationEscrowDeals_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) ListEscrowDeals(ctx context.Context, in *ListEscrowDealsRequest, opts ...grpc.CallOption) (*ListEscrowDealsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListEscrowDealsResponse)
+	err := c.cc.Invoke(ctx, BillingService_ListEscrowDeals_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) ListPayerEscrowDeals(ctx context.Context, in *ListPayerEscrowDealsRequest, opts ...grpc.CallOption) (*ListPayerEscrowDealsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPayerEscrowDealsResponse)
+	err := c.cc.Invoke(ctx, BillingService_ListPayerEscrowDeals_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -516,23 +561,26 @@ type BillingServiceServer interface {
 	DeclareEscrowWork(context.Context, *DeclareEscrowWorkRequest) (*DeclareEscrowWorkResponse, error)
 	// ConfirmEscrowDelivery confirms delivery and releases the escrowed amount.
 	// Only the authenticated payer may call it; service identities are forbidden.
+	// Request/bid escrow additionally requires a one-time, expiring challenge
+	// bound server-side to payer + deal + amount + this exact action.
 	ConfirmEscrowDelivery(context.Context, *ConfirmEscrowDeliveryRequest) (*ConfirmEscrowDeliveryResponse, error)
+	// StartEscrowReleaseChallenge sends the protected confirmation challenge to
+	// the authenticated payer's verified contact. The server resolves the payer
+	// and amount from the immutable deal snapshot; callers cannot supply either.
+	StartEscrowReleaseChallenge(context.Context, *StartEscrowReleaseChallengeRequest) (*StartEscrowReleaseChallengeResponse, error)
 	// AdminConfirmEscrowDelivery confirms delivery on behalf of the payer. Only
 	// the canonical cg-bff admin caller with a human admin identifier may call it.
 	AdminConfirmEscrowDelivery(context.Context, *AdminConfirmEscrowDeliveryRequest) (*AdminConfirmEscrowDeliveryResponse, error)
-	// OpenEscrowDispute stops auto-release and opens a dispute. Only the
-	// authenticated payer may call it.
+	// OpenEscrowDispute freezes ordinary settlement and opens a dispute. Only the
+	// authenticated payer may call it. No elapsed-time path releases escrow.
 	OpenEscrowDispute(context.Context, *OpenEscrowDisputeRequest) (*OpenEscrowDisputeResponse, error)
-	// ReleaseEscrowAdvance pays the recipient part of a held deal before the
-	// work is confirmed.
-	//
-	// Repair work needs materials bought up front, and until the flow has enough
-	// history to automate a split, a manager decides the amount after speaking to
-	// both sides. The deal stays open: the remainder is still held and still
-	// needs confirmation. Only the canonical cg-bff admin caller with a human
-	// admin identifier may call it.
+	// Deprecated: Do not use.
+	// ReleaseEscrowAdvance is retained only for published v1 wire compatibility.
+	// New and upgraded servers always reject it with FAILED_PRECONDITION; safe
+	// payment releases only after protected confirmation or dispute resolution.
 	ReleaseEscrowAdvance(context.Context, *ReleaseEscrowAdvanceRequest) (*ReleaseEscrowAdvanceResponse, error)
-	// SettleEscrowDispute resolves a dispute with an exact release/return split.
+	// SettleEscrowDispute resolves a dispute by either fully releasing the
+	// remaining amount or fully returning it. Split settlement is not supported.
 	// Only the canonical cg-bff admin caller with a human admin identifier may
 	// call it.
 	SettleEscrowDispute(context.Context, *SettleEscrowDisputeRequest) (*SettleEscrowDisputeResponse, error)
@@ -542,6 +590,14 @@ type BillingServiceServer interface {
 	// ListOrganizationEscrowDeals returns deals for an organization. Only a
 	// verified member of that organization or an authorized admin may call it.
 	ListOrganizationEscrowDeals(context.Context, *ListOrganizationEscrowDealsRequest) (*ListOrganizationEscrowDealsResponse, error)
+	// ListEscrowDeals is the global operational queue. It is service-token only;
+	// the admin BFF authenticates and authorizes the human platform administrator
+	// before adapting this projection.
+	ListEscrowDeals(context.Context, *ListEscrowDealsRequest) (*ListEscrowDealsResponse, error)
+	// ListPayerEscrowDeals returns the authenticated payer's safe-payment
+	// history. The service derives and verifies payer identity from the JWT;
+	// service identities may provide payer_user_id for admin/internal adapters.
+	ListPayerEscrowDeals(context.Context, *ListPayerEscrowDealsRequest) (*ListPayerEscrowDealsResponse, error)
 	// BindEscrowPerformer names the organization that will receive a deal whose
 	// performer was still unknown when the payer paid.
 	//
@@ -630,6 +686,9 @@ func (UnimplementedBillingServiceServer) DeclareEscrowWork(context.Context, *Dec
 func (UnimplementedBillingServiceServer) ConfirmEscrowDelivery(context.Context, *ConfirmEscrowDeliveryRequest) (*ConfirmEscrowDeliveryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ConfirmEscrowDelivery not implemented")
 }
+func (UnimplementedBillingServiceServer) StartEscrowReleaseChallenge(context.Context, *StartEscrowReleaseChallengeRequest) (*StartEscrowReleaseChallengeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method StartEscrowReleaseChallenge not implemented")
+}
 func (UnimplementedBillingServiceServer) AdminConfirmEscrowDelivery(context.Context, *AdminConfirmEscrowDeliveryRequest) (*AdminConfirmEscrowDeliveryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method AdminConfirmEscrowDelivery not implemented")
 }
@@ -647,6 +706,12 @@ func (UnimplementedBillingServiceServer) GetEscrowDeal(context.Context, *GetEscr
 }
 func (UnimplementedBillingServiceServer) ListOrganizationEscrowDeals(context.Context, *ListOrganizationEscrowDealsRequest) (*ListOrganizationEscrowDealsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListOrganizationEscrowDeals not implemented")
+}
+func (UnimplementedBillingServiceServer) ListEscrowDeals(context.Context, *ListEscrowDealsRequest) (*ListEscrowDealsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListEscrowDeals not implemented")
+}
+func (UnimplementedBillingServiceServer) ListPayerEscrowDeals(context.Context, *ListPayerEscrowDealsRequest) (*ListPayerEscrowDealsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPayerEscrowDeals not implemented")
 }
 func (UnimplementedBillingServiceServer) BindEscrowPerformer(context.Context, *BindEscrowPerformerRequest) (*BindEscrowPerformerResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method BindEscrowPerformer not implemented")
@@ -1086,6 +1151,24 @@ func _BillingService_ConfirmEscrowDelivery_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BillingService_StartEscrowReleaseChallenge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartEscrowReleaseChallengeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).StartEscrowReleaseChallenge(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_StartEscrowReleaseChallenge_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).StartEscrowReleaseChallenge(ctx, req.(*StartEscrowReleaseChallengeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BillingService_AdminConfirmEscrowDelivery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AdminConfirmEscrowDeliveryRequest)
 	if err := dec(in); err != nil {
@@ -1190,6 +1273,42 @@ func _BillingService_ListOrganizationEscrowDeals_Handler(srv interface{}, ctx co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BillingServiceServer).ListOrganizationEscrowDeals(ctx, req.(*ListOrganizationEscrowDealsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_ListEscrowDeals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEscrowDealsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).ListEscrowDeals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_ListEscrowDeals_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).ListEscrowDeals(ctx, req.(*ListEscrowDealsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_ListPayerEscrowDeals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPayerEscrowDealsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).ListPayerEscrowDeals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_ListPayerEscrowDeals_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).ListPayerEscrowDeals(ctx, req.(*ListPayerEscrowDealsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1312,6 +1431,10 @@ var BillingService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BillingService_ConfirmEscrowDelivery_Handler,
 		},
 		{
+			MethodName: "StartEscrowReleaseChallenge",
+			Handler:    _BillingService_StartEscrowReleaseChallenge_Handler,
+		},
+		{
 			MethodName: "AdminConfirmEscrowDelivery",
 			Handler:    _BillingService_AdminConfirmEscrowDelivery_Handler,
 		},
@@ -1334,6 +1457,14 @@ var BillingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListOrganizationEscrowDeals",
 			Handler:    _BillingService_ListOrganizationEscrowDeals_Handler,
+		},
+		{
+			MethodName: "ListEscrowDeals",
+			Handler:    _BillingService_ListEscrowDeals_Handler,
+		},
+		{
+			MethodName: "ListPayerEscrowDeals",
+			Handler:    _BillingService_ListPayerEscrowDeals_Handler,
 		},
 		{
 			MethodName: "BindEscrowPerformer",

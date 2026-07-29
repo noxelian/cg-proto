@@ -104,9 +104,47 @@ service RequestService {
   // claimed=false with the winning org in claimed_by_org_id.
   rpc ClaimInsuranceRequest(ClaimInsuranceRequestRequest) returns (ClaimInsuranceRequestResponse);
 
+  // CompleteInsuranceRequest is the dedicated request-owner work-completion
+  // action for an assigned insurance job. It is organization-scoped and
+  // idempotent. Only this action may move a claimed insurance request from
+  // PUBLISHED to CLOSED; billing payout terms remain unavailable before it.
+  rpc CompleteInsuranceRequest(CompleteInsuranceRequestRequest) returns (CompleteInsuranceRequestResponse);
+
   // IsOrgTargeted reports whether org_id is in the request's target audience
   // snapshot (target_org_ids). Gates feed visibility of insurance requests.
   rpc IsOrgTargeted(IsOrgTargetedRequest) returns (IsOrgTargetedResponse);
+
+  // PrepareRequestEscrow records an initiated payment snapshot. Initiation and
+  // provider failure do not pause the stale-request clock.
+  rpc PrepareRequestEscrow(PrepareRequestEscrowRequest) returns (PrepareRequestEscrowResponse);
+
+  // AuthorizeRequestEscrowCapture is the owner-side race barrier called before
+  // a provider success becomes terminal. It atomically sets monotonic
+  // ever_held; day-15 close must then lose the race.
+  rpc AuthorizeRequestEscrowCapture(AuthorizeRequestEscrowCaptureRequest) returns (AuthorizeRequestEscrowCaptureResponse);
+
+  // MarkRequestEscrowState mirrors only owner-relevant lifecycle after HELD.
+  // It never performs financial posting; cg-billing remains the money owner.
+  rpc MarkRequestEscrowState(MarkRequestEscrowStateRequest) returns (MarkRequestEscrowStateResponse);
+
+  // SelectRequestBid records the ordinary marketplace selection of a bid and
+  // STO by finalizing the previously reserved handoff. It does not claim
+  // payment or completion. Called by bid-service after its own acceptance CAS.
+  rpc SelectRequestBid(SelectRequestBidRequest) returns (SelectRequestBidResponse);
+
+  // CloseRequest is the only ordinary customer completion endpoint. Generic
+  // ChangeStatus must reject CLOSED. Once ever_held is true, only the escrow
+  // completion/dispute path may close the request.
+  rpc CloseRequest(CloseRequestRequest) returns (CloseRequestResponse);
+
+  // ReserveRequestBidSelection installs the request-owner stale-close barrier
+  // before bid-service commits acceptance. Initiated or failed payment never
+  // calls this command.
+  rpc ReserveRequestBidSelection(ReserveRequestBidSelectionRequest) returns (ReserveRequestBidSelectionResponse);
+
+  // CancelRequestBidSelection removes only the exact still-pending handoff
+  // after bid-service has durably determined that acceptance did not commit.
+  rpc CancelRequestBidSelection(CancelRequestBidSelectionRequest) returns (CancelRequestBidSelectionResponse);
 }
 
 enum RequestType {
@@ -126,6 +164,16 @@ enum RequestStatus {
   // Temporarily hidden by the customer ("на паузе"). Stays classified and can
   // be republished at any time (→ PUBLISHED). Invisible to the org/СТО feed.
   REQUEST_STATUS_PAUSED = 5;
+}
+
+enum RequestEscrowState {
+  REQUEST_ESCROW_STATE_UNSPECIFIED = 0;
+  REQUEST_ESCROW_STATE_INITIATED = 1;
+  REQUEST_ESCROW_STATE_HELD = 2;
+  REQUEST_ESCROW_STATE_WORK_DECLARED = 3;
+  REQUEST_ESCROW_STATE_DISPUTED = 4;
+  REQUEST_ESCROW_STATE_RELEASED = 5;
+  REQUEST_ESCROW_STATE_RETURNED = 6;
 }
 
 // RequestKind distinguishes a regular marketplace request from an insurance
@@ -224,6 +272,14 @@ message Request {
   // partners; admin UIs use it to render "В работе" while request_status
   // itself stays 'published' (there is no matched-like status in the enum).
   optional string claimed_by_org_id = 34;
+  // Safe-payment projection. ever_held is monotonic and remains true after a
+  // refund, dispute or release so ordinary close and stale close cannot bypass
+  // a deal that once held money.
+  bool ever_held = 35;
+  optional int64 selected_bid_id = 36;
+  optional string selected_organization_id = 37;
+  RequestEscrowState escrow_state = 38;
+  optional int64 escrow_transaction_id = 39;
 }
 
 // CreateRequest
@@ -411,6 +467,77 @@ message ChangeStatusRequest {
 }
 
 message ChangeStatusResponse {
+  Request request = 1;
+}
+
+message PrepareRequestEscrowRequest {
+  string request_id = 1;
+  int64 bid_id = 2;
+  int64 payer_user_id = 3;
+  string recipient_organization_id = 4;
+  int64 amount_minor = 5;
+  string currency = 6;
+  string idempotency_key = 7;
+}
+
+message PrepareRequestEscrowResponse {
+  string request_id = 1;
+  int64 bid_id = 2;
+  int64 payer_user_id = 3;
+  string recipient_organization_id = 4;
+  int64 amount_minor = 5;
+  string currency = 6;
+  RequestEscrowState state = 7;
+  bool ever_held = 8;
+}
+
+message AuthorizeRequestEscrowCaptureRequest {
+  string request_id = 1;
+  int64 bid_id = 2;
+  int64 payer_user_id = 3;
+  string recipient_organization_id = 4;
+  int64 amount_minor = 5;
+  string currency = 6;
+  int64 transaction_id = 7;
+}
+
+message AuthorizeRequestEscrowCaptureResponse {
+  bool authorized = 1;
+  bool already_held = 2;
+}
+
+message MarkRequestEscrowStateRequest {
+  string request_id = 1;
+  int64 bid_id = 2;
+  int64 transaction_id = 3;
+  RequestEscrowState state = 4;
+  string idempotency_key = 5;
+}
+
+message MarkRequestEscrowStateResponse {
+  RequestEscrowState state = 1;
+  bool request_closed = 2;
+}
+
+message SelectRequestBidRequest {
+  string request_id = 1;
+  int64 bid_id = 2;
+  int64 payer_user_id = 3;
+  string organization_id = 4;
+}
+
+message SelectRequestBidResponse {
+  bool selected = 1;
+  bool already_selected = 2;
+}
+
+message CloseRequestRequest {
+  string request_id = 1;
+  int64 user_id = 2;
+  string idempotency_key = 3;
+}
+
+message CloseRequestResponse {
   Request request = 1;
 }
 
@@ -654,4 +781,39 @@ message IsOrgTargetedRequest {
 
 message IsOrgTargetedResponse {
   bool targeted = 1;
+}
+
+// CompleteInsuranceRequest
+message CompleteInsuranceRequestRequest {
+  string request_id = 1; // UUID string
+  string organization_id = 2; // must equal the winning claimed organization
+  string idempotency_key = 3; // caller-stable, scoped to this request/action
+}
+
+message CompleteInsuranceRequestResponse {
+  Request request = 1;
+}
+
+message ReserveRequestBidSelectionRequest {
+  string request_id = 1;
+  int64 bid_id = 2;
+  int64 payer_user_id = 3;
+  string organization_id = 4;
+}
+
+message ReserveRequestBidSelectionResponse {
+  bool reserved = 1;
+  bool already_reserved = 2;
+}
+
+message CancelRequestBidSelectionRequest {
+  string request_id = 1;
+  int64 bid_id = 2;
+  int64 payer_user_id = 3;
+  string organization_id = 4;
+}
+
+message CancelRequestBidSelectionResponse {
+  bool cancelled = 1;
+  bool already_cancelled = 2;
 }

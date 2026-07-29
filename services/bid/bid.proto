@@ -62,6 +62,15 @@ service BidService {
   // GetAcceptedInsuranceBidForPayout returns the single accepted STO bid used
   // to authorize an insurance payout. Exact billing-service identity only.
   rpc GetAcceptedInsuranceBidForPayout(GetAcceptedInsuranceBidForPayoutRequest) returns (GetAcceptedInsuranceBidForPayoutResponse);
+
+  // GetEscrowBidTerms exposes accepted financial terms to the payment owner.
+  // Exact payment-service identity only.
+  rpc GetEscrowBidTerms(GetEscrowBidTermsRequest) returns (GetEscrowBidTermsResponse);
+
+  // GetBidSelectionTerms exposes pending-or-accepted STO terms only to the
+  // request owner so it can reserve/finalize an acceptance handoff without
+  // trusting bid-service request-body fields.
+  rpc GetBidSelectionTerms(GetBidSelectionTermsRequest) returns (GetBidSelectionTermsResponse);
 }
 
 enum BidType {
@@ -197,6 +206,19 @@ message GetAcceptedInsuranceBidForPayoutResponse {
   string organization_id = 3;
   int64 price_minor = 4;
   string currency = 5;
+}
+
+message GetEscrowBidTermsRequest {
+  int64 bid_id = 1;
+}
+
+message GetEscrowBidTermsResponse {
+  int64 bid_id = 1;
+  string request_id = 2;
+  string organization_id = 3;
+  int64 amount_minor = 4;
+  string currency = 5;
+  BidStatus status = 6;
 }
 
 // UpdateBid
@@ -377,4 +399,17 @@ message GetRequestResponsesSummaryRequest {
 message GetRequestResponsesSummaryResponse {
   // summaries maps request_id -> summary; absent entries mean zero responses.
   repeated RequestResponseSummary summaries = 1;
+}
+
+message GetBidSelectionTermsRequest {
+  int64 bid_id = 1;
+}
+
+message GetBidSelectionTermsResponse {
+  int64 bid_id = 1;
+  string request_id = 2;
+  string organization_id = 3;
+  int64 amount_minor = 4;
+  string currency = 5;
+  BidStatus status = 6;
 }

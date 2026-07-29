@@ -44,7 +44,15 @@ const (
 	RequestService_UnpauseRequest_FullMethodName                = "/services.request.v1.RequestService/UnpauseRequest"
 	RequestService_GetRequestInsuranceInfo_FullMethodName       = "/services.request.v1.RequestService/GetRequestInsuranceInfo"
 	RequestService_ClaimInsuranceRequest_FullMethodName         = "/services.request.v1.RequestService/ClaimInsuranceRequest"
+	RequestService_CompleteInsuranceRequest_FullMethodName      = "/services.request.v1.RequestService/CompleteInsuranceRequest"
 	RequestService_IsOrgTargeted_FullMethodName                 = "/services.request.v1.RequestService/IsOrgTargeted"
+	RequestService_PrepareRequestEscrow_FullMethodName          = "/services.request.v1.RequestService/PrepareRequestEscrow"
+	RequestService_AuthorizeRequestEscrowCapture_FullMethodName = "/services.request.v1.RequestService/AuthorizeRequestEscrowCapture"
+	RequestService_MarkRequestEscrowState_FullMethodName        = "/services.request.v1.RequestService/MarkRequestEscrowState"
+	RequestService_SelectRequestBid_FullMethodName              = "/services.request.v1.RequestService/SelectRequestBid"
+	RequestService_CloseRequest_FullMethodName                  = "/services.request.v1.RequestService/CloseRequest"
+	RequestService_ReserveRequestBidSelection_FullMethodName    = "/services.request.v1.RequestService/ReserveRequestBidSelection"
+	RequestService_CancelRequestBidSelection_FullMethodName     = "/services.request.v1.RequestService/CancelRequestBidSelection"
 )
 
 // RequestServiceClient is the client API for RequestService service.
@@ -123,9 +131,39 @@ type RequestServiceClient interface {
 	// acceptance. The first successful claim wins; later claims return
 	// claimed=false with the winning org in claimed_by_org_id.
 	ClaimInsuranceRequest(ctx context.Context, in *ClaimInsuranceRequestRequest, opts ...grpc.CallOption) (*ClaimInsuranceRequestResponse, error)
+	// CompleteInsuranceRequest is the dedicated request-owner work-completion
+	// action for an assigned insurance job. It is organization-scoped and
+	// idempotent. Only this action may move a claimed insurance request from
+	// PUBLISHED to CLOSED; billing payout terms remain unavailable before it.
+	CompleteInsuranceRequest(ctx context.Context, in *CompleteInsuranceRequestRequest, opts ...grpc.CallOption) (*CompleteInsuranceRequestResponse, error)
 	// IsOrgTargeted reports whether org_id is in the request's target audience
 	// snapshot (target_org_ids). Gates feed visibility of insurance requests.
 	IsOrgTargeted(ctx context.Context, in *IsOrgTargetedRequest, opts ...grpc.CallOption) (*IsOrgTargetedResponse, error)
+	// PrepareRequestEscrow records an initiated payment snapshot. Initiation and
+	// provider failure do not pause the stale-request clock.
+	PrepareRequestEscrow(ctx context.Context, in *PrepareRequestEscrowRequest, opts ...grpc.CallOption) (*PrepareRequestEscrowResponse, error)
+	// AuthorizeRequestEscrowCapture is the owner-side race barrier called before
+	// a provider success becomes terminal. It atomically sets monotonic
+	// ever_held; day-15 close must then lose the race.
+	AuthorizeRequestEscrowCapture(ctx context.Context, in *AuthorizeRequestEscrowCaptureRequest, opts ...grpc.CallOption) (*AuthorizeRequestEscrowCaptureResponse, error)
+	// MarkRequestEscrowState mirrors only owner-relevant lifecycle after HELD.
+	// It never performs financial posting; cg-billing remains the money owner.
+	MarkRequestEscrowState(ctx context.Context, in *MarkRequestEscrowStateRequest, opts ...grpc.CallOption) (*MarkRequestEscrowStateResponse, error)
+	// SelectRequestBid records the ordinary marketplace selection of a bid and
+	// STO by finalizing the previously reserved handoff. It does not claim
+	// payment or completion. Called by bid-service after its own acceptance CAS.
+	SelectRequestBid(ctx context.Context, in *SelectRequestBidRequest, opts ...grpc.CallOption) (*SelectRequestBidResponse, error)
+	// CloseRequest is the only ordinary customer completion endpoint. Generic
+	// ChangeStatus must reject CLOSED. Once ever_held is true, only the escrow
+	// completion/dispute path may close the request.
+	CloseRequest(ctx context.Context, in *CloseRequestRequest, opts ...grpc.CallOption) (*CloseRequestResponse, error)
+	// ReserveRequestBidSelection installs the request-owner stale-close barrier
+	// before bid-service commits acceptance. Initiated or failed payment never
+	// calls this command.
+	ReserveRequestBidSelection(ctx context.Context, in *ReserveRequestBidSelectionRequest, opts ...grpc.CallOption) (*ReserveRequestBidSelectionResponse, error)
+	// CancelRequestBidSelection removes only the exact still-pending handoff
+	// after bid-service has durably determined that acceptance did not commit.
+	CancelRequestBidSelection(ctx context.Context, in *CancelRequestBidSelectionRequest, opts ...grpc.CallOption) (*CancelRequestBidSelectionResponse, error)
 }
 
 type requestServiceClient struct {
@@ -386,10 +424,90 @@ func (c *requestServiceClient) ClaimInsuranceRequest(ctx context.Context, in *Cl
 	return out, nil
 }
 
+func (c *requestServiceClient) CompleteInsuranceRequest(ctx context.Context, in *CompleteInsuranceRequestRequest, opts ...grpc.CallOption) (*CompleteInsuranceRequestResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CompleteInsuranceRequestResponse)
+	err := c.cc.Invoke(ctx, RequestService_CompleteInsuranceRequest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *requestServiceClient) IsOrgTargeted(ctx context.Context, in *IsOrgTargetedRequest, opts ...grpc.CallOption) (*IsOrgTargetedResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(IsOrgTargetedResponse)
 	err := c.cc.Invoke(ctx, RequestService_IsOrgTargeted_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestServiceClient) PrepareRequestEscrow(ctx context.Context, in *PrepareRequestEscrowRequest, opts ...grpc.CallOption) (*PrepareRequestEscrowResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PrepareRequestEscrowResponse)
+	err := c.cc.Invoke(ctx, RequestService_PrepareRequestEscrow_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestServiceClient) AuthorizeRequestEscrowCapture(ctx context.Context, in *AuthorizeRequestEscrowCaptureRequest, opts ...grpc.CallOption) (*AuthorizeRequestEscrowCaptureResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AuthorizeRequestEscrowCaptureResponse)
+	err := c.cc.Invoke(ctx, RequestService_AuthorizeRequestEscrowCapture_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestServiceClient) MarkRequestEscrowState(ctx context.Context, in *MarkRequestEscrowStateRequest, opts ...grpc.CallOption) (*MarkRequestEscrowStateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MarkRequestEscrowStateResponse)
+	err := c.cc.Invoke(ctx, RequestService_MarkRequestEscrowState_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestServiceClient) SelectRequestBid(ctx context.Context, in *SelectRequestBidRequest, opts ...grpc.CallOption) (*SelectRequestBidResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SelectRequestBidResponse)
+	err := c.cc.Invoke(ctx, RequestService_SelectRequestBid_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestServiceClient) CloseRequest(ctx context.Context, in *CloseRequestRequest, opts ...grpc.CallOption) (*CloseRequestResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CloseRequestResponse)
+	err := c.cc.Invoke(ctx, RequestService_CloseRequest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestServiceClient) ReserveRequestBidSelection(ctx context.Context, in *ReserveRequestBidSelectionRequest, opts ...grpc.CallOption) (*ReserveRequestBidSelectionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReserveRequestBidSelectionResponse)
+	err := c.cc.Invoke(ctx, RequestService_ReserveRequestBidSelection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestServiceClient) CancelRequestBidSelection(ctx context.Context, in *CancelRequestBidSelectionRequest, opts ...grpc.CallOption) (*CancelRequestBidSelectionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CancelRequestBidSelectionResponse)
+	err := c.cc.Invoke(ctx, RequestService_CancelRequestBidSelection_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -472,9 +590,39 @@ type RequestServiceServer interface {
 	// acceptance. The first successful claim wins; later claims return
 	// claimed=false with the winning org in claimed_by_org_id.
 	ClaimInsuranceRequest(context.Context, *ClaimInsuranceRequestRequest) (*ClaimInsuranceRequestResponse, error)
+	// CompleteInsuranceRequest is the dedicated request-owner work-completion
+	// action for an assigned insurance job. It is organization-scoped and
+	// idempotent. Only this action may move a claimed insurance request from
+	// PUBLISHED to CLOSED; billing payout terms remain unavailable before it.
+	CompleteInsuranceRequest(context.Context, *CompleteInsuranceRequestRequest) (*CompleteInsuranceRequestResponse, error)
 	// IsOrgTargeted reports whether org_id is in the request's target audience
 	// snapshot (target_org_ids). Gates feed visibility of insurance requests.
 	IsOrgTargeted(context.Context, *IsOrgTargetedRequest) (*IsOrgTargetedResponse, error)
+	// PrepareRequestEscrow records an initiated payment snapshot. Initiation and
+	// provider failure do not pause the stale-request clock.
+	PrepareRequestEscrow(context.Context, *PrepareRequestEscrowRequest) (*PrepareRequestEscrowResponse, error)
+	// AuthorizeRequestEscrowCapture is the owner-side race barrier called before
+	// a provider success becomes terminal. It atomically sets monotonic
+	// ever_held; day-15 close must then lose the race.
+	AuthorizeRequestEscrowCapture(context.Context, *AuthorizeRequestEscrowCaptureRequest) (*AuthorizeRequestEscrowCaptureResponse, error)
+	// MarkRequestEscrowState mirrors only owner-relevant lifecycle after HELD.
+	// It never performs financial posting; cg-billing remains the money owner.
+	MarkRequestEscrowState(context.Context, *MarkRequestEscrowStateRequest) (*MarkRequestEscrowStateResponse, error)
+	// SelectRequestBid records the ordinary marketplace selection of a bid and
+	// STO by finalizing the previously reserved handoff. It does not claim
+	// payment or completion. Called by bid-service after its own acceptance CAS.
+	SelectRequestBid(context.Context, *SelectRequestBidRequest) (*SelectRequestBidResponse, error)
+	// CloseRequest is the only ordinary customer completion endpoint. Generic
+	// ChangeStatus must reject CLOSED. Once ever_held is true, only the escrow
+	// completion/dispute path may close the request.
+	CloseRequest(context.Context, *CloseRequestRequest) (*CloseRequestResponse, error)
+	// ReserveRequestBidSelection installs the request-owner stale-close barrier
+	// before bid-service commits acceptance. Initiated or failed payment never
+	// calls this command.
+	ReserveRequestBidSelection(context.Context, *ReserveRequestBidSelectionRequest) (*ReserveRequestBidSelectionResponse, error)
+	// CancelRequestBidSelection removes only the exact still-pending handoff
+	// after bid-service has durably determined that acceptance did not commit.
+	CancelRequestBidSelection(context.Context, *CancelRequestBidSelectionRequest) (*CancelRequestBidSelectionResponse, error)
 	mustEmbedUnimplementedRequestServiceServer()
 }
 
@@ -560,8 +708,32 @@ func (UnimplementedRequestServiceServer) GetRequestInsuranceInfo(context.Context
 func (UnimplementedRequestServiceServer) ClaimInsuranceRequest(context.Context, *ClaimInsuranceRequestRequest) (*ClaimInsuranceRequestResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ClaimInsuranceRequest not implemented")
 }
+func (UnimplementedRequestServiceServer) CompleteInsuranceRequest(context.Context, *CompleteInsuranceRequestRequest) (*CompleteInsuranceRequestResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CompleteInsuranceRequest not implemented")
+}
 func (UnimplementedRequestServiceServer) IsOrgTargeted(context.Context, *IsOrgTargetedRequest) (*IsOrgTargetedResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method IsOrgTargeted not implemented")
+}
+func (UnimplementedRequestServiceServer) PrepareRequestEscrow(context.Context, *PrepareRequestEscrowRequest) (*PrepareRequestEscrowResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PrepareRequestEscrow not implemented")
+}
+func (UnimplementedRequestServiceServer) AuthorizeRequestEscrowCapture(context.Context, *AuthorizeRequestEscrowCaptureRequest) (*AuthorizeRequestEscrowCaptureResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AuthorizeRequestEscrowCapture not implemented")
+}
+func (UnimplementedRequestServiceServer) MarkRequestEscrowState(context.Context, *MarkRequestEscrowStateRequest) (*MarkRequestEscrowStateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MarkRequestEscrowState not implemented")
+}
+func (UnimplementedRequestServiceServer) SelectRequestBid(context.Context, *SelectRequestBidRequest) (*SelectRequestBidResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SelectRequestBid not implemented")
+}
+func (UnimplementedRequestServiceServer) CloseRequest(context.Context, *CloseRequestRequest) (*CloseRequestResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CloseRequest not implemented")
+}
+func (UnimplementedRequestServiceServer) ReserveRequestBidSelection(context.Context, *ReserveRequestBidSelectionRequest) (*ReserveRequestBidSelectionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReserveRequestBidSelection not implemented")
+}
+func (UnimplementedRequestServiceServer) CancelRequestBidSelection(context.Context, *CancelRequestBidSelectionRequest) (*CancelRequestBidSelectionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CancelRequestBidSelection not implemented")
 }
 func (UnimplementedRequestServiceServer) mustEmbedUnimplementedRequestServiceServer() {}
 func (UnimplementedRequestServiceServer) testEmbeddedByValue()                        {}
@@ -1034,6 +1206,24 @@ func _RequestService_ClaimInsuranceRequest_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestService_CompleteInsuranceRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CompleteInsuranceRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).CompleteInsuranceRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_CompleteInsuranceRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).CompleteInsuranceRequest(ctx, req.(*CompleteInsuranceRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RequestService_IsOrgTargeted_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IsOrgTargetedRequest)
 	if err := dec(in); err != nil {
@@ -1048,6 +1238,132 @@ func _RequestService_IsOrgTargeted_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RequestServiceServer).IsOrgTargeted(ctx, req.(*IsOrgTargetedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestService_PrepareRequestEscrow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PrepareRequestEscrowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).PrepareRequestEscrow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_PrepareRequestEscrow_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).PrepareRequestEscrow(ctx, req.(*PrepareRequestEscrowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestService_AuthorizeRequestEscrowCapture_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthorizeRequestEscrowCaptureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).AuthorizeRequestEscrowCapture(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_AuthorizeRequestEscrowCapture_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).AuthorizeRequestEscrowCapture(ctx, req.(*AuthorizeRequestEscrowCaptureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestService_MarkRequestEscrowState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MarkRequestEscrowStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).MarkRequestEscrowState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_MarkRequestEscrowState_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).MarkRequestEscrowState(ctx, req.(*MarkRequestEscrowStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestService_SelectRequestBid_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SelectRequestBidRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).SelectRequestBid(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_SelectRequestBid_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).SelectRequestBid(ctx, req.(*SelectRequestBidRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestService_CloseRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CloseRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).CloseRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_CloseRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).CloseRequest(ctx, req.(*CloseRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestService_ReserveRequestBidSelection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReserveRequestBidSelectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).ReserveRequestBidSelection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_ReserveRequestBidSelection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).ReserveRequestBidSelection(ctx, req.(*ReserveRequestBidSelectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestService_CancelRequestBidSelection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelRequestBidSelectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).CancelRequestBidSelection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_CancelRequestBidSelection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).CancelRequestBidSelection(ctx, req.(*CancelRequestBidSelectionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1160,8 +1476,40 @@ var RequestService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RequestService_ClaimInsuranceRequest_Handler,
 		},
 		{
+			MethodName: "CompleteInsuranceRequest",
+			Handler:    _RequestService_CompleteInsuranceRequest_Handler,
+		},
+		{
 			MethodName: "IsOrgTargeted",
 			Handler:    _RequestService_IsOrgTargeted_Handler,
+		},
+		{
+			MethodName: "PrepareRequestEscrow",
+			Handler:    _RequestService_PrepareRequestEscrow_Handler,
+		},
+		{
+			MethodName: "AuthorizeRequestEscrowCapture",
+			Handler:    _RequestService_AuthorizeRequestEscrowCapture_Handler,
+		},
+		{
+			MethodName: "MarkRequestEscrowState",
+			Handler:    _RequestService_MarkRequestEscrowState_Handler,
+		},
+		{
+			MethodName: "SelectRequestBid",
+			Handler:    _RequestService_SelectRequestBid_Handler,
+		},
+		{
+			MethodName: "CloseRequest",
+			Handler:    _RequestService_CloseRequest_Handler,
+		},
+		{
+			MethodName: "ReserveRequestBidSelection",
+			Handler:    _RequestService_ReserveRequestBidSelection_Handler,
+		},
+		{
+			MethodName: "CancelRequestBidSelection",
+			Handler:    _RequestService_CancelRequestBidSelection_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
