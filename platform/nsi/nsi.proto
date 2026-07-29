@@ -305,6 +305,10 @@ message UpdateCarModelRequest {
   int32 id = 1;
   int32 mark_id = 2;
   string name = 3;
+  // body_type sets the pricing class — "sedan", "crossover" or "suv". An
+  // empty value leaves the stored class untouched, so a caller that only
+  // renames a model cannot silently erase it.
+  string body_type = 4;
 }
 message UpdateCarModelResponse { CarModel model = 1; }
 

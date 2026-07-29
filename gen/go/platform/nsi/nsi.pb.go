@@ -2595,10 +2595,14 @@ func (x *CreateCarModelResponse) GetModel() *CarModel {
 }
 
 type UpdateCarModelRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	MarkId        int32                  `protobuf:"varint,2,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
-	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	Id     int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	MarkId int32                  `protobuf:"varint,2,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
+	Name   string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	// body_type sets the pricing class — "sedan", "crossover" or "suv". An
+	// empty value leaves the stored class untouched, so a caller that only
+	// renames a model cannot silently erase it.
+	BodyType      string `protobuf:"bytes,4,opt,name=body_type,json=bodyType,proto3" json:"body_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2650,6 +2654,13 @@ func (x *UpdateCarModelRequest) GetMarkId() int32 {
 func (x *UpdateCarModelRequest) GetName() string {
 	if x != nil {
 		return x.Name
+	}
+	return ""
+}
+
+func (x *UpdateCarModelRequest) GetBodyType() string {
+	if x != nil {
+		return x.BodyType
 	}
 	return ""
 }
@@ -3910,11 +3921,12 @@ const file_platform_nsi_nsi_proto_rawDesc = "" +
 	"\amark_id\x18\x01 \x01(\x05R\x06markId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"I\n" +
 	"\x16CreateCarModelResponse\x12/\n" +
-	"\x05model\x18\x01 \x01(\v2\x19.platform.nsi.v1.CarModelR\x05model\"T\n" +
+	"\x05model\x18\x01 \x01(\v2\x19.platform.nsi.v1.CarModelR\x05model\"q\n" +
 	"\x15UpdateCarModelRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
 	"\amark_id\x18\x02 \x01(\x05R\x06markId\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\"I\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1b\n" +
+	"\tbody_type\x18\x04 \x01(\tR\bbodyType\"I\n" +
 	"\x16UpdateCarModelResponse\x12/\n" +
 	"\x05model\x18\x01 \x01(\v2\x19.platform.nsi.v1.CarModelR\x05model\"'\n" +
 	"\x15DeleteCarModelRequest\x12\x0e\n" +
