@@ -585,12 +585,14 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	CreditService_CreateCreditApplication_FullMethodName = "/payments.payment.v1.CreditService/CreateCreditApplication"
-	CreditService_GetCreditApplication_FullMethodName    = "/payments.payment.v1.CreditService/GetCreditApplication"
-	CreditService_RefundCreditApplication_FullMethodName = "/payments.payment.v1.CreditService/RefundCreditApplication"
-	CreditService_ListCessionLoans_FullMethodName        = "/payments.payment.v1.CreditService/ListCessionLoans"
-	CreditService_SubmitCessionAgreement_FullMethodName  = "/payments.payment.v1.CreditService/SubmitCessionAgreement"
-	CreditService_GetCessionAgreement_FullMethodName     = "/payments.payment.v1.CreditService/GetCessionAgreement"
+	CreditService_CreateCreditApplication_FullMethodName        = "/payments.payment.v1.CreditService/CreateCreditApplication"
+	CreditService_GetCreditApplication_FullMethodName           = "/payments.payment.v1.CreditService/GetCreditApplication"
+	CreditService_RefundCreditApplication_FullMethodName        = "/payments.payment.v1.CreditService/RefundCreditApplication"
+	CreditService_ListCessionLoans_FullMethodName               = "/payments.payment.v1.CreditService/ListCessionLoans"
+	CreditService_SubmitCessionAgreement_FullMethodName         = "/payments.payment.v1.CreditService/SubmitCessionAgreement"
+	CreditService_GetCessionAgreement_FullMethodName            = "/payments.payment.v1.CreditService/GetCessionAgreement"
+	CreditService_ListPartnerProducts_FullMethodName            = "/payments.payment.v1.CreditService/ListPartnerProducts"
+	CreditService_RefreshCreditApplicationStatus_FullMethodName = "/payments.payment.v1.CreditService/RefreshCreditApplicationStatus"
 )
 
 // CreditServiceClient is the client API for CreditService service.
@@ -622,6 +624,14 @@ type CreditServiceClient interface {
 	// partner-wide cession hook.
 	SubmitCessionAgreement(ctx context.Context, in *SubmitCessionAgreementRequest, opts ...grpc.CallOption) (*SubmitCessionAgreementResponse, error)
 	GetCessionAgreement(ctx context.Context, in *GetCessionAgreementRequest, opts ...grpc.CallOption) (*GetCessionAgreementResponse, error)
+	// ListPartnerProducts returns the bank products available to us with their
+	// amount ranges and allowed periods, so the storefront can offer only terms
+	// the conveyor will accept.
+	ListPartnerProducts(ctx context.Context, in *ListPartnerProductsRequest, opts ...grpc.CallOption) (*ListPartnerProductsResponse, error)
+	// RefreshCreditApplicationStatus pulls the conveyor's current status for a
+	// goods-loan application. Hooks remain the primary signal; this is the
+	// recovery path when a hook is lost.
+	RefreshCreditApplicationStatus(ctx context.Context, in *RefreshCreditApplicationStatusRequest, opts ...grpc.CallOption) (*RefreshCreditApplicationStatusResponse, error)
 }
 
 type creditServiceClient struct {
@@ -692,6 +702,26 @@ func (c *creditServiceClient) GetCessionAgreement(ctx context.Context, in *GetCe
 	return out, nil
 }
 
+func (c *creditServiceClient) ListPartnerProducts(ctx context.Context, in *ListPartnerProductsRequest, opts ...grpc.CallOption) (*ListPartnerProductsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPartnerProductsResponse)
+	err := c.cc.Invoke(ctx, CreditService_ListPartnerProducts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *creditServiceClient) RefreshCreditApplicationStatus(ctx context.Context, in *RefreshCreditApplicationStatusRequest, opts ...grpc.CallOption) (*RefreshCreditApplicationStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RefreshCreditApplicationStatusResponse)
+	err := c.cc.Invoke(ctx, CreditService_RefreshCreditApplicationStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CreditServiceServer is the server API for CreditService service.
 // All implementations must embed UnimplementedCreditServiceServer
 // for forward compatibility.
@@ -721,6 +751,14 @@ type CreditServiceServer interface {
 	// partner-wide cession hook.
 	SubmitCessionAgreement(context.Context, *SubmitCessionAgreementRequest) (*SubmitCessionAgreementResponse, error)
 	GetCessionAgreement(context.Context, *GetCessionAgreementRequest) (*GetCessionAgreementResponse, error)
+	// ListPartnerProducts returns the bank products available to us with their
+	// amount ranges and allowed periods, so the storefront can offer only terms
+	// the conveyor will accept.
+	ListPartnerProducts(context.Context, *ListPartnerProductsRequest) (*ListPartnerProductsResponse, error)
+	// RefreshCreditApplicationStatus pulls the conveyor's current status for a
+	// goods-loan application. Hooks remain the primary signal; this is the
+	// recovery path when a hook is lost.
+	RefreshCreditApplicationStatus(context.Context, *RefreshCreditApplicationStatusRequest) (*RefreshCreditApplicationStatusResponse, error)
 	mustEmbedUnimplementedCreditServiceServer()
 }
 
@@ -748,6 +786,12 @@ func (UnimplementedCreditServiceServer) SubmitCessionAgreement(context.Context, 
 }
 func (UnimplementedCreditServiceServer) GetCessionAgreement(context.Context, *GetCessionAgreementRequest) (*GetCessionAgreementResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCessionAgreement not implemented")
+}
+func (UnimplementedCreditServiceServer) ListPartnerProducts(context.Context, *ListPartnerProductsRequest) (*ListPartnerProductsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPartnerProducts not implemented")
+}
+func (UnimplementedCreditServiceServer) RefreshCreditApplicationStatus(context.Context, *RefreshCreditApplicationStatusRequest) (*RefreshCreditApplicationStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RefreshCreditApplicationStatus not implemented")
 }
 func (UnimplementedCreditServiceServer) mustEmbedUnimplementedCreditServiceServer() {}
 func (UnimplementedCreditServiceServer) testEmbeddedByValue()                       {}
@@ -878,6 +922,42 @@ func _CreditService_GetCessionAgreement_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CreditService_ListPartnerProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPartnerProductsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CreditServiceServer).ListPartnerProducts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CreditService_ListPartnerProducts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CreditServiceServer).ListPartnerProducts(ctx, req.(*ListPartnerProductsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CreditService_RefreshCreditApplicationStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefreshCreditApplicationStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CreditServiceServer).RefreshCreditApplicationStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CreditService_RefreshCreditApplicationStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CreditServiceServer).RefreshCreditApplicationStatus(ctx, req.(*RefreshCreditApplicationStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CreditService_ServiceDesc is the grpc.ServiceDesc for CreditService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -908,6 +988,14 @@ var CreditService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCessionAgreement",
 			Handler:    _CreditService_GetCessionAgreement_Handler,
+		},
+		{
+			MethodName: "ListPartnerProducts",
+			Handler:    _CreditService_ListPartnerProducts_Handler,
+		},
+		{
+			MethodName: "RefreshCreditApplicationStatus",
+			Handler:    _CreditService_RefreshCreditApplicationStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -472,6 +472,17 @@ service CreditService {
   // partner-wide cession hook.
   rpc SubmitCessionAgreement(SubmitCessionAgreementRequest) returns (SubmitCessionAgreementResponse);
   rpc GetCessionAgreement(GetCessionAgreementRequest) returns (GetCessionAgreementResponse);
+
+  // === Goods loan (bank-issued installment / credit) ===
+
+  // ListPartnerProducts returns the bank products available to us with their
+  // amount ranges and allowed periods, so the storefront can offer only terms
+  // the conveyor will accept.
+  rpc ListPartnerProducts(ListPartnerProductsRequest) returns (ListPartnerProductsResponse);
+  // RefreshCreditApplicationStatus pulls the conveyor's current status for a
+  // goods-loan application. Hooks remain the primary signal; this is the
+  // recovery path when a hook is lost.
+  rpc RefreshCreditApplicationStatus(RefreshCreditApplicationStatusRequest) returns (RefreshCreditApplicationStatusResponse);
 }
 
 enum CreditApplicationStatus {
@@ -484,6 +495,43 @@ enum CreditApplicationStatus {
   CREDIT_APPLICATION_STATUS_REJECTED = 4;
   CREDIT_APPLICATION_STATUS_PARTIALLY_REFUNDED = 5;
   CREDIT_APPLICATION_STATUS_REFUNDED = 6;
+  // Scoring approved the requested terms; the loan is not issued yet.
+  CREDIT_APPLICATION_STATUS_APPROVED = 7;
+  // Scoring offered different terms (smaller principal and/or another
+  // period). The customer continues without a new application; when the
+  // approved principal is below the basket the difference is paid at the till.
+  CREDIT_APPLICATION_STATUS_ALTERNATIVE = 8;
+}
+
+// CreditProductKind selects which FFC2 product a request belongs to. The two
+// products are separate integrations that share only authentication and the
+// hook contract.
+enum CreditProductKind {
+  // Treated as FACTORING so existing callers keep their behaviour.
+  CREDIT_PRODUCT_KIND_UNSPECIFIED = 0;
+  // apply-lead-factoring: we issue the installment, sign the print forms and
+  // later assign the claim to the bank through the daily cession.
+  CREDIT_PRODUCT_KIND_FACTORING = 1;
+  // goods-loan-lead: the bank lends directly. No print forms, no partner
+  // contract number, no cession and no refund method.
+  CREDIT_PRODUCT_KIND_GOODS_LOAN = 2;
+}
+
+// CreditLoanType mirrors the bank's `loan_type` field.
+enum CreditLoanType {
+  CREDIT_LOAN_TYPE_UNSPECIFIED = 0;
+  CREDIT_LOAN_TYPE_INSTALLMENT = 1; // рассрочка
+  CREDIT_LOAN_TYPE_CREDIT = 2;      // кредит
+}
+
+// CreditApprovedParams carries the terms scoring actually approved. Amounts are
+// tiyn; rates are basis points (1.5% -> 150) so no float reaches the wire.
+message CreditApprovedParams {
+  int64 principal_tiyn = 1;
+  int32 period_months = 2;
+  int32 interest_rate_bp = 3;
+  int32 effective_rate_bp = 4;
+  int64 monthly_payment_tiyn = 5;
 }
 
 enum CreditRefundType {
@@ -536,6 +584,12 @@ message CreateCreditApplicationRequest {
   string seller_iin = 17;
   string store_address = 18;
   string store_city = 19;
+  // product_kind selects the FFC2 product. FACTORING (the default) requires
+  // print_forms; GOODS_LOAN rejects them because the bank owns that paperwork.
+  CreditProductKind product_kind = 20;
+  // product_id is the bank product selected from ListPartnerProducts. Required
+  // for GOODS_LOAN; FACTORING falls back to the configured product.
+  string product_id = 21;
 }
 
 message CreditApplication {
@@ -555,6 +609,22 @@ message CreditApplication {
   string reference_id = 11;
   google.protobuf.Timestamp created_at = 12;
   google.protobuf.Timestamp updated_at = 13;
+  CreditProductKind product_kind = 14;
+  CreditLoanType loan_type = 15;
+  // approved_params is populated from the APPROVED / ALTERNATIVE / ISSUED
+  // hooks. Until scoring answers it carries the requested terms only.
+  CreditApprovedParams approved_params = 16;
+  // alternative_reason explains why scoring offered different terms.
+  string alternative_reason = 17;
+  // bank_credit_contract is the conveyor's own contract number (FCT26-...),
+  // distinct from the partner-side credit_contract we generate for factoring.
+  string bank_credit_contract = 18;
+  // bank_status is the raw conveyor status from the status endpoint
+  // (NEW, IN_PROGRESS, ON_SIGNING, STATEMENT, HOLD_BEFORE_ISSUED,
+  // READY_FOR_ISSUE, ...). Informational: our own lifecycle stays coarse.
+  string bank_status = 19;
+  // status_reason is the bank's rejection reason (REJECTED only).
+  string status_reason = 20;
 }
 
 message CreateCreditApplicationResponse {
@@ -662,4 +732,43 @@ message GetCessionAgreementRequest {
 
 message GetCessionAgreementResponse {
   CessionAgreement agreement = 1;
+}
+
+// =============================================
+// Goods loan (product 2) messages
+// =============================================
+
+// CreditRepaymentBand is one amount range and the periods allowed inside it.
+message CreditRepaymentBand {
+  int64 min_amount_tiyn = 1;
+  int64 max_amount_tiyn = 2;
+  repeated int32 periods_months = 3;
+}
+
+message CreditPartnerProduct {
+  string product_id = 1;
+  // repayment_method is the bank's raw value: ANNUITY / EQUAL_INSTALMENTS
+  // mean a credit, INSTALMENT means a 0% installment.
+  string repayment_method = 2;
+  CreditLoanType loan_type = 3;
+  repeated CreditRepaymentBand repayment = 4;
+}
+
+message ListPartnerProductsRequest {
+  // amount_tiyn optionally filters bands to those covering this amount.
+  int64 amount_tiyn = 1;
+}
+
+message ListPartnerProductsResponse {
+  string partner_id = 1;
+  string partner_name = 2;
+  repeated CreditPartnerProduct products = 3;
+}
+
+message RefreshCreditApplicationStatusRequest {
+  string uuid = 1;
+}
+
+message RefreshCreditApplicationStatusResponse {
+  CreditApplication application = 1;
 }
