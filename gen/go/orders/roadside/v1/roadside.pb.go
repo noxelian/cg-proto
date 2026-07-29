@@ -274,9 +274,25 @@ type RoadsideServiceType struct {
 	// The catalogue is shared, so without it every section shows every service:
 	// a car wash would appear under roadside assistance. Empty means "roadside",
 	// keeping every existing service exactly where it is today.
-	ServiceGroup  string `protobuf:"bytes,10,opt,name=service_group,json=serviceGroup,proto3" json:"service_group,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	ServiceGroup string `protobuf:"bytes,10,opt,name=service_group,json=serviceGroup,proto3" json:"service_group,omitempty"`
+	// description_* is what the customer reads before paying: the concrete work
+	// covered by the fixed price. One item per line — the apps render the lines
+	// as a list. It lives in the catalogue rather than in app resources because
+	// the same people who set the price decide what the price includes, and a
+	// wording fix must not require an app release.
+	//
+	// Empty is valid and renders nothing.
+	DescriptionRu string `protobuf:"bytes,11,opt,name=description_ru,json=descriptionRu,proto3" json:"description_ru,omitempty"`
+	DescriptionKk string `protobuf:"bytes,12,opt,name=description_kk,json=descriptionKk,proto3" json:"description_kk,omitempty"`
+	DescriptionEn string `protobuf:"bytes,13,opt,name=description_en,json=descriptionEn,proto3" json:"description_en,omitempty"`
+	// duration_min_minutes and duration_max_minutes bound how long the work
+	// takes, so the customer can tell a 30-minute scan from a two-hour
+	// inspection before committing. Equal values mean an exact duration; both
+	// zero means the duration is unknown and nothing is shown.
+	DurationMinMinutes int32 `protobuf:"varint,14,opt,name=duration_min_minutes,json=durationMinMinutes,proto3" json:"duration_min_minutes,omitempty"`
+	DurationMaxMinutes int32 `protobuf:"varint,15,opt,name=duration_max_minutes,json=durationMaxMinutes,proto3" json:"duration_max_minutes,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *RoadsideServiceType) Reset() {
@@ -377,6 +393,41 @@ func (x *RoadsideServiceType) GetServiceGroup() string {
 		return x.ServiceGroup
 	}
 	return ""
+}
+
+func (x *RoadsideServiceType) GetDescriptionRu() string {
+	if x != nil {
+		return x.DescriptionRu
+	}
+	return ""
+}
+
+func (x *RoadsideServiceType) GetDescriptionKk() string {
+	if x != nil {
+		return x.DescriptionKk
+	}
+	return ""
+}
+
+func (x *RoadsideServiceType) GetDescriptionEn() string {
+	if x != nil {
+		return x.DescriptionEn
+	}
+	return ""
+}
+
+func (x *RoadsideServiceType) GetDurationMinMinutes() int32 {
+	if x != nil {
+		return x.DurationMinMinutes
+	}
+	return 0
+}
+
+func (x *RoadsideServiceType) GetDurationMaxMinutes() int32 {
+	if x != nil {
+		return x.DurationMaxMinutes
+	}
+	return 0
 }
 
 type RoadsidePrice struct {
@@ -3762,7 +3813,7 @@ var File_orders_roadside_v1_roadside_proto protoreflect.FileDescriptor
 
 const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\n" +
-	"!orders/roadside/v1/roadside.proto\x12\x12orders.roadside.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xe5\x02\n" +
+	"!orders/roadside/v1/roadside.proto\x12\x12orders.roadside.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xbe\x04\n" +
 	"\x13RoadsideServiceType\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x19\n" +
 	"\btitle_ru\x18\x02 \x01(\tR\atitleRu\x12\x19\n" +
@@ -3775,7 +3826,12 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\tis_active\x18\b \x01(\bR\bisActive\x12'\n" +
 	"\x0frequires_pickup\x18\t \x01(\bR\x0erequiresPickup\x12#\n" +
 	"\rservice_group\x18\n" +
-	" \x01(\tR\fserviceGroup\"\xd4\x02\n" +
+	" \x01(\tR\fserviceGroup\x12%\n" +
+	"\x0edescription_ru\x18\v \x01(\tR\rdescriptionRu\x12%\n" +
+	"\x0edescription_kk\x18\f \x01(\tR\rdescriptionKk\x12%\n" +
+	"\x0edescription_en\x18\r \x01(\tR\rdescriptionEn\x120\n" +
+	"\x14duration_min_minutes\x18\x0e \x01(\x05R\x12durationMinMinutes\x120\n" +
+	"\x14duration_max_minutes\x18\x0f \x01(\x05R\x12durationMaxMinutes\"\xd4\x02\n" +
 	"\rRoadsidePrice\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
 	"\fservice_code\x18\x02 \x01(\tR\vserviceCode\x12\x17\n" +

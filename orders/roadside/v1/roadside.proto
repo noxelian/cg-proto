@@ -156,6 +156,22 @@ message RoadsideServiceType {
   // a car wash would appear under roadside assistance. Empty means "roadside",
   // keeping every existing service exactly where it is today.
   string service_group = 10;
+  // description_* is what the customer reads before paying: the concrete work
+  // covered by the fixed price. One item per line — the apps render the lines
+  // as a list. It lives in the catalogue rather than in app resources because
+  // the same people who set the price decide what the price includes, and a
+  // wording fix must not require an app release.
+  //
+  // Empty is valid and renders nothing.
+  string description_ru = 11;
+  string description_kk = 12;
+  string description_en = 13;
+  // duration_min_minutes and duration_max_minutes bound how long the work
+  // takes, so the customer can tell a 30-minute scan from a two-hour
+  // inspection before committing. Equal values mean an exact duration; both
+  // zero means the duration is unknown and nothing is shown.
+  int32 duration_min_minutes = 14;
+  int32 duration_max_minutes = 15;
 }
 
 message RoadsidePrice {
