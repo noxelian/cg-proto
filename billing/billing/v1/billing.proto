@@ -725,8 +725,8 @@ message OpenEscrowDisputeRequest {
 
 message OpenEscrowDisputeResponse {}
 
-// Deprecated: retained only so previously generated v1 clients keep their wire
-// contract. The server never performs an advance release.
+// ReleaseEscrowAdvance pays part of a held deal to the recipient before the
+// work is confirmed. Server policy decides which entity types allow it.
 message ReleaseEscrowAdvanceRequest {
   int64 deal_id = 1;
   string admin_id = 2;

@@ -4684,8 +4684,8 @@ func (*OpenEscrowDisputeResponse) Descriptor() ([]byte, []int) {
 	return file_billing_billing_v1_billing_proto_rawDescGZIP(), []int{60}
 }
 
-// Deprecated: retained only so previously generated v1 clients keep their wire
-// contract. The server never performs an advance release.
+// ReleaseEscrowAdvance pays part of a held deal to the recipient before the
+// work is confirmed. Server policy decides which entity types allow it.
 type ReleaseEscrowAdvanceRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	DealId         int64                  `protobuf:"varint,1,opt,name=deal_id,json=dealId,proto3" json:"deal_id,omitempty"`
