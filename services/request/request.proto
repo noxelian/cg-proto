@@ -2,23 +2,23 @@ syntax = "proto3";
 
 package services.request.v1;
 
-option go_package = "github.com/4ubak/cg-proto/gen/go/services/request;requestv1";
-
 import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/services/request;requestv1";
 
 service RequestService {
   // CreateRequest creates a new repair or parts request
   rpc CreateRequest(CreateRequestRequest) returns (CreateRequestResponse);
-  
+
   // GetRequest returns request by ID
   rpc GetRequest(GetRequestRequest) returns (GetRequestResponse);
-  
+
   // UpdateRequest updates a request
   rpc UpdateRequest(UpdateRequestRequest) returns (UpdateRequestResponse);
-  
+
   // DeleteRequest deletes a request
   rpc DeleteRequest(DeleteRequestRequest) returns (DeleteRequestResponse);
-  
+
   // ListRequests lists requests with filters
   rpc ListRequests(ListRequestsRequest) returns (ListRequestsResponse);
 
@@ -26,25 +26,25 @@ service RequestService {
   // projection before sign-in. Unlike ListRequests it never includes user,
   // address, geo, organization or lifecycle-private fields.
   rpc ListPublishedPreviews(ListPublishedPreviewsRequest) returns (ListPublishedPreviewsResponse);
-  
+
   // SearchRequests searches requests via Postgres
   rpc SearchRequests(SearchRequestsRequest) returns (SearchRequestsResponse);
-  
+
   // ChangeStatus changes request status (moderation, published, deleted)
   rpc ChangeStatus(ChangeStatusRequest) returns (ChangeStatusResponse);
-  
+
   // GetUserRequests returns requests for a user
   rpc GetUserRequests(GetUserRequestsRequest) returns (GetUserRequestsResponse);
-  
+
   // IncrementViews increments view count for a request
   rpc IncrementViews(IncrementViewsRequest) returns (IncrementViewsResponse);
-  
+
   // GetSuggestions returns search suggestions
   rpc GetSuggestions(GetSuggestionsRequest) returns (GetSuggestionsResponse);
-  
+
   // GetNewRequestsForOrganization returns list of new request IDs for organization
   rpc GetNewRequestsForOrganization(GetNewRequestsForOrganizationRequest) returns (GetNewRequestsForOrganizationResponse);
-  
+
   // MarkRequestAsViewed marks request as viewed for organization
   rpc MarkRequestAsViewed(MarkRequestAsViewedRequest) returns (MarkRequestAsViewedResponse);
 
@@ -70,6 +70,10 @@ service RequestService {
   // request.created events intentionally do not carry this PII.
   rpc GetRequestForClassification(GetRequestForClassificationRequest) returns (GetRequestForClassificationResponse);
 
+  // GetInsurancePayoutTerms exposes only the request-owned fields billing needs
+  // to resolve an insurance payout. Exact billing-service identity only.
+  rpc GetInsurancePayoutTerms(GetInsurancePayoutTermsRequest) returns (GetInsurancePayoutTermsResponse);
+
   // GetRequestEligibilityInfo returns only the fields required by
   // organization-service to decide review eligibility. It is not a general
   // full-request read and is exact-service authorized by request-service.
@@ -94,8 +98,9 @@ service RequestService {
   // Never exposed to СТО — the owning service authorizes a platform-admin caller.
   rpc GetRequestInsuranceInfo(GetRequestInsuranceInfoRequest) returns (GetRequestInsuranceInfoResponse);
 
-  // ClaimInsuranceRequest lets a targeted org claim an ASSIGNMENT_MODE_AUTO_FIRST
-  // insurance request. The first successful claim wins; later claims return
+  // ClaimInsuranceRequest is the request-owner assignment CAS for targeted
+  // insurance requests. It is used by AUTO_FIRST creation and MANUAL bid
+  // acceptance. The first successful claim wins; later claims return
   // claimed=false with the winning org in claimed_by_org_id.
   rpc ClaimInsuranceRequest(ClaimInsuranceRequestRequest) returns (ClaimInsuranceRequestResponse);
 
@@ -106,8 +111,8 @@ service RequestService {
 
 enum RequestType {
   REQUEST_TYPE_UNSPECIFIED = 0;
-  REQUEST_TYPE_REPAIR = 1;  // Ремонт
-  REQUEST_TYPE_PARTS = 2;    // Запчасти
+  REQUEST_TYPE_REPAIR = 1; // Ремонт
+  REQUEST_TYPE_PARTS = 2; // Запчасти
 }
 
 enum RequestStatus {
@@ -142,48 +147,48 @@ enum AssignmentMode {
 
 // EstimateItem is one line of the pre-agreed insurance repair estimate (смета).
 message EstimateItem {
-  string name = 1;   // работа
-  double hours = 2;  // нормо-часы
-  int64 price = 3;   // тиыны, за позицию
+  string name = 1; // работа
+  double hours = 2; // нормо-часы
+  int64 price = 3; // тиыны, за позицию
   int32 qty = 4;
 }
 
 message Request {
-  string id = 1;  // UUID string
+  string id = 1; // UUID string
   RequestType type = 2;
   RequestStatus status = 3;
   int64 user_id = 4;
-  
+
   // NSI (Группа → Категории)
-  int64 group_id = 5;           // СТО, Кузовные, Запчасти
-  repeated int64 category_ids = 6;  // Может быть несколько
-  
+  int64 group_id = 5; // СТО, Кузовные, Запчасти
+  repeated int64 category_ids = 6; // Может быть несколько
+
   // Car details (для матчинга)
   int64 car_make_id = 7;
   int64 car_model_id = 8;
   optional int64 car_generation_id = 9;
   int32 year = 10;
-  
+
   // Description
   string note = 11;
   repeated string photos = 12;
-  
+
   // Location
   int64 city_id = 13;
   string address = 14;
   double latitude = 15;
   double longitude = 16;
-  
+
   google.protobuf.Timestamp created_at = 17;
   google.protobuf.Timestamp updated_at = 18;
   optional google.protobuf.Timestamp published_at = 19;
 
   // Workshop integration (parts request from repair order)
-  optional int64 repair_order_id = 20;  // Linked repair order in cg-workshop
-  optional string org_id = 21;          // Organization UUID creating the request
+  optional int64 repair_order_id = 20; // Linked repair order in cg-workshop
+  optional string org_id = 21; // Organization UUID creating the request
 
   // Enriched field: set when listing with organization_id context
-  bool is_new = 22;  // true if this request has not been viewed by the requesting organization
+  bool is_new = 22; // true if this request has not been viewed by the requesting organization
 
   // Enriched field: number of bids (откликов) on this request. Populated by the
   // list/get queries via a LATERAL count subquery (no row multiplication).
@@ -212,7 +217,7 @@ message Request {
   optional int64 payout_price = 29;
   optional google.protobuf.Timestamp deadline = 30;
   AssignmentMode assignment_mode = 31;
-  optional int64 work_order_id = 32;  // RepairOrder.id из cg-workshop
+  optional int64 work_order_id = 32; // RepairOrder.id из cg-workshop
   repeated EstimateItem estimate_items = 33;
   // Winning org once the insurance request is claimed (auto_first CAS or
   // manual accept). Not sensitive — the claim outcome is already visible to
@@ -225,28 +230,28 @@ message Request {
 message CreateRequestRequest {
   RequestType type = 1;
   int64 user_id = 2;
-  
+
   int64 group_id = 3;
   repeated int64 category_ids = 4;
-  
+
   int64 car_make_id = 5;
   int64 car_model_id = 6;
   optional int64 car_generation_id = 7;
   int32 year = 8;
-  
+
   string note = 9;
   repeated string photos = 10;
-  
+
   int64 city_id = 11;
   string address = 12;
   double latitude = 13;
   double longitude = 14;
-  
-  bool publish = 15;  // Если true, статус = "moderation"
+
+  bool publish = 15; // Если true, статус = "moderation"
 
   // Workshop integration (parts request from repair order)
-  optional int64 repair_order_id = 16;  // Linked repair order in cg-workshop
-  optional string org_id = 17;          // Organization UUID creating the request
+  optional int64 repair_order_id = 16; // Linked repair order in cg-workshop
+  optional string org_id = 17; // Organization UUID creating the request
 
   // Garage car (cg-users garage) the request is created for. The BFF also uses
   // it to fill car_make_id/model/year, but it is persisted so request history
@@ -255,13 +260,13 @@ message CreateRequestRequest {
 
   // Insurance-request creation — set only when kind == REQUEST_KIND_INSURANCE.
   RequestKind kind = 19;
-  optional int64 payout_price = 20;   // Y, тиыны — публичная выплата СТО
+  optional int64 payout_price = 20; // Y, тиыны — публичная выплата СТО
   optional google.protobuf.Timestamp deadline = 21;
   AssignmentMode assignment_mode = 22;
-  optional int64 work_order_id = 23;  // RepairOrder.id из cg-workshop
+  optional int64 work_order_id = 23; // RepairOrder.id из cg-workshop
   repeated EstimateItem estimate_items = 24;
-  repeated string target_org_ids = 25;              // snapshot аудитории (org UUIDs)
-  optional InsuranceInfoInput insurance_info = 26;  // админ-only: X + контакты клиента
+  repeated string target_org_ids = 25; // snapshot аудитории (org UUIDs)
+  optional InsuranceInfoInput insurance_info = 26; // админ-only: X + контакты клиента
 
   // Caller-generated token for safely retrying an ambiguous create. The owner
   // service scopes it to the authenticated principal and rejects reuse with a
@@ -275,7 +280,7 @@ message CreateRequestResponse {
 
 // GetRequest
 message GetRequestRequest {
-  string request_id = 1;  // UUID string
+  string request_id = 1; // UUID string
 }
 
 message GetRequestResponse {
@@ -284,7 +289,7 @@ message GetRequestResponse {
 
 // UpdateRequest
 message UpdateRequestRequest {
-  string request_id = 1;  // UUID string
+  string request_id = 1; // UUID string
   int64 user_id = 2;
 
   optional string note = 3;
@@ -318,7 +323,7 @@ message UpdateRequestResponse {
 
 // DeleteRequest
 message DeleteRequestRequest {
-  string request_id = 1;  // UUID string
+  string request_id = 1; // UUID string
   int64 user_id = 2;
 }
 
@@ -332,16 +337,16 @@ message ListRequestsRequest {
   RequestStatus status = 2;
   int64 user_id = 3;
   int64 group_id = 4;
-  int64 category_id = 5;  // Фильтр по одной категории
+  int64 category_id = 5; // Фильтр по одной категории
   int64 city_id = 6;
   int64 car_make_id = 7;
   int32 page = 8;
   int32 page_size = 9;
-  string sort_by = 10;  // created_at, published_at, unread_first
-  optional int64 repair_order_id = 11;  // Filter by linked repair order
-  optional string organization_id = 12;  // When set, enriches results with is_new flag; enables sort_by=unread_first
-  optional string owner_organization_id = 13;  // Filters requests whose authoritative org_id matches this organization
-  optional RequestKind kind = 14;  // Filter by request kind (admin list: e.g. only insurance requests)
+  string sort_by = 10; // created_at, published_at, unread_first
+  optional int64 repair_order_id = 11; // Filter by linked repair order
+  optional string organization_id = 12; // When set, enriches results with is_new flag; enables sort_by=unread_first
+  optional string owner_organization_id = 13; // Filters requests whose authoritative org_id matches this organization
+  optional RequestKind kind = 14; // Filter by request kind (admin list: e.g. only insurance requests)
 }
 
 message ListRequestsResponse {
@@ -400,7 +405,7 @@ message SearchRequestsResponse {
 
 // ChangeStatus
 message ChangeStatusRequest {
-  string request_id = 1;  // UUID string
+  string request_id = 1; // UUID string
   RequestStatus status = 2;
   int64 user_id = 3;
 }
@@ -429,7 +434,7 @@ message GetUserRequestsResponse {
 
 // IncrementViews
 message IncrementViewsRequest {
-  string request_id = 1;  // UUID string
+  string request_id = 1; // UUID string
 }
 
 message IncrementViewsResponse {
@@ -448,17 +453,17 @@ message GetSuggestionsResponse {
 
 // GetNewRequestsForOrganization
 message GetNewRequestsForOrganizationRequest {
-  string organization_id = 1;  // UUID from organization-service
+  string organization_id = 1; // UUID from organization-service
 }
 
 message GetNewRequestsForOrganizationResponse {
-  repeated string request_ids = 1;  // UUID strings
+  repeated string request_ids = 1; // UUID strings
 }
 
 // MarkRequestAsViewed
 message MarkRequestAsViewedRequest {
-  string request_id = 1;  // UUID string
-  string organization_id = 2;  // UUID from organization-service
+  string request_id = 1; // UUID string
+  string organization_id = 2; // UUID from organization-service
 }
 
 message MarkRequestAsViewedResponse {
@@ -467,8 +472,8 @@ message MarkRequestAsViewedResponse {
 
 // IsRequestNew
 message IsRequestNewRequest {
-  string request_id = 1;  // UUID string
-  string organization_id = 2;  // UUID from organization-service
+  string request_id = 1; // UUID string
+  string organization_id = 2; // UUID from organization-service
 }
 
 message IsRequestNewResponse {
@@ -478,8 +483,8 @@ message IsRequestNewResponse {
 // DismissRequest — hide a request for an organization ("не интересно").
 // Wraps domain DismissRequest(ctx, requestID, orgID).
 message DismissRequestRequest {
-  string request_id = 1;       // UUID string
-  string organization_id = 2;  // UUID from organization-service
+  string request_id = 1; // UUID string
+  string organization_id = 2; // UUID from organization-service
 }
 
 message DismissRequestResponse {
@@ -493,16 +498,16 @@ message DismissRequestResponse {
 // Filter fields map 1:1 to model.RequestFilter. Empty/zero = no filter on that
 // field. Note the domain filter carries a single category_id (not a list).
 message CountUnreadForOrganizationRequest {
-  string organization_id = 1;  // UUID from organization-service
+  string organization_id = 1; // UUID from organization-service
 
   // Org-profile filter (subset of model.RequestFilter used by the feed).
-  RequestType type = 2;        // UNSPECIFIED = any type
-  int64 group_id = 3;          // 0 = any group
-  int64 category_id = 4;       // 0 = any category (model.RequestFilter.CategoryID)
-  int64 city_id = 5;           // 0 = any city
-  int64 car_make_id = 6;       // 0 = any make
-  int64 car_model_id = 7;      // 0 = any model
-  int32 year = 8;              // 0 = any year
+  RequestType type = 2; // UNSPECIFIED = any type
+  int64 group_id = 3; // 0 = any group
+  int64 category_id = 4; // 0 = any category (model.RequestFilter.CategoryID)
+  int64 city_id = 5; // 0 = any city
+  int64 car_make_id = 6; // 0 = any make
+  int64 car_model_id = 7; // 0 = any model
+  int32 year = 8; // 0 = any year
 }
 
 message CountUnreadForOrganizationResponse {
@@ -511,11 +516,11 @@ message CountUnreadForOrganizationResponse {
 
 // ClassifyRequest — AI auto-classification of repair/parts requests
 message ClassifyRequestRequest {
-  string request_id = 1;          // UUID of the request to classify
-  int64 group_id = 2;             // Service group (1=STO/Repair, 2=Bodyshop)
+  string request_id = 1; // UUID of the request to classify
+  int64 group_id = 2; // Service group (1=STO/Repair, 2=Bodyshop)
   repeated int64 category_ids = 3; // Service categories
-  string cleaned_note = 4;        // Moderated/cleaned description text
-  bool publish = 5;               // If true, also transition status to PUBLISHED
+  string cleaned_note = 4; // Moderated/cleaned description text
+  bool publish = 5; // If true, also transition status to PUBLISHED
 }
 
 message ClassifyRequestResponse {
@@ -528,6 +533,19 @@ message GetRequestForClassificationRequest {
 
 message GetRequestForClassificationResponse {
   string note = 1;
+}
+
+message GetInsurancePayoutTermsRequest {
+  string request_id = 1;
+}
+
+message GetInsurancePayoutTermsResponse {
+  string request_id = 1;
+  RequestKind kind = 2;
+  RequestStatus status = 3;
+  int64 payout_amount_minor = 4;
+  AssignmentMode assignment_mode = 5;
+  string claimed_by_org_id = 6;
 }
 
 message GetRequestEligibilityInfoRequest {
@@ -543,21 +561,21 @@ message GetRequestEligibilityInfoResponse {
 // GetUserRequestCounts — per-state counts of a user's requests (legacy ads/count).
 message GetUserRequestCountsRequest {
   int64 user_id = 1;
-  RequestType type = 2;  // optional filter; 0 (unspecified) = all types
+  RequestType type = 2; // optional filter; 0 (unspecified) = all types
 }
 
 message GetUserRequestCountsResponse {
   int32 total = 1;
-  int32 active = 2;       // REQUEST_STATUS_PUBLISHED
-  int32 moderation = 3;   // REQUEST_STATUS_MODERATION
-  int32 inactive = 4;     // REQUEST_STATUS_DELETED + REQUEST_STATUS_CLOSED
-  int32 paused = 5;       // REQUEST_STATUS_PAUSED (separate bucket)
+  int32 active = 2; // REQUEST_STATUS_PUBLISHED
+  int32 moderation = 3; // REQUEST_STATUS_MODERATION
+  int32 inactive = 4; // REQUEST_STATUS_DELETED + REQUEST_STATUS_CLOSED
+  int32 paused = 5; // REQUEST_STATUS_PAUSED (separate bucket)
 }
 
 // PauseRequest — hide a published request from the СТО feed.
 message PauseRequestRequest {
-  string request_id = 1;  // UUID of the request to pause
-  int64 user_id = 2;      // must match request.user_id
+  string request_id = 1; // UUID of the request to pause
+  int64 user_id = 2; // must match request.user_id
   // Optional UUID of the organization the customer is pausing for.
   // Mirrors legacy paused_by_service_id. Empty = self-pause.
   optional string paused_by_org_id = 3;
@@ -569,8 +587,8 @@ message PauseRequestResponse {
 
 // UnpauseRequest — restore a paused request to PUBLISHED.
 message UnpauseRequestRequest {
-  string request_id = 1;  // UUID of the request to unpause
-  int64 user_id = 2;      // must match request.user_id
+  string request_id = 1; // UUID of the request to unpause
+  int64 user_id = 2; // must match request.user_id
 }
 
 message UnpauseRequestResponse {
@@ -585,11 +603,11 @@ message UnpauseRequestResponse {
 // insurance request: the price the client pays (X), the insurer and client
 // contacts, plus the targeting-criteria snapshot kept for audit/history.
 message InsuranceInfoInput {
-  int64 insurance_price = 1;   // X, тиыны — админ-only
+  int64 insurance_price = 1; // X, тиыны — админ-only
   string insurance_company = 2;
   string client_name = 3;
   string client_phone = 4;
-  double min_rating = 5;        // критерии snapshot'а (для истории/аудита)
+  double min_rating = 5; // критерии snapshot'а (для истории/аудита)
   int32 min_raters_count = 6;
 }
 
@@ -610,7 +628,7 @@ message RequestInsuranceInfo {
 
 // GetRequestInsuranceInfo
 message GetRequestInsuranceInfoRequest {
-  string request_id = 1;  // UUID string
+  string request_id = 1; // UUID string
 }
 
 message GetRequestInsuranceInfoResponse {
@@ -619,8 +637,8 @@ message GetRequestInsuranceInfoResponse {
 
 // ClaimInsuranceRequest
 message ClaimInsuranceRequestRequest {
-  string request_id = 1;  // UUID string
-  string org_id = 2;      // UUID from organization-service
+  string request_id = 1; // UUID string
+  string org_id = 2; // UUID from organization-service
 }
 
 message ClaimInsuranceRequestResponse {
@@ -630,8 +648,8 @@ message ClaimInsuranceRequestResponse {
 
 // IsOrgTargeted
 message IsOrgTargetedRequest {
-  string request_id = 1;  // UUID string
-  string org_id = 2;      // UUID from organization-service
+  string request_id = 1; // UUID string
+  string org_id = 2; // UUID from organization-service
 }
 
 message IsOrgTargetedResponse {

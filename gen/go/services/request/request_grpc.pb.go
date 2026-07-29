@@ -37,6 +37,7 @@ const (
 	RequestService_CountUnreadForOrganization_FullMethodName    = "/services.request.v1.RequestService/CountUnreadForOrganization"
 	RequestService_ClassifyRequest_FullMethodName               = "/services.request.v1.RequestService/ClassifyRequest"
 	RequestService_GetRequestForClassification_FullMethodName   = "/services.request.v1.RequestService/GetRequestForClassification"
+	RequestService_GetInsurancePayoutTerms_FullMethodName       = "/services.request.v1.RequestService/GetInsurancePayoutTerms"
 	RequestService_GetRequestEligibilityInfo_FullMethodName     = "/services.request.v1.RequestService/GetRequestEligibilityInfo"
 	RequestService_GetUserRequestCounts_FullMethodName          = "/services.request.v1.RequestService/GetUserRequestCounts"
 	RequestService_PauseRequest_FullMethodName                  = "/services.request.v1.RequestService/PauseRequest"
@@ -95,6 +96,9 @@ type RequestServiceClient interface {
 	// classify-service. The owning service authorizes the exact service identity;
 	// request.created events intentionally do not carry this PII.
 	GetRequestForClassification(ctx context.Context, in *GetRequestForClassificationRequest, opts ...grpc.CallOption) (*GetRequestForClassificationResponse, error)
+	// GetInsurancePayoutTerms exposes only the request-owned fields billing needs
+	// to resolve an insurance payout. Exact billing-service identity only.
+	GetInsurancePayoutTerms(ctx context.Context, in *GetInsurancePayoutTermsRequest, opts ...grpc.CallOption) (*GetInsurancePayoutTermsResponse, error)
 	// GetRequestEligibilityInfo returns only the fields required by
 	// organization-service to decide review eligibility. It is not a general
 	// full-request read and is exact-service authorized by request-service.
@@ -114,8 +118,9 @@ type RequestServiceClient interface {
 	// price X, client contacts, targeting snapshot) for an insurance request.
 	// Never exposed to СТО — the owning service authorizes a platform-admin caller.
 	GetRequestInsuranceInfo(ctx context.Context, in *GetRequestInsuranceInfoRequest, opts ...grpc.CallOption) (*GetRequestInsuranceInfoResponse, error)
-	// ClaimInsuranceRequest lets a targeted org claim an ASSIGNMENT_MODE_AUTO_FIRST
-	// insurance request. The first successful claim wins; later claims return
+	// ClaimInsuranceRequest is the request-owner assignment CAS for targeted
+	// insurance requests. It is used by AUTO_FIRST creation and MANUAL bid
+	// acceptance. The first successful claim wins; later claims return
 	// claimed=false with the winning org in claimed_by_org_id.
 	ClaimInsuranceRequest(ctx context.Context, in *ClaimInsuranceRequestRequest, opts ...grpc.CallOption) (*ClaimInsuranceRequestResponse, error)
 	// IsOrgTargeted reports whether org_id is in the request's target audience
@@ -311,6 +316,16 @@ func (c *requestServiceClient) GetRequestForClassification(ctx context.Context, 
 	return out, nil
 }
 
+func (c *requestServiceClient) GetInsurancePayoutTerms(ctx context.Context, in *GetInsurancePayoutTermsRequest, opts ...grpc.CallOption) (*GetInsurancePayoutTermsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInsurancePayoutTermsResponse)
+	err := c.cc.Invoke(ctx, RequestService_GetInsurancePayoutTerms_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *requestServiceClient) GetRequestEligibilityInfo(ctx context.Context, in *GetRequestEligibilityInfoRequest, opts ...grpc.CallOption) (*GetRequestEligibilityInfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetRequestEligibilityInfoResponse)
@@ -430,6 +445,9 @@ type RequestServiceServer interface {
 	// classify-service. The owning service authorizes the exact service identity;
 	// request.created events intentionally do not carry this PII.
 	GetRequestForClassification(context.Context, *GetRequestForClassificationRequest) (*GetRequestForClassificationResponse, error)
+	// GetInsurancePayoutTerms exposes only the request-owned fields billing needs
+	// to resolve an insurance payout. Exact billing-service identity only.
+	GetInsurancePayoutTerms(context.Context, *GetInsurancePayoutTermsRequest) (*GetInsurancePayoutTermsResponse, error)
 	// GetRequestEligibilityInfo returns only the fields required by
 	// organization-service to decide review eligibility. It is not a general
 	// full-request read and is exact-service authorized by request-service.
@@ -449,8 +467,9 @@ type RequestServiceServer interface {
 	// price X, client contacts, targeting snapshot) for an insurance request.
 	// Never exposed to СТО — the owning service authorizes a platform-admin caller.
 	GetRequestInsuranceInfo(context.Context, *GetRequestInsuranceInfoRequest) (*GetRequestInsuranceInfoResponse, error)
-	// ClaimInsuranceRequest lets a targeted org claim an ASSIGNMENT_MODE_AUTO_FIRST
-	// insurance request. The first successful claim wins; later claims return
+	// ClaimInsuranceRequest is the request-owner assignment CAS for targeted
+	// insurance requests. It is used by AUTO_FIRST creation and MANUAL bid
+	// acceptance. The first successful claim wins; later claims return
 	// claimed=false with the winning org in claimed_by_org_id.
 	ClaimInsuranceRequest(context.Context, *ClaimInsuranceRequestRequest) (*ClaimInsuranceRequestResponse, error)
 	// IsOrgTargeted reports whether org_id is in the request's target audience
@@ -519,6 +538,9 @@ func (UnimplementedRequestServiceServer) ClassifyRequest(context.Context, *Class
 }
 func (UnimplementedRequestServiceServer) GetRequestForClassification(context.Context, *GetRequestForClassificationRequest) (*GetRequestForClassificationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRequestForClassification not implemented")
+}
+func (UnimplementedRequestServiceServer) GetInsurancePayoutTerms(context.Context, *GetInsurancePayoutTermsRequest) (*GetInsurancePayoutTermsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetInsurancePayoutTerms not implemented")
 }
 func (UnimplementedRequestServiceServer) GetRequestEligibilityInfo(context.Context, *GetRequestEligibilityInfoRequest) (*GetRequestEligibilityInfoResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRequestEligibilityInfo not implemented")
@@ -886,6 +908,24 @@ func _RequestService_GetRequestForClassification_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestService_GetInsurancePayoutTerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInsurancePayoutTermsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).GetInsurancePayoutTerms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_GetInsurancePayoutTerms_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).GetInsurancePayoutTerms(ctx, req.(*GetInsurancePayoutTermsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RequestService_GetRequestEligibilityInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRequestEligibilityInfoRequest)
 	if err := dec(in); err != nil {
@@ -1090,6 +1130,10 @@ var RequestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRequestForClassification",
 			Handler:    _RequestService_GetRequestForClassification_Handler,
+		},
+		{
+			MethodName: "GetInsurancePayoutTerms",
+			Handler:    _RequestService_GetInsurancePayoutTerms_Handler,
 		},
 		{
 			MethodName: "GetRequestEligibilityInfo",

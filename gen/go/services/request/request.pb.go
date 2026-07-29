@@ -3135,6 +3135,134 @@ func (x *GetRequestForClassificationResponse) GetNote() string {
 	return ""
 }
 
+type GetInsurancePayoutTermsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetInsurancePayoutTermsRequest) Reset() {
+	*x = GetInsurancePayoutTermsRequest{}
+	mi := &file_services_request_request_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInsurancePayoutTermsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInsurancePayoutTermsRequest) ProtoMessage() {}
+
+func (x *GetInsurancePayoutTermsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInsurancePayoutTermsRequest.ProtoReflect.Descriptor instead.
+func (*GetInsurancePayoutTermsRequest) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *GetInsurancePayoutTermsRequest) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+type GetInsurancePayoutTermsResponse struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	RequestId         string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	Kind              RequestKind            `protobuf:"varint,2,opt,name=kind,proto3,enum=services.request.v1.RequestKind" json:"kind,omitempty"`
+	Status            RequestStatus          `protobuf:"varint,3,opt,name=status,proto3,enum=services.request.v1.RequestStatus" json:"status,omitempty"`
+	PayoutAmountMinor int64                  `protobuf:"varint,4,opt,name=payout_amount_minor,json=payoutAmountMinor,proto3" json:"payout_amount_minor,omitempty"`
+	AssignmentMode    AssignmentMode         `protobuf:"varint,5,opt,name=assignment_mode,json=assignmentMode,proto3,enum=services.request.v1.AssignmentMode" json:"assignment_mode,omitempty"`
+	ClaimedByOrgId    string                 `protobuf:"bytes,6,opt,name=claimed_by_org_id,json=claimedByOrgId,proto3" json:"claimed_by_org_id,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *GetInsurancePayoutTermsResponse) Reset() {
+	*x = GetInsurancePayoutTermsResponse{}
+	mi := &file_services_request_request_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInsurancePayoutTermsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInsurancePayoutTermsResponse) ProtoMessage() {}
+
+func (x *GetInsurancePayoutTermsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInsurancePayoutTermsResponse.ProtoReflect.Descriptor instead.
+func (*GetInsurancePayoutTermsResponse) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *GetInsurancePayoutTermsResponse) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *GetInsurancePayoutTermsResponse) GetKind() RequestKind {
+	if x != nil {
+		return x.Kind
+	}
+	return RequestKind_REQUEST_KIND_UNSPECIFIED
+}
+
+func (x *GetInsurancePayoutTermsResponse) GetStatus() RequestStatus {
+	if x != nil {
+		return x.Status
+	}
+	return RequestStatus_REQUEST_STATUS_UNSPECIFIED
+}
+
+func (x *GetInsurancePayoutTermsResponse) GetPayoutAmountMinor() int64 {
+	if x != nil {
+		return x.PayoutAmountMinor
+	}
+	return 0
+}
+
+func (x *GetInsurancePayoutTermsResponse) GetAssignmentMode() AssignmentMode {
+	if x != nil {
+		return x.AssignmentMode
+	}
+	return AssignmentMode_ASSIGNMENT_MODE_UNSPECIFIED
+}
+
+func (x *GetInsurancePayoutTermsResponse) GetClaimedByOrgId() string {
+	if x != nil {
+		return x.ClaimedByOrgId
+	}
+	return ""
+}
+
 type GetRequestEligibilityInfoRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
@@ -3144,7 +3272,7 @@ type GetRequestEligibilityInfoRequest struct {
 
 func (x *GetRequestEligibilityInfoRequest) Reset() {
 	*x = GetRequestEligibilityInfoRequest{}
-	mi := &file_services_request_request_proto_msgTypes[39]
+	mi := &file_services_request_request_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3156,7 +3284,7 @@ func (x *GetRequestEligibilityInfoRequest) String() string {
 func (*GetRequestEligibilityInfoRequest) ProtoMessage() {}
 
 func (x *GetRequestEligibilityInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[39]
+	mi := &file_services_request_request_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3169,7 +3297,7 @@ func (x *GetRequestEligibilityInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRequestEligibilityInfoRequest.ProtoReflect.Descriptor instead.
 func (*GetRequestEligibilityInfoRequest) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{39}
+	return file_services_request_request_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetRequestEligibilityInfoRequest) GetRequestId() string {
@@ -3190,7 +3318,7 @@ type GetRequestEligibilityInfoResponse struct {
 
 func (x *GetRequestEligibilityInfoResponse) Reset() {
 	*x = GetRequestEligibilityInfoResponse{}
-	mi := &file_services_request_request_proto_msgTypes[40]
+	mi := &file_services_request_request_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3202,7 +3330,7 @@ func (x *GetRequestEligibilityInfoResponse) String() string {
 func (*GetRequestEligibilityInfoResponse) ProtoMessage() {}
 
 func (x *GetRequestEligibilityInfoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[40]
+	mi := &file_services_request_request_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3215,7 +3343,7 @@ func (x *GetRequestEligibilityInfoResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use GetRequestEligibilityInfoResponse.ProtoReflect.Descriptor instead.
 func (*GetRequestEligibilityInfoResponse) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{40}
+	return file_services_request_request_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *GetRequestEligibilityInfoResponse) GetUserId() int64 {
@@ -3250,7 +3378,7 @@ type GetUserRequestCountsRequest struct {
 
 func (x *GetUserRequestCountsRequest) Reset() {
 	*x = GetUserRequestCountsRequest{}
-	mi := &file_services_request_request_proto_msgTypes[41]
+	mi := &file_services_request_request_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3262,7 +3390,7 @@ func (x *GetUserRequestCountsRequest) String() string {
 func (*GetUserRequestCountsRequest) ProtoMessage() {}
 
 func (x *GetUserRequestCountsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[41]
+	mi := &file_services_request_request_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3275,7 +3403,7 @@ func (x *GetUserRequestCountsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserRequestCountsRequest.ProtoReflect.Descriptor instead.
 func (*GetUserRequestCountsRequest) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{41}
+	return file_services_request_request_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *GetUserRequestCountsRequest) GetUserId() int64 {
@@ -3305,7 +3433,7 @@ type GetUserRequestCountsResponse struct {
 
 func (x *GetUserRequestCountsResponse) Reset() {
 	*x = GetUserRequestCountsResponse{}
-	mi := &file_services_request_request_proto_msgTypes[42]
+	mi := &file_services_request_request_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3317,7 +3445,7 @@ func (x *GetUserRequestCountsResponse) String() string {
 func (*GetUserRequestCountsResponse) ProtoMessage() {}
 
 func (x *GetUserRequestCountsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[42]
+	mi := &file_services_request_request_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3330,7 +3458,7 @@ func (x *GetUserRequestCountsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserRequestCountsResponse.ProtoReflect.Descriptor instead.
 func (*GetUserRequestCountsResponse) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{42}
+	return file_services_request_request_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *GetUserRequestCountsResponse) GetTotal() int32 {
@@ -3382,7 +3510,7 @@ type PauseRequestRequest struct {
 
 func (x *PauseRequestRequest) Reset() {
 	*x = PauseRequestRequest{}
-	mi := &file_services_request_request_proto_msgTypes[43]
+	mi := &file_services_request_request_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3394,7 +3522,7 @@ func (x *PauseRequestRequest) String() string {
 func (*PauseRequestRequest) ProtoMessage() {}
 
 func (x *PauseRequestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[43]
+	mi := &file_services_request_request_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3407,7 +3535,7 @@ func (x *PauseRequestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PauseRequestRequest.ProtoReflect.Descriptor instead.
 func (*PauseRequestRequest) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{43}
+	return file_services_request_request_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *PauseRequestRequest) GetRequestId() string {
@@ -3440,7 +3568,7 @@ type PauseRequestResponse struct {
 
 func (x *PauseRequestResponse) Reset() {
 	*x = PauseRequestResponse{}
-	mi := &file_services_request_request_proto_msgTypes[44]
+	mi := &file_services_request_request_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3452,7 +3580,7 @@ func (x *PauseRequestResponse) String() string {
 func (*PauseRequestResponse) ProtoMessage() {}
 
 func (x *PauseRequestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[44]
+	mi := &file_services_request_request_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3465,7 +3593,7 @@ func (x *PauseRequestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PauseRequestResponse.ProtoReflect.Descriptor instead.
 func (*PauseRequestResponse) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{44}
+	return file_services_request_request_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *PauseRequestResponse) GetRequest() *Request {
@@ -3486,7 +3614,7 @@ type UnpauseRequestRequest struct {
 
 func (x *UnpauseRequestRequest) Reset() {
 	*x = UnpauseRequestRequest{}
-	mi := &file_services_request_request_proto_msgTypes[45]
+	mi := &file_services_request_request_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3498,7 +3626,7 @@ func (x *UnpauseRequestRequest) String() string {
 func (*UnpauseRequestRequest) ProtoMessage() {}
 
 func (x *UnpauseRequestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[45]
+	mi := &file_services_request_request_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3511,7 +3639,7 @@ func (x *UnpauseRequestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnpauseRequestRequest.ProtoReflect.Descriptor instead.
 func (*UnpauseRequestRequest) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{45}
+	return file_services_request_request_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *UnpauseRequestRequest) GetRequestId() string {
@@ -3537,7 +3665,7 @@ type UnpauseRequestResponse struct {
 
 func (x *UnpauseRequestResponse) Reset() {
 	*x = UnpauseRequestResponse{}
-	mi := &file_services_request_request_proto_msgTypes[46]
+	mi := &file_services_request_request_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3549,7 +3677,7 @@ func (x *UnpauseRequestResponse) String() string {
 func (*UnpauseRequestResponse) ProtoMessage() {}
 
 func (x *UnpauseRequestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[46]
+	mi := &file_services_request_request_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3562,7 +3690,7 @@ func (x *UnpauseRequestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnpauseRequestResponse.ProtoReflect.Descriptor instead.
 func (*UnpauseRequestResponse) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{46}
+	return file_services_request_request_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *UnpauseRequestResponse) GetRequest() *Request {
@@ -3589,7 +3717,7 @@ type InsuranceInfoInput struct {
 
 func (x *InsuranceInfoInput) Reset() {
 	*x = InsuranceInfoInput{}
-	mi := &file_services_request_request_proto_msgTypes[47]
+	mi := &file_services_request_request_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3601,7 +3729,7 @@ func (x *InsuranceInfoInput) String() string {
 func (*InsuranceInfoInput) ProtoMessage() {}
 
 func (x *InsuranceInfoInput) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[47]
+	mi := &file_services_request_request_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3614,7 +3742,7 @@ func (x *InsuranceInfoInput) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InsuranceInfoInput.ProtoReflect.Descriptor instead.
 func (*InsuranceInfoInput) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{47}
+	return file_services_request_request_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *InsuranceInfoInput) GetInsurancePrice() int64 {
@@ -3679,7 +3807,7 @@ type RequestInsuranceInfo struct {
 
 func (x *RequestInsuranceInfo) Reset() {
 	*x = RequestInsuranceInfo{}
-	mi := &file_services_request_request_proto_msgTypes[48]
+	mi := &file_services_request_request_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3691,7 +3819,7 @@ func (x *RequestInsuranceInfo) String() string {
 func (*RequestInsuranceInfo) ProtoMessage() {}
 
 func (x *RequestInsuranceInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[48]
+	mi := &file_services_request_request_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3704,7 +3832,7 @@ func (x *RequestInsuranceInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestInsuranceInfo.ProtoReflect.Descriptor instead.
 func (*RequestInsuranceInfo) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{48}
+	return file_services_request_request_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *RequestInsuranceInfo) GetRequestId() string {
@@ -3780,7 +3908,7 @@ type GetRequestInsuranceInfoRequest struct {
 
 func (x *GetRequestInsuranceInfoRequest) Reset() {
 	*x = GetRequestInsuranceInfoRequest{}
-	mi := &file_services_request_request_proto_msgTypes[49]
+	mi := &file_services_request_request_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3792,7 +3920,7 @@ func (x *GetRequestInsuranceInfoRequest) String() string {
 func (*GetRequestInsuranceInfoRequest) ProtoMessage() {}
 
 func (x *GetRequestInsuranceInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[49]
+	mi := &file_services_request_request_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3805,7 +3933,7 @@ func (x *GetRequestInsuranceInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRequestInsuranceInfoRequest.ProtoReflect.Descriptor instead.
 func (*GetRequestInsuranceInfoRequest) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{49}
+	return file_services_request_request_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *GetRequestInsuranceInfoRequest) GetRequestId() string {
@@ -3824,7 +3952,7 @@ type GetRequestInsuranceInfoResponse struct {
 
 func (x *GetRequestInsuranceInfoResponse) Reset() {
 	*x = GetRequestInsuranceInfoResponse{}
-	mi := &file_services_request_request_proto_msgTypes[50]
+	mi := &file_services_request_request_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3836,7 +3964,7 @@ func (x *GetRequestInsuranceInfoResponse) String() string {
 func (*GetRequestInsuranceInfoResponse) ProtoMessage() {}
 
 func (x *GetRequestInsuranceInfoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[50]
+	mi := &file_services_request_request_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3849,7 +3977,7 @@ func (x *GetRequestInsuranceInfoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRequestInsuranceInfoResponse.ProtoReflect.Descriptor instead.
 func (*GetRequestInsuranceInfoResponse) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{50}
+	return file_services_request_request_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *GetRequestInsuranceInfoResponse) GetInfo() *RequestInsuranceInfo {
@@ -3870,7 +3998,7 @@ type ClaimInsuranceRequestRequest struct {
 
 func (x *ClaimInsuranceRequestRequest) Reset() {
 	*x = ClaimInsuranceRequestRequest{}
-	mi := &file_services_request_request_proto_msgTypes[51]
+	mi := &file_services_request_request_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3882,7 +4010,7 @@ func (x *ClaimInsuranceRequestRequest) String() string {
 func (*ClaimInsuranceRequestRequest) ProtoMessage() {}
 
 func (x *ClaimInsuranceRequestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[51]
+	mi := &file_services_request_request_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3895,7 +4023,7 @@ func (x *ClaimInsuranceRequestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClaimInsuranceRequestRequest.ProtoReflect.Descriptor instead.
 func (*ClaimInsuranceRequestRequest) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{51}
+	return file_services_request_request_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *ClaimInsuranceRequestRequest) GetRequestId() string {
@@ -3922,7 +4050,7 @@ type ClaimInsuranceRequestResponse struct {
 
 func (x *ClaimInsuranceRequestResponse) Reset() {
 	*x = ClaimInsuranceRequestResponse{}
-	mi := &file_services_request_request_proto_msgTypes[52]
+	mi := &file_services_request_request_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3934,7 +4062,7 @@ func (x *ClaimInsuranceRequestResponse) String() string {
 func (*ClaimInsuranceRequestResponse) ProtoMessage() {}
 
 func (x *ClaimInsuranceRequestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[52]
+	mi := &file_services_request_request_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3947,7 +4075,7 @@ func (x *ClaimInsuranceRequestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClaimInsuranceRequestResponse.ProtoReflect.Descriptor instead.
 func (*ClaimInsuranceRequestResponse) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{52}
+	return file_services_request_request_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *ClaimInsuranceRequestResponse) GetClaimed() bool {
@@ -3975,7 +4103,7 @@ type IsOrgTargetedRequest struct {
 
 func (x *IsOrgTargetedRequest) Reset() {
 	*x = IsOrgTargetedRequest{}
-	mi := &file_services_request_request_proto_msgTypes[53]
+	mi := &file_services_request_request_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3987,7 +4115,7 @@ func (x *IsOrgTargetedRequest) String() string {
 func (*IsOrgTargetedRequest) ProtoMessage() {}
 
 func (x *IsOrgTargetedRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[53]
+	mi := &file_services_request_request_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4000,7 +4128,7 @@ func (x *IsOrgTargetedRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsOrgTargetedRequest.ProtoReflect.Descriptor instead.
 func (*IsOrgTargetedRequest) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{53}
+	return file_services_request_request_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *IsOrgTargetedRequest) GetRequestId() string {
@@ -4026,7 +4154,7 @@ type IsOrgTargetedResponse struct {
 
 func (x *IsOrgTargetedResponse) Reset() {
 	*x = IsOrgTargetedResponse{}
-	mi := &file_services_request_request_proto_msgTypes[54]
+	mi := &file_services_request_request_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4038,7 +4166,7 @@ func (x *IsOrgTargetedResponse) String() string {
 func (*IsOrgTargetedResponse) ProtoMessage() {}
 
 func (x *IsOrgTargetedResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_request_request_proto_msgTypes[54]
+	mi := &file_services_request_request_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4051,7 +4179,7 @@ func (x *IsOrgTargetedResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IsOrgTargetedResponse.ProtoReflect.Descriptor instead.
 func (*IsOrgTargetedResponse) Descriptor() ([]byte, []int) {
-	return file_services_request_request_proto_rawDescGZIP(), []int{54}
+	return file_services_request_request_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *IsOrgTargetedResponse) GetTargeted() bool {
@@ -4350,7 +4478,18 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\"9\n" +
 	"#GetRequestForClassificationResponse\x12\x12\n" +
-	"\x04note\x18\x01 \x01(\tR\x04note\"A\n" +
+	"\x04note\x18\x01 \x01(\tR\x04note\"?\n" +
+	"\x1eGetInsurancePayoutTermsRequest\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\"\xdb\x02\n" +
+	"\x1fGetInsurancePayoutTermsResponse\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\x124\n" +
+	"\x04kind\x18\x02 \x01(\x0e2 .services.request.v1.RequestKindR\x04kind\x12:\n" +
+	"\x06status\x18\x03 \x01(\x0e2\".services.request.v1.RequestStatusR\x06status\x12.\n" +
+	"\x13payout_amount_minor\x18\x04 \x01(\x03R\x11payoutAmountMinor\x12L\n" +
+	"\x0fassignment_mode\x18\x05 \x01(\x0e2#.services.request.v1.AssignmentModeR\x0eassignmentMode\x12)\n" +
+	"\x11claimed_by_org_id\x18\x06 \x01(\tR\x0eclaimedByOrgId\"A\n" +
 	" GetRequestEligibilityInfoRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\"\xb3\x01\n" +
@@ -4443,7 +4582,7 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x0eAssignmentMode\x12\x1f\n" +
 	"\x1bASSIGNMENT_MODE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16ASSIGNMENT_MODE_MANUAL\x10\x01\x12\x1e\n" +
-	"\x1aASSIGNMENT_MODE_AUTO_FIRST\x10\x022\xdd\x16\n" +
+	"\x1aASSIGNMENT_MODE_AUTO_FIRST\x10\x022\xe4\x17\n" +
 	"\x0eRequestService\x12f\n" +
 	"\rCreateRequest\x12).services.request.v1.CreateRequestRequest\x1a*.services.request.v1.CreateRequestResponse\x12]\n" +
 	"\n" +
@@ -4463,7 +4602,8 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x0eDismissRequest\x12*.services.request.v1.DismissRequestRequest\x1a+.services.request.v1.DismissRequestResponse\x12\x8d\x01\n" +
 	"\x1aCountUnreadForOrganization\x126.services.request.v1.CountUnreadForOrganizationRequest\x1a7.services.request.v1.CountUnreadForOrganizationResponse\x12l\n" +
 	"\x0fClassifyRequest\x12+.services.request.v1.ClassifyRequestRequest\x1a,.services.request.v1.ClassifyRequestResponse\x12\x90\x01\n" +
-	"\x1bGetRequestForClassification\x127.services.request.v1.GetRequestForClassificationRequest\x1a8.services.request.v1.GetRequestForClassificationResponse\x12\x8a\x01\n" +
+	"\x1bGetRequestForClassification\x127.services.request.v1.GetRequestForClassificationRequest\x1a8.services.request.v1.GetRequestForClassificationResponse\x12\x84\x01\n" +
+	"\x17GetInsurancePayoutTerms\x123.services.request.v1.GetInsurancePayoutTermsRequest\x1a4.services.request.v1.GetInsurancePayoutTermsResponse\x12\x8a\x01\n" +
 	"\x19GetRequestEligibilityInfo\x125.services.request.v1.GetRequestEligibilityInfoRequest\x1a6.services.request.v1.GetRequestEligibilityInfoResponse\x12{\n" +
 	"\x14GetUserRequestCounts\x120.services.request.v1.GetUserRequestCountsRequest\x1a1.services.request.v1.GetUserRequestCountsResponse\x12c\n" +
 	"\fPauseRequest\x12(.services.request.v1.PauseRequestRequest\x1a).services.request.v1.PauseRequestResponse\x12i\n" +
@@ -4485,7 +4625,7 @@ func file_services_request_request_proto_rawDescGZIP() []byte {
 }
 
 var file_services_request_request_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_services_request_request_proto_msgTypes = make([]protoimpl.MessageInfo, 55)
+var file_services_request_request_proto_msgTypes = make([]protoimpl.MessageInfo, 57)
 var file_services_request_request_proto_goTypes = []any{
 	(RequestType)(0),                              // 0: services.request.v1.RequestType
 	(RequestStatus)(0),                            // 1: services.request.v1.RequestStatus
@@ -4530,41 +4670,43 @@ var file_services_request_request_proto_goTypes = []any{
 	(*ClassifyRequestResponse)(nil),               // 40: services.request.v1.ClassifyRequestResponse
 	(*GetRequestForClassificationRequest)(nil),    // 41: services.request.v1.GetRequestForClassificationRequest
 	(*GetRequestForClassificationResponse)(nil),   // 42: services.request.v1.GetRequestForClassificationResponse
-	(*GetRequestEligibilityInfoRequest)(nil),      // 43: services.request.v1.GetRequestEligibilityInfoRequest
-	(*GetRequestEligibilityInfoResponse)(nil),     // 44: services.request.v1.GetRequestEligibilityInfoResponse
-	(*GetUserRequestCountsRequest)(nil),           // 45: services.request.v1.GetUserRequestCountsRequest
-	(*GetUserRequestCountsResponse)(nil),          // 46: services.request.v1.GetUserRequestCountsResponse
-	(*PauseRequestRequest)(nil),                   // 47: services.request.v1.PauseRequestRequest
-	(*PauseRequestResponse)(nil),                  // 48: services.request.v1.PauseRequestResponse
-	(*UnpauseRequestRequest)(nil),                 // 49: services.request.v1.UnpauseRequestRequest
-	(*UnpauseRequestResponse)(nil),                // 50: services.request.v1.UnpauseRequestResponse
-	(*InsuranceInfoInput)(nil),                    // 51: services.request.v1.InsuranceInfoInput
-	(*RequestInsuranceInfo)(nil),                  // 52: services.request.v1.RequestInsuranceInfo
-	(*GetRequestInsuranceInfoRequest)(nil),        // 53: services.request.v1.GetRequestInsuranceInfoRequest
-	(*GetRequestInsuranceInfoResponse)(nil),       // 54: services.request.v1.GetRequestInsuranceInfoResponse
-	(*ClaimInsuranceRequestRequest)(nil),          // 55: services.request.v1.ClaimInsuranceRequestRequest
-	(*ClaimInsuranceRequestResponse)(nil),         // 56: services.request.v1.ClaimInsuranceRequestResponse
-	(*IsOrgTargetedRequest)(nil),                  // 57: services.request.v1.IsOrgTargetedRequest
-	(*IsOrgTargetedResponse)(nil),                 // 58: services.request.v1.IsOrgTargetedResponse
-	(*timestamppb.Timestamp)(nil),                 // 59: google.protobuf.Timestamp
+	(*GetInsurancePayoutTermsRequest)(nil),        // 43: services.request.v1.GetInsurancePayoutTermsRequest
+	(*GetInsurancePayoutTermsResponse)(nil),       // 44: services.request.v1.GetInsurancePayoutTermsResponse
+	(*GetRequestEligibilityInfoRequest)(nil),      // 45: services.request.v1.GetRequestEligibilityInfoRequest
+	(*GetRequestEligibilityInfoResponse)(nil),     // 46: services.request.v1.GetRequestEligibilityInfoResponse
+	(*GetUserRequestCountsRequest)(nil),           // 47: services.request.v1.GetUserRequestCountsRequest
+	(*GetUserRequestCountsResponse)(nil),          // 48: services.request.v1.GetUserRequestCountsResponse
+	(*PauseRequestRequest)(nil),                   // 49: services.request.v1.PauseRequestRequest
+	(*PauseRequestResponse)(nil),                  // 50: services.request.v1.PauseRequestResponse
+	(*UnpauseRequestRequest)(nil),                 // 51: services.request.v1.UnpauseRequestRequest
+	(*UnpauseRequestResponse)(nil),                // 52: services.request.v1.UnpauseRequestResponse
+	(*InsuranceInfoInput)(nil),                    // 53: services.request.v1.InsuranceInfoInput
+	(*RequestInsuranceInfo)(nil),                  // 54: services.request.v1.RequestInsuranceInfo
+	(*GetRequestInsuranceInfoRequest)(nil),        // 55: services.request.v1.GetRequestInsuranceInfoRequest
+	(*GetRequestInsuranceInfoResponse)(nil),       // 56: services.request.v1.GetRequestInsuranceInfoResponse
+	(*ClaimInsuranceRequestRequest)(nil),          // 57: services.request.v1.ClaimInsuranceRequestRequest
+	(*ClaimInsuranceRequestResponse)(nil),         // 58: services.request.v1.ClaimInsuranceRequestResponse
+	(*IsOrgTargetedRequest)(nil),                  // 59: services.request.v1.IsOrgTargetedRequest
+	(*IsOrgTargetedResponse)(nil),                 // 60: services.request.v1.IsOrgTargetedResponse
+	(*timestamppb.Timestamp)(nil),                 // 61: google.protobuf.Timestamp
 }
 var file_services_request_request_proto_depIdxs = []int32{
 	0,  // 0: services.request.v1.Request.type:type_name -> services.request.v1.RequestType
 	1,  // 1: services.request.v1.Request.status:type_name -> services.request.v1.RequestStatus
-	59, // 2: services.request.v1.Request.created_at:type_name -> google.protobuf.Timestamp
-	59, // 3: services.request.v1.Request.updated_at:type_name -> google.protobuf.Timestamp
-	59, // 4: services.request.v1.Request.published_at:type_name -> google.protobuf.Timestamp
-	59, // 5: services.request.v1.Request.paused_at:type_name -> google.protobuf.Timestamp
+	61, // 2: services.request.v1.Request.created_at:type_name -> google.protobuf.Timestamp
+	61, // 3: services.request.v1.Request.updated_at:type_name -> google.protobuf.Timestamp
+	61, // 4: services.request.v1.Request.published_at:type_name -> google.protobuf.Timestamp
+	61, // 5: services.request.v1.Request.paused_at:type_name -> google.protobuf.Timestamp
 	2,  // 6: services.request.v1.Request.kind:type_name -> services.request.v1.RequestKind
-	59, // 7: services.request.v1.Request.deadline:type_name -> google.protobuf.Timestamp
+	61, // 7: services.request.v1.Request.deadline:type_name -> google.protobuf.Timestamp
 	3,  // 8: services.request.v1.Request.assignment_mode:type_name -> services.request.v1.AssignmentMode
 	4,  // 9: services.request.v1.Request.estimate_items:type_name -> services.request.v1.EstimateItem
 	0,  // 10: services.request.v1.CreateRequestRequest.type:type_name -> services.request.v1.RequestType
 	2,  // 11: services.request.v1.CreateRequestRequest.kind:type_name -> services.request.v1.RequestKind
-	59, // 12: services.request.v1.CreateRequestRequest.deadline:type_name -> google.protobuf.Timestamp
+	61, // 12: services.request.v1.CreateRequestRequest.deadline:type_name -> google.protobuf.Timestamp
 	3,  // 13: services.request.v1.CreateRequestRequest.assignment_mode:type_name -> services.request.v1.AssignmentMode
 	4,  // 14: services.request.v1.CreateRequestRequest.estimate_items:type_name -> services.request.v1.EstimateItem
-	51, // 15: services.request.v1.CreateRequestRequest.insurance_info:type_name -> services.request.v1.InsuranceInfoInput
+	53, // 15: services.request.v1.CreateRequestRequest.insurance_info:type_name -> services.request.v1.InsuranceInfoInput
 	5,  // 16: services.request.v1.CreateRequestResponse.request:type_name -> services.request.v1.Request
 	5,  // 17: services.request.v1.GetRequestResponse.request:type_name -> services.request.v1.Request
 	5,  // 18: services.request.v1.UpdateRequestResponse.request:type_name -> services.request.v1.Request
@@ -4573,7 +4715,7 @@ var file_services_request_request_proto_depIdxs = []int32{
 	2,  // 21: services.request.v1.ListRequestsRequest.kind:type_name -> services.request.v1.RequestKind
 	5,  // 22: services.request.v1.ListRequestsResponse.requests:type_name -> services.request.v1.Request
 	0,  // 23: services.request.v1.PublishedRequestPreview.type:type_name -> services.request.v1.RequestType
-	59, // 24: services.request.v1.PublishedRequestPreview.published_at:type_name -> google.protobuf.Timestamp
+	61, // 24: services.request.v1.PublishedRequestPreview.published_at:type_name -> google.protobuf.Timestamp
 	17, // 25: services.request.v1.ListPublishedPreviewsResponse.requests:type_name -> services.request.v1.PublishedRequestPreview
 	0,  // 26: services.request.v1.SearchRequestsRequest.type:type_name -> services.request.v1.RequestType
 	5,  // 27: services.request.v1.SearchRequestsResponse.requests:type_name -> services.request.v1.Request
@@ -4584,66 +4726,71 @@ var file_services_request_request_proto_depIdxs = []int32{
 	5,  // 32: services.request.v1.GetUserRequestsResponse.requests:type_name -> services.request.v1.Request
 	0,  // 33: services.request.v1.CountUnreadForOrganizationRequest.type:type_name -> services.request.v1.RequestType
 	5,  // 34: services.request.v1.ClassifyRequestResponse.request:type_name -> services.request.v1.Request
-	0,  // 35: services.request.v1.GetRequestEligibilityInfoResponse.type:type_name -> services.request.v1.RequestType
-	0,  // 36: services.request.v1.GetUserRequestCountsRequest.type:type_name -> services.request.v1.RequestType
-	5,  // 37: services.request.v1.PauseRequestResponse.request:type_name -> services.request.v1.Request
-	5,  // 38: services.request.v1.UnpauseRequestResponse.request:type_name -> services.request.v1.Request
-	52, // 39: services.request.v1.GetRequestInsuranceInfoResponse.info:type_name -> services.request.v1.RequestInsuranceInfo
-	6,  // 40: services.request.v1.RequestService.CreateRequest:input_type -> services.request.v1.CreateRequestRequest
-	8,  // 41: services.request.v1.RequestService.GetRequest:input_type -> services.request.v1.GetRequestRequest
-	10, // 42: services.request.v1.RequestService.UpdateRequest:input_type -> services.request.v1.UpdateRequestRequest
-	12, // 43: services.request.v1.RequestService.DeleteRequest:input_type -> services.request.v1.DeleteRequestRequest
-	14, // 44: services.request.v1.RequestService.ListRequests:input_type -> services.request.v1.ListRequestsRequest
-	16, // 45: services.request.v1.RequestService.ListPublishedPreviews:input_type -> services.request.v1.ListPublishedPreviewsRequest
-	19, // 46: services.request.v1.RequestService.SearchRequests:input_type -> services.request.v1.SearchRequestsRequest
-	21, // 47: services.request.v1.RequestService.ChangeStatus:input_type -> services.request.v1.ChangeStatusRequest
-	23, // 48: services.request.v1.RequestService.GetUserRequests:input_type -> services.request.v1.GetUserRequestsRequest
-	25, // 49: services.request.v1.RequestService.IncrementViews:input_type -> services.request.v1.IncrementViewsRequest
-	27, // 50: services.request.v1.RequestService.GetSuggestions:input_type -> services.request.v1.GetSuggestionsRequest
-	29, // 51: services.request.v1.RequestService.GetNewRequestsForOrganization:input_type -> services.request.v1.GetNewRequestsForOrganizationRequest
-	31, // 52: services.request.v1.RequestService.MarkRequestAsViewed:input_type -> services.request.v1.MarkRequestAsViewedRequest
-	33, // 53: services.request.v1.RequestService.IsRequestNew:input_type -> services.request.v1.IsRequestNewRequest
-	35, // 54: services.request.v1.RequestService.DismissRequest:input_type -> services.request.v1.DismissRequestRequest
-	37, // 55: services.request.v1.RequestService.CountUnreadForOrganization:input_type -> services.request.v1.CountUnreadForOrganizationRequest
-	39, // 56: services.request.v1.RequestService.ClassifyRequest:input_type -> services.request.v1.ClassifyRequestRequest
-	41, // 57: services.request.v1.RequestService.GetRequestForClassification:input_type -> services.request.v1.GetRequestForClassificationRequest
-	43, // 58: services.request.v1.RequestService.GetRequestEligibilityInfo:input_type -> services.request.v1.GetRequestEligibilityInfoRequest
-	45, // 59: services.request.v1.RequestService.GetUserRequestCounts:input_type -> services.request.v1.GetUserRequestCountsRequest
-	47, // 60: services.request.v1.RequestService.PauseRequest:input_type -> services.request.v1.PauseRequestRequest
-	49, // 61: services.request.v1.RequestService.UnpauseRequest:input_type -> services.request.v1.UnpauseRequestRequest
-	53, // 62: services.request.v1.RequestService.GetRequestInsuranceInfo:input_type -> services.request.v1.GetRequestInsuranceInfoRequest
-	55, // 63: services.request.v1.RequestService.ClaimInsuranceRequest:input_type -> services.request.v1.ClaimInsuranceRequestRequest
-	57, // 64: services.request.v1.RequestService.IsOrgTargeted:input_type -> services.request.v1.IsOrgTargetedRequest
-	7,  // 65: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
-	9,  // 66: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
-	11, // 67: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
-	13, // 68: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
-	15, // 69: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
-	18, // 70: services.request.v1.RequestService.ListPublishedPreviews:output_type -> services.request.v1.ListPublishedPreviewsResponse
-	20, // 71: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
-	22, // 72: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
-	24, // 73: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
-	26, // 74: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
-	28, // 75: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
-	30, // 76: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
-	32, // 77: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
-	34, // 78: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
-	36, // 79: services.request.v1.RequestService.DismissRequest:output_type -> services.request.v1.DismissRequestResponse
-	38, // 80: services.request.v1.RequestService.CountUnreadForOrganization:output_type -> services.request.v1.CountUnreadForOrganizationResponse
-	40, // 81: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
-	42, // 82: services.request.v1.RequestService.GetRequestForClassification:output_type -> services.request.v1.GetRequestForClassificationResponse
-	44, // 83: services.request.v1.RequestService.GetRequestEligibilityInfo:output_type -> services.request.v1.GetRequestEligibilityInfoResponse
-	46, // 84: services.request.v1.RequestService.GetUserRequestCounts:output_type -> services.request.v1.GetUserRequestCountsResponse
-	48, // 85: services.request.v1.RequestService.PauseRequest:output_type -> services.request.v1.PauseRequestResponse
-	50, // 86: services.request.v1.RequestService.UnpauseRequest:output_type -> services.request.v1.UnpauseRequestResponse
-	54, // 87: services.request.v1.RequestService.GetRequestInsuranceInfo:output_type -> services.request.v1.GetRequestInsuranceInfoResponse
-	56, // 88: services.request.v1.RequestService.ClaimInsuranceRequest:output_type -> services.request.v1.ClaimInsuranceRequestResponse
-	58, // 89: services.request.v1.RequestService.IsOrgTargeted:output_type -> services.request.v1.IsOrgTargetedResponse
-	65, // [65:90] is the sub-list for method output_type
-	40, // [40:65] is the sub-list for method input_type
-	40, // [40:40] is the sub-list for extension type_name
-	40, // [40:40] is the sub-list for extension extendee
-	0,  // [0:40] is the sub-list for field type_name
+	2,  // 35: services.request.v1.GetInsurancePayoutTermsResponse.kind:type_name -> services.request.v1.RequestKind
+	1,  // 36: services.request.v1.GetInsurancePayoutTermsResponse.status:type_name -> services.request.v1.RequestStatus
+	3,  // 37: services.request.v1.GetInsurancePayoutTermsResponse.assignment_mode:type_name -> services.request.v1.AssignmentMode
+	0,  // 38: services.request.v1.GetRequestEligibilityInfoResponse.type:type_name -> services.request.v1.RequestType
+	0,  // 39: services.request.v1.GetUserRequestCountsRequest.type:type_name -> services.request.v1.RequestType
+	5,  // 40: services.request.v1.PauseRequestResponse.request:type_name -> services.request.v1.Request
+	5,  // 41: services.request.v1.UnpauseRequestResponse.request:type_name -> services.request.v1.Request
+	54, // 42: services.request.v1.GetRequestInsuranceInfoResponse.info:type_name -> services.request.v1.RequestInsuranceInfo
+	6,  // 43: services.request.v1.RequestService.CreateRequest:input_type -> services.request.v1.CreateRequestRequest
+	8,  // 44: services.request.v1.RequestService.GetRequest:input_type -> services.request.v1.GetRequestRequest
+	10, // 45: services.request.v1.RequestService.UpdateRequest:input_type -> services.request.v1.UpdateRequestRequest
+	12, // 46: services.request.v1.RequestService.DeleteRequest:input_type -> services.request.v1.DeleteRequestRequest
+	14, // 47: services.request.v1.RequestService.ListRequests:input_type -> services.request.v1.ListRequestsRequest
+	16, // 48: services.request.v1.RequestService.ListPublishedPreviews:input_type -> services.request.v1.ListPublishedPreviewsRequest
+	19, // 49: services.request.v1.RequestService.SearchRequests:input_type -> services.request.v1.SearchRequestsRequest
+	21, // 50: services.request.v1.RequestService.ChangeStatus:input_type -> services.request.v1.ChangeStatusRequest
+	23, // 51: services.request.v1.RequestService.GetUserRequests:input_type -> services.request.v1.GetUserRequestsRequest
+	25, // 52: services.request.v1.RequestService.IncrementViews:input_type -> services.request.v1.IncrementViewsRequest
+	27, // 53: services.request.v1.RequestService.GetSuggestions:input_type -> services.request.v1.GetSuggestionsRequest
+	29, // 54: services.request.v1.RequestService.GetNewRequestsForOrganization:input_type -> services.request.v1.GetNewRequestsForOrganizationRequest
+	31, // 55: services.request.v1.RequestService.MarkRequestAsViewed:input_type -> services.request.v1.MarkRequestAsViewedRequest
+	33, // 56: services.request.v1.RequestService.IsRequestNew:input_type -> services.request.v1.IsRequestNewRequest
+	35, // 57: services.request.v1.RequestService.DismissRequest:input_type -> services.request.v1.DismissRequestRequest
+	37, // 58: services.request.v1.RequestService.CountUnreadForOrganization:input_type -> services.request.v1.CountUnreadForOrganizationRequest
+	39, // 59: services.request.v1.RequestService.ClassifyRequest:input_type -> services.request.v1.ClassifyRequestRequest
+	41, // 60: services.request.v1.RequestService.GetRequestForClassification:input_type -> services.request.v1.GetRequestForClassificationRequest
+	43, // 61: services.request.v1.RequestService.GetInsurancePayoutTerms:input_type -> services.request.v1.GetInsurancePayoutTermsRequest
+	45, // 62: services.request.v1.RequestService.GetRequestEligibilityInfo:input_type -> services.request.v1.GetRequestEligibilityInfoRequest
+	47, // 63: services.request.v1.RequestService.GetUserRequestCounts:input_type -> services.request.v1.GetUserRequestCountsRequest
+	49, // 64: services.request.v1.RequestService.PauseRequest:input_type -> services.request.v1.PauseRequestRequest
+	51, // 65: services.request.v1.RequestService.UnpauseRequest:input_type -> services.request.v1.UnpauseRequestRequest
+	55, // 66: services.request.v1.RequestService.GetRequestInsuranceInfo:input_type -> services.request.v1.GetRequestInsuranceInfoRequest
+	57, // 67: services.request.v1.RequestService.ClaimInsuranceRequest:input_type -> services.request.v1.ClaimInsuranceRequestRequest
+	59, // 68: services.request.v1.RequestService.IsOrgTargeted:input_type -> services.request.v1.IsOrgTargetedRequest
+	7,  // 69: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
+	9,  // 70: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
+	11, // 71: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
+	13, // 72: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
+	15, // 73: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
+	18, // 74: services.request.v1.RequestService.ListPublishedPreviews:output_type -> services.request.v1.ListPublishedPreviewsResponse
+	20, // 75: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
+	22, // 76: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
+	24, // 77: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
+	26, // 78: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
+	28, // 79: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
+	30, // 80: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
+	32, // 81: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
+	34, // 82: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
+	36, // 83: services.request.v1.RequestService.DismissRequest:output_type -> services.request.v1.DismissRequestResponse
+	38, // 84: services.request.v1.RequestService.CountUnreadForOrganization:output_type -> services.request.v1.CountUnreadForOrganizationResponse
+	40, // 85: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
+	42, // 86: services.request.v1.RequestService.GetRequestForClassification:output_type -> services.request.v1.GetRequestForClassificationResponse
+	44, // 87: services.request.v1.RequestService.GetInsurancePayoutTerms:output_type -> services.request.v1.GetInsurancePayoutTermsResponse
+	46, // 88: services.request.v1.RequestService.GetRequestEligibilityInfo:output_type -> services.request.v1.GetRequestEligibilityInfoResponse
+	48, // 89: services.request.v1.RequestService.GetUserRequestCounts:output_type -> services.request.v1.GetUserRequestCountsResponse
+	50, // 90: services.request.v1.RequestService.PauseRequest:output_type -> services.request.v1.PauseRequestResponse
+	52, // 91: services.request.v1.RequestService.UnpauseRequest:output_type -> services.request.v1.UnpauseRequestResponse
+	56, // 92: services.request.v1.RequestService.GetRequestInsuranceInfo:output_type -> services.request.v1.GetRequestInsuranceInfoResponse
+	58, // 93: services.request.v1.RequestService.ClaimInsuranceRequest:output_type -> services.request.v1.ClaimInsuranceRequestResponse
+	60, // 94: services.request.v1.RequestService.IsOrgTargeted:output_type -> services.request.v1.IsOrgTargetedResponse
+	69, // [69:95] is the sub-list for method output_type
+	43, // [43:69] is the sub-list for method input_type
+	43, // [43:43] is the sub-list for extension type_name
+	43, // [43:43] is the sub-list for extension extendee
+	0,  // [0:43] is the sub-list for field type_name
 }
 
 func init() { file_services_request_request_proto_init() }
@@ -4655,16 +4802,16 @@ func file_services_request_request_proto_init() {
 	file_services_request_request_proto_msgTypes[2].OneofWrappers = []any{}
 	file_services_request_request_proto_msgTypes[6].OneofWrappers = []any{}
 	file_services_request_request_proto_msgTypes[10].OneofWrappers = []any{}
-	file_services_request_request_proto_msgTypes[40].OneofWrappers = []any{}
-	file_services_request_request_proto_msgTypes[43].OneofWrappers = []any{}
-	file_services_request_request_proto_msgTypes[48].OneofWrappers = []any{}
+	file_services_request_request_proto_msgTypes[42].OneofWrappers = []any{}
+	file_services_request_request_proto_msgTypes[45].OneofWrappers = []any{}
+	file_services_request_request_proto_msgTypes[50].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_request_request_proto_rawDesc), len(file_services_request_request_proto_rawDesc)),
 			NumEnums:      4,
-			NumMessages:   55,
+			NumMessages:   57,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

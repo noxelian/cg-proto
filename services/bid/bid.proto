@@ -2,38 +2,38 @@ syntax = "proto3";
 
 package services.bid.v1;
 
-option go_package = "github.com/4ubak/cg-proto/gen/go/services/bid;bidv1";
-
 import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/services/bid;bidv1";
 
 service BidService {
   // CreateBid creates a new bid from organization to request
   rpc CreateBid(CreateBidRequest) returns (CreateBidResponse);
-  
+
   // GetBid returns bid by ID
   rpc GetBid(GetBidRequest) returns (GetBidResponse);
-  
+
   // UpdateBid updates a bid
   rpc UpdateBid(UpdateBidRequest) returns (UpdateBidResponse);
-  
+
   // DeleteBid deletes a bid
   rpc DeleteBid(DeleteBidRequest) returns (DeleteBidResponse);
-  
+
   // ListBids lists bids with filters
   rpc ListBids(ListBidsRequest) returns (ListBidsResponse);
-  
+
   // GetBidsByRequest returns bids for a request
   rpc GetBidsByRequest(GetBidsByRequestRequest) returns (GetBidsByRequestResponse);
-  
+
   // GetBidsByOrganization returns bids for an organization
   rpc GetBidsByOrganization(GetBidsByOrganizationRequest) returns (GetBidsByOrganizationResponse);
-  
+
   // AcceptBid accepts a bid (user accepts organization's bid)
   rpc AcceptBid(AcceptBidRequest) returns (AcceptBidResponse);
-  
+
   // RejectBid rejects a bid (user rejects organization's bid)
   rpc RejectBid(RejectBidRequest) returns (RejectBidResponse);
-  
+
   // CancelBid cancels a bid (organization cancels their bid)
   rpc CancelBid(CancelBidRequest) returns (CancelBidResponse);
   rpc MarkPartsPurchased(MarkPartsPurchasedRequest) returns (MarkPartsPurchasedResponse);
@@ -58,12 +58,16 @@ service BidService {
   // Review-eligibility projection for organization-service. It exposes only
   // whether one organization has an accepted bid on one request.
   rpc HasAcceptedBidForOrganization(HasAcceptedBidForOrganizationRequest) returns (HasAcceptedBidForOrganizationResponse);
+
+  // GetAcceptedInsuranceBidForPayout returns the single accepted STO bid used
+  // to authorize an insurance payout. Exact billing-service identity only.
+  rpc GetAcceptedInsuranceBidForPayout(GetAcceptedInsuranceBidForPayoutRequest) returns (GetAcceptedInsuranceBidForPayoutResponse);
 }
 
 enum BidType {
   BID_TYPE_UNSPECIFIED = 0;
-  BID_TYPE_STO = 1;              // СТО
-  BID_TYPE_PARTS_SUPPLIER = 2;   // Поставщик запчастей
+  BID_TYPE_STO = 1; // СТО
+  BID_TYPE_PARTS_SUPPLIER = 2; // Поставщик запчастей
 }
 
 enum BidStatus {
@@ -79,19 +83,19 @@ message Bid {
   string request_id = 2;
   BidType type = 3;
   BidStatus status = 4;
-  string organization_id = 5;  // UUID from organization-service
-  
+  string organization_id = 5; // UUID from organization-service
+
   // For STO
   optional int64 price = 6;
   string currency = 7;
-  optional int32 duration = 8;  // Длительность ремонта в днях
-  
+  optional int32 duration = 8; // Длительность ремонта в днях
+
   // For Parts Supplier
   repeated BidPart parts = 9;
-  
+
   string description = 10;
   repeated string photos = 11;
-  
+
   google.protobuf.Timestamp created_at = 12;
   google.protobuf.Timestamp updated_at = 13;
 }
@@ -103,9 +107,9 @@ message BidPart {
   string part_number = 4;
   int32 quantity = 5;
   int64 price = 6;
-  string condition = 7;        // new, used, refurbished
-  string availability = 8;     // in_stock, on_order, unavailable
-  string status = 9;           // pending, purchased
+  string condition = 7; // new, used, refurbished
+  string availability = 8; // in_stock, on_order, unavailable
+  string status = 9; // pending, purchased
   // Source warehouse the supplier ships this position from. UUID of cg-warehouse.warehouses.id.
   // Empty string means legacy/unspecified (warehouse write-off skipped).
   string warehouse_id = 10;
@@ -115,16 +119,16 @@ message BidPart {
 message CreateBidRequest {
   string request_id = 1;
   BidType type = 2;
-  string organization_id = 3;  // UUID from organization-service
-  
+  string organization_id = 3; // UUID from organization-service
+
   // For STO
   optional int64 price = 4;
   string currency = 5;
   optional int32 duration = 6;
-  
+
   // For Parts Supplier
   repeated CreateBidPartRequest parts = 7;
-  
+
   string description = 8;
   repeated string photos = 9;
 
@@ -183,11 +187,23 @@ message HasAcceptedBidForOrganizationResponse {
   bool accepted = 1;
 }
 
+message GetAcceptedInsuranceBidForPayoutRequest {
+  string request_id = 1;
+}
+
+message GetAcceptedInsuranceBidForPayoutResponse {
+  int64 bid_id = 1;
+  string request_id = 2;
+  string organization_id = 3;
+  int64 price_minor = 4;
+  string currency = 5;
+}
+
 // UpdateBid
 message UpdateBidRequest {
   int64 bid_id = 1;
-  string organization_id = 2;  // UUID from organization-service
-  
+  string organization_id = 2; // UUID from organization-service
+
   optional int64 price = 3;
   string currency = 4;
   optional int32 duration = 5;
@@ -203,7 +219,7 @@ message UpdateBidResponse {
 // DeleteBid
 message DeleteBidRequest {
   int64 bid_id = 1;
-  string organization_id = 2;  // UUID from organization-service
+  string organization_id = 2; // UUID from organization-service
 }
 
 message DeleteBidResponse {
@@ -214,7 +230,7 @@ message DeleteBidResponse {
 message ListBidsRequest {
   BidType type = 1;
   BidStatus status = 2;
-  string organization_id = 3;  // UUID from organization-service
+  string organization_id = 3; // UUID from organization-service
   string request_id = 4;
   int32 page = 5;
   int32 page_size = 6;
@@ -240,7 +256,7 @@ message GetBidsByRequestResponse {
 
 // GetBidsByOrganization
 message GetBidsByOrganizationRequest {
-  string organization_id = 1;  // UUID from organization-service
+  string organization_id = 1; // UUID from organization-service
   BidStatus status = 2;
   int32 page = 3;
   int32 page_size = 4;
@@ -274,13 +290,12 @@ message RejectBidResponse {
 // CancelBid
 message CancelBidRequest {
   int64 bid_id = 1;
-  string organization_id = 2;  // UUID from organization-service
+  string organization_id = 2; // UUID from organization-service
 }
 
 message CancelBidResponse {
   Bid bid = 1;
 }
-
 
 // GetBidPartPrices
 
@@ -333,8 +348,8 @@ message MarkPartsPurchasedResponse {}
 
 // MarkBidRead
 message MarkBidReadRequest {
-  int64  bid_id     = 1;
-  int64  user_id    = 2;
+  int64 bid_id = 1;
+  int64 user_id = 2;
   string request_id = 3;
 }
 
@@ -345,9 +360,9 @@ message MarkBidReadResponse {
 
 // GetRequestResponsesSummary
 message RequestResponseSummary {
-  string request_id       = 1;
-  int32  total_responses  = 2;
-  int32  unread_count     = 3;
+  string request_id = 1;
+  int32 total_responses = 2;
+  int32 unread_count = 3;
   // last_response_at is RFC3339; empty string when no responses exist.
   string last_response_at = 4;
 }

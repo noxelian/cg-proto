@@ -19,23 +19,24 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	BidService_CreateBid_FullMethodName                     = "/services.bid.v1.BidService/CreateBid"
-	BidService_GetBid_FullMethodName                        = "/services.bid.v1.BidService/GetBid"
-	BidService_UpdateBid_FullMethodName                     = "/services.bid.v1.BidService/UpdateBid"
-	BidService_DeleteBid_FullMethodName                     = "/services.bid.v1.BidService/DeleteBid"
-	BidService_ListBids_FullMethodName                      = "/services.bid.v1.BidService/ListBids"
-	BidService_GetBidsByRequest_FullMethodName              = "/services.bid.v1.BidService/GetBidsByRequest"
-	BidService_GetBidsByOrganization_FullMethodName         = "/services.bid.v1.BidService/GetBidsByOrganization"
-	BidService_AcceptBid_FullMethodName                     = "/services.bid.v1.BidService/AcceptBid"
-	BidService_RejectBid_FullMethodName                     = "/services.bid.v1.BidService/RejectBid"
-	BidService_CancelBid_FullMethodName                     = "/services.bid.v1.BidService/CancelBid"
-	BidService_MarkPartsPurchased_FullMethodName            = "/services.bid.v1.BidService/MarkPartsPurchased"
-	BidService_GetBidPartPrices_FullMethodName              = "/services.bid.v1.BidService/GetBidPartPrices"
-	BidService_MarkBidRead_FullMethodName                   = "/services.bid.v1.BidService/MarkBidRead"
-	BidService_GetRequestResponsesSummary_FullMethodName    = "/services.bid.v1.BidService/GetRequestResponsesSummary"
-	BidService_GetBidForBuyer_FullMethodName                = "/services.bid.v1.BidService/GetBidForBuyer"
-	BidService_ListBidsForBuyer_FullMethodName              = "/services.bid.v1.BidService/ListBidsForBuyer"
-	BidService_HasAcceptedBidForOrganization_FullMethodName = "/services.bid.v1.BidService/HasAcceptedBidForOrganization"
+	BidService_CreateBid_FullMethodName                        = "/services.bid.v1.BidService/CreateBid"
+	BidService_GetBid_FullMethodName                           = "/services.bid.v1.BidService/GetBid"
+	BidService_UpdateBid_FullMethodName                        = "/services.bid.v1.BidService/UpdateBid"
+	BidService_DeleteBid_FullMethodName                        = "/services.bid.v1.BidService/DeleteBid"
+	BidService_ListBids_FullMethodName                         = "/services.bid.v1.BidService/ListBids"
+	BidService_GetBidsByRequest_FullMethodName                 = "/services.bid.v1.BidService/GetBidsByRequest"
+	BidService_GetBidsByOrganization_FullMethodName            = "/services.bid.v1.BidService/GetBidsByOrganization"
+	BidService_AcceptBid_FullMethodName                        = "/services.bid.v1.BidService/AcceptBid"
+	BidService_RejectBid_FullMethodName                        = "/services.bid.v1.BidService/RejectBid"
+	BidService_CancelBid_FullMethodName                        = "/services.bid.v1.BidService/CancelBid"
+	BidService_MarkPartsPurchased_FullMethodName               = "/services.bid.v1.BidService/MarkPartsPurchased"
+	BidService_GetBidPartPrices_FullMethodName                 = "/services.bid.v1.BidService/GetBidPartPrices"
+	BidService_MarkBidRead_FullMethodName                      = "/services.bid.v1.BidService/MarkBidRead"
+	BidService_GetRequestResponsesSummary_FullMethodName       = "/services.bid.v1.BidService/GetRequestResponsesSummary"
+	BidService_GetBidForBuyer_FullMethodName                   = "/services.bid.v1.BidService/GetBidForBuyer"
+	BidService_ListBidsForBuyer_FullMethodName                 = "/services.bid.v1.BidService/ListBidsForBuyer"
+	BidService_HasAcceptedBidForOrganization_FullMethodName    = "/services.bid.v1.BidService/HasAcceptedBidForOrganization"
+	BidService_GetAcceptedInsuranceBidForPayout_FullMethodName = "/services.bid.v1.BidService/GetAcceptedInsuranceBidForPayout"
 )
 
 // BidServiceClient is the client API for BidService service.
@@ -79,6 +80,9 @@ type BidServiceClient interface {
 	// Review-eligibility projection for organization-service. It exposes only
 	// whether one organization has an accepted bid on one request.
 	HasAcceptedBidForOrganization(ctx context.Context, in *HasAcceptedBidForOrganizationRequest, opts ...grpc.CallOption) (*HasAcceptedBidForOrganizationResponse, error)
+	// GetAcceptedInsuranceBidForPayout returns the single accepted STO bid used
+	// to authorize an insurance payout. Exact billing-service identity only.
+	GetAcceptedInsuranceBidForPayout(ctx context.Context, in *GetAcceptedInsuranceBidForPayoutRequest, opts ...grpc.CallOption) (*GetAcceptedInsuranceBidForPayoutResponse, error)
 }
 
 type bidServiceClient struct {
@@ -259,6 +263,16 @@ func (c *bidServiceClient) HasAcceptedBidForOrganization(ctx context.Context, in
 	return out, nil
 }
 
+func (c *bidServiceClient) GetAcceptedInsuranceBidForPayout(ctx context.Context, in *GetAcceptedInsuranceBidForPayoutRequest, opts ...grpc.CallOption) (*GetAcceptedInsuranceBidForPayoutResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAcceptedInsuranceBidForPayoutResponse)
+	err := c.cc.Invoke(ctx, BidService_GetAcceptedInsuranceBidForPayout_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BidServiceServer is the server API for BidService service.
 // All implementations must embed UnimplementedBidServiceServer
 // for forward compatibility.
@@ -300,6 +314,9 @@ type BidServiceServer interface {
 	// Review-eligibility projection for organization-service. It exposes only
 	// whether one organization has an accepted bid on one request.
 	HasAcceptedBidForOrganization(context.Context, *HasAcceptedBidForOrganizationRequest) (*HasAcceptedBidForOrganizationResponse, error)
+	// GetAcceptedInsuranceBidForPayout returns the single accepted STO bid used
+	// to authorize an insurance payout. Exact billing-service identity only.
+	GetAcceptedInsuranceBidForPayout(context.Context, *GetAcceptedInsuranceBidForPayoutRequest) (*GetAcceptedInsuranceBidForPayoutResponse, error)
 	mustEmbedUnimplementedBidServiceServer()
 }
 
@@ -360,6 +377,9 @@ func (UnimplementedBidServiceServer) ListBidsForBuyer(context.Context, *ListBids
 }
 func (UnimplementedBidServiceServer) HasAcceptedBidForOrganization(context.Context, *HasAcceptedBidForOrganizationRequest) (*HasAcceptedBidForOrganizationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HasAcceptedBidForOrganization not implemented")
+}
+func (UnimplementedBidServiceServer) GetAcceptedInsuranceBidForPayout(context.Context, *GetAcceptedInsuranceBidForPayoutRequest) (*GetAcceptedInsuranceBidForPayoutResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAcceptedInsuranceBidForPayout not implemented")
 }
 func (UnimplementedBidServiceServer) mustEmbedUnimplementedBidServiceServer() {}
 func (UnimplementedBidServiceServer) testEmbeddedByValue()                    {}
@@ -688,6 +708,24 @@ func _BidService_HasAcceptedBidForOrganization_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BidService_GetAcceptedInsuranceBidForPayout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAcceptedInsuranceBidForPayoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BidServiceServer).GetAcceptedInsuranceBidForPayout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BidService_GetAcceptedInsuranceBidForPayout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BidServiceServer).GetAcceptedInsuranceBidForPayout(ctx, req.(*GetAcceptedInsuranceBidForPayoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BidService_ServiceDesc is the grpc.ServiceDesc for BidService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -762,6 +800,10 @@ var BidService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HasAcceptedBidForOrganization",
 			Handler:    _BidService_HasAcceptedBidForOrganization_Handler,
+		},
+		{
+			MethodName: "GetAcceptedInsuranceBidForPayout",
+			Handler:    _BidService_GetAcceptedInsuranceBidForPayout_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

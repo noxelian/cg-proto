@@ -19,34 +19,36 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	BillingService_RecordLedgerEntry_FullMethodName           = "/billing.billing.v1.BillingService/RecordLedgerEntry"
-	BillingService_ListLedgerEntries_FullMethodName           = "/billing.billing.v1.BillingService/ListLedgerEntries"
-	BillingService_GetOrgBalance_FullMethodName               = "/billing.billing.v1.BillingService/GetOrgBalance"
-	BillingService_InitiatePayout_FullMethodName              = "/billing.billing.v1.BillingService/InitiatePayout"
-	BillingService_GetPayoutHistory_FullMethodName            = "/billing.billing.v1.BillingService/GetPayoutHistory"
-	BillingService_ReconcileTransaction_FullMethodName        = "/billing.billing.v1.BillingService/ReconcileTransaction"
-	BillingService_GetOrgStatement_FullMethodName             = "/billing.billing.v1.BillingService/GetOrgStatement"
-	BillingService_GetRevenueStats_FullMethodName             = "/billing.billing.v1.BillingService/GetRevenueStats"
-	BillingService_GetStatement_FullMethodName                = "/billing.billing.v1.BillingService/GetStatement"
-	BillingService_GetUserBalance_FullMethodName              = "/billing.billing.v1.BillingService/GetUserBalance"
-	BillingService_ListSpending_FullMethodName                = "/billing.billing.v1.BillingService/ListSpending"
-	BillingService_GetWalletBalance_FullMethodName            = "/billing.billing.v1.BillingService/GetWalletBalance"
-	BillingService_DebitWallet_FullMethodName                 = "/billing.billing.v1.BillingService/DebitWallet"
-	BillingService_CreditWallet_FullMethodName                = "/billing.billing.v1.BillingService/CreditWallet"
-	BillingService_CreditOrgBalance_FullMethodName            = "/billing.billing.v1.BillingService/CreditOrgBalance"
-	BillingService_InitiateOrgCardBinding_FullMethodName      = "/billing.billing.v1.BillingService/InitiateOrgCardBinding"
-	BillingService_ConfirmOrgCardBinding_FullMethodName       = "/billing.billing.v1.BillingService/ConfirmOrgCardBinding"
-	BillingService_ListOrgCards_FullMethodName                = "/billing.billing.v1.BillingService/ListOrgCards"
-	BillingService_DeleteOrgCard_FullMethodName               = "/billing.billing.v1.BillingService/DeleteOrgCard"
-	BillingService_DeclareEscrowWork_FullMethodName           = "/billing.billing.v1.BillingService/DeclareEscrowWork"
-	BillingService_ConfirmEscrowDelivery_FullMethodName       = "/billing.billing.v1.BillingService/ConfirmEscrowDelivery"
-	BillingService_AdminConfirmEscrowDelivery_FullMethodName  = "/billing.billing.v1.BillingService/AdminConfirmEscrowDelivery"
-	BillingService_OpenEscrowDispute_FullMethodName           = "/billing.billing.v1.BillingService/OpenEscrowDispute"
-	BillingService_ReleaseEscrowAdvance_FullMethodName        = "/billing.billing.v1.BillingService/ReleaseEscrowAdvance"
-	BillingService_SettleEscrowDispute_FullMethodName         = "/billing.billing.v1.BillingService/SettleEscrowDispute"
-	BillingService_GetEscrowDeal_FullMethodName               = "/billing.billing.v1.BillingService/GetEscrowDeal"
-	BillingService_ListOrganizationEscrowDeals_FullMethodName = "/billing.billing.v1.BillingService/ListOrganizationEscrowDeals"
-	BillingService_BindEscrowPerformer_FullMethodName         = "/billing.billing.v1.BillingService/BindEscrowPerformer"
+	BillingService_RecordLedgerEntry_FullMethodName             = "/billing.billing.v1.BillingService/RecordLedgerEntry"
+	BillingService_ListLedgerEntries_FullMethodName             = "/billing.billing.v1.BillingService/ListLedgerEntries"
+	BillingService_GetOrgBalance_FullMethodName                 = "/billing.billing.v1.BillingService/GetOrgBalance"
+	BillingService_InitiatePayout_FullMethodName                = "/billing.billing.v1.BillingService/InitiatePayout"
+	BillingService_GetPayoutHistory_FullMethodName              = "/billing.billing.v1.BillingService/GetPayoutHistory"
+	BillingService_ReconcileTransaction_FullMethodName          = "/billing.billing.v1.BillingService/ReconcileTransaction"
+	BillingService_GetOrgStatement_FullMethodName               = "/billing.billing.v1.BillingService/GetOrgStatement"
+	BillingService_GetRevenueStats_FullMethodName               = "/billing.billing.v1.BillingService/GetRevenueStats"
+	BillingService_GetStatement_FullMethodName                  = "/billing.billing.v1.BillingService/GetStatement"
+	BillingService_GetUserBalance_FullMethodName                = "/billing.billing.v1.BillingService/GetUserBalance"
+	BillingService_ListSpending_FullMethodName                  = "/billing.billing.v1.BillingService/ListSpending"
+	BillingService_GetWalletBalance_FullMethodName              = "/billing.billing.v1.BillingService/GetWalletBalance"
+	BillingService_DebitWallet_FullMethodName                   = "/billing.billing.v1.BillingService/DebitWallet"
+	BillingService_CreditWallet_FullMethodName                  = "/billing.billing.v1.BillingService/CreditWallet"
+	BillingService_CreditOrgBalance_FullMethodName              = "/billing.billing.v1.BillingService/CreditOrgBalance"
+	BillingService_CreditInsuranceOrder_FullMethodName          = "/billing.billing.v1.BillingService/CreditInsuranceOrder"
+	BillingService_GetInsuranceOrderCreditStatus_FullMethodName = "/billing.billing.v1.BillingService/GetInsuranceOrderCreditStatus"
+	BillingService_InitiateOrgCardBinding_FullMethodName        = "/billing.billing.v1.BillingService/InitiateOrgCardBinding"
+	BillingService_ConfirmOrgCardBinding_FullMethodName         = "/billing.billing.v1.BillingService/ConfirmOrgCardBinding"
+	BillingService_ListOrgCards_FullMethodName                  = "/billing.billing.v1.BillingService/ListOrgCards"
+	BillingService_DeleteOrgCard_FullMethodName                 = "/billing.billing.v1.BillingService/DeleteOrgCard"
+	BillingService_DeclareEscrowWork_FullMethodName             = "/billing.billing.v1.BillingService/DeclareEscrowWork"
+	BillingService_ConfirmEscrowDelivery_FullMethodName         = "/billing.billing.v1.BillingService/ConfirmEscrowDelivery"
+	BillingService_AdminConfirmEscrowDelivery_FullMethodName    = "/billing.billing.v1.BillingService/AdminConfirmEscrowDelivery"
+	BillingService_OpenEscrowDispute_FullMethodName             = "/billing.billing.v1.BillingService/OpenEscrowDispute"
+	BillingService_ReleaseEscrowAdvance_FullMethodName          = "/billing.billing.v1.BillingService/ReleaseEscrowAdvance"
+	BillingService_SettleEscrowDispute_FullMethodName           = "/billing.billing.v1.BillingService/SettleEscrowDispute"
+	BillingService_GetEscrowDeal_FullMethodName                 = "/billing.billing.v1.BillingService/GetEscrowDeal"
+	BillingService_ListOrganizationEscrowDeals_FullMethodName   = "/billing.billing.v1.BillingService/ListOrganizationEscrowDeals"
+	BillingService_BindEscrowPerformer_FullMethodName           = "/billing.billing.v1.BillingService/BindEscrowPerformer"
 )
 
 // BillingServiceClient is the client API for BillingService service.
@@ -91,6 +93,11 @@ type BillingServiceClient interface {
 	// CreditOrgBalance credits an organization's available balance directly
 	// (insurance-order payout or manual adjustment). Idempotent on idempotency_key.
 	CreditOrgBalance(ctx context.Context, in *CreditOrgBalanceRequest, opts ...grpc.CallOption) (*CreditOrgBalanceResponse, error)
+	// CreditInsuranceOrder resolves organization and amount from the request/bid
+	// owners, then credits the durable billing ledger exactly once per request.
+	CreditInsuranceOrder(ctx context.Context, in *CreditInsuranceOrderRequest, opts ...grpc.CallOption) (*CreditInsuranceOrderResponse, error)
+	// GetInsuranceOrderCreditStatus returns billing-owned state for one request.
+	GetInsuranceOrderCreditStatus(ctx context.Context, in *GetInsuranceOrderCreditStatusRequest, opts ...grpc.CallOption) (*GetInsuranceOrderCreditStatusResponse, error)
 	// InitiateOrgCardBinding starts a card-binding flow and returns a redirect URL.
 	InitiateOrgCardBinding(ctx context.Context, in *InitiateOrgCardBindingRequest, opts ...grpc.CallOption) (*InitiateOrgCardBindingResponse, error)
 	// ConfirmOrgCardBinding finalizes a card binding after the provider callback.
@@ -299,6 +306,26 @@ func (c *billingServiceClient) CreditOrgBalance(ctx context.Context, in *CreditO
 	return out, nil
 }
 
+func (c *billingServiceClient) CreditInsuranceOrder(ctx context.Context, in *CreditInsuranceOrderRequest, opts ...grpc.CallOption) (*CreditInsuranceOrderResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreditInsuranceOrderResponse)
+	err := c.cc.Invoke(ctx, BillingService_CreditInsuranceOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingServiceClient) GetInsuranceOrderCreditStatus(ctx context.Context, in *GetInsuranceOrderCreditStatusRequest, opts ...grpc.CallOption) (*GetInsuranceOrderCreditStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInsuranceOrderCreditStatusResponse)
+	err := c.cc.Invoke(ctx, BillingService_GetInsuranceOrderCreditStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *billingServiceClient) InitiateOrgCardBinding(ctx context.Context, in *InitiateOrgCardBindingRequest, opts ...grpc.CallOption) (*InitiateOrgCardBindingResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(InitiateOrgCardBindingResponse)
@@ -471,6 +498,11 @@ type BillingServiceServer interface {
 	// CreditOrgBalance credits an organization's available balance directly
 	// (insurance-order payout or manual adjustment). Idempotent on idempotency_key.
 	CreditOrgBalance(context.Context, *CreditOrgBalanceRequest) (*CreditOrgBalanceResponse, error)
+	// CreditInsuranceOrder resolves organization and amount from the request/bid
+	// owners, then credits the durable billing ledger exactly once per request.
+	CreditInsuranceOrder(context.Context, *CreditInsuranceOrderRequest) (*CreditInsuranceOrderResponse, error)
+	// GetInsuranceOrderCreditStatus returns billing-owned state for one request.
+	GetInsuranceOrderCreditStatus(context.Context, *GetInsuranceOrderCreditStatusRequest) (*GetInsuranceOrderCreditStatusResponse, error)
 	// InitiateOrgCardBinding starts a card-binding flow and returns a redirect URL.
 	InitiateOrgCardBinding(context.Context, *InitiateOrgCardBindingRequest) (*InitiateOrgCardBindingResponse, error)
 	// ConfirmOrgCardBinding finalizes a card binding after the provider callback.
@@ -573,6 +605,12 @@ func (UnimplementedBillingServiceServer) CreditWallet(context.Context, *CreditWa
 }
 func (UnimplementedBillingServiceServer) CreditOrgBalance(context.Context, *CreditOrgBalanceRequest) (*CreditOrgBalanceResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreditOrgBalance not implemented")
+}
+func (UnimplementedBillingServiceServer) CreditInsuranceOrder(context.Context, *CreditInsuranceOrderRequest) (*CreditInsuranceOrderResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreditInsuranceOrder not implemented")
+}
+func (UnimplementedBillingServiceServer) GetInsuranceOrderCreditStatus(context.Context, *GetInsuranceOrderCreditStatusRequest) (*GetInsuranceOrderCreditStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetInsuranceOrderCreditStatus not implemented")
 }
 func (UnimplementedBillingServiceServer) InitiateOrgCardBinding(context.Context, *InitiateOrgCardBindingRequest) (*InitiateOrgCardBindingResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method InitiateOrgCardBinding not implemented")
@@ -904,6 +942,42 @@ func _BillingService_CreditOrgBalance_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BillingService_CreditInsuranceOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreditInsuranceOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).CreditInsuranceOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_CreditInsuranceOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).CreditInsuranceOrder(ctx, req.(*CreditInsuranceOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingService_GetInsuranceOrderCreditStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInsuranceOrderCreditStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingServiceServer).GetInsuranceOrderCreditStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BillingService_GetInsuranceOrderCreditStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingServiceServer).GetInsuranceOrderCreditStatus(ctx, req.(*GetInsuranceOrderCreditStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BillingService_InitiateOrgCardBinding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(InitiateOrgCardBindingRequest)
 	if err := dec(in); err != nil {
@@ -1204,6 +1278,14 @@ var BillingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreditOrgBalance",
 			Handler:    _BillingService_CreditOrgBalance_Handler,
+		},
+		{
+			MethodName: "CreditInsuranceOrder",
+			Handler:    _BillingService_CreditInsuranceOrder_Handler,
+		},
+		{
+			MethodName: "GetInsuranceOrderCreditStatus",
+			Handler:    _BillingService_GetInsuranceOrderCreditStatus_Handler,
 		},
 		{
 			MethodName: "InitiateOrgCardBinding",

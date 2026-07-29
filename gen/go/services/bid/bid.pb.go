@@ -1020,6 +1020,126 @@ func (x *HasAcceptedBidForOrganizationResponse) GetAccepted() bool {
 	return false
 }
 
+type GetAcceptedInsuranceBidForPayoutRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAcceptedInsuranceBidForPayoutRequest) Reset() {
+	*x = GetAcceptedInsuranceBidForPayoutRequest{}
+	mi := &file_services_bid_bid_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAcceptedInsuranceBidForPayoutRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAcceptedInsuranceBidForPayoutRequest) ProtoMessage() {}
+
+func (x *GetAcceptedInsuranceBidForPayoutRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_bid_bid_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAcceptedInsuranceBidForPayoutRequest.ProtoReflect.Descriptor instead.
+func (*GetAcceptedInsuranceBidForPayoutRequest) Descriptor() ([]byte, []int) {
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *GetAcceptedInsuranceBidForPayoutRequest) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+type GetAcceptedInsuranceBidForPayoutResponse struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	BidId          int64                  `protobuf:"varint,1,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
+	RequestId      string                 `protobuf:"bytes,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	OrganizationId string                 `protobuf:"bytes,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	PriceMinor     int64                  `protobuf:"varint,4,opt,name=price_minor,json=priceMinor,proto3" json:"price_minor,omitempty"`
+	Currency       string                 `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *GetAcceptedInsuranceBidForPayoutResponse) Reset() {
+	*x = GetAcceptedInsuranceBidForPayoutResponse{}
+	mi := &file_services_bid_bid_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAcceptedInsuranceBidForPayoutResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAcceptedInsuranceBidForPayoutResponse) ProtoMessage() {}
+
+func (x *GetAcceptedInsuranceBidForPayoutResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_bid_bid_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAcceptedInsuranceBidForPayoutResponse.ProtoReflect.Descriptor instead.
+func (*GetAcceptedInsuranceBidForPayoutResponse) Descriptor() ([]byte, []int) {
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *GetAcceptedInsuranceBidForPayoutResponse) GetBidId() int64 {
+	if x != nil {
+		return x.BidId
+	}
+	return 0
+}
+
+func (x *GetAcceptedInsuranceBidForPayoutResponse) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *GetAcceptedInsuranceBidForPayoutResponse) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *GetAcceptedInsuranceBidForPayoutResponse) GetPriceMinor() int64 {
+	if x != nil {
+		return x.PriceMinor
+	}
+	return 0
+}
+
+func (x *GetAcceptedInsuranceBidForPayoutResponse) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
 // UpdateBid
 type UpdateBidRequest struct {
 	state          protoimpl.MessageState  `protogen:"open.v1"`
@@ -1037,7 +1157,7 @@ type UpdateBidRequest struct {
 
 func (x *UpdateBidRequest) Reset() {
 	*x = UpdateBidRequest{}
-	mi := &file_services_bid_bid_proto_msgTypes[13]
+	mi := &file_services_bid_bid_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1049,7 +1169,7 @@ func (x *UpdateBidRequest) String() string {
 func (*UpdateBidRequest) ProtoMessage() {}
 
 func (x *UpdateBidRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[13]
+	mi := &file_services_bid_bid_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1062,7 +1182,7 @@ func (x *UpdateBidRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateBidRequest.ProtoReflect.Descriptor instead.
 func (*UpdateBidRequest) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{13}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *UpdateBidRequest) GetBidId() int64 {
@@ -1130,7 +1250,7 @@ type UpdateBidResponse struct {
 
 func (x *UpdateBidResponse) Reset() {
 	*x = UpdateBidResponse{}
-	mi := &file_services_bid_bid_proto_msgTypes[14]
+	mi := &file_services_bid_bid_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1142,7 +1262,7 @@ func (x *UpdateBidResponse) String() string {
 func (*UpdateBidResponse) ProtoMessage() {}
 
 func (x *UpdateBidResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[14]
+	mi := &file_services_bid_bid_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1155,7 +1275,7 @@ func (x *UpdateBidResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateBidResponse.ProtoReflect.Descriptor instead.
 func (*UpdateBidResponse) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{14}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *UpdateBidResponse) GetBid() *Bid {
@@ -1176,7 +1296,7 @@ type DeleteBidRequest struct {
 
 func (x *DeleteBidRequest) Reset() {
 	*x = DeleteBidRequest{}
-	mi := &file_services_bid_bid_proto_msgTypes[15]
+	mi := &file_services_bid_bid_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1188,7 +1308,7 @@ func (x *DeleteBidRequest) String() string {
 func (*DeleteBidRequest) ProtoMessage() {}
 
 func (x *DeleteBidRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[15]
+	mi := &file_services_bid_bid_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1201,7 +1321,7 @@ func (x *DeleteBidRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBidRequest.ProtoReflect.Descriptor instead.
 func (*DeleteBidRequest) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{15}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *DeleteBidRequest) GetBidId() int64 {
@@ -1227,7 +1347,7 @@ type DeleteBidResponse struct {
 
 func (x *DeleteBidResponse) Reset() {
 	*x = DeleteBidResponse{}
-	mi := &file_services_bid_bid_proto_msgTypes[16]
+	mi := &file_services_bid_bid_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1239,7 +1359,7 @@ func (x *DeleteBidResponse) String() string {
 func (*DeleteBidResponse) ProtoMessage() {}
 
 func (x *DeleteBidResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[16]
+	mi := &file_services_bid_bid_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1252,7 +1372,7 @@ func (x *DeleteBidResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBidResponse.ProtoReflect.Descriptor instead.
 func (*DeleteBidResponse) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{16}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *DeleteBidResponse) GetSuccess() bool {
@@ -1277,7 +1397,7 @@ type ListBidsRequest struct {
 
 func (x *ListBidsRequest) Reset() {
 	*x = ListBidsRequest{}
-	mi := &file_services_bid_bid_proto_msgTypes[17]
+	mi := &file_services_bid_bid_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1289,7 +1409,7 @@ func (x *ListBidsRequest) String() string {
 func (*ListBidsRequest) ProtoMessage() {}
 
 func (x *ListBidsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[17]
+	mi := &file_services_bid_bid_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1302,7 +1422,7 @@ func (x *ListBidsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBidsRequest.ProtoReflect.Descriptor instead.
 func (*ListBidsRequest) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{17}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ListBidsRequest) GetType() BidType {
@@ -1357,7 +1477,7 @@ type ListBidsResponse struct {
 
 func (x *ListBidsResponse) Reset() {
 	*x = ListBidsResponse{}
-	mi := &file_services_bid_bid_proto_msgTypes[18]
+	mi := &file_services_bid_bid_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1369,7 +1489,7 @@ func (x *ListBidsResponse) String() string {
 func (*ListBidsResponse) ProtoMessage() {}
 
 func (x *ListBidsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[18]
+	mi := &file_services_bid_bid_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1382,7 +1502,7 @@ func (x *ListBidsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBidsResponse.ProtoReflect.Descriptor instead.
 func (*ListBidsResponse) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{18}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ListBidsResponse) GetBids() []*Bid {
@@ -1412,7 +1532,7 @@ type GetBidsByRequestRequest struct {
 
 func (x *GetBidsByRequestRequest) Reset() {
 	*x = GetBidsByRequestRequest{}
-	mi := &file_services_bid_bid_proto_msgTypes[19]
+	mi := &file_services_bid_bid_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1424,7 +1544,7 @@ func (x *GetBidsByRequestRequest) String() string {
 func (*GetBidsByRequestRequest) ProtoMessage() {}
 
 func (x *GetBidsByRequestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[19]
+	mi := &file_services_bid_bid_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1437,7 +1557,7 @@ func (x *GetBidsByRequestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBidsByRequestRequest.ProtoReflect.Descriptor instead.
 func (*GetBidsByRequestRequest) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{19}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetBidsByRequestRequest) GetRequestId() string {
@@ -1478,7 +1598,7 @@ type GetBidsByRequestResponse struct {
 
 func (x *GetBidsByRequestResponse) Reset() {
 	*x = GetBidsByRequestResponse{}
-	mi := &file_services_bid_bid_proto_msgTypes[20]
+	mi := &file_services_bid_bid_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1490,7 +1610,7 @@ func (x *GetBidsByRequestResponse) String() string {
 func (*GetBidsByRequestResponse) ProtoMessage() {}
 
 func (x *GetBidsByRequestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[20]
+	mi := &file_services_bid_bid_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1503,7 +1623,7 @@ func (x *GetBidsByRequestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBidsByRequestResponse.ProtoReflect.Descriptor instead.
 func (*GetBidsByRequestResponse) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{20}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *GetBidsByRequestResponse) GetBids() []*Bid {
@@ -1533,7 +1653,7 @@ type GetBidsByOrganizationRequest struct {
 
 func (x *GetBidsByOrganizationRequest) Reset() {
 	*x = GetBidsByOrganizationRequest{}
-	mi := &file_services_bid_bid_proto_msgTypes[21]
+	mi := &file_services_bid_bid_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1545,7 +1665,7 @@ func (x *GetBidsByOrganizationRequest) String() string {
 func (*GetBidsByOrganizationRequest) ProtoMessage() {}
 
 func (x *GetBidsByOrganizationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[21]
+	mi := &file_services_bid_bid_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1558,7 +1678,7 @@ func (x *GetBidsByOrganizationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBidsByOrganizationRequest.ProtoReflect.Descriptor instead.
 func (*GetBidsByOrganizationRequest) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{21}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *GetBidsByOrganizationRequest) GetOrganizationId() string {
@@ -1599,7 +1719,7 @@ type GetBidsByOrganizationResponse struct {
 
 func (x *GetBidsByOrganizationResponse) Reset() {
 	*x = GetBidsByOrganizationResponse{}
-	mi := &file_services_bid_bid_proto_msgTypes[22]
+	mi := &file_services_bid_bid_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1611,7 +1731,7 @@ func (x *GetBidsByOrganizationResponse) String() string {
 func (*GetBidsByOrganizationResponse) ProtoMessage() {}
 
 func (x *GetBidsByOrganizationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[22]
+	mi := &file_services_bid_bid_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1624,7 +1744,7 @@ func (x *GetBidsByOrganizationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBidsByOrganizationResponse.ProtoReflect.Descriptor instead.
 func (*GetBidsByOrganizationResponse) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{22}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *GetBidsByOrganizationResponse) GetBids() []*Bid {
@@ -1652,7 +1772,7 @@ type AcceptBidRequest struct {
 
 func (x *AcceptBidRequest) Reset() {
 	*x = AcceptBidRequest{}
-	mi := &file_services_bid_bid_proto_msgTypes[23]
+	mi := &file_services_bid_bid_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1664,7 +1784,7 @@ func (x *AcceptBidRequest) String() string {
 func (*AcceptBidRequest) ProtoMessage() {}
 
 func (x *AcceptBidRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[23]
+	mi := &file_services_bid_bid_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1677,7 +1797,7 @@ func (x *AcceptBidRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AcceptBidRequest.ProtoReflect.Descriptor instead.
 func (*AcceptBidRequest) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{23}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *AcceptBidRequest) GetBidId() int64 {
@@ -1703,7 +1823,7 @@ type AcceptBidResponse struct {
 
 func (x *AcceptBidResponse) Reset() {
 	*x = AcceptBidResponse{}
-	mi := &file_services_bid_bid_proto_msgTypes[24]
+	mi := &file_services_bid_bid_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1715,7 +1835,7 @@ func (x *AcceptBidResponse) String() string {
 func (*AcceptBidResponse) ProtoMessage() {}
 
 func (x *AcceptBidResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[24]
+	mi := &file_services_bid_bid_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1728,7 +1848,7 @@ func (x *AcceptBidResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AcceptBidResponse.ProtoReflect.Descriptor instead.
 func (*AcceptBidResponse) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{24}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *AcceptBidResponse) GetBid() *Bid {
@@ -1749,7 +1869,7 @@ type RejectBidRequest struct {
 
 func (x *RejectBidRequest) Reset() {
 	*x = RejectBidRequest{}
-	mi := &file_services_bid_bid_proto_msgTypes[25]
+	mi := &file_services_bid_bid_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1761,7 +1881,7 @@ func (x *RejectBidRequest) String() string {
 func (*RejectBidRequest) ProtoMessage() {}
 
 func (x *RejectBidRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[25]
+	mi := &file_services_bid_bid_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1774,7 +1894,7 @@ func (x *RejectBidRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RejectBidRequest.ProtoReflect.Descriptor instead.
 func (*RejectBidRequest) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{25}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *RejectBidRequest) GetBidId() int64 {
@@ -1800,7 +1920,7 @@ type RejectBidResponse struct {
 
 func (x *RejectBidResponse) Reset() {
 	*x = RejectBidResponse{}
-	mi := &file_services_bid_bid_proto_msgTypes[26]
+	mi := &file_services_bid_bid_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1812,7 +1932,7 @@ func (x *RejectBidResponse) String() string {
 func (*RejectBidResponse) ProtoMessage() {}
 
 func (x *RejectBidResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[26]
+	mi := &file_services_bid_bid_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1825,7 +1945,7 @@ func (x *RejectBidResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RejectBidResponse.ProtoReflect.Descriptor instead.
 func (*RejectBidResponse) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{26}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *RejectBidResponse) GetBid() *Bid {
@@ -1846,7 +1966,7 @@ type CancelBidRequest struct {
 
 func (x *CancelBidRequest) Reset() {
 	*x = CancelBidRequest{}
-	mi := &file_services_bid_bid_proto_msgTypes[27]
+	mi := &file_services_bid_bid_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1858,7 +1978,7 @@ func (x *CancelBidRequest) String() string {
 func (*CancelBidRequest) ProtoMessage() {}
 
 func (x *CancelBidRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[27]
+	mi := &file_services_bid_bid_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1871,7 +1991,7 @@ func (x *CancelBidRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelBidRequest.ProtoReflect.Descriptor instead.
 func (*CancelBidRequest) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{27}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *CancelBidRequest) GetBidId() int64 {
@@ -1897,7 +2017,7 @@ type CancelBidResponse struct {
 
 func (x *CancelBidResponse) Reset() {
 	*x = CancelBidResponse{}
-	mi := &file_services_bid_bid_proto_msgTypes[28]
+	mi := &file_services_bid_bid_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1909,7 +2029,7 @@ func (x *CancelBidResponse) String() string {
 func (*CancelBidResponse) ProtoMessage() {}
 
 func (x *CancelBidResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[28]
+	mi := &file_services_bid_bid_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1922,7 +2042,7 @@ func (x *CancelBidResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelBidResponse.ProtoReflect.Descriptor instead.
 func (*CancelBidResponse) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{28}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *CancelBidResponse) GetBid() *Bid {
@@ -1943,7 +2063,7 @@ type BidPartPriceQuery struct {
 
 func (x *BidPartPriceQuery) Reset() {
 	*x = BidPartPriceQuery{}
-	mi := &file_services_bid_bid_proto_msgTypes[29]
+	mi := &file_services_bid_bid_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1955,7 +2075,7 @@ func (x *BidPartPriceQuery) String() string {
 func (*BidPartPriceQuery) ProtoMessage() {}
 
 func (x *BidPartPriceQuery) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[29]
+	mi := &file_services_bid_bid_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1968,7 +2088,7 @@ func (x *BidPartPriceQuery) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BidPartPriceQuery.ProtoReflect.Descriptor instead.
 func (*BidPartPriceQuery) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{29}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *BidPartPriceQuery) GetBidId() int64 {
@@ -2010,7 +2130,7 @@ type BidPartPriceResult struct {
 
 func (x *BidPartPriceResult) Reset() {
 	*x = BidPartPriceResult{}
-	mi := &file_services_bid_bid_proto_msgTypes[30]
+	mi := &file_services_bid_bid_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2022,7 +2142,7 @@ func (x *BidPartPriceResult) String() string {
 func (*BidPartPriceResult) ProtoMessage() {}
 
 func (x *BidPartPriceResult) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[30]
+	mi := &file_services_bid_bid_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2035,7 +2155,7 @@ func (x *BidPartPriceResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BidPartPriceResult.ProtoReflect.Descriptor instead.
 func (*BidPartPriceResult) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{30}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *BidPartPriceResult) GetBidId() int64 {
@@ -2096,7 +2216,7 @@ type GetBidPartPricesRequest struct {
 
 func (x *GetBidPartPricesRequest) Reset() {
 	*x = GetBidPartPricesRequest{}
-	mi := &file_services_bid_bid_proto_msgTypes[31]
+	mi := &file_services_bid_bid_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2108,7 +2228,7 @@ func (x *GetBidPartPricesRequest) String() string {
 func (*GetBidPartPricesRequest) ProtoMessage() {}
 
 func (x *GetBidPartPricesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[31]
+	mi := &file_services_bid_bid_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2121,7 +2241,7 @@ func (x *GetBidPartPricesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBidPartPricesRequest.ProtoReflect.Descriptor instead.
 func (*GetBidPartPricesRequest) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{31}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *GetBidPartPricesRequest) GetItems() []*BidPartPriceQuery {
@@ -2140,7 +2260,7 @@ type GetBidPartPricesResponse struct {
 
 func (x *GetBidPartPricesResponse) Reset() {
 	*x = GetBidPartPricesResponse{}
-	mi := &file_services_bid_bid_proto_msgTypes[32]
+	mi := &file_services_bid_bid_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2152,7 +2272,7 @@ func (x *GetBidPartPricesResponse) String() string {
 func (*GetBidPartPricesResponse) ProtoMessage() {}
 
 func (x *GetBidPartPricesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[32]
+	mi := &file_services_bid_bid_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2165,7 +2285,7 @@ func (x *GetBidPartPricesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBidPartPricesResponse.ProtoReflect.Descriptor instead.
 func (*GetBidPartPricesResponse) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{32}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *GetBidPartPricesResponse) GetResults() []*BidPartPriceResult {
@@ -2186,7 +2306,7 @@ type MarkPartsPurchasedRequest struct {
 
 func (x *MarkPartsPurchasedRequest) Reset() {
 	*x = MarkPartsPurchasedRequest{}
-	mi := &file_services_bid_bid_proto_msgTypes[33]
+	mi := &file_services_bid_bid_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2198,7 +2318,7 @@ func (x *MarkPartsPurchasedRequest) String() string {
 func (*MarkPartsPurchasedRequest) ProtoMessage() {}
 
 func (x *MarkPartsPurchasedRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[33]
+	mi := &file_services_bid_bid_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2211,7 +2331,7 @@ func (x *MarkPartsPurchasedRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkPartsPurchasedRequest.ProtoReflect.Descriptor instead.
 func (*MarkPartsPurchasedRequest) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{33}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *MarkPartsPurchasedRequest) GetBidId() int64 {
@@ -2236,7 +2356,7 @@ type MarkPartsPurchasedResponse struct {
 
 func (x *MarkPartsPurchasedResponse) Reset() {
 	*x = MarkPartsPurchasedResponse{}
-	mi := &file_services_bid_bid_proto_msgTypes[34]
+	mi := &file_services_bid_bid_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2248,7 +2368,7 @@ func (x *MarkPartsPurchasedResponse) String() string {
 func (*MarkPartsPurchasedResponse) ProtoMessage() {}
 
 func (x *MarkPartsPurchasedResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[34]
+	mi := &file_services_bid_bid_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2261,7 +2381,7 @@ func (x *MarkPartsPurchasedResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkPartsPurchasedResponse.ProtoReflect.Descriptor instead.
 func (*MarkPartsPurchasedResponse) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{34}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{36}
 }
 
 // MarkBidRead
@@ -2276,7 +2396,7 @@ type MarkBidReadRequest struct {
 
 func (x *MarkBidReadRequest) Reset() {
 	*x = MarkBidReadRequest{}
-	mi := &file_services_bid_bid_proto_msgTypes[35]
+	mi := &file_services_bid_bid_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2288,7 +2408,7 @@ func (x *MarkBidReadRequest) String() string {
 func (*MarkBidReadRequest) ProtoMessage() {}
 
 func (x *MarkBidReadRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[35]
+	mi := &file_services_bid_bid_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2301,7 +2421,7 @@ func (x *MarkBidReadRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkBidReadRequest.ProtoReflect.Descriptor instead.
 func (*MarkBidReadRequest) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{35}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *MarkBidReadRequest) GetBidId() int64 {
@@ -2335,7 +2455,7 @@ type MarkBidReadResponse struct {
 
 func (x *MarkBidReadResponse) Reset() {
 	*x = MarkBidReadResponse{}
-	mi := &file_services_bid_bid_proto_msgTypes[36]
+	mi := &file_services_bid_bid_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2347,7 +2467,7 @@ func (x *MarkBidReadResponse) String() string {
 func (*MarkBidReadResponse) ProtoMessage() {}
 
 func (x *MarkBidReadResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[36]
+	mi := &file_services_bid_bid_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2360,7 +2480,7 @@ func (x *MarkBidReadResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkBidReadResponse.ProtoReflect.Descriptor instead.
 func (*MarkBidReadResponse) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{36}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *MarkBidReadResponse) GetAlreadyRead() bool {
@@ -2384,7 +2504,7 @@ type RequestResponseSummary struct {
 
 func (x *RequestResponseSummary) Reset() {
 	*x = RequestResponseSummary{}
-	mi := &file_services_bid_bid_proto_msgTypes[37]
+	mi := &file_services_bid_bid_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2396,7 +2516,7 @@ func (x *RequestResponseSummary) String() string {
 func (*RequestResponseSummary) ProtoMessage() {}
 
 func (x *RequestResponseSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[37]
+	mi := &file_services_bid_bid_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2409,7 +2529,7 @@ func (x *RequestResponseSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestResponseSummary.ProtoReflect.Descriptor instead.
 func (*RequestResponseSummary) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{37}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *RequestResponseSummary) GetRequestId() string {
@@ -2452,7 +2572,7 @@ type GetRequestResponsesSummaryRequest struct {
 
 func (x *GetRequestResponsesSummaryRequest) Reset() {
 	*x = GetRequestResponsesSummaryRequest{}
-	mi := &file_services_bid_bid_proto_msgTypes[38]
+	mi := &file_services_bid_bid_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2464,7 +2584,7 @@ func (x *GetRequestResponsesSummaryRequest) String() string {
 func (*GetRequestResponsesSummaryRequest) ProtoMessage() {}
 
 func (x *GetRequestResponsesSummaryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[38]
+	mi := &file_services_bid_bid_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2477,7 +2597,7 @@ func (x *GetRequestResponsesSummaryRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use GetRequestResponsesSummaryRequest.ProtoReflect.Descriptor instead.
 func (*GetRequestResponsesSummaryRequest) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{38}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *GetRequestResponsesSummaryRequest) GetRequestIds() []string {
@@ -2504,7 +2624,7 @@ type GetRequestResponsesSummaryResponse struct {
 
 func (x *GetRequestResponsesSummaryResponse) Reset() {
 	*x = GetRequestResponsesSummaryResponse{}
-	mi := &file_services_bid_bid_proto_msgTypes[39]
+	mi := &file_services_bid_bid_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2516,7 +2636,7 @@ func (x *GetRequestResponsesSummaryResponse) String() string {
 func (*GetRequestResponsesSummaryResponse) ProtoMessage() {}
 
 func (x *GetRequestResponsesSummaryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_bid_bid_proto_msgTypes[39]
+	mi := &file_services_bid_bid_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2529,7 +2649,7 @@ func (x *GetRequestResponsesSummaryResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use GetRequestResponsesSummaryResponse.ProtoReflect.Descriptor instead.
 func (*GetRequestResponsesSummaryResponse) Descriptor() ([]byte, []int) {
-	return file_services_bid_bid_proto_rawDescGZIP(), []int{39}
+	return file_services_bid_bid_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetRequestResponsesSummaryResponse) GetSummaries() []*RequestResponseSummary {
@@ -2623,7 +2743,18 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\"C\n" +
 	"%HasAcceptedBidForOrganizationResponse\x12\x1a\n" +
-	"\baccepted\x18\x01 \x01(\bR\baccepted\"\xcd\x02\n" +
+	"\baccepted\x18\x01 \x01(\bR\baccepted\"H\n" +
+	"'GetAcceptedInsuranceBidForPayoutRequest\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\tR\trequestId\"\xc6\x01\n" +
+	"(GetAcceptedInsuranceBidForPayoutResponse\x12\x15\n" +
+	"\x06bid_id\x18\x01 \x01(\x03R\x05bidId\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x02 \x01(\tR\trequestId\x12'\n" +
+	"\x0forganization_id\x18\x03 \x01(\tR\x0eorganizationId\x12\x1f\n" +
+	"\vprice_minor\x18\x04 \x01(\x03R\n" +
+	"priceMinor\x12\x1a\n" +
+	"\bcurrency\x18\x05 \x01(\tR\bcurrency\"\xcd\x02\n" +
 	"\x10UpdateBidRequest\x12\x15\n" +
 	"\x06bid_id\x18\x01 \x01(\x03R\x05bidId\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x19\n" +
@@ -2734,7 +2865,7 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\x12BID_STATUS_PENDING\x10\x01\x12\x17\n" +
 	"\x13BID_STATUS_ACCEPTED\x10\x02\x12\x17\n" +
 	"\x13BID_STATUS_REJECTED\x10\x03\x12\x18\n" +
-	"\x14BID_STATUS_CANCELLED\x10\x042\x98\r\n" +
+	"\x14BID_STATUS_CANCELLED\x10\x042\xb2\x0e\n" +
 	"\n" +
 	"BidService\x12R\n" +
 	"\tCreateBid\x12!.services.bid.v1.CreateBidRequest\x1a\".services.bid.v1.CreateBidResponse\x12I\n" +
@@ -2753,7 +2884,8 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\x1aGetRequestResponsesSummary\x122.services.bid.v1.GetRequestResponsesSummaryRequest\x1a3.services.bid.v1.GetRequestResponsesSummaryResponse\x12a\n" +
 	"\x0eGetBidForBuyer\x12&.services.bid.v1.GetBidForBuyerRequest\x1a'.services.bid.v1.GetBidForBuyerResponse\x12g\n" +
 	"\x10ListBidsForBuyer\x12(.services.bid.v1.ListBidsForBuyerRequest\x1a).services.bid.v1.ListBidsForBuyerResponse\x12\x8e\x01\n" +
-	"\x1dHasAcceptedBidForOrganization\x125.services.bid.v1.HasAcceptedBidForOrganizationRequest\x1a6.services.bid.v1.HasAcceptedBidForOrganizationResponseB5Z3github.com/4ubak/cg-proto/gen/go/services/bid;bidv1b\x06proto3"
+	"\x1dHasAcceptedBidForOrganization\x125.services.bid.v1.HasAcceptedBidForOrganizationRequest\x1a6.services.bid.v1.HasAcceptedBidForOrganizationResponse\x12\x97\x01\n" +
+	" GetAcceptedInsuranceBidForPayout\x128.services.bid.v1.GetAcceptedInsuranceBidForPayoutRequest\x1a9.services.bid.v1.GetAcceptedInsuranceBidForPayoutResponseB5Z3github.com/4ubak/cg-proto/gen/go/services/bid;bidv1b\x06proto3"
 
 var (
 	file_services_bid_bid_proto_rawDescOnce sync.Once
@@ -2768,58 +2900,60 @@ func file_services_bid_bid_proto_rawDescGZIP() []byte {
 }
 
 var file_services_bid_bid_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_services_bid_bid_proto_msgTypes = make([]protoimpl.MessageInfo, 40)
+var file_services_bid_bid_proto_msgTypes = make([]protoimpl.MessageInfo, 42)
 var file_services_bid_bid_proto_goTypes = []any{
-	(BidType)(0),                                  // 0: services.bid.v1.BidType
-	(BidStatus)(0),                                // 1: services.bid.v1.BidStatus
-	(*Bid)(nil),                                   // 2: services.bid.v1.Bid
-	(*BidPart)(nil),                               // 3: services.bid.v1.BidPart
-	(*CreateBidRequest)(nil),                      // 4: services.bid.v1.CreateBidRequest
-	(*CreateBidPartRequest)(nil),                  // 5: services.bid.v1.CreateBidPartRequest
-	(*CreateBidResponse)(nil),                     // 6: services.bid.v1.CreateBidResponse
-	(*GetBidRequest)(nil),                         // 7: services.bid.v1.GetBidRequest
-	(*GetBidResponse)(nil),                        // 8: services.bid.v1.GetBidResponse
-	(*GetBidForBuyerRequest)(nil),                 // 9: services.bid.v1.GetBidForBuyerRequest
-	(*GetBidForBuyerResponse)(nil),                // 10: services.bid.v1.GetBidForBuyerResponse
-	(*ListBidsForBuyerRequest)(nil),               // 11: services.bid.v1.ListBidsForBuyerRequest
-	(*ListBidsForBuyerResponse)(nil),              // 12: services.bid.v1.ListBidsForBuyerResponse
-	(*HasAcceptedBidForOrganizationRequest)(nil),  // 13: services.bid.v1.HasAcceptedBidForOrganizationRequest
-	(*HasAcceptedBidForOrganizationResponse)(nil), // 14: services.bid.v1.HasAcceptedBidForOrganizationResponse
-	(*UpdateBidRequest)(nil),                      // 15: services.bid.v1.UpdateBidRequest
-	(*UpdateBidResponse)(nil),                     // 16: services.bid.v1.UpdateBidResponse
-	(*DeleteBidRequest)(nil),                      // 17: services.bid.v1.DeleteBidRequest
-	(*DeleteBidResponse)(nil),                     // 18: services.bid.v1.DeleteBidResponse
-	(*ListBidsRequest)(nil),                       // 19: services.bid.v1.ListBidsRequest
-	(*ListBidsResponse)(nil),                      // 20: services.bid.v1.ListBidsResponse
-	(*GetBidsByRequestRequest)(nil),               // 21: services.bid.v1.GetBidsByRequestRequest
-	(*GetBidsByRequestResponse)(nil),              // 22: services.bid.v1.GetBidsByRequestResponse
-	(*GetBidsByOrganizationRequest)(nil),          // 23: services.bid.v1.GetBidsByOrganizationRequest
-	(*GetBidsByOrganizationResponse)(nil),         // 24: services.bid.v1.GetBidsByOrganizationResponse
-	(*AcceptBidRequest)(nil),                      // 25: services.bid.v1.AcceptBidRequest
-	(*AcceptBidResponse)(nil),                     // 26: services.bid.v1.AcceptBidResponse
-	(*RejectBidRequest)(nil),                      // 27: services.bid.v1.RejectBidRequest
-	(*RejectBidResponse)(nil),                     // 28: services.bid.v1.RejectBidResponse
-	(*CancelBidRequest)(nil),                      // 29: services.bid.v1.CancelBidRequest
-	(*CancelBidResponse)(nil),                     // 30: services.bid.v1.CancelBidResponse
-	(*BidPartPriceQuery)(nil),                     // 31: services.bid.v1.BidPartPriceQuery
-	(*BidPartPriceResult)(nil),                    // 32: services.bid.v1.BidPartPriceResult
-	(*GetBidPartPricesRequest)(nil),               // 33: services.bid.v1.GetBidPartPricesRequest
-	(*GetBidPartPricesResponse)(nil),              // 34: services.bid.v1.GetBidPartPricesResponse
-	(*MarkPartsPurchasedRequest)(nil),             // 35: services.bid.v1.MarkPartsPurchasedRequest
-	(*MarkPartsPurchasedResponse)(nil),            // 36: services.bid.v1.MarkPartsPurchasedResponse
-	(*MarkBidReadRequest)(nil),                    // 37: services.bid.v1.MarkBidReadRequest
-	(*MarkBidReadResponse)(nil),                   // 38: services.bid.v1.MarkBidReadResponse
-	(*RequestResponseSummary)(nil),                // 39: services.bid.v1.RequestResponseSummary
-	(*GetRequestResponsesSummaryRequest)(nil),     // 40: services.bid.v1.GetRequestResponsesSummaryRequest
-	(*GetRequestResponsesSummaryResponse)(nil),    // 41: services.bid.v1.GetRequestResponsesSummaryResponse
-	(*timestamppb.Timestamp)(nil),                 // 42: google.protobuf.Timestamp
+	(BidType)(0),                                     // 0: services.bid.v1.BidType
+	(BidStatus)(0),                                   // 1: services.bid.v1.BidStatus
+	(*Bid)(nil),                                      // 2: services.bid.v1.Bid
+	(*BidPart)(nil),                                  // 3: services.bid.v1.BidPart
+	(*CreateBidRequest)(nil),                         // 4: services.bid.v1.CreateBidRequest
+	(*CreateBidPartRequest)(nil),                     // 5: services.bid.v1.CreateBidPartRequest
+	(*CreateBidResponse)(nil),                        // 6: services.bid.v1.CreateBidResponse
+	(*GetBidRequest)(nil),                            // 7: services.bid.v1.GetBidRequest
+	(*GetBidResponse)(nil),                           // 8: services.bid.v1.GetBidResponse
+	(*GetBidForBuyerRequest)(nil),                    // 9: services.bid.v1.GetBidForBuyerRequest
+	(*GetBidForBuyerResponse)(nil),                   // 10: services.bid.v1.GetBidForBuyerResponse
+	(*ListBidsForBuyerRequest)(nil),                  // 11: services.bid.v1.ListBidsForBuyerRequest
+	(*ListBidsForBuyerResponse)(nil),                 // 12: services.bid.v1.ListBidsForBuyerResponse
+	(*HasAcceptedBidForOrganizationRequest)(nil),     // 13: services.bid.v1.HasAcceptedBidForOrganizationRequest
+	(*HasAcceptedBidForOrganizationResponse)(nil),    // 14: services.bid.v1.HasAcceptedBidForOrganizationResponse
+	(*GetAcceptedInsuranceBidForPayoutRequest)(nil),  // 15: services.bid.v1.GetAcceptedInsuranceBidForPayoutRequest
+	(*GetAcceptedInsuranceBidForPayoutResponse)(nil), // 16: services.bid.v1.GetAcceptedInsuranceBidForPayoutResponse
+	(*UpdateBidRequest)(nil),                         // 17: services.bid.v1.UpdateBidRequest
+	(*UpdateBidResponse)(nil),                        // 18: services.bid.v1.UpdateBidResponse
+	(*DeleteBidRequest)(nil),                         // 19: services.bid.v1.DeleteBidRequest
+	(*DeleteBidResponse)(nil),                        // 20: services.bid.v1.DeleteBidResponse
+	(*ListBidsRequest)(nil),                          // 21: services.bid.v1.ListBidsRequest
+	(*ListBidsResponse)(nil),                         // 22: services.bid.v1.ListBidsResponse
+	(*GetBidsByRequestRequest)(nil),                  // 23: services.bid.v1.GetBidsByRequestRequest
+	(*GetBidsByRequestResponse)(nil),                 // 24: services.bid.v1.GetBidsByRequestResponse
+	(*GetBidsByOrganizationRequest)(nil),             // 25: services.bid.v1.GetBidsByOrganizationRequest
+	(*GetBidsByOrganizationResponse)(nil),            // 26: services.bid.v1.GetBidsByOrganizationResponse
+	(*AcceptBidRequest)(nil),                         // 27: services.bid.v1.AcceptBidRequest
+	(*AcceptBidResponse)(nil),                        // 28: services.bid.v1.AcceptBidResponse
+	(*RejectBidRequest)(nil),                         // 29: services.bid.v1.RejectBidRequest
+	(*RejectBidResponse)(nil),                        // 30: services.bid.v1.RejectBidResponse
+	(*CancelBidRequest)(nil),                         // 31: services.bid.v1.CancelBidRequest
+	(*CancelBidResponse)(nil),                        // 32: services.bid.v1.CancelBidResponse
+	(*BidPartPriceQuery)(nil),                        // 33: services.bid.v1.BidPartPriceQuery
+	(*BidPartPriceResult)(nil),                       // 34: services.bid.v1.BidPartPriceResult
+	(*GetBidPartPricesRequest)(nil),                  // 35: services.bid.v1.GetBidPartPricesRequest
+	(*GetBidPartPricesResponse)(nil),                 // 36: services.bid.v1.GetBidPartPricesResponse
+	(*MarkPartsPurchasedRequest)(nil),                // 37: services.bid.v1.MarkPartsPurchasedRequest
+	(*MarkPartsPurchasedResponse)(nil),               // 38: services.bid.v1.MarkPartsPurchasedResponse
+	(*MarkBidReadRequest)(nil),                       // 39: services.bid.v1.MarkBidReadRequest
+	(*MarkBidReadResponse)(nil),                      // 40: services.bid.v1.MarkBidReadResponse
+	(*RequestResponseSummary)(nil),                   // 41: services.bid.v1.RequestResponseSummary
+	(*GetRequestResponsesSummaryRequest)(nil),        // 42: services.bid.v1.GetRequestResponsesSummaryRequest
+	(*GetRequestResponsesSummaryResponse)(nil),       // 43: services.bid.v1.GetRequestResponsesSummaryResponse
+	(*timestamppb.Timestamp)(nil),                    // 44: google.protobuf.Timestamp
 }
 var file_services_bid_bid_proto_depIdxs = []int32{
 	0,  // 0: services.bid.v1.Bid.type:type_name -> services.bid.v1.BidType
 	1,  // 1: services.bid.v1.Bid.status:type_name -> services.bid.v1.BidStatus
 	3,  // 2: services.bid.v1.Bid.parts:type_name -> services.bid.v1.BidPart
-	42, // 3: services.bid.v1.Bid.created_at:type_name -> google.protobuf.Timestamp
-	42, // 4: services.bid.v1.Bid.updated_at:type_name -> google.protobuf.Timestamp
+	44, // 3: services.bid.v1.Bid.created_at:type_name -> google.protobuf.Timestamp
+	44, // 4: services.bid.v1.Bid.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 5: services.bid.v1.CreateBidRequest.type:type_name -> services.bid.v1.BidType
 	5,  // 6: services.bid.v1.CreateBidRequest.parts:type_name -> services.bid.v1.CreateBidPartRequest
 	2,  // 7: services.bid.v1.CreateBidResponse.bid:type_name -> services.bid.v1.Bid
@@ -2838,45 +2972,47 @@ var file_services_bid_bid_proto_depIdxs = []int32{
 	2,  // 20: services.bid.v1.AcceptBidResponse.bid:type_name -> services.bid.v1.Bid
 	2,  // 21: services.bid.v1.RejectBidResponse.bid:type_name -> services.bid.v1.Bid
 	2,  // 22: services.bid.v1.CancelBidResponse.bid:type_name -> services.bid.v1.Bid
-	31, // 23: services.bid.v1.GetBidPartPricesRequest.items:type_name -> services.bid.v1.BidPartPriceQuery
-	32, // 24: services.bid.v1.GetBidPartPricesResponse.results:type_name -> services.bid.v1.BidPartPriceResult
-	39, // 25: services.bid.v1.GetRequestResponsesSummaryResponse.summaries:type_name -> services.bid.v1.RequestResponseSummary
+	33, // 23: services.bid.v1.GetBidPartPricesRequest.items:type_name -> services.bid.v1.BidPartPriceQuery
+	34, // 24: services.bid.v1.GetBidPartPricesResponse.results:type_name -> services.bid.v1.BidPartPriceResult
+	41, // 25: services.bid.v1.GetRequestResponsesSummaryResponse.summaries:type_name -> services.bid.v1.RequestResponseSummary
 	4,  // 26: services.bid.v1.BidService.CreateBid:input_type -> services.bid.v1.CreateBidRequest
 	7,  // 27: services.bid.v1.BidService.GetBid:input_type -> services.bid.v1.GetBidRequest
-	15, // 28: services.bid.v1.BidService.UpdateBid:input_type -> services.bid.v1.UpdateBidRequest
-	17, // 29: services.bid.v1.BidService.DeleteBid:input_type -> services.bid.v1.DeleteBidRequest
-	19, // 30: services.bid.v1.BidService.ListBids:input_type -> services.bid.v1.ListBidsRequest
-	21, // 31: services.bid.v1.BidService.GetBidsByRequest:input_type -> services.bid.v1.GetBidsByRequestRequest
-	23, // 32: services.bid.v1.BidService.GetBidsByOrganization:input_type -> services.bid.v1.GetBidsByOrganizationRequest
-	25, // 33: services.bid.v1.BidService.AcceptBid:input_type -> services.bid.v1.AcceptBidRequest
-	27, // 34: services.bid.v1.BidService.RejectBid:input_type -> services.bid.v1.RejectBidRequest
-	29, // 35: services.bid.v1.BidService.CancelBid:input_type -> services.bid.v1.CancelBidRequest
-	35, // 36: services.bid.v1.BidService.MarkPartsPurchased:input_type -> services.bid.v1.MarkPartsPurchasedRequest
-	33, // 37: services.bid.v1.BidService.GetBidPartPrices:input_type -> services.bid.v1.GetBidPartPricesRequest
-	37, // 38: services.bid.v1.BidService.MarkBidRead:input_type -> services.bid.v1.MarkBidReadRequest
-	40, // 39: services.bid.v1.BidService.GetRequestResponsesSummary:input_type -> services.bid.v1.GetRequestResponsesSummaryRequest
+	17, // 28: services.bid.v1.BidService.UpdateBid:input_type -> services.bid.v1.UpdateBidRequest
+	19, // 29: services.bid.v1.BidService.DeleteBid:input_type -> services.bid.v1.DeleteBidRequest
+	21, // 30: services.bid.v1.BidService.ListBids:input_type -> services.bid.v1.ListBidsRequest
+	23, // 31: services.bid.v1.BidService.GetBidsByRequest:input_type -> services.bid.v1.GetBidsByRequestRequest
+	25, // 32: services.bid.v1.BidService.GetBidsByOrganization:input_type -> services.bid.v1.GetBidsByOrganizationRequest
+	27, // 33: services.bid.v1.BidService.AcceptBid:input_type -> services.bid.v1.AcceptBidRequest
+	29, // 34: services.bid.v1.BidService.RejectBid:input_type -> services.bid.v1.RejectBidRequest
+	31, // 35: services.bid.v1.BidService.CancelBid:input_type -> services.bid.v1.CancelBidRequest
+	37, // 36: services.bid.v1.BidService.MarkPartsPurchased:input_type -> services.bid.v1.MarkPartsPurchasedRequest
+	35, // 37: services.bid.v1.BidService.GetBidPartPrices:input_type -> services.bid.v1.GetBidPartPricesRequest
+	39, // 38: services.bid.v1.BidService.MarkBidRead:input_type -> services.bid.v1.MarkBidReadRequest
+	42, // 39: services.bid.v1.BidService.GetRequestResponsesSummary:input_type -> services.bid.v1.GetRequestResponsesSummaryRequest
 	9,  // 40: services.bid.v1.BidService.GetBidForBuyer:input_type -> services.bid.v1.GetBidForBuyerRequest
 	11, // 41: services.bid.v1.BidService.ListBidsForBuyer:input_type -> services.bid.v1.ListBidsForBuyerRequest
 	13, // 42: services.bid.v1.BidService.HasAcceptedBidForOrganization:input_type -> services.bid.v1.HasAcceptedBidForOrganizationRequest
-	6,  // 43: services.bid.v1.BidService.CreateBid:output_type -> services.bid.v1.CreateBidResponse
-	8,  // 44: services.bid.v1.BidService.GetBid:output_type -> services.bid.v1.GetBidResponse
-	16, // 45: services.bid.v1.BidService.UpdateBid:output_type -> services.bid.v1.UpdateBidResponse
-	18, // 46: services.bid.v1.BidService.DeleteBid:output_type -> services.bid.v1.DeleteBidResponse
-	20, // 47: services.bid.v1.BidService.ListBids:output_type -> services.bid.v1.ListBidsResponse
-	22, // 48: services.bid.v1.BidService.GetBidsByRequest:output_type -> services.bid.v1.GetBidsByRequestResponse
-	24, // 49: services.bid.v1.BidService.GetBidsByOrganization:output_type -> services.bid.v1.GetBidsByOrganizationResponse
-	26, // 50: services.bid.v1.BidService.AcceptBid:output_type -> services.bid.v1.AcceptBidResponse
-	28, // 51: services.bid.v1.BidService.RejectBid:output_type -> services.bid.v1.RejectBidResponse
-	30, // 52: services.bid.v1.BidService.CancelBid:output_type -> services.bid.v1.CancelBidResponse
-	36, // 53: services.bid.v1.BidService.MarkPartsPurchased:output_type -> services.bid.v1.MarkPartsPurchasedResponse
-	34, // 54: services.bid.v1.BidService.GetBidPartPrices:output_type -> services.bid.v1.GetBidPartPricesResponse
-	38, // 55: services.bid.v1.BidService.MarkBidRead:output_type -> services.bid.v1.MarkBidReadResponse
-	41, // 56: services.bid.v1.BidService.GetRequestResponsesSummary:output_type -> services.bid.v1.GetRequestResponsesSummaryResponse
-	10, // 57: services.bid.v1.BidService.GetBidForBuyer:output_type -> services.bid.v1.GetBidForBuyerResponse
-	12, // 58: services.bid.v1.BidService.ListBidsForBuyer:output_type -> services.bid.v1.ListBidsForBuyerResponse
-	14, // 59: services.bid.v1.BidService.HasAcceptedBidForOrganization:output_type -> services.bid.v1.HasAcceptedBidForOrganizationResponse
-	43, // [43:60] is the sub-list for method output_type
-	26, // [26:43] is the sub-list for method input_type
+	15, // 43: services.bid.v1.BidService.GetAcceptedInsuranceBidForPayout:input_type -> services.bid.v1.GetAcceptedInsuranceBidForPayoutRequest
+	6,  // 44: services.bid.v1.BidService.CreateBid:output_type -> services.bid.v1.CreateBidResponse
+	8,  // 45: services.bid.v1.BidService.GetBid:output_type -> services.bid.v1.GetBidResponse
+	18, // 46: services.bid.v1.BidService.UpdateBid:output_type -> services.bid.v1.UpdateBidResponse
+	20, // 47: services.bid.v1.BidService.DeleteBid:output_type -> services.bid.v1.DeleteBidResponse
+	22, // 48: services.bid.v1.BidService.ListBids:output_type -> services.bid.v1.ListBidsResponse
+	24, // 49: services.bid.v1.BidService.GetBidsByRequest:output_type -> services.bid.v1.GetBidsByRequestResponse
+	26, // 50: services.bid.v1.BidService.GetBidsByOrganization:output_type -> services.bid.v1.GetBidsByOrganizationResponse
+	28, // 51: services.bid.v1.BidService.AcceptBid:output_type -> services.bid.v1.AcceptBidResponse
+	30, // 52: services.bid.v1.BidService.RejectBid:output_type -> services.bid.v1.RejectBidResponse
+	32, // 53: services.bid.v1.BidService.CancelBid:output_type -> services.bid.v1.CancelBidResponse
+	38, // 54: services.bid.v1.BidService.MarkPartsPurchased:output_type -> services.bid.v1.MarkPartsPurchasedResponse
+	36, // 55: services.bid.v1.BidService.GetBidPartPrices:output_type -> services.bid.v1.GetBidPartPricesResponse
+	40, // 56: services.bid.v1.BidService.MarkBidRead:output_type -> services.bid.v1.MarkBidReadResponse
+	43, // 57: services.bid.v1.BidService.GetRequestResponsesSummary:output_type -> services.bid.v1.GetRequestResponsesSummaryResponse
+	10, // 58: services.bid.v1.BidService.GetBidForBuyer:output_type -> services.bid.v1.GetBidForBuyerResponse
+	12, // 59: services.bid.v1.BidService.ListBidsForBuyer:output_type -> services.bid.v1.ListBidsForBuyerResponse
+	14, // 60: services.bid.v1.BidService.HasAcceptedBidForOrganization:output_type -> services.bid.v1.HasAcceptedBidForOrganizationResponse
+	16, // 61: services.bid.v1.BidService.GetAcceptedInsuranceBidForPayout:output_type -> services.bid.v1.GetAcceptedInsuranceBidForPayoutResponse
+	44, // [44:62] is the sub-list for method output_type
+	26, // [26:44] is the sub-list for method input_type
 	26, // [26:26] is the sub-list for extension type_name
 	26, // [26:26] is the sub-list for extension extendee
 	0,  // [0:26] is the sub-list for field type_name
@@ -2889,14 +3025,14 @@ func file_services_bid_bid_proto_init() {
 	}
 	file_services_bid_bid_proto_msgTypes[0].OneofWrappers = []any{}
 	file_services_bid_bid_proto_msgTypes[2].OneofWrappers = []any{}
-	file_services_bid_bid_proto_msgTypes[13].OneofWrappers = []any{}
+	file_services_bid_bid_proto_msgTypes[15].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_bid_bid_proto_rawDesc), len(file_services_bid_bid_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   40,
+			NumMessages:   42,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
