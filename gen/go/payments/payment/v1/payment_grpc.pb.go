@@ -31,6 +31,8 @@ const (
 	PaymentService_ListAvailablePaymentMethods_FullMethodName = "/payments.payment.v1.PaymentService/ListAvailablePaymentMethods"
 	PaymentService_InitPayment_FullMethodName                 = "/payments.payment.v1.PaymentService/InitPayment"
 	PaymentService_StartPayment_FullMethodName                = "/payments.payment.v1.PaymentService/StartPayment"
+	PaymentService_ListPaymentProviderRoutes_FullMethodName   = "/payments.payment.v1.PaymentService/ListPaymentProviderRoutes"
+	PaymentService_SetPaymentProviderRoute_FullMethodName     = "/payments.payment.v1.PaymentService/SetPaymentProviderRoute"
 )
 
 // PaymentServiceClient is the client API for PaymentService service.
@@ -72,6 +74,14 @@ type PaymentServiceClient interface {
 	InitPayment(ctx context.Context, in *InitPaymentRequest, opts ...grpc.CallOption) (*InitPaymentResponse, error)
 	// StartPayment begins the chosen payment option (or settles from wallet).
 	StartPayment(ctx context.Context, in *StartPaymentRequest, opts ...grpc.CallOption) (*StartPaymentResponse, error)
+	// ListPaymentProviderRoutes reports which card acquirer serves each product
+	// flow right now, plus the flows and acquirers an operator may choose from.
+	// Routing is runtime state: it is read from storage, not from the image, so
+	// switching an acquirer never requires a release.
+	ListPaymentProviderRoutes(ctx context.Context, in *ListPaymentProviderRoutesRequest, opts ...grpc.CallOption) (*ListPaymentProviderRoutesResponse, error)
+	// SetPaymentProviderRoute points one product flow at a card acquirer. The
+	// caller must hold a platform-admin role, resolved through cg-users.
+	SetPaymentProviderRoute(ctx context.Context, in *SetPaymentProviderRouteRequest, opts ...grpc.CallOption) (*SetPaymentProviderRouteResponse, error)
 }
 
 type paymentServiceClient struct {
@@ -202,6 +212,26 @@ func (c *paymentServiceClient) StartPayment(ctx context.Context, in *StartPaymen
 	return out, nil
 }
 
+func (c *paymentServiceClient) ListPaymentProviderRoutes(ctx context.Context, in *ListPaymentProviderRoutesRequest, opts ...grpc.CallOption) (*ListPaymentProviderRoutesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPaymentProviderRoutesResponse)
+	err := c.cc.Invoke(ctx, PaymentService_ListPaymentProviderRoutes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) SetPaymentProviderRoute(ctx context.Context, in *SetPaymentProviderRouteRequest, opts ...grpc.CallOption) (*SetPaymentProviderRouteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetPaymentProviderRouteResponse)
+	err := c.cc.Invoke(ctx, PaymentService_SetPaymentProviderRoute_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PaymentServiceServer is the server API for PaymentService service.
 // All implementations must embed UnimplementedPaymentServiceServer
 // for forward compatibility.
@@ -241,6 +271,14 @@ type PaymentServiceServer interface {
 	InitPayment(context.Context, *InitPaymentRequest) (*InitPaymentResponse, error)
 	// StartPayment begins the chosen payment option (or settles from wallet).
 	StartPayment(context.Context, *StartPaymentRequest) (*StartPaymentResponse, error)
+	// ListPaymentProviderRoutes reports which card acquirer serves each product
+	// flow right now, plus the flows and acquirers an operator may choose from.
+	// Routing is runtime state: it is read from storage, not from the image, so
+	// switching an acquirer never requires a release.
+	ListPaymentProviderRoutes(context.Context, *ListPaymentProviderRoutesRequest) (*ListPaymentProviderRoutesResponse, error)
+	// SetPaymentProviderRoute points one product flow at a card acquirer. The
+	// caller must hold a platform-admin role, resolved through cg-users.
+	SetPaymentProviderRoute(context.Context, *SetPaymentProviderRouteRequest) (*SetPaymentProviderRouteResponse, error)
 	mustEmbedUnimplementedPaymentServiceServer()
 }
 
@@ -286,6 +324,12 @@ func (UnimplementedPaymentServiceServer) InitPayment(context.Context, *InitPayme
 }
 func (UnimplementedPaymentServiceServer) StartPayment(context.Context, *StartPaymentRequest) (*StartPaymentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method StartPayment not implemented")
+}
+func (UnimplementedPaymentServiceServer) ListPaymentProviderRoutes(context.Context, *ListPaymentProviderRoutesRequest) (*ListPaymentProviderRoutesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPaymentProviderRoutes not implemented")
+}
+func (UnimplementedPaymentServiceServer) SetPaymentProviderRoute(context.Context, *SetPaymentProviderRouteRequest) (*SetPaymentProviderRouteResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetPaymentProviderRoute not implemented")
 }
 func (UnimplementedPaymentServiceServer) mustEmbedUnimplementedPaymentServiceServer() {}
 func (UnimplementedPaymentServiceServer) testEmbeddedByValue()                        {}
@@ -524,6 +568,42 @@ func _PaymentService_StartPayment_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PaymentService_ListPaymentProviderRoutes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPaymentProviderRoutesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).ListPaymentProviderRoutes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_ListPaymentProviderRoutes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).ListPaymentProviderRoutes(ctx, req.(*ListPaymentProviderRoutesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_SetPaymentProviderRoute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetPaymentProviderRouteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).SetPaymentProviderRoute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_SetPaymentProviderRoute_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).SetPaymentProviderRoute(ctx, req.(*SetPaymentProviderRouteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PaymentService_ServiceDesc is the grpc.ServiceDesc for PaymentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -578,6 +658,14 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StartPayment",
 			Handler:    _PaymentService_StartPayment_Handler,
+		},
+		{
+			MethodName: "ListPaymentProviderRoutes",
+			Handler:    _PaymentService_ListPaymentProviderRoutes_Handler,
+		},
+		{
+			MethodName: "SetPaymentProviderRoute",
+			Handler:    _PaymentService_SetPaymentProviderRoute_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

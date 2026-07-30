@@ -50,6 +50,18 @@ service PaymentService {
 
   // StartPayment begins the chosen payment option (or settles from wallet).
   rpc StartPayment(StartPaymentRequest) returns (StartPaymentResponse);
+
+  // === Provider routing (admin) ===
+
+  // ListPaymentProviderRoutes reports which card acquirer serves each product
+  // flow right now, plus the flows and acquirers an operator may choose from.
+  // Routing is runtime state: it is read from storage, not from the image, so
+  // switching an acquirer never requires a release.
+  rpc ListPaymentProviderRoutes(ListPaymentProviderRoutesRequest) returns (ListPaymentProviderRoutesResponse);
+
+  // SetPaymentProviderRoute points one product flow at a card acquirer. The
+  // caller must hold a platform-admin role, resolved through cg-users.
+  rpc SetPaymentProviderRoute(SetPaymentProviderRouteRequest) returns (SetPaymentProviderRouteResponse);
 }
 
 // =============================================
@@ -790,4 +802,48 @@ message RefreshCreditApplicationStatusRequest {
 
 message RefreshCreditApplicationStatusResponse {
   CreditApplication application = 1;
+}
+
+// =============================================
+// Provider routing (admin)
+// =============================================
+
+// PaymentProviderRoute binds one product flow to the card acquirer that serves
+// it. Only competing card acquirers are routed this way; wallet-style
+// providers (Kaspi, Boxo, FFC) are selected by method/audience and are not
+// affected by a route.
+message PaymentProviderRoute {
+  // flow is the payable flow key, e.g. "fueling" or "roadside". The reserved
+  // key "default" applies to every flow without a row of its own.
+  string flow = 1;
+  string provider = 2;
+  // source reports where the effective value comes from: "runtime" (stored and
+  // editable), "default" (inherited from the "default" route) or "builtin"
+  // (compiled fallback used while nothing is stored).
+  string source = 3;
+  google.protobuf.Timestamp updated_at = 4;
+  int64 updated_by = 5;
+}
+
+message ListPaymentProviderRoutesRequest {}
+
+message ListPaymentProviderRoutesResponse {
+  // routes carries one entry per known flow, always resolved to the value in
+  // force, so an operator never has to guess what an absent row means.
+  repeated PaymentProviderRoute routes = 1;
+  // supported_providers lists the acquirers a route may be pointed at.
+  repeated string supported_providers = 2;
+  // unavailable_providers are supported acquirers that carry no credentials in
+  // this environment. Pointing a flow at one would take that flow's checkout
+  // down, so the UI must show them as not selectable.
+  repeated string unavailable_providers = 3;
+}
+
+message SetPaymentProviderRouteRequest {
+  string flow = 1;
+  string provider = 2;
+}
+
+message SetPaymentProviderRouteResponse {
+  PaymentProviderRoute route = 1;
 }
