@@ -20,6 +20,16 @@ service PartsProviderService {
   // SearchByProvider performs a search via a single named provider.
   rpc SearchByProvider(SearchByProviderRequest) returns (SearchByProviderResponse);
 
+  // SearchPartsByCar answers "what fits this car" instead of "who sells this
+  // part number". It resolves the car against a supplier applicability
+  // catalogue and returns priced, in-stock offers for the parts that fit.
+  // Results are paginated because pricing is per-article upstream.
+  rpc SearchPartsByCar(SearchPartsByCarRequest) returns (SearchPartsByCarResponse);
+
+  // ListCarPartTypes returns the part-type vocabulary accepted by
+  // SearchPartsByCar, for building category filters.
+  rpc ListCarPartTypes(ListCarPartTypesRequest) returns (ListCarPartTypesResponse);
+
   // StreamSearchParts performs a fan-out search and streams results as each provider completes.
   rpc StreamSearchParts(SearchPartsRequest) returns (stream StreamSearchPartsResponse);
 
@@ -140,6 +150,53 @@ message Part {
   // price for a catalog cart line instead of trusting a client-supplied amount.
   // Empty for providers/offers that cannot mint an authoritative quote.
   string price_quote = 30;
+}
+
+// SearchPartsByCarRequest describes the car to build a parts showcase for.
+// The car is given in the caller's own vocabulary; the service matches it
+// against the supplier's catalogue and reports what it matched in the response.
+message SearchPartsByCarRequest {
+  // mark and model are free-form names, e.g. "Toyota" / "Camry". Suppliers use
+  // their own regional variants ("Camry Europe/Russia"), so matching is fuzzy.
+  string mark = 1;
+  string model = 2;
+  // year selects the generation. 0 means "newest generation".
+  int32 year = 3;
+  // part_types filters by category, using the vocabulary from ListCarPartTypes.
+  // Empty means a default everyday-maintenance selection.
+  repeated string part_types = 4;
+  string city = 5;
+  int32 currency = 6;
+  // page is 1-based; page_size is bounded server-side.
+  int32 page = 7;
+  int32 page_size = 8;
+}
+
+message SearchPartsByCarResponse {
+  repeated Part parts = 1;
+  // car reports which catalogue entry the request was matched to, so the client
+  // can show it and so a wrong match is visible rather than silent.
+  CarMatch car = 2;
+  // total is the number of applicable parts across all pages, before pricing
+  // and stock filtering. It drives pagination, not the length of `parts`.
+  int32 total = 3;
+  // matched is false when the car could not be resolved; parts is then empty.
+  bool matched = 4;
+}
+
+// CarMatch is the supplier catalogue entry a request resolved to.
+message CarMatch {
+  string mark = 1;
+  string model = 2;
+  string generation = 3;
+  int32 year_from = 4;
+  int32 year_to = 5;
+}
+
+message ListCarPartTypesRequest {}
+
+message ListCarPartTypesResponse {
+  repeated string part_types = 1;
 }
 
 // Installment holds installment payment details.

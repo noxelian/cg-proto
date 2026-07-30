@@ -23,6 +23,8 @@ const (
 	PartsProviderService_ListSearchHistory_FullMethodName   = "/parts.provider.v1.PartsProviderService/ListSearchHistory"
 	PartsProviderService_GetSearchResult_FullMethodName     = "/parts.provider.v1.PartsProviderService/GetSearchResult"
 	PartsProviderService_SearchByProvider_FullMethodName    = "/parts.provider.v1.PartsProviderService/SearchByProvider"
+	PartsProviderService_SearchPartsByCar_FullMethodName    = "/parts.provider.v1.PartsProviderService/SearchPartsByCar"
+	PartsProviderService_ListCarPartTypes_FullMethodName    = "/parts.provider.v1.PartsProviderService/ListCarPartTypes"
 	PartsProviderService_StreamSearchParts_FullMethodName   = "/parts.provider.v1.PartsProviderService/StreamSearchParts"
 	PartsProviderService_ResolveCatalogQuote_FullMethodName = "/parts.provider.v1.PartsProviderService/ResolveCatalogQuote"
 )
@@ -41,6 +43,14 @@ type PartsProviderServiceClient interface {
 	GetSearchResult(ctx context.Context, in *GetSearchResultRequest, opts ...grpc.CallOption) (*GetSearchResultResponse, error)
 	// SearchByProvider performs a search via a single named provider.
 	SearchByProvider(ctx context.Context, in *SearchByProviderRequest, opts ...grpc.CallOption) (*SearchByProviderResponse, error)
+	// SearchPartsByCar answers "what fits this car" instead of "who sells this
+	// part number". It resolves the car against a supplier applicability
+	// catalogue and returns priced, in-stock offers for the parts that fit.
+	// Results are paginated because pricing is per-article upstream.
+	SearchPartsByCar(ctx context.Context, in *SearchPartsByCarRequest, opts ...grpc.CallOption) (*SearchPartsByCarResponse, error)
+	// ListCarPartTypes returns the part-type vocabulary accepted by
+	// SearchPartsByCar, for building category filters.
+	ListCarPartTypes(ctx context.Context, in *ListCarPartTypesRequest, opts ...grpc.CallOption) (*ListCarPartTypesResponse, error)
 	// StreamSearchParts performs a fan-out search and streams results as each provider completes.
 	StreamSearchParts(ctx context.Context, in *SearchPartsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamSearchPartsResponse], error)
 	// ResolveCatalogQuote verifies a signed price_quote token minted by
@@ -101,6 +111,26 @@ func (c *partsProviderServiceClient) SearchByProvider(ctx context.Context, in *S
 	return out, nil
 }
 
+func (c *partsProviderServiceClient) SearchPartsByCar(ctx context.Context, in *SearchPartsByCarRequest, opts ...grpc.CallOption) (*SearchPartsByCarResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchPartsByCarResponse)
+	err := c.cc.Invoke(ctx, PartsProviderService_SearchPartsByCar_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *partsProviderServiceClient) ListCarPartTypes(ctx context.Context, in *ListCarPartTypesRequest, opts ...grpc.CallOption) (*ListCarPartTypesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCarPartTypesResponse)
+	err := c.cc.Invoke(ctx, PartsProviderService_ListCarPartTypes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *partsProviderServiceClient) StreamSearchParts(ctx context.Context, in *SearchPartsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamSearchPartsResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &PartsProviderService_ServiceDesc.Streams[0], PartsProviderService_StreamSearchParts_FullMethodName, cOpts...)
@@ -144,6 +174,14 @@ type PartsProviderServiceServer interface {
 	GetSearchResult(context.Context, *GetSearchResultRequest) (*GetSearchResultResponse, error)
 	// SearchByProvider performs a search via a single named provider.
 	SearchByProvider(context.Context, *SearchByProviderRequest) (*SearchByProviderResponse, error)
+	// SearchPartsByCar answers "what fits this car" instead of "who sells this
+	// part number". It resolves the car against a supplier applicability
+	// catalogue and returns priced, in-stock offers for the parts that fit.
+	// Results are paginated because pricing is per-article upstream.
+	SearchPartsByCar(context.Context, *SearchPartsByCarRequest) (*SearchPartsByCarResponse, error)
+	// ListCarPartTypes returns the part-type vocabulary accepted by
+	// SearchPartsByCar, for building category filters.
+	ListCarPartTypes(context.Context, *ListCarPartTypesRequest) (*ListCarPartTypesResponse, error)
 	// StreamSearchParts performs a fan-out search and streams results as each provider completes.
 	StreamSearchParts(*SearchPartsRequest, grpc.ServerStreamingServer[StreamSearchPartsResponse]) error
 	// ResolveCatalogQuote verifies a signed price_quote token minted by
@@ -175,6 +213,12 @@ func (UnimplementedPartsProviderServiceServer) GetSearchResult(context.Context, 
 }
 func (UnimplementedPartsProviderServiceServer) SearchByProvider(context.Context, *SearchByProviderRequest) (*SearchByProviderResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SearchByProvider not implemented")
+}
+func (UnimplementedPartsProviderServiceServer) SearchPartsByCar(context.Context, *SearchPartsByCarRequest) (*SearchPartsByCarResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SearchPartsByCar not implemented")
+}
+func (UnimplementedPartsProviderServiceServer) ListCarPartTypes(context.Context, *ListCarPartTypesRequest) (*ListCarPartTypesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListCarPartTypes not implemented")
 }
 func (UnimplementedPartsProviderServiceServer) StreamSearchParts(*SearchPartsRequest, grpc.ServerStreamingServer[StreamSearchPartsResponse]) error {
 	return status.Error(codes.Unimplemented, "method StreamSearchParts not implemented")
@@ -275,6 +319,42 @@ func _PartsProviderService_SearchByProvider_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PartsProviderService_SearchPartsByCar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchPartsByCarRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PartsProviderServiceServer).SearchPartsByCar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PartsProviderService_SearchPartsByCar_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PartsProviderServiceServer).SearchPartsByCar(ctx, req.(*SearchPartsByCarRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PartsProviderService_ListCarPartTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCarPartTypesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PartsProviderServiceServer).ListCarPartTypes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PartsProviderService_ListCarPartTypes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PartsProviderServiceServer).ListCarPartTypes(ctx, req.(*ListCarPartTypesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PartsProviderService_StreamSearchParts_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(SearchPartsRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -326,6 +406,14 @@ var PartsProviderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SearchByProvider",
 			Handler:    _PartsProviderService_SearchByProvider_Handler,
+		},
+		{
+			MethodName: "SearchPartsByCar",
+			Handler:    _PartsProviderService_SearchPartsByCar_Handler,
+		},
+		{
+			MethodName: "ListCarPartTypes",
+			Handler:    _PartsProviderService_ListCarPartTypes_Handler,
 		},
 		{
 			MethodName: "ResolveCatalogQuote",
