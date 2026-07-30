@@ -737,9 +737,21 @@ type RoadsideOrder struct {
 	// service_group is the immutable snapshot of the catalogue section this
 	// order was bought from. Empty means roadside assistance, which is what
 	// every order created before the sections existed is.
-	ServiceGroup  string `protobuf:"bytes,36,opt,name=service_group,json=serviceGroup,proto3" json:"service_group,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	ServiceGroup string `protobuf:"bytes,36,opt,name=service_group,json=serviceGroup,proto3" json:"service_group,omitempty"`
+	// Immutable copy of the customer-visible scope that was shown when the
+	// order was created. Catalogue descriptions remain editable, but paid order
+	// details and disputes must continue to show the wording accepted at
+	// checkout. Empty descriptions and zero durations preserve legacy orders
+	// created before service content existed.
+	ServiceDescriptionRu      string `protobuf:"bytes,37,opt,name=service_description_ru,json=serviceDescriptionRu,proto3" json:"service_description_ru,omitempty"`
+	ServiceDescriptionKk      string `protobuf:"bytes,38,opt,name=service_description_kk,json=serviceDescriptionKk,proto3" json:"service_description_kk,omitempty"`
+	ServiceDescriptionEn      string `protobuf:"bytes,39,opt,name=service_description_en,json=serviceDescriptionEn,proto3" json:"service_description_en,omitempty"`
+	ServiceDurationMinMinutes int32  `protobuf:"varint,40,opt,name=service_duration_min_minutes,json=serviceDurationMinMinutes,proto3" json:"service_duration_min_minutes,omitempty"`
+	ServiceDurationMaxMinutes int32  `protobuf:"varint,41,opt,name=service_duration_max_minutes,json=serviceDurationMaxMinutes,proto3" json:"service_duration_max_minutes,omitempty"`
+	// Immutable pickup requirement from the same catalogue snapshot.
+	RequiresPickup bool `protobuf:"varint,42,opt,name=requires_pickup,json=requiresPickup,proto3" json:"requires_pickup,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *RoadsideOrder) Reset() {
@@ -1022,6 +1034,48 @@ func (x *RoadsideOrder) GetServiceGroup() string {
 		return x.ServiceGroup
 	}
 	return ""
+}
+
+func (x *RoadsideOrder) GetServiceDescriptionRu() string {
+	if x != nil {
+		return x.ServiceDescriptionRu
+	}
+	return ""
+}
+
+func (x *RoadsideOrder) GetServiceDescriptionKk() string {
+	if x != nil {
+		return x.ServiceDescriptionKk
+	}
+	return ""
+}
+
+func (x *RoadsideOrder) GetServiceDescriptionEn() string {
+	if x != nil {
+		return x.ServiceDescriptionEn
+	}
+	return ""
+}
+
+func (x *RoadsideOrder) GetServiceDurationMinMinutes() int32 {
+	if x != nil {
+		return x.ServiceDurationMinMinutes
+	}
+	return 0
+}
+
+func (x *RoadsideOrder) GetServiceDurationMaxMinutes() int32 {
+	if x != nil {
+		return x.ServiceDurationMaxMinutes
+	}
+	return 0
+}
+
+func (x *RoadsideOrder) GetRequiresPickup() bool {
+	if x != nil {
+		return x.RequiresPickup
+	}
+	return false
 }
 
 type RoadsideAssignment struct {
@@ -2068,9 +2122,17 @@ type ListRoadsideOrdersRequest struct {
 	PageSize    int32                  `protobuf:"varint,7,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	// Empty returns every section, so an existing dispatcher view keeps showing
 	// the whole queue.
-	ServiceGroup  string `protobuf:"bytes,8,opt,name=service_group,json=serviceGroup,proto3" json:"service_group,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	ServiceGroup string `protobuf:"bytes,8,opt,name=service_group,json=serviceGroup,proto3" json:"service_group,omitempty"`
+	// Free-text search over order-owned identifiers, locations and assignment
+	// contact data. Matching is a literal case-insensitive substring; wildcard
+	// characters are not interpreted.
+	Query string `protobuf:"bytes,9,opt,name=query,proto3" json:"query,omitempty"`
+	// Optional exact owner filters. Zero/empty keeps the filter disabled.
+	UserId         int64  `protobuf:"varint,10,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrganizationId string `protobuf:"bytes,11,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	CarId          int64  `protobuf:"varint,12,opt,name=car_id,json=carId,proto3" json:"car_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *ListRoadsideOrdersRequest) Reset() {
@@ -2157,6 +2219,34 @@ func (x *ListRoadsideOrdersRequest) GetServiceGroup() string {
 		return x.ServiceGroup
 	}
 	return ""
+}
+
+func (x *ListRoadsideOrdersRequest) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+func (x *ListRoadsideOrdersRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ListRoadsideOrdersRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *ListRoadsideOrdersRequest) GetCarId() int64 {
+	if x != nil {
+		return x.CarId
+	}
+	return 0
 }
 
 type ListRoadsideOrdersResponse struct {
@@ -3857,7 +3947,7 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\aversion\x18\a \x01(\x05R\aversion\"\xa5\x01\n" +
 	"\x17RoadsideServiceOffering\x12J\n" +
 	"\fservice_type\x18\x01 \x01(\v2'.orders.roadside.v1.RoadsideServiceTypeR\vserviceType\x12>\n" +
-	"\x06prices\x18\x02 \x03(\v2&.orders.roadside.v1.RoadsidePriceQuoteR\x06prices\"\xb6\x0e\n" +
+	"\x06prices\x18\x02 \x03(\v2&.orders.roadside.v1.RoadsidePriceQuoteR\x06prices\"\x83\x11\n" +
 	"\rRoadsideOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\forder_number\x18\x02 \x01(\tR\vorderNumber\x12*\n" +
@@ -3899,7 +3989,13 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12$\n" +
 	"\x0eescrow_deal_id\x18# \x01(\x03R\fescrowDealId\x12#\n" +
-	"\rservice_group\x18$ \x01(\tR\fserviceGroupB\t\n" +
+	"\rservice_group\x18$ \x01(\tR\fserviceGroup\x124\n" +
+	"\x16service_description_ru\x18% \x01(\tR\x14serviceDescriptionRu\x124\n" +
+	"\x16service_description_kk\x18& \x01(\tR\x14serviceDescriptionKk\x124\n" +
+	"\x16service_description_en\x18' \x01(\tR\x14serviceDescriptionEn\x12?\n" +
+	"\x1cservice_duration_min_minutes\x18( \x01(\x05R\x19serviceDurationMinMinutes\x12?\n" +
+	"\x1cservice_duration_max_minutes\x18) \x01(\x05R\x19serviceDurationMaxMinutes\x12'\n" +
+	"\x0frequires_pickup\x18* \x01(\bR\x0erequiresPickupB\t\n" +
 	"\a_car_idB\x16\n" +
 	"\x14_destination_addressB\x17\n" +
 	"\x15_destination_latitudeB\x18\n" +
@@ -4001,7 +4097,7 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\vreason_code\x18\x02 \x01(\tR\n" +
 	"reasonCode\"V\n" +
 	"\x1bCancelRoadsideOrderResponse\x127\n" +
-	"\x05order\x18\x01 \x01(\v2!.orders.roadside.v1.RoadsideOrderR\x05order\"\xca\x02\n" +
+	"\x05order\x18\x01 \x01(\v2!.orders.roadside.v1.RoadsideOrderR\x05order\"\xb9\x03\n" +
 	"\x19ListRoadsideOrdersRequest\x12?\n" +
 	"\x06status\x18\x01 \x01(\x0e2'.orders.roadside.v1.RoadsideOrderStatusR\x06status\x12\x17\n" +
 	"\acity_id\x18\x02 \x01(\x03R\x06cityId\x12!\n" +
@@ -4010,7 +4106,12 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\x02to\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x12\n" +
 	"\x04page\x18\x06 \x01(\x05R\x04page\x12\x1b\n" +
 	"\tpage_size\x18\a \x01(\x05R\bpageSize\x12#\n" +
-	"\rservice_group\x18\b \x01(\tR\fserviceGroup\"m\n" +
+	"\rservice_group\x18\b \x01(\tR\fserviceGroup\x12\x14\n" +
+	"\x05query\x18\t \x01(\tR\x05query\x12\x17\n" +
+	"\auser_id\x18\n" +
+	" \x01(\x03R\x06userId\x12'\n" +
+	"\x0forganization_id\x18\v \x01(\tR\x0eorganizationId\x12\x15\n" +
+	"\x06car_id\x18\f \x01(\x03R\x05carId\"m\n" +
 	"\x1aListRoadsideOrdersResponse\x129\n" +
 	"\x06orders\x18\x01 \x03(\v2!.orders.roadside.v1.RoadsideOrderR\x06orders\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"8\n" +

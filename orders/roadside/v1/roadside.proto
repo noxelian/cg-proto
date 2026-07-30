@@ -249,6 +249,18 @@ message RoadsideOrder {
   // order was bought from. Empty means roadside assistance, which is what
   // every order created before the sections existed is.
   string service_group = 36;
+  // Immutable copy of the customer-visible scope that was shown when the
+  // order was created. Catalogue descriptions remain editable, but paid order
+  // details and disputes must continue to show the wording accepted at
+  // checkout. Empty descriptions and zero durations preserve legacy orders
+  // created before service content existed.
+  string service_description_ru = 37;
+  string service_description_kk = 38;
+  string service_description_en = 39;
+  int32 service_duration_min_minutes = 40;
+  int32 service_duration_max_minutes = 41;
+  // Immutable pickup requirement from the same catalogue snapshot.
+  bool requires_pickup = 42;
 }
 
 message RoadsideAssignment {
@@ -381,6 +393,14 @@ message ListRoadsideOrdersRequest {
   // Empty returns every section, so an existing dispatcher view keeps showing
   // the whole queue.
   string service_group = 8;
+  // Free-text search over order-owned identifiers, locations and assignment
+  // contact data. Matching is a literal case-insensitive substring; wildcard
+  // characters are not interpreted.
+  string query = 9;
+  // Optional exact owner filters. Zero/empty keeps the filter disabled.
+  int64 user_id = 10;
+  string organization_id = 11;
+  int64 car_id = 12;
 }
 
 message ListRoadsideOrdersResponse {
