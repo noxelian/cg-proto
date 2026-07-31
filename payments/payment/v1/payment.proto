@@ -51,6 +51,18 @@ service PaymentService {
   // StartPayment begins the chosen payment option (or settles from wallet).
   rpc StartPayment(StartPaymentRequest) returns (StartPaymentResponse);
 
+  // ConfirmWalletPayment charges an intent already started by StartPayment
+  // using a device-wallet token (Apple Pay) instead of the hosted checkout
+  // page. The caller supplies only the wallet token: amount, currency and
+  // organization were fixed when the provider order was created and must
+  // never be re-supplied by transport.
+  //
+  // It reports what the acquirer answered; it does NOT settle the payment.
+  // The durable money state still changes only through the provider webhook,
+  // which remains the single authority for transitions, audit rows and outbox
+  // events.
+  rpc ConfirmWalletPayment(ConfirmWalletPaymentRequest) returns (ConfirmWalletPaymentResponse);
+
   // === Provider routing (admin) ===
 
   // ListPaymentProviderRoutes reports which card acquirer serves each product
@@ -465,6 +477,33 @@ message StartPaymentResponse {
   int64 wallet_debited_tiyn = 4;
   // fully_paid_from_wallet=true means the wallet covered the full amount.
   bool fully_paid_from_wallet = 5;
+}
+
+message ConfirmWalletPaymentRequest {
+  // transaction_id is the intent returned by StartPayment.
+  int64 transaction_id = 1;
+  // wallet_token is the device wallet payload as JSON, forwarded to the
+  // acquirer byte-for-byte. For Apple Pay this is the PKPaymentToken:
+  // {"paymentData":{...},"paymentMethod":{...},"transactionIdentifier":"..."}.
+  // It is opaque on purpose — re-modelling Apple's schema in proto would only
+  // create a place to silently drop a field, and any re-encoding of the
+  // encrypted payload invalidates its signature.
+  string wallet_token = 2;
+}
+
+message ConfirmWalletPaymentResponse {
+  int64 transaction_id = 1;
+  // provider_status is the acquirer's payment status, passed through
+  // untranslated (APPROVED, CAPTURED, DECLINED, REQUIRES_ACTION, PENDING).
+  string provider_status = 2;
+  // succeeded is true only when the funds are authorized or taken.
+  // REQUIRES_ACTION and PENDING are explicitly NOT success.
+  bool succeeded = 3;
+  // action_url is the 3-D Secure step the payer must still complete. When it
+  // is set the payment is unfinished, whatever provider_status says.
+  string action_url = 4;
+  // decline_reason is the acquirer's decline code, safe to show the payer.
+  string decline_reason = 5;
 }
 
 // =============================================

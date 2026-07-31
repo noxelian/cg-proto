@@ -31,6 +31,7 @@ const (
 	PaymentService_ListAvailablePaymentMethods_FullMethodName = "/payments.payment.v1.PaymentService/ListAvailablePaymentMethods"
 	PaymentService_InitPayment_FullMethodName                 = "/payments.payment.v1.PaymentService/InitPayment"
 	PaymentService_StartPayment_FullMethodName                = "/payments.payment.v1.PaymentService/StartPayment"
+	PaymentService_ConfirmWalletPayment_FullMethodName        = "/payments.payment.v1.PaymentService/ConfirmWalletPayment"
 	PaymentService_ListPaymentProviderRoutes_FullMethodName   = "/payments.payment.v1.PaymentService/ListPaymentProviderRoutes"
 	PaymentService_SetPaymentProviderRoute_FullMethodName     = "/payments.payment.v1.PaymentService/SetPaymentProviderRoute"
 )
@@ -74,6 +75,17 @@ type PaymentServiceClient interface {
 	InitPayment(ctx context.Context, in *InitPaymentRequest, opts ...grpc.CallOption) (*InitPaymentResponse, error)
 	// StartPayment begins the chosen payment option (or settles from wallet).
 	StartPayment(ctx context.Context, in *StartPaymentRequest, opts ...grpc.CallOption) (*StartPaymentResponse, error)
+	// ConfirmWalletPayment charges an intent already started by StartPayment
+	// using a device-wallet token (Apple Pay) instead of the hosted checkout
+	// page. The caller supplies only the wallet token: amount, currency and
+	// organization were fixed when the provider order was created and must
+	// never be re-supplied by transport.
+	//
+	// It reports what the acquirer answered; it does NOT settle the payment.
+	// The durable money state still changes only through the provider webhook,
+	// which remains the single authority for transitions, audit rows and outbox
+	// events.
+	ConfirmWalletPayment(ctx context.Context, in *ConfirmWalletPaymentRequest, opts ...grpc.CallOption) (*ConfirmWalletPaymentResponse, error)
 	// ListPaymentProviderRoutes reports which card acquirer serves each product
 	// flow right now, plus the flows and acquirers an operator may choose from.
 	// Routing is runtime state: it is read from storage, not from the image, so
@@ -212,6 +224,16 @@ func (c *paymentServiceClient) StartPayment(ctx context.Context, in *StartPaymen
 	return out, nil
 }
 
+func (c *paymentServiceClient) ConfirmWalletPayment(ctx context.Context, in *ConfirmWalletPaymentRequest, opts ...grpc.CallOption) (*ConfirmWalletPaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConfirmWalletPaymentResponse)
+	err := c.cc.Invoke(ctx, PaymentService_ConfirmWalletPayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *paymentServiceClient) ListPaymentProviderRoutes(ctx context.Context, in *ListPaymentProviderRoutesRequest, opts ...grpc.CallOption) (*ListPaymentProviderRoutesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListPaymentProviderRoutesResponse)
@@ -271,6 +293,17 @@ type PaymentServiceServer interface {
 	InitPayment(context.Context, *InitPaymentRequest) (*InitPaymentResponse, error)
 	// StartPayment begins the chosen payment option (or settles from wallet).
 	StartPayment(context.Context, *StartPaymentRequest) (*StartPaymentResponse, error)
+	// ConfirmWalletPayment charges an intent already started by StartPayment
+	// using a device-wallet token (Apple Pay) instead of the hosted checkout
+	// page. The caller supplies only the wallet token: amount, currency and
+	// organization were fixed when the provider order was created and must
+	// never be re-supplied by transport.
+	//
+	// It reports what the acquirer answered; it does NOT settle the payment.
+	// The durable money state still changes only through the provider webhook,
+	// which remains the single authority for transitions, audit rows and outbox
+	// events.
+	ConfirmWalletPayment(context.Context, *ConfirmWalletPaymentRequest) (*ConfirmWalletPaymentResponse, error)
 	// ListPaymentProviderRoutes reports which card acquirer serves each product
 	// flow right now, plus the flows and acquirers an operator may choose from.
 	// Routing is runtime state: it is read from storage, not from the image, so
@@ -324,6 +357,9 @@ func (UnimplementedPaymentServiceServer) InitPayment(context.Context, *InitPayme
 }
 func (UnimplementedPaymentServiceServer) StartPayment(context.Context, *StartPaymentRequest) (*StartPaymentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method StartPayment not implemented")
+}
+func (UnimplementedPaymentServiceServer) ConfirmWalletPayment(context.Context, *ConfirmWalletPaymentRequest) (*ConfirmWalletPaymentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ConfirmWalletPayment not implemented")
 }
 func (UnimplementedPaymentServiceServer) ListPaymentProviderRoutes(context.Context, *ListPaymentProviderRoutesRequest) (*ListPaymentProviderRoutesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPaymentProviderRoutes not implemented")
@@ -568,6 +604,24 @@ func _PaymentService_StartPayment_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PaymentService_ConfirmWalletPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfirmWalletPaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).ConfirmWalletPayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_ConfirmWalletPayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).ConfirmWalletPayment(ctx, req.(*ConfirmWalletPaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PaymentService_ListPaymentProviderRoutes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListPaymentProviderRoutesRequest)
 	if err := dec(in); err != nil {
@@ -658,6 +712,10 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StartPayment",
 			Handler:    _PaymentService_StartPayment_Handler,
+		},
+		{
+			MethodName: "ConfirmWalletPayment",
+			Handler:    _PaymentService_ConfirmWalletPayment_Handler,
 		},
 		{
 			MethodName: "ListPaymentProviderRoutes",

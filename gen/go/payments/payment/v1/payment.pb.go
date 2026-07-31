@@ -3004,6 +3004,148 @@ func (x *StartPaymentResponse) GetFullyPaidFromWallet() bool {
 	return false
 }
 
+type ConfirmWalletPaymentRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// transaction_id is the intent returned by StartPayment.
+	TransactionId int64 `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	// wallet_token is the device wallet payload as JSON, forwarded to the
+	// acquirer byte-for-byte. For Apple Pay this is the PKPaymentToken:
+	// {"paymentData":{...},"paymentMethod":{...},"transactionIdentifier":"..."}.
+	// It is opaque on purpose — re-modelling Apple's schema in proto would only
+	// create a place to silently drop a field, and any re-encoding of the
+	// encrypted payload invalidates its signature.
+	WalletToken   string `protobuf:"bytes,2,opt,name=wallet_token,json=walletToken,proto3" json:"wallet_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmWalletPaymentRequest) Reset() {
+	*x = ConfirmWalletPaymentRequest{}
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmWalletPaymentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmWalletPaymentRequest) ProtoMessage() {}
+
+func (x *ConfirmWalletPaymentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmWalletPaymentRequest.ProtoReflect.Descriptor instead.
+func (*ConfirmWalletPaymentRequest) Descriptor() ([]byte, []int) {
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *ConfirmWalletPaymentRequest) GetTransactionId() int64 {
+	if x != nil {
+		return x.TransactionId
+	}
+	return 0
+}
+
+func (x *ConfirmWalletPaymentRequest) GetWalletToken() string {
+	if x != nil {
+		return x.WalletToken
+	}
+	return ""
+}
+
+type ConfirmWalletPaymentResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TransactionId int64                  `protobuf:"varint,1,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	// provider_status is the acquirer's payment status, passed through
+	// untranslated (APPROVED, CAPTURED, DECLINED, REQUIRES_ACTION, PENDING).
+	ProviderStatus string `protobuf:"bytes,2,opt,name=provider_status,json=providerStatus,proto3" json:"provider_status,omitempty"`
+	// succeeded is true only when the funds are authorized or taken.
+	// REQUIRES_ACTION and PENDING are explicitly NOT success.
+	Succeeded bool `protobuf:"varint,3,opt,name=succeeded,proto3" json:"succeeded,omitempty"`
+	// action_url is the 3-D Secure step the payer must still complete. When it
+	// is set the payment is unfinished, whatever provider_status says.
+	ActionUrl string `protobuf:"bytes,4,opt,name=action_url,json=actionUrl,proto3" json:"action_url,omitempty"`
+	// decline_reason is the acquirer's decline code, safe to show the payer.
+	DeclineReason string `protobuf:"bytes,5,opt,name=decline_reason,json=declineReason,proto3" json:"decline_reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmWalletPaymentResponse) Reset() {
+	*x = ConfirmWalletPaymentResponse{}
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmWalletPaymentResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmWalletPaymentResponse) ProtoMessage() {}
+
+func (x *ConfirmWalletPaymentResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmWalletPaymentResponse.ProtoReflect.Descriptor instead.
+func (*ConfirmWalletPaymentResponse) Descriptor() ([]byte, []int) {
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *ConfirmWalletPaymentResponse) GetTransactionId() int64 {
+	if x != nil {
+		return x.TransactionId
+	}
+	return 0
+}
+
+func (x *ConfirmWalletPaymentResponse) GetProviderStatus() string {
+	if x != nil {
+		return x.ProviderStatus
+	}
+	return ""
+}
+
+func (x *ConfirmWalletPaymentResponse) GetSucceeded() bool {
+	if x != nil {
+		return x.Succeeded
+	}
+	return false
+}
+
+func (x *ConfirmWalletPaymentResponse) GetActionUrl() string {
+	if x != nil {
+		return x.ActionUrl
+	}
+	return ""
+}
+
+func (x *ConfirmWalletPaymentResponse) GetDeclineReason() string {
+	if x != nil {
+		return x.DeclineReason
+	}
+	return ""
+}
+
 // CreditApprovedParams carries the terms scoring actually approved. Amounts are
 // tiyn; rates are basis points (1.5% -> 150) so no float reaches the wire.
 type CreditApprovedParams struct {
@@ -3019,7 +3161,7 @@ type CreditApprovedParams struct {
 
 func (x *CreditApprovedParams) Reset() {
 	*x = CreditApprovedParams{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[29]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3031,7 +3173,7 @@ func (x *CreditApprovedParams) String() string {
 func (*CreditApprovedParams) ProtoMessage() {}
 
 func (x *CreditApprovedParams) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[29]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3044,7 +3186,7 @@ func (x *CreditApprovedParams) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreditApprovedParams.ProtoReflect.Descriptor instead.
 func (*CreditApprovedParams) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{29}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *CreditApprovedParams) GetPrincipalTiyn() int64 {
@@ -3096,7 +3238,7 @@ type CreditPrintForm struct {
 
 func (x *CreditPrintForm) Reset() {
 	*x = CreditPrintForm{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[30]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3108,7 +3250,7 @@ func (x *CreditPrintForm) String() string {
 func (*CreditPrintForm) ProtoMessage() {}
 
 func (x *CreditPrintForm) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[30]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3121,7 +3263,7 @@ func (x *CreditPrintForm) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreditPrintForm.ProtoReflect.Descriptor instead.
 func (*CreditPrintForm) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{30}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *CreditPrintForm) GetName() string {
@@ -3152,7 +3294,7 @@ type CreditGood struct {
 
 func (x *CreditGood) Reset() {
 	*x = CreditGood{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[31]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3164,7 +3306,7 @@ func (x *CreditGood) String() string {
 func (*CreditGood) ProtoMessage() {}
 
 func (x *CreditGood) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[31]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3177,7 +3319,7 @@ func (x *CreditGood) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreditGood.ProtoReflect.Descriptor instead.
 func (*CreditGood) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{31}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *CreditGood) GetCostTiyn() int64 {
@@ -3261,7 +3403,7 @@ type CreateCreditApplicationRequest struct {
 
 func (x *CreateCreditApplicationRequest) Reset() {
 	*x = CreateCreditApplicationRequest{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[32]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3273,7 +3415,7 @@ func (x *CreateCreditApplicationRequest) String() string {
 func (*CreateCreditApplicationRequest) ProtoMessage() {}
 
 func (x *CreateCreditApplicationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[32]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3286,7 +3428,7 @@ func (x *CreateCreditApplicationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCreditApplicationRequest.ProtoReflect.Descriptor instead.
 func (*CreateCreditApplicationRequest) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{32}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *CreateCreditApplicationRequest) GetEntityType() string {
@@ -3476,7 +3618,7 @@ type CreditApplication struct {
 
 func (x *CreditApplication) Reset() {
 	*x = CreditApplication{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[33]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3488,7 +3630,7 @@ func (x *CreditApplication) String() string {
 func (*CreditApplication) ProtoMessage() {}
 
 func (x *CreditApplication) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[33]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3501,7 +3643,7 @@ func (x *CreditApplication) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreditApplication.ProtoReflect.Descriptor instead.
 func (*CreditApplication) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{33}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *CreditApplication) GetUuid() string {
@@ -3653,7 +3795,7 @@ type CreateCreditApplicationResponse struct {
 
 func (x *CreateCreditApplicationResponse) Reset() {
 	*x = CreateCreditApplicationResponse{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[34]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3665,7 +3807,7 @@ func (x *CreateCreditApplicationResponse) String() string {
 func (*CreateCreditApplicationResponse) ProtoMessage() {}
 
 func (x *CreateCreditApplicationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[34]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3678,7 +3820,7 @@ func (x *CreateCreditApplicationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCreditApplicationResponse.ProtoReflect.Descriptor instead.
 func (*CreateCreditApplicationResponse) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{34}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *CreateCreditApplicationResponse) GetApplication() *CreditApplication {
@@ -3700,7 +3842,7 @@ type GetCreditApplicationRequest struct {
 
 func (x *GetCreditApplicationRequest) Reset() {
 	*x = GetCreditApplicationRequest{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[35]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3712,7 +3854,7 @@ func (x *GetCreditApplicationRequest) String() string {
 func (*GetCreditApplicationRequest) ProtoMessage() {}
 
 func (x *GetCreditApplicationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[35]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3725,7 +3867,7 @@ func (x *GetCreditApplicationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCreditApplicationRequest.ProtoReflect.Descriptor instead.
 func (*GetCreditApplicationRequest) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{35}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *GetCreditApplicationRequest) GetUuid() string {
@@ -3758,7 +3900,7 @@ type GetCreditApplicationResponse struct {
 
 func (x *GetCreditApplicationResponse) Reset() {
 	*x = GetCreditApplicationResponse{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[36]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3770,7 +3912,7 @@ func (x *GetCreditApplicationResponse) String() string {
 func (*GetCreditApplicationResponse) ProtoMessage() {}
 
 func (x *GetCreditApplicationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[36]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3783,7 +3925,7 @@ func (x *GetCreditApplicationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCreditApplicationResponse.ProtoReflect.Descriptor instead.
 func (*GetCreditApplicationResponse) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{36}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *GetCreditApplicationResponse) GetApplication() *CreditApplication {
@@ -3805,7 +3947,7 @@ type RefundCreditApplicationRequest struct {
 
 func (x *RefundCreditApplicationRequest) Reset() {
 	*x = RefundCreditApplicationRequest{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[37]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3817,7 +3959,7 @@ func (x *RefundCreditApplicationRequest) String() string {
 func (*RefundCreditApplicationRequest) ProtoMessage() {}
 
 func (x *RefundCreditApplicationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[37]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3830,7 +3972,7 @@ func (x *RefundCreditApplicationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefundCreditApplicationRequest.ProtoReflect.Descriptor instead.
 func (*RefundCreditApplicationRequest) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{37}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *RefundCreditApplicationRequest) GetUuid() string {
@@ -3872,7 +4014,7 @@ type RefundCreditApplicationResponse struct {
 
 func (x *RefundCreditApplicationResponse) Reset() {
 	*x = RefundCreditApplicationResponse{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[38]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3884,7 +4026,7 @@ func (x *RefundCreditApplicationResponse) String() string {
 func (*RefundCreditApplicationResponse) ProtoMessage() {}
 
 func (x *RefundCreditApplicationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[38]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3897,7 +4039,7 @@ func (x *RefundCreditApplicationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefundCreditApplicationResponse.ProtoReflect.Descriptor instead.
 func (*RefundCreditApplicationResponse) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{38}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *RefundCreditApplicationResponse) GetApplication() *CreditApplication {
@@ -3925,7 +4067,7 @@ type CessionLoan struct {
 
 func (x *CessionLoan) Reset() {
 	*x = CessionLoan{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[39]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3937,7 +4079,7 @@ func (x *CessionLoan) String() string {
 func (*CessionLoan) ProtoMessage() {}
 
 func (x *CessionLoan) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[39]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3950,7 +4092,7 @@ func (x *CessionLoan) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CessionLoan.ProtoReflect.Descriptor instead.
 func (*CessionLoan) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{39}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *CessionLoan) GetUuid() string {
@@ -4019,7 +4161,7 @@ type ListCessionLoansRequest struct {
 
 func (x *ListCessionLoansRequest) Reset() {
 	*x = ListCessionLoansRequest{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[40]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4031,7 +4173,7 @@ func (x *ListCessionLoansRequest) String() string {
 func (*ListCessionLoansRequest) ProtoMessage() {}
 
 func (x *ListCessionLoansRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[40]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4044,7 +4186,7 @@ func (x *ListCessionLoansRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCessionLoansRequest.ProtoReflect.Descriptor instead.
 func (*ListCessionLoansRequest) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{40}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *ListCessionLoansRequest) GetIssueDate() string {
@@ -4066,7 +4208,7 @@ type ListCessionLoansResponse struct {
 
 func (x *ListCessionLoansResponse) Reset() {
 	*x = ListCessionLoansResponse{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[41]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4078,7 +4220,7 @@ func (x *ListCessionLoansResponse) String() string {
 func (*ListCessionLoansResponse) ProtoMessage() {}
 
 func (x *ListCessionLoansResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[41]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4091,7 +4233,7 @@ func (x *ListCessionLoansResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCessionLoansResponse.ProtoReflect.Descriptor instead.
 func (*ListCessionLoansResponse) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{41}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *ListCessionLoansResponse) GetLoans() []*CessionLoan {
@@ -4136,7 +4278,7 @@ type CessionAgreement struct {
 
 func (x *CessionAgreement) Reset() {
 	*x = CessionAgreement{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[42]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4148,7 +4290,7 @@ func (x *CessionAgreement) String() string {
 func (*CessionAgreement) ProtoMessage() {}
 
 func (x *CessionAgreement) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[42]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4161,7 +4303,7 @@ func (x *CessionAgreement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CessionAgreement.ProtoReflect.Descriptor instead.
 func (*CessionAgreement) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{42}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *CessionAgreement) GetIssueDate() string {
@@ -4266,7 +4408,7 @@ type SubmitCessionAgreementRequest struct {
 
 func (x *SubmitCessionAgreementRequest) Reset() {
 	*x = SubmitCessionAgreementRequest{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[43]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4278,7 +4420,7 @@ func (x *SubmitCessionAgreementRequest) String() string {
 func (*SubmitCessionAgreementRequest) ProtoMessage() {}
 
 func (x *SubmitCessionAgreementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[43]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4291,7 +4433,7 @@ func (x *SubmitCessionAgreementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubmitCessionAgreementRequest.ProtoReflect.Descriptor instead.
 func (*SubmitCessionAgreementRequest) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{43}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *SubmitCessionAgreementRequest) GetIssueDate() string {
@@ -4338,7 +4480,7 @@ type SubmitCessionAgreementResponse struct {
 
 func (x *SubmitCessionAgreementResponse) Reset() {
 	*x = SubmitCessionAgreementResponse{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[44]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4350,7 +4492,7 @@ func (x *SubmitCessionAgreementResponse) String() string {
 func (*SubmitCessionAgreementResponse) ProtoMessage() {}
 
 func (x *SubmitCessionAgreementResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[44]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4363,7 +4505,7 @@ func (x *SubmitCessionAgreementResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubmitCessionAgreementResponse.ProtoReflect.Descriptor instead.
 func (*SubmitCessionAgreementResponse) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{44}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *SubmitCessionAgreementResponse) GetAgreement() *CessionAgreement {
@@ -4384,7 +4526,7 @@ type GetCessionAgreementRequest struct {
 
 func (x *GetCessionAgreementRequest) Reset() {
 	*x = GetCessionAgreementRequest{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[45]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4396,7 +4538,7 @@ func (x *GetCessionAgreementRequest) String() string {
 func (*GetCessionAgreementRequest) ProtoMessage() {}
 
 func (x *GetCessionAgreementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[45]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4409,7 +4551,7 @@ func (x *GetCessionAgreementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCessionAgreementRequest.ProtoReflect.Descriptor instead.
 func (*GetCessionAgreementRequest) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{45}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *GetCessionAgreementRequest) GetIssueDate() string {
@@ -4435,7 +4577,7 @@ type GetCessionAgreementResponse struct {
 
 func (x *GetCessionAgreementResponse) Reset() {
 	*x = GetCessionAgreementResponse{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[46]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4447,7 +4589,7 @@ func (x *GetCessionAgreementResponse) String() string {
 func (*GetCessionAgreementResponse) ProtoMessage() {}
 
 func (x *GetCessionAgreementResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[46]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4460,7 +4602,7 @@ func (x *GetCessionAgreementResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCessionAgreementResponse.ProtoReflect.Descriptor instead.
 func (*GetCessionAgreementResponse) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{46}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *GetCessionAgreementResponse) GetAgreement() *CessionAgreement {
@@ -4482,7 +4624,7 @@ type CreditRepaymentBand struct {
 
 func (x *CreditRepaymentBand) Reset() {
 	*x = CreditRepaymentBand{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[47]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4494,7 +4636,7 @@ func (x *CreditRepaymentBand) String() string {
 func (*CreditRepaymentBand) ProtoMessage() {}
 
 func (x *CreditRepaymentBand) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[47]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4507,7 +4649,7 @@ func (x *CreditRepaymentBand) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreditRepaymentBand.ProtoReflect.Descriptor instead.
 func (*CreditRepaymentBand) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{47}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *CreditRepaymentBand) GetMinAmountTiyn() int64 {
@@ -4545,7 +4687,7 @@ type CreditPartnerProduct struct {
 
 func (x *CreditPartnerProduct) Reset() {
 	*x = CreditPartnerProduct{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[48]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4557,7 +4699,7 @@ func (x *CreditPartnerProduct) String() string {
 func (*CreditPartnerProduct) ProtoMessage() {}
 
 func (x *CreditPartnerProduct) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[48]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4570,7 +4712,7 @@ func (x *CreditPartnerProduct) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreditPartnerProduct.ProtoReflect.Descriptor instead.
 func (*CreditPartnerProduct) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{48}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *CreditPartnerProduct) GetProductId() string {
@@ -4611,7 +4753,7 @@ type ListPartnerProductsRequest struct {
 
 func (x *ListPartnerProductsRequest) Reset() {
 	*x = ListPartnerProductsRequest{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[49]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4623,7 +4765,7 @@ func (x *ListPartnerProductsRequest) String() string {
 func (*ListPartnerProductsRequest) ProtoMessage() {}
 
 func (x *ListPartnerProductsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[49]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4636,7 +4778,7 @@ func (x *ListPartnerProductsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPartnerProductsRequest.ProtoReflect.Descriptor instead.
 func (*ListPartnerProductsRequest) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{49}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *ListPartnerProductsRequest) GetAmountTiyn() int64 {
@@ -4657,7 +4799,7 @@ type ListPartnerProductsResponse struct {
 
 func (x *ListPartnerProductsResponse) Reset() {
 	*x = ListPartnerProductsResponse{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[50]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4669,7 +4811,7 @@ func (x *ListPartnerProductsResponse) String() string {
 func (*ListPartnerProductsResponse) ProtoMessage() {}
 
 func (x *ListPartnerProductsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[50]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4682,7 +4824,7 @@ func (x *ListPartnerProductsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPartnerProductsResponse.ProtoReflect.Descriptor instead.
 func (*ListPartnerProductsResponse) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{50}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *ListPartnerProductsResponse) GetPartnerId() string {
@@ -4715,7 +4857,7 @@ type RefreshCreditApplicationStatusRequest struct {
 
 func (x *RefreshCreditApplicationStatusRequest) Reset() {
 	*x = RefreshCreditApplicationStatusRequest{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[51]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4727,7 +4869,7 @@ func (x *RefreshCreditApplicationStatusRequest) String() string {
 func (*RefreshCreditApplicationStatusRequest) ProtoMessage() {}
 
 func (x *RefreshCreditApplicationStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[51]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4740,7 +4882,7 @@ func (x *RefreshCreditApplicationStatusRequest) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use RefreshCreditApplicationStatusRequest.ProtoReflect.Descriptor instead.
 func (*RefreshCreditApplicationStatusRequest) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{51}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *RefreshCreditApplicationStatusRequest) GetUuid() string {
@@ -4759,7 +4901,7 @@ type RefreshCreditApplicationStatusResponse struct {
 
 func (x *RefreshCreditApplicationStatusResponse) Reset() {
 	*x = RefreshCreditApplicationStatusResponse{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[52]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4771,7 +4913,7 @@ func (x *RefreshCreditApplicationStatusResponse) String() string {
 func (*RefreshCreditApplicationStatusResponse) ProtoMessage() {}
 
 func (x *RefreshCreditApplicationStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[52]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4784,7 +4926,7 @@ func (x *RefreshCreditApplicationStatusResponse) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use RefreshCreditApplicationStatusResponse.ProtoReflect.Descriptor instead.
 func (*RefreshCreditApplicationStatusResponse) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{52}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *RefreshCreditApplicationStatusResponse) GetApplication() *CreditApplication {
@@ -4831,7 +4973,7 @@ type PaymentProviderRoute struct {
 
 func (x *PaymentProviderRoute) Reset() {
 	*x = PaymentProviderRoute{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[53]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4843,7 +4985,7 @@ func (x *PaymentProviderRoute) String() string {
 func (*PaymentProviderRoute) ProtoMessage() {}
 
 func (x *PaymentProviderRoute) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[53]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4856,7 +4998,7 @@ func (x *PaymentProviderRoute) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PaymentProviderRoute.ProtoReflect.Descriptor instead.
 func (*PaymentProviderRoute) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{53}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *PaymentProviderRoute) GetFlow() string {
@@ -4924,7 +5066,7 @@ type ListPaymentProviderRoutesRequest struct {
 
 func (x *ListPaymentProviderRoutesRequest) Reset() {
 	*x = ListPaymentProviderRoutesRequest{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[54]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4936,7 +5078,7 @@ func (x *ListPaymentProviderRoutesRequest) String() string {
 func (*ListPaymentProviderRoutesRequest) ProtoMessage() {}
 
 func (x *ListPaymentProviderRoutesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[54]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4949,7 +5091,7 @@ func (x *ListPaymentProviderRoutesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPaymentProviderRoutesRequest.ProtoReflect.Descriptor instead.
 func (*ListPaymentProviderRoutesRequest) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{54}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{56}
 }
 
 type ListPaymentProviderRoutesResponse struct {
@@ -4969,7 +5111,7 @@ type ListPaymentProviderRoutesResponse struct {
 
 func (x *ListPaymentProviderRoutesResponse) Reset() {
 	*x = ListPaymentProviderRoutesResponse{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[55]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4981,7 +5123,7 @@ func (x *ListPaymentProviderRoutesResponse) String() string {
 func (*ListPaymentProviderRoutesResponse) ProtoMessage() {}
 
 func (x *ListPaymentProviderRoutesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[55]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4994,7 +5136,7 @@ func (x *ListPaymentProviderRoutesResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ListPaymentProviderRoutesResponse.ProtoReflect.Descriptor instead.
 func (*ListPaymentProviderRoutesResponse) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{55}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *ListPaymentProviderRoutesResponse) GetRoutes() []*PaymentProviderRoute {
@@ -5035,7 +5177,7 @@ type SetPaymentProviderRouteRequest struct {
 
 func (x *SetPaymentProviderRouteRequest) Reset() {
 	*x = SetPaymentProviderRouteRequest{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[56]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5047,7 +5189,7 @@ func (x *SetPaymentProviderRouteRequest) String() string {
 func (*SetPaymentProviderRouteRequest) ProtoMessage() {}
 
 func (x *SetPaymentProviderRouteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[56]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5060,7 +5202,7 @@ func (x *SetPaymentProviderRouteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetPaymentProviderRouteRequest.ProtoReflect.Descriptor instead.
 func (*SetPaymentProviderRouteRequest) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{56}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *SetPaymentProviderRouteRequest) GetFlow() string {
@@ -5094,7 +5236,7 @@ type SetPaymentProviderRouteResponse struct {
 
 func (x *SetPaymentProviderRouteResponse) Reset() {
 	*x = SetPaymentProviderRouteResponse{}
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[57]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5106,7 +5248,7 @@ func (x *SetPaymentProviderRouteResponse) String() string {
 func (*SetPaymentProviderRouteResponse) ProtoMessage() {}
 
 func (x *SetPaymentProviderRouteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payments_payment_v1_payment_proto_msgTypes[57]
+	mi := &file_payments_payment_v1_payment_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5119,7 +5261,7 @@ func (x *SetPaymentProviderRouteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetPaymentProviderRouteResponse.ProtoReflect.Descriptor instead.
 func (*SetPaymentProviderRouteResponse) Descriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{57}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *SetPaymentProviderRouteResponse) GetRoute() *PaymentProviderRoute {
@@ -5326,7 +5468,17 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x0finstallment_url\x18\x02 \x01(\tR\x0einstallmentUrl\x12%\n" +
 	"\x0etransaction_id\x18\x03 \x01(\x03R\rtransactionId\x12.\n" +
 	"\x13wallet_debited_tiyn\x18\x04 \x01(\x03R\x11walletDebitedTiyn\x123\n" +
-	"\x16fully_paid_from_wallet\x18\x05 \x01(\bR\x13fullyPaidFromWallet\"\xea\x01\n" +
+	"\x16fully_paid_from_wallet\x18\x05 \x01(\bR\x13fullyPaidFromWallet\"g\n" +
+	"\x1bConfirmWalletPaymentRequest\x12%\n" +
+	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\x12!\n" +
+	"\fwallet_token\x18\x02 \x01(\tR\vwalletToken\"\xd2\x01\n" +
+	"\x1cConfirmWalletPaymentResponse\x12%\n" +
+	"\x0etransaction_id\x18\x01 \x01(\x03R\rtransactionId\x12'\n" +
+	"\x0fprovider_status\x18\x02 \x01(\tR\x0eproviderStatus\x12\x1c\n" +
+	"\tsucceeded\x18\x03 \x01(\bR\tsucceeded\x12\x1d\n" +
+	"\n" +
+	"action_url\x18\x04 \x01(\tR\tactionUrl\x12%\n" +
+	"\x0edecline_reason\x18\x05 \x01(\tR\rdeclineReason\"\xea\x01\n" +
 	"\x14CreditApprovedParams\x12%\n" +
 	"\x0eprincipal_tiyn\x18\x01 \x01(\x03R\rprincipalTiyn\x12#\n" +
 	"\rperiod_months\x18\x02 \x01(\x05R\fperiodMonths\x12(\n" +
@@ -5601,7 +5753,7 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	" CESSION_AGREEMENT_STATUS_PENDING\x10\x01\x12&\n" +
 	"\"CESSION_AGREEMENT_STATUS_SUBMITTED\x10\x02\x12&\n" +
 	"\"CESSION_AGREEMENT_STATUS_CONFIRMED\x10\x03\x12#\n" +
-	"\x1fCESSION_AGREEMENT_STATUS_FAILED\x10\x042\x8d\r\n" +
+	"\x1fCESSION_AGREEMENT_STATUS_FAILED\x10\x042\x8a\x0e\n" +
 	"\x0ePaymentService\x12r\n" +
 	"\x11CreateTransaction\x12-.payments.payment.v1.CreateTransactionRequest\x1a..payments.payment.v1.CreateTransactionResponse\x12o\n" +
 	"\x10ListTransactions\x12,.payments.payment.v1.ListTransactionsRequest\x1a-.payments.payment.v1.ListTransactionsResponse\x12i\n" +
@@ -5614,7 +5766,8 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\vMarkPaidB2B\x12'.payments.payment.v1.MarkPaidB2BRequest\x1a(.payments.payment.v1.MarkPaidB2BResponse\x12\x90\x01\n" +
 	"\x1bListAvailablePaymentMethods\x127.payments.payment.v1.ListAvailablePaymentMethodsRequest\x1a8.payments.payment.v1.ListAvailablePaymentMethodsResponse\x12`\n" +
 	"\vInitPayment\x12'.payments.payment.v1.InitPaymentRequest\x1a(.payments.payment.v1.InitPaymentResponse\x12c\n" +
-	"\fStartPayment\x12(.payments.payment.v1.StartPaymentRequest\x1a).payments.payment.v1.StartPaymentResponse\x12\x8a\x01\n" +
+	"\fStartPayment\x12(.payments.payment.v1.StartPaymentRequest\x1a).payments.payment.v1.StartPaymentResponse\x12{\n" +
+	"\x14ConfirmWalletPayment\x120.payments.payment.v1.ConfirmWalletPaymentRequest\x1a1.payments.payment.v1.ConfirmWalletPaymentResponse\x12\x8a\x01\n" +
 	"\x19ListPaymentProviderRoutes\x125.payments.payment.v1.ListPaymentProviderRoutesRequest\x1a6.payments.payment.v1.ListPaymentProviderRoutesResponse\x12\x84\x01\n" +
 	"\x17SetPaymentProviderRoute\x123.payments.payment.v1.SetPaymentProviderRouteRequest\x1a4.payments.payment.v1.SetPaymentProviderRouteResponse2\x9f\b\n" +
 	"\rCreditService\x12\x84\x01\n" +
@@ -5640,7 +5793,7 @@ func file_payments_payment_v1_payment_proto_rawDescGZIP() []byte {
 }
 
 var file_payments_payment_v1_payment_proto_enumTypes = make([]protoimpl.EnumInfo, 13)
-var file_payments_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 59)
+var file_payments_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 61)
 var file_payments_payment_v1_payment_proto_goTypes = []any{
 	(TransactionStatus)(0),                         // 0: payments.payment.v1.TransactionStatus
 	(TransactionType)(0),                           // 1: payments.payment.v1.TransactionType
@@ -5684,48 +5837,50 @@ var file_payments_payment_v1_payment_proto_goTypes = []any{
 	(*InitPaymentResponse)(nil),                    // 39: payments.payment.v1.InitPaymentResponse
 	(*StartPaymentRequest)(nil),                    // 40: payments.payment.v1.StartPaymentRequest
 	(*StartPaymentResponse)(nil),                   // 41: payments.payment.v1.StartPaymentResponse
-	(*CreditApprovedParams)(nil),                   // 42: payments.payment.v1.CreditApprovedParams
-	(*CreditPrintForm)(nil),                        // 43: payments.payment.v1.CreditPrintForm
-	(*CreditGood)(nil),                             // 44: payments.payment.v1.CreditGood
-	(*CreateCreditApplicationRequest)(nil),         // 45: payments.payment.v1.CreateCreditApplicationRequest
-	(*CreditApplication)(nil),                      // 46: payments.payment.v1.CreditApplication
-	(*CreateCreditApplicationResponse)(nil),        // 47: payments.payment.v1.CreateCreditApplicationResponse
-	(*GetCreditApplicationRequest)(nil),            // 48: payments.payment.v1.GetCreditApplicationRequest
-	(*GetCreditApplicationResponse)(nil),           // 49: payments.payment.v1.GetCreditApplicationResponse
-	(*RefundCreditApplicationRequest)(nil),         // 50: payments.payment.v1.RefundCreditApplicationRequest
-	(*RefundCreditApplicationResponse)(nil),        // 51: payments.payment.v1.RefundCreditApplicationResponse
-	(*CessionLoan)(nil),                            // 52: payments.payment.v1.CessionLoan
-	(*ListCessionLoansRequest)(nil),                // 53: payments.payment.v1.ListCessionLoansRequest
-	(*ListCessionLoansResponse)(nil),               // 54: payments.payment.v1.ListCessionLoansResponse
-	(*CessionAgreement)(nil),                       // 55: payments.payment.v1.CessionAgreement
-	(*SubmitCessionAgreementRequest)(nil),          // 56: payments.payment.v1.SubmitCessionAgreementRequest
-	(*SubmitCessionAgreementResponse)(nil),         // 57: payments.payment.v1.SubmitCessionAgreementResponse
-	(*GetCessionAgreementRequest)(nil),             // 58: payments.payment.v1.GetCessionAgreementRequest
-	(*GetCessionAgreementResponse)(nil),            // 59: payments.payment.v1.GetCessionAgreementResponse
-	(*CreditRepaymentBand)(nil),                    // 60: payments.payment.v1.CreditRepaymentBand
-	(*CreditPartnerProduct)(nil),                   // 61: payments.payment.v1.CreditPartnerProduct
-	(*ListPartnerProductsRequest)(nil),             // 62: payments.payment.v1.ListPartnerProductsRequest
-	(*ListPartnerProductsResponse)(nil),            // 63: payments.payment.v1.ListPartnerProductsResponse
-	(*RefreshCreditApplicationStatusRequest)(nil),  // 64: payments.payment.v1.RefreshCreditApplicationStatusRequest
-	(*RefreshCreditApplicationStatusResponse)(nil), // 65: payments.payment.v1.RefreshCreditApplicationStatusResponse
-	(*PaymentProviderRoute)(nil),                   // 66: payments.payment.v1.PaymentProviderRoute
-	(*ListPaymentProviderRoutesRequest)(nil),       // 67: payments.payment.v1.ListPaymentProviderRoutesRequest
-	(*ListPaymentProviderRoutesResponse)(nil),      // 68: payments.payment.v1.ListPaymentProviderRoutesResponse
-	(*SetPaymentProviderRouteRequest)(nil),         // 69: payments.payment.v1.SetPaymentProviderRouteRequest
-	(*SetPaymentProviderRouteResponse)(nil),        // 70: payments.payment.v1.SetPaymentProviderRouteResponse
-	nil,                                            // 71: payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
-	(*timestamppb.Timestamp)(nil),                  // 72: google.protobuf.Timestamp
+	(*ConfirmWalletPaymentRequest)(nil),            // 42: payments.payment.v1.ConfirmWalletPaymentRequest
+	(*ConfirmWalletPaymentResponse)(nil),           // 43: payments.payment.v1.ConfirmWalletPaymentResponse
+	(*CreditApprovedParams)(nil),                   // 44: payments.payment.v1.CreditApprovedParams
+	(*CreditPrintForm)(nil),                        // 45: payments.payment.v1.CreditPrintForm
+	(*CreditGood)(nil),                             // 46: payments.payment.v1.CreditGood
+	(*CreateCreditApplicationRequest)(nil),         // 47: payments.payment.v1.CreateCreditApplicationRequest
+	(*CreditApplication)(nil),                      // 48: payments.payment.v1.CreditApplication
+	(*CreateCreditApplicationResponse)(nil),        // 49: payments.payment.v1.CreateCreditApplicationResponse
+	(*GetCreditApplicationRequest)(nil),            // 50: payments.payment.v1.GetCreditApplicationRequest
+	(*GetCreditApplicationResponse)(nil),           // 51: payments.payment.v1.GetCreditApplicationResponse
+	(*RefundCreditApplicationRequest)(nil),         // 52: payments.payment.v1.RefundCreditApplicationRequest
+	(*RefundCreditApplicationResponse)(nil),        // 53: payments.payment.v1.RefundCreditApplicationResponse
+	(*CessionLoan)(nil),                            // 54: payments.payment.v1.CessionLoan
+	(*ListCessionLoansRequest)(nil),                // 55: payments.payment.v1.ListCessionLoansRequest
+	(*ListCessionLoansResponse)(nil),               // 56: payments.payment.v1.ListCessionLoansResponse
+	(*CessionAgreement)(nil),                       // 57: payments.payment.v1.CessionAgreement
+	(*SubmitCessionAgreementRequest)(nil),          // 58: payments.payment.v1.SubmitCessionAgreementRequest
+	(*SubmitCessionAgreementResponse)(nil),         // 59: payments.payment.v1.SubmitCessionAgreementResponse
+	(*GetCessionAgreementRequest)(nil),             // 60: payments.payment.v1.GetCessionAgreementRequest
+	(*GetCessionAgreementResponse)(nil),            // 61: payments.payment.v1.GetCessionAgreementResponse
+	(*CreditRepaymentBand)(nil),                    // 62: payments.payment.v1.CreditRepaymentBand
+	(*CreditPartnerProduct)(nil),                   // 63: payments.payment.v1.CreditPartnerProduct
+	(*ListPartnerProductsRequest)(nil),             // 64: payments.payment.v1.ListPartnerProductsRequest
+	(*ListPartnerProductsResponse)(nil),            // 65: payments.payment.v1.ListPartnerProductsResponse
+	(*RefreshCreditApplicationStatusRequest)(nil),  // 66: payments.payment.v1.RefreshCreditApplicationStatusRequest
+	(*RefreshCreditApplicationStatusResponse)(nil), // 67: payments.payment.v1.RefreshCreditApplicationStatusResponse
+	(*PaymentProviderRoute)(nil),                   // 68: payments.payment.v1.PaymentProviderRoute
+	(*ListPaymentProviderRoutesRequest)(nil),       // 69: payments.payment.v1.ListPaymentProviderRoutesRequest
+	(*ListPaymentProviderRoutesResponse)(nil),      // 70: payments.payment.v1.ListPaymentProviderRoutesResponse
+	(*SetPaymentProviderRouteRequest)(nil),         // 71: payments.payment.v1.SetPaymentProviderRouteRequest
+	(*SetPaymentProviderRouteResponse)(nil),        // 72: payments.payment.v1.SetPaymentProviderRouteResponse
+	nil,                                            // 73: payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
+	(*timestamppb.Timestamp)(nil),                  // 74: google.protobuf.Timestamp
 }
 var file_payments_payment_v1_payment_proto_depIdxs = []int32{
 	2,  // 0: payments.payment.v1.Transaction.provider:type_name -> payments.payment.v1.PaymentProvider
 	3,  // 1: payments.payment.v1.Transaction.payment_method:type_name -> payments.payment.v1.PaymentMethod
 	0,  // 2: payments.payment.v1.Transaction.status:type_name -> payments.payment.v1.TransactionStatus
 	1,  // 3: payments.payment.v1.Transaction.type:type_name -> payments.payment.v1.TransactionType
-	72, // 4: payments.payment.v1.Transaction.paid_at:type_name -> google.protobuf.Timestamp
-	72, // 5: payments.payment.v1.Transaction.created_at:type_name -> google.protobuf.Timestamp
-	72, // 6: payments.payment.v1.Transaction.updated_at:type_name -> google.protobuf.Timestamp
-	72, // 7: payments.payment.v1.Refund.created_at:type_name -> google.protobuf.Timestamp
-	72, // 8: payments.payment.v1.AuditLogEntry.created_at:type_name -> google.protobuf.Timestamp
+	74, // 4: payments.payment.v1.Transaction.paid_at:type_name -> google.protobuf.Timestamp
+	74, // 5: payments.payment.v1.Transaction.created_at:type_name -> google.protobuf.Timestamp
+	74, // 6: payments.payment.v1.Transaction.updated_at:type_name -> google.protobuf.Timestamp
+	74, // 7: payments.payment.v1.Refund.created_at:type_name -> google.protobuf.Timestamp
+	74, // 8: payments.payment.v1.AuditLogEntry.created_at:type_name -> google.protobuf.Timestamp
 	2,  // 9: payments.payment.v1.CreateTransactionRequest.provider:type_name -> payments.payment.v1.PaymentProvider
 	3,  // 10: payments.payment.v1.CreateTransactionRequest.payment_method:type_name -> payments.payment.v1.PaymentMethod
 	7,  // 11: payments.payment.v1.CreateTransactionRequest.settlement_mode:type_name -> payments.payment.v1.SettlementMode
@@ -5734,7 +5889,7 @@ var file_payments_payment_v1_payment_proto_depIdxs = []int32{
 	13, // 14: payments.payment.v1.ListTransactionsResponse.transactions:type_name -> payments.payment.v1.Transaction
 	13, // 15: payments.payment.v1.GetTransactionResponse.transaction:type_name -> payments.payment.v1.Transaction
 	14, // 16: payments.payment.v1.InitiateRefundResponse.refund:type_name -> payments.payment.v1.Refund
-	71, // 17: payments.payment.v1.HandleIokaWebhookRequest.headers:type_name -> payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
+	73, // 17: payments.payment.v1.HandleIokaWebhookRequest.headers:type_name -> payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
 	15, // 18: payments.payment.v1.GetPaymentAuditLogResponse.entries:type_name -> payments.payment.v1.AuditLogEntry
 	13, // 19: payments.payment.v1.MarkPaidB2BResponse.transaction:type_name -> payments.payment.v1.Transaction
 	6,  // 20: payments.payment.v1.ListAvailablePaymentMethodsRequest.use_case:type_name -> payments.payment.v1.PaymentUseCase
@@ -5744,36 +5899,36 @@ var file_payments_payment_v1_payment_proto_depIdxs = []int32{
 	4,  // 24: payments.payment.v1.InitPaymentRequest.entity_type:type_name -> payments.payment.v1.PayEntityType
 	37, // 25: payments.payment.v1.InitPaymentResponse.available_options:type_name -> payments.payment.v1.PayOption
 	37, // 26: payments.payment.v1.InitPaymentResponse.installment_options:type_name -> payments.payment.v1.PayOption
-	43, // 27: payments.payment.v1.CreateCreditApplicationRequest.print_forms:type_name -> payments.payment.v1.CreditPrintForm
-	44, // 28: payments.payment.v1.CreateCreditApplicationRequest.goods:type_name -> payments.payment.v1.CreditGood
+	45, // 27: payments.payment.v1.CreateCreditApplicationRequest.print_forms:type_name -> payments.payment.v1.CreditPrintForm
+	46, // 28: payments.payment.v1.CreateCreditApplicationRequest.goods:type_name -> payments.payment.v1.CreditGood
 	9,  // 29: payments.payment.v1.CreateCreditApplicationRequest.product_kind:type_name -> payments.payment.v1.CreditProductKind
 	8,  // 30: payments.payment.v1.CreditApplication.status:type_name -> payments.payment.v1.CreditApplicationStatus
-	72, // 31: payments.payment.v1.CreditApplication.created_at:type_name -> google.protobuf.Timestamp
-	72, // 32: payments.payment.v1.CreditApplication.updated_at:type_name -> google.protobuf.Timestamp
+	74, // 31: payments.payment.v1.CreditApplication.created_at:type_name -> google.protobuf.Timestamp
+	74, // 32: payments.payment.v1.CreditApplication.updated_at:type_name -> google.protobuf.Timestamp
 	9,  // 33: payments.payment.v1.CreditApplication.product_kind:type_name -> payments.payment.v1.CreditProductKind
 	10, // 34: payments.payment.v1.CreditApplication.loan_type:type_name -> payments.payment.v1.CreditLoanType
-	42, // 35: payments.payment.v1.CreditApplication.approved_params:type_name -> payments.payment.v1.CreditApprovedParams
-	46, // 36: payments.payment.v1.CreateCreditApplicationResponse.application:type_name -> payments.payment.v1.CreditApplication
-	46, // 37: payments.payment.v1.GetCreditApplicationResponse.application:type_name -> payments.payment.v1.CreditApplication
+	44, // 35: payments.payment.v1.CreditApplication.approved_params:type_name -> payments.payment.v1.CreditApprovedParams
+	48, // 36: payments.payment.v1.CreateCreditApplicationResponse.application:type_name -> payments.payment.v1.CreditApplication
+	48, // 37: payments.payment.v1.GetCreditApplicationResponse.application:type_name -> payments.payment.v1.CreditApplication
 	11, // 38: payments.payment.v1.RefundCreditApplicationRequest.refund_type:type_name -> payments.payment.v1.CreditRefundType
-	46, // 39: payments.payment.v1.RefundCreditApplicationResponse.application:type_name -> payments.payment.v1.CreditApplication
-	72, // 40: payments.payment.v1.CessionLoan.issued_at:type_name -> google.protobuf.Timestamp
-	52, // 41: payments.payment.v1.ListCessionLoansResponse.loans:type_name -> payments.payment.v1.CessionLoan
-	55, // 42: payments.payment.v1.ListCessionLoansResponse.agreement:type_name -> payments.payment.v1.CessionAgreement
+	48, // 39: payments.payment.v1.RefundCreditApplicationResponse.application:type_name -> payments.payment.v1.CreditApplication
+	74, // 40: payments.payment.v1.CessionLoan.issued_at:type_name -> google.protobuf.Timestamp
+	54, // 41: payments.payment.v1.ListCessionLoansResponse.loans:type_name -> payments.payment.v1.CessionLoan
+	57, // 42: payments.payment.v1.ListCessionLoansResponse.agreement:type_name -> payments.payment.v1.CessionAgreement
 	12, // 43: payments.payment.v1.CessionAgreement.status:type_name -> payments.payment.v1.CessionAgreementStatus
-	72, // 44: payments.payment.v1.CessionAgreement.submitted_at:type_name -> google.protobuf.Timestamp
-	72, // 45: payments.payment.v1.CessionAgreement.confirmed_at:type_name -> google.protobuf.Timestamp
-	72, // 46: payments.payment.v1.CessionAgreement.created_at:type_name -> google.protobuf.Timestamp
-	72, // 47: payments.payment.v1.CessionAgreement.updated_at:type_name -> google.protobuf.Timestamp
-	55, // 48: payments.payment.v1.SubmitCessionAgreementResponse.agreement:type_name -> payments.payment.v1.CessionAgreement
-	55, // 49: payments.payment.v1.GetCessionAgreementResponse.agreement:type_name -> payments.payment.v1.CessionAgreement
+	74, // 44: payments.payment.v1.CessionAgreement.submitted_at:type_name -> google.protobuf.Timestamp
+	74, // 45: payments.payment.v1.CessionAgreement.confirmed_at:type_name -> google.protobuf.Timestamp
+	74, // 46: payments.payment.v1.CessionAgreement.created_at:type_name -> google.protobuf.Timestamp
+	74, // 47: payments.payment.v1.CessionAgreement.updated_at:type_name -> google.protobuf.Timestamp
+	57, // 48: payments.payment.v1.SubmitCessionAgreementResponse.agreement:type_name -> payments.payment.v1.CessionAgreement
+	57, // 49: payments.payment.v1.GetCessionAgreementResponse.agreement:type_name -> payments.payment.v1.CessionAgreement
 	10, // 50: payments.payment.v1.CreditPartnerProduct.loan_type:type_name -> payments.payment.v1.CreditLoanType
-	60, // 51: payments.payment.v1.CreditPartnerProduct.repayment:type_name -> payments.payment.v1.CreditRepaymentBand
-	61, // 52: payments.payment.v1.ListPartnerProductsResponse.products:type_name -> payments.payment.v1.CreditPartnerProduct
-	46, // 53: payments.payment.v1.RefreshCreditApplicationStatusResponse.application:type_name -> payments.payment.v1.CreditApplication
-	72, // 54: payments.payment.v1.PaymentProviderRoute.updated_at:type_name -> google.protobuf.Timestamp
-	66, // 55: payments.payment.v1.ListPaymentProviderRoutesResponse.routes:type_name -> payments.payment.v1.PaymentProviderRoute
-	66, // 56: payments.payment.v1.SetPaymentProviderRouteResponse.route:type_name -> payments.payment.v1.PaymentProviderRoute
+	62, // 51: payments.payment.v1.CreditPartnerProduct.repayment:type_name -> payments.payment.v1.CreditRepaymentBand
+	63, // 52: payments.payment.v1.ListPartnerProductsResponse.products:type_name -> payments.payment.v1.CreditPartnerProduct
+	48, // 53: payments.payment.v1.RefreshCreditApplicationStatusResponse.application:type_name -> payments.payment.v1.CreditApplication
+	74, // 54: payments.payment.v1.PaymentProviderRoute.updated_at:type_name -> google.protobuf.Timestamp
+	68, // 55: payments.payment.v1.ListPaymentProviderRoutesResponse.routes:type_name -> payments.payment.v1.PaymentProviderRoute
+	68, // 56: payments.payment.v1.SetPaymentProviderRouteResponse.route:type_name -> payments.payment.v1.PaymentProviderRoute
 	16, // 57: payments.payment.v1.PaymentService.CreateTransaction:input_type -> payments.payment.v1.CreateTransactionRequest
 	18, // 58: payments.payment.v1.PaymentService.ListTransactions:input_type -> payments.payment.v1.ListTransactionsRequest
 	20, // 59: payments.payment.v1.PaymentService.GetTransaction:input_type -> payments.payment.v1.GetTransactionRequest
@@ -5786,40 +5941,42 @@ var file_payments_payment_v1_payment_proto_depIdxs = []int32{
 	34, // 66: payments.payment.v1.PaymentService.ListAvailablePaymentMethods:input_type -> payments.payment.v1.ListAvailablePaymentMethodsRequest
 	38, // 67: payments.payment.v1.PaymentService.InitPayment:input_type -> payments.payment.v1.InitPaymentRequest
 	40, // 68: payments.payment.v1.PaymentService.StartPayment:input_type -> payments.payment.v1.StartPaymentRequest
-	67, // 69: payments.payment.v1.PaymentService.ListPaymentProviderRoutes:input_type -> payments.payment.v1.ListPaymentProviderRoutesRequest
-	69, // 70: payments.payment.v1.PaymentService.SetPaymentProviderRoute:input_type -> payments.payment.v1.SetPaymentProviderRouteRequest
-	45, // 71: payments.payment.v1.CreditService.CreateCreditApplication:input_type -> payments.payment.v1.CreateCreditApplicationRequest
-	48, // 72: payments.payment.v1.CreditService.GetCreditApplication:input_type -> payments.payment.v1.GetCreditApplicationRequest
-	50, // 73: payments.payment.v1.CreditService.RefundCreditApplication:input_type -> payments.payment.v1.RefundCreditApplicationRequest
-	53, // 74: payments.payment.v1.CreditService.ListCessionLoans:input_type -> payments.payment.v1.ListCessionLoansRequest
-	56, // 75: payments.payment.v1.CreditService.SubmitCessionAgreement:input_type -> payments.payment.v1.SubmitCessionAgreementRequest
-	58, // 76: payments.payment.v1.CreditService.GetCessionAgreement:input_type -> payments.payment.v1.GetCessionAgreementRequest
-	62, // 77: payments.payment.v1.CreditService.ListPartnerProducts:input_type -> payments.payment.v1.ListPartnerProductsRequest
-	64, // 78: payments.payment.v1.CreditService.RefreshCreditApplicationStatus:input_type -> payments.payment.v1.RefreshCreditApplicationStatusRequest
-	17, // 79: payments.payment.v1.PaymentService.CreateTransaction:output_type -> payments.payment.v1.CreateTransactionResponse
-	19, // 80: payments.payment.v1.PaymentService.ListTransactions:output_type -> payments.payment.v1.ListTransactionsResponse
-	21, // 81: payments.payment.v1.PaymentService.GetTransaction:output_type -> payments.payment.v1.GetTransactionResponse
-	23, // 82: payments.payment.v1.PaymentService.InitiateRefund:output_type -> payments.payment.v1.InitiateRefundResponse
-	25, // 83: payments.payment.v1.PaymentService.HandleIokaWebhook:output_type -> payments.payment.v1.HandleIokaWebhookResponse
-	27, // 84: payments.payment.v1.PaymentService.HandleKaspiCheckPay:output_type -> payments.payment.v1.HandleKaspiCheckPayResponse
-	29, // 85: payments.payment.v1.PaymentService.HandleLegacyKaspiCallback:output_type -> payments.payment.v1.HandleLegacyKaspiCallbackResponse
-	31, // 86: payments.payment.v1.PaymentService.GetPaymentAuditLog:output_type -> payments.payment.v1.GetPaymentAuditLogResponse
-	33, // 87: payments.payment.v1.PaymentService.MarkPaidB2B:output_type -> payments.payment.v1.MarkPaidB2BResponse
-	36, // 88: payments.payment.v1.PaymentService.ListAvailablePaymentMethods:output_type -> payments.payment.v1.ListAvailablePaymentMethodsResponse
-	39, // 89: payments.payment.v1.PaymentService.InitPayment:output_type -> payments.payment.v1.InitPaymentResponse
-	41, // 90: payments.payment.v1.PaymentService.StartPayment:output_type -> payments.payment.v1.StartPaymentResponse
-	68, // 91: payments.payment.v1.PaymentService.ListPaymentProviderRoutes:output_type -> payments.payment.v1.ListPaymentProviderRoutesResponse
-	70, // 92: payments.payment.v1.PaymentService.SetPaymentProviderRoute:output_type -> payments.payment.v1.SetPaymentProviderRouteResponse
-	47, // 93: payments.payment.v1.CreditService.CreateCreditApplication:output_type -> payments.payment.v1.CreateCreditApplicationResponse
-	49, // 94: payments.payment.v1.CreditService.GetCreditApplication:output_type -> payments.payment.v1.GetCreditApplicationResponse
-	51, // 95: payments.payment.v1.CreditService.RefundCreditApplication:output_type -> payments.payment.v1.RefundCreditApplicationResponse
-	54, // 96: payments.payment.v1.CreditService.ListCessionLoans:output_type -> payments.payment.v1.ListCessionLoansResponse
-	57, // 97: payments.payment.v1.CreditService.SubmitCessionAgreement:output_type -> payments.payment.v1.SubmitCessionAgreementResponse
-	59, // 98: payments.payment.v1.CreditService.GetCessionAgreement:output_type -> payments.payment.v1.GetCessionAgreementResponse
-	63, // 99: payments.payment.v1.CreditService.ListPartnerProducts:output_type -> payments.payment.v1.ListPartnerProductsResponse
-	65, // 100: payments.payment.v1.CreditService.RefreshCreditApplicationStatus:output_type -> payments.payment.v1.RefreshCreditApplicationStatusResponse
-	79, // [79:101] is the sub-list for method output_type
-	57, // [57:79] is the sub-list for method input_type
+	42, // 69: payments.payment.v1.PaymentService.ConfirmWalletPayment:input_type -> payments.payment.v1.ConfirmWalletPaymentRequest
+	69, // 70: payments.payment.v1.PaymentService.ListPaymentProviderRoutes:input_type -> payments.payment.v1.ListPaymentProviderRoutesRequest
+	71, // 71: payments.payment.v1.PaymentService.SetPaymentProviderRoute:input_type -> payments.payment.v1.SetPaymentProviderRouteRequest
+	47, // 72: payments.payment.v1.CreditService.CreateCreditApplication:input_type -> payments.payment.v1.CreateCreditApplicationRequest
+	50, // 73: payments.payment.v1.CreditService.GetCreditApplication:input_type -> payments.payment.v1.GetCreditApplicationRequest
+	52, // 74: payments.payment.v1.CreditService.RefundCreditApplication:input_type -> payments.payment.v1.RefundCreditApplicationRequest
+	55, // 75: payments.payment.v1.CreditService.ListCessionLoans:input_type -> payments.payment.v1.ListCessionLoansRequest
+	58, // 76: payments.payment.v1.CreditService.SubmitCessionAgreement:input_type -> payments.payment.v1.SubmitCessionAgreementRequest
+	60, // 77: payments.payment.v1.CreditService.GetCessionAgreement:input_type -> payments.payment.v1.GetCessionAgreementRequest
+	64, // 78: payments.payment.v1.CreditService.ListPartnerProducts:input_type -> payments.payment.v1.ListPartnerProductsRequest
+	66, // 79: payments.payment.v1.CreditService.RefreshCreditApplicationStatus:input_type -> payments.payment.v1.RefreshCreditApplicationStatusRequest
+	17, // 80: payments.payment.v1.PaymentService.CreateTransaction:output_type -> payments.payment.v1.CreateTransactionResponse
+	19, // 81: payments.payment.v1.PaymentService.ListTransactions:output_type -> payments.payment.v1.ListTransactionsResponse
+	21, // 82: payments.payment.v1.PaymentService.GetTransaction:output_type -> payments.payment.v1.GetTransactionResponse
+	23, // 83: payments.payment.v1.PaymentService.InitiateRefund:output_type -> payments.payment.v1.InitiateRefundResponse
+	25, // 84: payments.payment.v1.PaymentService.HandleIokaWebhook:output_type -> payments.payment.v1.HandleIokaWebhookResponse
+	27, // 85: payments.payment.v1.PaymentService.HandleKaspiCheckPay:output_type -> payments.payment.v1.HandleKaspiCheckPayResponse
+	29, // 86: payments.payment.v1.PaymentService.HandleLegacyKaspiCallback:output_type -> payments.payment.v1.HandleLegacyKaspiCallbackResponse
+	31, // 87: payments.payment.v1.PaymentService.GetPaymentAuditLog:output_type -> payments.payment.v1.GetPaymentAuditLogResponse
+	33, // 88: payments.payment.v1.PaymentService.MarkPaidB2B:output_type -> payments.payment.v1.MarkPaidB2BResponse
+	36, // 89: payments.payment.v1.PaymentService.ListAvailablePaymentMethods:output_type -> payments.payment.v1.ListAvailablePaymentMethodsResponse
+	39, // 90: payments.payment.v1.PaymentService.InitPayment:output_type -> payments.payment.v1.InitPaymentResponse
+	41, // 91: payments.payment.v1.PaymentService.StartPayment:output_type -> payments.payment.v1.StartPaymentResponse
+	43, // 92: payments.payment.v1.PaymentService.ConfirmWalletPayment:output_type -> payments.payment.v1.ConfirmWalletPaymentResponse
+	70, // 93: payments.payment.v1.PaymentService.ListPaymentProviderRoutes:output_type -> payments.payment.v1.ListPaymentProviderRoutesResponse
+	72, // 94: payments.payment.v1.PaymentService.SetPaymentProviderRoute:output_type -> payments.payment.v1.SetPaymentProviderRouteResponse
+	49, // 95: payments.payment.v1.CreditService.CreateCreditApplication:output_type -> payments.payment.v1.CreateCreditApplicationResponse
+	51, // 96: payments.payment.v1.CreditService.GetCreditApplication:output_type -> payments.payment.v1.GetCreditApplicationResponse
+	53, // 97: payments.payment.v1.CreditService.RefundCreditApplication:output_type -> payments.payment.v1.RefundCreditApplicationResponse
+	56, // 98: payments.payment.v1.CreditService.ListCessionLoans:output_type -> payments.payment.v1.ListCessionLoansResponse
+	59, // 99: payments.payment.v1.CreditService.SubmitCessionAgreement:output_type -> payments.payment.v1.SubmitCessionAgreementResponse
+	61, // 100: payments.payment.v1.CreditService.GetCessionAgreement:output_type -> payments.payment.v1.GetCessionAgreementResponse
+	65, // 101: payments.payment.v1.CreditService.ListPartnerProducts:output_type -> payments.payment.v1.ListPartnerProductsResponse
+	67, // 102: payments.payment.v1.CreditService.RefreshCreditApplicationStatus:output_type -> payments.payment.v1.RefreshCreditApplicationStatusResponse
+	80, // [80:103] is the sub-list for method output_type
+	57, // [57:80] is the sub-list for method input_type
 	57, // [57:57] is the sub-list for extension type_name
 	57, // [57:57] is the sub-list for extension extendee
 	0,  // [0:57] is the sub-list for field type_name
@@ -5836,7 +5993,7 @@ func file_payments_payment_v1_payment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_payments_payment_v1_payment_proto_rawDesc), len(file_payments_payment_v1_payment_proto_rawDesc)),
 			NumEnums:      13,
-			NumMessages:   59,
+			NumMessages:   61,
 			NumExtensions: 0,
 			NumServices:   2,
 		},
