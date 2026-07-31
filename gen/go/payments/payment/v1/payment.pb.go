@@ -4802,14 +4802,22 @@ type PaymentProviderRoute struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// flow is the payable flow key, e.g. "fueling" or "roadside". The reserved
 	// key "default" applies to every flow without a row of its own.
-	Flow     string `protobuf:"bytes,1,opt,name=flow,proto3" json:"flow,omitempty"`
+	Flow string `protobuf:"bytes,1,opt,name=flow,proto3" json:"flow,omitempty"`
+	// provider is the first acquirer of `providers`, kept for wire compatibility
+	// with the single-acquirer release. Read `providers`.
+	//
+	// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
 	Provider string `protobuf:"bytes,2,opt,name=provider,proto3" json:"provider,omitempty"`
 	// source reports where the effective value comes from: "runtime" (stored and
 	// editable), "default" (inherited from the "default" route) or "builtin"
 	// (compiled fallback used while nothing is stored).
-	Source        string                 `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	UpdatedBy     int64                  `protobuf:"varint,5,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	Source    string                 `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	UpdatedBy int64                  `protobuf:"varint,5,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
+	// providers are the acquirers serving this flow, in the order the checkout
+	// offers them. More than one means the payer picks; exactly one means the
+	// flow is pinned to that acquirer.
+	Providers     []string `protobuf:"bytes,6,rep,name=providers,proto3" json:"providers,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4851,6 +4859,7 @@ func (x *PaymentProviderRoute) GetFlow() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
 func (x *PaymentProviderRoute) GetProvider() string {
 	if x != nil {
 		return x.Provider
@@ -4877,6 +4886,13 @@ func (x *PaymentProviderRoute) GetUpdatedBy() int64 {
 		return x.UpdatedBy
 	}
 	return 0
+}
+
+func (x *PaymentProviderRoute) GetProviders() []string {
+	if x != nil {
+		return x.Providers
+	}
+	return nil
 }
 
 type ListPaymentProviderRoutesRequest struct {
@@ -4982,9 +4998,16 @@ func (x *ListPaymentProviderRoutesResponse) GetUnavailableProviders() []string {
 }
 
 type SetPaymentProviderRouteRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Flow          string                 `protobuf:"bytes,1,opt,name=flow,proto3" json:"flow,omitempty"`
-	Provider      string                 `protobuf:"bytes,2,opt,name=provider,proto3" json:"provider,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Flow  string                 `protobuf:"bytes,1,opt,name=flow,proto3" json:"flow,omitempty"`
+	// provider sets a single acquirer. Kept for the earlier release; prefer
+	// `providers`. Ignored when `providers` is non-empty.
+	//
+	// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
+	Provider string `protobuf:"bytes,2,opt,name=provider,proto3" json:"provider,omitempty"`
+	// providers replaces the whole set for this flow, in offer order. An empty
+	// list clears the route so the flow falls back to configuration.
+	Providers     []string `protobuf:"bytes,3,rep,name=providers,proto3" json:"providers,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5026,11 +5049,19 @@ func (x *SetPaymentProviderRouteRequest) GetFlow() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
 func (x *SetPaymentProviderRouteRequest) GetProvider() string {
 	if x != nil {
 		return x.Provider
 	}
 	return ""
+}
+
+func (x *SetPaymentProviderRouteRequest) GetProviders() []string {
+	if x != nil {
+		return x.Providers
+	}
+	return nil
 }
 
 type SetPaymentProviderRouteResponse struct {
@@ -5438,23 +5469,25 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"%RefreshCreditApplicationStatusRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\"r\n" +
 	"&RefreshCreditApplicationStatusResponse\x12H\n" +
-	"\vapplication\x18\x01 \x01(\v2&.payments.payment.v1.CreditApplicationR\vapplication\"\xb8\x01\n" +
+	"\vapplication\x18\x01 \x01(\v2&.payments.payment.v1.CreditApplicationR\vapplication\"\xda\x01\n" +
 	"\x14PaymentProviderRoute\x12\x12\n" +
-	"\x04flow\x18\x01 \x01(\tR\x04flow\x12\x1a\n" +
-	"\bprovider\x18\x02 \x01(\tR\bprovider\x12\x16\n" +
+	"\x04flow\x18\x01 \x01(\tR\x04flow\x12\x1e\n" +
+	"\bprovider\x18\x02 \x01(\tB\x02\x18\x01R\bprovider\x12\x16\n" +
 	"\x06source\x18\x03 \x01(\tR\x06source\x129\n" +
 	"\n" +
 	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_by\x18\x05 \x01(\x03R\tupdatedBy\"\"\n" +
+	"updated_by\x18\x05 \x01(\x03R\tupdatedBy\x12\x1c\n" +
+	"\tproviders\x18\x06 \x03(\tR\tproviders\"\"\n" +
 	" ListPaymentProviderRoutesRequest\"\xcc\x01\n" +
 	"!ListPaymentProviderRoutesResponse\x12A\n" +
 	"\x06routes\x18\x01 \x03(\v2).payments.payment.v1.PaymentProviderRouteR\x06routes\x12/\n" +
 	"\x13supported_providers\x18\x02 \x03(\tR\x12supportedProviders\x123\n" +
-	"\x15unavailable_providers\x18\x03 \x03(\tR\x14unavailableProviders\"P\n" +
+	"\x15unavailable_providers\x18\x03 \x03(\tR\x14unavailableProviders\"r\n" +
 	"\x1eSetPaymentProviderRouteRequest\x12\x12\n" +
-	"\x04flow\x18\x01 \x01(\tR\x04flow\x12\x1a\n" +
-	"\bprovider\x18\x02 \x01(\tR\bprovider\"b\n" +
+	"\x04flow\x18\x01 \x01(\tR\x04flow\x12\x1e\n" +
+	"\bprovider\x18\x02 \x01(\tB\x02\x18\x01R\bprovider\x12\x1c\n" +
+	"\tproviders\x18\x03 \x03(\tR\tproviders\"b\n" +
 	"\x1fSetPaymentProviderRouteResponse\x12?\n" +
 	"\x05route\x18\x01 \x01(\v2).payments.payment.v1.PaymentProviderRouteR\x05route*\x87\x02\n" +
 	"\x11TransactionStatus\x12\"\n" +

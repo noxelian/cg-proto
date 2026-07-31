@@ -816,13 +816,19 @@ message PaymentProviderRoute {
   // flow is the payable flow key, e.g. "fueling" or "roadside". The reserved
   // key "default" applies to every flow without a row of its own.
   string flow = 1;
-  string provider = 2;
+  // provider is the first acquirer of `providers`, kept for wire compatibility
+  // with the single-acquirer release. Read `providers`.
+  string provider = 2 [deprecated = true];
   // source reports where the effective value comes from: "runtime" (stored and
   // editable), "default" (inherited from the "default" route) or "builtin"
   // (compiled fallback used while nothing is stored).
   string source = 3;
   google.protobuf.Timestamp updated_at = 4;
   int64 updated_by = 5;
+  // providers are the acquirers serving this flow, in the order the checkout
+  // offers them. More than one means the payer picks; exactly one means the
+  // flow is pinned to that acquirer.
+  repeated string providers = 6;
 }
 
 message ListPaymentProviderRoutesRequest {}
@@ -841,7 +847,12 @@ message ListPaymentProviderRoutesResponse {
 
 message SetPaymentProviderRouteRequest {
   string flow = 1;
-  string provider = 2;
+  // provider sets a single acquirer. Kept for the earlier release; prefer
+  // `providers`. Ignored when `providers` is non-empty.
+  string provider = 2 [deprecated = true];
+  // providers replaces the whole set for this flow, in offer order. An empty
+  // list clears the route so the flow falls back to configuration.
+  repeated string providers = 3;
 }
 
 message SetPaymentProviderRouteResponse {
