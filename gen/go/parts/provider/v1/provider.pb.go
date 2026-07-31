@@ -1850,8 +1850,12 @@ func (x *StreamSearchPartsResponse) GetCompletedProviders() int32 {
 }
 
 type Supplier struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Deprecated: numeric org id, never carried a value that maps to the
+	// marketplace organization. Superseded by seller_org_id.
+	//
+	// Deprecated: Marked as deprecated in parts/provider/v1/provider.proto.
 	OrgId           int64                  `protobuf:"varint,2,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
 	Name            string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	IntegrationType IntegrationType        `protobuf:"varint,4,opt,name=integration_type,json=integrationType,proto3,enum=parts.provider.v1.IntegrationType" json:"integration_type,omitempty"`
@@ -1862,8 +1866,13 @@ type Supplier struct {
 	CatalogCount    int32                  `protobuf:"varint,9,opt,name=catalog_count,json=catalogCount,proto3" json:"catalog_count,omitempty"`
 	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// seller_org_id is the marketplace organization UUID this supplier sells as.
+	// Parts sourced from the supplier carry it, which is what makes them
+	// purchasable through the cart. Empty means the supplier answers requests
+	// (bid flow) only.
+	SellerOrgId   string `protobuf:"bytes,12,opt,name=seller_org_id,json=sellerOrgId,proto3" json:"seller_org_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Supplier) Reset() {
@@ -1903,6 +1912,7 @@ func (x *Supplier) GetId() int64 {
 	return 0
 }
 
+// Deprecated: Marked as deprecated in parts/provider/v1/provider.proto.
 func (x *Supplier) GetOrgId() int64 {
 	if x != nil {
 		return x.OrgId
@@ -1973,15 +1983,28 @@ func (x *Supplier) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Supplier) GetSellerOrgId() string {
+	if x != nil {
+		return x.SellerOrgId
+	}
+	return ""
+}
+
 type CreateSupplierRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	OrgId           int64                  `protobuf:"varint,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
-	Name            string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	City            string                 `protobuf:"bytes,3,opt,name=city,proto3" json:"city,omitempty"`
-	IntegrationType IntegrationType        `protobuf:"varint,4,opt,name=integration_type,json=integrationType,proto3,enum=parts.provider.v1.IntegrationType" json:"integration_type,omitempty"`
-	ApiProvider     string                 `protobuf:"bytes,5,opt,name=api_provider,json=apiProvider,proto3" json:"api_provider,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Deprecated: use seller_org_id.
+	//
+	// Deprecated: Marked as deprecated in parts/provider/v1/provider.proto.
+	OrgId           int64           `protobuf:"varint,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	Name            string          `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	City            string          `protobuf:"bytes,3,opt,name=city,proto3" json:"city,omitempty"`
+	IntegrationType IntegrationType `protobuf:"varint,4,opt,name=integration_type,json=integrationType,proto3,enum=parts.provider.v1.IntegrationType" json:"integration_type,omitempty"`
+	ApiProvider     string          `protobuf:"bytes,5,opt,name=api_provider,json=apiProvider,proto3" json:"api_provider,omitempty"`
+	// seller_org_id is the marketplace organization UUID. Optional: leave empty
+	// for suppliers that only answer requests.
+	SellerOrgId   string `protobuf:"bytes,6,opt,name=seller_org_id,json=sellerOrgId,proto3" json:"seller_org_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateSupplierRequest) Reset() {
@@ -2014,6 +2037,7 @@ func (*CreateSupplierRequest) Descriptor() ([]byte, []int) {
 	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{23}
 }
 
+// Deprecated: Marked as deprecated in parts/provider/v1/provider.proto.
 func (x *CreateSupplierRequest) GetOrgId() int64 {
 	if x != nil {
 		return x.OrgId
@@ -2045,6 +2069,13 @@ func (x *CreateSupplierRequest) GetIntegrationType() IntegrationType {
 func (x *CreateSupplierRequest) GetApiProvider() string {
 	if x != nil {
 		return x.ApiProvider
+	}
+	return ""
+}
+
+func (x *CreateSupplierRequest) GetSellerOrgId() string {
+	if x != nil {
+		return x.SellerOrgId
 	}
 	return ""
 }
@@ -2094,12 +2125,18 @@ func (x *CreateSupplierResponse) GetSupplier() *Supplier {
 }
 
 type UpdateSupplierRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	City          string                 `protobuf:"bytes,3,opt,name=city,proto3" json:"city,omitempty"`
-	Enabled       bool                   `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	OrgId         int64                  `protobuf:"varint,5,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Id      int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name    string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	City    string                 `protobuf:"bytes,3,opt,name=city,proto3" json:"city,omitempty"`
+	Enabled bool                   `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	// Deprecated: use seller_org_id.
+	//
+	// Deprecated: Marked as deprecated in parts/provider/v1/provider.proto.
+	OrgId int64 `protobuf:"varint,5,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	// seller_org_id is the marketplace organization UUID. Empty leaves the
+	// stored value untouched; send "-" to clear it.
+	SellerOrgId   string `protobuf:"bytes,6,opt,name=seller_org_id,json=sellerOrgId,proto3" json:"seller_org_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2162,11 +2199,19 @@ func (x *UpdateSupplierRequest) GetEnabled() bool {
 	return false
 }
 
+// Deprecated: Marked as deprecated in parts/provider/v1/provider.proto.
 func (x *UpdateSupplierRequest) GetOrgId() int64 {
 	if x != nil {
 		return x.OrgId
 	}
 	return 0
+}
+
+func (x *UpdateSupplierRequest) GetSellerOrgId() string {
+	if x != nil {
+		return x.SellerOrgId
+	}
+	return ""
 }
 
 type UpdateSupplierResponse struct {
@@ -3357,10 +3402,10 @@ const file_parts_provider_v1_provider_proto_rawDesc = "" +
 	"\tsearch_id\x18\x01 \x01(\x03R\bsearchId\x129\n" +
 	"\x06result\x18\x02 \x01(\v2!.parts.provider.v1.ProviderResultR\x06result\x12'\n" +
 	"\x0ftotal_providers\x18\x03 \x01(\x05R\x0etotalProviders\x12/\n" +
-	"\x13completed_providers\x18\x04 \x01(\x05R\x12completedProviders\"\x9f\x03\n" +
+	"\x13completed_providers\x18\x04 \x01(\x05R\x12completedProviders\"\xc7\x03\n" +
 	"\bSupplier\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x15\n" +
-	"\x06org_id\x18\x02 \x01(\x03R\x05orgId\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
+	"\x06org_id\x18\x02 \x01(\x03B\x02\x18\x01R\x05orgId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12M\n" +
 	"\x10integration_type\x18\x04 \x01(\x0e2\".parts.provider.v1.IntegrationTypeR\x0fintegrationType\x12\x1d\n" +
 	"\n" +
@@ -3373,21 +3418,24 @@ const file_parts_provider_v1_provider_proto_rawDesc = "" +
 	"created_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xc8\x01\n" +
-	"\x15CreateSupplierRequest\x12\x15\n" +
-	"\x06org_id\x18\x01 \x01(\x03R\x05orgId\x12\x12\n" +
+	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\"\n" +
+	"\rseller_org_id\x18\f \x01(\tR\vsellerOrgId\"\xf0\x01\n" +
+	"\x15CreateSupplierRequest\x12\x19\n" +
+	"\x06org_id\x18\x01 \x01(\x03B\x02\x18\x01R\x05orgId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
 	"\x04city\x18\x03 \x01(\tR\x04city\x12M\n" +
 	"\x10integration_type\x18\x04 \x01(\x0e2\".parts.provider.v1.IntegrationTypeR\x0fintegrationType\x12!\n" +
-	"\fapi_provider\x18\x05 \x01(\tR\vapiProvider\"Q\n" +
+	"\fapi_provider\x18\x05 \x01(\tR\vapiProvider\x12\"\n" +
+	"\rseller_org_id\x18\x06 \x01(\tR\vsellerOrgId\"Q\n" +
 	"\x16CreateSupplierResponse\x127\n" +
-	"\bsupplier\x18\x01 \x01(\v2\x1b.parts.provider.v1.SupplierR\bsupplier\"\x80\x01\n" +
+	"\bsupplier\x18\x01 \x01(\v2\x1b.parts.provider.v1.SupplierR\bsupplier\"\xa8\x01\n" +
 	"\x15UpdateSupplierRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
 	"\x04city\x18\x03 \x01(\tR\x04city\x12\x18\n" +
-	"\aenabled\x18\x04 \x01(\bR\aenabled\x12\x15\n" +
-	"\x06org_id\x18\x05 \x01(\x03R\x05orgId\"Q\n" +
+	"\aenabled\x18\x04 \x01(\bR\aenabled\x12\x19\n" +
+	"\x06org_id\x18\x05 \x01(\x03B\x02\x18\x01R\x05orgId\x12\"\n" +
+	"\rseller_org_id\x18\x06 \x01(\tR\vsellerOrgId\"Q\n" +
 	"\x16UpdateSupplierResponse\x127\n" +
 	"\bsupplier\x18\x01 \x01(\v2\x1b.parts.provider.v1.SupplierR\bsupplier\"'\n" +
 	"\x15DeleteSupplierRequest\x12\x0e\n" +

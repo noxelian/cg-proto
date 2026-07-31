@@ -301,7 +301,9 @@ enum ImportMode {
 
 message Supplier {
   int64 id = 1;
-  int64 org_id = 2;
+  // Deprecated: numeric org id, never carried a value that maps to the
+  // marketplace organization. Superseded by seller_org_id.
+  int64 org_id = 2 [deprecated = true];
   string name = 3;
   IntegrationType integration_type = 4;
   int32 service_id = 5;
@@ -311,14 +313,23 @@ message Supplier {
   int32 catalog_count = 9;
   google.protobuf.Timestamp created_at = 10;
   google.protobuf.Timestamp updated_at = 11;
+  // seller_org_id is the marketplace organization UUID this supplier sells as.
+  // Parts sourced from the supplier carry it, which is what makes them
+  // purchasable through the cart. Empty means the supplier answers requests
+  // (bid flow) only.
+  string seller_org_id = 12;
 }
 
 message CreateSupplierRequest {
-  int64 org_id = 1;
+  // Deprecated: use seller_org_id.
+  int64 org_id = 1 [deprecated = true];
   string name = 2;
   string city = 3;
   IntegrationType integration_type = 4;
   string api_provider = 5;
+  // seller_org_id is the marketplace organization UUID. Optional: leave empty
+  // for suppliers that only answer requests.
+  string seller_org_id = 6;
 }
 
 message CreateSupplierResponse {
@@ -330,7 +341,11 @@ message UpdateSupplierRequest {
   string name = 2;
   string city = 3;
   bool enabled = 4;
-  int64 org_id = 5;
+  // Deprecated: use seller_org_id.
+  int64 org_id = 5 [deprecated = true];
+  // seller_org_id is the marketplace organization UUID. Empty leaves the
+  // stored value untouched; send "-" to clear it.
+  string seller_org_id = 6;
 }
 
 message UpdateSupplierResponse {
