@@ -825,10 +825,17 @@ message PaymentProviderRoute {
   string source = 3;
   google.protobuf.Timestamp updated_at = 4;
   int64 updated_by = 5;
-  // providers are the acquirers serving this flow, in the order the checkout
-  // offers them. More than one means the payer picks; exactly one means the
-  // flow is pinned to that acquirer.
+  // providers are the providers serving this flow, in the order the checkout
+  // offers them. More than one means the payer picks.
   repeated string providers = 6;
+  // supported_providers is the TECHNICAL limit of this flow: providers it can
+  // be served by at all. A provider outside this list cannot be selected —
+  // e.g. fueling cannot take Kaspi, whose failed orders cannot be refunded
+  // automatically. The panel shows the difference as unavailable.
+  repeated string supported_providers = 7;
+  // is_global marks the reserved "default" row: the one switch that applies to
+  // every service without an exception of its own.
+  bool is_global = 8;
 }
 
 message ListPaymentProviderRoutesRequest {}

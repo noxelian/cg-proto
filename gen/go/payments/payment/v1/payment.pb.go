@@ -4814,10 +4814,17 @@ type PaymentProviderRoute struct {
 	Source    string                 `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	UpdatedBy int64                  `protobuf:"varint,5,opt,name=updated_by,json=updatedBy,proto3" json:"updated_by,omitempty"`
-	// providers are the acquirers serving this flow, in the order the checkout
-	// offers them. More than one means the payer picks; exactly one means the
-	// flow is pinned to that acquirer.
-	Providers     []string `protobuf:"bytes,6,rep,name=providers,proto3" json:"providers,omitempty"`
+	// providers are the providers serving this flow, in the order the checkout
+	// offers them. More than one means the payer picks.
+	Providers []string `protobuf:"bytes,6,rep,name=providers,proto3" json:"providers,omitempty"`
+	// supported_providers is the TECHNICAL limit of this flow: providers it can
+	// be served by at all. A provider outside this list cannot be selected —
+	// e.g. fueling cannot take Kaspi, whose failed orders cannot be refunded
+	// automatically. The panel shows the difference as unavailable.
+	SupportedProviders []string `protobuf:"bytes,7,rep,name=supported_providers,json=supportedProviders,proto3" json:"supported_providers,omitempty"`
+	// is_global marks the reserved "default" row: the one switch that applies to
+	// every service without an exception of its own.
+	IsGlobal      bool `protobuf:"varint,8,opt,name=is_global,json=isGlobal,proto3" json:"is_global,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4893,6 +4900,20 @@ func (x *PaymentProviderRoute) GetProviders() []string {
 		return x.Providers
 	}
 	return nil
+}
+
+func (x *PaymentProviderRoute) GetSupportedProviders() []string {
+	if x != nil {
+		return x.SupportedProviders
+	}
+	return nil
+}
+
+func (x *PaymentProviderRoute) GetIsGlobal() bool {
+	if x != nil {
+		return x.IsGlobal
+	}
+	return false
 }
 
 type ListPaymentProviderRoutesRequest struct {
@@ -5469,7 +5490,7 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"%RefreshCreditApplicationStatusRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\"r\n" +
 	"&RefreshCreditApplicationStatusResponse\x12H\n" +
-	"\vapplication\x18\x01 \x01(\v2&.payments.payment.v1.CreditApplicationR\vapplication\"\xda\x01\n" +
+	"\vapplication\x18\x01 \x01(\v2&.payments.payment.v1.CreditApplicationR\vapplication\"\xa8\x02\n" +
 	"\x14PaymentProviderRoute\x12\x12\n" +
 	"\x04flow\x18\x01 \x01(\tR\x04flow\x12\x1e\n" +
 	"\bprovider\x18\x02 \x01(\tB\x02\x18\x01R\bprovider\x12\x16\n" +
@@ -5478,7 +5499,9 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_by\x18\x05 \x01(\x03R\tupdatedBy\x12\x1c\n" +
-	"\tproviders\x18\x06 \x03(\tR\tproviders\"\"\n" +
+	"\tproviders\x18\x06 \x03(\tR\tproviders\x12/\n" +
+	"\x13supported_providers\x18\a \x03(\tR\x12supportedProviders\x12\x1b\n" +
+	"\tis_global\x18\b \x01(\bR\bisGlobal\"\"\n" +
 	" ListPaymentProviderRoutesRequest\"\xcc\x01\n" +
 	"!ListPaymentProviderRoutesResponse\x12A\n" +
 	"\x06routes\x18\x01 \x03(\v2).payments.payment.v1.PaymentProviderRouteR\x06routes\x12/\n" +
