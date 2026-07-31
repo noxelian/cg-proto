@@ -440,6 +440,15 @@ message InitPaymentRequest {
   string phone = 7 [deprecated = true];
   string note = 8 [deprecated = true];
   int64 delivery_amount = 9 [deprecated = true];
+  // client_platform is the caller's device platform: "ios", "android" or "web".
+  // It is a rendering capability, not a financial fact — it only decides which
+  // wallet options a client can actually present. Apple Pay is offered solely
+  // to "ios", because listing it on Android or in the web mini-app produces a
+  // row that cannot be paid.
+  //
+  // Empty means "unknown" and is treated as the safe subset: no wallet options.
+  // Older clients therefore keep exactly today's list.
+  string client_platform = 10;
 }
 
 message InitPaymentResponse {

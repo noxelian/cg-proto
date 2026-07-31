@@ -2666,6 +2666,15 @@ type InitPaymentRequest struct {
 	Note string `protobuf:"bytes,8,opt,name=note,proto3" json:"note,omitempty"`
 	// Deprecated: Marked as deprecated in payments/payment/v1/payment.proto.
 	DeliveryAmount int64 `protobuf:"varint,9,opt,name=delivery_amount,json=deliveryAmount,proto3" json:"delivery_amount,omitempty"`
+	// client_platform is the caller's device platform: "ios", "android" or "web".
+	// It is a rendering capability, not a financial fact — it only decides which
+	// wallet options a client can actually present. Apple Pay is offered solely
+	// to "ios", because listing it on Android or in the web mini-app produces a
+	// row that cannot be paid.
+	//
+	// Empty means "unknown" and is treated as the safe subset: no wallet options.
+	// Older clients therefore keep exactly today's list.
+	ClientPlatform string `protobuf:"bytes,10,opt,name=client_platform,json=clientPlatform,proto3" json:"client_platform,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -2768,6 +2777,13 @@ func (x *InitPaymentRequest) GetDeliveryAmount() int64 {
 		return x.DeliveryAmount
 	}
 	return 0
+}
+
+func (x *InitPaymentRequest) GetClientPlatform() string {
+	if x != nil {
+		return x.ClientPlatform
+	}
+	return ""
 }
 
 type InitPaymentResponse struct {
@@ -5438,7 +5454,7 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\bicon_url\x18\x05 \x01(\tR\aiconUrl\x126\n" +
 	"\x04kind\x18\x06 \x01(\x0e2\".payments.payment.v1.PayOptionKindR\x04kind\x12*\n" +
 	"\x11pay_session_token\x18\a \x01(\tR\x0fpaySessionToken\x12)\n" +
-	"\x10cashback_percent\x18\b \x01(\x05R\x0fcashbackPercent\"\xc6\x02\n" +
+	"\x10cashback_percent\x18\b \x01(\x05R\x0fcashbackPercent\"\xef\x02\n" +
 	"\x12InitPaymentRequest\x12C\n" +
 	"\ventity_type\x18\x01 \x01(\x0e2\".payments.payment.v1.PayEntityTypeR\n" +
 	"entityType\x12\x1b\n" +
@@ -5449,7 +5465,9 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x04city\x18\x06 \x01(\tB\x02\x18\x01R\x04city\x12\x18\n" +
 	"\x05phone\x18\a \x01(\tB\x02\x18\x01R\x05phone\x12\x16\n" +
 	"\x04note\x18\b \x01(\tB\x02\x18\x01R\x04note\x12+\n" +
-	"\x0fdelivery_amount\x18\t \x01(\x03B\x02\x18\x01R\x0edeliveryAmount\"\xb8\x02\n" +
+	"\x0fdelivery_amount\x18\t \x01(\x03B\x02\x18\x01R\x0edeliveryAmount\x12'\n" +
+	"\x0fclient_platform\x18\n" +
+	" \x01(\tR\x0eclientPlatform\"\xb8\x02\n" +
 	"\x13InitPaymentResponse\x12K\n" +
 	"\x11available_options\x18\x01 \x03(\v2\x1e.payments.payment.v1.PayOptionR\x10availableOptions\x12O\n" +
 	"\x13installment_options\x18\x02 \x03(\v2\x1e.payments.payment.v1.PayOptionR\x12installmentOptions\x12'\n" +
