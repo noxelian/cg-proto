@@ -33,6 +33,13 @@ service PartsProviderService {
   // StreamSearchParts performs a fan-out search and streams results as each provider completes.
   rpc StreamSearchParts(SearchPartsRequest) returns (stream StreamSearchPartsResponse);
 
+  // StreamSearchPartsByCar answers the same question as SearchPartsByCar but
+  // does not make the buyer wait for the slowest supplier. Only one supplier
+  // owns an applicability catalogue, yet the articles it says fit the car are
+  // sold by the others too, so those articles are fanned out and every
+  // supplier's offers are pushed the moment they arrive.
+  rpc StreamSearchPartsByCar(SearchPartsByCarRequest) returns (stream StreamSearchPartsByCarResponse);
+
   // ResolveCatalogQuote verifies a signed price_quote token minted by
   // SearchParts/SearchByProvider and returns the AUTHORITATIVE price for a
   // CATALOG-sourced cart line. This service is the price authority for catalog
@@ -266,6 +273,29 @@ message StreamSearchPartsResponse {
   ProviderResult result = 2;
   int32 total_providers = 3;
   int32 completed_providers = 4;
+}
+
+// StreamSearchPartsByCarResponse is one message of the by-car showcase stream.
+//
+// The first message is the header: it reports the matched car and how many
+// parts fit it, and carries no `result`. The client draws the screen from it
+// immediately instead of holding a spinner until a supplier answers. Every
+// later message carries exactly one supplier's offers, sent as that supplier
+// replies; the client appends them to what is already on screen.
+message StreamSearchPartsByCarResponse {
+  // car, total and matched are meaningful on the header message only. matched
+  // is false when the car is not in any supplier catalogue — the stream then
+  // ends after the header, because there are no articles to price.
+  CarMatch car = 1;
+  int32 total = 2;
+  bool matched = 3;
+  // result is set on every message after the header and is nil on the header.
+  ProviderResult result = 4;
+  // total_providers counts the suppliers this search will ask, so the client can
+  // show progress; completed_providers counts those that have already answered.
+  // Both are 0 on the header, which is sent before the fan-out starts.
+  int32 total_providers = 5;
+  int32 completed_providers = 6;
 }
 
 // ─── Supplier Management ─────────────────────────────────────────────

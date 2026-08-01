@@ -19,14 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PartsProviderService_SearchParts_FullMethodName         = "/parts.provider.v1.PartsProviderService/SearchParts"
-	PartsProviderService_ListSearchHistory_FullMethodName   = "/parts.provider.v1.PartsProviderService/ListSearchHistory"
-	PartsProviderService_GetSearchResult_FullMethodName     = "/parts.provider.v1.PartsProviderService/GetSearchResult"
-	PartsProviderService_SearchByProvider_FullMethodName    = "/parts.provider.v1.PartsProviderService/SearchByProvider"
-	PartsProviderService_SearchPartsByCar_FullMethodName    = "/parts.provider.v1.PartsProviderService/SearchPartsByCar"
-	PartsProviderService_ListCarPartTypes_FullMethodName    = "/parts.provider.v1.PartsProviderService/ListCarPartTypes"
-	PartsProviderService_StreamSearchParts_FullMethodName   = "/parts.provider.v1.PartsProviderService/StreamSearchParts"
-	PartsProviderService_ResolveCatalogQuote_FullMethodName = "/parts.provider.v1.PartsProviderService/ResolveCatalogQuote"
+	PartsProviderService_SearchParts_FullMethodName            = "/parts.provider.v1.PartsProviderService/SearchParts"
+	PartsProviderService_ListSearchHistory_FullMethodName      = "/parts.provider.v1.PartsProviderService/ListSearchHistory"
+	PartsProviderService_GetSearchResult_FullMethodName        = "/parts.provider.v1.PartsProviderService/GetSearchResult"
+	PartsProviderService_SearchByProvider_FullMethodName       = "/parts.provider.v1.PartsProviderService/SearchByProvider"
+	PartsProviderService_SearchPartsByCar_FullMethodName       = "/parts.provider.v1.PartsProviderService/SearchPartsByCar"
+	PartsProviderService_ListCarPartTypes_FullMethodName       = "/parts.provider.v1.PartsProviderService/ListCarPartTypes"
+	PartsProviderService_StreamSearchParts_FullMethodName      = "/parts.provider.v1.PartsProviderService/StreamSearchParts"
+	PartsProviderService_StreamSearchPartsByCar_FullMethodName = "/parts.provider.v1.PartsProviderService/StreamSearchPartsByCar"
+	PartsProviderService_ResolveCatalogQuote_FullMethodName    = "/parts.provider.v1.PartsProviderService/ResolveCatalogQuote"
 )
 
 // PartsProviderServiceClient is the client API for PartsProviderService service.
@@ -53,6 +54,12 @@ type PartsProviderServiceClient interface {
 	ListCarPartTypes(ctx context.Context, in *ListCarPartTypesRequest, opts ...grpc.CallOption) (*ListCarPartTypesResponse, error)
 	// StreamSearchParts performs a fan-out search and streams results as each provider completes.
 	StreamSearchParts(ctx context.Context, in *SearchPartsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamSearchPartsResponse], error)
+	// StreamSearchPartsByCar answers the same question as SearchPartsByCar but
+	// does not make the buyer wait for the slowest supplier. Only one supplier
+	// owns an applicability catalogue, yet the articles it says fit the car are
+	// sold by the others too, so those articles are fanned out and every
+	// supplier's offers are pushed the moment they arrive.
+	StreamSearchPartsByCar(ctx context.Context, in *SearchPartsByCarRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamSearchPartsByCarResponse], error)
 	// ResolveCatalogQuote verifies a signed price_quote token minted by
 	// SearchParts/SearchByProvider and returns the AUTHORITATIVE price for a
 	// CATALOG-sourced cart line. This service is the price authority for catalog
@@ -150,6 +157,25 @@ func (c *partsProviderServiceClient) StreamSearchParts(ctx context.Context, in *
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type PartsProviderService_StreamSearchPartsClient = grpc.ServerStreamingClient[StreamSearchPartsResponse]
 
+func (c *partsProviderServiceClient) StreamSearchPartsByCar(ctx context.Context, in *SearchPartsByCarRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamSearchPartsByCarResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &PartsProviderService_ServiceDesc.Streams[1], PartsProviderService_StreamSearchPartsByCar_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[SearchPartsByCarRequest, StreamSearchPartsByCarResponse]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type PartsProviderService_StreamSearchPartsByCarClient = grpc.ServerStreamingClient[StreamSearchPartsByCarResponse]
+
 func (c *partsProviderServiceClient) ResolveCatalogQuote(ctx context.Context, in *ResolveCatalogQuoteRequest, opts ...grpc.CallOption) (*ResolveCatalogQuoteResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ResolveCatalogQuoteResponse)
@@ -184,6 +210,12 @@ type PartsProviderServiceServer interface {
 	ListCarPartTypes(context.Context, *ListCarPartTypesRequest) (*ListCarPartTypesResponse, error)
 	// StreamSearchParts performs a fan-out search and streams results as each provider completes.
 	StreamSearchParts(*SearchPartsRequest, grpc.ServerStreamingServer[StreamSearchPartsResponse]) error
+	// StreamSearchPartsByCar answers the same question as SearchPartsByCar but
+	// does not make the buyer wait for the slowest supplier. Only one supplier
+	// owns an applicability catalogue, yet the articles it says fit the car are
+	// sold by the others too, so those articles are fanned out and every
+	// supplier's offers are pushed the moment they arrive.
+	StreamSearchPartsByCar(*SearchPartsByCarRequest, grpc.ServerStreamingServer[StreamSearchPartsByCarResponse]) error
 	// ResolveCatalogQuote verifies a signed price_quote token minted by
 	// SearchParts/SearchByProvider and returns the AUTHORITATIVE price for a
 	// CATALOG-sourced cart line. This service is the price authority for catalog
@@ -222,6 +254,9 @@ func (UnimplementedPartsProviderServiceServer) ListCarPartTypes(context.Context,
 }
 func (UnimplementedPartsProviderServiceServer) StreamSearchParts(*SearchPartsRequest, grpc.ServerStreamingServer[StreamSearchPartsResponse]) error {
 	return status.Error(codes.Unimplemented, "method StreamSearchParts not implemented")
+}
+func (UnimplementedPartsProviderServiceServer) StreamSearchPartsByCar(*SearchPartsByCarRequest, grpc.ServerStreamingServer[StreamSearchPartsByCarResponse]) error {
+	return status.Error(codes.Unimplemented, "method StreamSearchPartsByCar not implemented")
 }
 func (UnimplementedPartsProviderServiceServer) ResolveCatalogQuote(context.Context, *ResolveCatalogQuoteRequest) (*ResolveCatalogQuoteResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResolveCatalogQuote not implemented")
@@ -366,6 +401,17 @@ func _PartsProviderService_StreamSearchParts_Handler(srv interface{}, stream grp
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type PartsProviderService_StreamSearchPartsServer = grpc.ServerStreamingServer[StreamSearchPartsResponse]
 
+func _PartsProviderService_StreamSearchPartsByCar_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SearchPartsByCarRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PartsProviderServiceServer).StreamSearchPartsByCar(m, &grpc.GenericServerStream[SearchPartsByCarRequest, StreamSearchPartsByCarResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type PartsProviderService_StreamSearchPartsByCarServer = grpc.ServerStreamingServer[StreamSearchPartsByCarResponse]
+
 func _PartsProviderService_ResolveCatalogQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ResolveCatalogQuoteRequest)
 	if err := dec(in); err != nil {
@@ -424,6 +470,11 @@ var PartsProviderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "StreamSearchParts",
 			Handler:       _PartsProviderService_StreamSearchParts_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "StreamSearchPartsByCar",
+			Handler:       _PartsProviderService_StreamSearchPartsByCar_Handler,
 			ServerStreams: true,
 		},
 	},

@@ -1849,6 +1849,104 @@ func (x *StreamSearchPartsResponse) GetCompletedProviders() int32 {
 	return 0
 }
 
+// StreamSearchPartsByCarResponse is one message of the by-car showcase stream.
+//
+// The first message is the header: it reports the matched car and how many
+// parts fit it, and carries no `result`. The client draws the screen from it
+// immediately instead of holding a spinner until a supplier answers. Every
+// later message carries exactly one supplier's offers, sent as that supplier
+// replies; the client appends them to what is already on screen.
+type StreamSearchPartsByCarResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// car, total and matched are meaningful on the header message only. matched
+	// is false when the car is not in any supplier catalogue — the stream then
+	// ends after the header, because there are no articles to price.
+	Car     *CarMatch `protobuf:"bytes,1,opt,name=car,proto3" json:"car,omitempty"`
+	Total   int32     `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Matched bool      `protobuf:"varint,3,opt,name=matched,proto3" json:"matched,omitempty"`
+	// result is set on every message after the header and is nil on the header.
+	Result *ProviderResult `protobuf:"bytes,4,opt,name=result,proto3" json:"result,omitempty"`
+	// total_providers counts the suppliers this search will ask, so the client can
+	// show progress; completed_providers counts those that have already answered.
+	// Both are 0 on the header, which is sent before the fan-out starts.
+	TotalProviders     int32 `protobuf:"varint,5,opt,name=total_providers,json=totalProviders,proto3" json:"total_providers,omitempty"`
+	CompletedProviders int32 `protobuf:"varint,6,opt,name=completed_providers,json=completedProviders,proto3" json:"completed_providers,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *StreamSearchPartsByCarResponse) Reset() {
+	*x = StreamSearchPartsByCarResponse{}
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StreamSearchPartsByCarResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StreamSearchPartsByCarResponse) ProtoMessage() {}
+
+func (x *StreamSearchPartsByCarResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StreamSearchPartsByCarResponse.ProtoReflect.Descriptor instead.
+func (*StreamSearchPartsByCarResponse) Descriptor() ([]byte, []int) {
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *StreamSearchPartsByCarResponse) GetCar() *CarMatch {
+	if x != nil {
+		return x.Car
+	}
+	return nil
+}
+
+func (x *StreamSearchPartsByCarResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *StreamSearchPartsByCarResponse) GetMatched() bool {
+	if x != nil {
+		return x.Matched
+	}
+	return false
+}
+
+func (x *StreamSearchPartsByCarResponse) GetResult() *ProviderResult {
+	if x != nil {
+		return x.Result
+	}
+	return nil
+}
+
+func (x *StreamSearchPartsByCarResponse) GetTotalProviders() int32 {
+	if x != nil {
+		return x.TotalProviders
+	}
+	return 0
+}
+
+func (x *StreamSearchPartsByCarResponse) GetCompletedProviders() int32 {
+	if x != nil {
+		return x.CompletedProviders
+	}
+	return 0
+}
+
 type Supplier struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -1877,7 +1975,7 @@ type Supplier struct {
 
 func (x *Supplier) Reset() {
 	*x = Supplier{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[22]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1889,7 +1987,7 @@ func (x *Supplier) String() string {
 func (*Supplier) ProtoMessage() {}
 
 func (x *Supplier) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[22]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1902,7 +2000,7 @@ func (x *Supplier) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Supplier.ProtoReflect.Descriptor instead.
 func (*Supplier) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{22}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *Supplier) GetId() int64 {
@@ -2009,7 +2107,7 @@ type CreateSupplierRequest struct {
 
 func (x *CreateSupplierRequest) Reset() {
 	*x = CreateSupplierRequest{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[23]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2021,7 +2119,7 @@ func (x *CreateSupplierRequest) String() string {
 func (*CreateSupplierRequest) ProtoMessage() {}
 
 func (x *CreateSupplierRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[23]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2034,7 +2132,7 @@ func (x *CreateSupplierRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSupplierRequest.ProtoReflect.Descriptor instead.
 func (*CreateSupplierRequest) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{23}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{24}
 }
 
 // Deprecated: Marked as deprecated in parts/provider/v1/provider.proto.
@@ -2089,7 +2187,7 @@ type CreateSupplierResponse struct {
 
 func (x *CreateSupplierResponse) Reset() {
 	*x = CreateSupplierResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[24]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2101,7 +2199,7 @@ func (x *CreateSupplierResponse) String() string {
 func (*CreateSupplierResponse) ProtoMessage() {}
 
 func (x *CreateSupplierResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[24]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2114,7 +2212,7 @@ func (x *CreateSupplierResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSupplierResponse.ProtoReflect.Descriptor instead.
 func (*CreateSupplierResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{24}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *CreateSupplierResponse) GetSupplier() *Supplier {
@@ -2143,7 +2241,7 @@ type UpdateSupplierRequest struct {
 
 func (x *UpdateSupplierRequest) Reset() {
 	*x = UpdateSupplierRequest{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[25]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2155,7 +2253,7 @@ func (x *UpdateSupplierRequest) String() string {
 func (*UpdateSupplierRequest) ProtoMessage() {}
 
 func (x *UpdateSupplierRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[25]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2168,7 +2266,7 @@ func (x *UpdateSupplierRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSupplierRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSupplierRequest) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{25}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *UpdateSupplierRequest) GetId() int64 {
@@ -2223,7 +2321,7 @@ type UpdateSupplierResponse struct {
 
 func (x *UpdateSupplierResponse) Reset() {
 	*x = UpdateSupplierResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[26]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2235,7 +2333,7 @@ func (x *UpdateSupplierResponse) String() string {
 func (*UpdateSupplierResponse) ProtoMessage() {}
 
 func (x *UpdateSupplierResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[26]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2248,7 +2346,7 @@ func (x *UpdateSupplierResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSupplierResponse.ProtoReflect.Descriptor instead.
 func (*UpdateSupplierResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{26}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *UpdateSupplierResponse) GetSupplier() *Supplier {
@@ -2267,7 +2365,7 @@ type DeleteSupplierRequest struct {
 
 func (x *DeleteSupplierRequest) Reset() {
 	*x = DeleteSupplierRequest{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[27]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2279,7 +2377,7 @@ func (x *DeleteSupplierRequest) String() string {
 func (*DeleteSupplierRequest) ProtoMessage() {}
 
 func (x *DeleteSupplierRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[27]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2292,7 +2390,7 @@ func (x *DeleteSupplierRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSupplierRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSupplierRequest) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{27}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *DeleteSupplierRequest) GetId() int64 {
@@ -2310,7 +2408,7 @@ type DeleteSupplierResponse struct {
 
 func (x *DeleteSupplierResponse) Reset() {
 	*x = DeleteSupplierResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[28]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2322,7 +2420,7 @@ func (x *DeleteSupplierResponse) String() string {
 func (*DeleteSupplierResponse) ProtoMessage() {}
 
 func (x *DeleteSupplierResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[28]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2335,7 +2433,7 @@ func (x *DeleteSupplierResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSupplierResponse.ProtoReflect.Descriptor instead.
 func (*DeleteSupplierResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{28}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{29}
 }
 
 type GetSupplierRequest struct {
@@ -2347,7 +2445,7 @@ type GetSupplierRequest struct {
 
 func (x *GetSupplierRequest) Reset() {
 	*x = GetSupplierRequest{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[29]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2359,7 +2457,7 @@ func (x *GetSupplierRequest) String() string {
 func (*GetSupplierRequest) ProtoMessage() {}
 
 func (x *GetSupplierRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[29]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2372,7 +2470,7 @@ func (x *GetSupplierRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSupplierRequest.ProtoReflect.Descriptor instead.
 func (*GetSupplierRequest) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{29}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *GetSupplierRequest) GetId() int64 {
@@ -2391,7 +2489,7 @@ type GetSupplierResponse struct {
 
 func (x *GetSupplierResponse) Reset() {
 	*x = GetSupplierResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[30]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2403,7 +2501,7 @@ func (x *GetSupplierResponse) String() string {
 func (*GetSupplierResponse) ProtoMessage() {}
 
 func (x *GetSupplierResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[30]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2416,7 +2514,7 @@ func (x *GetSupplierResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSupplierResponse.ProtoReflect.Descriptor instead.
 func (*GetSupplierResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{30}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *GetSupplierResponse) GetSupplier() *Supplier {
@@ -2439,7 +2537,7 @@ type ListSuppliersRequest struct {
 
 func (x *ListSuppliersRequest) Reset() {
 	*x = ListSuppliersRequest{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[31]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2451,7 +2549,7 @@ func (x *ListSuppliersRequest) String() string {
 func (*ListSuppliersRequest) ProtoMessage() {}
 
 func (x *ListSuppliersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[31]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2464,7 +2562,7 @@ func (x *ListSuppliersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSuppliersRequest.ProtoReflect.Descriptor instead.
 func (*ListSuppliersRequest) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{31}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ListSuppliersRequest) GetPage() int32 {
@@ -2512,7 +2610,7 @@ type ListSuppliersResponse struct {
 
 func (x *ListSuppliersResponse) Reset() {
 	*x = ListSuppliersResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[32]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2524,7 +2622,7 @@ func (x *ListSuppliersResponse) String() string {
 func (*ListSuppliersResponse) ProtoMessage() {}
 
 func (x *ListSuppliersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[32]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2537,7 +2635,7 @@ func (x *ListSuppliersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSuppliersResponse.ProtoReflect.Descriptor instead.
 func (*ListSuppliersResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{32}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *ListSuppliersResponse) GetSuppliers() []*Supplier {
@@ -2566,7 +2664,7 @@ type ImportCatalogRequest struct {
 
 func (x *ImportCatalogRequest) Reset() {
 	*x = ImportCatalogRequest{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[33]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2578,7 +2676,7 @@ func (x *ImportCatalogRequest) String() string {
 func (*ImportCatalogRequest) ProtoMessage() {}
 
 func (x *ImportCatalogRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[33]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2591,7 +2689,7 @@ func (x *ImportCatalogRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImportCatalogRequest.ProtoReflect.Descriptor instead.
 func (*ImportCatalogRequest) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{33}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *ImportCatalogRequest) GetSupplierId() int64 {
@@ -2637,7 +2735,7 @@ type ImportCatalogResponse struct {
 
 func (x *ImportCatalogResponse) Reset() {
 	*x = ImportCatalogResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[34]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2649,7 +2747,7 @@ func (x *ImportCatalogResponse) String() string {
 func (*ImportCatalogResponse) ProtoMessage() {}
 
 func (x *ImportCatalogResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[34]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2662,7 +2760,7 @@ func (x *ImportCatalogResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImportCatalogResponse.ProtoReflect.Descriptor instead.
 func (*ImportCatalogResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{34}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *ImportCatalogResponse) GetImportId() int64 {
@@ -2723,7 +2821,7 @@ type GetImportStatusRequest struct {
 
 func (x *GetImportStatusRequest) Reset() {
 	*x = GetImportStatusRequest{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[35]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2735,7 +2833,7 @@ func (x *GetImportStatusRequest) String() string {
 func (*GetImportStatusRequest) ProtoMessage() {}
 
 func (x *GetImportStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[35]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2748,7 +2846,7 @@ func (x *GetImportStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetImportStatusRequest.ProtoReflect.Descriptor instead.
 func (*GetImportStatusRequest) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{35}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *GetImportStatusRequest) GetImportId() int64 {
@@ -2773,7 +2871,7 @@ type GetImportStatusResponse struct {
 
 func (x *GetImportStatusResponse) Reset() {
 	*x = GetImportStatusResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[36]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2785,7 +2883,7 @@ func (x *GetImportStatusResponse) String() string {
 func (*GetImportStatusResponse) ProtoMessage() {}
 
 func (x *GetImportStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[36]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2798,7 +2896,7 @@ func (x *GetImportStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetImportStatusResponse.ProtoReflect.Descriptor instead.
 func (*GetImportStatusResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{36}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *GetImportStatusResponse) GetImportId() int64 {
@@ -2860,7 +2958,7 @@ type ImportError struct {
 
 func (x *ImportError) Reset() {
 	*x = ImportError{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[37]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2872,7 +2970,7 @@ func (x *ImportError) String() string {
 func (*ImportError) ProtoMessage() {}
 
 func (x *ImportError) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[37]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2885,7 +2983,7 @@ func (x *ImportError) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImportError.ProtoReflect.Descriptor instead.
 func (*ImportError) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{37}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *ImportError) GetRow() int32 {
@@ -2921,7 +3019,7 @@ type CatalogItem struct {
 
 func (x *CatalogItem) Reset() {
 	*x = CatalogItem{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[38]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2933,7 +3031,7 @@ func (x *CatalogItem) String() string {
 func (*CatalogItem) ProtoMessage() {}
 
 func (x *CatalogItem) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[38]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2946,7 +3044,7 @@ func (x *CatalogItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CatalogItem.ProtoReflect.Descriptor instead.
 func (*CatalogItem) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{38}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *CatalogItem) GetId() int64 {
@@ -3038,7 +3136,7 @@ type ListCatalogItemsRequest struct {
 
 func (x *ListCatalogItemsRequest) Reset() {
 	*x = ListCatalogItemsRequest{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[39]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3050,7 +3148,7 @@ func (x *ListCatalogItemsRequest) String() string {
 func (*ListCatalogItemsRequest) ProtoMessage() {}
 
 func (x *ListCatalogItemsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[39]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3063,7 +3161,7 @@ func (x *ListCatalogItemsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCatalogItemsRequest.ProtoReflect.Descriptor instead.
 func (*ListCatalogItemsRequest) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{39}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ListCatalogItemsRequest) GetSupplierId() int64 {
@@ -3104,7 +3202,7 @@ type ListCatalogItemsResponse struct {
 
 func (x *ListCatalogItemsResponse) Reset() {
 	*x = ListCatalogItemsResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[40]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3116,7 +3214,7 @@ func (x *ListCatalogItemsResponse) String() string {
 func (*ListCatalogItemsResponse) ProtoMessage() {}
 
 func (x *ListCatalogItemsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[40]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3129,7 +3227,7 @@ func (x *ListCatalogItemsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCatalogItemsResponse.ProtoReflect.Descriptor instead.
 func (*ListCatalogItemsResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{40}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *ListCatalogItemsResponse) GetItems() []*CatalogItem {
@@ -3156,7 +3254,7 @@ type DeleteCatalogItemsRequest struct {
 
 func (x *DeleteCatalogItemsRequest) Reset() {
 	*x = DeleteCatalogItemsRequest{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[41]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3168,7 +3266,7 @@ func (x *DeleteCatalogItemsRequest) String() string {
 func (*DeleteCatalogItemsRequest) ProtoMessage() {}
 
 func (x *DeleteCatalogItemsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[41]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3181,7 +3279,7 @@ func (x *DeleteCatalogItemsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCatalogItemsRequest.ProtoReflect.Descriptor instead.
 func (*DeleteCatalogItemsRequest) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{41}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *DeleteCatalogItemsRequest) GetSupplierId() int64 {
@@ -3207,7 +3305,7 @@ type DeleteCatalogItemsResponse struct {
 
 func (x *DeleteCatalogItemsResponse) Reset() {
 	*x = DeleteCatalogItemsResponse{}
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[42]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3219,7 +3317,7 @@ func (x *DeleteCatalogItemsResponse) String() string {
 func (*DeleteCatalogItemsResponse) ProtoMessage() {}
 
 func (x *DeleteCatalogItemsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_parts_provider_v1_provider_proto_msgTypes[42]
+	mi := &file_parts_provider_v1_provider_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3232,7 +3330,7 @@ func (x *DeleteCatalogItemsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCatalogItemsResponse.ProtoReflect.Descriptor instead.
 func (*DeleteCatalogItemsResponse) Descriptor() ([]byte, []int) {
-	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{42}
+	return file_parts_provider_v1_provider_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *DeleteCatalogItemsResponse) GetDeleted() int32 {
@@ -3402,7 +3500,14 @@ const file_parts_provider_v1_provider_proto_rawDesc = "" +
 	"\tsearch_id\x18\x01 \x01(\x03R\bsearchId\x129\n" +
 	"\x06result\x18\x02 \x01(\v2!.parts.provider.v1.ProviderResultR\x06result\x12'\n" +
 	"\x0ftotal_providers\x18\x03 \x01(\x05R\x0etotalProviders\x12/\n" +
-	"\x13completed_providers\x18\x04 \x01(\x05R\x12completedProviders\"\xc7\x03\n" +
+	"\x13completed_providers\x18\x04 \x01(\x05R\x12completedProviders\"\x94\x02\n" +
+	"\x1eStreamSearchPartsByCarResponse\x12-\n" +
+	"\x03car\x18\x01 \x01(\v2\x1b.parts.provider.v1.CarMatchR\x03car\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\x12\x18\n" +
+	"\amatched\x18\x03 \x01(\bR\amatched\x129\n" +
+	"\x06result\x18\x04 \x01(\v2!.parts.provider.v1.ProviderResultR\x06result\x12'\n" +
+	"\x0ftotal_providers\x18\x05 \x01(\x05R\x0etotalProviders\x12/\n" +
+	"\x13completed_providers\x18\x06 \x01(\x05R\x12completedProviders\"\xc7\x03\n" +
 	"\bSupplier\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\x06org_id\x18\x02 \x01(\x03B\x02\x18\x01R\x05orgId\x12\x12\n" +
@@ -3522,7 +3627,7 @@ const file_parts_provider_v1_provider_proto_rawDesc = "" +
 	"ImportMode\x12\x1b\n" +
 	"\x17IMPORT_MODE_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18IMPORT_MODE_FULL_REPLACE\x10\x01\x12\x1d\n" +
-	"\x19IMPORT_MODE_APPEND_UPDATE\x10\x022\xf7\x06\n" +
+	"\x19IMPORT_MODE_APPEND_UPDATE\x10\x022\xf2\a\n" +
 	"\x14PartsProviderService\x12\\\n" +
 	"\vSearchParts\x12%.parts.provider.v1.SearchPartsRequest\x1a&.parts.provider.v1.SearchPartsResponse\x12n\n" +
 	"\x11ListSearchHistory\x12+.parts.provider.v1.ListSearchHistoryRequest\x1a,.parts.provider.v1.ListSearchHistoryResponse\x12h\n" +
@@ -3530,7 +3635,8 @@ const file_parts_provider_v1_provider_proto_rawDesc = "" +
 	"\x10SearchByProvider\x12*.parts.provider.v1.SearchByProviderRequest\x1a+.parts.provider.v1.SearchByProviderResponse\x12k\n" +
 	"\x10SearchPartsByCar\x12*.parts.provider.v1.SearchPartsByCarRequest\x1a+.parts.provider.v1.SearchPartsByCarResponse\x12k\n" +
 	"\x10ListCarPartTypes\x12*.parts.provider.v1.ListCarPartTypesRequest\x1a+.parts.provider.v1.ListCarPartTypesResponse\x12j\n" +
-	"\x11StreamSearchParts\x12%.parts.provider.v1.SearchPartsRequest\x1a,.parts.provider.v1.StreamSearchPartsResponse0\x01\x12t\n" +
+	"\x11StreamSearchParts\x12%.parts.provider.v1.SearchPartsRequest\x1a,.parts.provider.v1.StreamSearchPartsResponse0\x01\x12y\n" +
+	"\x16StreamSearchPartsByCar\x12*.parts.provider.v1.SearchPartsByCarRequest\x1a1.parts.provider.v1.StreamSearchPartsByCarResponse0\x01\x12t\n" +
 	"\x13ResolveCatalogQuote\x12-.parts.provider.v1.ResolveCatalogQuoteRequest\x1a..parts.provider.v1.ResolveCatalogQuoteResponse2\xb6\a\n" +
 	"\x0fSupplierService\x12e\n" +
 	"\x0eCreateSupplier\x12(.parts.provider.v1.CreateSupplierRequest\x1a).parts.provider.v1.CreateSupplierResponse\x12e\n" +
@@ -3556,54 +3662,55 @@ func file_parts_provider_v1_provider_proto_rawDescGZIP() []byte {
 }
 
 var file_parts_provider_v1_provider_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_parts_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 43)
+var file_parts_provider_v1_provider_proto_msgTypes = make([]protoimpl.MessageInfo, 44)
 var file_parts_provider_v1_provider_proto_goTypes = []any{
-	(IntegrationType)(0),                // 0: parts.provider.v1.IntegrationType
-	(ImportMode)(0),                     // 1: parts.provider.v1.ImportMode
-	(*ResolveCatalogQuoteRequest)(nil),  // 2: parts.provider.v1.ResolveCatalogQuoteRequest
-	(*ResolveCatalogQuoteResponse)(nil), // 3: parts.provider.v1.ResolveCatalogQuoteResponse
-	(*SearchPartsRequest)(nil),          // 4: parts.provider.v1.SearchPartsRequest
-	(*SearchByProviderRequest)(nil),     // 5: parts.provider.v1.SearchByProviderRequest
-	(*SearchByProviderResponse)(nil),    // 6: parts.provider.v1.SearchByProviderResponse
-	(*SearchPartsResponse)(nil),         // 7: parts.provider.v1.SearchPartsResponse
-	(*ProviderResult)(nil),              // 8: parts.provider.v1.ProviderResult
-	(*Part)(nil),                        // 9: parts.provider.v1.Part
-	(*SearchPartsByCarRequest)(nil),     // 10: parts.provider.v1.SearchPartsByCarRequest
-	(*SearchPartsByCarResponse)(nil),    // 11: parts.provider.v1.SearchPartsByCarResponse
-	(*CarMatch)(nil),                    // 12: parts.provider.v1.CarMatch
-	(*ListCarPartTypesRequest)(nil),     // 13: parts.provider.v1.ListCarPartTypesRequest
-	(*ListCarPartTypesResponse)(nil),    // 14: parts.provider.v1.ListCarPartTypesResponse
-	(*Installment)(nil),                 // 15: parts.provider.v1.Installment
-	(*CurrencyInfo)(nil),                // 16: parts.provider.v1.CurrencyInfo
-	(*ListSearchHistoryRequest)(nil),    // 17: parts.provider.v1.ListSearchHistoryRequest
-	(*ListSearchHistoryResponse)(nil),   // 18: parts.provider.v1.ListSearchHistoryResponse
-	(*SearchHistoryItem)(nil),           // 19: parts.provider.v1.SearchHistoryItem
-	(*GetSearchResultRequest)(nil),      // 20: parts.provider.v1.GetSearchResultRequest
-	(*GetSearchResultResponse)(nil),     // 21: parts.provider.v1.GetSearchResultResponse
-	(*SearchResultRecord)(nil),          // 22: parts.provider.v1.SearchResultRecord
-	(*StreamSearchPartsResponse)(nil),   // 23: parts.provider.v1.StreamSearchPartsResponse
-	(*Supplier)(nil),                    // 24: parts.provider.v1.Supplier
-	(*CreateSupplierRequest)(nil),       // 25: parts.provider.v1.CreateSupplierRequest
-	(*CreateSupplierResponse)(nil),      // 26: parts.provider.v1.CreateSupplierResponse
-	(*UpdateSupplierRequest)(nil),       // 27: parts.provider.v1.UpdateSupplierRequest
-	(*UpdateSupplierResponse)(nil),      // 28: parts.provider.v1.UpdateSupplierResponse
-	(*DeleteSupplierRequest)(nil),       // 29: parts.provider.v1.DeleteSupplierRequest
-	(*DeleteSupplierResponse)(nil),      // 30: parts.provider.v1.DeleteSupplierResponse
-	(*GetSupplierRequest)(nil),          // 31: parts.provider.v1.GetSupplierRequest
-	(*GetSupplierResponse)(nil),         // 32: parts.provider.v1.GetSupplierResponse
-	(*ListSuppliersRequest)(nil),        // 33: parts.provider.v1.ListSuppliersRequest
-	(*ListSuppliersResponse)(nil),       // 34: parts.provider.v1.ListSuppliersResponse
-	(*ImportCatalogRequest)(nil),        // 35: parts.provider.v1.ImportCatalogRequest
-	(*ImportCatalogResponse)(nil),       // 36: parts.provider.v1.ImportCatalogResponse
-	(*GetImportStatusRequest)(nil),      // 37: parts.provider.v1.GetImportStatusRequest
-	(*GetImportStatusResponse)(nil),     // 38: parts.provider.v1.GetImportStatusResponse
-	(*ImportError)(nil),                 // 39: parts.provider.v1.ImportError
-	(*CatalogItem)(nil),                 // 40: parts.provider.v1.CatalogItem
-	(*ListCatalogItemsRequest)(nil),     // 41: parts.provider.v1.ListCatalogItemsRequest
-	(*ListCatalogItemsResponse)(nil),    // 42: parts.provider.v1.ListCatalogItemsResponse
-	(*DeleteCatalogItemsRequest)(nil),   // 43: parts.provider.v1.DeleteCatalogItemsRequest
-	(*DeleteCatalogItemsResponse)(nil),  // 44: parts.provider.v1.DeleteCatalogItemsResponse
-	(*timestamppb.Timestamp)(nil),       // 45: google.protobuf.Timestamp
+	(IntegrationType)(0),                   // 0: parts.provider.v1.IntegrationType
+	(ImportMode)(0),                        // 1: parts.provider.v1.ImportMode
+	(*ResolveCatalogQuoteRequest)(nil),     // 2: parts.provider.v1.ResolveCatalogQuoteRequest
+	(*ResolveCatalogQuoteResponse)(nil),    // 3: parts.provider.v1.ResolveCatalogQuoteResponse
+	(*SearchPartsRequest)(nil),             // 4: parts.provider.v1.SearchPartsRequest
+	(*SearchByProviderRequest)(nil),        // 5: parts.provider.v1.SearchByProviderRequest
+	(*SearchByProviderResponse)(nil),       // 6: parts.provider.v1.SearchByProviderResponse
+	(*SearchPartsResponse)(nil),            // 7: parts.provider.v1.SearchPartsResponse
+	(*ProviderResult)(nil),                 // 8: parts.provider.v1.ProviderResult
+	(*Part)(nil),                           // 9: parts.provider.v1.Part
+	(*SearchPartsByCarRequest)(nil),        // 10: parts.provider.v1.SearchPartsByCarRequest
+	(*SearchPartsByCarResponse)(nil),       // 11: parts.provider.v1.SearchPartsByCarResponse
+	(*CarMatch)(nil),                       // 12: parts.provider.v1.CarMatch
+	(*ListCarPartTypesRequest)(nil),        // 13: parts.provider.v1.ListCarPartTypesRequest
+	(*ListCarPartTypesResponse)(nil),       // 14: parts.provider.v1.ListCarPartTypesResponse
+	(*Installment)(nil),                    // 15: parts.provider.v1.Installment
+	(*CurrencyInfo)(nil),                   // 16: parts.provider.v1.CurrencyInfo
+	(*ListSearchHistoryRequest)(nil),       // 17: parts.provider.v1.ListSearchHistoryRequest
+	(*ListSearchHistoryResponse)(nil),      // 18: parts.provider.v1.ListSearchHistoryResponse
+	(*SearchHistoryItem)(nil),              // 19: parts.provider.v1.SearchHistoryItem
+	(*GetSearchResultRequest)(nil),         // 20: parts.provider.v1.GetSearchResultRequest
+	(*GetSearchResultResponse)(nil),        // 21: parts.provider.v1.GetSearchResultResponse
+	(*SearchResultRecord)(nil),             // 22: parts.provider.v1.SearchResultRecord
+	(*StreamSearchPartsResponse)(nil),      // 23: parts.provider.v1.StreamSearchPartsResponse
+	(*StreamSearchPartsByCarResponse)(nil), // 24: parts.provider.v1.StreamSearchPartsByCarResponse
+	(*Supplier)(nil),                       // 25: parts.provider.v1.Supplier
+	(*CreateSupplierRequest)(nil),          // 26: parts.provider.v1.CreateSupplierRequest
+	(*CreateSupplierResponse)(nil),         // 27: parts.provider.v1.CreateSupplierResponse
+	(*UpdateSupplierRequest)(nil),          // 28: parts.provider.v1.UpdateSupplierRequest
+	(*UpdateSupplierResponse)(nil),         // 29: parts.provider.v1.UpdateSupplierResponse
+	(*DeleteSupplierRequest)(nil),          // 30: parts.provider.v1.DeleteSupplierRequest
+	(*DeleteSupplierResponse)(nil),         // 31: parts.provider.v1.DeleteSupplierResponse
+	(*GetSupplierRequest)(nil),             // 32: parts.provider.v1.GetSupplierRequest
+	(*GetSupplierResponse)(nil),            // 33: parts.provider.v1.GetSupplierResponse
+	(*ListSuppliersRequest)(nil),           // 34: parts.provider.v1.ListSuppliersRequest
+	(*ListSuppliersResponse)(nil),          // 35: parts.provider.v1.ListSuppliersResponse
+	(*ImportCatalogRequest)(nil),           // 36: parts.provider.v1.ImportCatalogRequest
+	(*ImportCatalogResponse)(nil),          // 37: parts.provider.v1.ImportCatalogResponse
+	(*GetImportStatusRequest)(nil),         // 38: parts.provider.v1.GetImportStatusRequest
+	(*GetImportStatusResponse)(nil),        // 39: parts.provider.v1.GetImportStatusResponse
+	(*ImportError)(nil),                    // 40: parts.provider.v1.ImportError
+	(*CatalogItem)(nil),                    // 41: parts.provider.v1.CatalogItem
+	(*ListCatalogItemsRequest)(nil),        // 42: parts.provider.v1.ListCatalogItemsRequest
+	(*ListCatalogItemsResponse)(nil),       // 43: parts.provider.v1.ListCatalogItemsResponse
+	(*DeleteCatalogItemsRequest)(nil),      // 44: parts.provider.v1.DeleteCatalogItemsRequest
+	(*DeleteCatalogItemsResponse)(nil),     // 45: parts.provider.v1.DeleteCatalogItemsResponse
+	(*timestamppb.Timestamp)(nil),          // 46: google.protobuf.Timestamp
 }
 var file_parts_provider_v1_provider_proto_depIdxs = []int32{
 	8,  // 0: parts.provider.v1.SearchByProviderResponse.result:type_name -> parts.provider.v1.ProviderResult
@@ -3614,64 +3721,68 @@ var file_parts_provider_v1_provider_proto_depIdxs = []int32{
 	9,  // 5: parts.provider.v1.SearchPartsByCarResponse.parts:type_name -> parts.provider.v1.Part
 	12, // 6: parts.provider.v1.SearchPartsByCarResponse.car:type_name -> parts.provider.v1.CarMatch
 	19, // 7: parts.provider.v1.ListSearchHistoryResponse.items:type_name -> parts.provider.v1.SearchHistoryItem
-	45, // 8: parts.provider.v1.SearchHistoryItem.created_at:type_name -> google.protobuf.Timestamp
+	46, // 8: parts.provider.v1.SearchHistoryItem.created_at:type_name -> google.protobuf.Timestamp
 	22, // 9: parts.provider.v1.GetSearchResultResponse.results:type_name -> parts.provider.v1.SearchResultRecord
-	45, // 10: parts.provider.v1.SearchResultRecord.created_at:type_name -> google.protobuf.Timestamp
+	46, // 10: parts.provider.v1.SearchResultRecord.created_at:type_name -> google.protobuf.Timestamp
 	8,  // 11: parts.provider.v1.StreamSearchPartsResponse.result:type_name -> parts.provider.v1.ProviderResult
-	0,  // 12: parts.provider.v1.Supplier.integration_type:type_name -> parts.provider.v1.IntegrationType
-	45, // 13: parts.provider.v1.Supplier.created_at:type_name -> google.protobuf.Timestamp
-	45, // 14: parts.provider.v1.Supplier.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 15: parts.provider.v1.CreateSupplierRequest.integration_type:type_name -> parts.provider.v1.IntegrationType
-	24, // 16: parts.provider.v1.CreateSupplierResponse.supplier:type_name -> parts.provider.v1.Supplier
-	24, // 17: parts.provider.v1.UpdateSupplierResponse.supplier:type_name -> parts.provider.v1.Supplier
-	24, // 18: parts.provider.v1.GetSupplierResponse.supplier:type_name -> parts.provider.v1.Supplier
-	0,  // 19: parts.provider.v1.ListSuppliersRequest.integration_type:type_name -> parts.provider.v1.IntegrationType
-	24, // 20: parts.provider.v1.ListSuppliersResponse.suppliers:type_name -> parts.provider.v1.Supplier
-	1,  // 21: parts.provider.v1.ImportCatalogRequest.mode:type_name -> parts.provider.v1.ImportMode
-	39, // 22: parts.provider.v1.ImportCatalogResponse.error_details:type_name -> parts.provider.v1.ImportError
-	39, // 23: parts.provider.v1.GetImportStatusResponse.error_details:type_name -> parts.provider.v1.ImportError
-	45, // 24: parts.provider.v1.CatalogItem.created_at:type_name -> google.protobuf.Timestamp
-	45, // 25: parts.provider.v1.CatalogItem.updated_at:type_name -> google.protobuf.Timestamp
-	40, // 26: parts.provider.v1.ListCatalogItemsResponse.items:type_name -> parts.provider.v1.CatalogItem
-	4,  // 27: parts.provider.v1.PartsProviderService.SearchParts:input_type -> parts.provider.v1.SearchPartsRequest
-	17, // 28: parts.provider.v1.PartsProviderService.ListSearchHistory:input_type -> parts.provider.v1.ListSearchHistoryRequest
-	20, // 29: parts.provider.v1.PartsProviderService.GetSearchResult:input_type -> parts.provider.v1.GetSearchResultRequest
-	5,  // 30: parts.provider.v1.PartsProviderService.SearchByProvider:input_type -> parts.provider.v1.SearchByProviderRequest
-	10, // 31: parts.provider.v1.PartsProviderService.SearchPartsByCar:input_type -> parts.provider.v1.SearchPartsByCarRequest
-	13, // 32: parts.provider.v1.PartsProviderService.ListCarPartTypes:input_type -> parts.provider.v1.ListCarPartTypesRequest
-	4,  // 33: parts.provider.v1.PartsProviderService.StreamSearchParts:input_type -> parts.provider.v1.SearchPartsRequest
-	2,  // 34: parts.provider.v1.PartsProviderService.ResolveCatalogQuote:input_type -> parts.provider.v1.ResolveCatalogQuoteRequest
-	25, // 35: parts.provider.v1.SupplierService.CreateSupplier:input_type -> parts.provider.v1.CreateSupplierRequest
-	27, // 36: parts.provider.v1.SupplierService.UpdateSupplier:input_type -> parts.provider.v1.UpdateSupplierRequest
-	29, // 37: parts.provider.v1.SupplierService.DeleteSupplier:input_type -> parts.provider.v1.DeleteSupplierRequest
-	31, // 38: parts.provider.v1.SupplierService.GetSupplier:input_type -> parts.provider.v1.GetSupplierRequest
-	33, // 39: parts.provider.v1.SupplierService.ListSuppliers:input_type -> parts.provider.v1.ListSuppliersRequest
-	35, // 40: parts.provider.v1.SupplierService.ImportCatalog:input_type -> parts.provider.v1.ImportCatalogRequest
-	37, // 41: parts.provider.v1.SupplierService.GetImportStatus:input_type -> parts.provider.v1.GetImportStatusRequest
-	41, // 42: parts.provider.v1.SupplierService.ListCatalogItems:input_type -> parts.provider.v1.ListCatalogItemsRequest
-	43, // 43: parts.provider.v1.SupplierService.DeleteCatalogItems:input_type -> parts.provider.v1.DeleteCatalogItemsRequest
-	7,  // 44: parts.provider.v1.PartsProviderService.SearchParts:output_type -> parts.provider.v1.SearchPartsResponse
-	18, // 45: parts.provider.v1.PartsProviderService.ListSearchHistory:output_type -> parts.provider.v1.ListSearchHistoryResponse
-	21, // 46: parts.provider.v1.PartsProviderService.GetSearchResult:output_type -> parts.provider.v1.GetSearchResultResponse
-	6,  // 47: parts.provider.v1.PartsProviderService.SearchByProvider:output_type -> parts.provider.v1.SearchByProviderResponse
-	11, // 48: parts.provider.v1.PartsProviderService.SearchPartsByCar:output_type -> parts.provider.v1.SearchPartsByCarResponse
-	14, // 49: parts.provider.v1.PartsProviderService.ListCarPartTypes:output_type -> parts.provider.v1.ListCarPartTypesResponse
-	23, // 50: parts.provider.v1.PartsProviderService.StreamSearchParts:output_type -> parts.provider.v1.StreamSearchPartsResponse
-	3,  // 51: parts.provider.v1.PartsProviderService.ResolveCatalogQuote:output_type -> parts.provider.v1.ResolveCatalogQuoteResponse
-	26, // 52: parts.provider.v1.SupplierService.CreateSupplier:output_type -> parts.provider.v1.CreateSupplierResponse
-	28, // 53: parts.provider.v1.SupplierService.UpdateSupplier:output_type -> parts.provider.v1.UpdateSupplierResponse
-	30, // 54: parts.provider.v1.SupplierService.DeleteSupplier:output_type -> parts.provider.v1.DeleteSupplierResponse
-	32, // 55: parts.provider.v1.SupplierService.GetSupplier:output_type -> parts.provider.v1.GetSupplierResponse
-	34, // 56: parts.provider.v1.SupplierService.ListSuppliers:output_type -> parts.provider.v1.ListSuppliersResponse
-	36, // 57: parts.provider.v1.SupplierService.ImportCatalog:output_type -> parts.provider.v1.ImportCatalogResponse
-	38, // 58: parts.provider.v1.SupplierService.GetImportStatus:output_type -> parts.provider.v1.GetImportStatusResponse
-	42, // 59: parts.provider.v1.SupplierService.ListCatalogItems:output_type -> parts.provider.v1.ListCatalogItemsResponse
-	44, // 60: parts.provider.v1.SupplierService.DeleteCatalogItems:output_type -> parts.provider.v1.DeleteCatalogItemsResponse
-	44, // [44:61] is the sub-list for method output_type
-	27, // [27:44] is the sub-list for method input_type
-	27, // [27:27] is the sub-list for extension type_name
-	27, // [27:27] is the sub-list for extension extendee
-	0,  // [0:27] is the sub-list for field type_name
+	12, // 12: parts.provider.v1.StreamSearchPartsByCarResponse.car:type_name -> parts.provider.v1.CarMatch
+	8,  // 13: parts.provider.v1.StreamSearchPartsByCarResponse.result:type_name -> parts.provider.v1.ProviderResult
+	0,  // 14: parts.provider.v1.Supplier.integration_type:type_name -> parts.provider.v1.IntegrationType
+	46, // 15: parts.provider.v1.Supplier.created_at:type_name -> google.protobuf.Timestamp
+	46, // 16: parts.provider.v1.Supplier.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 17: parts.provider.v1.CreateSupplierRequest.integration_type:type_name -> parts.provider.v1.IntegrationType
+	25, // 18: parts.provider.v1.CreateSupplierResponse.supplier:type_name -> parts.provider.v1.Supplier
+	25, // 19: parts.provider.v1.UpdateSupplierResponse.supplier:type_name -> parts.provider.v1.Supplier
+	25, // 20: parts.provider.v1.GetSupplierResponse.supplier:type_name -> parts.provider.v1.Supplier
+	0,  // 21: parts.provider.v1.ListSuppliersRequest.integration_type:type_name -> parts.provider.v1.IntegrationType
+	25, // 22: parts.provider.v1.ListSuppliersResponse.suppliers:type_name -> parts.provider.v1.Supplier
+	1,  // 23: parts.provider.v1.ImportCatalogRequest.mode:type_name -> parts.provider.v1.ImportMode
+	40, // 24: parts.provider.v1.ImportCatalogResponse.error_details:type_name -> parts.provider.v1.ImportError
+	40, // 25: parts.provider.v1.GetImportStatusResponse.error_details:type_name -> parts.provider.v1.ImportError
+	46, // 26: parts.provider.v1.CatalogItem.created_at:type_name -> google.protobuf.Timestamp
+	46, // 27: parts.provider.v1.CatalogItem.updated_at:type_name -> google.protobuf.Timestamp
+	41, // 28: parts.provider.v1.ListCatalogItemsResponse.items:type_name -> parts.provider.v1.CatalogItem
+	4,  // 29: parts.provider.v1.PartsProviderService.SearchParts:input_type -> parts.provider.v1.SearchPartsRequest
+	17, // 30: parts.provider.v1.PartsProviderService.ListSearchHistory:input_type -> parts.provider.v1.ListSearchHistoryRequest
+	20, // 31: parts.provider.v1.PartsProviderService.GetSearchResult:input_type -> parts.provider.v1.GetSearchResultRequest
+	5,  // 32: parts.provider.v1.PartsProviderService.SearchByProvider:input_type -> parts.provider.v1.SearchByProviderRequest
+	10, // 33: parts.provider.v1.PartsProviderService.SearchPartsByCar:input_type -> parts.provider.v1.SearchPartsByCarRequest
+	13, // 34: parts.provider.v1.PartsProviderService.ListCarPartTypes:input_type -> parts.provider.v1.ListCarPartTypesRequest
+	4,  // 35: parts.provider.v1.PartsProviderService.StreamSearchParts:input_type -> parts.provider.v1.SearchPartsRequest
+	10, // 36: parts.provider.v1.PartsProviderService.StreamSearchPartsByCar:input_type -> parts.provider.v1.SearchPartsByCarRequest
+	2,  // 37: parts.provider.v1.PartsProviderService.ResolveCatalogQuote:input_type -> parts.provider.v1.ResolveCatalogQuoteRequest
+	26, // 38: parts.provider.v1.SupplierService.CreateSupplier:input_type -> parts.provider.v1.CreateSupplierRequest
+	28, // 39: parts.provider.v1.SupplierService.UpdateSupplier:input_type -> parts.provider.v1.UpdateSupplierRequest
+	30, // 40: parts.provider.v1.SupplierService.DeleteSupplier:input_type -> parts.provider.v1.DeleteSupplierRequest
+	32, // 41: parts.provider.v1.SupplierService.GetSupplier:input_type -> parts.provider.v1.GetSupplierRequest
+	34, // 42: parts.provider.v1.SupplierService.ListSuppliers:input_type -> parts.provider.v1.ListSuppliersRequest
+	36, // 43: parts.provider.v1.SupplierService.ImportCatalog:input_type -> parts.provider.v1.ImportCatalogRequest
+	38, // 44: parts.provider.v1.SupplierService.GetImportStatus:input_type -> parts.provider.v1.GetImportStatusRequest
+	42, // 45: parts.provider.v1.SupplierService.ListCatalogItems:input_type -> parts.provider.v1.ListCatalogItemsRequest
+	44, // 46: parts.provider.v1.SupplierService.DeleteCatalogItems:input_type -> parts.provider.v1.DeleteCatalogItemsRequest
+	7,  // 47: parts.provider.v1.PartsProviderService.SearchParts:output_type -> parts.provider.v1.SearchPartsResponse
+	18, // 48: parts.provider.v1.PartsProviderService.ListSearchHistory:output_type -> parts.provider.v1.ListSearchHistoryResponse
+	21, // 49: parts.provider.v1.PartsProviderService.GetSearchResult:output_type -> parts.provider.v1.GetSearchResultResponse
+	6,  // 50: parts.provider.v1.PartsProviderService.SearchByProvider:output_type -> parts.provider.v1.SearchByProviderResponse
+	11, // 51: parts.provider.v1.PartsProviderService.SearchPartsByCar:output_type -> parts.provider.v1.SearchPartsByCarResponse
+	14, // 52: parts.provider.v1.PartsProviderService.ListCarPartTypes:output_type -> parts.provider.v1.ListCarPartTypesResponse
+	23, // 53: parts.provider.v1.PartsProviderService.StreamSearchParts:output_type -> parts.provider.v1.StreamSearchPartsResponse
+	24, // 54: parts.provider.v1.PartsProviderService.StreamSearchPartsByCar:output_type -> parts.provider.v1.StreamSearchPartsByCarResponse
+	3,  // 55: parts.provider.v1.PartsProviderService.ResolveCatalogQuote:output_type -> parts.provider.v1.ResolveCatalogQuoteResponse
+	27, // 56: parts.provider.v1.SupplierService.CreateSupplier:output_type -> parts.provider.v1.CreateSupplierResponse
+	29, // 57: parts.provider.v1.SupplierService.UpdateSupplier:output_type -> parts.provider.v1.UpdateSupplierResponse
+	31, // 58: parts.provider.v1.SupplierService.DeleteSupplier:output_type -> parts.provider.v1.DeleteSupplierResponse
+	33, // 59: parts.provider.v1.SupplierService.GetSupplier:output_type -> parts.provider.v1.GetSupplierResponse
+	35, // 60: parts.provider.v1.SupplierService.ListSuppliers:output_type -> parts.provider.v1.ListSuppliersResponse
+	37, // 61: parts.provider.v1.SupplierService.ImportCatalog:output_type -> parts.provider.v1.ImportCatalogResponse
+	39, // 62: parts.provider.v1.SupplierService.GetImportStatus:output_type -> parts.provider.v1.GetImportStatusResponse
+	43, // 63: parts.provider.v1.SupplierService.ListCatalogItems:output_type -> parts.provider.v1.ListCatalogItemsResponse
+	45, // 64: parts.provider.v1.SupplierService.DeleteCatalogItems:output_type -> parts.provider.v1.DeleteCatalogItemsResponse
+	47, // [47:65] is the sub-list for method output_type
+	29, // [29:47] is the sub-list for method input_type
+	29, // [29:29] is the sub-list for extension type_name
+	29, // [29:29] is the sub-list for extension extendee
+	0,  // [0:29] is the sub-list for field type_name
 }
 
 func init() { file_parts_provider_v1_provider_proto_init() }
@@ -3685,7 +3796,7 @@ func file_parts_provider_v1_provider_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_parts_provider_v1_provider_proto_rawDesc), len(file_parts_provider_v1_provider_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   43,
+			NumMessages:   44,
 			NumExtensions: 0,
 			NumServices:   2,
 		},
