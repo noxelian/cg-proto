@@ -333,6 +333,11 @@ message Campaign {
   // started_at / finished_at are unset (null) until the campaign is sent.
   google.protobuf.Timestamp started_at = 15;
   google.protobuf.Timestamp finished_at = 16;
+  // target_apps selects which applications receive this campaign:
+  // "client" (cg_client_fapp) and/or "partner" (cg_fapp PRO).
+  // Empty means ["client"]. Applied on top of the segment via the existing
+  // user_devices.app filter in the push pipeline.
+  repeated string target_apps = 17;
 }
 
 message AdminCreateCampaignRequest {
@@ -341,6 +346,8 @@ message AdminCreateCampaignRequest {
   NotificationCategory category = 3;
   CampaignAction action = 4;
   CampaignSegment segment = 5;
+  // target_apps: "client" and/or "partner"; empty = ["client"].
+  repeated string target_apps = 6;
 }
 
 message AdminCreateCampaignResponse {
@@ -354,6 +361,8 @@ message AdminUpdateCampaignRequest {
   NotificationCategory category = 4;
   CampaignAction action = 5;
   CampaignSegment segment = 6;
+  // target_apps: "client" and/or "partner"; empty = ["client"].
+  repeated string target_apps = 7;
 }
 
 message AdminUpdateCampaignResponse {

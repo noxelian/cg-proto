@@ -2089,8 +2089,13 @@ type Campaign struct {
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// started_at / finished_at are unset (null) until the campaign is sent.
-	StartedAt     *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
-	FinishedAt    *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
+	StartedAt  *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	FinishedAt *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
+	// target_apps selects which applications receive this campaign:
+	// "client" (cg_client_fapp) and/or "partner" (cg_fapp PRO).
+	// Empty means ["client"]. Applied on top of the segment via the existing
+	// user_devices.app filter in the push pipeline.
+	TargetApps    []string `protobuf:"bytes,17,rep,name=target_apps,json=targetApps,proto3" json:"target_apps,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2237,13 +2242,22 @@ func (x *Campaign) GetFinishedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Campaign) GetTargetApps() []string {
+	if x != nil {
+		return x.TargetApps
+	}
+	return nil
+}
+
 type AdminCreateCampaignRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
-	Body          string                 `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
-	Category      NotificationCategory   `protobuf:"varint,3,opt,name=category,proto3,enum=communication.notification.v1.NotificationCategory" json:"category,omitempty"`
-	Action        *CampaignAction        `protobuf:"bytes,4,opt,name=action,proto3" json:"action,omitempty"`
-	Segment       *CampaignSegment       `protobuf:"bytes,5,opt,name=segment,proto3" json:"segment,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	Title    string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Body     string                 `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
+	Category NotificationCategory   `protobuf:"varint,3,opt,name=category,proto3,enum=communication.notification.v1.NotificationCategory" json:"category,omitempty"`
+	Action   *CampaignAction        `protobuf:"bytes,4,opt,name=action,proto3" json:"action,omitempty"`
+	Segment  *CampaignSegment       `protobuf:"bytes,5,opt,name=segment,proto3" json:"segment,omitempty"`
+	// target_apps: "client" and/or "partner"; empty = ["client"].
+	TargetApps    []string `protobuf:"bytes,6,rep,name=target_apps,json=targetApps,proto3" json:"target_apps,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2313,6 +2327,13 @@ func (x *AdminCreateCampaignRequest) GetSegment() *CampaignSegment {
 	return nil
 }
 
+func (x *AdminCreateCampaignRequest) GetTargetApps() []string {
+	if x != nil {
+		return x.TargetApps
+	}
+	return nil
+}
+
 type AdminCreateCampaignResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Campaign      *Campaign              `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
@@ -2358,13 +2379,15 @@ func (x *AdminCreateCampaignResponse) GetCampaign() *Campaign {
 }
 
 type AdminUpdateCampaignRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	Body          string                 `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
-	Category      NotificationCategory   `protobuf:"varint,4,opt,name=category,proto3,enum=communication.notification.v1.NotificationCategory" json:"category,omitempty"`
-	Action        *CampaignAction        `protobuf:"bytes,5,opt,name=action,proto3" json:"action,omitempty"`
-	Segment       *CampaignSegment       `protobuf:"bytes,6,opt,name=segment,proto3" json:"segment,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	Id       string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title    string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Body     string                 `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
+	Category NotificationCategory   `protobuf:"varint,4,opt,name=category,proto3,enum=communication.notification.v1.NotificationCategory" json:"category,omitempty"`
+	Action   *CampaignAction        `protobuf:"bytes,5,opt,name=action,proto3" json:"action,omitempty"`
+	Segment  *CampaignSegment       `protobuf:"bytes,6,opt,name=segment,proto3" json:"segment,omitempty"`
+	// target_apps: "client" and/or "partner"; empty = ["client"].
+	TargetApps    []string `protobuf:"bytes,7,rep,name=target_apps,json=targetApps,proto3" json:"target_apps,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2437,6 +2460,13 @@ func (x *AdminUpdateCampaignRequest) GetAction() *CampaignAction {
 func (x *AdminUpdateCampaignRequest) GetSegment() *CampaignSegment {
 	if x != nil {
 		return x.Segment
+	}
+	return nil
+}
+
+func (x *AdminUpdateCampaignRequest) GetTargetApps() []string {
+	if x != nil {
+		return x.TargetApps
 	}
 	return nil
 }
@@ -3122,7 +3152,7 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\b_has_carB\n" +
 	"\n" +
 	"\b_mark_idB\x0f\n" +
-	"\r_has_requests\"\xce\x05\n" +
+	"\r_has_requests\"\xef\x05\n" +
 	"\bCampaign\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x12\n" +
@@ -3146,22 +3176,28 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\n" +
 	"started_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\tstartedAt\x12;\n" +
 	"\vfinished_at\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"finishedAt\"\xa8\x02\n" +
+	"finishedAt\x12\x1f\n" +
+	"\vtarget_apps\x18\x11 \x03(\tR\n" +
+	"targetApps\"\xc9\x02\n" +
 	"\x1aAdminCreateCampaignRequest\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12\x12\n" +
 	"\x04body\x18\x02 \x01(\tR\x04body\x12O\n" +
 	"\bcategory\x18\x03 \x01(\x0e23.communication.notification.v1.NotificationCategoryR\bcategory\x12E\n" +
 	"\x06action\x18\x04 \x01(\v2-.communication.notification.v1.CampaignActionR\x06action\x12H\n" +
-	"\asegment\x18\x05 \x01(\v2..communication.notification.v1.CampaignSegmentR\asegment\"b\n" +
+	"\asegment\x18\x05 \x01(\v2..communication.notification.v1.CampaignSegmentR\asegment\x12\x1f\n" +
+	"\vtarget_apps\x18\x06 \x03(\tR\n" +
+	"targetApps\"b\n" +
 	"\x1bAdminCreateCampaignResponse\x12C\n" +
-	"\bcampaign\x18\x01 \x01(\v2'.communication.notification.v1.CampaignR\bcampaign\"\xb8\x02\n" +
+	"\bcampaign\x18\x01 \x01(\v2'.communication.notification.v1.CampaignR\bcampaign\"\xd9\x02\n" +
 	"\x1aAdminUpdateCampaignRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x12\n" +
 	"\x04body\x18\x03 \x01(\tR\x04body\x12O\n" +
 	"\bcategory\x18\x04 \x01(\x0e23.communication.notification.v1.NotificationCategoryR\bcategory\x12E\n" +
 	"\x06action\x18\x05 \x01(\v2-.communication.notification.v1.CampaignActionR\x06action\x12H\n" +
-	"\asegment\x18\x06 \x01(\v2..communication.notification.v1.CampaignSegmentR\asegment\"b\n" +
+	"\asegment\x18\x06 \x01(\v2..communication.notification.v1.CampaignSegmentR\asegment\x12\x1f\n" +
+	"\vtarget_apps\x18\a \x03(\tR\n" +
+	"targetApps\"b\n" +
 	"\x1bAdminUpdateCampaignResponse\x12C\n" +
 	"\bcampaign\x18\x01 \x01(\v2'.communication.notification.v1.CampaignR\bcampaign\")\n" +
 	"\x17AdminGetCampaignRequest\x12\x0e\n" +
