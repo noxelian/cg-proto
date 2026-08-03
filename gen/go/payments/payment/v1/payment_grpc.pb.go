@@ -25,6 +25,7 @@ const (
 	PaymentService_InitiateRefund_FullMethodName              = "/payments.payment.v1.PaymentService/InitiateRefund"
 	PaymentService_CapturePayment_FullMethodName              = "/payments.payment.v1.PaymentService/CapturePayment"
 	PaymentService_CancelPayment_FullMethodName               = "/payments.payment.v1.PaymentService/CancelPayment"
+	PaymentService_ReleasePayment_FullMethodName              = "/payments.payment.v1.PaymentService/ReleasePayment"
 	PaymentService_HandleIokaWebhook_FullMethodName           = "/payments.payment.v1.PaymentService/HandleIokaWebhook"
 	PaymentService_HandleKaspiCheckPay_FullMethodName         = "/payments.payment.v1.PaymentService/HandleKaspiCheckPay"
 	PaymentService_HandleLegacyKaspiCallback_FullMethodName   = "/payments.payment.v1.PaymentService/HandleLegacyKaspiCallback"
@@ -66,6 +67,14 @@ type PaymentServiceClient interface {
 	// return of funds that never left the payer.
 	CapturePayment(ctx context.Context, in *CapturePaymentRequest, opts ...grpc.CallOption) (*CapturePaymentResponse, error)
 	CancelPayment(ctx context.Context, in *CancelPaymentRequest, opts ...grpc.CallOption) (*CancelPaymentResponse, error)
+	// ReleasePayment returns the money to the payer, whichever way applies: a
+	// live hold is cancelled, an already captured payment is refunded.
+	//
+	// It exists so an owner service can express the intent ("give the money
+	// back") without knowing whether this flow takes holds. Which mechanism
+	// applies is a payment fact, not an order fact, and duplicating that branch
+	// in every owner service would guarantee the two drift apart.
+	ReleasePayment(ctx context.Context, in *ReleasePaymentRequest, opts ...grpc.CallOption) (*ReleasePaymentResponse, error)
 	// === Provider webhooks ===
 	HandleIokaWebhook(ctx context.Context, in *HandleIokaWebhookRequest, opts ...grpc.CallOption) (*HandleIokaWebhookResponse, error)
 	HandleKaspiCheckPay(ctx context.Context, in *HandleKaspiCheckPayRequest, opts ...grpc.CallOption) (*HandleKaspiCheckPayResponse, error)
@@ -172,6 +181,16 @@ func (c *paymentServiceClient) CancelPayment(ctx context.Context, in *CancelPaym
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CancelPaymentResponse)
 	err := c.cc.Invoke(ctx, PaymentService_CancelPayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) ReleasePayment(ctx context.Context, in *ReleasePaymentRequest, opts ...grpc.CallOption) (*ReleasePaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReleasePaymentResponse)
+	err := c.cc.Invoke(ctx, PaymentService_ReleasePayment_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -316,6 +335,14 @@ type PaymentServiceServer interface {
 	// return of funds that never left the payer.
 	CapturePayment(context.Context, *CapturePaymentRequest) (*CapturePaymentResponse, error)
 	CancelPayment(context.Context, *CancelPaymentRequest) (*CancelPaymentResponse, error)
+	// ReleasePayment returns the money to the payer, whichever way applies: a
+	// live hold is cancelled, an already captured payment is refunded.
+	//
+	// It exists so an owner service can express the intent ("give the money
+	// back") without knowing whether this flow takes holds. Which mechanism
+	// applies is a payment fact, not an order fact, and duplicating that branch
+	// in every owner service would guarantee the two drift apart.
+	ReleasePayment(context.Context, *ReleasePaymentRequest) (*ReleasePaymentResponse, error)
 	// === Provider webhooks ===
 	HandleIokaWebhook(context.Context, *HandleIokaWebhookRequest) (*HandleIokaWebhookResponse, error)
 	HandleKaspiCheckPay(context.Context, *HandleKaspiCheckPayRequest) (*HandleKaspiCheckPayResponse, error)
@@ -385,6 +412,9 @@ func (UnimplementedPaymentServiceServer) CapturePayment(context.Context, *Captur
 }
 func (UnimplementedPaymentServiceServer) CancelPayment(context.Context, *CancelPaymentRequest) (*CancelPaymentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelPayment not implemented")
+}
+func (UnimplementedPaymentServiceServer) ReleasePayment(context.Context, *ReleasePaymentRequest) (*ReleasePaymentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReleasePayment not implemented")
 }
 func (UnimplementedPaymentServiceServer) HandleIokaWebhook(context.Context, *HandleIokaWebhookRequest) (*HandleIokaWebhookResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HandleIokaWebhook not implemented")
@@ -544,6 +574,24 @@ func _PaymentService_CancelPayment_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PaymentServiceServer).CancelPayment(ctx, req.(*CancelPaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_ReleasePayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReleasePaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).ReleasePayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_ReleasePayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).ReleasePayment(ctx, req.(*ReleasePaymentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -776,6 +824,10 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CancelPayment",
 			Handler:    _PaymentService_CancelPayment_Handler,
+		},
+		{
+			MethodName: "ReleasePayment",
+			Handler:    _PaymentService_ReleasePayment_Handler,
 		},
 		{
 			MethodName: "HandleIokaWebhook",

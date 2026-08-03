@@ -33,6 +33,15 @@ service PaymentService {
   rpc CapturePayment(CapturePaymentRequest) returns (CapturePaymentResponse);
   rpc CancelPayment(CancelPaymentRequest) returns (CancelPaymentResponse);
 
+  // ReleasePayment returns the money to the payer, whichever way applies: a
+  // live hold is cancelled, an already captured payment is refunded.
+  //
+  // It exists so an owner service can express the intent ("give the money
+  // back") without knowing whether this flow takes holds. Which mechanism
+  // applies is a payment fact, not an order fact, and duplicating that branch
+  // in every owner service would guarantee the two drift apart.
+  rpc ReleasePayment(ReleasePaymentRequest) returns (ReleasePaymentResponse);
+
   // === Provider webhooks ===
   rpc HandleIokaWebhook(HandleIokaWebhookRequest) returns (HandleIokaWebhookResponse);
   rpc HandleKaspiCheckPay(HandleKaspiCheckPayRequest) returns (HandleKaspiCheckPayResponse);
@@ -343,6 +352,27 @@ message CancelPaymentRequest {
 message CancelPaymentResponse {
   Transaction transaction = 1;
   bool idempotent = 2;
+}
+
+message ReleasePaymentRequest {
+  int64 transaction_id = 1;
+  // amount to return, in minor units. Ignored when the payment is still a
+  // hold — releasing a hold always frees the whole authorization. Zero means
+  // the full transaction amount.
+  int64 amount = 2;
+  string reason = 3;
+  string idempotency_key = 4;
+}
+
+message ReleasePaymentResponse {
+  Transaction transaction = 1;
+  // released_by_cancel=true when a hold was released without any debit, so the
+  // caller can tell "money never moved" from "money moved and came back" —
+  // they differ for the payer, for accounting and for support.
+  bool released_by_cancel = 2;
+  // refund is set only when the payment had already been captured.
+  Refund refund = 3;
+  bool idempotent = 4;
 }
 
 // =============================================
