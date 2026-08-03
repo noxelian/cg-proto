@@ -397,6 +397,9 @@ var ChatService_ServiceDesc = grpc.ServiceDesc{
 const (
 	AdminChatService_AdminGetUserChats_FullMethodName    = "/communication.chat.v1.AdminChatService/AdminGetUserChats"
 	AdminChatService_AdminGetChatMessages_FullMethodName = "/communication.chat.v1.AdminChatService/AdminGetChatMessages"
+	AdminChatService_AdminListChats_FullMethodName       = "/communication.chat.v1.AdminChatService/AdminListChats"
+	AdminChatService_AdminSendMessage_FullMethodName     = "/communication.chat.v1.AdminChatService/AdminSendMessage"
+	AdminChatService_AdminMarkChatRead_FullMethodName    = "/communication.chat.v1.AdminChatService/AdminMarkChatRead"
 )
 
 // AdminChatServiceClient is the client API for AdminChatService service.
@@ -411,6 +414,17 @@ type AdminChatServiceClient interface {
 	AdminGetUserChats(ctx context.Context, in *AdminGetUserChatsRequest, opts ...grpc.CallOption) (*AdminGetUserChatsResponse, error)
 	// AdminGetChatMessages returns messages from any chat by ID.
 	AdminGetChatMessages(ctx context.Context, in *AdminGetChatMessagesRequest, opts ...grpc.CallOption) (*AdminGetChatMessagesResponse, error)
+	// AdminListChats returns chats filtered by context type — the operator inbox
+	// feed (context_type = CHAT_CONTEXT_TYPE_SUPPORT for the support desk).
+	// Ordered by last message time, newest first. The operator-side unread count
+	// is Chat.unread_for_seller (support chats have no seller).
+	AdminListChats(ctx context.Context, in *AdminListChatsRequest, opts ...grpc.CallOption) (*AdminListChatsResponse, error)
+	// AdminSendMessage posts an operator reply into any chat. The sender is the
+	// admin/support user resolved from the JWT — never taken from the request —
+	// and the message ID is generated server-side.
+	AdminSendMessage(ctx context.Context, in *AdminSendMessageRequest, opts ...grpc.CallOption) (*AdminSendMessageResponse, error)
+	// AdminMarkChatRead resets the operator-side unread counter for the chat.
+	AdminMarkChatRead(ctx context.Context, in *AdminMarkChatReadRequest, opts ...grpc.CallOption) (*AdminMarkChatReadResponse, error)
 }
 
 type adminChatServiceClient struct {
@@ -441,6 +455,36 @@ func (c *adminChatServiceClient) AdminGetChatMessages(ctx context.Context, in *A
 	return out, nil
 }
 
+func (c *adminChatServiceClient) AdminListChats(ctx context.Context, in *AdminListChatsRequest, opts ...grpc.CallOption) (*AdminListChatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminListChatsResponse)
+	err := c.cc.Invoke(ctx, AdminChatService_AdminListChats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminChatServiceClient) AdminSendMessage(ctx context.Context, in *AdminSendMessageRequest, opts ...grpc.CallOption) (*AdminSendMessageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminSendMessageResponse)
+	err := c.cc.Invoke(ctx, AdminChatService_AdminSendMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminChatServiceClient) AdminMarkChatRead(ctx context.Context, in *AdminMarkChatReadRequest, opts ...grpc.CallOption) (*AdminMarkChatReadResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminMarkChatReadResponse)
+	err := c.cc.Invoke(ctx, AdminChatService_AdminMarkChatRead_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminChatServiceServer is the server API for AdminChatService service.
 // All implementations must embed UnimplementedAdminChatServiceServer
 // for forward compatibility.
@@ -453,6 +497,17 @@ type AdminChatServiceServer interface {
 	AdminGetUserChats(context.Context, *AdminGetUserChatsRequest) (*AdminGetUserChatsResponse, error)
 	// AdminGetChatMessages returns messages from any chat by ID.
 	AdminGetChatMessages(context.Context, *AdminGetChatMessagesRequest) (*AdminGetChatMessagesResponse, error)
+	// AdminListChats returns chats filtered by context type — the operator inbox
+	// feed (context_type = CHAT_CONTEXT_TYPE_SUPPORT for the support desk).
+	// Ordered by last message time, newest first. The operator-side unread count
+	// is Chat.unread_for_seller (support chats have no seller).
+	AdminListChats(context.Context, *AdminListChatsRequest) (*AdminListChatsResponse, error)
+	// AdminSendMessage posts an operator reply into any chat. The sender is the
+	// admin/support user resolved from the JWT — never taken from the request —
+	// and the message ID is generated server-side.
+	AdminSendMessage(context.Context, *AdminSendMessageRequest) (*AdminSendMessageResponse, error)
+	// AdminMarkChatRead resets the operator-side unread counter for the chat.
+	AdminMarkChatRead(context.Context, *AdminMarkChatReadRequest) (*AdminMarkChatReadResponse, error)
 	mustEmbedUnimplementedAdminChatServiceServer()
 }
 
@@ -468,6 +523,15 @@ func (UnimplementedAdminChatServiceServer) AdminGetUserChats(context.Context, *A
 }
 func (UnimplementedAdminChatServiceServer) AdminGetChatMessages(context.Context, *AdminGetChatMessagesRequest) (*AdminGetChatMessagesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method AdminGetChatMessages not implemented")
+}
+func (UnimplementedAdminChatServiceServer) AdminListChats(context.Context, *AdminListChatsRequest) (*AdminListChatsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminListChats not implemented")
+}
+func (UnimplementedAdminChatServiceServer) AdminSendMessage(context.Context, *AdminSendMessageRequest) (*AdminSendMessageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminSendMessage not implemented")
+}
+func (UnimplementedAdminChatServiceServer) AdminMarkChatRead(context.Context, *AdminMarkChatReadRequest) (*AdminMarkChatReadResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminMarkChatRead not implemented")
 }
 func (UnimplementedAdminChatServiceServer) mustEmbedUnimplementedAdminChatServiceServer() {}
 func (UnimplementedAdminChatServiceServer) testEmbeddedByValue()                          {}
@@ -526,6 +590,60 @@ func _AdminChatService_AdminGetChatMessages_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdminChatService_AdminListChats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminListChatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminChatServiceServer).AdminListChats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminChatService_AdminListChats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminChatServiceServer).AdminListChats(ctx, req.(*AdminListChatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminChatService_AdminSendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminSendMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminChatServiceServer).AdminSendMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminChatService_AdminSendMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminChatServiceServer).AdminSendMessage(ctx, req.(*AdminSendMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminChatService_AdminMarkChatRead_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminMarkChatReadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminChatServiceServer).AdminMarkChatRead(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminChatService_AdminMarkChatRead_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminChatServiceServer).AdminMarkChatRead(ctx, req.(*AdminMarkChatReadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdminChatService_ServiceDesc is the grpc.ServiceDesc for AdminChatService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -540,6 +658,18 @@ var AdminChatService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AdminGetChatMessages",
 			Handler:    _AdminChatService_AdminGetChatMessages_Handler,
+		},
+		{
+			MethodName: "AdminListChats",
+			Handler:    _AdminChatService_AdminListChats_Handler,
+		},
+		{
+			MethodName: "AdminSendMessage",
+			Handler:    _AdminChatService_AdminSendMessage_Handler,
+		},
+		{
+			MethodName: "AdminMarkChatRead",
+			Handler:    _AdminChatService_AdminMarkChatRead_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

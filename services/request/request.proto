@@ -145,6 +145,13 @@ service RequestService {
   // CancelRequestBidSelection removes only the exact still-pending handoff
   // after bid-service has durably determined that acceptance did not commit.
   rpc CancelRequestBidSelection(CancelRequestBidSelectionRequest) returns (CancelRequestBidSelectionResponse);
+
+  // ListRequestUserIDs returns the distinct owners (user_id) of non-deleted
+  // client requests — IDs only, no request bodies and no PII. Used to build
+  // the "has requests" audience for segmented broadcast campaigns
+  // (cg-communication notification-service).
+  // Auth: service-token or platform admin. Never exposed to end users.
+  rpc ListRequestUserIDs(ListRequestUserIDsRequest) returns (ListRequestUserIDsResponse);
 }
 
 enum RequestType {
@@ -816,4 +823,18 @@ message CancelRequestBidSelectionRequest {
 message CancelRequestBidSelectionResponse {
   bool cancelled = 1;
   bool already_cancelled = 2;
+}
+
+// ==== Segment resolution (broadcast campaigns) ====
+
+message ListRequestUserIDsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+// ListRequestUserIDsResponse deliberately carries IDs only — no PII.
+message ListRequestUserIDsResponse {
+  repeated int64 user_ids = 1;
+  // total is the full number of distinct owners, not the size of this page.
+  int64 total = 2;
 }

@@ -72,6 +72,13 @@ service UserService {
   // ListUsers returns a paginated list of users (admin-only)
   rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
 
+  // ResolveUserSegment returns ONLY the IDs of users matching the segment
+  // filters — no PII (no phone, name, email). Used for segmented broadcast
+  // campaigns (cg-communication notification-service) so the audience is
+  // resolved by the service that owns the data.
+  // Auth: service-token or platform admin. Never exposed to end users.
+  rpc ResolveUserSegment(ResolveUserSegmentRequest) returns (ResolveUserSegmentResponse);
+
   // Platform roles (CTOgram employee roles — many-to-many)
   rpc SetPlatformRoles(SetPlatformRolesRequest) returns (SetPlatformRolesResponse);
   rpc GetPlatformRoles(GetPlatformRolesRequest) returns (GetPlatformRolesResponse);
@@ -508,6 +515,29 @@ message ListUsersRequest {
 message ListUsersResponse {
   repeated User users = 1;
   int32 total = 2;
+}
+
+// ==== Segment resolution (broadcast campaigns) ====
+
+// ResolveUserSegmentRequest filters active users (deleted_at IS NULL).
+// Unset filters are not applied; set filters are combined with AND.
+message ResolveUserSegmentRequest {
+  // city_id matches users.city_id.
+  optional int64 city_id = 1;
+  // has_car = true keeps users owning at least one car; false keeps users
+  // with no cars at all.
+  optional bool has_car = 2;
+  // mark_id keeps users owning a car of this NSI make (user_cars.mark_id).
+  optional int64 mark_id = 3;
+  int32 page = 4;
+  int32 page_size = 5;
+}
+
+// ResolveUserSegmentResponse deliberately carries IDs only — no PII.
+message ResolveUserSegmentResponse {
+  repeated int64 user_ids = 1;
+  // total is the full segment size, not the size of this page.
+  int64 total = 2;
 }
 
 // ListUsersByPlatformRoles

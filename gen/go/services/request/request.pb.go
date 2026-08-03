@@ -5326,6 +5326,112 @@ func (x *CancelRequestBidSelectionResponse) GetAlreadyCancelled() bool {
 	return false
 }
 
+type ListRequestUserIDsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      int32                  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListRequestUserIDsRequest) Reset() {
+	*x = ListRequestUserIDsRequest{}
+	mi := &file_services_request_request_proto_msgTypes[73]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListRequestUserIDsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListRequestUserIDsRequest) ProtoMessage() {}
+
+func (x *ListRequestUserIDsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[73]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListRequestUserIDsRequest.ProtoReflect.Descriptor instead.
+func (*ListRequestUserIDsRequest) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{73}
+}
+
+func (x *ListRequestUserIDsRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListRequestUserIDsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+// ListRequestUserIDsResponse deliberately carries IDs only — no PII.
+type ListRequestUserIDsResponse struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	UserIds []int64                `protobuf:"varint,1,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	// total is the full number of distinct owners, not the size of this page.
+	Total         int64 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListRequestUserIDsResponse) Reset() {
+	*x = ListRequestUserIDsResponse{}
+	mi := &file_services_request_request_proto_msgTypes[74]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListRequestUserIDsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListRequestUserIDsResponse) ProtoMessage() {}
+
+func (x *ListRequestUserIDsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_request_request_proto_msgTypes[74]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListRequestUserIDsResponse.ProtoReflect.Descriptor instead.
+func (*ListRequestUserIDsResponse) Descriptor() ([]byte, []int) {
+	return file_services_request_request_proto_rawDescGZIP(), []int{74}
+}
+
+func (x *ListRequestUserIDsResponse) GetUserIds() []int64 {
+	if x != nil {
+		return x.UserIds
+	}
+	return nil
+}
+
+func (x *ListRequestUserIDsResponse) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
 var File_services_request_request_proto protoreflect.FileDescriptor
 
 const file_services_request_request_proto_rawDesc = "" +
@@ -5792,7 +5898,13 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x04 \x01(\tR\x0eorganizationId\"n\n" +
 	"!CancelRequestBidSelectionResponse\x12\x1c\n" +
 	"\tcancelled\x18\x01 \x01(\bR\tcancelled\x12+\n" +
-	"\x11already_cancelled\x18\x02 \x01(\bR\x10alreadyCancelled*\\\n" +
+	"\x11already_cancelled\x18\x02 \x01(\bR\x10alreadyCancelled\"L\n" +
+	"\x19ListRequestUserIDsRequest\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\"M\n" +
+	"\x1aListRequestUserIDsResponse\x12\x19\n" +
+	"\buser_ids\x18\x01 \x03(\x03R\auserIds\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total*\\\n" +
 	"\vRequestType\x12\x1c\n" +
 	"\x18REQUEST_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13REQUEST_TYPE_REPAIR\x10\x01\x12\x16\n" +
@@ -5819,7 +5931,7 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x0eAssignmentMode\x12\x1f\n" +
 	"\x1bASSIGNMENT_MODE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16ASSIGNMENT_MODE_MANUAL\x10\x01\x12\x1e\n" +
-	"\x1aASSIGNMENT_MODE_AUTO_FIRST\x10\x022\xfb\x1f\n" +
+	"\x1aASSIGNMENT_MODE_AUTO_FIRST\x10\x022\xf2 \n" +
 	"\x0eRequestService\x12f\n" +
 	"\rCreateRequest\x12).services.request.v1.CreateRequestRequest\x1a*.services.request.v1.CreateRequestResponse\x12]\n" +
 	"\n" +
@@ -5855,7 +5967,8 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x10SelectRequestBid\x12,.services.request.v1.SelectRequestBidRequest\x1a-.services.request.v1.SelectRequestBidResponse\x12c\n" +
 	"\fCloseRequest\x12(.services.request.v1.CloseRequestRequest\x1a).services.request.v1.CloseRequestResponse\x12\x8d\x01\n" +
 	"\x1aReserveRequestBidSelection\x126.services.request.v1.ReserveRequestBidSelectionRequest\x1a7.services.request.v1.ReserveRequestBidSelectionResponse\x12\x8a\x01\n" +
-	"\x19CancelRequestBidSelection\x125.services.request.v1.CancelRequestBidSelectionRequest\x1a6.services.request.v1.CancelRequestBidSelectionResponseB=Z;github.com/4ubak/cg-proto/gen/go/services/request;requestv1b\x06proto3"
+	"\x19CancelRequestBidSelection\x125.services.request.v1.CancelRequestBidSelectionRequest\x1a6.services.request.v1.CancelRequestBidSelectionResponse\x12u\n" +
+	"\x12ListRequestUserIDs\x12..services.request.v1.ListRequestUserIDsRequest\x1a/.services.request.v1.ListRequestUserIDsResponseB=Z;github.com/4ubak/cg-proto/gen/go/services/request;requestv1b\x06proto3"
 
 var (
 	file_services_request_request_proto_rawDescOnce sync.Once
@@ -5870,7 +5983,7 @@ func file_services_request_request_proto_rawDescGZIP() []byte {
 }
 
 var file_services_request_request_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_services_request_request_proto_msgTypes = make([]protoimpl.MessageInfo, 73)
+var file_services_request_request_proto_msgTypes = make([]protoimpl.MessageInfo, 75)
 var file_services_request_request_proto_goTypes = []any{
 	(RequestType)(0),                              // 0: services.request.v1.RequestType
 	(RequestStatus)(0),                            // 1: services.request.v1.RequestStatus
@@ -5950,23 +6063,25 @@ var file_services_request_request_proto_goTypes = []any{
 	(*ReserveRequestBidSelectionResponse)(nil),    // 75: services.request.v1.ReserveRequestBidSelectionResponse
 	(*CancelRequestBidSelectionRequest)(nil),      // 76: services.request.v1.CancelRequestBidSelectionRequest
 	(*CancelRequestBidSelectionResponse)(nil),     // 77: services.request.v1.CancelRequestBidSelectionResponse
-	(*timestamppb.Timestamp)(nil),                 // 78: google.protobuf.Timestamp
+	(*ListRequestUserIDsRequest)(nil),             // 78: services.request.v1.ListRequestUserIDsRequest
+	(*ListRequestUserIDsResponse)(nil),            // 79: services.request.v1.ListRequestUserIDsResponse
+	(*timestamppb.Timestamp)(nil),                 // 80: google.protobuf.Timestamp
 }
 var file_services_request_request_proto_depIdxs = []int32{
 	0,  // 0: services.request.v1.Request.type:type_name -> services.request.v1.RequestType
 	1,  // 1: services.request.v1.Request.status:type_name -> services.request.v1.RequestStatus
-	78, // 2: services.request.v1.Request.created_at:type_name -> google.protobuf.Timestamp
-	78, // 3: services.request.v1.Request.updated_at:type_name -> google.protobuf.Timestamp
-	78, // 4: services.request.v1.Request.published_at:type_name -> google.protobuf.Timestamp
-	78, // 5: services.request.v1.Request.paused_at:type_name -> google.protobuf.Timestamp
+	80, // 2: services.request.v1.Request.created_at:type_name -> google.protobuf.Timestamp
+	80, // 3: services.request.v1.Request.updated_at:type_name -> google.protobuf.Timestamp
+	80, // 4: services.request.v1.Request.published_at:type_name -> google.protobuf.Timestamp
+	80, // 5: services.request.v1.Request.paused_at:type_name -> google.protobuf.Timestamp
 	3,  // 6: services.request.v1.Request.kind:type_name -> services.request.v1.RequestKind
-	78, // 7: services.request.v1.Request.deadline:type_name -> google.protobuf.Timestamp
+	80, // 7: services.request.v1.Request.deadline:type_name -> google.protobuf.Timestamp
 	4,  // 8: services.request.v1.Request.assignment_mode:type_name -> services.request.v1.AssignmentMode
 	5,  // 9: services.request.v1.Request.estimate_items:type_name -> services.request.v1.EstimateItem
 	2,  // 10: services.request.v1.Request.escrow_state:type_name -> services.request.v1.RequestEscrowState
 	0,  // 11: services.request.v1.CreateRequestRequest.type:type_name -> services.request.v1.RequestType
 	3,  // 12: services.request.v1.CreateRequestRequest.kind:type_name -> services.request.v1.RequestKind
-	78, // 13: services.request.v1.CreateRequestRequest.deadline:type_name -> google.protobuf.Timestamp
+	80, // 13: services.request.v1.CreateRequestRequest.deadline:type_name -> google.protobuf.Timestamp
 	4,  // 14: services.request.v1.CreateRequestRequest.assignment_mode:type_name -> services.request.v1.AssignmentMode
 	5,  // 15: services.request.v1.CreateRequestRequest.estimate_items:type_name -> services.request.v1.EstimateItem
 	64, // 16: services.request.v1.CreateRequestRequest.insurance_info:type_name -> services.request.v1.InsuranceInfoInput
@@ -5978,7 +6093,7 @@ var file_services_request_request_proto_depIdxs = []int32{
 	3,  // 22: services.request.v1.ListRequestsRequest.kind:type_name -> services.request.v1.RequestKind
 	6,  // 23: services.request.v1.ListRequestsResponse.requests:type_name -> services.request.v1.Request
 	0,  // 24: services.request.v1.PublishedRequestPreview.type:type_name -> services.request.v1.RequestType
-	78, // 25: services.request.v1.PublishedRequestPreview.published_at:type_name -> google.protobuf.Timestamp
+	80, // 25: services.request.v1.PublishedRequestPreview.published_at:type_name -> google.protobuf.Timestamp
 	18, // 26: services.request.v1.ListPublishedPreviewsResponse.requests:type_name -> services.request.v1.PublishedRequestPreview
 	0,  // 27: services.request.v1.SearchRequestsRequest.type:type_name -> services.request.v1.RequestType
 	6,  // 28: services.request.v1.SearchRequestsResponse.requests:type_name -> services.request.v1.Request
@@ -6036,42 +6151,44 @@ var file_services_request_request_proto_depIdxs = []int32{
 	32, // 80: services.request.v1.RequestService.CloseRequest:input_type -> services.request.v1.CloseRequestRequest
 	74, // 81: services.request.v1.RequestService.ReserveRequestBidSelection:input_type -> services.request.v1.ReserveRequestBidSelectionRequest
 	76, // 82: services.request.v1.RequestService.CancelRequestBidSelection:input_type -> services.request.v1.CancelRequestBidSelectionRequest
-	8,  // 83: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
-	10, // 84: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
-	12, // 85: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
-	14, // 86: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
-	16, // 87: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
-	19, // 88: services.request.v1.RequestService.ListPublishedPreviews:output_type -> services.request.v1.ListPublishedPreviewsResponse
-	21, // 89: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
-	23, // 90: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
-	35, // 91: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
-	37, // 92: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
-	39, // 93: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
-	41, // 94: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
-	43, // 95: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
-	45, // 96: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
-	47, // 97: services.request.v1.RequestService.DismissRequest:output_type -> services.request.v1.DismissRequestResponse
-	49, // 98: services.request.v1.RequestService.CountUnreadForOrganization:output_type -> services.request.v1.CountUnreadForOrganizationResponse
-	51, // 99: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
-	53, // 100: services.request.v1.RequestService.GetRequestForClassification:output_type -> services.request.v1.GetRequestForClassificationResponse
-	55, // 101: services.request.v1.RequestService.GetInsurancePayoutTerms:output_type -> services.request.v1.GetInsurancePayoutTermsResponse
-	57, // 102: services.request.v1.RequestService.GetRequestEligibilityInfo:output_type -> services.request.v1.GetRequestEligibilityInfoResponse
-	59, // 103: services.request.v1.RequestService.GetUserRequestCounts:output_type -> services.request.v1.GetUserRequestCountsResponse
-	61, // 104: services.request.v1.RequestService.PauseRequest:output_type -> services.request.v1.PauseRequestResponse
-	63, // 105: services.request.v1.RequestService.UnpauseRequest:output_type -> services.request.v1.UnpauseRequestResponse
-	67, // 106: services.request.v1.RequestService.GetRequestInsuranceInfo:output_type -> services.request.v1.GetRequestInsuranceInfoResponse
-	69, // 107: services.request.v1.RequestService.ClaimInsuranceRequest:output_type -> services.request.v1.ClaimInsuranceRequestResponse
-	73, // 108: services.request.v1.RequestService.CompleteInsuranceRequest:output_type -> services.request.v1.CompleteInsuranceRequestResponse
-	71, // 109: services.request.v1.RequestService.IsOrgTargeted:output_type -> services.request.v1.IsOrgTargetedResponse
-	25, // 110: services.request.v1.RequestService.PrepareRequestEscrow:output_type -> services.request.v1.PrepareRequestEscrowResponse
-	27, // 111: services.request.v1.RequestService.AuthorizeRequestEscrowCapture:output_type -> services.request.v1.AuthorizeRequestEscrowCaptureResponse
-	29, // 112: services.request.v1.RequestService.MarkRequestEscrowState:output_type -> services.request.v1.MarkRequestEscrowStateResponse
-	31, // 113: services.request.v1.RequestService.SelectRequestBid:output_type -> services.request.v1.SelectRequestBidResponse
-	33, // 114: services.request.v1.RequestService.CloseRequest:output_type -> services.request.v1.CloseRequestResponse
-	75, // 115: services.request.v1.RequestService.ReserveRequestBidSelection:output_type -> services.request.v1.ReserveRequestBidSelectionResponse
-	77, // 116: services.request.v1.RequestService.CancelRequestBidSelection:output_type -> services.request.v1.CancelRequestBidSelectionResponse
-	83, // [83:117] is the sub-list for method output_type
-	49, // [49:83] is the sub-list for method input_type
+	78, // 83: services.request.v1.RequestService.ListRequestUserIDs:input_type -> services.request.v1.ListRequestUserIDsRequest
+	8,  // 84: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
+	10, // 85: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
+	12, // 86: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
+	14, // 87: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
+	16, // 88: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
+	19, // 89: services.request.v1.RequestService.ListPublishedPreviews:output_type -> services.request.v1.ListPublishedPreviewsResponse
+	21, // 90: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
+	23, // 91: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
+	35, // 92: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
+	37, // 93: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
+	39, // 94: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
+	41, // 95: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
+	43, // 96: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
+	45, // 97: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
+	47, // 98: services.request.v1.RequestService.DismissRequest:output_type -> services.request.v1.DismissRequestResponse
+	49, // 99: services.request.v1.RequestService.CountUnreadForOrganization:output_type -> services.request.v1.CountUnreadForOrganizationResponse
+	51, // 100: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
+	53, // 101: services.request.v1.RequestService.GetRequestForClassification:output_type -> services.request.v1.GetRequestForClassificationResponse
+	55, // 102: services.request.v1.RequestService.GetInsurancePayoutTerms:output_type -> services.request.v1.GetInsurancePayoutTermsResponse
+	57, // 103: services.request.v1.RequestService.GetRequestEligibilityInfo:output_type -> services.request.v1.GetRequestEligibilityInfoResponse
+	59, // 104: services.request.v1.RequestService.GetUserRequestCounts:output_type -> services.request.v1.GetUserRequestCountsResponse
+	61, // 105: services.request.v1.RequestService.PauseRequest:output_type -> services.request.v1.PauseRequestResponse
+	63, // 106: services.request.v1.RequestService.UnpauseRequest:output_type -> services.request.v1.UnpauseRequestResponse
+	67, // 107: services.request.v1.RequestService.GetRequestInsuranceInfo:output_type -> services.request.v1.GetRequestInsuranceInfoResponse
+	69, // 108: services.request.v1.RequestService.ClaimInsuranceRequest:output_type -> services.request.v1.ClaimInsuranceRequestResponse
+	73, // 109: services.request.v1.RequestService.CompleteInsuranceRequest:output_type -> services.request.v1.CompleteInsuranceRequestResponse
+	71, // 110: services.request.v1.RequestService.IsOrgTargeted:output_type -> services.request.v1.IsOrgTargetedResponse
+	25, // 111: services.request.v1.RequestService.PrepareRequestEscrow:output_type -> services.request.v1.PrepareRequestEscrowResponse
+	27, // 112: services.request.v1.RequestService.AuthorizeRequestEscrowCapture:output_type -> services.request.v1.AuthorizeRequestEscrowCaptureResponse
+	29, // 113: services.request.v1.RequestService.MarkRequestEscrowState:output_type -> services.request.v1.MarkRequestEscrowStateResponse
+	31, // 114: services.request.v1.RequestService.SelectRequestBid:output_type -> services.request.v1.SelectRequestBidResponse
+	33, // 115: services.request.v1.RequestService.CloseRequest:output_type -> services.request.v1.CloseRequestResponse
+	75, // 116: services.request.v1.RequestService.ReserveRequestBidSelection:output_type -> services.request.v1.ReserveRequestBidSelectionResponse
+	77, // 117: services.request.v1.RequestService.CancelRequestBidSelection:output_type -> services.request.v1.CancelRequestBidSelectionResponse
+	79, // 118: services.request.v1.RequestService.ListRequestUserIDs:output_type -> services.request.v1.ListRequestUserIDsResponse
+	84, // [84:119] is the sub-list for method output_type
+	49, // [49:84] is the sub-list for method input_type
 	49, // [49:49] is the sub-list for extension type_name
 	49, // [49:49] is the sub-list for extension extendee
 	0,  // [0:49] is the sub-list for field type_name
@@ -6095,7 +6212,7 @@ func file_services_request_request_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_request_request_proto_rawDesc), len(file_services_request_request_proto_rawDesc)),
 			NumEnums:      5,
-			NumMessages:   73,
+			NumMessages:   75,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

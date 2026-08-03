@@ -37,6 +37,7 @@ const (
 	UserService_GetDevices_FullMethodName                    = "/users.user.v1.UserService/GetDevices"
 	UserService_DeleteAccount_FullMethodName                 = "/users.user.v1.UserService/DeleteAccount"
 	UserService_ListUsers_FullMethodName                     = "/users.user.v1.UserService/ListUsers"
+	UserService_ResolveUserSegment_FullMethodName            = "/users.user.v1.UserService/ResolveUserSegment"
 	UserService_SetPlatformRoles_FullMethodName              = "/users.user.v1.UserService/SetPlatformRoles"
 	UserService_GetPlatformRoles_FullMethodName              = "/users.user.v1.UserService/GetPlatformRoles"
 	UserService_CheckPlatformRoles_FullMethodName            = "/users.user.v1.UserService/CheckPlatformRoles"
@@ -114,6 +115,12 @@ type UserServiceClient interface {
 	DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*DeleteAccountResponse, error)
 	// ListUsers returns a paginated list of users (admin-only)
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
+	// ResolveUserSegment returns ONLY the IDs of users matching the segment
+	// filters — no PII (no phone, name, email). Used for segmented broadcast
+	// campaigns (cg-communication notification-service) so the audience is
+	// resolved by the service that owns the data.
+	// Auth: service-token or platform admin. Never exposed to end users.
+	ResolveUserSegment(ctx context.Context, in *ResolveUserSegmentRequest, opts ...grpc.CallOption) (*ResolveUserSegmentResponse, error)
 	// Platform roles (CTOgram employee roles — many-to-many)
 	SetPlatformRoles(ctx context.Context, in *SetPlatformRolesRequest, opts ...grpc.CallOption) (*SetPlatformRolesResponse, error)
 	GetPlatformRoles(ctx context.Context, in *GetPlatformRolesRequest, opts ...grpc.CallOption) (*GetPlatformRolesResponse, error)
@@ -364,6 +371,16 @@ func (c *userServiceClient) ListUsers(ctx context.Context, in *ListUsersRequest,
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListUsersResponse)
 	err := c.cc.Invoke(ctx, UserService_ListUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ResolveUserSegment(ctx context.Context, in *ResolveUserSegmentRequest, opts ...grpc.CallOption) (*ResolveUserSegmentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResolveUserSegmentResponse)
+	err := c.cc.Invoke(ctx, UserService_ResolveUserSegment_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -652,6 +669,12 @@ type UserServiceServer interface {
 	DeleteAccount(context.Context, *DeleteAccountRequest) (*DeleteAccountResponse, error)
 	// ListUsers returns a paginated list of users (admin-only)
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
+	// ResolveUserSegment returns ONLY the IDs of users matching the segment
+	// filters — no PII (no phone, name, email). Used for segmented broadcast
+	// campaigns (cg-communication notification-service) so the audience is
+	// resolved by the service that owns the data.
+	// Auth: service-token or platform admin. Never exposed to end users.
+	ResolveUserSegment(context.Context, *ResolveUserSegmentRequest) (*ResolveUserSegmentResponse, error)
 	// Platform roles (CTOgram employee roles — many-to-many)
 	SetPlatformRoles(context.Context, *SetPlatformRolesRequest) (*SetPlatformRolesResponse, error)
 	GetPlatformRoles(context.Context, *GetPlatformRolesRequest) (*GetPlatformRolesResponse, error)
@@ -781,6 +804,9 @@ func (UnimplementedUserServiceServer) DeleteAccount(context.Context, *DeleteAcco
 }
 func (UnimplementedUserServiceServer) ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUsers not implemented")
+}
+func (UnimplementedUserServiceServer) ResolveUserSegment(context.Context, *ResolveUserSegmentRequest) (*ResolveUserSegmentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResolveUserSegment not implemented")
 }
 func (UnimplementedUserServiceServer) SetPlatformRoles(context.Context, *SetPlatformRolesRequest) (*SetPlatformRolesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetPlatformRoles not implemented")
@@ -1192,6 +1218,24 @@ func _UserService_ListUsers_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).ListUsers(ctx, req.(*ListUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ResolveUserSegment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResolveUserSegmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ResolveUserSegment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_ResolveUserSegment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ResolveUserSegment(ctx, req.(*ResolveUserSegmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1688,6 +1732,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUsers",
 			Handler:    _UserService_ListUsers_Handler,
+		},
+		{
+			MethodName: "ResolveUserSegment",
+			Handler:    _UserService_ResolveUserSegment_Handler,
 		},
 		{
 			MethodName: "SetPlatformRoles",

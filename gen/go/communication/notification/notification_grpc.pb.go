@@ -577,3 +577,375 @@ var NotificationService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "communication/notification/notification.proto",
 }
+
+const (
+	CampaignService_AdminCreateCampaign_FullMethodName = "/communication.notification.v1.CampaignService/AdminCreateCampaign"
+	CampaignService_AdminUpdateCampaign_FullMethodName = "/communication.notification.v1.CampaignService/AdminUpdateCampaign"
+	CampaignService_AdminGetCampaign_FullMethodName    = "/communication.notification.v1.CampaignService/AdminGetCampaign"
+	CampaignService_AdminListCampaigns_FullMethodName  = "/communication.notification.v1.CampaignService/AdminListCampaigns"
+	CampaignService_AdminPreviewSegment_FullMethodName = "/communication.notification.v1.CampaignService/AdminPreviewSegment"
+	CampaignService_AdminSendCampaign_FullMethodName   = "/communication.notification.v1.CampaignService/AdminSendCampaign"
+	CampaignService_AdminCancelCampaign_FullMethodName = "/communication.notification.v1.CampaignService/AdminCancelCampaign"
+)
+
+// CampaignServiceClient is the client API for CampaignService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// CampaignService provides admin-only RPCs for targeted push campaigns.
+// All methods require a valid JWT with platform role "admin"; the role is
+// asserted via the x-platform-role gRPC metadata header (set by BFF) and
+// re-checked by notification-service itself. Recipient IDs are never accepted
+// from the caller — the audience is resolved server-side from CampaignSegment.
+type CampaignServiceClient interface {
+	// AdminCreateCampaign stores a new campaign in status "draft".
+	// Returns INVALID_ARGUMENT when action.route is outside the allowlist or
+	// when route "client.url" carries a non-https params["url"].
+	AdminCreateCampaign(ctx context.Context, in *AdminCreateCampaignRequest, opts ...grpc.CallOption) (*AdminCreateCampaignResponse, error)
+	// AdminUpdateCampaign edits a campaign. Allowed only while status = "draft";
+	// otherwise FAILED_PRECONDITION.
+	AdminUpdateCampaign(ctx context.Context, in *AdminUpdateCampaignRequest, opts ...grpc.CallOption) (*AdminUpdateCampaignResponse, error)
+	// AdminGetCampaign returns one campaign with its progress counters.
+	AdminGetCampaign(ctx context.Context, in *AdminGetCampaignRequest, opts ...grpc.CallOption) (*AdminGetCampaignResponse, error)
+	// AdminListCampaigns returns a paginated list, newest first, optionally
+	// filtered by status.
+	AdminListCampaigns(ctx context.Context, in *AdminListCampaignsRequest, opts ...grpc.CallOption) (*AdminListCampaignsResponse, error)
+	// AdminPreviewSegment resolves the audience size for a segment without
+	// creating or sending anything. Returns only a count, never user data.
+	AdminPreviewSegment(ctx context.Context, in *AdminPreviewSegmentRequest, opts ...grpc.CallOption) (*AdminPreviewSegmentResponse, error)
+	// AdminSendCampaign transitions draft -> sending and hands the campaign to
+	// the background sender. Returns the campaign in its new state; delivery
+	// progress is observed via AdminGetCampaign.
+	AdminSendCampaign(ctx context.Context, in *AdminSendCampaignRequest, opts ...grpc.CallOption) (*AdminSendCampaignResponse, error)
+	// AdminCancelCampaign transitions draft|sending -> cancelled. Messages
+	// already handed to the push pipeline are not recalled.
+	AdminCancelCampaign(ctx context.Context, in *AdminCancelCampaignRequest, opts ...grpc.CallOption) (*AdminCancelCampaignResponse, error)
+}
+
+type campaignServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewCampaignServiceClient(cc grpc.ClientConnInterface) CampaignServiceClient {
+	return &campaignServiceClient{cc}
+}
+
+func (c *campaignServiceClient) AdminCreateCampaign(ctx context.Context, in *AdminCreateCampaignRequest, opts ...grpc.CallOption) (*AdminCreateCampaignResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCreateCampaignResponse)
+	err := c.cc.Invoke(ctx, CampaignService_AdminCreateCampaign_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *campaignServiceClient) AdminUpdateCampaign(ctx context.Context, in *AdminUpdateCampaignRequest, opts ...grpc.CallOption) (*AdminUpdateCampaignResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminUpdateCampaignResponse)
+	err := c.cc.Invoke(ctx, CampaignService_AdminUpdateCampaign_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *campaignServiceClient) AdminGetCampaign(ctx context.Context, in *AdminGetCampaignRequest, opts ...grpc.CallOption) (*AdminGetCampaignResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminGetCampaignResponse)
+	err := c.cc.Invoke(ctx, CampaignService_AdminGetCampaign_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *campaignServiceClient) AdminListCampaigns(ctx context.Context, in *AdminListCampaignsRequest, opts ...grpc.CallOption) (*AdminListCampaignsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminListCampaignsResponse)
+	err := c.cc.Invoke(ctx, CampaignService_AdminListCampaigns_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *campaignServiceClient) AdminPreviewSegment(ctx context.Context, in *AdminPreviewSegmentRequest, opts ...grpc.CallOption) (*AdminPreviewSegmentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminPreviewSegmentResponse)
+	err := c.cc.Invoke(ctx, CampaignService_AdminPreviewSegment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *campaignServiceClient) AdminSendCampaign(ctx context.Context, in *AdminSendCampaignRequest, opts ...grpc.CallOption) (*AdminSendCampaignResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminSendCampaignResponse)
+	err := c.cc.Invoke(ctx, CampaignService_AdminSendCampaign_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *campaignServiceClient) AdminCancelCampaign(ctx context.Context, in *AdminCancelCampaignRequest, opts ...grpc.CallOption) (*AdminCancelCampaignResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCancelCampaignResponse)
+	err := c.cc.Invoke(ctx, CampaignService_AdminCancelCampaign_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CampaignServiceServer is the server API for CampaignService service.
+// All implementations must embed UnimplementedCampaignServiceServer
+// for forward compatibility.
+//
+// CampaignService provides admin-only RPCs for targeted push campaigns.
+// All methods require a valid JWT with platform role "admin"; the role is
+// asserted via the x-platform-role gRPC metadata header (set by BFF) and
+// re-checked by notification-service itself. Recipient IDs are never accepted
+// from the caller — the audience is resolved server-side from CampaignSegment.
+type CampaignServiceServer interface {
+	// AdminCreateCampaign stores a new campaign in status "draft".
+	// Returns INVALID_ARGUMENT when action.route is outside the allowlist or
+	// when route "client.url" carries a non-https params["url"].
+	AdminCreateCampaign(context.Context, *AdminCreateCampaignRequest) (*AdminCreateCampaignResponse, error)
+	// AdminUpdateCampaign edits a campaign. Allowed only while status = "draft";
+	// otherwise FAILED_PRECONDITION.
+	AdminUpdateCampaign(context.Context, *AdminUpdateCampaignRequest) (*AdminUpdateCampaignResponse, error)
+	// AdminGetCampaign returns one campaign with its progress counters.
+	AdminGetCampaign(context.Context, *AdminGetCampaignRequest) (*AdminGetCampaignResponse, error)
+	// AdminListCampaigns returns a paginated list, newest first, optionally
+	// filtered by status.
+	AdminListCampaigns(context.Context, *AdminListCampaignsRequest) (*AdminListCampaignsResponse, error)
+	// AdminPreviewSegment resolves the audience size for a segment without
+	// creating or sending anything. Returns only a count, never user data.
+	AdminPreviewSegment(context.Context, *AdminPreviewSegmentRequest) (*AdminPreviewSegmentResponse, error)
+	// AdminSendCampaign transitions draft -> sending and hands the campaign to
+	// the background sender. Returns the campaign in its new state; delivery
+	// progress is observed via AdminGetCampaign.
+	AdminSendCampaign(context.Context, *AdminSendCampaignRequest) (*AdminSendCampaignResponse, error)
+	// AdminCancelCampaign transitions draft|sending -> cancelled. Messages
+	// already handed to the push pipeline are not recalled.
+	AdminCancelCampaign(context.Context, *AdminCancelCampaignRequest) (*AdminCancelCampaignResponse, error)
+	mustEmbedUnimplementedCampaignServiceServer()
+}
+
+// UnimplementedCampaignServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedCampaignServiceServer struct{}
+
+func (UnimplementedCampaignServiceServer) AdminCreateCampaign(context.Context, *AdminCreateCampaignRequest) (*AdminCreateCampaignResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminCreateCampaign not implemented")
+}
+func (UnimplementedCampaignServiceServer) AdminUpdateCampaign(context.Context, *AdminUpdateCampaignRequest) (*AdminUpdateCampaignResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminUpdateCampaign not implemented")
+}
+func (UnimplementedCampaignServiceServer) AdminGetCampaign(context.Context, *AdminGetCampaignRequest) (*AdminGetCampaignResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminGetCampaign not implemented")
+}
+func (UnimplementedCampaignServiceServer) AdminListCampaigns(context.Context, *AdminListCampaignsRequest) (*AdminListCampaignsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminListCampaigns not implemented")
+}
+func (UnimplementedCampaignServiceServer) AdminPreviewSegment(context.Context, *AdminPreviewSegmentRequest) (*AdminPreviewSegmentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminPreviewSegment not implemented")
+}
+func (UnimplementedCampaignServiceServer) AdminSendCampaign(context.Context, *AdminSendCampaignRequest) (*AdminSendCampaignResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminSendCampaign not implemented")
+}
+func (UnimplementedCampaignServiceServer) AdminCancelCampaign(context.Context, *AdminCancelCampaignRequest) (*AdminCancelCampaignResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminCancelCampaign not implemented")
+}
+func (UnimplementedCampaignServiceServer) mustEmbedUnimplementedCampaignServiceServer() {}
+func (UnimplementedCampaignServiceServer) testEmbeddedByValue()                         {}
+
+// UnsafeCampaignServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CampaignServiceServer will
+// result in compilation errors.
+type UnsafeCampaignServiceServer interface {
+	mustEmbedUnimplementedCampaignServiceServer()
+}
+
+func RegisterCampaignServiceServer(s grpc.ServiceRegistrar, srv CampaignServiceServer) {
+	// If the following call panics, it indicates UnimplementedCampaignServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&CampaignService_ServiceDesc, srv)
+}
+
+func _CampaignService_AdminCreateCampaign_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminCreateCampaignRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CampaignServiceServer).AdminCreateCampaign(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CampaignService_AdminCreateCampaign_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CampaignServiceServer).AdminCreateCampaign(ctx, req.(*AdminCreateCampaignRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CampaignService_AdminUpdateCampaign_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminUpdateCampaignRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CampaignServiceServer).AdminUpdateCampaign(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CampaignService_AdminUpdateCampaign_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CampaignServiceServer).AdminUpdateCampaign(ctx, req.(*AdminUpdateCampaignRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CampaignService_AdminGetCampaign_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminGetCampaignRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CampaignServiceServer).AdminGetCampaign(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CampaignService_AdminGetCampaign_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CampaignServiceServer).AdminGetCampaign(ctx, req.(*AdminGetCampaignRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CampaignService_AdminListCampaigns_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminListCampaignsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CampaignServiceServer).AdminListCampaigns(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CampaignService_AdminListCampaigns_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CampaignServiceServer).AdminListCampaigns(ctx, req.(*AdminListCampaignsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CampaignService_AdminPreviewSegment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminPreviewSegmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CampaignServiceServer).AdminPreviewSegment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CampaignService_AdminPreviewSegment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CampaignServiceServer).AdminPreviewSegment(ctx, req.(*AdminPreviewSegmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CampaignService_AdminSendCampaign_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminSendCampaignRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CampaignServiceServer).AdminSendCampaign(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CampaignService_AdminSendCampaign_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CampaignServiceServer).AdminSendCampaign(ctx, req.(*AdminSendCampaignRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CampaignService_AdminCancelCampaign_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminCancelCampaignRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CampaignServiceServer).AdminCancelCampaign(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CampaignService_AdminCancelCampaign_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CampaignServiceServer).AdminCancelCampaign(ctx, req.(*AdminCancelCampaignRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// CampaignService_ServiceDesc is the grpc.ServiceDesc for CampaignService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var CampaignService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "communication.notification.v1.CampaignService",
+	HandlerType: (*CampaignServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AdminCreateCampaign",
+			Handler:    _CampaignService_AdminCreateCampaign_Handler,
+		},
+		{
+			MethodName: "AdminUpdateCampaign",
+			Handler:    _CampaignService_AdminUpdateCampaign_Handler,
+		},
+		{
+			MethodName: "AdminGetCampaign",
+			Handler:    _CampaignService_AdminGetCampaign_Handler,
+		},
+		{
+			MethodName: "AdminListCampaigns",
+			Handler:    _CampaignService_AdminListCampaigns_Handler,
+		},
+		{
+			MethodName: "AdminPreviewSegment",
+			Handler:    _CampaignService_AdminPreviewSegment_Handler,
+		},
+		{
+			MethodName: "AdminSendCampaign",
+			Handler:    _CampaignService_AdminSendCampaign_Handler,
+		},
+		{
+			MethodName: "AdminCancelCampaign",
+			Handler:    _CampaignService_AdminCancelCampaign_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "communication/notification/notification.proto",
+}

@@ -53,6 +53,7 @@ const (
 	RequestService_CloseRequest_FullMethodName                  = "/services.request.v1.RequestService/CloseRequest"
 	RequestService_ReserveRequestBidSelection_FullMethodName    = "/services.request.v1.RequestService/ReserveRequestBidSelection"
 	RequestService_CancelRequestBidSelection_FullMethodName     = "/services.request.v1.RequestService/CancelRequestBidSelection"
+	RequestService_ListRequestUserIDs_FullMethodName            = "/services.request.v1.RequestService/ListRequestUserIDs"
 )
 
 // RequestServiceClient is the client API for RequestService service.
@@ -164,6 +165,12 @@ type RequestServiceClient interface {
 	// CancelRequestBidSelection removes only the exact still-pending handoff
 	// after bid-service has durably determined that acceptance did not commit.
 	CancelRequestBidSelection(ctx context.Context, in *CancelRequestBidSelectionRequest, opts ...grpc.CallOption) (*CancelRequestBidSelectionResponse, error)
+	// ListRequestUserIDs returns the distinct owners (user_id) of non-deleted
+	// client requests — IDs only, no request bodies and no PII. Used to build
+	// the "has requests" audience for segmented broadcast campaigns
+	// (cg-communication notification-service).
+	// Auth: service-token or platform admin. Never exposed to end users.
+	ListRequestUserIDs(ctx context.Context, in *ListRequestUserIDsRequest, opts ...grpc.CallOption) (*ListRequestUserIDsResponse, error)
 }
 
 type requestServiceClient struct {
@@ -514,6 +521,16 @@ func (c *requestServiceClient) CancelRequestBidSelection(ctx context.Context, in
 	return out, nil
 }
 
+func (c *requestServiceClient) ListRequestUserIDs(ctx context.Context, in *ListRequestUserIDsRequest, opts ...grpc.CallOption) (*ListRequestUserIDsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRequestUserIDsResponse)
+	err := c.cc.Invoke(ctx, RequestService_ListRequestUserIDs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RequestServiceServer is the server API for RequestService service.
 // All implementations must embed UnimplementedRequestServiceServer
 // for forward compatibility.
@@ -623,6 +640,12 @@ type RequestServiceServer interface {
 	// CancelRequestBidSelection removes only the exact still-pending handoff
 	// after bid-service has durably determined that acceptance did not commit.
 	CancelRequestBidSelection(context.Context, *CancelRequestBidSelectionRequest) (*CancelRequestBidSelectionResponse, error)
+	// ListRequestUserIDs returns the distinct owners (user_id) of non-deleted
+	// client requests — IDs only, no request bodies and no PII. Used to build
+	// the "has requests" audience for segmented broadcast campaigns
+	// (cg-communication notification-service).
+	// Auth: service-token or platform admin. Never exposed to end users.
+	ListRequestUserIDs(context.Context, *ListRequestUserIDsRequest) (*ListRequestUserIDsResponse, error)
 	mustEmbedUnimplementedRequestServiceServer()
 }
 
@@ -734,6 +757,9 @@ func (UnimplementedRequestServiceServer) ReserveRequestBidSelection(context.Cont
 }
 func (UnimplementedRequestServiceServer) CancelRequestBidSelection(context.Context, *CancelRequestBidSelectionRequest) (*CancelRequestBidSelectionResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelRequestBidSelection not implemented")
+}
+func (UnimplementedRequestServiceServer) ListRequestUserIDs(context.Context, *ListRequestUserIDsRequest) (*ListRequestUserIDsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListRequestUserIDs not implemented")
 }
 func (UnimplementedRequestServiceServer) mustEmbedUnimplementedRequestServiceServer() {}
 func (UnimplementedRequestServiceServer) testEmbeddedByValue()                        {}
@@ -1368,6 +1394,24 @@ func _RequestService_CancelRequestBidSelection_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestService_ListRequestUserIDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRequestUserIDsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).ListRequestUserIDs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_ListRequestUserIDs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).ListRequestUserIDs(ctx, req.(*ListRequestUserIDsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RequestService_ServiceDesc is the grpc.ServiceDesc for RequestService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1510,6 +1554,10 @@ var RequestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CancelRequestBidSelection",
 			Handler:    _RequestService_CancelRequestBidSelection_Handler,
+		},
+		{
+			MethodName: "ListRequestUserIDs",
+			Handler:    _RequestService_ListRequestUserIDs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

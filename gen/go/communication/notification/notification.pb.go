@@ -83,6 +83,9 @@ const (
 	NotificationCategory_NOTIFICATION_CATEGORY_PROMO       NotificationCategory = 3
 	NotificationCategory_NOTIFICATION_CATEGORY_SYSTEM      NotificationCategory = 4
 	NotificationCategory_NOTIFICATION_CATEGORY_JOB         NotificationCategory = 5
+	// PAYMENT covers transactional payment notifications (charge succeeded,
+	// refund, etc.). Treated as critical: not gated by user preferences.
+	NotificationCategory_NOTIFICATION_CATEGORY_PAYMENT NotificationCategory = 6
 )
 
 // Enum value maps for NotificationCategory.
@@ -94,6 +97,7 @@ var (
 		3: "NOTIFICATION_CATEGORY_PROMO",
 		4: "NOTIFICATION_CATEGORY_SYSTEM",
 		5: "NOTIFICATION_CATEGORY_JOB",
+		6: "NOTIFICATION_CATEGORY_PAYMENT",
 	}
 	NotificationCategory_value = map[string]int32{
 		"NOTIFICATION_CATEGORY_UNSPECIFIED": 0,
@@ -102,6 +106,7 @@ var (
 		"NOTIFICATION_CATEGORY_PROMO":       3,
 		"NOTIFICATION_CATEGORY_SYSTEM":      4,
 		"NOTIFICATION_CATEGORY_JOB":         5,
+		"NOTIFICATION_CATEGORY_PAYMENT":     6,
 	}
 )
 
@@ -1921,6 +1926,1031 @@ func (x *UpdatePreferencesResponse) GetPreferences() *NotificationPreferences {
 	return nil
 }
 
+// CampaignAction is the tap target of the campaign notification. It is carried
+// to the client inside the existing versioned push data contract
+// (schema "ctogram.push.v1"): route + params are merged into Notification.data.
+// route must be one of the server-side allowlist (client.notifications,
+// client.purchases, client.request.create, client.request.responses,
+// client.parts_request.detail, client.garage, client.home, chat.detail,
+// client.url). An unknown route is a safe no-op on the client, so the
+// allowlist is enforced at campaign creation time.
+type CampaignAction struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Route string                 `protobuf:"bytes,1,opt,name=route,proto3" json:"route,omitempty"`
+	// params are route-specific values (e.g. {"request_id": "..."} or
+	// {"url": "https://..."} for route "client.url"; https-only, validated).
+	Params        map[string]string `protobuf:"bytes,2,rep,name=params,proto3" json:"params,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CampaignAction) Reset() {
+	*x = CampaignAction{}
+	mi := &file_communication_notification_notification_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CampaignAction) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CampaignAction) ProtoMessage() {}
+
+func (x *CampaignAction) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CampaignAction.ProtoReflect.Descriptor instead.
+func (*CampaignAction) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *CampaignAction) GetRoute() string {
+	if x != nil {
+		return x.Route
+	}
+	return ""
+}
+
+func (x *CampaignAction) GetParams() map[string]string {
+	if x != nil {
+		return x.Params
+	}
+	return nil
+}
+
+// CampaignSegment describes the audience. Unset fields are not filtered on;
+// set fields are combined with AND. The audience is resolved through the
+// owning services (users.ResolveUserSegment, services.request.ListRequestUserIDs)
+// and intersected in notification-service — no cross-database joins.
+type CampaignSegment struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// city_id filters by users.city_id (NSI city).
+	CityId *int64 `protobuf:"varint,1,opt,name=city_id,json=cityId,proto3,oneof" json:"city_id,omitempty"`
+	// has_car = true keeps users with at least one car; false keeps users with none.
+	HasCar *bool `protobuf:"varint,2,opt,name=has_car,json=hasCar,proto3,oneof" json:"has_car,omitempty"`
+	// mark_id keeps users owning a car of this NSI make.
+	MarkId *int64 `protobuf:"varint,3,opt,name=mark_id,json=markId,proto3,oneof" json:"mark_id,omitempty"`
+	// has_requests = true keeps users that created at least one request;
+	// false keeps users that never created one.
+	HasRequests   *bool `protobuf:"varint,4,opt,name=has_requests,json=hasRequests,proto3,oneof" json:"has_requests,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CampaignSegment) Reset() {
+	*x = CampaignSegment{}
+	mi := &file_communication_notification_notification_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CampaignSegment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CampaignSegment) ProtoMessage() {}
+
+func (x *CampaignSegment) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CampaignSegment.ProtoReflect.Descriptor instead.
+func (*CampaignSegment) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *CampaignSegment) GetCityId() int64 {
+	if x != nil && x.CityId != nil {
+		return *x.CityId
+	}
+	return 0
+}
+
+func (x *CampaignSegment) GetHasCar() bool {
+	if x != nil && x.HasCar != nil {
+		return *x.HasCar
+	}
+	return false
+}
+
+func (x *CampaignSegment) GetMarkId() int64 {
+	if x != nil && x.MarkId != nil {
+		return *x.MarkId
+	}
+	return 0
+}
+
+func (x *CampaignSegment) GetHasRequests() bool {
+	if x != nil && x.HasRequests != nil {
+		return *x.HasRequests
+	}
+	return false
+}
+
+// Campaign is one admin broadcast and its delivery progress.
+type Campaign struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Body  string                 `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
+	// category of the produced notifications; defaults to
+	// NOTIFICATION_CATEGORY_PROMO when unspecified.
+	Category NotificationCategory `protobuf:"varint,4,opt,name=category,proto3,enum=communication.notification.v1.NotificationCategory" json:"category,omitempty"`
+	Action   *CampaignAction      `protobuf:"bytes,5,opt,name=action,proto3" json:"action,omitempty"`
+	Segment  *CampaignSegment     `protobuf:"bytes,6,opt,name=segment,proto3" json:"segment,omitempty"`
+	// status: "draft" | "sending" | "sent" | "cancelled" | "failed".
+	Status string `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
+	// total_recipients is the resolved audience size, filled when sending starts.
+	TotalRecipients int32 `protobuf:"varint,8,opt,name=total_recipients,json=totalRecipients,proto3" json:"total_recipients,omitempty"`
+	SentCount       int32 `protobuf:"varint,9,opt,name=sent_count,json=sentCount,proto3" json:"sent_count,omitempty"`
+	FailedCount     int32 `protobuf:"varint,10,opt,name=failed_count,json=failedCount,proto3" json:"failed_count,omitempty"`
+	// created_by is the admin user ID taken from the JWT at creation time.
+	CreatedBy int64 `protobuf:"varint,11,opt,name=created_by,json=createdBy,proto3" json:"created_by,omitempty"`
+	// error carries the failure reason when status = "failed"; empty otherwise.
+	Error     string                 `protobuf:"bytes,12,opt,name=error,proto3" json:"error,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// started_at / finished_at are unset (null) until the campaign is sent.
+	StartedAt     *timestamppb.Timestamp `protobuf:"bytes,15,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	FinishedAt    *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=finished_at,json=finishedAt,proto3" json:"finished_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Campaign) Reset() {
+	*x = Campaign{}
+	mi := &file_communication_notification_notification_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Campaign) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Campaign) ProtoMessage() {}
+
+func (x *Campaign) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Campaign.ProtoReflect.Descriptor instead.
+func (*Campaign) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *Campaign) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Campaign) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *Campaign) GetBody() string {
+	if x != nil {
+		return x.Body
+	}
+	return ""
+}
+
+func (x *Campaign) GetCategory() NotificationCategory {
+	if x != nil {
+		return x.Category
+	}
+	return NotificationCategory_NOTIFICATION_CATEGORY_UNSPECIFIED
+}
+
+func (x *Campaign) GetAction() *CampaignAction {
+	if x != nil {
+		return x.Action
+	}
+	return nil
+}
+
+func (x *Campaign) GetSegment() *CampaignSegment {
+	if x != nil {
+		return x.Segment
+	}
+	return nil
+}
+
+func (x *Campaign) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *Campaign) GetTotalRecipients() int32 {
+	if x != nil {
+		return x.TotalRecipients
+	}
+	return 0
+}
+
+func (x *Campaign) GetSentCount() int32 {
+	if x != nil {
+		return x.SentCount
+	}
+	return 0
+}
+
+func (x *Campaign) GetFailedCount() int32 {
+	if x != nil {
+		return x.FailedCount
+	}
+	return 0
+}
+
+func (x *Campaign) GetCreatedBy() int64 {
+	if x != nil {
+		return x.CreatedBy
+	}
+	return 0
+}
+
+func (x *Campaign) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
+func (x *Campaign) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Campaign) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *Campaign) GetStartedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.StartedAt
+	}
+	return nil
+}
+
+func (x *Campaign) GetFinishedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.FinishedAt
+	}
+	return nil
+}
+
+type AdminCreateCampaignRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Body          string                 `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
+	Category      NotificationCategory   `protobuf:"varint,3,opt,name=category,proto3,enum=communication.notification.v1.NotificationCategory" json:"category,omitempty"`
+	Action        *CampaignAction        `protobuf:"bytes,4,opt,name=action,proto3" json:"action,omitempty"`
+	Segment       *CampaignSegment       `protobuf:"bytes,5,opt,name=segment,proto3" json:"segment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminCreateCampaignRequest) Reset() {
+	*x = AdminCreateCampaignRequest{}
+	mi := &file_communication_notification_notification_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminCreateCampaignRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminCreateCampaignRequest) ProtoMessage() {}
+
+func (x *AdminCreateCampaignRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminCreateCampaignRequest.ProtoReflect.Descriptor instead.
+func (*AdminCreateCampaignRequest) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *AdminCreateCampaignRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *AdminCreateCampaignRequest) GetBody() string {
+	if x != nil {
+		return x.Body
+	}
+	return ""
+}
+
+func (x *AdminCreateCampaignRequest) GetCategory() NotificationCategory {
+	if x != nil {
+		return x.Category
+	}
+	return NotificationCategory_NOTIFICATION_CATEGORY_UNSPECIFIED
+}
+
+func (x *AdminCreateCampaignRequest) GetAction() *CampaignAction {
+	if x != nil {
+		return x.Action
+	}
+	return nil
+}
+
+func (x *AdminCreateCampaignRequest) GetSegment() *CampaignSegment {
+	if x != nil {
+		return x.Segment
+	}
+	return nil
+}
+
+type AdminCreateCampaignResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Campaign      *Campaign              `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminCreateCampaignResponse) Reset() {
+	*x = AdminCreateCampaignResponse{}
+	mi := &file_communication_notification_notification_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminCreateCampaignResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminCreateCampaignResponse) ProtoMessage() {}
+
+func (x *AdminCreateCampaignResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminCreateCampaignResponse.ProtoReflect.Descriptor instead.
+func (*AdminCreateCampaignResponse) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *AdminCreateCampaignResponse) GetCampaign() *Campaign {
+	if x != nil {
+		return x.Campaign
+	}
+	return nil
+}
+
+type AdminUpdateCampaignRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Body          string                 `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
+	Category      NotificationCategory   `protobuf:"varint,4,opt,name=category,proto3,enum=communication.notification.v1.NotificationCategory" json:"category,omitempty"`
+	Action        *CampaignAction        `protobuf:"bytes,5,opt,name=action,proto3" json:"action,omitempty"`
+	Segment       *CampaignSegment       `protobuf:"bytes,6,opt,name=segment,proto3" json:"segment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminUpdateCampaignRequest) Reset() {
+	*x = AdminUpdateCampaignRequest{}
+	mi := &file_communication_notification_notification_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminUpdateCampaignRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminUpdateCampaignRequest) ProtoMessage() {}
+
+func (x *AdminUpdateCampaignRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminUpdateCampaignRequest.ProtoReflect.Descriptor instead.
+func (*AdminUpdateCampaignRequest) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *AdminUpdateCampaignRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *AdminUpdateCampaignRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *AdminUpdateCampaignRequest) GetBody() string {
+	if x != nil {
+		return x.Body
+	}
+	return ""
+}
+
+func (x *AdminUpdateCampaignRequest) GetCategory() NotificationCategory {
+	if x != nil {
+		return x.Category
+	}
+	return NotificationCategory_NOTIFICATION_CATEGORY_UNSPECIFIED
+}
+
+func (x *AdminUpdateCampaignRequest) GetAction() *CampaignAction {
+	if x != nil {
+		return x.Action
+	}
+	return nil
+}
+
+func (x *AdminUpdateCampaignRequest) GetSegment() *CampaignSegment {
+	if x != nil {
+		return x.Segment
+	}
+	return nil
+}
+
+type AdminUpdateCampaignResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Campaign      *Campaign              `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminUpdateCampaignResponse) Reset() {
+	*x = AdminUpdateCampaignResponse{}
+	mi := &file_communication_notification_notification_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminUpdateCampaignResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminUpdateCampaignResponse) ProtoMessage() {}
+
+func (x *AdminUpdateCampaignResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminUpdateCampaignResponse.ProtoReflect.Descriptor instead.
+func (*AdminUpdateCampaignResponse) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *AdminUpdateCampaignResponse) GetCampaign() *Campaign {
+	if x != nil {
+		return x.Campaign
+	}
+	return nil
+}
+
+type AdminGetCampaignRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminGetCampaignRequest) Reset() {
+	*x = AdminGetCampaignRequest{}
+	mi := &file_communication_notification_notification_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminGetCampaignRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminGetCampaignRequest) ProtoMessage() {}
+
+func (x *AdminGetCampaignRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminGetCampaignRequest.ProtoReflect.Descriptor instead.
+func (*AdminGetCampaignRequest) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *AdminGetCampaignRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type AdminGetCampaignResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Campaign      *Campaign              `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminGetCampaignResponse) Reset() {
+	*x = AdminGetCampaignResponse{}
+	mi := &file_communication_notification_notification_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminGetCampaignResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminGetCampaignResponse) ProtoMessage() {}
+
+func (x *AdminGetCampaignResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminGetCampaignResponse.ProtoReflect.Descriptor instead.
+func (*AdminGetCampaignResponse) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *AdminGetCampaignResponse) GetCampaign() *Campaign {
+	if x != nil {
+		return x.Campaign
+	}
+	return nil
+}
+
+type AdminListCampaignsRequest struct {
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	Page     int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize int32                  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	// status filters by campaign status; unset = all statuses.
+	Status        *string `protobuf:"bytes,3,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminListCampaignsRequest) Reset() {
+	*x = AdminListCampaignsRequest{}
+	mi := &file_communication_notification_notification_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminListCampaignsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminListCampaignsRequest) ProtoMessage() {}
+
+func (x *AdminListCampaignsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminListCampaignsRequest.ProtoReflect.Descriptor instead.
+func (*AdminListCampaignsRequest) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *AdminListCampaignsRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *AdminListCampaignsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *AdminListCampaignsRequest) GetStatus() string {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return ""
+}
+
+type AdminListCampaignsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Campaigns     []*Campaign            `protobuf:"bytes,1,rep,name=campaigns,proto3" json:"campaigns,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminListCampaignsResponse) Reset() {
+	*x = AdminListCampaignsResponse{}
+	mi := &file_communication_notification_notification_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminListCampaignsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminListCampaignsResponse) ProtoMessage() {}
+
+func (x *AdminListCampaignsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminListCampaignsResponse.ProtoReflect.Descriptor instead.
+func (*AdminListCampaignsResponse) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *AdminListCampaignsResponse) GetCampaigns() []*Campaign {
+	if x != nil {
+		return x.Campaigns
+	}
+	return nil
+}
+
+func (x *AdminListCampaignsResponse) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type AdminPreviewSegmentRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Segment       *CampaignSegment       `protobuf:"bytes,1,opt,name=segment,proto3" json:"segment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminPreviewSegmentRequest) Reset() {
+	*x = AdminPreviewSegmentRequest{}
+	mi := &file_communication_notification_notification_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminPreviewSegmentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminPreviewSegmentRequest) ProtoMessage() {}
+
+func (x *AdminPreviewSegmentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminPreviewSegmentRequest.ProtoReflect.Descriptor instead.
+func (*AdminPreviewSegmentRequest) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *AdminPreviewSegmentRequest) GetSegment() *CampaignSegment {
+	if x != nil {
+		return x.Segment
+	}
+	return nil
+}
+
+type AdminPreviewSegmentResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// count is the number of users matching the segment.
+	Count         int64 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminPreviewSegmentResponse) Reset() {
+	*x = AdminPreviewSegmentResponse{}
+	mi := &file_communication_notification_notification_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminPreviewSegmentResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminPreviewSegmentResponse) ProtoMessage() {}
+
+func (x *AdminPreviewSegmentResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminPreviewSegmentResponse.ProtoReflect.Descriptor instead.
+func (*AdminPreviewSegmentResponse) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *AdminPreviewSegmentResponse) GetCount() int64 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type AdminSendCampaignRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminSendCampaignRequest) Reset() {
+	*x = AdminSendCampaignRequest{}
+	mi := &file_communication_notification_notification_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminSendCampaignRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminSendCampaignRequest) ProtoMessage() {}
+
+func (x *AdminSendCampaignRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminSendCampaignRequest.ProtoReflect.Descriptor instead.
+func (*AdminSendCampaignRequest) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *AdminSendCampaignRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type AdminSendCampaignResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Campaign      *Campaign              `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminSendCampaignResponse) Reset() {
+	*x = AdminSendCampaignResponse{}
+	mi := &file_communication_notification_notification_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminSendCampaignResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminSendCampaignResponse) ProtoMessage() {}
+
+func (x *AdminSendCampaignResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminSendCampaignResponse.ProtoReflect.Descriptor instead.
+func (*AdminSendCampaignResponse) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *AdminSendCampaignResponse) GetCampaign() *Campaign {
+	if x != nil {
+		return x.Campaign
+	}
+	return nil
+}
+
+type AdminCancelCampaignRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminCancelCampaignRequest) Reset() {
+	*x = AdminCancelCampaignRequest{}
+	mi := &file_communication_notification_notification_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminCancelCampaignRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminCancelCampaignRequest) ProtoMessage() {}
+
+func (x *AdminCancelCampaignRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminCancelCampaignRequest.ProtoReflect.Descriptor instead.
+func (*AdminCancelCampaignRequest) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *AdminCancelCampaignRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type AdminCancelCampaignResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Campaign      *Campaign              `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminCancelCampaignResponse) Reset() {
+	*x = AdminCancelCampaignResponse{}
+	mi := &file_communication_notification_notification_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminCancelCampaignResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminCancelCampaignResponse) ProtoMessage() {}
+
+func (x *AdminCancelCampaignResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_communication_notification_notification_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminCancelCampaignResponse.ProtoReflect.Descriptor instead.
+func (*AdminCancelCampaignResponse) Descriptor() ([]byte, []int) {
+	return file_communication_notification_notification_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *AdminCancelCampaignResponse) GetCampaign() *Campaign {
+	if x != nil {
+		return x.Campaign
+	}
+	return nil
+}
+
 var File_communication_notification_notification_proto protoreflect.FileDescriptor
 
 const file_communication_notification_notification_proto_rawDesc = "" +
@@ -2074,19 +3104,103 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\x14_promo_notificationsB\x14\n" +
 	"\x12_job_notifications\"u\n" +
 	"\x19UpdatePreferencesResponse\x12X\n" +
-	"\vpreferences\x18\x01 \x01(\v26.communication.notification.v1.NotificationPreferencesR\vpreferences*\x89\x01\n" +
+	"\vpreferences\x18\x01 \x01(\v26.communication.notification.v1.NotificationPreferencesR\vpreferences\"\xb4\x01\n" +
+	"\x0eCampaignAction\x12\x14\n" +
+	"\x05route\x18\x01 \x01(\tR\x05route\x12Q\n" +
+	"\x06params\x18\x02 \x03(\v29.communication.notification.v1.CampaignAction.ParamsEntryR\x06params\x1a9\n" +
+	"\vParamsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xc8\x01\n" +
+	"\x0fCampaignSegment\x12\x1c\n" +
+	"\acity_id\x18\x01 \x01(\x03H\x00R\x06cityId\x88\x01\x01\x12\x1c\n" +
+	"\ahas_car\x18\x02 \x01(\bH\x01R\x06hasCar\x88\x01\x01\x12\x1c\n" +
+	"\amark_id\x18\x03 \x01(\x03H\x02R\x06markId\x88\x01\x01\x12&\n" +
+	"\fhas_requests\x18\x04 \x01(\bH\x03R\vhasRequests\x88\x01\x01B\n" +
+	"\n" +
+	"\b_city_idB\n" +
+	"\n" +
+	"\b_has_carB\n" +
+	"\n" +
+	"\b_mark_idB\x0f\n" +
+	"\r_has_requests\"\xce\x05\n" +
+	"\bCampaign\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12\x12\n" +
+	"\x04body\x18\x03 \x01(\tR\x04body\x12O\n" +
+	"\bcategory\x18\x04 \x01(\x0e23.communication.notification.v1.NotificationCategoryR\bcategory\x12E\n" +
+	"\x06action\x18\x05 \x01(\v2-.communication.notification.v1.CampaignActionR\x06action\x12H\n" +
+	"\asegment\x18\x06 \x01(\v2..communication.notification.v1.CampaignSegmentR\asegment\x12\x16\n" +
+	"\x06status\x18\a \x01(\tR\x06status\x12)\n" +
+	"\x10total_recipients\x18\b \x01(\x05R\x0ftotalRecipients\x12\x1d\n" +
+	"\n" +
+	"sent_count\x18\t \x01(\x05R\tsentCount\x12!\n" +
+	"\ffailed_count\x18\n" +
+	" \x01(\x05R\vfailedCount\x12\x1d\n" +
+	"\n" +
+	"created_by\x18\v \x01(\x03R\tcreatedBy\x12\x14\n" +
+	"\x05error\x18\f \x01(\tR\x05error\x129\n" +
+	"\n" +
+	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x129\n" +
+	"\n" +
+	"started_at\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\tstartedAt\x12;\n" +
+	"\vfinished_at\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"finishedAt\"\xa8\x02\n" +
+	"\x1aAdminCreateCampaignRequest\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x12\x12\n" +
+	"\x04body\x18\x02 \x01(\tR\x04body\x12O\n" +
+	"\bcategory\x18\x03 \x01(\x0e23.communication.notification.v1.NotificationCategoryR\bcategory\x12E\n" +
+	"\x06action\x18\x04 \x01(\v2-.communication.notification.v1.CampaignActionR\x06action\x12H\n" +
+	"\asegment\x18\x05 \x01(\v2..communication.notification.v1.CampaignSegmentR\asegment\"b\n" +
+	"\x1bAdminCreateCampaignResponse\x12C\n" +
+	"\bcampaign\x18\x01 \x01(\v2'.communication.notification.v1.CampaignR\bcampaign\"\xb8\x02\n" +
+	"\x1aAdminUpdateCampaignRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12\x12\n" +
+	"\x04body\x18\x03 \x01(\tR\x04body\x12O\n" +
+	"\bcategory\x18\x04 \x01(\x0e23.communication.notification.v1.NotificationCategoryR\bcategory\x12E\n" +
+	"\x06action\x18\x05 \x01(\v2-.communication.notification.v1.CampaignActionR\x06action\x12H\n" +
+	"\asegment\x18\x06 \x01(\v2..communication.notification.v1.CampaignSegmentR\asegment\"b\n" +
+	"\x1bAdminUpdateCampaignResponse\x12C\n" +
+	"\bcampaign\x18\x01 \x01(\v2'.communication.notification.v1.CampaignR\bcampaign\")\n" +
+	"\x17AdminGetCampaignRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"_\n" +
+	"\x18AdminGetCampaignResponse\x12C\n" +
+	"\bcampaign\x18\x01 \x01(\v2'.communication.notification.v1.CampaignR\bcampaign\"t\n" +
+	"\x19AdminListCampaignsRequest\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1b\n" +
+	"\x06status\x18\x03 \x01(\tH\x00R\x06status\x88\x01\x01B\t\n" +
+	"\a_status\"y\n" +
+	"\x1aAdminListCampaignsResponse\x12E\n" +
+	"\tcampaigns\x18\x01 \x03(\v2'.communication.notification.v1.CampaignR\tcampaigns\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"f\n" +
+	"\x1aAdminPreviewSegmentRequest\x12H\n" +
+	"\asegment\x18\x01 \x01(\v2..communication.notification.v1.CampaignSegmentR\asegment\"3\n" +
+	"\x1bAdminPreviewSegmentResponse\x12\x14\n" +
+	"\x05count\x18\x01 \x01(\x03R\x05count\"*\n" +
+	"\x18AdminSendCampaignRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"`\n" +
+	"\x19AdminSendCampaignResponse\x12C\n" +
+	"\bcampaign\x18\x01 \x01(\v2'.communication.notification.v1.CampaignR\bcampaign\",\n" +
+	"\x1aAdminCancelCampaignRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"b\n" +
+	"\x1bAdminCancelCampaignResponse\x12C\n" +
+	"\bcampaign\x18\x01 \x01(\v2'.communication.notification.v1.CampaignR\bcampaign*\x89\x01\n" +
 	"\x10NotificationType\x12!\n" +
 	"\x1dNOTIFICATION_TYPE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16NOTIFICATION_TYPE_PUSH\x10\x01\x12\x19\n" +
 	"\x15NOTIFICATION_TYPE_SMS\x10\x02\x12\x1b\n" +
-	"\x17NOTIFICATION_TYPE_EMAIL\x10\x03*\xe0\x01\n" +
+	"\x17NOTIFICATION_TYPE_EMAIL\x10\x03*\x83\x02\n" +
 	"\x14NotificationCategory\x12%\n" +
 	"!NOTIFICATION_CATEGORY_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aNOTIFICATION_CATEGORY_CHAT\x10\x01\x12\x1f\n" +
 	"\x1bNOTIFICATION_CATEGORY_ORDER\x10\x02\x12\x1f\n" +
 	"\x1bNOTIFICATION_CATEGORY_PROMO\x10\x03\x12 \n" +
 	"\x1cNOTIFICATION_CATEGORY_SYSTEM\x10\x04\x12\x1d\n" +
-	"\x19NOTIFICATION_CATEGORY_JOB\x10\x052\xd9\f\n" +
+	"\x19NOTIFICATION_CATEGORY_JOB\x10\x05\x12!\n" +
+	"\x1dNOTIFICATION_CATEGORY_PAYMENT\x10\x062\xd9\f\n" +
 	"\x13NotificationService\x12k\n" +
 	"\bSendPush\x12..communication.notification.v1.SendPushRequest\x1a/.communication.notification.v1.SendPushResponse\x12h\n" +
 	"\aSendSMS\x12-.communication.notification.v1.SendSMSRequest\x1a..communication.notification.v1.SendSMSResponse\x12n\n" +
@@ -2101,7 +3215,15 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\x0fListUserDevices\x125.communication.notification.v1.ListUserDevicesRequest\x1a6.communication.notification.v1.ListUserDevicesResponse\x12z\n" +
 	"\rGetSMSBalance\x123.communication.notification.v1.GetSMSBalanceRequest\x1a4.communication.notification.v1.GetSMSBalanceResponse\x12}\n" +
 	"\x0eGetPreferences\x124.communication.notification.v1.GetPreferencesRequest\x1a5.communication.notification.v1.GetPreferencesResponse\x12\x86\x01\n" +
-	"\x11UpdatePreferences\x127.communication.notification.v1.UpdatePreferencesRequest\x1a8.communication.notification.v1.UpdatePreferencesResponseBLZJgithub.com/4ubak/cg-proto/gen/go/communication/notification;notificationv1b\x06proto3"
+	"\x11UpdatePreferences\x127.communication.notification.v1.UpdatePreferencesRequest\x1a8.communication.notification.v1.UpdatePreferencesResponse2\xe8\a\n" +
+	"\x0fCampaignService\x12\x8c\x01\n" +
+	"\x13AdminCreateCampaign\x129.communication.notification.v1.AdminCreateCampaignRequest\x1a:.communication.notification.v1.AdminCreateCampaignResponse\x12\x8c\x01\n" +
+	"\x13AdminUpdateCampaign\x129.communication.notification.v1.AdminUpdateCampaignRequest\x1a:.communication.notification.v1.AdminUpdateCampaignResponse\x12\x83\x01\n" +
+	"\x10AdminGetCampaign\x126.communication.notification.v1.AdminGetCampaignRequest\x1a7.communication.notification.v1.AdminGetCampaignResponse\x12\x89\x01\n" +
+	"\x12AdminListCampaigns\x128.communication.notification.v1.AdminListCampaignsRequest\x1a9.communication.notification.v1.AdminListCampaignsResponse\x12\x8c\x01\n" +
+	"\x13AdminPreviewSegment\x129.communication.notification.v1.AdminPreviewSegmentRequest\x1a:.communication.notification.v1.AdminPreviewSegmentResponse\x12\x86\x01\n" +
+	"\x11AdminSendCampaign\x127.communication.notification.v1.AdminSendCampaignRequest\x1a8.communication.notification.v1.AdminSendCampaignResponse\x12\x8c\x01\n" +
+	"\x13AdminCancelCampaign\x129.communication.notification.v1.AdminCancelCampaignRequest\x1a:.communication.notification.v1.AdminCancelCampaignResponseBLZJgithub.com/4ubak/cg-proto/gen/go/communication/notification;notificationv1b\x06proto3"
 
 var (
 	file_communication_notification_notification_proto_rawDescOnce sync.Once
@@ -2116,56 +3238,74 @@ func file_communication_notification_notification_proto_rawDescGZIP() []byte {
 }
 
 var file_communication_notification_notification_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_communication_notification_notification_proto_msgTypes = make([]protoimpl.MessageInfo, 33)
+var file_communication_notification_notification_proto_msgTypes = make([]protoimpl.MessageInfo, 51)
 var file_communication_notification_notification_proto_goTypes = []any{
-	(NotificationType)(0),             // 0: communication.notification.v1.NotificationType
-	(NotificationCategory)(0),         // 1: communication.notification.v1.NotificationCategory
-	(*Notification)(nil),              // 2: communication.notification.v1.Notification
-	(*DeviceInfo)(nil),                // 3: communication.notification.v1.DeviceInfo
-	(*SendPushRequest)(nil),           // 4: communication.notification.v1.SendPushRequest
-	(*SendPushResponse)(nil),          // 5: communication.notification.v1.SendPushResponse
-	(*SendSMSRequest)(nil),            // 6: communication.notification.v1.SendSMSRequest
-	(*SendSMSResponse)(nil),           // 7: communication.notification.v1.SendSMSResponse
-	(*SendEmailRequest)(nil),          // 8: communication.notification.v1.SendEmailRequest
-	(*SendEmailResponse)(nil),         // 9: communication.notification.v1.SendEmailResponse
-	(*GetNotificationsRequest)(nil),   // 10: communication.notification.v1.GetNotificationsRequest
-	(*GetNotificationsResponse)(nil),  // 11: communication.notification.v1.GetNotificationsResponse
-	(*MarkAsReadRequest)(nil),         // 12: communication.notification.v1.MarkAsReadRequest
-	(*MarkAsReadResponse)(nil),        // 13: communication.notification.v1.MarkAsReadResponse
-	(*GetUnreadCountRequest)(nil),     // 14: communication.notification.v1.GetUnreadCountRequest
-	(*GetUnreadCountResponse)(nil),    // 15: communication.notification.v1.GetUnreadCountResponse
-	(*RegisterDeviceRequest)(nil),     // 16: communication.notification.v1.RegisterDeviceRequest
-	(*RegisterDeviceResponse)(nil),    // 17: communication.notification.v1.RegisterDeviceResponse
-	(*UnregisterDeviceRequest)(nil),   // 18: communication.notification.v1.UnregisterDeviceRequest
-	(*UnregisterDeviceResponse)(nil),  // 19: communication.notification.v1.UnregisterDeviceResponse
-	(*UpdateDeviceRequest)(nil),       // 20: communication.notification.v1.UpdateDeviceRequest
-	(*UpdateDeviceResponse)(nil),      // 21: communication.notification.v1.UpdateDeviceResponse
-	(*ListUserDevicesRequest)(nil),    // 22: communication.notification.v1.ListUserDevicesRequest
-	(*ListUserDevicesResponse)(nil),   // 23: communication.notification.v1.ListUserDevicesResponse
-	(*GetSMSBalanceRequest)(nil),      // 24: communication.notification.v1.GetSMSBalanceRequest
-	(*GetSMSBalanceResponse)(nil),     // 25: communication.notification.v1.GetSMSBalanceResponse
-	(*NotificationPreferences)(nil),   // 26: communication.notification.v1.NotificationPreferences
-	(*GetPreferencesRequest)(nil),     // 27: communication.notification.v1.GetPreferencesRequest
-	(*GetPreferencesResponse)(nil),    // 28: communication.notification.v1.GetPreferencesResponse
-	(*UpdatePreferencesRequest)(nil),  // 29: communication.notification.v1.UpdatePreferencesRequest
-	(*UpdatePreferencesResponse)(nil), // 30: communication.notification.v1.UpdatePreferencesResponse
-	nil,                               // 31: communication.notification.v1.Notification.DataEntry
-	nil,                               // 32: communication.notification.v1.SendPushRequest.DataEntry
-	nil,                               // 33: communication.notification.v1.SendSMSRequest.TemplateDataEntry
-	nil,                               // 34: communication.notification.v1.SendEmailRequest.TemplateDataEntry
-	(*timestamppb.Timestamp)(nil),     // 35: google.protobuf.Timestamp
+	(NotificationType)(0),               // 0: communication.notification.v1.NotificationType
+	(NotificationCategory)(0),           // 1: communication.notification.v1.NotificationCategory
+	(*Notification)(nil),                // 2: communication.notification.v1.Notification
+	(*DeviceInfo)(nil),                  // 3: communication.notification.v1.DeviceInfo
+	(*SendPushRequest)(nil),             // 4: communication.notification.v1.SendPushRequest
+	(*SendPushResponse)(nil),            // 5: communication.notification.v1.SendPushResponse
+	(*SendSMSRequest)(nil),              // 6: communication.notification.v1.SendSMSRequest
+	(*SendSMSResponse)(nil),             // 7: communication.notification.v1.SendSMSResponse
+	(*SendEmailRequest)(nil),            // 8: communication.notification.v1.SendEmailRequest
+	(*SendEmailResponse)(nil),           // 9: communication.notification.v1.SendEmailResponse
+	(*GetNotificationsRequest)(nil),     // 10: communication.notification.v1.GetNotificationsRequest
+	(*GetNotificationsResponse)(nil),    // 11: communication.notification.v1.GetNotificationsResponse
+	(*MarkAsReadRequest)(nil),           // 12: communication.notification.v1.MarkAsReadRequest
+	(*MarkAsReadResponse)(nil),          // 13: communication.notification.v1.MarkAsReadResponse
+	(*GetUnreadCountRequest)(nil),       // 14: communication.notification.v1.GetUnreadCountRequest
+	(*GetUnreadCountResponse)(nil),      // 15: communication.notification.v1.GetUnreadCountResponse
+	(*RegisterDeviceRequest)(nil),       // 16: communication.notification.v1.RegisterDeviceRequest
+	(*RegisterDeviceResponse)(nil),      // 17: communication.notification.v1.RegisterDeviceResponse
+	(*UnregisterDeviceRequest)(nil),     // 18: communication.notification.v1.UnregisterDeviceRequest
+	(*UnregisterDeviceResponse)(nil),    // 19: communication.notification.v1.UnregisterDeviceResponse
+	(*UpdateDeviceRequest)(nil),         // 20: communication.notification.v1.UpdateDeviceRequest
+	(*UpdateDeviceResponse)(nil),        // 21: communication.notification.v1.UpdateDeviceResponse
+	(*ListUserDevicesRequest)(nil),      // 22: communication.notification.v1.ListUserDevicesRequest
+	(*ListUserDevicesResponse)(nil),     // 23: communication.notification.v1.ListUserDevicesResponse
+	(*GetSMSBalanceRequest)(nil),        // 24: communication.notification.v1.GetSMSBalanceRequest
+	(*GetSMSBalanceResponse)(nil),       // 25: communication.notification.v1.GetSMSBalanceResponse
+	(*NotificationPreferences)(nil),     // 26: communication.notification.v1.NotificationPreferences
+	(*GetPreferencesRequest)(nil),       // 27: communication.notification.v1.GetPreferencesRequest
+	(*GetPreferencesResponse)(nil),      // 28: communication.notification.v1.GetPreferencesResponse
+	(*UpdatePreferencesRequest)(nil),    // 29: communication.notification.v1.UpdatePreferencesRequest
+	(*UpdatePreferencesResponse)(nil),   // 30: communication.notification.v1.UpdatePreferencesResponse
+	(*CampaignAction)(nil),              // 31: communication.notification.v1.CampaignAction
+	(*CampaignSegment)(nil),             // 32: communication.notification.v1.CampaignSegment
+	(*Campaign)(nil),                    // 33: communication.notification.v1.Campaign
+	(*AdminCreateCampaignRequest)(nil),  // 34: communication.notification.v1.AdminCreateCampaignRequest
+	(*AdminCreateCampaignResponse)(nil), // 35: communication.notification.v1.AdminCreateCampaignResponse
+	(*AdminUpdateCampaignRequest)(nil),  // 36: communication.notification.v1.AdminUpdateCampaignRequest
+	(*AdminUpdateCampaignResponse)(nil), // 37: communication.notification.v1.AdminUpdateCampaignResponse
+	(*AdminGetCampaignRequest)(nil),     // 38: communication.notification.v1.AdminGetCampaignRequest
+	(*AdminGetCampaignResponse)(nil),    // 39: communication.notification.v1.AdminGetCampaignResponse
+	(*AdminListCampaignsRequest)(nil),   // 40: communication.notification.v1.AdminListCampaignsRequest
+	(*AdminListCampaignsResponse)(nil),  // 41: communication.notification.v1.AdminListCampaignsResponse
+	(*AdminPreviewSegmentRequest)(nil),  // 42: communication.notification.v1.AdminPreviewSegmentRequest
+	(*AdminPreviewSegmentResponse)(nil), // 43: communication.notification.v1.AdminPreviewSegmentResponse
+	(*AdminSendCampaignRequest)(nil),    // 44: communication.notification.v1.AdminSendCampaignRequest
+	(*AdminSendCampaignResponse)(nil),   // 45: communication.notification.v1.AdminSendCampaignResponse
+	(*AdminCancelCampaignRequest)(nil),  // 46: communication.notification.v1.AdminCancelCampaignRequest
+	(*AdminCancelCampaignResponse)(nil), // 47: communication.notification.v1.AdminCancelCampaignResponse
+	nil,                                 // 48: communication.notification.v1.Notification.DataEntry
+	nil,                                 // 49: communication.notification.v1.SendPushRequest.DataEntry
+	nil,                                 // 50: communication.notification.v1.SendSMSRequest.TemplateDataEntry
+	nil,                                 // 51: communication.notification.v1.SendEmailRequest.TemplateDataEntry
+	nil,                                 // 52: communication.notification.v1.CampaignAction.ParamsEntry
+	(*timestamppb.Timestamp)(nil),       // 53: google.protobuf.Timestamp
 }
 var file_communication_notification_notification_proto_depIdxs = []int32{
 	0,  // 0: communication.notification.v1.Notification.type:type_name -> communication.notification.v1.NotificationType
 	1,  // 1: communication.notification.v1.Notification.category:type_name -> communication.notification.v1.NotificationCategory
-	31, // 2: communication.notification.v1.Notification.data:type_name -> communication.notification.v1.Notification.DataEntry
-	35, // 3: communication.notification.v1.Notification.created_at:type_name -> google.protobuf.Timestamp
-	35, // 4: communication.notification.v1.DeviceInfo.last_seen_at:type_name -> google.protobuf.Timestamp
-	35, // 5: communication.notification.v1.DeviceInfo.created_at:type_name -> google.protobuf.Timestamp
+	48, // 2: communication.notification.v1.Notification.data:type_name -> communication.notification.v1.Notification.DataEntry
+	53, // 3: communication.notification.v1.Notification.created_at:type_name -> google.protobuf.Timestamp
+	53, // 4: communication.notification.v1.DeviceInfo.last_seen_at:type_name -> google.protobuf.Timestamp
+	53, // 5: communication.notification.v1.DeviceInfo.created_at:type_name -> google.protobuf.Timestamp
 	1,  // 6: communication.notification.v1.SendPushRequest.category:type_name -> communication.notification.v1.NotificationCategory
-	32, // 7: communication.notification.v1.SendPushRequest.data:type_name -> communication.notification.v1.SendPushRequest.DataEntry
-	33, // 8: communication.notification.v1.SendSMSRequest.template_data:type_name -> communication.notification.v1.SendSMSRequest.TemplateDataEntry
-	34, // 9: communication.notification.v1.SendEmailRequest.template_data:type_name -> communication.notification.v1.SendEmailRequest.TemplateDataEntry
+	49, // 7: communication.notification.v1.SendPushRequest.data:type_name -> communication.notification.v1.SendPushRequest.DataEntry
+	50, // 8: communication.notification.v1.SendSMSRequest.template_data:type_name -> communication.notification.v1.SendSMSRequest.TemplateDataEntry
+	51, // 9: communication.notification.v1.SendEmailRequest.template_data:type_name -> communication.notification.v1.SendEmailRequest.TemplateDataEntry
 	1,  // 10: communication.notification.v1.GetNotificationsRequest.category:type_name -> communication.notification.v1.NotificationCategory
 	2,  // 11: communication.notification.v1.GetNotificationsResponse.notifications:type_name -> communication.notification.v1.Notification
 	3,  // 12: communication.notification.v1.RegisterDeviceResponse.device:type_name -> communication.notification.v1.DeviceInfo
@@ -2173,37 +3313,72 @@ var file_communication_notification_notification_proto_depIdxs = []int32{
 	3,  // 14: communication.notification.v1.ListUserDevicesResponse.devices:type_name -> communication.notification.v1.DeviceInfo
 	26, // 15: communication.notification.v1.GetPreferencesResponse.preferences:type_name -> communication.notification.v1.NotificationPreferences
 	26, // 16: communication.notification.v1.UpdatePreferencesResponse.preferences:type_name -> communication.notification.v1.NotificationPreferences
-	4,  // 17: communication.notification.v1.NotificationService.SendPush:input_type -> communication.notification.v1.SendPushRequest
-	6,  // 18: communication.notification.v1.NotificationService.SendSMS:input_type -> communication.notification.v1.SendSMSRequest
-	8,  // 19: communication.notification.v1.NotificationService.SendEmail:input_type -> communication.notification.v1.SendEmailRequest
-	10, // 20: communication.notification.v1.NotificationService.GetNotifications:input_type -> communication.notification.v1.GetNotificationsRequest
-	12, // 21: communication.notification.v1.NotificationService.MarkAsRead:input_type -> communication.notification.v1.MarkAsReadRequest
-	14, // 22: communication.notification.v1.NotificationService.GetUnreadCount:input_type -> communication.notification.v1.GetUnreadCountRequest
-	16, // 23: communication.notification.v1.NotificationService.RegisterDevice:input_type -> communication.notification.v1.RegisterDeviceRequest
-	18, // 24: communication.notification.v1.NotificationService.UnregisterDevice:input_type -> communication.notification.v1.UnregisterDeviceRequest
-	20, // 25: communication.notification.v1.NotificationService.UpdateDevice:input_type -> communication.notification.v1.UpdateDeviceRequest
-	22, // 26: communication.notification.v1.NotificationService.ListUserDevices:input_type -> communication.notification.v1.ListUserDevicesRequest
-	24, // 27: communication.notification.v1.NotificationService.GetSMSBalance:input_type -> communication.notification.v1.GetSMSBalanceRequest
-	27, // 28: communication.notification.v1.NotificationService.GetPreferences:input_type -> communication.notification.v1.GetPreferencesRequest
-	29, // 29: communication.notification.v1.NotificationService.UpdatePreferences:input_type -> communication.notification.v1.UpdatePreferencesRequest
-	5,  // 30: communication.notification.v1.NotificationService.SendPush:output_type -> communication.notification.v1.SendPushResponse
-	7,  // 31: communication.notification.v1.NotificationService.SendSMS:output_type -> communication.notification.v1.SendSMSResponse
-	9,  // 32: communication.notification.v1.NotificationService.SendEmail:output_type -> communication.notification.v1.SendEmailResponse
-	11, // 33: communication.notification.v1.NotificationService.GetNotifications:output_type -> communication.notification.v1.GetNotificationsResponse
-	13, // 34: communication.notification.v1.NotificationService.MarkAsRead:output_type -> communication.notification.v1.MarkAsReadResponse
-	15, // 35: communication.notification.v1.NotificationService.GetUnreadCount:output_type -> communication.notification.v1.GetUnreadCountResponse
-	17, // 36: communication.notification.v1.NotificationService.RegisterDevice:output_type -> communication.notification.v1.RegisterDeviceResponse
-	19, // 37: communication.notification.v1.NotificationService.UnregisterDevice:output_type -> communication.notification.v1.UnregisterDeviceResponse
-	21, // 38: communication.notification.v1.NotificationService.UpdateDevice:output_type -> communication.notification.v1.UpdateDeviceResponse
-	23, // 39: communication.notification.v1.NotificationService.ListUserDevices:output_type -> communication.notification.v1.ListUserDevicesResponse
-	25, // 40: communication.notification.v1.NotificationService.GetSMSBalance:output_type -> communication.notification.v1.GetSMSBalanceResponse
-	28, // 41: communication.notification.v1.NotificationService.GetPreferences:output_type -> communication.notification.v1.GetPreferencesResponse
-	30, // 42: communication.notification.v1.NotificationService.UpdatePreferences:output_type -> communication.notification.v1.UpdatePreferencesResponse
-	30, // [30:43] is the sub-list for method output_type
-	17, // [17:30] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	52, // 17: communication.notification.v1.CampaignAction.params:type_name -> communication.notification.v1.CampaignAction.ParamsEntry
+	1,  // 18: communication.notification.v1.Campaign.category:type_name -> communication.notification.v1.NotificationCategory
+	31, // 19: communication.notification.v1.Campaign.action:type_name -> communication.notification.v1.CampaignAction
+	32, // 20: communication.notification.v1.Campaign.segment:type_name -> communication.notification.v1.CampaignSegment
+	53, // 21: communication.notification.v1.Campaign.created_at:type_name -> google.protobuf.Timestamp
+	53, // 22: communication.notification.v1.Campaign.updated_at:type_name -> google.protobuf.Timestamp
+	53, // 23: communication.notification.v1.Campaign.started_at:type_name -> google.protobuf.Timestamp
+	53, // 24: communication.notification.v1.Campaign.finished_at:type_name -> google.protobuf.Timestamp
+	1,  // 25: communication.notification.v1.AdminCreateCampaignRequest.category:type_name -> communication.notification.v1.NotificationCategory
+	31, // 26: communication.notification.v1.AdminCreateCampaignRequest.action:type_name -> communication.notification.v1.CampaignAction
+	32, // 27: communication.notification.v1.AdminCreateCampaignRequest.segment:type_name -> communication.notification.v1.CampaignSegment
+	33, // 28: communication.notification.v1.AdminCreateCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
+	1,  // 29: communication.notification.v1.AdminUpdateCampaignRequest.category:type_name -> communication.notification.v1.NotificationCategory
+	31, // 30: communication.notification.v1.AdminUpdateCampaignRequest.action:type_name -> communication.notification.v1.CampaignAction
+	32, // 31: communication.notification.v1.AdminUpdateCampaignRequest.segment:type_name -> communication.notification.v1.CampaignSegment
+	33, // 32: communication.notification.v1.AdminUpdateCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
+	33, // 33: communication.notification.v1.AdminGetCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
+	33, // 34: communication.notification.v1.AdminListCampaignsResponse.campaigns:type_name -> communication.notification.v1.Campaign
+	32, // 35: communication.notification.v1.AdminPreviewSegmentRequest.segment:type_name -> communication.notification.v1.CampaignSegment
+	33, // 36: communication.notification.v1.AdminSendCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
+	33, // 37: communication.notification.v1.AdminCancelCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
+	4,  // 38: communication.notification.v1.NotificationService.SendPush:input_type -> communication.notification.v1.SendPushRequest
+	6,  // 39: communication.notification.v1.NotificationService.SendSMS:input_type -> communication.notification.v1.SendSMSRequest
+	8,  // 40: communication.notification.v1.NotificationService.SendEmail:input_type -> communication.notification.v1.SendEmailRequest
+	10, // 41: communication.notification.v1.NotificationService.GetNotifications:input_type -> communication.notification.v1.GetNotificationsRequest
+	12, // 42: communication.notification.v1.NotificationService.MarkAsRead:input_type -> communication.notification.v1.MarkAsReadRequest
+	14, // 43: communication.notification.v1.NotificationService.GetUnreadCount:input_type -> communication.notification.v1.GetUnreadCountRequest
+	16, // 44: communication.notification.v1.NotificationService.RegisterDevice:input_type -> communication.notification.v1.RegisterDeviceRequest
+	18, // 45: communication.notification.v1.NotificationService.UnregisterDevice:input_type -> communication.notification.v1.UnregisterDeviceRequest
+	20, // 46: communication.notification.v1.NotificationService.UpdateDevice:input_type -> communication.notification.v1.UpdateDeviceRequest
+	22, // 47: communication.notification.v1.NotificationService.ListUserDevices:input_type -> communication.notification.v1.ListUserDevicesRequest
+	24, // 48: communication.notification.v1.NotificationService.GetSMSBalance:input_type -> communication.notification.v1.GetSMSBalanceRequest
+	27, // 49: communication.notification.v1.NotificationService.GetPreferences:input_type -> communication.notification.v1.GetPreferencesRequest
+	29, // 50: communication.notification.v1.NotificationService.UpdatePreferences:input_type -> communication.notification.v1.UpdatePreferencesRequest
+	34, // 51: communication.notification.v1.CampaignService.AdminCreateCampaign:input_type -> communication.notification.v1.AdminCreateCampaignRequest
+	36, // 52: communication.notification.v1.CampaignService.AdminUpdateCampaign:input_type -> communication.notification.v1.AdminUpdateCampaignRequest
+	38, // 53: communication.notification.v1.CampaignService.AdminGetCampaign:input_type -> communication.notification.v1.AdminGetCampaignRequest
+	40, // 54: communication.notification.v1.CampaignService.AdminListCampaigns:input_type -> communication.notification.v1.AdminListCampaignsRequest
+	42, // 55: communication.notification.v1.CampaignService.AdminPreviewSegment:input_type -> communication.notification.v1.AdminPreviewSegmentRequest
+	44, // 56: communication.notification.v1.CampaignService.AdminSendCampaign:input_type -> communication.notification.v1.AdminSendCampaignRequest
+	46, // 57: communication.notification.v1.CampaignService.AdminCancelCampaign:input_type -> communication.notification.v1.AdminCancelCampaignRequest
+	5,  // 58: communication.notification.v1.NotificationService.SendPush:output_type -> communication.notification.v1.SendPushResponse
+	7,  // 59: communication.notification.v1.NotificationService.SendSMS:output_type -> communication.notification.v1.SendSMSResponse
+	9,  // 60: communication.notification.v1.NotificationService.SendEmail:output_type -> communication.notification.v1.SendEmailResponse
+	11, // 61: communication.notification.v1.NotificationService.GetNotifications:output_type -> communication.notification.v1.GetNotificationsResponse
+	13, // 62: communication.notification.v1.NotificationService.MarkAsRead:output_type -> communication.notification.v1.MarkAsReadResponse
+	15, // 63: communication.notification.v1.NotificationService.GetUnreadCount:output_type -> communication.notification.v1.GetUnreadCountResponse
+	17, // 64: communication.notification.v1.NotificationService.RegisterDevice:output_type -> communication.notification.v1.RegisterDeviceResponse
+	19, // 65: communication.notification.v1.NotificationService.UnregisterDevice:output_type -> communication.notification.v1.UnregisterDeviceResponse
+	21, // 66: communication.notification.v1.NotificationService.UpdateDevice:output_type -> communication.notification.v1.UpdateDeviceResponse
+	23, // 67: communication.notification.v1.NotificationService.ListUserDevices:output_type -> communication.notification.v1.ListUserDevicesResponse
+	25, // 68: communication.notification.v1.NotificationService.GetSMSBalance:output_type -> communication.notification.v1.GetSMSBalanceResponse
+	28, // 69: communication.notification.v1.NotificationService.GetPreferences:output_type -> communication.notification.v1.GetPreferencesResponse
+	30, // 70: communication.notification.v1.NotificationService.UpdatePreferences:output_type -> communication.notification.v1.UpdatePreferencesResponse
+	35, // 71: communication.notification.v1.CampaignService.AdminCreateCampaign:output_type -> communication.notification.v1.AdminCreateCampaignResponse
+	37, // 72: communication.notification.v1.CampaignService.AdminUpdateCampaign:output_type -> communication.notification.v1.AdminUpdateCampaignResponse
+	39, // 73: communication.notification.v1.CampaignService.AdminGetCampaign:output_type -> communication.notification.v1.AdminGetCampaignResponse
+	41, // 74: communication.notification.v1.CampaignService.AdminListCampaigns:output_type -> communication.notification.v1.AdminListCampaignsResponse
+	43, // 75: communication.notification.v1.CampaignService.AdminPreviewSegment:output_type -> communication.notification.v1.AdminPreviewSegmentResponse
+	45, // 76: communication.notification.v1.CampaignService.AdminSendCampaign:output_type -> communication.notification.v1.AdminSendCampaignResponse
+	47, // 77: communication.notification.v1.CampaignService.AdminCancelCampaign:output_type -> communication.notification.v1.AdminCancelCampaignResponse
+	58, // [58:78] is the sub-list for method output_type
+	38, // [38:58] is the sub-list for method input_type
+	38, // [38:38] is the sub-list for extension type_name
+	38, // [38:38] is the sub-list for extension extendee
+	0,  // [0:38] is the sub-list for field type_name
 }
 
 func init() { file_communication_notification_notification_proto_init() }
@@ -2212,15 +3387,17 @@ func file_communication_notification_notification_proto_init() {
 		return
 	}
 	file_communication_notification_notification_proto_msgTypes[27].OneofWrappers = []any{}
+	file_communication_notification_notification_proto_msgTypes[30].OneofWrappers = []any{}
+	file_communication_notification_notification_proto_msgTypes[38].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_communication_notification_notification_proto_rawDesc), len(file_communication_notification_notification_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   33,
+			NumMessages:   51,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_communication_notification_notification_proto_goTypes,
 		DependencyIndexes: file_communication_notification_notification_proto_depIdxs,

@@ -181,6 +181,20 @@ service AdminChatService {
 
   // AdminGetChatMessages returns messages from any chat by ID.
   rpc AdminGetChatMessages(AdminGetChatMessagesRequest) returns (AdminGetChatMessagesResponse);
+
+  // AdminListChats returns chats filtered by context type — the operator inbox
+  // feed (context_type = CHAT_CONTEXT_TYPE_SUPPORT for the support desk).
+  // Ordered by last message time, newest first. The operator-side unread count
+  // is Chat.unread_for_seller (support chats have no seller).
+  rpc AdminListChats(AdminListChatsRequest) returns (AdminListChatsResponse);
+
+  // AdminSendMessage posts an operator reply into any chat. The sender is the
+  // admin/support user resolved from the JWT — never taken from the request —
+  // and the message ID is generated server-side.
+  rpc AdminSendMessage(AdminSendMessageRequest) returns (AdminSendMessageResponse);
+
+  // AdminMarkChatRead resets the operator-side unread counter for the chat.
+  rpc AdminMarkChatRead(AdminMarkChatReadRequest) returns (AdminMarkChatReadResponse);
 }
 
 message AdminGetUserChatsRequest {
@@ -203,4 +217,40 @@ message AdminGetChatMessagesRequest {
 message AdminGetChatMessagesResponse {
   repeated Message messages = 1;
   bool has_more = 2;
+}
+
+// AdminListChatsRequest selects the operator inbox slice.
+// context_type is required; CHAT_CONTEXT_TYPE_UNSPECIFIED is rejected with
+// INVALID_ARGUMENT so an admin can never fan out over every chat by accident.
+message AdminListChatsRequest {
+  ChatContextType context_type = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message AdminListChatsResponse {
+  repeated Chat chats = 1;
+  int64 total = 2;
+}
+
+// AdminSendMessageRequest carries only the chat and the operator's text.
+// sender_id is NOT accepted from the caller — the service takes the admin user
+// from the JWT. The message is published to chat.events like any other message,
+// so the client receives it over websocket and as an offline push.
+message AdminSendMessageRequest {
+  string chat_id = 1;
+  string text = 2;
+}
+
+message AdminSendMessageResponse {
+  Message message = 1;
+}
+
+// AdminMarkChatReadRequest clears the operator-side unread counter.
+message AdminMarkChatReadRequest {
+  string chat_id = 1;
+}
+
+message AdminMarkChatReadResponse {
+  bool success = 1;
 }

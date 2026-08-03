@@ -38,6 +38,9 @@ enum NotificationCategory {
   NOTIFICATION_CATEGORY_PROMO = 3;
   NOTIFICATION_CATEGORY_SYSTEM = 4;
   NOTIFICATION_CATEGORY_JOB = 5;
+  // PAYMENT covers transactional payment notifications (charge succeeded,
+  // refund, etc.). Treated as critical: not gated by user preferences.
+  NOTIFICATION_CATEGORY_PAYMENT = 6;
 }
 
 message Notification {
@@ -232,4 +235,172 @@ message UpdatePreferencesRequest {
 
 message UpdatePreferencesResponse {
   NotificationPreferences preferences = 1;
+}
+
+// ============================================================
+// Campaigns — admin-driven targeted broadcasts
+// ============================================================
+
+// CampaignService provides admin-only RPCs for targeted push campaigns.
+// All methods require a valid JWT with platform role "admin"; the role is
+// asserted via the x-platform-role gRPC metadata header (set by BFF) and
+// re-checked by notification-service itself. Recipient IDs are never accepted
+// from the caller — the audience is resolved server-side from CampaignSegment.
+service CampaignService {
+  // AdminCreateCampaign stores a new campaign in status "draft".
+  // Returns INVALID_ARGUMENT when action.route is outside the allowlist or
+  // when route "client.url" carries a non-https params["url"].
+  rpc AdminCreateCampaign(AdminCreateCampaignRequest) returns (AdminCreateCampaignResponse);
+
+  // AdminUpdateCampaign edits a campaign. Allowed only while status = "draft";
+  // otherwise FAILED_PRECONDITION.
+  rpc AdminUpdateCampaign(AdminUpdateCampaignRequest) returns (AdminUpdateCampaignResponse);
+
+  // AdminGetCampaign returns one campaign with its progress counters.
+  rpc AdminGetCampaign(AdminGetCampaignRequest) returns (AdminGetCampaignResponse);
+
+  // AdminListCampaigns returns a paginated list, newest first, optionally
+  // filtered by status.
+  rpc AdminListCampaigns(AdminListCampaignsRequest) returns (AdminListCampaignsResponse);
+
+  // AdminPreviewSegment resolves the audience size for a segment without
+  // creating or sending anything. Returns only a count, never user data.
+  rpc AdminPreviewSegment(AdminPreviewSegmentRequest) returns (AdminPreviewSegmentResponse);
+
+  // AdminSendCampaign transitions draft -> sending and hands the campaign to
+  // the background sender. Returns the campaign in its new state; delivery
+  // progress is observed via AdminGetCampaign.
+  rpc AdminSendCampaign(AdminSendCampaignRequest) returns (AdminSendCampaignResponse);
+
+  // AdminCancelCampaign transitions draft|sending -> cancelled. Messages
+  // already handed to the push pipeline are not recalled.
+  rpc AdminCancelCampaign(AdminCancelCampaignRequest) returns (AdminCancelCampaignResponse);
+}
+
+// CampaignAction is the tap target of the campaign notification. It is carried
+// to the client inside the existing versioned push data contract
+// (schema "ctogram.push.v1"): route + params are merged into Notification.data.
+// route must be one of the server-side allowlist (client.notifications,
+// client.purchases, client.request.create, client.request.responses,
+// client.parts_request.detail, client.garage, client.home, chat.detail,
+// client.url). An unknown route is a safe no-op on the client, so the
+// allowlist is enforced at campaign creation time.
+message CampaignAction {
+  string route = 1;
+  // params are route-specific values (e.g. {"request_id": "..."} or
+  // {"url": "https://..."} for route "client.url"; https-only, validated).
+  map<string, string> params = 2;
+}
+
+// CampaignSegment describes the audience. Unset fields are not filtered on;
+// set fields are combined with AND. The audience is resolved through the
+// owning services (users.ResolveUserSegment, services.request.ListRequestUserIDs)
+// and intersected in notification-service — no cross-database joins.
+message CampaignSegment {
+  // city_id filters by users.city_id (NSI city).
+  optional int64 city_id = 1;
+  // has_car = true keeps users with at least one car; false keeps users with none.
+  optional bool has_car = 2;
+  // mark_id keeps users owning a car of this NSI make.
+  optional int64 mark_id = 3;
+  // has_requests = true keeps users that created at least one request;
+  // false keeps users that never created one.
+  optional bool has_requests = 4;
+}
+
+// Campaign is one admin broadcast and its delivery progress.
+message Campaign {
+  string id = 1;
+  string title = 2;
+  string body = 3;
+  // category of the produced notifications; defaults to
+  // NOTIFICATION_CATEGORY_PROMO when unspecified.
+  NotificationCategory category = 4;
+  CampaignAction action = 5;
+  CampaignSegment segment = 6;
+  // status: "draft" | "sending" | "sent" | "cancelled" | "failed".
+  string status = 7;
+  // total_recipients is the resolved audience size, filled when sending starts.
+  int32 total_recipients = 8;
+  int32 sent_count = 9;
+  int32 failed_count = 10;
+  // created_by is the admin user ID taken from the JWT at creation time.
+  int64 created_by = 11;
+  // error carries the failure reason when status = "failed"; empty otherwise.
+  string error = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Timestamp updated_at = 14;
+  // started_at / finished_at are unset (null) until the campaign is sent.
+  google.protobuf.Timestamp started_at = 15;
+  google.protobuf.Timestamp finished_at = 16;
+}
+
+message AdminCreateCampaignRequest {
+  string title = 1;
+  string body = 2;
+  NotificationCategory category = 3;
+  CampaignAction action = 4;
+  CampaignSegment segment = 5;
+}
+
+message AdminCreateCampaignResponse {
+  Campaign campaign = 1;
+}
+
+message AdminUpdateCampaignRequest {
+  string id = 1;
+  string title = 2;
+  string body = 3;
+  NotificationCategory category = 4;
+  CampaignAction action = 5;
+  CampaignSegment segment = 6;
+}
+
+message AdminUpdateCampaignResponse {
+  Campaign campaign = 1;
+}
+
+message AdminGetCampaignRequest {
+  string id = 1;
+}
+
+message AdminGetCampaignResponse {
+  Campaign campaign = 1;
+}
+
+message AdminListCampaignsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  // status filters by campaign status; unset = all statuses.
+  optional string status = 3;
+}
+
+message AdminListCampaignsResponse {
+  repeated Campaign campaigns = 1;
+  int64 total = 2;
+}
+
+message AdminPreviewSegmentRequest {
+  CampaignSegment segment = 1;
+}
+
+message AdminPreviewSegmentResponse {
+  // count is the number of users matching the segment.
+  int64 count = 1;
+}
+
+message AdminSendCampaignRequest {
+  string id = 1;
+}
+
+message AdminSendCampaignResponse {
+  Campaign campaign = 1;
+}
+
+message AdminCancelCampaignRequest {
+  string id = 1;
+}
+
+message AdminCancelCampaignResponse {
+  Campaign campaign = 1;
 }
