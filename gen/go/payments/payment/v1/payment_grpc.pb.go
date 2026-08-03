@@ -23,6 +23,8 @@ const (
 	PaymentService_ListTransactions_FullMethodName            = "/payments.payment.v1.PaymentService/ListTransactions"
 	PaymentService_GetTransaction_FullMethodName              = "/payments.payment.v1.PaymentService/GetTransaction"
 	PaymentService_InitiateRefund_FullMethodName              = "/payments.payment.v1.PaymentService/InitiateRefund"
+	PaymentService_CapturePayment_FullMethodName              = "/payments.payment.v1.PaymentService/CapturePayment"
+	PaymentService_CancelPayment_FullMethodName               = "/payments.payment.v1.PaymentService/CancelPayment"
 	PaymentService_HandleIokaWebhook_FullMethodName           = "/payments.payment.v1.PaymentService/HandleIokaWebhook"
 	PaymentService_HandleKaspiCheckPay_FullMethodName         = "/payments.payment.v1.PaymentService/HandleKaspiCheckPay"
 	PaymentService_HandleLegacyKaspiCallback_FullMethodName   = "/payments.payment.v1.PaymentService/HandleLegacyKaspiCallback"
@@ -52,6 +54,18 @@ type PaymentServiceClient interface {
 	GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error)
 	// === Refunds ===
 	InitiateRefund(ctx context.Context, in *InitiateRefundRequest, opts ...grpc.CallOption) (*InitiateRefundResponse, error)
+	// === Two-stage payments (hold -> capture / cancel) ===
+	//
+	// A two-stage payment authorizes the payer's funds without debiting them.
+	// CapturePayment debits what was actually delivered; CancelPayment releases
+	// the hold without any debit. Both are owned by the service that owns the
+	// payable entity: only it knows whether the service was rendered.
+	//
+	// Neither is a refund. Capture is the first and only debit, cancel means no
+	// money ever moved — using the refund flow for either would report a
+	// return of funds that never left the payer.
+	CapturePayment(ctx context.Context, in *CapturePaymentRequest, opts ...grpc.CallOption) (*CapturePaymentResponse, error)
+	CancelPayment(ctx context.Context, in *CancelPaymentRequest, opts ...grpc.CallOption) (*CancelPaymentResponse, error)
 	// === Provider webhooks ===
 	HandleIokaWebhook(ctx context.Context, in *HandleIokaWebhookRequest, opts ...grpc.CallOption) (*HandleIokaWebhookResponse, error)
 	HandleKaspiCheckPay(ctx context.Context, in *HandleKaspiCheckPayRequest, opts ...grpc.CallOption) (*HandleKaspiCheckPayResponse, error)
@@ -138,6 +152,26 @@ func (c *paymentServiceClient) InitiateRefund(ctx context.Context, in *InitiateR
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(InitiateRefundResponse)
 	err := c.cc.Invoke(ctx, PaymentService_InitiateRefund_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) CapturePayment(ctx context.Context, in *CapturePaymentRequest, opts ...grpc.CallOption) (*CapturePaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CapturePaymentResponse)
+	err := c.cc.Invoke(ctx, PaymentService_CapturePayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) CancelPayment(ctx context.Context, in *CancelPaymentRequest, opts ...grpc.CallOption) (*CancelPaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CancelPaymentResponse)
+	err := c.cc.Invoke(ctx, PaymentService_CancelPayment_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -270,6 +304,18 @@ type PaymentServiceServer interface {
 	GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error)
 	// === Refunds ===
 	InitiateRefund(context.Context, *InitiateRefundRequest) (*InitiateRefundResponse, error)
+	// === Two-stage payments (hold -> capture / cancel) ===
+	//
+	// A two-stage payment authorizes the payer's funds without debiting them.
+	// CapturePayment debits what was actually delivered; CancelPayment releases
+	// the hold without any debit. Both are owned by the service that owns the
+	// payable entity: only it knows whether the service was rendered.
+	//
+	// Neither is a refund. Capture is the first and only debit, cancel means no
+	// money ever moved — using the refund flow for either would report a
+	// return of funds that never left the payer.
+	CapturePayment(context.Context, *CapturePaymentRequest) (*CapturePaymentResponse, error)
+	CancelPayment(context.Context, *CancelPaymentRequest) (*CancelPaymentResponse, error)
 	// === Provider webhooks ===
 	HandleIokaWebhook(context.Context, *HandleIokaWebhookRequest) (*HandleIokaWebhookResponse, error)
 	HandleKaspiCheckPay(context.Context, *HandleKaspiCheckPayRequest) (*HandleKaspiCheckPayResponse, error)
@@ -333,6 +379,12 @@ func (UnimplementedPaymentServiceServer) GetTransaction(context.Context, *GetTra
 }
 func (UnimplementedPaymentServiceServer) InitiateRefund(context.Context, *InitiateRefundRequest) (*InitiateRefundResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method InitiateRefund not implemented")
+}
+func (UnimplementedPaymentServiceServer) CapturePayment(context.Context, *CapturePaymentRequest) (*CapturePaymentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CapturePayment not implemented")
+}
+func (UnimplementedPaymentServiceServer) CancelPayment(context.Context, *CancelPaymentRequest) (*CancelPaymentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CancelPayment not implemented")
 }
 func (UnimplementedPaymentServiceServer) HandleIokaWebhook(context.Context, *HandleIokaWebhookRequest) (*HandleIokaWebhookResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HandleIokaWebhook not implemented")
@@ -456,6 +508,42 @@ func _PaymentService_InitiateRefund_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PaymentServiceServer).InitiateRefund(ctx, req.(*InitiateRefundRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_CapturePayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CapturePaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).CapturePayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_CapturePayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).CapturePayment(ctx, req.(*CapturePaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_CancelPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelPaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).CancelPayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_CancelPayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).CancelPayment(ctx, req.(*CancelPaymentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -680,6 +768,14 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "InitiateRefund",
 			Handler:    _PaymentService_InitiateRefund_Handler,
+		},
+		{
+			MethodName: "CapturePayment",
+			Handler:    _PaymentService_CapturePayment_Handler,
+		},
+		{
+			MethodName: "CancelPayment",
+			Handler:    _PaymentService_CancelPayment_Handler,
 		},
 		{
 			MethodName: "HandleIokaWebhook",

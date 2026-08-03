@@ -20,6 +20,19 @@ service PaymentService {
   // === Refunds ===
   rpc InitiateRefund(InitiateRefundRequest) returns (InitiateRefundResponse);
 
+  // === Two-stage payments (hold -> capture / cancel) ===
+  //
+  // A two-stage payment authorizes the payer's funds without debiting them.
+  // CapturePayment debits what was actually delivered; CancelPayment releases
+  // the hold without any debit. Both are owned by the service that owns the
+  // payable entity: only it knows whether the service was rendered.
+  //
+  // Neither is a refund. Capture is the first and only debit, cancel means no
+  // money ever moved — using the refund flow for either would report a
+  // return of funds that never left the payer.
+  rpc CapturePayment(CapturePaymentRequest) returns (CapturePaymentResponse);
+  rpc CancelPayment(CancelPaymentRequest) returns (CancelPaymentResponse);
+
   // === Provider webhooks ===
   rpc HandleIokaWebhook(HandleIokaWebhookRequest) returns (HandleIokaWebhookResponse);
   rpc HandleKaspiCheckPay(HandleKaspiCheckPayRequest) returns (HandleKaspiCheckPayResponse);
@@ -88,6 +101,11 @@ enum TransactionStatus {
   TRANSACTION_STATUS_FAILED = 4;
   TRANSACTION_STATUS_REFUNDED = 5;
   TRANSACTION_STATUS_PARTIALLY_REFUNDED = 6;
+  // Two-stage payment: the acquirer holds the payer's funds and has NOT
+  // debited them. Never treat it as payment — capture is what debits.
+  TRANSACTION_STATUS_AUTHORIZED = 7;
+  // A hold released without a debit. Not a refund: no money ever moved.
+  TRANSACTION_STATUS_CANCELLED = 8;
 }
 
 enum TransactionType {
@@ -295,6 +313,36 @@ message InitiateRefundRequest {
 
 message InitiateRefundResponse {
   Refund refund = 1;
+}
+
+message CapturePaymentRequest {
+  int64 transaction_id = 1;
+  // amount is what was actually delivered, in minor units. It may be less than
+  // the authorized amount — the acquirer releases the difference. Zero means
+  // "capture the full authorized amount".
+  int64 amount = 2;
+  string reason = 3;
+  // idempotency_key makes a retried settlement safe. The owner service retries
+  // "the order is finished" on its own schedule, and a retry must never be a
+  // second debit.
+  string idempotency_key = 4;
+}
+
+message CapturePaymentResponse {
+  Transaction transaction = 1;
+  // idempotent=true when the request matched an already settled transaction.
+  bool idempotent = 2;
+}
+
+message CancelPaymentRequest {
+  int64 transaction_id = 1;
+  string reason = 2;
+  string idempotency_key = 3;
+}
+
+message CancelPaymentResponse {
+  Transaction transaction = 1;
+  bool idempotent = 2;
 }
 
 // =============================================
