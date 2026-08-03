@@ -2339,10 +2339,19 @@ func (x *MarkPaidB2BResponse) GetIdempotent() bool {
 }
 
 type ListAvailablePaymentMethodsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UseCase       PaymentUseCase         `protobuf:"varint,1,opt,name=use_case,json=useCase,proto3,enum=payments.payment.v1.PaymentUseCase" json:"use_case,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	UseCase PaymentUseCase         `protobuf:"varint,1,opt,name=use_case,json=useCase,proto3,enum=payments.payment.v1.PaymentUseCase" json:"use_case,omitempty"`
+	// client_platform is the caller's device platform: "ios", "android" or "web".
+	// Same meaning and same safe default as InitPaymentRequest.client_platform:
+	// a wallet route is offered only to the platform that can present it, and an
+	// empty value means "unknown" and hides every wallet route. Older clients
+	// therefore keep exactly today's list.
+	//
+	// The checkout catalog needs the gate as much as the combined-pay modal does:
+	// without it a fueling checkout on Android shows an Apple Pay row.
+	ClientPlatform string `protobuf:"bytes,2,opt,name=client_platform,json=clientPlatform,proto3" json:"client_platform,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *ListAvailablePaymentMethodsRequest) Reset() {
@@ -2380,6 +2389,13 @@ func (x *ListAvailablePaymentMethodsRequest) GetUseCase() PaymentUseCase {
 		return x.UseCase
 	}
 	return PaymentUseCase_PAYMENT_USE_CASE_UNSPECIFIED
+}
+
+func (x *ListAvailablePaymentMethodsRequest) GetClientPlatform() string {
+	if x != nil {
+		return x.ClientPlatform
+	}
+	return ""
 }
 
 type AvailablePaymentMethod struct {
@@ -5432,9 +5448,10 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\vtransaction\x18\x01 \x01(\v2 .payments.payment.v1.TransactionR\vtransaction\x12\x1e\n" +
 	"\n" +
 	"idempotent\x18\x02 \x01(\bR\n" +
-	"idempotent\"d\n" +
+	"idempotent\"\x8d\x01\n" +
 	"\"ListAvailablePaymentMethodsRequest\x12>\n" +
-	"\buse_case\x18\x01 \x01(\x0e2#.payments.payment.v1.PaymentUseCaseR\auseCase\"\xa7\x02\n" +
+	"\buse_case\x18\x01 \x01(\x0e2#.payments.payment.v1.PaymentUseCaseR\auseCase\x12'\n" +
+	"\x0fclient_platform\x18\x02 \x01(\tR\x0eclientPlatform\"\xa7\x02\n" +
 	"\x16AvailablePaymentMethod\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12%\n" +
 	"\x0epayment_method\x18\x02 \x01(\tR\rpaymentMethod\x12\x14\n" +

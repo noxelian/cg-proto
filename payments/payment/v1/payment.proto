@@ -383,6 +383,15 @@ message MarkPaidB2BResponse {
 
 message ListAvailablePaymentMethodsRequest {
   PaymentUseCase use_case = 1;
+  // client_platform is the caller's device platform: "ios", "android" or "web".
+  // Same meaning and same safe default as InitPaymentRequest.client_platform:
+  // a wallet route is offered only to the platform that can present it, and an
+  // empty value means "unknown" and hides every wallet route. Older clients
+  // therefore keep exactly today's list.
+  //
+  // The checkout catalog needs the gate as much as the combined-pay modal does:
+  // without it a fueling checkout on Android shows an Apple Pay row.
+  string client_platform = 2;
 }
 
 message AvailablePaymentMethod {
