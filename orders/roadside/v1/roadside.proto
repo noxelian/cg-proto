@@ -31,6 +31,15 @@ service RoadsideService {
   // CancelRoadsideOrder cancels an eligible order before an active assignment.
   // Only the authenticated client who owns the order may call it through gwc.
   rpc CancelRoadsideOrder(CancelRoadsideOrderRequest) returns (CancelRoadsideOrderResponse);
+
+  // ResumeRoadsidePayment starts another payment for an order still awaiting
+  // one, with a payment method chosen now rather than inherited from
+  // creation. The checkout link CreateRoadsideOrder returned is a one-time
+  // artifact: it is never stored and cannot be recovered any other way, so a
+  // payer who abandoned it or whose method failed had no way back into the
+  // order without this. Only the authenticated client who owns the order may
+  // call it through gwc.
+  rpc ResumeRoadsidePayment(ResumeRoadsidePaymentRequest) returns (ResumeRoadsidePaymentResponse);
 }
 
 // RoadsideDispatchService exposes operator dispatch and catalog management
@@ -388,6 +397,25 @@ message CancelRoadsideOrderRequest {
 
 message CancelRoadsideOrderResponse {
   RoadsideOrder order = 1;
+}
+
+message ResumeRoadsidePaymentRequest {
+  string order_id = 1;
+  // Required. One of the payment methods supported by cg-payments. Chosen
+  // now — not carried over from creation — because a payer resuming payment
+  // is usually here precisely because the original method did not work.
+  string payment_method = 2;
+  string return_url = 3;
+}
+
+message ResumeRoadsidePaymentResponse {
+  RoadsideOrder order = 1;
+  // Empty for device-wallet methods, which are charged through
+  // transaction_id instead of a hosted checkout page.
+  string payment_url = 2;
+  // Set for every method; device wallets need it to charge the token
+  // through PaymentService.ConfirmWalletPayment.
+  int64 transaction_id = 3;
 }
 
 // =============================================

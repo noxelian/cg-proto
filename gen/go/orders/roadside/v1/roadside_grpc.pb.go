@@ -25,6 +25,7 @@ const (
 	RoadsideService_GetRoadsideOrder_FullMethodName       = "/orders.roadside.v1.RoadsideService/GetRoadsideOrder"
 	RoadsideService_ListMyRoadsideOrders_FullMethodName   = "/orders.roadside.v1.RoadsideService/ListMyRoadsideOrders"
 	RoadsideService_CancelRoadsideOrder_FullMethodName    = "/orders.roadside.v1.RoadsideService/CancelRoadsideOrder"
+	RoadsideService_ResumeRoadsidePayment_FullMethodName  = "/orders.roadside.v1.RoadsideService/ResumeRoadsidePayment"
 )
 
 // RoadsideServiceClient is the client API for RoadsideService service.
@@ -51,6 +52,14 @@ type RoadsideServiceClient interface {
 	// CancelRoadsideOrder cancels an eligible order before an active assignment.
 	// Only the authenticated client who owns the order may call it through gwc.
 	CancelRoadsideOrder(ctx context.Context, in *CancelRoadsideOrderRequest, opts ...grpc.CallOption) (*CancelRoadsideOrderResponse, error)
+	// ResumeRoadsidePayment starts another payment for an order still awaiting
+	// one, with a payment method chosen now rather than inherited from
+	// creation. The checkout link CreateRoadsideOrder returned is a one-time
+	// artifact: it is never stored and cannot be recovered any other way, so a
+	// payer who abandoned it or whose method failed had no way back into the
+	// order without this. Only the authenticated client who owns the order may
+	// call it through gwc.
+	ResumeRoadsidePayment(ctx context.Context, in *ResumeRoadsidePaymentRequest, opts ...grpc.CallOption) (*ResumeRoadsidePaymentResponse, error)
 }
 
 type roadsideServiceClient struct {
@@ -121,6 +130,16 @@ func (c *roadsideServiceClient) CancelRoadsideOrder(ctx context.Context, in *Can
 	return out, nil
 }
 
+func (c *roadsideServiceClient) ResumeRoadsidePayment(ctx context.Context, in *ResumeRoadsidePaymentRequest, opts ...grpc.CallOption) (*ResumeRoadsidePaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResumeRoadsidePaymentResponse)
+	err := c.cc.Invoke(ctx, RoadsideService_ResumeRoadsidePayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RoadsideServiceServer is the server API for RoadsideService service.
 // All implementations must embed UnimplementedRoadsideServiceServer
 // for forward compatibility.
@@ -145,6 +164,14 @@ type RoadsideServiceServer interface {
 	// CancelRoadsideOrder cancels an eligible order before an active assignment.
 	// Only the authenticated client who owns the order may call it through gwc.
 	CancelRoadsideOrder(context.Context, *CancelRoadsideOrderRequest) (*CancelRoadsideOrderResponse, error)
+	// ResumeRoadsidePayment starts another payment for an order still awaiting
+	// one, with a payment method chosen now rather than inherited from
+	// creation. The checkout link CreateRoadsideOrder returned is a one-time
+	// artifact: it is never stored and cannot be recovered any other way, so a
+	// payer who abandoned it or whose method failed had no way back into the
+	// order without this. Only the authenticated client who owns the order may
+	// call it through gwc.
+	ResumeRoadsidePayment(context.Context, *ResumeRoadsidePaymentRequest) (*ResumeRoadsidePaymentResponse, error)
 	mustEmbedUnimplementedRoadsideServiceServer()
 }
 
@@ -172,6 +199,9 @@ func (UnimplementedRoadsideServiceServer) ListMyRoadsideOrders(context.Context, 
 }
 func (UnimplementedRoadsideServiceServer) CancelRoadsideOrder(context.Context, *CancelRoadsideOrderRequest) (*CancelRoadsideOrderResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelRoadsideOrder not implemented")
+}
+func (UnimplementedRoadsideServiceServer) ResumeRoadsidePayment(context.Context, *ResumeRoadsidePaymentRequest) (*ResumeRoadsidePaymentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResumeRoadsidePayment not implemented")
 }
 func (UnimplementedRoadsideServiceServer) mustEmbedUnimplementedRoadsideServiceServer() {}
 func (UnimplementedRoadsideServiceServer) testEmbeddedByValue()                         {}
@@ -302,6 +332,24 @@ func _RoadsideService_CancelRoadsideOrder_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RoadsideService_ResumeRoadsidePayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResumeRoadsidePaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoadsideServiceServer).ResumeRoadsidePayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RoadsideService_ResumeRoadsidePayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoadsideServiceServer).ResumeRoadsidePayment(ctx, req.(*ResumeRoadsidePaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RoadsideService_ServiceDesc is the grpc.ServiceDesc for RoadsideService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -332,6 +380,10 @@ var RoadsideService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CancelRoadsideOrder",
 			Handler:    _RoadsideService_CancelRoadsideOrder_Handler,
+		},
+		{
+			MethodName: "ResumeRoadsidePayment",
+			Handler:    _RoadsideService_ResumeRoadsidePayment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

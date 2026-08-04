@@ -2137,6 +2137,133 @@ func (x *CancelRoadsideOrderResponse) GetOrder() *RoadsideOrder {
 	return nil
 }
 
+type ResumeRoadsidePaymentRequest struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	OrderId string                 `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	// Required. One of the payment methods supported by cg-payments. Chosen
+	// now — not carried over from creation — because a payer resuming payment
+	// is usually here precisely because the original method did not work.
+	PaymentMethod string `protobuf:"bytes,2,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
+	ReturnUrl     string `protobuf:"bytes,3,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResumeRoadsidePaymentRequest) Reset() {
+	*x = ResumeRoadsidePaymentRequest{}
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResumeRoadsidePaymentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResumeRoadsidePaymentRequest) ProtoMessage() {}
+
+func (x *ResumeRoadsidePaymentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResumeRoadsidePaymentRequest.ProtoReflect.Descriptor instead.
+func (*ResumeRoadsidePaymentRequest) Descriptor() ([]byte, []int) {
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ResumeRoadsidePaymentRequest) GetOrderId() string {
+	if x != nil {
+		return x.OrderId
+	}
+	return ""
+}
+
+func (x *ResumeRoadsidePaymentRequest) GetPaymentMethod() string {
+	if x != nil {
+		return x.PaymentMethod
+	}
+	return ""
+}
+
+func (x *ResumeRoadsidePaymentRequest) GetReturnUrl() string {
+	if x != nil {
+		return x.ReturnUrl
+	}
+	return ""
+}
+
+type ResumeRoadsidePaymentResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Order *RoadsideOrder         `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
+	// Empty for device-wallet methods, which are charged through
+	// transaction_id instead of a hosted checkout page.
+	PaymentUrl string `protobuf:"bytes,2,opt,name=payment_url,json=paymentUrl,proto3" json:"payment_url,omitempty"`
+	// Set for every method; device wallets need it to charge the token
+	// through PaymentService.ConfirmWalletPayment.
+	TransactionId int64 `protobuf:"varint,3,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResumeRoadsidePaymentResponse) Reset() {
+	*x = ResumeRoadsidePaymentResponse{}
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResumeRoadsidePaymentResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResumeRoadsidePaymentResponse) ProtoMessage() {}
+
+func (x *ResumeRoadsidePaymentResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResumeRoadsidePaymentResponse.ProtoReflect.Descriptor instead.
+func (*ResumeRoadsidePaymentResponse) Descriptor() ([]byte, []int) {
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *ResumeRoadsidePaymentResponse) GetOrder() *RoadsideOrder {
+	if x != nil {
+		return x.Order
+	}
+	return nil
+}
+
+func (x *ResumeRoadsidePaymentResponse) GetPaymentUrl() string {
+	if x != nil {
+		return x.PaymentUrl
+	}
+	return ""
+}
+
+func (x *ResumeRoadsidePaymentResponse) GetTransactionId() int64 {
+	if x != nil {
+		return x.TransactionId
+	}
+	return 0
+}
+
 type ListRoadsideOrdersRequest struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	Status      RoadsideOrderStatus    `protobuf:"varint,1,opt,name=status,proto3,enum=orders.roadside.v1.RoadsideOrderStatus" json:"status,omitempty"`
@@ -2163,7 +2290,7 @@ type ListRoadsideOrdersRequest struct {
 
 func (x *ListRoadsideOrdersRequest) Reset() {
 	*x = ListRoadsideOrdersRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[20]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2175,7 +2302,7 @@ func (x *ListRoadsideOrdersRequest) String() string {
 func (*ListRoadsideOrdersRequest) ProtoMessage() {}
 
 func (x *ListRoadsideOrdersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[20]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2188,7 +2315,7 @@ func (x *ListRoadsideOrdersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRoadsideOrdersRequest.ProtoReflect.Descriptor instead.
 func (*ListRoadsideOrdersRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{20}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ListRoadsideOrdersRequest) GetStatus() RoadsideOrderStatus {
@@ -2285,7 +2412,7 @@ type ListRoadsideOrdersResponse struct {
 
 func (x *ListRoadsideOrdersResponse) Reset() {
 	*x = ListRoadsideOrdersResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[21]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2297,7 +2424,7 @@ func (x *ListRoadsideOrdersResponse) String() string {
 func (*ListRoadsideOrdersResponse) ProtoMessage() {}
 
 func (x *ListRoadsideOrdersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[21]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2310,7 +2437,7 @@ func (x *ListRoadsideOrdersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRoadsideOrdersResponse.ProtoReflect.Descriptor instead.
 func (*ListRoadsideOrdersResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{21}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ListRoadsideOrdersResponse) GetOrders() []*RoadsideOrder {
@@ -2336,7 +2463,7 @@ type GetRoadsideOrderCardRequest struct {
 
 func (x *GetRoadsideOrderCardRequest) Reset() {
 	*x = GetRoadsideOrderCardRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[22]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2348,7 +2475,7 @@ func (x *GetRoadsideOrderCardRequest) String() string {
 func (*GetRoadsideOrderCardRequest) ProtoMessage() {}
 
 func (x *GetRoadsideOrderCardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[22]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2361,7 +2488,7 @@ func (x *GetRoadsideOrderCardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRoadsideOrderCardRequest.ProtoReflect.Descriptor instead.
 func (*GetRoadsideOrderCardRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{22}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *GetRoadsideOrderCardRequest) GetOrderId() string {
@@ -2380,7 +2507,7 @@ type GetRoadsideOrderCardResponse struct {
 
 func (x *GetRoadsideOrderCardResponse) Reset() {
 	*x = GetRoadsideOrderCardResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[23]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2392,7 +2519,7 @@ func (x *GetRoadsideOrderCardResponse) String() string {
 func (*GetRoadsideOrderCardResponse) ProtoMessage() {}
 
 func (x *GetRoadsideOrderCardResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[23]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2405,7 +2532,7 @@ func (x *GetRoadsideOrderCardResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRoadsideOrderCardResponse.ProtoReflect.Descriptor instead.
 func (*GetRoadsideOrderCardResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{23}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetRoadsideOrderCardResponse) GetCard() *RoadsideOrderCard {
@@ -2425,7 +2552,7 @@ type ManualRoadsideAssignee struct {
 
 func (x *ManualRoadsideAssignee) Reset() {
 	*x = ManualRoadsideAssignee{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[24]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2437,7 +2564,7 @@ func (x *ManualRoadsideAssignee) String() string {
 func (*ManualRoadsideAssignee) ProtoMessage() {}
 
 func (x *ManualRoadsideAssignee) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[24]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2450,7 +2577,7 @@ func (x *ManualRoadsideAssignee) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ManualRoadsideAssignee.ProtoReflect.Descriptor instead.
 func (*ManualRoadsideAssignee) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{24}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ManualRoadsideAssignee) GetProviderName() string {
@@ -2478,7 +2605,7 @@ type OrganizationRoadsideAssignee struct {
 
 func (x *OrganizationRoadsideAssignee) Reset() {
 	*x = OrganizationRoadsideAssignee{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[25]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2490,7 +2617,7 @@ func (x *OrganizationRoadsideAssignee) String() string {
 func (*OrganizationRoadsideAssignee) ProtoMessage() {}
 
 func (x *OrganizationRoadsideAssignee) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[25]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2503,7 +2630,7 @@ func (x *OrganizationRoadsideAssignee) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrganizationRoadsideAssignee.ProtoReflect.Descriptor instead.
 func (*OrganizationRoadsideAssignee) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{25}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *OrganizationRoadsideAssignee) GetOrganizationId() string {
@@ -2545,7 +2672,7 @@ type AssignRoadsideOrderRequest struct {
 
 func (x *AssignRoadsideOrderRequest) Reset() {
 	*x = AssignRoadsideOrderRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[26]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2557,7 +2684,7 @@ func (x *AssignRoadsideOrderRequest) String() string {
 func (*AssignRoadsideOrderRequest) ProtoMessage() {}
 
 func (x *AssignRoadsideOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[26]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2570,7 +2697,7 @@ func (x *AssignRoadsideOrderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssignRoadsideOrderRequest.ProtoReflect.Descriptor instead.
 func (*AssignRoadsideOrderRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{26}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *AssignRoadsideOrderRequest) GetOrderId() string {
@@ -2638,7 +2765,7 @@ type AssignRoadsideOrderResponse struct {
 
 func (x *AssignRoadsideOrderResponse) Reset() {
 	*x = AssignRoadsideOrderResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[27]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2650,7 +2777,7 @@ func (x *AssignRoadsideOrderResponse) String() string {
 func (*AssignRoadsideOrderResponse) ProtoMessage() {}
 
 func (x *AssignRoadsideOrderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[27]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2663,7 +2790,7 @@ func (x *AssignRoadsideOrderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssignRoadsideOrderResponse.ProtoReflect.Descriptor instead.
 func (*AssignRoadsideOrderResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{27}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *AssignRoadsideOrderResponse) GetOrder() *RoadsideOrder {
@@ -2691,7 +2818,7 @@ type RevokeRoadsideAssignmentRequest struct {
 
 func (x *RevokeRoadsideAssignmentRequest) Reset() {
 	*x = RevokeRoadsideAssignmentRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[28]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2703,7 +2830,7 @@ func (x *RevokeRoadsideAssignmentRequest) String() string {
 func (*RevokeRoadsideAssignmentRequest) ProtoMessage() {}
 
 func (x *RevokeRoadsideAssignmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[28]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2716,7 +2843,7 @@ func (x *RevokeRoadsideAssignmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeRoadsideAssignmentRequest.ProtoReflect.Descriptor instead.
 func (*RevokeRoadsideAssignmentRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{28}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *RevokeRoadsideAssignmentRequest) GetOrderId() string {
@@ -2750,7 +2877,7 @@ type RevokeRoadsideAssignmentResponse struct {
 
 func (x *RevokeRoadsideAssignmentResponse) Reset() {
 	*x = RevokeRoadsideAssignmentResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[29]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2762,7 +2889,7 @@ func (x *RevokeRoadsideAssignmentResponse) String() string {
 func (*RevokeRoadsideAssignmentResponse) ProtoMessage() {}
 
 func (x *RevokeRoadsideAssignmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[29]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2775,7 +2902,7 @@ func (x *RevokeRoadsideAssignmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeRoadsideAssignmentResponse.ProtoReflect.Descriptor instead.
 func (*RevokeRoadsideAssignmentResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{29}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *RevokeRoadsideAssignmentResponse) GetOrder() *RoadsideOrder {
@@ -2803,7 +2930,7 @@ type AdvanceRoadsideOrderRequest struct {
 
 func (x *AdvanceRoadsideOrderRequest) Reset() {
 	*x = AdvanceRoadsideOrderRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[30]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2815,7 +2942,7 @@ func (x *AdvanceRoadsideOrderRequest) String() string {
 func (*AdvanceRoadsideOrderRequest) ProtoMessage() {}
 
 func (x *AdvanceRoadsideOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[30]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2828,7 +2955,7 @@ func (x *AdvanceRoadsideOrderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdvanceRoadsideOrderRequest.ProtoReflect.Descriptor instead.
 func (*AdvanceRoadsideOrderRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{30}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *AdvanceRoadsideOrderRequest) GetOrderId() string {
@@ -2861,7 +2988,7 @@ type AdvanceRoadsideOrderResponse struct {
 
 func (x *AdvanceRoadsideOrderResponse) Reset() {
 	*x = AdvanceRoadsideOrderResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[31]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2873,7 +3000,7 @@ func (x *AdvanceRoadsideOrderResponse) String() string {
 func (*AdvanceRoadsideOrderResponse) ProtoMessage() {}
 
 func (x *AdvanceRoadsideOrderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[31]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2886,7 +3013,7 @@ func (x *AdvanceRoadsideOrderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdvanceRoadsideOrderResponse.ProtoReflect.Descriptor instead.
 func (*AdvanceRoadsideOrderResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{31}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *AdvanceRoadsideOrderResponse) GetOrder() *RoadsideOrder {
@@ -2907,7 +3034,7 @@ type CancelRoadsideOrderByOperatorRequest struct {
 
 func (x *CancelRoadsideOrderByOperatorRequest) Reset() {
 	*x = CancelRoadsideOrderByOperatorRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[32]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2919,7 +3046,7 @@ func (x *CancelRoadsideOrderByOperatorRequest) String() string {
 func (*CancelRoadsideOrderByOperatorRequest) ProtoMessage() {}
 
 func (x *CancelRoadsideOrderByOperatorRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[32]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2932,7 +3059,7 @@ func (x *CancelRoadsideOrderByOperatorRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use CancelRoadsideOrderByOperatorRequest.ProtoReflect.Descriptor instead.
 func (*CancelRoadsideOrderByOperatorRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{32}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *CancelRoadsideOrderByOperatorRequest) GetOrderId() string {
@@ -2965,7 +3092,7 @@ type CancelRoadsideOrderByOperatorResponse struct {
 
 func (x *CancelRoadsideOrderByOperatorResponse) Reset() {
 	*x = CancelRoadsideOrderByOperatorResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[33]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2977,7 +3104,7 @@ func (x *CancelRoadsideOrderByOperatorResponse) String() string {
 func (*CancelRoadsideOrderByOperatorResponse) ProtoMessage() {}
 
 func (x *CancelRoadsideOrderByOperatorResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[33]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2990,7 +3117,7 @@ func (x *CancelRoadsideOrderByOperatorResponse) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use CancelRoadsideOrderByOperatorResponse.ProtoReflect.Descriptor instead.
 func (*CancelRoadsideOrderByOperatorResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{33}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *CancelRoadsideOrderByOperatorResponse) GetOrder() *RoadsideOrder {
@@ -3013,7 +3140,7 @@ type ListRoadsideServiceTypesRequest struct {
 
 func (x *ListRoadsideServiceTypesRequest) Reset() {
 	*x = ListRoadsideServiceTypesRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[34]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3025,7 +3152,7 @@ func (x *ListRoadsideServiceTypesRequest) String() string {
 func (*ListRoadsideServiceTypesRequest) ProtoMessage() {}
 
 func (x *ListRoadsideServiceTypesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[34]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3038,7 +3165,7 @@ func (x *ListRoadsideServiceTypesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRoadsideServiceTypesRequest.ProtoReflect.Descriptor instead.
 func (*ListRoadsideServiceTypesRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{34}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *ListRoadsideServiceTypesRequest) GetIsActive() bool {
@@ -3079,7 +3206,7 @@ type ListRoadsideServiceTypesResponse struct {
 
 func (x *ListRoadsideServiceTypesResponse) Reset() {
 	*x = ListRoadsideServiceTypesResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[35]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3091,7 +3218,7 @@ func (x *ListRoadsideServiceTypesResponse) String() string {
 func (*ListRoadsideServiceTypesResponse) ProtoMessage() {}
 
 func (x *ListRoadsideServiceTypesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[35]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3104,7 +3231,7 @@ func (x *ListRoadsideServiceTypesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRoadsideServiceTypesResponse.ProtoReflect.Descriptor instead.
 func (*ListRoadsideServiceTypesResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{35}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *ListRoadsideServiceTypesResponse) GetServiceTypes() []*RoadsideServiceType {
@@ -3130,7 +3257,7 @@ type UpsertRoadsideServiceTypeRequest struct {
 
 func (x *UpsertRoadsideServiceTypeRequest) Reset() {
 	*x = UpsertRoadsideServiceTypeRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[36]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3142,7 +3269,7 @@ func (x *UpsertRoadsideServiceTypeRequest) String() string {
 func (*UpsertRoadsideServiceTypeRequest) ProtoMessage() {}
 
 func (x *UpsertRoadsideServiceTypeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[36]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3155,7 +3282,7 @@ func (x *UpsertRoadsideServiceTypeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertRoadsideServiceTypeRequest.ProtoReflect.Descriptor instead.
 func (*UpsertRoadsideServiceTypeRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{36}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *UpsertRoadsideServiceTypeRequest) GetServiceType() *RoadsideServiceType {
@@ -3174,7 +3301,7 @@ type UpsertRoadsideServiceTypeResponse struct {
 
 func (x *UpsertRoadsideServiceTypeResponse) Reset() {
 	*x = UpsertRoadsideServiceTypeResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[37]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3186,7 +3313,7 @@ func (x *UpsertRoadsideServiceTypeResponse) String() string {
 func (*UpsertRoadsideServiceTypeResponse) ProtoMessage() {}
 
 func (x *UpsertRoadsideServiceTypeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[37]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3199,7 +3326,7 @@ func (x *UpsertRoadsideServiceTypeResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use UpsertRoadsideServiceTypeResponse.ProtoReflect.Descriptor instead.
 func (*UpsertRoadsideServiceTypeResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{37}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *UpsertRoadsideServiceTypeResponse) GetServiceType() *RoadsideServiceType {
@@ -3223,7 +3350,7 @@ type ListRoadsidePricesRequest struct {
 
 func (x *ListRoadsidePricesRequest) Reset() {
 	*x = ListRoadsidePricesRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[38]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3235,7 +3362,7 @@ func (x *ListRoadsidePricesRequest) String() string {
 func (*ListRoadsidePricesRequest) ProtoMessage() {}
 
 func (x *ListRoadsidePricesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[38]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3248,7 +3375,7 @@ func (x *ListRoadsidePricesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRoadsidePricesRequest.ProtoReflect.Descriptor instead.
 func (*ListRoadsidePricesRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{38}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ListRoadsidePricesRequest) GetServiceCode() string {
@@ -3303,7 +3430,7 @@ type ListRoadsidePricesResponse struct {
 
 func (x *ListRoadsidePricesResponse) Reset() {
 	*x = ListRoadsidePricesResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[39]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3315,7 +3442,7 @@ func (x *ListRoadsidePricesResponse) String() string {
 func (*ListRoadsidePricesResponse) ProtoMessage() {}
 
 func (x *ListRoadsidePricesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[39]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3328,7 +3455,7 @@ func (x *ListRoadsidePricesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRoadsidePricesResponse.ProtoReflect.Descriptor instead.
 func (*ListRoadsidePricesResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{39}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *ListRoadsidePricesResponse) GetPrices() []*RoadsidePrice {
@@ -3359,7 +3486,7 @@ type SetRoadsidePriceRequest struct {
 
 func (x *SetRoadsidePriceRequest) Reset() {
 	*x = SetRoadsidePriceRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[40]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3371,7 +3498,7 @@ func (x *SetRoadsidePriceRequest) String() string {
 func (*SetRoadsidePriceRequest) ProtoMessage() {}
 
 func (x *SetRoadsidePriceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[40]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3384,7 +3511,7 @@ func (x *SetRoadsidePriceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetRoadsidePriceRequest.ProtoReflect.Descriptor instead.
 func (*SetRoadsidePriceRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{40}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *SetRoadsidePriceRequest) GetServiceCode() string {
@@ -3431,7 +3558,7 @@ type SetRoadsidePriceResponse struct {
 
 func (x *SetRoadsidePriceResponse) Reset() {
 	*x = SetRoadsidePriceResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[41]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3443,7 +3570,7 @@ func (x *SetRoadsidePriceResponse) String() string {
 func (*SetRoadsidePriceResponse) ProtoMessage() {}
 
 func (x *SetRoadsidePriceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[41]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3456,7 +3583,7 @@ func (x *SetRoadsidePriceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetRoadsidePriceResponse.ProtoReflect.Descriptor instead.
 func (*SetRoadsidePriceResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{41}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *SetRoadsidePriceResponse) GetPrice() *RoadsidePrice {
@@ -3477,7 +3604,7 @@ type ListAvailableRoadsideOrdersRequest struct {
 
 func (x *ListAvailableRoadsideOrdersRequest) Reset() {
 	*x = ListAvailableRoadsideOrdersRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[42]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3489,7 +3616,7 @@ func (x *ListAvailableRoadsideOrdersRequest) String() string {
 func (*ListAvailableRoadsideOrdersRequest) ProtoMessage() {}
 
 func (x *ListAvailableRoadsideOrdersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[42]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3502,7 +3629,7 @@ func (x *ListAvailableRoadsideOrdersRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ListAvailableRoadsideOrdersRequest.ProtoReflect.Descriptor instead.
 func (*ListAvailableRoadsideOrdersRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{42}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *ListAvailableRoadsideOrdersRequest) GetCityId() int64 {
@@ -3536,7 +3663,7 @@ type ListAvailableRoadsideOrdersResponse struct {
 
 func (x *ListAvailableRoadsideOrdersResponse) Reset() {
 	*x = ListAvailableRoadsideOrdersResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[43]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3548,7 +3675,7 @@ func (x *ListAvailableRoadsideOrdersResponse) String() string {
 func (*ListAvailableRoadsideOrdersResponse) ProtoMessage() {}
 
 func (x *ListAvailableRoadsideOrdersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[43]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3561,7 +3688,7 @@ func (x *ListAvailableRoadsideOrdersResponse) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use ListAvailableRoadsideOrdersResponse.ProtoReflect.Descriptor instead.
 func (*ListAvailableRoadsideOrdersResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{43}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *ListAvailableRoadsideOrdersResponse) GetOrders() []*RoadsideOrder {
@@ -3592,7 +3719,7 @@ type ClaimRoadsideOrderRequest struct {
 
 func (x *ClaimRoadsideOrderRequest) Reset() {
 	*x = ClaimRoadsideOrderRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[44]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3604,7 +3731,7 @@ func (x *ClaimRoadsideOrderRequest) String() string {
 func (*ClaimRoadsideOrderRequest) ProtoMessage() {}
 
 func (x *ClaimRoadsideOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[44]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3617,7 +3744,7 @@ func (x *ClaimRoadsideOrderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClaimRoadsideOrderRequest.ProtoReflect.Descriptor instead.
 func (*ClaimRoadsideOrderRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{44}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *ClaimRoadsideOrderRequest) GetOrderId() string {
@@ -3665,7 +3792,7 @@ type ClaimRoadsideOrderResponse struct {
 
 func (x *ClaimRoadsideOrderResponse) Reset() {
 	*x = ClaimRoadsideOrderResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[45]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3677,7 +3804,7 @@ func (x *ClaimRoadsideOrderResponse) String() string {
 func (*ClaimRoadsideOrderResponse) ProtoMessage() {}
 
 func (x *ClaimRoadsideOrderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[45]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3690,7 +3817,7 @@ func (x *ClaimRoadsideOrderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ClaimRoadsideOrderResponse.ProtoReflect.Descriptor instead.
 func (*ClaimRoadsideOrderResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{45}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *ClaimRoadsideOrderResponse) GetOrder() *RoadsideOrder {
@@ -3720,7 +3847,7 @@ type ListOrganizationRoadsideOrdersRequest struct {
 
 func (x *ListOrganizationRoadsideOrdersRequest) Reset() {
 	*x = ListOrganizationRoadsideOrdersRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[46]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3732,7 +3859,7 @@ func (x *ListOrganizationRoadsideOrdersRequest) String() string {
 func (*ListOrganizationRoadsideOrdersRequest) ProtoMessage() {}
 
 func (x *ListOrganizationRoadsideOrdersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[46]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3745,7 +3872,7 @@ func (x *ListOrganizationRoadsideOrdersRequest) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use ListOrganizationRoadsideOrdersRequest.ProtoReflect.Descriptor instead.
 func (*ListOrganizationRoadsideOrdersRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{46}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *ListOrganizationRoadsideOrdersRequest) GetOrganizationId() string {
@@ -3786,7 +3913,7 @@ type ListOrganizationRoadsideOrdersResponse struct {
 
 func (x *ListOrganizationRoadsideOrdersResponse) Reset() {
 	*x = ListOrganizationRoadsideOrdersResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[47]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3798,7 +3925,7 @@ func (x *ListOrganizationRoadsideOrdersResponse) String() string {
 func (*ListOrganizationRoadsideOrdersResponse) ProtoMessage() {}
 
 func (x *ListOrganizationRoadsideOrdersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[47]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3811,7 +3938,7 @@ func (x *ListOrganizationRoadsideOrdersResponse) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use ListOrganizationRoadsideOrdersResponse.ProtoReflect.Descriptor instead.
 func (*ListOrganizationRoadsideOrdersResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{47}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *ListOrganizationRoadsideOrdersResponse) GetOrders() []*RoadsideOrder {
@@ -3841,7 +3968,7 @@ type AdvancePartnerRoadsideOrderRequest struct {
 
 func (x *AdvancePartnerRoadsideOrderRequest) Reset() {
 	*x = AdvancePartnerRoadsideOrderRequest{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[48]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3853,7 +3980,7 @@ func (x *AdvancePartnerRoadsideOrderRequest) String() string {
 func (*AdvancePartnerRoadsideOrderRequest) ProtoMessage() {}
 
 func (x *AdvancePartnerRoadsideOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[48]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3866,7 +3993,7 @@ func (x *AdvancePartnerRoadsideOrderRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use AdvancePartnerRoadsideOrderRequest.ProtoReflect.Descriptor instead.
 func (*AdvancePartnerRoadsideOrderRequest) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{48}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *AdvancePartnerRoadsideOrderRequest) GetOrderId() string {
@@ -3906,7 +4033,7 @@ type AdvancePartnerRoadsideOrderResponse struct {
 
 func (x *AdvancePartnerRoadsideOrderResponse) Reset() {
 	*x = AdvancePartnerRoadsideOrderResponse{}
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[49]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3918,7 +4045,7 @@ func (x *AdvancePartnerRoadsideOrderResponse) String() string {
 func (*AdvancePartnerRoadsideOrderResponse) ProtoMessage() {}
 
 func (x *AdvancePartnerRoadsideOrderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[49]
+	mi := &file_orders_roadside_v1_roadside_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3931,7 +4058,7 @@ func (x *AdvancePartnerRoadsideOrderResponse) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use AdvancePartnerRoadsideOrderResponse.ProtoReflect.Descriptor instead.
 func (*AdvancePartnerRoadsideOrderResponse) Descriptor() ([]byte, []int) {
-	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{49}
+	return file_orders_roadside_v1_roadside_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *AdvancePartnerRoadsideOrderResponse) GetOrder() *RoadsideOrder {
@@ -4143,7 +4270,17 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\vreason_code\x18\x02 \x01(\tR\n" +
 	"reasonCode\"V\n" +
 	"\x1bCancelRoadsideOrderResponse\x127\n" +
-	"\x05order\x18\x01 \x01(\v2!.orders.roadside.v1.RoadsideOrderR\x05order\"\xb9\x03\n" +
+	"\x05order\x18\x01 \x01(\v2!.orders.roadside.v1.RoadsideOrderR\x05order\"\x7f\n" +
+	"\x1cResumeRoadsidePaymentRequest\x12\x19\n" +
+	"\border_id\x18\x01 \x01(\tR\aorderId\x12%\n" +
+	"\x0epayment_method\x18\x02 \x01(\tR\rpaymentMethod\x12\x1d\n" +
+	"\n" +
+	"return_url\x18\x03 \x01(\tR\treturnUrl\"\xa0\x01\n" +
+	"\x1dResumeRoadsidePaymentResponse\x127\n" +
+	"\x05order\x18\x01 \x01(\v2!.orders.roadside.v1.RoadsideOrderR\x05order\x12\x1f\n" +
+	"\vpayment_url\x18\x02 \x01(\tR\n" +
+	"paymentUrl\x12%\n" +
+	"\x0etransaction_id\x18\x03 \x01(\x03R\rtransactionId\"\xb9\x03\n" +
 	"\x19ListRoadsideOrdersRequest\x12?\n" +
 	"\x06status\x18\x01 \x01(\x0e2'.orders.roadside.v1.RoadsideOrderStatusR\x06status\x12\x17\n" +
 	"\acity_id\x18\x02 \x01(\x03R\x06cityId\x12!\n" +
@@ -4302,14 +4439,15 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\x1cROADSIDE_ACTOR_KIND_OPERATOR\x10\x02\x12\x1e\n" +
 	"\x1aROADSIDE_ACTOR_KIND_SYSTEM\x10\x03\x12$\n" +
 	" ROADSIDE_ACTOR_KIND_ORGANIZATION\x10\x04\x12!\n" +
-	"\x1dROADSIDE_ACTOR_KIND_PERFORMER\x10\x052\xe7\x05\n" +
+	"\x1dROADSIDE_ACTOR_KIND_PERFORMER\x10\x052\xe5\x06\n" +
 	"\x0fRoadsideService\x12y\n" +
 	"\x14ListRoadsideServices\x12/.orders.roadside.v1.ListRoadsideServicesRequest\x1a0.orders.roadside.v1.ListRoadsideServicesResponse\x12\x7f\n" +
 	"\x16CalculateRoadsidePrice\x121.orders.roadside.v1.CalculateRoadsidePriceRequest\x1a2.orders.roadside.v1.CalculateRoadsidePriceResponse\x12v\n" +
 	"\x13CreateRoadsideOrder\x12..orders.roadside.v1.CreateRoadsideOrderRequest\x1a/.orders.roadside.v1.CreateRoadsideOrderResponse\x12m\n" +
 	"\x10GetRoadsideOrder\x12+.orders.roadside.v1.GetRoadsideOrderRequest\x1a,.orders.roadside.v1.GetRoadsideOrderResponse\x12y\n" +
 	"\x14ListMyRoadsideOrders\x12/.orders.roadside.v1.ListMyRoadsideOrdersRequest\x1a0.orders.roadside.v1.ListMyRoadsideOrdersResponse\x12v\n" +
-	"\x13CancelRoadsideOrder\x12..orders.roadside.v1.CancelRoadsideOrderRequest\x1a/.orders.roadside.v1.CancelRoadsideOrderResponse2\x92\n" +
+	"\x13CancelRoadsideOrder\x12..orders.roadside.v1.CancelRoadsideOrderRequest\x1a/.orders.roadside.v1.CancelRoadsideOrderResponse\x12|\n" +
+	"\x15ResumeRoadsidePayment\x120.orders.roadside.v1.ResumeRoadsidePaymentRequest\x1a1.orders.roadside.v1.ResumeRoadsidePaymentResponse2\x92\n" +
 	"\n" +
 	"\x17RoadsideDispatchService\x12s\n" +
 	"\x12ListRoadsideOrders\x12-.orders.roadside.v1.ListRoadsideOrdersRequest\x1a..orders.roadside.v1.ListRoadsideOrdersResponse\x12y\n" +
@@ -4341,7 +4479,7 @@ func file_orders_roadside_v1_roadside_proto_rawDescGZIP() []byte {
 }
 
 var file_orders_roadside_v1_roadside_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_orders_roadside_v1_roadside_proto_msgTypes = make([]protoimpl.MessageInfo, 50)
+var file_orders_roadside_v1_roadside_proto_msgTypes = make([]protoimpl.MessageInfo, 52)
 var file_orders_roadside_v1_roadside_proto_goTypes = []any{
 	(RoadsideOrderStatus)(0),                       // 0: orders.roadside.v1.RoadsideOrderStatus
 	(RoadsideAssigneeKind)(0),                      // 1: orders.roadside.v1.RoadsideAssigneeKind
@@ -4367,62 +4505,64 @@ var file_orders_roadside_v1_roadside_proto_goTypes = []any{
 	(*ListMyRoadsideOrdersResponse)(nil),           // 21: orders.roadside.v1.ListMyRoadsideOrdersResponse
 	(*CancelRoadsideOrderRequest)(nil),             // 22: orders.roadside.v1.CancelRoadsideOrderRequest
 	(*CancelRoadsideOrderResponse)(nil),            // 23: orders.roadside.v1.CancelRoadsideOrderResponse
-	(*ListRoadsideOrdersRequest)(nil),              // 24: orders.roadside.v1.ListRoadsideOrdersRequest
-	(*ListRoadsideOrdersResponse)(nil),             // 25: orders.roadside.v1.ListRoadsideOrdersResponse
-	(*GetRoadsideOrderCardRequest)(nil),            // 26: orders.roadside.v1.GetRoadsideOrderCardRequest
-	(*GetRoadsideOrderCardResponse)(nil),           // 27: orders.roadside.v1.GetRoadsideOrderCardResponse
-	(*ManualRoadsideAssignee)(nil),                 // 28: orders.roadside.v1.ManualRoadsideAssignee
-	(*OrganizationRoadsideAssignee)(nil),           // 29: orders.roadside.v1.OrganizationRoadsideAssignee
-	(*AssignRoadsideOrderRequest)(nil),             // 30: orders.roadside.v1.AssignRoadsideOrderRequest
-	(*AssignRoadsideOrderResponse)(nil),            // 31: orders.roadside.v1.AssignRoadsideOrderResponse
-	(*RevokeRoadsideAssignmentRequest)(nil),        // 32: orders.roadside.v1.RevokeRoadsideAssignmentRequest
-	(*RevokeRoadsideAssignmentResponse)(nil),       // 33: orders.roadside.v1.RevokeRoadsideAssignmentResponse
-	(*AdvanceRoadsideOrderRequest)(nil),            // 34: orders.roadside.v1.AdvanceRoadsideOrderRequest
-	(*AdvanceRoadsideOrderResponse)(nil),           // 35: orders.roadside.v1.AdvanceRoadsideOrderResponse
-	(*CancelRoadsideOrderByOperatorRequest)(nil),   // 36: orders.roadside.v1.CancelRoadsideOrderByOperatorRequest
-	(*CancelRoadsideOrderByOperatorResponse)(nil),  // 37: orders.roadside.v1.CancelRoadsideOrderByOperatorResponse
-	(*ListRoadsideServiceTypesRequest)(nil),        // 38: orders.roadside.v1.ListRoadsideServiceTypesRequest
-	(*ListRoadsideServiceTypesResponse)(nil),       // 39: orders.roadside.v1.ListRoadsideServiceTypesResponse
-	(*UpsertRoadsideServiceTypeRequest)(nil),       // 40: orders.roadside.v1.UpsertRoadsideServiceTypeRequest
-	(*UpsertRoadsideServiceTypeResponse)(nil),      // 41: orders.roadside.v1.UpsertRoadsideServiceTypeResponse
-	(*ListRoadsidePricesRequest)(nil),              // 42: orders.roadside.v1.ListRoadsidePricesRequest
-	(*ListRoadsidePricesResponse)(nil),             // 43: orders.roadside.v1.ListRoadsidePricesResponse
-	(*SetRoadsidePriceRequest)(nil),                // 44: orders.roadside.v1.SetRoadsidePriceRequest
-	(*SetRoadsidePriceResponse)(nil),               // 45: orders.roadside.v1.SetRoadsidePriceResponse
-	(*ListAvailableRoadsideOrdersRequest)(nil),     // 46: orders.roadside.v1.ListAvailableRoadsideOrdersRequest
-	(*ListAvailableRoadsideOrdersResponse)(nil),    // 47: orders.roadside.v1.ListAvailableRoadsideOrdersResponse
-	(*ClaimRoadsideOrderRequest)(nil),              // 48: orders.roadside.v1.ClaimRoadsideOrderRequest
-	(*ClaimRoadsideOrderResponse)(nil),             // 49: orders.roadside.v1.ClaimRoadsideOrderResponse
-	(*ListOrganizationRoadsideOrdersRequest)(nil),  // 50: orders.roadside.v1.ListOrganizationRoadsideOrdersRequest
-	(*ListOrganizationRoadsideOrdersResponse)(nil), // 51: orders.roadside.v1.ListOrganizationRoadsideOrdersResponse
-	(*AdvancePartnerRoadsideOrderRequest)(nil),     // 52: orders.roadside.v1.AdvancePartnerRoadsideOrderRequest
-	(*AdvancePartnerRoadsideOrderResponse)(nil),    // 53: orders.roadside.v1.AdvancePartnerRoadsideOrderResponse
-	(*timestamppb.Timestamp)(nil),                  // 54: google.protobuf.Timestamp
+	(*ResumeRoadsidePaymentRequest)(nil),           // 24: orders.roadside.v1.ResumeRoadsidePaymentRequest
+	(*ResumeRoadsidePaymentResponse)(nil),          // 25: orders.roadside.v1.ResumeRoadsidePaymentResponse
+	(*ListRoadsideOrdersRequest)(nil),              // 26: orders.roadside.v1.ListRoadsideOrdersRequest
+	(*ListRoadsideOrdersResponse)(nil),             // 27: orders.roadside.v1.ListRoadsideOrdersResponse
+	(*GetRoadsideOrderCardRequest)(nil),            // 28: orders.roadside.v1.GetRoadsideOrderCardRequest
+	(*GetRoadsideOrderCardResponse)(nil),           // 29: orders.roadside.v1.GetRoadsideOrderCardResponse
+	(*ManualRoadsideAssignee)(nil),                 // 30: orders.roadside.v1.ManualRoadsideAssignee
+	(*OrganizationRoadsideAssignee)(nil),           // 31: orders.roadside.v1.OrganizationRoadsideAssignee
+	(*AssignRoadsideOrderRequest)(nil),             // 32: orders.roadside.v1.AssignRoadsideOrderRequest
+	(*AssignRoadsideOrderResponse)(nil),            // 33: orders.roadside.v1.AssignRoadsideOrderResponse
+	(*RevokeRoadsideAssignmentRequest)(nil),        // 34: orders.roadside.v1.RevokeRoadsideAssignmentRequest
+	(*RevokeRoadsideAssignmentResponse)(nil),       // 35: orders.roadside.v1.RevokeRoadsideAssignmentResponse
+	(*AdvanceRoadsideOrderRequest)(nil),            // 36: orders.roadside.v1.AdvanceRoadsideOrderRequest
+	(*AdvanceRoadsideOrderResponse)(nil),           // 37: orders.roadside.v1.AdvanceRoadsideOrderResponse
+	(*CancelRoadsideOrderByOperatorRequest)(nil),   // 38: orders.roadside.v1.CancelRoadsideOrderByOperatorRequest
+	(*CancelRoadsideOrderByOperatorResponse)(nil),  // 39: orders.roadside.v1.CancelRoadsideOrderByOperatorResponse
+	(*ListRoadsideServiceTypesRequest)(nil),        // 40: orders.roadside.v1.ListRoadsideServiceTypesRequest
+	(*ListRoadsideServiceTypesResponse)(nil),       // 41: orders.roadside.v1.ListRoadsideServiceTypesResponse
+	(*UpsertRoadsideServiceTypeRequest)(nil),       // 42: orders.roadside.v1.UpsertRoadsideServiceTypeRequest
+	(*UpsertRoadsideServiceTypeResponse)(nil),      // 43: orders.roadside.v1.UpsertRoadsideServiceTypeResponse
+	(*ListRoadsidePricesRequest)(nil),              // 44: orders.roadside.v1.ListRoadsidePricesRequest
+	(*ListRoadsidePricesResponse)(nil),             // 45: orders.roadside.v1.ListRoadsidePricesResponse
+	(*SetRoadsidePriceRequest)(nil),                // 46: orders.roadside.v1.SetRoadsidePriceRequest
+	(*SetRoadsidePriceResponse)(nil),               // 47: orders.roadside.v1.SetRoadsidePriceResponse
+	(*ListAvailableRoadsideOrdersRequest)(nil),     // 48: orders.roadside.v1.ListAvailableRoadsideOrdersRequest
+	(*ListAvailableRoadsideOrdersResponse)(nil),    // 49: orders.roadside.v1.ListAvailableRoadsideOrdersResponse
+	(*ClaimRoadsideOrderRequest)(nil),              // 50: orders.roadside.v1.ClaimRoadsideOrderRequest
+	(*ClaimRoadsideOrderResponse)(nil),             // 51: orders.roadside.v1.ClaimRoadsideOrderResponse
+	(*ListOrganizationRoadsideOrdersRequest)(nil),  // 52: orders.roadside.v1.ListOrganizationRoadsideOrdersRequest
+	(*ListOrganizationRoadsideOrdersResponse)(nil), // 53: orders.roadside.v1.ListOrganizationRoadsideOrdersResponse
+	(*AdvancePartnerRoadsideOrderRequest)(nil),     // 54: orders.roadside.v1.AdvancePartnerRoadsideOrderRequest
+	(*AdvancePartnerRoadsideOrderResponse)(nil),    // 55: orders.roadside.v1.AdvancePartnerRoadsideOrderResponse
+	(*timestamppb.Timestamp)(nil),                  // 56: google.protobuf.Timestamp
 }
 var file_orders_roadside_v1_roadside_proto_depIdxs = []int32{
-	54, // 0: orders.roadside.v1.RoadsidePrice.created_at:type_name -> google.protobuf.Timestamp
+	56, // 0: orders.roadside.v1.RoadsidePrice.created_at:type_name -> google.protobuf.Timestamp
 	4,  // 1: orders.roadside.v1.RoadsideServiceOffering.service_type:type_name -> orders.roadside.v1.RoadsideServiceType
 	6,  // 2: orders.roadside.v1.RoadsideServiceOffering.prices:type_name -> orders.roadside.v1.RoadsidePriceQuote
 	0,  // 3: orders.roadside.v1.RoadsideOrder.status:type_name -> orders.roadside.v1.RoadsideOrderStatus
-	54, // 4: orders.roadside.v1.RoadsideOrder.dispatch_deadline_at:type_name -> google.protobuf.Timestamp
-	54, // 5: orders.roadside.v1.RoadsideOrder.payment_failed_at:type_name -> google.protobuf.Timestamp
-	54, // 6: orders.roadside.v1.RoadsideOrder.dispatching_at:type_name -> google.protobuf.Timestamp
-	54, // 7: orders.roadside.v1.RoadsideOrder.assigned_at:type_name -> google.protobuf.Timestamp
-	54, // 8: orders.roadside.v1.RoadsideOrder.en_route_at:type_name -> google.protobuf.Timestamp
-	54, // 9: orders.roadside.v1.RoadsideOrder.in_progress_at:type_name -> google.protobuf.Timestamp
-	54, // 10: orders.roadside.v1.RoadsideOrder.completed_at:type_name -> google.protobuf.Timestamp
-	54, // 11: orders.roadside.v1.RoadsideOrder.cancelled_at:type_name -> google.protobuf.Timestamp
-	54, // 12: orders.roadside.v1.RoadsideOrder.created_at:type_name -> google.protobuf.Timestamp
-	54, // 13: orders.roadside.v1.RoadsideOrder.updated_at:type_name -> google.protobuf.Timestamp
+	56, // 4: orders.roadside.v1.RoadsideOrder.dispatch_deadline_at:type_name -> google.protobuf.Timestamp
+	56, // 5: orders.roadside.v1.RoadsideOrder.payment_failed_at:type_name -> google.protobuf.Timestamp
+	56, // 6: orders.roadside.v1.RoadsideOrder.dispatching_at:type_name -> google.protobuf.Timestamp
+	56, // 7: orders.roadside.v1.RoadsideOrder.assigned_at:type_name -> google.protobuf.Timestamp
+	56, // 8: orders.roadside.v1.RoadsideOrder.en_route_at:type_name -> google.protobuf.Timestamp
+	56, // 9: orders.roadside.v1.RoadsideOrder.in_progress_at:type_name -> google.protobuf.Timestamp
+	56, // 10: orders.roadside.v1.RoadsideOrder.completed_at:type_name -> google.protobuf.Timestamp
+	56, // 11: orders.roadside.v1.RoadsideOrder.cancelled_at:type_name -> google.protobuf.Timestamp
+	56, // 12: orders.roadside.v1.RoadsideOrder.created_at:type_name -> google.protobuf.Timestamp
+	56, // 13: orders.roadside.v1.RoadsideOrder.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 14: orders.roadside.v1.RoadsideAssignment.assignee_kind:type_name -> orders.roadside.v1.RoadsideAssigneeKind
 	2,  // 15: orders.roadside.v1.RoadsideAssignment.state:type_name -> orders.roadside.v1.RoadsideAssignmentState
-	54, // 16: orders.roadside.v1.RoadsideAssignment.assigned_at:type_name -> google.protobuf.Timestamp
-	54, // 17: orders.roadside.v1.RoadsideAssignment.revoked_at:type_name -> google.protobuf.Timestamp
-	54, // 18: orders.roadside.v1.RoadsideAssignment.appointment_at:type_name -> google.protobuf.Timestamp
+	56, // 16: orders.roadside.v1.RoadsideAssignment.assigned_at:type_name -> google.protobuf.Timestamp
+	56, // 17: orders.roadside.v1.RoadsideAssignment.revoked_at:type_name -> google.protobuf.Timestamp
+	56, // 18: orders.roadside.v1.RoadsideAssignment.appointment_at:type_name -> google.protobuf.Timestamp
 	0,  // 19: orders.roadside.v1.RoadsideOrderEvent.from_status:type_name -> orders.roadside.v1.RoadsideOrderStatus
 	0,  // 20: orders.roadside.v1.RoadsideOrderEvent.to_status:type_name -> orders.roadside.v1.RoadsideOrderStatus
 	3,  // 21: orders.roadside.v1.RoadsideOrderEvent.actor_kind:type_name -> orders.roadside.v1.RoadsideActorKind
-	54, // 22: orders.roadside.v1.RoadsideOrderEvent.created_at:type_name -> google.protobuf.Timestamp
+	56, // 22: orders.roadside.v1.RoadsideOrderEvent.created_at:type_name -> google.protobuf.Timestamp
 	8,  // 23: orders.roadside.v1.RoadsideOrderCard.order:type_name -> orders.roadside.v1.RoadsideOrder
 	9,  // 24: orders.roadside.v1.RoadsideOrderCard.assignments:type_name -> orders.roadside.v1.RoadsideAssignment
 	10, // 25: orders.roadside.v1.RoadsideOrderCard.timeline:type_name -> orders.roadside.v1.RoadsideOrderEvent
@@ -4434,79 +4574,82 @@ var file_orders_roadside_v1_roadside_proto_depIdxs = []int32{
 	0,  // 31: orders.roadside.v1.ListMyRoadsideOrdersRequest.status:type_name -> orders.roadside.v1.RoadsideOrderStatus
 	8,  // 32: orders.roadside.v1.ListMyRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
 	8,  // 33: orders.roadside.v1.CancelRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	0,  // 34: orders.roadside.v1.ListRoadsideOrdersRequest.status:type_name -> orders.roadside.v1.RoadsideOrderStatus
-	54, // 35: orders.roadside.v1.ListRoadsideOrdersRequest.from:type_name -> google.protobuf.Timestamp
-	54, // 36: orders.roadside.v1.ListRoadsideOrdersRequest.to:type_name -> google.protobuf.Timestamp
-	8,  // 37: orders.roadside.v1.ListRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
-	11, // 38: orders.roadside.v1.GetRoadsideOrderCardResponse.card:type_name -> orders.roadside.v1.RoadsideOrderCard
-	54, // 39: orders.roadside.v1.OrganizationRoadsideAssignee.appointment_at:type_name -> google.protobuf.Timestamp
-	28, // 40: orders.roadside.v1.AssignRoadsideOrderRequest.manual:type_name -> orders.roadside.v1.ManualRoadsideAssignee
-	29, // 41: orders.roadside.v1.AssignRoadsideOrderRequest.organization:type_name -> orders.roadside.v1.OrganizationRoadsideAssignee
-	8,  // 42: orders.roadside.v1.AssignRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	9,  // 43: orders.roadside.v1.AssignRoadsideOrderResponse.assignment:type_name -> orders.roadside.v1.RoadsideAssignment
-	8,  // 44: orders.roadside.v1.RevokeRoadsideAssignmentResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	9,  // 45: orders.roadside.v1.RevokeRoadsideAssignmentResponse.assignment:type_name -> orders.roadside.v1.RoadsideAssignment
-	0,  // 46: orders.roadside.v1.AdvanceRoadsideOrderRequest.target_status:type_name -> orders.roadside.v1.RoadsideOrderStatus
-	8,  // 47: orders.roadside.v1.AdvanceRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	8,  // 48: orders.roadside.v1.CancelRoadsideOrderByOperatorResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	4,  // 49: orders.roadside.v1.ListRoadsideServiceTypesResponse.service_types:type_name -> orders.roadside.v1.RoadsideServiceType
-	4,  // 50: orders.roadside.v1.UpsertRoadsideServiceTypeRequest.service_type:type_name -> orders.roadside.v1.RoadsideServiceType
-	4,  // 51: orders.roadside.v1.UpsertRoadsideServiceTypeResponse.service_type:type_name -> orders.roadside.v1.RoadsideServiceType
-	5,  // 52: orders.roadside.v1.ListRoadsidePricesResponse.prices:type_name -> orders.roadside.v1.RoadsidePrice
-	5,  // 53: orders.roadside.v1.SetRoadsidePriceResponse.price:type_name -> orders.roadside.v1.RoadsidePrice
-	8,  // 54: orders.roadside.v1.ListAvailableRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
-	54, // 55: orders.roadside.v1.ClaimRoadsideOrderRequest.appointment_at:type_name -> google.protobuf.Timestamp
-	8,  // 56: orders.roadside.v1.ClaimRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	9,  // 57: orders.roadside.v1.ClaimRoadsideOrderResponse.assignment:type_name -> orders.roadside.v1.RoadsideAssignment
-	0,  // 58: orders.roadside.v1.ListOrganizationRoadsideOrdersRequest.status:type_name -> orders.roadside.v1.RoadsideOrderStatus
-	8,  // 59: orders.roadside.v1.ListOrganizationRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
-	0,  // 60: orders.roadside.v1.AdvancePartnerRoadsideOrderRequest.target_status:type_name -> orders.roadside.v1.RoadsideOrderStatus
-	8,  // 61: orders.roadside.v1.AdvancePartnerRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	12, // 62: orders.roadside.v1.RoadsideService.ListRoadsideServices:input_type -> orders.roadside.v1.ListRoadsideServicesRequest
-	14, // 63: orders.roadside.v1.RoadsideService.CalculateRoadsidePrice:input_type -> orders.roadside.v1.CalculateRoadsidePriceRequest
-	16, // 64: orders.roadside.v1.RoadsideService.CreateRoadsideOrder:input_type -> orders.roadside.v1.CreateRoadsideOrderRequest
-	18, // 65: orders.roadside.v1.RoadsideService.GetRoadsideOrder:input_type -> orders.roadside.v1.GetRoadsideOrderRequest
-	20, // 66: orders.roadside.v1.RoadsideService.ListMyRoadsideOrders:input_type -> orders.roadside.v1.ListMyRoadsideOrdersRequest
-	22, // 67: orders.roadside.v1.RoadsideService.CancelRoadsideOrder:input_type -> orders.roadside.v1.CancelRoadsideOrderRequest
-	24, // 68: orders.roadside.v1.RoadsideDispatchService.ListRoadsideOrders:input_type -> orders.roadside.v1.ListRoadsideOrdersRequest
-	26, // 69: orders.roadside.v1.RoadsideDispatchService.GetRoadsideOrderCard:input_type -> orders.roadside.v1.GetRoadsideOrderCardRequest
-	30, // 70: orders.roadside.v1.RoadsideDispatchService.AssignRoadsideOrder:input_type -> orders.roadside.v1.AssignRoadsideOrderRequest
-	32, // 71: orders.roadside.v1.RoadsideDispatchService.RevokeRoadsideAssignment:input_type -> orders.roadside.v1.RevokeRoadsideAssignmentRequest
-	34, // 72: orders.roadside.v1.RoadsideDispatchService.AdvanceRoadsideOrder:input_type -> orders.roadside.v1.AdvanceRoadsideOrderRequest
-	36, // 73: orders.roadside.v1.RoadsideDispatchService.CancelRoadsideOrderByOperator:input_type -> orders.roadside.v1.CancelRoadsideOrderByOperatorRequest
-	38, // 74: orders.roadside.v1.RoadsideDispatchService.ListRoadsideServiceTypes:input_type -> orders.roadside.v1.ListRoadsideServiceTypesRequest
-	40, // 75: orders.roadside.v1.RoadsideDispatchService.UpsertRoadsideServiceType:input_type -> orders.roadside.v1.UpsertRoadsideServiceTypeRequest
-	42, // 76: orders.roadside.v1.RoadsideDispatchService.ListRoadsidePrices:input_type -> orders.roadside.v1.ListRoadsidePricesRequest
-	44, // 77: orders.roadside.v1.RoadsideDispatchService.SetRoadsidePrice:input_type -> orders.roadside.v1.SetRoadsidePriceRequest
-	46, // 78: orders.roadside.v1.RoadsidePartnerService.ListAvailableRoadsideOrders:input_type -> orders.roadside.v1.ListAvailableRoadsideOrdersRequest
-	48, // 79: orders.roadside.v1.RoadsidePartnerService.ClaimRoadsideOrder:input_type -> orders.roadside.v1.ClaimRoadsideOrderRequest
-	50, // 80: orders.roadside.v1.RoadsidePartnerService.ListOrganizationRoadsideOrders:input_type -> orders.roadside.v1.ListOrganizationRoadsideOrdersRequest
-	52, // 81: orders.roadside.v1.RoadsidePartnerService.AdvancePartnerRoadsideOrder:input_type -> orders.roadside.v1.AdvancePartnerRoadsideOrderRequest
-	13, // 82: orders.roadside.v1.RoadsideService.ListRoadsideServices:output_type -> orders.roadside.v1.ListRoadsideServicesResponse
-	15, // 83: orders.roadside.v1.RoadsideService.CalculateRoadsidePrice:output_type -> orders.roadside.v1.CalculateRoadsidePriceResponse
-	17, // 84: orders.roadside.v1.RoadsideService.CreateRoadsideOrder:output_type -> orders.roadside.v1.CreateRoadsideOrderResponse
-	19, // 85: orders.roadside.v1.RoadsideService.GetRoadsideOrder:output_type -> orders.roadside.v1.GetRoadsideOrderResponse
-	21, // 86: orders.roadside.v1.RoadsideService.ListMyRoadsideOrders:output_type -> orders.roadside.v1.ListMyRoadsideOrdersResponse
-	23, // 87: orders.roadside.v1.RoadsideService.CancelRoadsideOrder:output_type -> orders.roadside.v1.CancelRoadsideOrderResponse
-	25, // 88: orders.roadside.v1.RoadsideDispatchService.ListRoadsideOrders:output_type -> orders.roadside.v1.ListRoadsideOrdersResponse
-	27, // 89: orders.roadside.v1.RoadsideDispatchService.GetRoadsideOrderCard:output_type -> orders.roadside.v1.GetRoadsideOrderCardResponse
-	31, // 90: orders.roadside.v1.RoadsideDispatchService.AssignRoadsideOrder:output_type -> orders.roadside.v1.AssignRoadsideOrderResponse
-	33, // 91: orders.roadside.v1.RoadsideDispatchService.RevokeRoadsideAssignment:output_type -> orders.roadside.v1.RevokeRoadsideAssignmentResponse
-	35, // 92: orders.roadside.v1.RoadsideDispatchService.AdvanceRoadsideOrder:output_type -> orders.roadside.v1.AdvanceRoadsideOrderResponse
-	37, // 93: orders.roadside.v1.RoadsideDispatchService.CancelRoadsideOrderByOperator:output_type -> orders.roadside.v1.CancelRoadsideOrderByOperatorResponse
-	39, // 94: orders.roadside.v1.RoadsideDispatchService.ListRoadsideServiceTypes:output_type -> orders.roadside.v1.ListRoadsideServiceTypesResponse
-	41, // 95: orders.roadside.v1.RoadsideDispatchService.UpsertRoadsideServiceType:output_type -> orders.roadside.v1.UpsertRoadsideServiceTypeResponse
-	43, // 96: orders.roadside.v1.RoadsideDispatchService.ListRoadsidePrices:output_type -> orders.roadside.v1.ListRoadsidePricesResponse
-	45, // 97: orders.roadside.v1.RoadsideDispatchService.SetRoadsidePrice:output_type -> orders.roadside.v1.SetRoadsidePriceResponse
-	47, // 98: orders.roadside.v1.RoadsidePartnerService.ListAvailableRoadsideOrders:output_type -> orders.roadside.v1.ListAvailableRoadsideOrdersResponse
-	49, // 99: orders.roadside.v1.RoadsidePartnerService.ClaimRoadsideOrder:output_type -> orders.roadside.v1.ClaimRoadsideOrderResponse
-	51, // 100: orders.roadside.v1.RoadsidePartnerService.ListOrganizationRoadsideOrders:output_type -> orders.roadside.v1.ListOrganizationRoadsideOrdersResponse
-	53, // 101: orders.roadside.v1.RoadsidePartnerService.AdvancePartnerRoadsideOrder:output_type -> orders.roadside.v1.AdvancePartnerRoadsideOrderResponse
-	82, // [82:102] is the sub-list for method output_type
-	62, // [62:82] is the sub-list for method input_type
-	62, // [62:62] is the sub-list for extension type_name
-	62, // [62:62] is the sub-list for extension extendee
-	0,  // [0:62] is the sub-list for field type_name
+	8,  // 34: orders.roadside.v1.ResumeRoadsidePaymentResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	0,  // 35: orders.roadside.v1.ListRoadsideOrdersRequest.status:type_name -> orders.roadside.v1.RoadsideOrderStatus
+	56, // 36: orders.roadside.v1.ListRoadsideOrdersRequest.from:type_name -> google.protobuf.Timestamp
+	56, // 37: orders.roadside.v1.ListRoadsideOrdersRequest.to:type_name -> google.protobuf.Timestamp
+	8,  // 38: orders.roadside.v1.ListRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
+	11, // 39: orders.roadside.v1.GetRoadsideOrderCardResponse.card:type_name -> orders.roadside.v1.RoadsideOrderCard
+	56, // 40: orders.roadside.v1.OrganizationRoadsideAssignee.appointment_at:type_name -> google.protobuf.Timestamp
+	30, // 41: orders.roadside.v1.AssignRoadsideOrderRequest.manual:type_name -> orders.roadside.v1.ManualRoadsideAssignee
+	31, // 42: orders.roadside.v1.AssignRoadsideOrderRequest.organization:type_name -> orders.roadside.v1.OrganizationRoadsideAssignee
+	8,  // 43: orders.roadside.v1.AssignRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	9,  // 44: orders.roadside.v1.AssignRoadsideOrderResponse.assignment:type_name -> orders.roadside.v1.RoadsideAssignment
+	8,  // 45: orders.roadside.v1.RevokeRoadsideAssignmentResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	9,  // 46: orders.roadside.v1.RevokeRoadsideAssignmentResponse.assignment:type_name -> orders.roadside.v1.RoadsideAssignment
+	0,  // 47: orders.roadside.v1.AdvanceRoadsideOrderRequest.target_status:type_name -> orders.roadside.v1.RoadsideOrderStatus
+	8,  // 48: orders.roadside.v1.AdvanceRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	8,  // 49: orders.roadside.v1.CancelRoadsideOrderByOperatorResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	4,  // 50: orders.roadside.v1.ListRoadsideServiceTypesResponse.service_types:type_name -> orders.roadside.v1.RoadsideServiceType
+	4,  // 51: orders.roadside.v1.UpsertRoadsideServiceTypeRequest.service_type:type_name -> orders.roadside.v1.RoadsideServiceType
+	4,  // 52: orders.roadside.v1.UpsertRoadsideServiceTypeResponse.service_type:type_name -> orders.roadside.v1.RoadsideServiceType
+	5,  // 53: orders.roadside.v1.ListRoadsidePricesResponse.prices:type_name -> orders.roadside.v1.RoadsidePrice
+	5,  // 54: orders.roadside.v1.SetRoadsidePriceResponse.price:type_name -> orders.roadside.v1.RoadsidePrice
+	8,  // 55: orders.roadside.v1.ListAvailableRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
+	56, // 56: orders.roadside.v1.ClaimRoadsideOrderRequest.appointment_at:type_name -> google.protobuf.Timestamp
+	8,  // 57: orders.roadside.v1.ClaimRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	9,  // 58: orders.roadside.v1.ClaimRoadsideOrderResponse.assignment:type_name -> orders.roadside.v1.RoadsideAssignment
+	0,  // 59: orders.roadside.v1.ListOrganizationRoadsideOrdersRequest.status:type_name -> orders.roadside.v1.RoadsideOrderStatus
+	8,  // 60: orders.roadside.v1.ListOrganizationRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
+	0,  // 61: orders.roadside.v1.AdvancePartnerRoadsideOrderRequest.target_status:type_name -> orders.roadside.v1.RoadsideOrderStatus
+	8,  // 62: orders.roadside.v1.AdvancePartnerRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	12, // 63: orders.roadside.v1.RoadsideService.ListRoadsideServices:input_type -> orders.roadside.v1.ListRoadsideServicesRequest
+	14, // 64: orders.roadside.v1.RoadsideService.CalculateRoadsidePrice:input_type -> orders.roadside.v1.CalculateRoadsidePriceRequest
+	16, // 65: orders.roadside.v1.RoadsideService.CreateRoadsideOrder:input_type -> orders.roadside.v1.CreateRoadsideOrderRequest
+	18, // 66: orders.roadside.v1.RoadsideService.GetRoadsideOrder:input_type -> orders.roadside.v1.GetRoadsideOrderRequest
+	20, // 67: orders.roadside.v1.RoadsideService.ListMyRoadsideOrders:input_type -> orders.roadside.v1.ListMyRoadsideOrdersRequest
+	22, // 68: orders.roadside.v1.RoadsideService.CancelRoadsideOrder:input_type -> orders.roadside.v1.CancelRoadsideOrderRequest
+	24, // 69: orders.roadside.v1.RoadsideService.ResumeRoadsidePayment:input_type -> orders.roadside.v1.ResumeRoadsidePaymentRequest
+	26, // 70: orders.roadside.v1.RoadsideDispatchService.ListRoadsideOrders:input_type -> orders.roadside.v1.ListRoadsideOrdersRequest
+	28, // 71: orders.roadside.v1.RoadsideDispatchService.GetRoadsideOrderCard:input_type -> orders.roadside.v1.GetRoadsideOrderCardRequest
+	32, // 72: orders.roadside.v1.RoadsideDispatchService.AssignRoadsideOrder:input_type -> orders.roadside.v1.AssignRoadsideOrderRequest
+	34, // 73: orders.roadside.v1.RoadsideDispatchService.RevokeRoadsideAssignment:input_type -> orders.roadside.v1.RevokeRoadsideAssignmentRequest
+	36, // 74: orders.roadside.v1.RoadsideDispatchService.AdvanceRoadsideOrder:input_type -> orders.roadside.v1.AdvanceRoadsideOrderRequest
+	38, // 75: orders.roadside.v1.RoadsideDispatchService.CancelRoadsideOrderByOperator:input_type -> orders.roadside.v1.CancelRoadsideOrderByOperatorRequest
+	40, // 76: orders.roadside.v1.RoadsideDispatchService.ListRoadsideServiceTypes:input_type -> orders.roadside.v1.ListRoadsideServiceTypesRequest
+	42, // 77: orders.roadside.v1.RoadsideDispatchService.UpsertRoadsideServiceType:input_type -> orders.roadside.v1.UpsertRoadsideServiceTypeRequest
+	44, // 78: orders.roadside.v1.RoadsideDispatchService.ListRoadsidePrices:input_type -> orders.roadside.v1.ListRoadsidePricesRequest
+	46, // 79: orders.roadside.v1.RoadsideDispatchService.SetRoadsidePrice:input_type -> orders.roadside.v1.SetRoadsidePriceRequest
+	48, // 80: orders.roadside.v1.RoadsidePartnerService.ListAvailableRoadsideOrders:input_type -> orders.roadside.v1.ListAvailableRoadsideOrdersRequest
+	50, // 81: orders.roadside.v1.RoadsidePartnerService.ClaimRoadsideOrder:input_type -> orders.roadside.v1.ClaimRoadsideOrderRequest
+	52, // 82: orders.roadside.v1.RoadsidePartnerService.ListOrganizationRoadsideOrders:input_type -> orders.roadside.v1.ListOrganizationRoadsideOrdersRequest
+	54, // 83: orders.roadside.v1.RoadsidePartnerService.AdvancePartnerRoadsideOrder:input_type -> orders.roadside.v1.AdvancePartnerRoadsideOrderRequest
+	13, // 84: orders.roadside.v1.RoadsideService.ListRoadsideServices:output_type -> orders.roadside.v1.ListRoadsideServicesResponse
+	15, // 85: orders.roadside.v1.RoadsideService.CalculateRoadsidePrice:output_type -> orders.roadside.v1.CalculateRoadsidePriceResponse
+	17, // 86: orders.roadside.v1.RoadsideService.CreateRoadsideOrder:output_type -> orders.roadside.v1.CreateRoadsideOrderResponse
+	19, // 87: orders.roadside.v1.RoadsideService.GetRoadsideOrder:output_type -> orders.roadside.v1.GetRoadsideOrderResponse
+	21, // 88: orders.roadside.v1.RoadsideService.ListMyRoadsideOrders:output_type -> orders.roadside.v1.ListMyRoadsideOrdersResponse
+	23, // 89: orders.roadside.v1.RoadsideService.CancelRoadsideOrder:output_type -> orders.roadside.v1.CancelRoadsideOrderResponse
+	25, // 90: orders.roadside.v1.RoadsideService.ResumeRoadsidePayment:output_type -> orders.roadside.v1.ResumeRoadsidePaymentResponse
+	27, // 91: orders.roadside.v1.RoadsideDispatchService.ListRoadsideOrders:output_type -> orders.roadside.v1.ListRoadsideOrdersResponse
+	29, // 92: orders.roadside.v1.RoadsideDispatchService.GetRoadsideOrderCard:output_type -> orders.roadside.v1.GetRoadsideOrderCardResponse
+	33, // 93: orders.roadside.v1.RoadsideDispatchService.AssignRoadsideOrder:output_type -> orders.roadside.v1.AssignRoadsideOrderResponse
+	35, // 94: orders.roadside.v1.RoadsideDispatchService.RevokeRoadsideAssignment:output_type -> orders.roadside.v1.RevokeRoadsideAssignmentResponse
+	37, // 95: orders.roadside.v1.RoadsideDispatchService.AdvanceRoadsideOrder:output_type -> orders.roadside.v1.AdvanceRoadsideOrderResponse
+	39, // 96: orders.roadside.v1.RoadsideDispatchService.CancelRoadsideOrderByOperator:output_type -> orders.roadside.v1.CancelRoadsideOrderByOperatorResponse
+	41, // 97: orders.roadside.v1.RoadsideDispatchService.ListRoadsideServiceTypes:output_type -> orders.roadside.v1.ListRoadsideServiceTypesResponse
+	43, // 98: orders.roadside.v1.RoadsideDispatchService.UpsertRoadsideServiceType:output_type -> orders.roadside.v1.UpsertRoadsideServiceTypeResponse
+	45, // 99: orders.roadside.v1.RoadsideDispatchService.ListRoadsidePrices:output_type -> orders.roadside.v1.ListRoadsidePricesResponse
+	47, // 100: orders.roadside.v1.RoadsideDispatchService.SetRoadsidePrice:output_type -> orders.roadside.v1.SetRoadsidePriceResponse
+	49, // 101: orders.roadside.v1.RoadsidePartnerService.ListAvailableRoadsideOrders:output_type -> orders.roadside.v1.ListAvailableRoadsideOrdersResponse
+	51, // 102: orders.roadside.v1.RoadsidePartnerService.ClaimRoadsideOrder:output_type -> orders.roadside.v1.ClaimRoadsideOrderResponse
+	53, // 103: orders.roadside.v1.RoadsidePartnerService.ListOrganizationRoadsideOrders:output_type -> orders.roadside.v1.ListOrganizationRoadsideOrdersResponse
+	55, // 104: orders.roadside.v1.RoadsidePartnerService.AdvancePartnerRoadsideOrder:output_type -> orders.roadside.v1.AdvancePartnerRoadsideOrderResponse
+	84, // [84:105] is the sub-list for method output_type
+	63, // [63:84] is the sub-list for method input_type
+	63, // [63:63] is the sub-list for extension type_name
+	63, // [63:63] is the sub-list for extension extendee
+	0,  // [0:63] is the sub-list for field type_name
 }
 
 func init() { file_orders_roadside_v1_roadside_proto_init() }
@@ -4518,21 +4661,21 @@ func file_orders_roadside_v1_roadside_proto_init() {
 	file_orders_roadside_v1_roadside_proto_msgTypes[5].OneofWrappers = []any{}
 	file_orders_roadside_v1_roadside_proto_msgTypes[6].OneofWrappers = []any{}
 	file_orders_roadside_v1_roadside_proto_msgTypes[12].OneofWrappers = []any{}
-	file_orders_roadside_v1_roadside_proto_msgTypes[25].OneofWrappers = []any{}
-	file_orders_roadside_v1_roadside_proto_msgTypes[26].OneofWrappers = []any{
+	file_orders_roadside_v1_roadside_proto_msgTypes[27].OneofWrappers = []any{}
+	file_orders_roadside_v1_roadside_proto_msgTypes[28].OneofWrappers = []any{
 		(*AssignRoadsideOrderRequest_Manual)(nil),
 		(*AssignRoadsideOrderRequest_Organization)(nil),
 	}
-	file_orders_roadside_v1_roadside_proto_msgTypes[34].OneofWrappers = []any{}
-	file_orders_roadside_v1_roadside_proto_msgTypes[38].OneofWrappers = []any{}
-	file_orders_roadside_v1_roadside_proto_msgTypes[44].OneofWrappers = []any{}
+	file_orders_roadside_v1_roadside_proto_msgTypes[36].OneofWrappers = []any{}
+	file_orders_roadside_v1_roadside_proto_msgTypes[40].OneofWrappers = []any{}
+	file_orders_roadside_v1_roadside_proto_msgTypes[46].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_orders_roadside_v1_roadside_proto_rawDesc), len(file_orders_roadside_v1_roadside_proto_rawDesc)),
 			NumEnums:      4,
-			NumMessages:   50,
+			NumMessages:   52,
 			NumExtensions: 0,
 			NumServices:   3,
 		},
