@@ -40,6 +40,10 @@ message FuelStationSummary {
   optional string city = 4;
   optional double latitude = 5;
   optional double longitude = 6;
+  // Canonical QR payload printed at the station (from the provider), e.g.
+  // "/AZS/100001/" or a Helios code. Clients match a scanned QR against this
+  // to resolve the station without a dedicated lookup endpoint.
+  string qr_code = 7;
 }
 
 message FuelStation {

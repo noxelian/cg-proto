@@ -90,13 +90,17 @@ func (FuelingOrderStatus) EnumDescriptor() ([]byte, []int) {
 }
 
 type FuelStationSummary struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	Address       string                 `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
-	City          *string                `protobuf:"bytes,4,opt,name=city,proto3,oneof" json:"city,omitempty"`
-	Latitude      *float64               `protobuf:"fixed64,5,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
-	Longitude     *float64               `protobuf:"fixed64,6,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title     string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Address   string                 `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
+	City      *string                `protobuf:"bytes,4,opt,name=city,proto3,oneof" json:"city,omitempty"`
+	Latitude  *float64               `protobuf:"fixed64,5,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
+	Longitude *float64               `protobuf:"fixed64,6,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
+	// Canonical QR payload printed at the station (from the provider), e.g.
+	// "/AZS/100001/" or a Helios code. Clients match a scanned QR against this
+	// to resolve the station without a dedicated lookup endpoint.
+	QrCode        string `protobuf:"bytes,7,opt,name=qr_code,json=qrCode,proto3" json:"qr_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -171,6 +175,13 @@ func (x *FuelStationSummary) GetLongitude() float64 {
 		return *x.Longitude
 	}
 	return 0
+}
+
+func (x *FuelStationSummary) GetQrCode() string {
+	if x != nil {
+		return x.QrCode
+	}
+	return ""
 }
 
 type FuelStation struct {
@@ -1212,14 +1223,15 @@ var File_orders_fueling_v1_fueling_proto protoreflect.FileDescriptor
 
 const file_orders_fueling_v1_fueling_proto_rawDesc = "" +
 	"\n" +
-	"\x1forders/fueling/v1/fueling.proto\x12\x11orders.fueling.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd5\x01\n" +
+	"\x1forders/fueling/v1/fueling.proto\x12\x11orders.fueling.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xee\x01\n" +
 	"\x12FuelStationSummary\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x18\n" +
 	"\aaddress\x18\x03 \x01(\tR\aaddress\x12\x17\n" +
 	"\x04city\x18\x04 \x01(\tH\x00R\x04city\x88\x01\x01\x12\x1f\n" +
 	"\blatitude\x18\x05 \x01(\x01H\x01R\blatitude\x88\x01\x01\x12!\n" +
-	"\tlongitude\x18\x06 \x01(\x01H\x02R\tlongitude\x88\x01\x01B\a\n" +
+	"\tlongitude\x18\x06 \x01(\x01H\x02R\tlongitude\x88\x01\x01\x12\x17\n" +
+	"\aqr_code\x18\a \x01(\tR\x06qrCodeB\a\n" +
 	"\x05_cityB\v\n" +
 	"\t_latitudeB\f\n" +
 	"\n" +
