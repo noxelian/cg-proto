@@ -267,6 +267,9 @@ message RoadsideAssignment {
   int64 id = 1;
   string order_id = 2;
   RoadsideAssigneeKind assignee_kind = 3;
+  // Immutable provider display-name snapshot resolved by cg-orders from the
+  // owning organization service. Organization IDs remain the authority for
+  // access, escrow binding, filters, and navigation.
   string provider_name = 4;
   optional string provider_phone = 5;
   optional string organization_id = 6;
@@ -277,6 +280,10 @@ message RoadsideAssignment {
   google.protobuf.Timestamp assigned_at = 11;
   google.protobuf.Timestamp revoked_at = 12;
   string revoke_reason = 13;
+  // Agreed customer arrival time for an organization assignment. Required by
+  // cg-orders for new STO assignments; nullable for legacy records and service
+  // groups that do not use appointments.
+  google.protobuf.Timestamp appointment_at = 14;
 }
 
 message RoadsideOrderEvent {
@@ -429,6 +436,7 @@ message ManualRoadsideAssignee {
 message OrganizationRoadsideAssignee {
   string organization_id = 1;
   optional int64 performer_user_id = 2;
+  google.protobuf.Timestamp appointment_at = 3;
 }
 
 message AssignRoadsideOrderRequest {
@@ -547,6 +555,7 @@ message ClaimRoadsideOrderRequest {
   string organization_id = 2;
   optional int64 performer_user_id = 3;
   string note = 4;
+  google.protobuf.Timestamp appointment_at = 5;
 }
 
 message ClaimRoadsideOrderResponse {
