@@ -1860,8 +1860,13 @@ func (x *GetRoadsideOrderRequest) GetOrderId() string {
 }
 
 type GetRoadsideOrderResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Order         *RoadsideOrder         `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Order *RoadsideOrder         `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
+	// Current owner-visible assignment. This is separate from RoadsideOrder so
+	// list/feed consumers do not receive dispatcher notes or provider contacts.
+	// It is active while work is in progress and completed after the order is
+	// finished. Revoked assignments remain available only on the admin card.
+	Assignment    *RoadsideAssignment `protobuf:"bytes,2,opt,name=assignment,proto3" json:"assignment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1899,6 +1904,13 @@ func (*GetRoadsideOrderResponse) Descriptor() ([]byte, []int) {
 func (x *GetRoadsideOrderResponse) GetOrder() *RoadsideOrder {
 	if x != nil {
 		return x.Order
+	}
+	return nil
+}
+
+func (x *GetRoadsideOrderResponse) GetAssignment() *RoadsideAssignment {
+	if x != nil {
+		return x.Assignment
 	}
 	return nil
 }
@@ -4082,9 +4094,12 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"paymentUrl\x12+\n" +
 	"\x11idempotent_replay\x18\x03 \x01(\bR\x10idempotentReplay\"4\n" +
 	"\x17GetRoadsideOrderRequest\x12\x19\n" +
-	"\border_id\x18\x01 \x01(\tR\aorderId\"S\n" +
+	"\border_id\x18\x01 \x01(\tR\aorderId\"\x9b\x01\n" +
 	"\x18GetRoadsideOrderResponse\x127\n" +
-	"\x05order\x18\x01 \x01(\v2!.orders.roadside.v1.RoadsideOrderR\x05order\"\x8f\x01\n" +
+	"\x05order\x18\x01 \x01(\v2!.orders.roadside.v1.RoadsideOrderR\x05order\x12F\n" +
+	"\n" +
+	"assignment\x18\x02 \x01(\v2&.orders.roadside.v1.RoadsideAssignmentR\n" +
+	"assignment\"\x8f\x01\n" +
 	"\x1bListMyRoadsideOrdersRequest\x12?\n" +
 	"\x06status\x18\x01 \x01(\x0e2'.orders.roadside.v1.RoadsideOrderStatusR\x06status\x12\x12\n" +
 	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x1b\n" +
@@ -4381,80 +4396,81 @@ var file_orders_roadside_v1_roadside_proto_depIdxs = []int32{
 	6,  // 26: orders.roadside.v1.CalculateRoadsidePriceResponse.quote:type_name -> orders.roadside.v1.RoadsidePriceQuote
 	8,  // 27: orders.roadside.v1.CreateRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
 	8,  // 28: orders.roadside.v1.GetRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	0,  // 29: orders.roadside.v1.ListMyRoadsideOrdersRequest.status:type_name -> orders.roadside.v1.RoadsideOrderStatus
-	8,  // 30: orders.roadside.v1.ListMyRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
-	8,  // 31: orders.roadside.v1.CancelRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	0,  // 32: orders.roadside.v1.ListRoadsideOrdersRequest.status:type_name -> orders.roadside.v1.RoadsideOrderStatus
-	54, // 33: orders.roadside.v1.ListRoadsideOrdersRequest.from:type_name -> google.protobuf.Timestamp
-	54, // 34: orders.roadside.v1.ListRoadsideOrdersRequest.to:type_name -> google.protobuf.Timestamp
-	8,  // 35: orders.roadside.v1.ListRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
-	11, // 36: orders.roadside.v1.GetRoadsideOrderCardResponse.card:type_name -> orders.roadside.v1.RoadsideOrderCard
-	28, // 37: orders.roadside.v1.AssignRoadsideOrderRequest.manual:type_name -> orders.roadside.v1.ManualRoadsideAssignee
-	29, // 38: orders.roadside.v1.AssignRoadsideOrderRequest.organization:type_name -> orders.roadside.v1.OrganizationRoadsideAssignee
-	8,  // 39: orders.roadside.v1.AssignRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	9,  // 40: orders.roadside.v1.AssignRoadsideOrderResponse.assignment:type_name -> orders.roadside.v1.RoadsideAssignment
-	8,  // 41: orders.roadside.v1.RevokeRoadsideAssignmentResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	9,  // 42: orders.roadside.v1.RevokeRoadsideAssignmentResponse.assignment:type_name -> orders.roadside.v1.RoadsideAssignment
-	0,  // 43: orders.roadside.v1.AdvanceRoadsideOrderRequest.target_status:type_name -> orders.roadside.v1.RoadsideOrderStatus
-	8,  // 44: orders.roadside.v1.AdvanceRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	8,  // 45: orders.roadside.v1.CancelRoadsideOrderByOperatorResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	4,  // 46: orders.roadside.v1.ListRoadsideServiceTypesResponse.service_types:type_name -> orders.roadside.v1.RoadsideServiceType
-	4,  // 47: orders.roadside.v1.UpsertRoadsideServiceTypeRequest.service_type:type_name -> orders.roadside.v1.RoadsideServiceType
-	4,  // 48: orders.roadside.v1.UpsertRoadsideServiceTypeResponse.service_type:type_name -> orders.roadside.v1.RoadsideServiceType
-	5,  // 49: orders.roadside.v1.ListRoadsidePricesResponse.prices:type_name -> orders.roadside.v1.RoadsidePrice
-	5,  // 50: orders.roadside.v1.SetRoadsidePriceResponse.price:type_name -> orders.roadside.v1.RoadsidePrice
-	8,  // 51: orders.roadside.v1.ListAvailableRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
-	8,  // 52: orders.roadside.v1.ClaimRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	9,  // 53: orders.roadside.v1.ClaimRoadsideOrderResponse.assignment:type_name -> orders.roadside.v1.RoadsideAssignment
-	0,  // 54: orders.roadside.v1.ListOrganizationRoadsideOrdersRequest.status:type_name -> orders.roadside.v1.RoadsideOrderStatus
-	8,  // 55: orders.roadside.v1.ListOrganizationRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
-	0,  // 56: orders.roadside.v1.AdvancePartnerRoadsideOrderRequest.target_status:type_name -> orders.roadside.v1.RoadsideOrderStatus
-	8,  // 57: orders.roadside.v1.AdvancePartnerRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
-	12, // 58: orders.roadside.v1.RoadsideService.ListRoadsideServices:input_type -> orders.roadside.v1.ListRoadsideServicesRequest
-	14, // 59: orders.roadside.v1.RoadsideService.CalculateRoadsidePrice:input_type -> orders.roadside.v1.CalculateRoadsidePriceRequest
-	16, // 60: orders.roadside.v1.RoadsideService.CreateRoadsideOrder:input_type -> orders.roadside.v1.CreateRoadsideOrderRequest
-	18, // 61: orders.roadside.v1.RoadsideService.GetRoadsideOrder:input_type -> orders.roadside.v1.GetRoadsideOrderRequest
-	20, // 62: orders.roadside.v1.RoadsideService.ListMyRoadsideOrders:input_type -> orders.roadside.v1.ListMyRoadsideOrdersRequest
-	22, // 63: orders.roadside.v1.RoadsideService.CancelRoadsideOrder:input_type -> orders.roadside.v1.CancelRoadsideOrderRequest
-	24, // 64: orders.roadside.v1.RoadsideDispatchService.ListRoadsideOrders:input_type -> orders.roadside.v1.ListRoadsideOrdersRequest
-	26, // 65: orders.roadside.v1.RoadsideDispatchService.GetRoadsideOrderCard:input_type -> orders.roadside.v1.GetRoadsideOrderCardRequest
-	30, // 66: orders.roadside.v1.RoadsideDispatchService.AssignRoadsideOrder:input_type -> orders.roadside.v1.AssignRoadsideOrderRequest
-	32, // 67: orders.roadside.v1.RoadsideDispatchService.RevokeRoadsideAssignment:input_type -> orders.roadside.v1.RevokeRoadsideAssignmentRequest
-	34, // 68: orders.roadside.v1.RoadsideDispatchService.AdvanceRoadsideOrder:input_type -> orders.roadside.v1.AdvanceRoadsideOrderRequest
-	36, // 69: orders.roadside.v1.RoadsideDispatchService.CancelRoadsideOrderByOperator:input_type -> orders.roadside.v1.CancelRoadsideOrderByOperatorRequest
-	38, // 70: orders.roadside.v1.RoadsideDispatchService.ListRoadsideServiceTypes:input_type -> orders.roadside.v1.ListRoadsideServiceTypesRequest
-	40, // 71: orders.roadside.v1.RoadsideDispatchService.UpsertRoadsideServiceType:input_type -> orders.roadside.v1.UpsertRoadsideServiceTypeRequest
-	42, // 72: orders.roadside.v1.RoadsideDispatchService.ListRoadsidePrices:input_type -> orders.roadside.v1.ListRoadsidePricesRequest
-	44, // 73: orders.roadside.v1.RoadsideDispatchService.SetRoadsidePrice:input_type -> orders.roadside.v1.SetRoadsidePriceRequest
-	46, // 74: orders.roadside.v1.RoadsidePartnerService.ListAvailableRoadsideOrders:input_type -> orders.roadside.v1.ListAvailableRoadsideOrdersRequest
-	48, // 75: orders.roadside.v1.RoadsidePartnerService.ClaimRoadsideOrder:input_type -> orders.roadside.v1.ClaimRoadsideOrderRequest
-	50, // 76: orders.roadside.v1.RoadsidePartnerService.ListOrganizationRoadsideOrders:input_type -> orders.roadside.v1.ListOrganizationRoadsideOrdersRequest
-	52, // 77: orders.roadside.v1.RoadsidePartnerService.AdvancePartnerRoadsideOrder:input_type -> orders.roadside.v1.AdvancePartnerRoadsideOrderRequest
-	13, // 78: orders.roadside.v1.RoadsideService.ListRoadsideServices:output_type -> orders.roadside.v1.ListRoadsideServicesResponse
-	15, // 79: orders.roadside.v1.RoadsideService.CalculateRoadsidePrice:output_type -> orders.roadside.v1.CalculateRoadsidePriceResponse
-	17, // 80: orders.roadside.v1.RoadsideService.CreateRoadsideOrder:output_type -> orders.roadside.v1.CreateRoadsideOrderResponse
-	19, // 81: orders.roadside.v1.RoadsideService.GetRoadsideOrder:output_type -> orders.roadside.v1.GetRoadsideOrderResponse
-	21, // 82: orders.roadside.v1.RoadsideService.ListMyRoadsideOrders:output_type -> orders.roadside.v1.ListMyRoadsideOrdersResponse
-	23, // 83: orders.roadside.v1.RoadsideService.CancelRoadsideOrder:output_type -> orders.roadside.v1.CancelRoadsideOrderResponse
-	25, // 84: orders.roadside.v1.RoadsideDispatchService.ListRoadsideOrders:output_type -> orders.roadside.v1.ListRoadsideOrdersResponse
-	27, // 85: orders.roadside.v1.RoadsideDispatchService.GetRoadsideOrderCard:output_type -> orders.roadside.v1.GetRoadsideOrderCardResponse
-	31, // 86: orders.roadside.v1.RoadsideDispatchService.AssignRoadsideOrder:output_type -> orders.roadside.v1.AssignRoadsideOrderResponse
-	33, // 87: orders.roadside.v1.RoadsideDispatchService.RevokeRoadsideAssignment:output_type -> orders.roadside.v1.RevokeRoadsideAssignmentResponse
-	35, // 88: orders.roadside.v1.RoadsideDispatchService.AdvanceRoadsideOrder:output_type -> orders.roadside.v1.AdvanceRoadsideOrderResponse
-	37, // 89: orders.roadside.v1.RoadsideDispatchService.CancelRoadsideOrderByOperator:output_type -> orders.roadside.v1.CancelRoadsideOrderByOperatorResponse
-	39, // 90: orders.roadside.v1.RoadsideDispatchService.ListRoadsideServiceTypes:output_type -> orders.roadside.v1.ListRoadsideServiceTypesResponse
-	41, // 91: orders.roadside.v1.RoadsideDispatchService.UpsertRoadsideServiceType:output_type -> orders.roadside.v1.UpsertRoadsideServiceTypeResponse
-	43, // 92: orders.roadside.v1.RoadsideDispatchService.ListRoadsidePrices:output_type -> orders.roadside.v1.ListRoadsidePricesResponse
-	45, // 93: orders.roadside.v1.RoadsideDispatchService.SetRoadsidePrice:output_type -> orders.roadside.v1.SetRoadsidePriceResponse
-	47, // 94: orders.roadside.v1.RoadsidePartnerService.ListAvailableRoadsideOrders:output_type -> orders.roadside.v1.ListAvailableRoadsideOrdersResponse
-	49, // 95: orders.roadside.v1.RoadsidePartnerService.ClaimRoadsideOrder:output_type -> orders.roadside.v1.ClaimRoadsideOrderResponse
-	51, // 96: orders.roadside.v1.RoadsidePartnerService.ListOrganizationRoadsideOrders:output_type -> orders.roadside.v1.ListOrganizationRoadsideOrdersResponse
-	53, // 97: orders.roadside.v1.RoadsidePartnerService.AdvancePartnerRoadsideOrder:output_type -> orders.roadside.v1.AdvancePartnerRoadsideOrderResponse
-	78, // [78:98] is the sub-list for method output_type
-	58, // [58:78] is the sub-list for method input_type
-	58, // [58:58] is the sub-list for extension type_name
-	58, // [58:58] is the sub-list for extension extendee
-	0,  // [0:58] is the sub-list for field type_name
+	9,  // 29: orders.roadside.v1.GetRoadsideOrderResponse.assignment:type_name -> orders.roadside.v1.RoadsideAssignment
+	0,  // 30: orders.roadside.v1.ListMyRoadsideOrdersRequest.status:type_name -> orders.roadside.v1.RoadsideOrderStatus
+	8,  // 31: orders.roadside.v1.ListMyRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
+	8,  // 32: orders.roadside.v1.CancelRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	0,  // 33: orders.roadside.v1.ListRoadsideOrdersRequest.status:type_name -> orders.roadside.v1.RoadsideOrderStatus
+	54, // 34: orders.roadside.v1.ListRoadsideOrdersRequest.from:type_name -> google.protobuf.Timestamp
+	54, // 35: orders.roadside.v1.ListRoadsideOrdersRequest.to:type_name -> google.protobuf.Timestamp
+	8,  // 36: orders.roadside.v1.ListRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
+	11, // 37: orders.roadside.v1.GetRoadsideOrderCardResponse.card:type_name -> orders.roadside.v1.RoadsideOrderCard
+	28, // 38: orders.roadside.v1.AssignRoadsideOrderRequest.manual:type_name -> orders.roadside.v1.ManualRoadsideAssignee
+	29, // 39: orders.roadside.v1.AssignRoadsideOrderRequest.organization:type_name -> orders.roadside.v1.OrganizationRoadsideAssignee
+	8,  // 40: orders.roadside.v1.AssignRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	9,  // 41: orders.roadside.v1.AssignRoadsideOrderResponse.assignment:type_name -> orders.roadside.v1.RoadsideAssignment
+	8,  // 42: orders.roadside.v1.RevokeRoadsideAssignmentResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	9,  // 43: orders.roadside.v1.RevokeRoadsideAssignmentResponse.assignment:type_name -> orders.roadside.v1.RoadsideAssignment
+	0,  // 44: orders.roadside.v1.AdvanceRoadsideOrderRequest.target_status:type_name -> orders.roadside.v1.RoadsideOrderStatus
+	8,  // 45: orders.roadside.v1.AdvanceRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	8,  // 46: orders.roadside.v1.CancelRoadsideOrderByOperatorResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	4,  // 47: orders.roadside.v1.ListRoadsideServiceTypesResponse.service_types:type_name -> orders.roadside.v1.RoadsideServiceType
+	4,  // 48: orders.roadside.v1.UpsertRoadsideServiceTypeRequest.service_type:type_name -> orders.roadside.v1.RoadsideServiceType
+	4,  // 49: orders.roadside.v1.UpsertRoadsideServiceTypeResponse.service_type:type_name -> orders.roadside.v1.RoadsideServiceType
+	5,  // 50: orders.roadside.v1.ListRoadsidePricesResponse.prices:type_name -> orders.roadside.v1.RoadsidePrice
+	5,  // 51: orders.roadside.v1.SetRoadsidePriceResponse.price:type_name -> orders.roadside.v1.RoadsidePrice
+	8,  // 52: orders.roadside.v1.ListAvailableRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
+	8,  // 53: orders.roadside.v1.ClaimRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	9,  // 54: orders.roadside.v1.ClaimRoadsideOrderResponse.assignment:type_name -> orders.roadside.v1.RoadsideAssignment
+	0,  // 55: orders.roadside.v1.ListOrganizationRoadsideOrdersRequest.status:type_name -> orders.roadside.v1.RoadsideOrderStatus
+	8,  // 56: orders.roadside.v1.ListOrganizationRoadsideOrdersResponse.orders:type_name -> orders.roadside.v1.RoadsideOrder
+	0,  // 57: orders.roadside.v1.AdvancePartnerRoadsideOrderRequest.target_status:type_name -> orders.roadside.v1.RoadsideOrderStatus
+	8,  // 58: orders.roadside.v1.AdvancePartnerRoadsideOrderResponse.order:type_name -> orders.roadside.v1.RoadsideOrder
+	12, // 59: orders.roadside.v1.RoadsideService.ListRoadsideServices:input_type -> orders.roadside.v1.ListRoadsideServicesRequest
+	14, // 60: orders.roadside.v1.RoadsideService.CalculateRoadsidePrice:input_type -> orders.roadside.v1.CalculateRoadsidePriceRequest
+	16, // 61: orders.roadside.v1.RoadsideService.CreateRoadsideOrder:input_type -> orders.roadside.v1.CreateRoadsideOrderRequest
+	18, // 62: orders.roadside.v1.RoadsideService.GetRoadsideOrder:input_type -> orders.roadside.v1.GetRoadsideOrderRequest
+	20, // 63: orders.roadside.v1.RoadsideService.ListMyRoadsideOrders:input_type -> orders.roadside.v1.ListMyRoadsideOrdersRequest
+	22, // 64: orders.roadside.v1.RoadsideService.CancelRoadsideOrder:input_type -> orders.roadside.v1.CancelRoadsideOrderRequest
+	24, // 65: orders.roadside.v1.RoadsideDispatchService.ListRoadsideOrders:input_type -> orders.roadside.v1.ListRoadsideOrdersRequest
+	26, // 66: orders.roadside.v1.RoadsideDispatchService.GetRoadsideOrderCard:input_type -> orders.roadside.v1.GetRoadsideOrderCardRequest
+	30, // 67: orders.roadside.v1.RoadsideDispatchService.AssignRoadsideOrder:input_type -> orders.roadside.v1.AssignRoadsideOrderRequest
+	32, // 68: orders.roadside.v1.RoadsideDispatchService.RevokeRoadsideAssignment:input_type -> orders.roadside.v1.RevokeRoadsideAssignmentRequest
+	34, // 69: orders.roadside.v1.RoadsideDispatchService.AdvanceRoadsideOrder:input_type -> orders.roadside.v1.AdvanceRoadsideOrderRequest
+	36, // 70: orders.roadside.v1.RoadsideDispatchService.CancelRoadsideOrderByOperator:input_type -> orders.roadside.v1.CancelRoadsideOrderByOperatorRequest
+	38, // 71: orders.roadside.v1.RoadsideDispatchService.ListRoadsideServiceTypes:input_type -> orders.roadside.v1.ListRoadsideServiceTypesRequest
+	40, // 72: orders.roadside.v1.RoadsideDispatchService.UpsertRoadsideServiceType:input_type -> orders.roadside.v1.UpsertRoadsideServiceTypeRequest
+	42, // 73: orders.roadside.v1.RoadsideDispatchService.ListRoadsidePrices:input_type -> orders.roadside.v1.ListRoadsidePricesRequest
+	44, // 74: orders.roadside.v1.RoadsideDispatchService.SetRoadsidePrice:input_type -> orders.roadside.v1.SetRoadsidePriceRequest
+	46, // 75: orders.roadside.v1.RoadsidePartnerService.ListAvailableRoadsideOrders:input_type -> orders.roadside.v1.ListAvailableRoadsideOrdersRequest
+	48, // 76: orders.roadside.v1.RoadsidePartnerService.ClaimRoadsideOrder:input_type -> orders.roadside.v1.ClaimRoadsideOrderRequest
+	50, // 77: orders.roadside.v1.RoadsidePartnerService.ListOrganizationRoadsideOrders:input_type -> orders.roadside.v1.ListOrganizationRoadsideOrdersRequest
+	52, // 78: orders.roadside.v1.RoadsidePartnerService.AdvancePartnerRoadsideOrder:input_type -> orders.roadside.v1.AdvancePartnerRoadsideOrderRequest
+	13, // 79: orders.roadside.v1.RoadsideService.ListRoadsideServices:output_type -> orders.roadside.v1.ListRoadsideServicesResponse
+	15, // 80: orders.roadside.v1.RoadsideService.CalculateRoadsidePrice:output_type -> orders.roadside.v1.CalculateRoadsidePriceResponse
+	17, // 81: orders.roadside.v1.RoadsideService.CreateRoadsideOrder:output_type -> orders.roadside.v1.CreateRoadsideOrderResponse
+	19, // 82: orders.roadside.v1.RoadsideService.GetRoadsideOrder:output_type -> orders.roadside.v1.GetRoadsideOrderResponse
+	21, // 83: orders.roadside.v1.RoadsideService.ListMyRoadsideOrders:output_type -> orders.roadside.v1.ListMyRoadsideOrdersResponse
+	23, // 84: orders.roadside.v1.RoadsideService.CancelRoadsideOrder:output_type -> orders.roadside.v1.CancelRoadsideOrderResponse
+	25, // 85: orders.roadside.v1.RoadsideDispatchService.ListRoadsideOrders:output_type -> orders.roadside.v1.ListRoadsideOrdersResponse
+	27, // 86: orders.roadside.v1.RoadsideDispatchService.GetRoadsideOrderCard:output_type -> orders.roadside.v1.GetRoadsideOrderCardResponse
+	31, // 87: orders.roadside.v1.RoadsideDispatchService.AssignRoadsideOrder:output_type -> orders.roadside.v1.AssignRoadsideOrderResponse
+	33, // 88: orders.roadside.v1.RoadsideDispatchService.RevokeRoadsideAssignment:output_type -> orders.roadside.v1.RevokeRoadsideAssignmentResponse
+	35, // 89: orders.roadside.v1.RoadsideDispatchService.AdvanceRoadsideOrder:output_type -> orders.roadside.v1.AdvanceRoadsideOrderResponse
+	37, // 90: orders.roadside.v1.RoadsideDispatchService.CancelRoadsideOrderByOperator:output_type -> orders.roadside.v1.CancelRoadsideOrderByOperatorResponse
+	39, // 91: orders.roadside.v1.RoadsideDispatchService.ListRoadsideServiceTypes:output_type -> orders.roadside.v1.ListRoadsideServiceTypesResponse
+	41, // 92: orders.roadside.v1.RoadsideDispatchService.UpsertRoadsideServiceType:output_type -> orders.roadside.v1.UpsertRoadsideServiceTypeResponse
+	43, // 93: orders.roadside.v1.RoadsideDispatchService.ListRoadsidePrices:output_type -> orders.roadside.v1.ListRoadsidePricesResponse
+	45, // 94: orders.roadside.v1.RoadsideDispatchService.SetRoadsidePrice:output_type -> orders.roadside.v1.SetRoadsidePriceResponse
+	47, // 95: orders.roadside.v1.RoadsidePartnerService.ListAvailableRoadsideOrders:output_type -> orders.roadside.v1.ListAvailableRoadsideOrdersResponse
+	49, // 96: orders.roadside.v1.RoadsidePartnerService.ClaimRoadsideOrder:output_type -> orders.roadside.v1.ClaimRoadsideOrderResponse
+	51, // 97: orders.roadside.v1.RoadsidePartnerService.ListOrganizationRoadsideOrders:output_type -> orders.roadside.v1.ListOrganizationRoadsideOrdersResponse
+	53, // 98: orders.roadside.v1.RoadsidePartnerService.AdvancePartnerRoadsideOrder:output_type -> orders.roadside.v1.AdvancePartnerRoadsideOrderResponse
+	79, // [79:99] is the sub-list for method output_type
+	59, // [59:79] is the sub-list for method input_type
+	59, // [59:59] is the sub-list for extension type_name
+	59, // [59:59] is the sub-list for extension extendee
+	0,  // [0:59] is the sub-list for field type_name
 }
 
 func init() { file_orders_roadside_v1_roadside_proto_init() }

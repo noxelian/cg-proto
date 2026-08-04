@@ -356,6 +356,11 @@ message GetRoadsideOrderRequest {
 
 message GetRoadsideOrderResponse {
   RoadsideOrder order = 1;
+  // Current owner-visible assignment. This is separate from RoadsideOrder so
+  // list/feed consumers do not receive dispatcher notes or provider contacts.
+  // It is active while work is in progress and completed after the order is
+  // finished. Revoked assignments remain available only on the admin card.
+  RoadsideAssignment assignment = 2;
 }
 
 message ListMyRoadsideOrdersRequest {
