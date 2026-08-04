@@ -11,6 +11,7 @@ service NotificationService {
   rpc SendSMS(SendSMSRequest) returns (SendSMSResponse);
   rpc SendEmail(SendEmailRequest) returns (SendEmailResponse);
   rpc GetNotifications(GetNotificationsRequest) returns (GetNotificationsResponse);
+  rpc GetNotificationStreams(GetNotificationStreamsRequest) returns (GetNotificationStreamsResponse);
   rpc MarkAsRead(MarkAsReadRequest) returns (MarkAsReadResponse);
   rpc GetUnreadCount(GetUnreadCountRequest) returns (GetUnreadCountResponse);
   rpc RegisterDevice(RegisterDeviceRequest) returns (RegisterDeviceResponse);
@@ -41,6 +42,18 @@ enum NotificationCategory {
   // PAYMENT covers transactional payment notifications (charge succeeded,
   // refund, etc.). Treated as critical: not gated by user preferences.
   NOTIFICATION_CATEGORY_PAYMENT = 6;
+  // CART covers cart expiry/reminder and checkout lifecycle notifications.
+  NOTIFICATION_CATEGORY_CART = 7;
+}
+
+// NotificationStream is the customer-facing inbox split. It deliberately
+// groups several internal categories while keeping chat notifications out of
+// the notification centre because chat has its own conversation list.
+enum NotificationStream {
+  NOTIFICATION_STREAM_UNSPECIFIED = 0;
+  NOTIFICATION_STREAM_ACTIVITY = 1;
+  NOTIFICATION_STREAM_PAYMENTS = 2;
+  NOTIFICATION_STREAM_NEWS = 3;
 }
 
 message Notification {
@@ -120,6 +133,7 @@ message GetNotificationsRequest {
   bool unread_only = 3;
   int32 page = 4;
   int32 page_size = 5;
+  NotificationStream stream = 6;
 }
 
 message GetNotificationsResponse {
@@ -127,10 +141,27 @@ message GetNotificationsResponse {
   int32 total = 2;
 }
 
+message NotificationStreamSummary {
+  NotificationStream stream = 1;
+  Notification latest_notification = 2;
+  int32 unread_count = 3;
+}
+
+message GetNotificationStreamsRequest {
+  int64 user_id = 1;
+}
+
+message GetNotificationStreamsResponse {
+  repeated NotificationStreamSummary streams = 1;
+}
+
 message MarkAsReadRequest {
   int64 user_id = 1;
   repeated string notification_ids = 2;
   bool mark_all = 3;
+  // When mark_all is true, scopes the bulk action to one customer-facing
+  // stream. UNSPECIFIED preserves the legacy all-notifications behavior.
+  NotificationStream stream = 4;
 }
 
 message MarkAsReadResponse {

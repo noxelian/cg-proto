@@ -19,19 +19,20 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	NotificationService_SendPush_FullMethodName          = "/communication.notification.v1.NotificationService/SendPush"
-	NotificationService_SendSMS_FullMethodName           = "/communication.notification.v1.NotificationService/SendSMS"
-	NotificationService_SendEmail_FullMethodName         = "/communication.notification.v1.NotificationService/SendEmail"
-	NotificationService_GetNotifications_FullMethodName  = "/communication.notification.v1.NotificationService/GetNotifications"
-	NotificationService_MarkAsRead_FullMethodName        = "/communication.notification.v1.NotificationService/MarkAsRead"
-	NotificationService_GetUnreadCount_FullMethodName    = "/communication.notification.v1.NotificationService/GetUnreadCount"
-	NotificationService_RegisterDevice_FullMethodName    = "/communication.notification.v1.NotificationService/RegisterDevice"
-	NotificationService_UnregisterDevice_FullMethodName  = "/communication.notification.v1.NotificationService/UnregisterDevice"
-	NotificationService_UpdateDevice_FullMethodName      = "/communication.notification.v1.NotificationService/UpdateDevice"
-	NotificationService_ListUserDevices_FullMethodName   = "/communication.notification.v1.NotificationService/ListUserDevices"
-	NotificationService_GetSMSBalance_FullMethodName     = "/communication.notification.v1.NotificationService/GetSMSBalance"
-	NotificationService_GetPreferences_FullMethodName    = "/communication.notification.v1.NotificationService/GetPreferences"
-	NotificationService_UpdatePreferences_FullMethodName = "/communication.notification.v1.NotificationService/UpdatePreferences"
+	NotificationService_SendPush_FullMethodName               = "/communication.notification.v1.NotificationService/SendPush"
+	NotificationService_SendSMS_FullMethodName                = "/communication.notification.v1.NotificationService/SendSMS"
+	NotificationService_SendEmail_FullMethodName              = "/communication.notification.v1.NotificationService/SendEmail"
+	NotificationService_GetNotifications_FullMethodName       = "/communication.notification.v1.NotificationService/GetNotifications"
+	NotificationService_GetNotificationStreams_FullMethodName = "/communication.notification.v1.NotificationService/GetNotificationStreams"
+	NotificationService_MarkAsRead_FullMethodName             = "/communication.notification.v1.NotificationService/MarkAsRead"
+	NotificationService_GetUnreadCount_FullMethodName         = "/communication.notification.v1.NotificationService/GetUnreadCount"
+	NotificationService_RegisterDevice_FullMethodName         = "/communication.notification.v1.NotificationService/RegisterDevice"
+	NotificationService_UnregisterDevice_FullMethodName       = "/communication.notification.v1.NotificationService/UnregisterDevice"
+	NotificationService_UpdateDevice_FullMethodName           = "/communication.notification.v1.NotificationService/UpdateDevice"
+	NotificationService_ListUserDevices_FullMethodName        = "/communication.notification.v1.NotificationService/ListUserDevices"
+	NotificationService_GetSMSBalance_FullMethodName          = "/communication.notification.v1.NotificationService/GetSMSBalance"
+	NotificationService_GetPreferences_FullMethodName         = "/communication.notification.v1.NotificationService/GetPreferences"
+	NotificationService_UpdatePreferences_FullMethodName      = "/communication.notification.v1.NotificationService/UpdatePreferences"
 )
 
 // NotificationServiceClient is the client API for NotificationService service.
@@ -42,6 +43,7 @@ type NotificationServiceClient interface {
 	SendSMS(ctx context.Context, in *SendSMSRequest, opts ...grpc.CallOption) (*SendSMSResponse, error)
 	SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*SendEmailResponse, error)
 	GetNotifications(ctx context.Context, in *GetNotificationsRequest, opts ...grpc.CallOption) (*GetNotificationsResponse, error)
+	GetNotificationStreams(ctx context.Context, in *GetNotificationStreamsRequest, opts ...grpc.CallOption) (*GetNotificationStreamsResponse, error)
 	MarkAsRead(ctx context.Context, in *MarkAsReadRequest, opts ...grpc.CallOption) (*MarkAsReadResponse, error)
 	GetUnreadCount(ctx context.Context, in *GetUnreadCountRequest, opts ...grpc.CallOption) (*GetUnreadCountResponse, error)
 	RegisterDevice(ctx context.Context, in *RegisterDeviceRequest, opts ...grpc.CallOption) (*RegisterDeviceResponse, error)
@@ -96,6 +98,16 @@ func (c *notificationServiceClient) GetNotifications(ctx context.Context, in *Ge
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetNotificationsResponse)
 	err := c.cc.Invoke(ctx, NotificationService_GetNotifications_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notificationServiceClient) GetNotificationStreams(ctx context.Context, in *GetNotificationStreamsRequest, opts ...grpc.CallOption) (*GetNotificationStreamsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetNotificationStreamsResponse)
+	err := c.cc.Invoke(ctx, NotificationService_GetNotificationStreams_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -200,6 +212,7 @@ type NotificationServiceServer interface {
 	SendSMS(context.Context, *SendSMSRequest) (*SendSMSResponse, error)
 	SendEmail(context.Context, *SendEmailRequest) (*SendEmailResponse, error)
 	GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error)
+	GetNotificationStreams(context.Context, *GetNotificationStreamsRequest) (*GetNotificationStreamsResponse, error)
 	MarkAsRead(context.Context, *MarkAsReadRequest) (*MarkAsReadResponse, error)
 	GetUnreadCount(context.Context, *GetUnreadCountRequest) (*GetUnreadCountResponse, error)
 	RegisterDevice(context.Context, *RegisterDeviceRequest) (*RegisterDeviceResponse, error)
@@ -231,6 +244,9 @@ func (UnimplementedNotificationServiceServer) SendEmail(context.Context, *SendEm
 }
 func (UnimplementedNotificationServiceServer) GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetNotifications not implemented")
+}
+func (UnimplementedNotificationServiceServer) GetNotificationStreams(context.Context, *GetNotificationStreamsRequest) (*GetNotificationStreamsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetNotificationStreams not implemented")
 }
 func (UnimplementedNotificationServiceServer) MarkAsRead(context.Context, *MarkAsReadRequest) (*MarkAsReadResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method MarkAsRead not implemented")
@@ -348,6 +364,24 @@ func _NotificationService_GetNotifications_Handler(srv interface{}, ctx context.
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(NotificationServiceServer).GetNotifications(ctx, req.(*GetNotificationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NotificationService_GetNotificationStreams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNotificationStreamsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationServiceServer).GetNotificationStreams(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationService_GetNotificationStreams_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationServiceServer).GetNotificationStreams(ctx, req.(*GetNotificationStreamsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -536,6 +570,10 @@ var NotificationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetNotifications",
 			Handler:    _NotificationService_GetNotifications_Handler,
+		},
+		{
+			MethodName: "GetNotificationStreams",
+			Handler:    _NotificationService_GetNotificationStreams_Handler,
 		},
 		{
 			MethodName: "MarkAsRead",
