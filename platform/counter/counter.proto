@@ -91,6 +91,8 @@ message ResetRoadsidePurchasesUnreadRequest {
 message ResetRoadsidePurchasesUnreadResponse {
   bool success = 1;
   int32 roadside_purchases_unread = 2;
+  // Remaining unread changes in the filter selected by the request.
+  int32 state_unread = 3;
 }
 
 message GetBadgeTotalRequest {

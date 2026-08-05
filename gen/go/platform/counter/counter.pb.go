@@ -716,8 +716,10 @@ type ResetRoadsidePurchasesUnreadResponse struct {
 	state                   protoimpl.MessageState `protogen:"open.v1"`
 	Success                 bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	RoadsidePurchasesUnread int32                  `protobuf:"varint,2,opt,name=roadside_purchases_unread,json=roadsidePurchasesUnread,proto3" json:"roadside_purchases_unread,omitempty"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	// Remaining unread changes in the filter selected by the request.
+	StateUnread   int32 `protobuf:"varint,3,opt,name=state_unread,json=stateUnread,proto3" json:"state_unread,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ResetRoadsidePurchasesUnreadResponse) Reset() {
@@ -760,6 +762,13 @@ func (x *ResetRoadsidePurchasesUnreadResponse) GetSuccess() bool {
 func (x *ResetRoadsidePurchasesUnreadResponse) GetRoadsidePurchasesUnread() int32 {
 	if x != nil {
 		return x.RoadsidePurchasesUnread
+	}
+	return 0
+}
+
+func (x *ResetRoadsidePurchasesUnreadResponse) GetStateUnread() int32 {
+	if x != nil {
+		return x.StateUnread
 	}
 	return 0
 }
@@ -903,10 +912,11 @@ const file_platform_counter_counter_proto_rawDesc = "" +
 	"\x06cursor\x18\x01 \x01(\x04R\x06cursor\"\x80\x01\n" +
 	"#ResetRoadsidePurchasesUnreadRequest\x12A\n" +
 	"\x05state\x18\x01 \x01(\x0e2+.platform.counter.v1.RoadsidePurchasesStateR\x05state\x12\x16\n" +
-	"\x06cursor\x18\x02 \x01(\x04R\x06cursor\"|\n" +
+	"\x06cursor\x18\x02 \x01(\x04R\x06cursor\"\x9f\x01\n" +
 	"$ResetRoadsidePurchasesUnreadResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12:\n" +
-	"\x19roadside_purchases_unread\x18\x02 \x01(\x05R\x17roadsidePurchasesUnread\"/\n" +
+	"\x19roadside_purchases_unread\x18\x02 \x01(\x05R\x17roadsidePurchasesUnread\x12!\n" +
+	"\fstate_unread\x18\x03 \x01(\x05R\vstateUnread\"/\n" +
 	"\x14GetBadgeTotalRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xc4\x01\n" +
 	"\x15GetBadgeTotalResponse\x12\x14\n" +
