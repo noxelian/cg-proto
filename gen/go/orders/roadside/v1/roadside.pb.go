@@ -291,8 +291,14 @@ type RoadsideServiceType struct {
 	// zero means the duration is unknown and nothing is shown.
 	DurationMinMinutes int32 `protobuf:"varint,14,opt,name=duration_min_minutes,json=durationMinMinutes,proto3" json:"duration_min_minutes,omitempty"`
 	DurationMaxMinutes int32 `protobuf:"varint,15,opt,name=duration_max_minutes,json=durationMaxMinutes,proto3" json:"duration_max_minutes,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	// image_url points to the transparent service artwork rendered on catalogue
+	// cards. Empty keeps the client-owned fallback asset for rolling deploys.
+	ImageUrl string `protobuf:"bytes,16,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
+	// background_color is an opaque CSS hex color in #RRGGBB form. Empty keeps
+	// the client theme fallback, so older catalogue rows remain valid.
+	BackgroundColor string `protobuf:"bytes,17,opt,name=background_color,json=backgroundColor,proto3" json:"background_color,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *RoadsideServiceType) Reset() {
@@ -428,6 +434,20 @@ func (x *RoadsideServiceType) GetDurationMaxMinutes() int32 {
 		return x.DurationMaxMinutes
 	}
 	return 0
+}
+
+func (x *RoadsideServiceType) GetImageUrl() string {
+	if x != nil {
+		return x.ImageUrl
+	}
+	return ""
+}
+
+func (x *RoadsideServiceType) GetBackgroundColor() string {
+	if x != nil {
+		return x.BackgroundColor
+	}
+	return ""
 }
 
 type RoadsidePrice struct {
@@ -4176,7 +4196,7 @@ var File_orders_roadside_v1_roadside_proto protoreflect.FileDescriptor
 
 const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\n" +
-	"!orders/roadside/v1/roadside.proto\x12\x12orders.roadside.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xbe\x04\n" +
+	"!orders/roadside/v1/roadside.proto\x12\x12orders.roadside.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x86\x05\n" +
 	"\x13RoadsideServiceType\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x19\n" +
 	"\btitle_ru\x18\x02 \x01(\tR\atitleRu\x12\x19\n" +
@@ -4194,7 +4214,9 @@ const file_orders_roadside_v1_roadside_proto_rawDesc = "" +
 	"\x0edescription_kk\x18\f \x01(\tR\rdescriptionKk\x12%\n" +
 	"\x0edescription_en\x18\r \x01(\tR\rdescriptionEn\x120\n" +
 	"\x14duration_min_minutes\x18\x0e \x01(\x05R\x12durationMinMinutes\x120\n" +
-	"\x14duration_max_minutes\x18\x0f \x01(\x05R\x12durationMaxMinutes\"\xd4\x02\n" +
+	"\x14duration_max_minutes\x18\x0f \x01(\x05R\x12durationMaxMinutes\x12\x1b\n" +
+	"\timage_url\x18\x10 \x01(\tR\bimageUrl\x12)\n" +
+	"\x10background_color\x18\x11 \x01(\tR\x0fbackgroundColor\"\xd4\x02\n" +
 	"\rRoadsidePrice\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
 	"\fservice_code\x18\x02 \x01(\tR\vserviceCode\x12\x17\n" +

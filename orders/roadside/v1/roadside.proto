@@ -186,6 +186,12 @@ message RoadsideServiceType {
   // zero means the duration is unknown and nothing is shown.
   int32 duration_min_minutes = 14;
   int32 duration_max_minutes = 15;
+  // image_url points to the transparent service artwork rendered on catalogue
+  // cards. Empty keeps the client-owned fallback asset for rolling deploys.
+  string image_url = 16;
+  // background_color is an opaque CSS hex color in #RRGGBB form. Empty keeps
+  // the client theme fallback, so older catalogue rows remain valid.
+  string background_color = 17;
 }
 
 message RoadsidePrice {
