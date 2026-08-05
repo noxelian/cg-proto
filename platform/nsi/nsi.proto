@@ -111,6 +111,10 @@ message ServiceGroup {
   string slug = 3;
   string icon = 4;
   int32 sort_order = 5;
+  // skip_vehicle_filter lets product operators disable garage/car selection
+  // for group flows where the vehicle does not affect matching (for example,
+  // body repair). False preserves the legacy filter behavior.
+  bool skip_vehicle_filter = 6;
 }
 
 // Service Category represents a service category within a group
@@ -344,6 +348,7 @@ message CreateServiceGroupRequest {
   string slug = 2;
   string icon = 3;
   int32 sort_order = 4;
+  bool skip_vehicle_filter = 5;
 }
 message CreateServiceGroupResponse { ServiceGroup group = 1; }
 
@@ -353,6 +358,7 @@ message UpdateServiceGroupRequest {
   string slug = 3;
   string icon = 4;
   int32 sort_order = 5;
+  optional bool skip_vehicle_filter = 6;
 }
 message UpdateServiceGroupResponse { ServiceGroup group = 1; }
 
@@ -379,4 +385,3 @@ message UpdateServiceCategoryResponse { ServiceCategory category = 1; }
 
 message DeleteServiceCategoryRequest { int64 id = 1; }
 message DeleteServiceCategoryResponse {}
-

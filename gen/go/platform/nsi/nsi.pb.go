@@ -419,14 +419,18 @@ func (x *Category) GetSortOrder() int32 {
 
 // Service Group represents a service group (СТО, Кузовные, Запчасти, Шины, Автомойка)
 type ServiceGroup struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Slug          string                 `protobuf:"bytes,3,opt,name=slug,proto3" json:"slug,omitempty"`
-	Icon          string                 `protobuf:"bytes,4,opt,name=icon,proto3" json:"icon,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name      string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Slug      string                 `protobuf:"bytes,3,opt,name=slug,proto3" json:"slug,omitempty"`
+	Icon      string                 `protobuf:"bytes,4,opt,name=icon,proto3" json:"icon,omitempty"`
+	SortOrder int32                  `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	// skip_vehicle_filter lets product operators disable garage/car selection
+	// for group flows where the vehicle does not affect matching (for example,
+	// body repair). False preserves the legacy filter behavior.
+	SkipVehicleFilter bool `protobuf:"varint,6,opt,name=skip_vehicle_filter,json=skipVehicleFilter,proto3" json:"skip_vehicle_filter,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *ServiceGroup) Reset() {
@@ -492,6 +496,13 @@ func (x *ServiceGroup) GetSortOrder() int32 {
 		return x.SortOrder
 	}
 	return 0
+}
+
+func (x *ServiceGroup) GetSkipVehicleFilter() bool {
+	if x != nil {
+		return x.SkipVehicleFilter
+	}
+	return false
 }
 
 // Service Category represents a service category within a group
@@ -3120,13 +3131,14 @@ func (*DeleteCarGenerationResponse) Descriptor() ([]byte, []int) {
 
 // --- Service Groups ---
 type CreateServiceGroupRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Slug          string                 `protobuf:"bytes,2,opt,name=slug,proto3" json:"slug,omitempty"`
-	Icon          string                 `protobuf:"bytes,3,opt,name=icon,proto3" json:"icon,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,4,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Name              string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Slug              string                 `protobuf:"bytes,2,opt,name=slug,proto3" json:"slug,omitempty"`
+	Icon              string                 `protobuf:"bytes,3,opt,name=icon,proto3" json:"icon,omitempty"`
+	SortOrder         int32                  `protobuf:"varint,4,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	SkipVehicleFilter bool                   `protobuf:"varint,5,opt,name=skip_vehicle_filter,json=skipVehicleFilter,proto3" json:"skip_vehicle_filter,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *CreateServiceGroupRequest) Reset() {
@@ -3187,6 +3199,13 @@ func (x *CreateServiceGroupRequest) GetSortOrder() int32 {
 	return 0
 }
 
+func (x *CreateServiceGroupRequest) GetSkipVehicleFilter() bool {
+	if x != nil {
+		return x.SkipVehicleFilter
+	}
+	return false
+}
+
 type CreateServiceGroupResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Group         *ServiceGroup          `protobuf:"bytes,1,opt,name=group,proto3" json:"group,omitempty"`
@@ -3232,14 +3251,15 @@ func (x *CreateServiceGroupResponse) GetGroup() *ServiceGroup {
 }
 
 type UpdateServiceGroupRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Slug          string                 `protobuf:"bytes,3,opt,name=slug,proto3" json:"slug,omitempty"`
-	Icon          string                 `protobuf:"bytes,4,opt,name=icon,proto3" json:"icon,omitempty"`
-	SortOrder     int32                  `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Id                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name              string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Slug              string                 `protobuf:"bytes,3,opt,name=slug,proto3" json:"slug,omitempty"`
+	Icon              string                 `protobuf:"bytes,4,opt,name=icon,proto3" json:"icon,omitempty"`
+	SortOrder         int32                  `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	SkipVehicleFilter *bool                  `protobuf:"varint,6,opt,name=skip_vehicle_filter,json=skipVehicleFilter,proto3,oneof" json:"skip_vehicle_filter,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *UpdateServiceGroupRequest) Reset() {
@@ -3305,6 +3325,13 @@ func (x *UpdateServiceGroupRequest) GetSortOrder() int32 {
 		return x.SortOrder
 	}
 	return 0
+}
+
+func (x *UpdateServiceGroupRequest) GetSkipVehicleFilter() bool {
+	if x != nil && x.SkipVehicleFilter != nil {
+		return *x.SkipVehicleFilter
+	}
+	return false
 }
 
 type UpdateServiceGroupResponse struct {
@@ -3782,14 +3809,15 @@ const file_platform_nsi_nsi_proto_rawDesc = "" +
 	"\x04slug\x18\x04 \x01(\tR\x04slug\x12\x19\n" +
 	"\bicon_url\x18\x05 \x01(\tR\aiconUrl\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\x06 \x01(\x05R\tsortOrder\"y\n" +
+	"sort_order\x18\x06 \x01(\x05R\tsortOrder\"\xa9\x01\n" +
 	"\fServiceGroup\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
 	"\x04slug\x18\x03 \x01(\tR\x04slug\x12\x12\n" +
 	"\x04icon\x18\x04 \x01(\tR\x04icon\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\x05 \x01(\x05R\tsortOrder\"\x83\x01\n" +
+	"sort_order\x18\x05 \x01(\x05R\tsortOrder\x12.\n" +
+	"\x13skip_vehicle_filter\x18\x06 \x01(\bR\x11skipVehicleFilter\"\x83\x01\n" +
 	"\x0fServiceCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12\x12\n" +
@@ -3957,22 +3985,25 @@ const file_platform_nsi_nsi_proto_rawDesc = "" +
 	"generation\",\n" +
 	"\x1aDeleteCarGenerationRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\"\x1d\n" +
-	"\x1bDeleteCarGenerationResponse\"v\n" +
+	"\x1bDeleteCarGenerationResponse\"\xa6\x01\n" +
 	"\x19CreateServiceGroupRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04slug\x18\x02 \x01(\tR\x04slug\x12\x12\n" +
 	"\x04icon\x18\x03 \x01(\tR\x04icon\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\x04 \x01(\x05R\tsortOrder\"Q\n" +
+	"sort_order\x18\x04 \x01(\x05R\tsortOrder\x12.\n" +
+	"\x13skip_vehicle_filter\x18\x05 \x01(\bR\x11skipVehicleFilter\"Q\n" +
 	"\x1aCreateServiceGroupResponse\x123\n" +
-	"\x05group\x18\x01 \x01(\v2\x1d.platform.nsi.v1.ServiceGroupR\x05group\"\x86\x01\n" +
+	"\x05group\x18\x01 \x01(\v2\x1d.platform.nsi.v1.ServiceGroupR\x05group\"\xd3\x01\n" +
 	"\x19UpdateServiceGroupRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
 	"\x04slug\x18\x03 \x01(\tR\x04slug\x12\x12\n" +
 	"\x04icon\x18\x04 \x01(\tR\x04icon\x12\x1d\n" +
 	"\n" +
-	"sort_order\x18\x05 \x01(\x05R\tsortOrder\"Q\n" +
+	"sort_order\x18\x05 \x01(\x05R\tsortOrder\x123\n" +
+	"\x13skip_vehicle_filter\x18\x06 \x01(\bH\x00R\x11skipVehicleFilter\x88\x01\x01B\x16\n" +
+	"\x14_skip_vehicle_filter\"Q\n" +
 	"\x1aUpdateServiceGroupResponse\x123\n" +
 	"\x05group\x18\x01 \x01(\v2\x1d.platform.nsi.v1.ServiceGroupR\x05group\"+\n" +
 	"\x19DeleteServiceGroupRequest\x12\x0e\n" +
@@ -4218,6 +4249,7 @@ func file_platform_nsi_nsi_proto_init() {
 	if File_platform_nsi_nsi_proto != nil {
 		return
 	}
+	file_platform_nsi_nsi_proto_msgTypes[60].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
