@@ -19,33 +19,34 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GarageService_CreateCar_FullMethodName             = "/users.garage.v1.GarageService/CreateCar"
-	GarageService_GetCar_FullMethodName                = "/users.garage.v1.GarageService/GetCar"
-	GarageService_ListCars_FullMethodName              = "/users.garage.v1.GarageService/ListCars"
-	GarageService_UpdateCar_FullMethodName             = "/users.garage.v1.GarageService/UpdateCar"
-	GarageService_DeleteCar_FullMethodName             = "/users.garage.v1.GarageService/DeleteCar"
-	GarageService_FindOrCreateCar_FullMethodName       = "/users.garage.v1.GarageService/FindOrCreateCar"
-	GarageService_LookupVehicleByPlate_FullMethodName  = "/users.garage.v1.GarageService/LookupVehicleByPlate"
-	GarageService_AddCarPhoto_FullMethodName           = "/users.garage.v1.GarageService/AddCarPhoto"
-	GarageService_DeleteCarPhoto_FullMethodName        = "/users.garage.v1.GarageService/DeleteCarPhoto"
-	GarageService_SetPrimaryPhoto_FullMethodName       = "/users.garage.v1.GarageService/SetPrimaryPhoto"
-	GarageService_CreateDocument_FullMethodName        = "/users.garage.v1.GarageService/CreateDocument"
-	GarageService_GetDocument_FullMethodName           = "/users.garage.v1.GarageService/GetDocument"
-	GarageService_ListDocuments_FullMethodName         = "/users.garage.v1.GarageService/ListDocuments"
-	GarageService_UpdateDocument_FullMethodName        = "/users.garage.v1.GarageService/UpdateDocument"
-	GarageService_DeleteDocument_FullMethodName        = "/users.garage.v1.GarageService/DeleteDocument"
-	GarageService_CreateServiceRecord_FullMethodName   = "/users.garage.v1.GarageService/CreateServiceRecord"
-	GarageService_GetServiceRecord_FullMethodName      = "/users.garage.v1.GarageService/GetServiceRecord"
-	GarageService_ListServiceRecords_FullMethodName    = "/users.garage.v1.GarageService/ListServiceRecords"
-	GarageService_UpdateServiceRecord_FullMethodName   = "/users.garage.v1.GarageService/UpdateServiceRecord"
-	GarageService_DeleteServiceRecord_FullMethodName   = "/users.garage.v1.GarageService/DeleteServiceRecord"
-	GarageService_CreateReminder_FullMethodName        = "/users.garage.v1.GarageService/CreateReminder"
-	GarageService_GetReminder_FullMethodName           = "/users.garage.v1.GarageService/GetReminder"
-	GarageService_ListReminders_FullMethodName         = "/users.garage.v1.GarageService/ListReminders"
-	GarageService_ListUpcomingReminders_FullMethodName = "/users.garage.v1.GarageService/ListUpcomingReminders"
-	GarageService_UpdateReminder_FullMethodName        = "/users.garage.v1.GarageService/UpdateReminder"
-	GarageService_CompleteReminder_FullMethodName      = "/users.garage.v1.GarageService/CompleteReminder"
-	GarageService_DeleteReminder_FullMethodName        = "/users.garage.v1.GarageService/DeleteReminder"
+	GarageService_CreateCar_FullMethodName              = "/users.garage.v1.GarageService/CreateCar"
+	GarageService_GetCar_FullMethodName                 = "/users.garage.v1.GarageService/GetCar"
+	GarageService_ListCars_FullMethodName               = "/users.garage.v1.GarageService/ListCars"
+	GarageService_UpdateCar_FullMethodName              = "/users.garage.v1.GarageService/UpdateCar"
+	GarageService_DeleteCar_FullMethodName              = "/users.garage.v1.GarageService/DeleteCar"
+	GarageService_FindOrCreateCar_FullMethodName        = "/users.garage.v1.GarageService/FindOrCreateCar"
+	GarageService_LookupVehicleByPlate_FullMethodName   = "/users.garage.v1.GarageService/LookupVehicleByPlate"
+	GarageService_AddCarPhoto_FullMethodName            = "/users.garage.v1.GarageService/AddCarPhoto"
+	GarageService_DeleteCarPhoto_FullMethodName         = "/users.garage.v1.GarageService/DeleteCarPhoto"
+	GarageService_SetPrimaryPhoto_FullMethodName        = "/users.garage.v1.GarageService/SetPrimaryPhoto"
+	GarageService_CreateDocument_FullMethodName         = "/users.garage.v1.GarageService/CreateDocument"
+	GarageService_GetDocument_FullMethodName            = "/users.garage.v1.GarageService/GetDocument"
+	GarageService_ListDocuments_FullMethodName          = "/users.garage.v1.GarageService/ListDocuments"
+	GarageService_UpdateDocument_FullMethodName         = "/users.garage.v1.GarageService/UpdateDocument"
+	GarageService_DeleteDocument_FullMethodName         = "/users.garage.v1.GarageService/DeleteDocument"
+	GarageService_CreateServiceRecord_FullMethodName    = "/users.garage.v1.GarageService/CreateServiceRecord"
+	GarageService_GetServiceRecord_FullMethodName       = "/users.garage.v1.GarageService/GetServiceRecord"
+	GarageService_ListServiceRecords_FullMethodName     = "/users.garage.v1.GarageService/ListServiceRecords"
+	GarageService_UpdateServiceRecord_FullMethodName    = "/users.garage.v1.GarageService/UpdateServiceRecord"
+	GarageService_DeleteServiceRecord_FullMethodName    = "/users.garage.v1.GarageService/DeleteServiceRecord"
+	GarageService_CreateReminder_FullMethodName         = "/users.garage.v1.GarageService/CreateReminder"
+	GarageService_GetReminder_FullMethodName            = "/users.garage.v1.GarageService/GetReminder"
+	GarageService_ListReminders_FullMethodName          = "/users.garage.v1.GarageService/ListReminders"
+	GarageService_ListUpcomingReminders_FullMethodName  = "/users.garage.v1.GarageService/ListUpcomingReminders"
+	GarageService_UpdateReminder_FullMethodName         = "/users.garage.v1.GarageService/UpdateReminder"
+	GarageService_CompleteReminder_FullMethodName       = "/users.garage.v1.GarageService/CompleteReminder"
+	GarageService_DeleteReminder_FullMethodName         = "/users.garage.v1.GarageService/DeleteReminder"
+	GarageService_GetWorkshopIntakeParty_FullMethodName = "/users.garage.v1.GarageService/GetWorkshopIntakeParty"
 )
 
 // GarageServiceClient is the client API for GarageService service.
@@ -90,6 +91,16 @@ type GarageServiceClient interface {
 	UpdateReminder(ctx context.Context, in *UpdateReminderRequest, opts ...grpc.CallOption) (*UpdateReminderResponse, error)
 	CompleteReminder(ctx context.Context, in *CompleteReminderRequest, opts ...grpc.CallOption) (*CompleteReminderResponse, error)
 	DeleteReminder(ctx context.Context, in *DeleteReminderRequest, opts ...grpc.CallOption) (*DeleteReminderResponse, error)
+	// GetWorkshopIntakeParty is a narrow authoritative user/car read for CRM's
+	// workshop handoff assembly. It requires the exact verified service JWT
+	// identity UserID=0, phone=device_id="cg-crm"; human, BFF and direct
+	// cg-workshop callers are denied. cg-users verifies both rows and
+	// car.user_id == user_id, fails NOT_FOUND for missing rows and
+	// FAILED_PRECONDITION for a mismatched linkage, and returns only the user/car
+	// fields required for workshop intake.
+	// The organization/workshop/event/deal fields are mandatory audit binding
+	// context from CRM, not authority over cg-users records.
+	GetWorkshopIntakeParty(ctx context.Context, in *GetWorkshopIntakePartyRequest, opts ...grpc.CallOption) (*GetWorkshopIntakePartyResponse, error)
 }
 
 type garageServiceClient struct {
@@ -370,6 +381,16 @@ func (c *garageServiceClient) DeleteReminder(ctx context.Context, in *DeleteRemi
 	return out, nil
 }
 
+func (c *garageServiceClient) GetWorkshopIntakeParty(ctx context.Context, in *GetWorkshopIntakePartyRequest, opts ...grpc.CallOption) (*GetWorkshopIntakePartyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWorkshopIntakePartyResponse)
+	err := c.cc.Invoke(ctx, GarageService_GetWorkshopIntakeParty_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GarageServiceServer is the server API for GarageService service.
 // All implementations must embed UnimplementedGarageServiceServer
 // for forward compatibility.
@@ -412,6 +433,16 @@ type GarageServiceServer interface {
 	UpdateReminder(context.Context, *UpdateReminderRequest) (*UpdateReminderResponse, error)
 	CompleteReminder(context.Context, *CompleteReminderRequest) (*CompleteReminderResponse, error)
 	DeleteReminder(context.Context, *DeleteReminderRequest) (*DeleteReminderResponse, error)
+	// GetWorkshopIntakeParty is a narrow authoritative user/car read for CRM's
+	// workshop handoff assembly. It requires the exact verified service JWT
+	// identity UserID=0, phone=device_id="cg-crm"; human, BFF and direct
+	// cg-workshop callers are denied. cg-users verifies both rows and
+	// car.user_id == user_id, fails NOT_FOUND for missing rows and
+	// FAILED_PRECONDITION for a mismatched linkage, and returns only the user/car
+	// fields required for workshop intake.
+	// The organization/workshop/event/deal fields are mandatory audit binding
+	// context from CRM, not authority over cg-users records.
+	GetWorkshopIntakeParty(context.Context, *GetWorkshopIntakePartyRequest) (*GetWorkshopIntakePartyResponse, error)
 	mustEmbedUnimplementedGarageServiceServer()
 }
 
@@ -502,6 +533,9 @@ func (UnimplementedGarageServiceServer) CompleteReminder(context.Context, *Compl
 }
 func (UnimplementedGarageServiceServer) DeleteReminder(context.Context, *DeleteReminderRequest) (*DeleteReminderResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteReminder not implemented")
+}
+func (UnimplementedGarageServiceServer) GetWorkshopIntakeParty(context.Context, *GetWorkshopIntakePartyRequest) (*GetWorkshopIntakePartyResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetWorkshopIntakeParty not implemented")
 }
 func (UnimplementedGarageServiceServer) mustEmbedUnimplementedGarageServiceServer() {}
 func (UnimplementedGarageServiceServer) testEmbeddedByValue()                       {}
@@ -1010,6 +1044,24 @@ func _GarageService_DeleteReminder_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GarageService_GetWorkshopIntakeParty_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWorkshopIntakePartyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GarageServiceServer).GetWorkshopIntakeParty(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GarageService_GetWorkshopIntakeParty_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GarageServiceServer).GetWorkshopIntakeParty(ctx, req.(*GetWorkshopIntakePartyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GarageService_ServiceDesc is the grpc.ServiceDesc for GarageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1124,6 +1176,10 @@ var GarageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteReminder",
 			Handler:    _GarageService_DeleteReminder_Handler,
+		},
+		{
+			MethodName: "GetWorkshopIntakeParty",
+			Handler:    _GarageService_GetWorkshopIntakeParty_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -31,6 +31,7 @@ const (
 	WorkshopService_UpdateRepairOrderStatus_FullMethodName        = "/workshop.v1.WorkshopService/UpdateRepairOrderStatus"
 	WorkshopService_ListRepairOrders_FullMethodName               = "/workshop.v1.WorkshopService/ListRepairOrders"
 	WorkshopService_GetKanban_FullMethodName                      = "/workshop.v1.WorkshopService/GetKanban"
+	WorkshopService_AcceptVehicle_FullMethodName                  = "/workshop.v1.WorkshopService/AcceptVehicle"
 	WorkshopService_CreateCarWork_FullMethodName                  = "/workshop.v1.WorkshopService/CreateCarWork"
 	WorkshopService_UpdateCarWork_FullMethodName                  = "/workshop.v1.WorkshopService/UpdateCarWork"
 	WorkshopService_DeleteCarWork_FullMethodName                  = "/workshop.v1.WorkshopService/DeleteCarWork"
@@ -85,6 +86,7 @@ const (
 	WorkshopService_SendForApproval_FullMethodName                = "/workshop.v1.WorkshopService/SendForApproval"
 	WorkshopService_ApproveEstimate_FullMethodName                = "/workshop.v1.WorkshopService/ApproveEstimate"
 	WorkshopService_RejectEstimate_FullMethodName                 = "/workshop.v1.WorkshopService/RejectEstimate"
+	WorkshopService_CreateIntakeOrderFromCRM_FullMethodName       = "/workshop.v1.WorkshopService/CreateIntakeOrderFromCRM"
 	WorkshopService_CreateOrderFromCRM_FullMethodName             = "/workshop.v1.WorkshopService/CreateOrderFromCRM"
 	WorkshopService_SyncCRMDeals_FullMethodName                   = "/workshop.v1.WorkshopService/SyncCRMDeals"
 	WorkshopService_GetCRMSyncStatus_FullMethodName               = "/workshop.v1.WorkshopService/GetCRMSyncStatus"
@@ -97,6 +99,7 @@ const (
 	WorkshopService_MarkPaidManual_FullMethodName                 = "/workshop.v1.WorkshopService/MarkPaidManual"
 	WorkshopService_CancelPayment_FullMethodName                  = "/workshop.v1.WorkshopService/CancelPayment"
 	WorkshopService_GetPaymentHistory_FullMethodName              = "/workshop.v1.WorkshopService/GetPaymentHistory"
+	WorkshopService_GetRepairOrderPaymentTarget_FullMethodName    = "/workshop.v1.WorkshopService/GetRepairOrderPaymentTarget"
 	WorkshopService_GetWarrantyOrders_FullMethodName              = "/workshop.v1.WorkshopService/GetWarrantyOrders"
 	WorkshopService_ConfirmOrderCompletionByClient_FullMethodName = "/workshop.v1.WorkshopService/ConfirmOrderCompletionByClient"
 	WorkshopService_RequestAVRSigningCode_FullMethodName          = "/workshop.v1.WorkshopService/RequestAVRSigningCode"
@@ -126,6 +129,10 @@ type WorkshopServiceClient interface {
 	UpdateRepairOrderStatus(ctx context.Context, in *UpdateRepairOrderStatusRequest, opts ...grpc.CallOption) (*UpdateRepairOrderStatusResponse, error)
 	ListRepairOrders(ctx context.Context, in *ListRepairOrdersRequest, opts ...grpc.CallOption) (*ListRepairOrdersResponse, error)
 	GetKanban(ctx context.Context, in *GetKanbanRequest, opts ...grpc.CallOption) (*GetKanbanResponse, error)
+	// AcceptVehicle is the explicit V2 arrival command. The authenticated
+	// principal is the audit actor; caller-supplied identity is never trusted.
+	// See AcceptVehicleRequest for the mandatory replay/conflict contract.
+	AcceptVehicle(ctx context.Context, in *AcceptVehicleRequest, opts ...grpc.CallOption) (*AcceptVehicleResponse, error)
 	// --- Car Work ---
 	CreateCarWork(ctx context.Context, in *CreateCarWorkRequest, opts ...grpc.CallOption) (*CreateCarWorkResponse, error)
 	UpdateCarWork(ctx context.Context, in *UpdateCarWorkRequest, opts ...grpc.CallOption) (*UpdateCarWorkResponse, error)
@@ -193,6 +200,12 @@ type WorkshopServiceClient interface {
 	ApproveEstimate(ctx context.Context, in *ApproveEstimateRequest, opts ...grpc.CallOption) (*ApproveEstimateResponse, error)
 	RejectEstimate(ctx context.Context, in *RejectEstimateRequest, opts ...grpc.CallOption) (*RejectEstimateResponse, error)
 	// --- CRM Integration ---
+	// CreateIntakeOrderFromCRM is reserved for the idempotent V2 CRM event
+	// consumer and controlled replay tooling. Human/BFF intake must not use it
+	// to orchestrate CRM and workshop synchronously. The request contains only
+	// routing/linkage identifiers; cg-workshop resolves every tenant, customer,
+	// car and display field from authoritative records before writing.
+	CreateIntakeOrderFromCRM(ctx context.Context, in *CreateIntakeOrderFromCRMRequest, opts ...grpc.CallOption) (*CreateIntakeOrderFromCRMResponse, error)
 	CreateOrderFromCRM(ctx context.Context, in *CreateOrderFromCRMRequest, opts ...grpc.CallOption) (*CreateOrderFromCRMResponse, error)
 	SyncCRMDeals(ctx context.Context, in *SyncCRMDealsRequest, opts ...grpc.CallOption) (*SyncCRMDealsResponse, error)
 	GetCRMSyncStatus(ctx context.Context, in *GetCRMSyncStatusRequest, opts ...grpc.CallOption) (*GetCRMSyncStatusResponse, error)
@@ -208,6 +221,9 @@ type WorkshopServiceClient interface {
 	MarkPaidManual(ctx context.Context, in *MarkPaidManualRequest, opts ...grpc.CallOption) (*MarkPaidManualResponse, error)
 	CancelPayment(ctx context.Context, in *CancelPaymentRequest, opts ...grpc.CallOption) (*CancelPaymentResponse, error)
 	GetPaymentHistory(ctx context.Context, in *GetPaymentHistoryRequest, opts ...grpc.CallOption) (*GetPaymentHistoryResponse, error)
+	// GetRepairOrderPaymentTarget is a read-only service-to-service contract for
+	// cg-payments. It returns owner-authoritative whole-tenge payment facts.
+	GetRepairOrderPaymentTarget(ctx context.Context, in *GetRepairOrderPaymentTargetRequest, opts ...grpc.CallOption) (*GetRepairOrderPaymentTargetResponse, error)
 	// --- Warranty ---
 	GetWarrantyOrders(ctx context.Context, in *GetWarrantyOrdersRequest, opts ...grpc.CallOption) (*GetWarrantyOrdersResponse, error)
 	// --- Client completion confirmation ---
@@ -347,6 +363,16 @@ func (c *workshopServiceClient) GetKanban(ctx context.Context, in *GetKanbanRequ
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetKanbanResponse)
 	err := c.cc.Invoke(ctx, WorkshopService_GetKanban_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workshopServiceClient) AcceptVehicle(ctx context.Context, in *AcceptVehicleRequest, opts ...grpc.CallOption) (*AcceptVehicleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AcceptVehicleResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_AcceptVehicle_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -893,6 +919,16 @@ func (c *workshopServiceClient) RejectEstimate(ctx context.Context, in *RejectEs
 	return out, nil
 }
 
+func (c *workshopServiceClient) CreateIntakeOrderFromCRM(ctx context.Context, in *CreateIntakeOrderFromCRMRequest, opts ...grpc.CallOption) (*CreateIntakeOrderFromCRMResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateIntakeOrderFromCRMResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_CreateIntakeOrderFromCRM_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *workshopServiceClient) CreateOrderFromCRM(ctx context.Context, in *CreateOrderFromCRMRequest, opts ...grpc.CallOption) (*CreateOrderFromCRMResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateOrderFromCRMResponse)
@@ -1013,6 +1049,16 @@ func (c *workshopServiceClient) GetPaymentHistory(ctx context.Context, in *GetPa
 	return out, nil
 }
 
+func (c *workshopServiceClient) GetRepairOrderPaymentTarget(ctx context.Context, in *GetRepairOrderPaymentTargetRequest, opts ...grpc.CallOption) (*GetRepairOrderPaymentTargetResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRepairOrderPaymentTargetResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_GetRepairOrderPaymentTarget_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *workshopServiceClient) GetWarrantyOrders(ctx context.Context, in *GetWarrantyOrdersRequest, opts ...grpc.CallOption) (*GetWarrantyOrdersResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetWarrantyOrdersResponse)
@@ -1094,6 +1140,10 @@ type WorkshopServiceServer interface {
 	UpdateRepairOrderStatus(context.Context, *UpdateRepairOrderStatusRequest) (*UpdateRepairOrderStatusResponse, error)
 	ListRepairOrders(context.Context, *ListRepairOrdersRequest) (*ListRepairOrdersResponse, error)
 	GetKanban(context.Context, *GetKanbanRequest) (*GetKanbanResponse, error)
+	// AcceptVehicle is the explicit V2 arrival command. The authenticated
+	// principal is the audit actor; caller-supplied identity is never trusted.
+	// See AcceptVehicleRequest for the mandatory replay/conflict contract.
+	AcceptVehicle(context.Context, *AcceptVehicleRequest) (*AcceptVehicleResponse, error)
 	// --- Car Work ---
 	CreateCarWork(context.Context, *CreateCarWorkRequest) (*CreateCarWorkResponse, error)
 	UpdateCarWork(context.Context, *UpdateCarWorkRequest) (*UpdateCarWorkResponse, error)
@@ -1161,6 +1211,12 @@ type WorkshopServiceServer interface {
 	ApproveEstimate(context.Context, *ApproveEstimateRequest) (*ApproveEstimateResponse, error)
 	RejectEstimate(context.Context, *RejectEstimateRequest) (*RejectEstimateResponse, error)
 	// --- CRM Integration ---
+	// CreateIntakeOrderFromCRM is reserved for the idempotent V2 CRM event
+	// consumer and controlled replay tooling. Human/BFF intake must not use it
+	// to orchestrate CRM and workshop synchronously. The request contains only
+	// routing/linkage identifiers; cg-workshop resolves every tenant, customer,
+	// car and display field from authoritative records before writing.
+	CreateIntakeOrderFromCRM(context.Context, *CreateIntakeOrderFromCRMRequest) (*CreateIntakeOrderFromCRMResponse, error)
 	CreateOrderFromCRM(context.Context, *CreateOrderFromCRMRequest) (*CreateOrderFromCRMResponse, error)
 	SyncCRMDeals(context.Context, *SyncCRMDealsRequest) (*SyncCRMDealsResponse, error)
 	GetCRMSyncStatus(context.Context, *GetCRMSyncStatusRequest) (*GetCRMSyncStatusResponse, error)
@@ -1176,6 +1232,9 @@ type WorkshopServiceServer interface {
 	MarkPaidManual(context.Context, *MarkPaidManualRequest) (*MarkPaidManualResponse, error)
 	CancelPayment(context.Context, *CancelPaymentRequest) (*CancelPaymentResponse, error)
 	GetPaymentHistory(context.Context, *GetPaymentHistoryRequest) (*GetPaymentHistoryResponse, error)
+	// GetRepairOrderPaymentTarget is a read-only service-to-service contract for
+	// cg-payments. It returns owner-authoritative whole-tenge payment facts.
+	GetRepairOrderPaymentTarget(context.Context, *GetRepairOrderPaymentTargetRequest) (*GetRepairOrderPaymentTargetResponse, error)
 	// --- Warranty ---
 	GetWarrantyOrders(context.Context, *GetWarrantyOrdersRequest) (*GetWarrantyOrdersResponse, error)
 	// --- Client completion confirmation ---
@@ -1236,6 +1295,9 @@ func (UnimplementedWorkshopServiceServer) ListRepairOrders(context.Context, *Lis
 }
 func (UnimplementedWorkshopServiceServer) GetKanban(context.Context, *GetKanbanRequest) (*GetKanbanResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetKanban not implemented")
+}
+func (UnimplementedWorkshopServiceServer) AcceptVehicle(context.Context, *AcceptVehicleRequest) (*AcceptVehicleResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AcceptVehicle not implemented")
 }
 func (UnimplementedWorkshopServiceServer) CreateCarWork(context.Context, *CreateCarWorkRequest) (*CreateCarWorkResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateCarWork not implemented")
@@ -1399,6 +1461,9 @@ func (UnimplementedWorkshopServiceServer) ApproveEstimate(context.Context, *Appr
 func (UnimplementedWorkshopServiceServer) RejectEstimate(context.Context, *RejectEstimateRequest) (*RejectEstimateResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RejectEstimate not implemented")
 }
+func (UnimplementedWorkshopServiceServer) CreateIntakeOrderFromCRM(context.Context, *CreateIntakeOrderFromCRMRequest) (*CreateIntakeOrderFromCRMResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateIntakeOrderFromCRM not implemented")
+}
 func (UnimplementedWorkshopServiceServer) CreateOrderFromCRM(context.Context, *CreateOrderFromCRMRequest) (*CreateOrderFromCRMResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateOrderFromCRM not implemented")
 }
@@ -1434,6 +1499,9 @@ func (UnimplementedWorkshopServiceServer) CancelPayment(context.Context, *Cancel
 }
 func (UnimplementedWorkshopServiceServer) GetPaymentHistory(context.Context, *GetPaymentHistoryRequest) (*GetPaymentHistoryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPaymentHistory not implemented")
+}
+func (UnimplementedWorkshopServiceServer) GetRepairOrderPaymentTarget(context.Context, *GetRepairOrderPaymentTargetRequest) (*GetRepairOrderPaymentTargetResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetRepairOrderPaymentTarget not implemented")
 }
 func (UnimplementedWorkshopServiceServer) GetWarrantyOrders(context.Context, *GetWarrantyOrdersRequest) (*GetWarrantyOrdersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetWarrantyOrders not implemented")
@@ -1686,6 +1754,24 @@ func _WorkshopService_GetKanban_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(WorkshopServiceServer).GetKanban(ctx, req.(*GetKanbanRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkshopService_AcceptVehicle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AcceptVehicleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).AcceptVehicle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_AcceptVehicle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).AcceptVehicle(ctx, req.(*AcceptVehicleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2662,6 +2748,24 @@ func _WorkshopService_RejectEstimate_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkshopService_CreateIntakeOrderFromCRM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateIntakeOrderFromCRMRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).CreateIntakeOrderFromCRM(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_CreateIntakeOrderFromCRM_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).CreateIntakeOrderFromCRM(ctx, req.(*CreateIntakeOrderFromCRMRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _WorkshopService_CreateOrderFromCRM_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateOrderFromCRMRequest)
 	if err := dec(in); err != nil {
@@ -2878,6 +2982,24 @@ func _WorkshopService_GetPaymentHistory_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkshopService_GetRepairOrderPaymentTarget_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRepairOrderPaymentTargetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).GetRepairOrderPaymentTarget(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_GetRepairOrderPaymentTarget_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).GetRepairOrderPaymentTarget(ctx, req.(*GetRepairOrderPaymentTargetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _WorkshopService_GetWarrantyOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetWarrantyOrdersRequest)
 	if err := dec(in); err != nil {
@@ -3040,6 +3162,10 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetKanban",
 			Handler:    _WorkshopService_GetKanban_Handler,
+		},
+		{
+			MethodName: "AcceptVehicle",
+			Handler:    _WorkshopService_AcceptVehicle_Handler,
 		},
 		{
 			MethodName: "CreateCarWork",
@@ -3258,6 +3384,10 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _WorkshopService_RejectEstimate_Handler,
 		},
 		{
+			MethodName: "CreateIntakeOrderFromCRM",
+			Handler:    _WorkshopService_CreateIntakeOrderFromCRM_Handler,
+		},
+		{
 			MethodName: "CreateOrderFromCRM",
 			Handler:    _WorkshopService_CreateOrderFromCRM_Handler,
 		},
@@ -3304,6 +3434,10 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPaymentHistory",
 			Handler:    _WorkshopService_GetPaymentHistory_Handler,
+		},
+		{
+			MethodName: "GetRepairOrderPaymentTarget",
+			Handler:    _WorkshopService_GetRepairOrderPaymentTarget_Handler,
 		},
 		{
 			MethodName: "GetWarrantyOrders",

@@ -51,6 +51,17 @@ service GarageService {
   rpc UpdateReminder(UpdateReminderRequest) returns (UpdateReminderResponse);
   rpc CompleteReminder(CompleteReminderRequest) returns (CompleteReminderResponse);
   rpc DeleteReminder(DeleteReminderRequest) returns (DeleteReminderResponse);
+
+  // GetWorkshopIntakeParty is a narrow authoritative user/car read for CRM's
+  // workshop handoff assembly. It requires the exact verified service JWT
+  // identity UserID=0, phone=device_id="cg-crm"; human, BFF and direct
+  // cg-workshop callers are denied. cg-users verifies both rows and
+  // car.user_id == user_id, fails NOT_FOUND for missing rows and
+  // FAILED_PRECONDITION for a mismatched linkage, and returns only the user/car
+  // fields required for workshop intake.
+  // The organization/workshop/event/deal fields are mandatory audit binding
+  // context from CRM, not authority over cg-users records.
+  rpc GetWorkshopIntakeParty(GetWorkshopIntakePartyRequest) returns (GetWorkshopIntakePartyResponse);
 }
 
 // ==================== Core Messages ====================
@@ -466,4 +477,34 @@ message VehicleInfo {
   string car_name = 12;
   // mask is a legacy field carried forward from the cg_api contract; usually empty.
   string mask = 13;
+}
+
+message GetWorkshopIntakePartyRequest {
+  string organization_id = 1;
+  int64 workshop_id = 2;
+  string source_event_id = 3;
+  string crm_deal_id = 4;
+  int64 user_id = 5;
+  int64 garage_car_id = 6;
+}
+
+message WorkshopIntakePartyProjection {
+  string organization_id = 1;
+  int64 workshop_id = 2;
+  string source_event_id = 3;
+  string crm_deal_id = 4;
+  int64 user_id = 5;
+  int64 garage_car_id = 6;
+  string client_name = 7;
+  string client_phone = 8;
+  string license_plate = 9;
+  string vin = 10;
+  string car_color = 11;
+  int32 car_year = 12;
+  int32 mark_id = 13;
+  int32 model_id = 14;
+}
+
+message GetWorkshopIntakePartyResponse {
+  WorkshopIntakePartyProjection projection = 1;
 }
