@@ -211,9 +211,12 @@ type PaymentMethod int32
 const (
 	PaymentMethod_PAYMENT_METHOD_UNSPECIFIED PaymentMethod = 0
 	PaymentMethod_PAYMENT_METHOD_CARD        PaymentMethod = 1
-	PaymentMethod_PAYMENT_METHOD_APPLE_PAY   PaymentMethod = 2
-	PaymentMethod_PAYMENT_METHOD_GOOGLE_PAY  PaymentMethod = 3
-	PaymentMethod_PAYMENT_METHOD_KASPI       PaymentMethod = 4
+	// Apple Pay is a native CLIENT capability only. A PARTNER/PRO or SAPP
+	// audience must never receive or start this method, even when its platform
+	// string says "ios".
+	PaymentMethod_PAYMENT_METHOD_APPLE_PAY  PaymentMethod = 2
+	PaymentMethod_PAYMENT_METHOD_GOOGLE_PAY PaymentMethod = 3
+	PaymentMethod_PAYMENT_METHOD_KASPI      PaymentMethod = 4
 )
 
 // Enum value maps for PaymentMethod.
@@ -434,6 +437,12 @@ const (
 	// Roadside assistance and the dispatched fixed-price services sold through
 	// the same order API (POST /roadside/services).
 	PaymentUseCase_PAYMENT_USE_CASE_ROADSIDE PaymentUseCase = 2
+	// Partner/PRO subscription purchase. cg-orders owns the payable projection.
+	PaymentUseCase_PAYMENT_USE_CASE_SUBSCRIPTION PaymentUseCase = 3
+	// Partner/PRO one-time bid purchase. cg-orders owns the payable projection.
+	PaymentUseCase_PAYMENT_USE_CASE_BID_PURCHASE PaymentUseCase = 4
+	// Parts cart checkout (legacy basket and new cart_checkout owner entities).
+	PaymentUseCase_PAYMENT_USE_CASE_CART PaymentUseCase = 5
 )
 
 // Enum value maps for PaymentUseCase.
@@ -442,11 +451,17 @@ var (
 		0: "PAYMENT_USE_CASE_UNSPECIFIED",
 		1: "PAYMENT_USE_CASE_FUELING",
 		2: "PAYMENT_USE_CASE_ROADSIDE",
+		3: "PAYMENT_USE_CASE_SUBSCRIPTION",
+		4: "PAYMENT_USE_CASE_BID_PURCHASE",
+		5: "PAYMENT_USE_CASE_CART",
 	}
 	PaymentUseCase_value = map[string]int32{
-		"PAYMENT_USE_CASE_UNSPECIFIED": 0,
-		"PAYMENT_USE_CASE_FUELING":     1,
-		"PAYMENT_USE_CASE_ROADSIDE":    2,
+		"PAYMENT_USE_CASE_UNSPECIFIED":  0,
+		"PAYMENT_USE_CASE_FUELING":      1,
+		"PAYMENT_USE_CASE_ROADSIDE":     2,
+		"PAYMENT_USE_CASE_SUBSCRIPTION": 3,
+		"PAYMENT_USE_CASE_BID_PURCHASE": 4,
+		"PAYMENT_USE_CASE_CART":         5,
 	}
 )
 
@@ -475,6 +490,68 @@ func (x PaymentUseCase) Number() protoreflect.EnumNumber {
 // Deprecated: Use PaymentUseCase.Descriptor instead.
 func (PaymentUseCase) EnumDescriptor() ([]byte, []int) {
 	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{6}
+}
+
+// PaymentAudience is the trusted application audience from the verified JWT
+// app claim. Public callers never choose it. Owner services and BFFs derive it
+// from authentication and use it to keep provider/method catalogs separate.
+type PaymentAudience int32
+
+const (
+	// Unspecified is reserved for compatibility with routes written before
+	// audience scoping. It must never grant an audience-specific method.
+	PaymentAudience_PAYMENT_AUDIENCE_UNSPECIFIED PaymentAudience = 0
+	// CLIENT is the consumer mobile application and is the only audience that
+	// may be offered Apple Pay (subject to the separate iOS platform gate).
+	PaymentAudience_PAYMENT_AUDIENCE_CLIENT PaymentAudience = 1
+	// PARTNER is the Partner/PRO application. Apple Pay is forbidden here.
+	PaymentAudience_PAYMENT_AUDIENCE_PARTNER PaymentAudience = 2
+	// SAPP is the bank super-app miniapp. Apple Pay is forbidden here; its
+	// provider/method catalog is selected for the verified SAPP channel.
+	PaymentAudience_PAYMENT_AUDIENCE_SAPP PaymentAudience = 3
+)
+
+// Enum value maps for PaymentAudience.
+var (
+	PaymentAudience_name = map[int32]string{
+		0: "PAYMENT_AUDIENCE_UNSPECIFIED",
+		1: "PAYMENT_AUDIENCE_CLIENT",
+		2: "PAYMENT_AUDIENCE_PARTNER",
+		3: "PAYMENT_AUDIENCE_SAPP",
+	}
+	PaymentAudience_value = map[string]int32{
+		"PAYMENT_AUDIENCE_UNSPECIFIED": 0,
+		"PAYMENT_AUDIENCE_CLIENT":      1,
+		"PAYMENT_AUDIENCE_PARTNER":     2,
+		"PAYMENT_AUDIENCE_SAPP":        3,
+	}
+)
+
+func (x PaymentAudience) Enum() *PaymentAudience {
+	p := new(PaymentAudience)
+	*p = x
+	return p
+}
+
+func (x PaymentAudience) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PaymentAudience) Descriptor() protoreflect.EnumDescriptor {
+	return file_payments_payment_v1_payment_proto_enumTypes[7].Descriptor()
+}
+
+func (PaymentAudience) Type() protoreflect.EnumType {
+	return &file_payments_payment_v1_payment_proto_enumTypes[7]
+}
+
+func (x PaymentAudience) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PaymentAudience.Descriptor instead.
+func (PaymentAudience) EnumDescriptor() ([]byte, []int) {
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{7}
 }
 
 // SettlementMode selects how cg-billing posts a captured payment.
@@ -515,11 +592,11 @@ func (x SettlementMode) String() string {
 }
 
 func (SettlementMode) Descriptor() protoreflect.EnumDescriptor {
-	return file_payments_payment_v1_payment_proto_enumTypes[7].Descriptor()
+	return file_payments_payment_v1_payment_proto_enumTypes[8].Descriptor()
 }
 
 func (SettlementMode) Type() protoreflect.EnumType {
-	return &file_payments_payment_v1_payment_proto_enumTypes[7]
+	return &file_payments_payment_v1_payment_proto_enumTypes[8]
 }
 
 func (x SettlementMode) Number() protoreflect.EnumNumber {
@@ -528,7 +605,7 @@ func (x SettlementMode) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SettlementMode.Descriptor instead.
 func (SettlementMode) EnumDescriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{7}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{8}
 }
 
 type CreditApplicationStatus int32
@@ -588,11 +665,11 @@ func (x CreditApplicationStatus) String() string {
 }
 
 func (CreditApplicationStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_payments_payment_v1_payment_proto_enumTypes[8].Descriptor()
+	return file_payments_payment_v1_payment_proto_enumTypes[9].Descriptor()
 }
 
 func (CreditApplicationStatus) Type() protoreflect.EnumType {
-	return &file_payments_payment_v1_payment_proto_enumTypes[8]
+	return &file_payments_payment_v1_payment_proto_enumTypes[9]
 }
 
 func (x CreditApplicationStatus) Number() protoreflect.EnumNumber {
@@ -601,7 +678,7 @@ func (x CreditApplicationStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CreditApplicationStatus.Descriptor instead.
 func (CreditApplicationStatus) EnumDescriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{8}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{9}
 }
 
 // CreditProductKind selects which FFC2 product a request belongs to. The two
@@ -645,11 +722,11 @@ func (x CreditProductKind) String() string {
 }
 
 func (CreditProductKind) Descriptor() protoreflect.EnumDescriptor {
-	return file_payments_payment_v1_payment_proto_enumTypes[9].Descriptor()
+	return file_payments_payment_v1_payment_proto_enumTypes[10].Descriptor()
 }
 
 func (CreditProductKind) Type() protoreflect.EnumType {
-	return &file_payments_payment_v1_payment_proto_enumTypes[9]
+	return &file_payments_payment_v1_payment_proto_enumTypes[10]
 }
 
 func (x CreditProductKind) Number() protoreflect.EnumNumber {
@@ -658,7 +735,7 @@ func (x CreditProductKind) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CreditProductKind.Descriptor instead.
 func (CreditProductKind) EnumDescriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{9}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{10}
 }
 
 // CreditLoanType mirrors the bank's `loan_type` field.
@@ -695,11 +772,11 @@ func (x CreditLoanType) String() string {
 }
 
 func (CreditLoanType) Descriptor() protoreflect.EnumDescriptor {
-	return file_payments_payment_v1_payment_proto_enumTypes[10].Descriptor()
+	return file_payments_payment_v1_payment_proto_enumTypes[11].Descriptor()
 }
 
 func (CreditLoanType) Type() protoreflect.EnumType {
-	return &file_payments_payment_v1_payment_proto_enumTypes[10]
+	return &file_payments_payment_v1_payment_proto_enumTypes[11]
 }
 
 func (x CreditLoanType) Number() protoreflect.EnumNumber {
@@ -708,7 +785,7 @@ func (x CreditLoanType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CreditLoanType.Descriptor instead.
 func (CreditLoanType) EnumDescriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{10}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{11}
 }
 
 type CreditRefundType int32
@@ -744,11 +821,11 @@ func (x CreditRefundType) String() string {
 }
 
 func (CreditRefundType) Descriptor() protoreflect.EnumDescriptor {
-	return file_payments_payment_v1_payment_proto_enumTypes[11].Descriptor()
+	return file_payments_payment_v1_payment_proto_enumTypes[12].Descriptor()
 }
 
 func (CreditRefundType) Type() protoreflect.EnumType {
-	return &file_payments_payment_v1_payment_proto_enumTypes[11]
+	return &file_payments_payment_v1_payment_proto_enumTypes[12]
 }
 
 func (x CreditRefundType) Number() protoreflect.EnumNumber {
@@ -757,7 +834,7 @@ func (x CreditRefundType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CreditRefundType.Descriptor instead.
 func (CreditRefundType) EnumDescriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{11}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{12}
 }
 
 type CessionAgreementStatus int32
@@ -802,11 +879,11 @@ func (x CessionAgreementStatus) String() string {
 }
 
 func (CessionAgreementStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_payments_payment_v1_payment_proto_enumTypes[12].Descriptor()
+	return file_payments_payment_v1_payment_proto_enumTypes[13].Descriptor()
 }
 
 func (CessionAgreementStatus) Type() protoreflect.EnumType {
-	return &file_payments_payment_v1_payment_proto_enumTypes[12]
+	return &file_payments_payment_v1_payment_proto_enumTypes[13]
 }
 
 func (x CessionAgreementStatus) Number() protoreflect.EnumNumber {
@@ -815,7 +892,7 @@ func (x CessionAgreementStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CessionAgreementStatus.Descriptor instead.
 func (CessionAgreementStatus) EnumDescriptor() ([]byte, []int) {
-	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{12}
+	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{13}
 }
 
 type Transaction struct {
@@ -2739,7 +2816,10 @@ type ListAvailablePaymentMethodsRequest struct {
 	// therefore keep exactly today's list.
 	//
 	// The checkout catalog needs the gate as much as the combined-pay modal does:
-	// without it a fueling checkout on Android shows an Apple Pay row.
+	// without it a fueling checkout on Android shows an Apple Pay row. Platform
+	// is only a rendering capability; the service still derives PaymentAudience
+	// from the verified JWT app claim. PARTNER/PRO and SAPP must never receive
+	// Apple Pay even if this field is "ios".
 	ClientPlatform string `protobuf:"bytes,2,opt,name=client_platform,json=clientPlatform,proto3" json:"client_platform,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
@@ -3047,6 +3127,10 @@ func (x *PayOption) GetCashbackPercent() int32 {
 	return 0
 }
 
+// InitPaymentRequest intentionally has no audience field. cg-payments derives
+// PaymentAudience from the verified JWT app claim forwarded by the trusted
+// owner/BFF boundary. Caller-supplied audience must never select a provider or
+// make Apple Pay available to PARTNER/PRO or SAPP.
 type InitPaymentRequest struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
 	EntityType PayEntityType          `protobuf:"varint,1,opt,name=entity_type,json=entityType,proto3,enum=payments.payment.v1.PayEntityType" json:"entity_type,omitempty"`
@@ -5388,8 +5472,12 @@ type PaymentProviderRoute struct {
 	// automatically. The panel shows the difference as unavailable.
 	SupportedProviders []string `protobuf:"bytes,7,rep,name=supported_providers,json=supportedProviders,proto3" json:"supported_providers,omitempty"`
 	// is_global marks the reserved "default" row: the one switch that applies to
-	// every service without an exception of its own.
-	IsGlobal      bool `protobuf:"varint,8,opt,name=is_global,json=isGlobal,proto3" json:"is_global,omitempty"`
+	// every service in this audience without an exception of its own.
+	IsGlobal bool `protobuf:"varint,8,opt,name=is_global,json=isGlobal,proto3" json:"is_global,omitempty"`
+	// audience scopes this route independently from the same flow in other apps.
+	// The effective key is (audience, flow). UNSPECIFIED identifies a legacy
+	// pre-audience route only and must not grant audience-specific methods.
+	Audience      PaymentAudience `protobuf:"varint,9,opt,name=audience,proto3,enum=payments.payment.v1.PaymentAudience" json:"audience,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5481,8 +5569,18 @@ func (x *PaymentProviderRoute) GetIsGlobal() bool {
 	return false
 }
 
+func (x *PaymentProviderRoute) GetAudience() PaymentAudience {
+	if x != nil {
+		return x.Audience
+	}
+	return PaymentAudience_PAYMENT_AUDIENCE_UNSPECIFIED
+}
+
 type ListPaymentProviderRoutesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// audience filters the admin list. UNSPECIFIED lists every audience so old
+	// admin clients retain their broad list behavior.
+	Audience      PaymentAudience `protobuf:"varint,1,opt,name=audience,proto3,enum=payments.payment.v1.PaymentAudience" json:"audience,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5515,6 +5613,13 @@ func (x *ListPaymentProviderRoutesRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListPaymentProviderRoutesRequest.ProtoReflect.Descriptor instead.
 func (*ListPaymentProviderRoutesRequest) Descriptor() ([]byte, []int) {
 	return file_payments_payment_v1_payment_proto_rawDescGZIP(), []int{62}
+}
+
+func (x *ListPaymentProviderRoutesRequest) GetAudience() PaymentAudience {
+	if x != nil {
+		return x.Audience
+	}
+	return PaymentAudience_PAYMENT_AUDIENCE_UNSPECIFIED
 }
 
 type ListPaymentProviderRoutesResponse struct {
@@ -5593,7 +5698,11 @@ type SetPaymentProviderRouteRequest struct {
 	Provider string `protobuf:"bytes,2,opt,name=provider,proto3" json:"provider,omitempty"`
 	// providers replaces the whole set for this flow, in offer order. An empty
 	// list clears the route so the flow falls back to configuration.
-	Providers     []string `protobuf:"bytes,3,rep,name=providers,proto3" json:"providers,omitempty"`
+	Providers []string `protobuf:"bytes,3,rep,name=providers,proto3" json:"providers,omitempty"`
+	// audience selects the independent route set to replace. New admin clients
+	// must send a concrete value. UNSPECIFIED addresses only the legacy route
+	// namespace for wire compatibility; it must not enable audience-only methods.
+	Audience      PaymentAudience `protobuf:"varint,4,opt,name=audience,proto3,enum=payments.payment.v1.PaymentAudience" json:"audience,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5648,6 +5757,13 @@ func (x *SetPaymentProviderRouteRequest) GetProviders() []string {
 		return x.Providers
 	}
 	return nil
+}
+
+func (x *SetPaymentProviderRouteRequest) GetAudience() PaymentAudience {
+	if x != nil {
+		return x.Audience
+	}
+	return PaymentAudience_PAYMENT_AUDIENCE_UNSPECIFIED
 }
 
 type SetPaymentProviderRouteResponse struct {
@@ -6099,7 +6215,7 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"%RefreshCreditApplicationStatusRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\"r\n" +
 	"&RefreshCreditApplicationStatusResponse\x12H\n" +
-	"\vapplication\x18\x01 \x01(\v2&.payments.payment.v1.CreditApplicationR\vapplication\"\xa8\x02\n" +
+	"\vapplication\x18\x01 \x01(\v2&.payments.payment.v1.CreditApplicationR\vapplication\"\xea\x02\n" +
 	"\x14PaymentProviderRoute\x12\x12\n" +
 	"\x04flow\x18\x01 \x01(\tR\x04flow\x12\x1e\n" +
 	"\bprovider\x18\x02 \x01(\tB\x02\x18\x01R\bprovider\x12\x16\n" +
@@ -6110,16 +6226,19 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"updated_by\x18\x05 \x01(\x03R\tupdatedBy\x12\x1c\n" +
 	"\tproviders\x18\x06 \x03(\tR\tproviders\x12/\n" +
 	"\x13supported_providers\x18\a \x03(\tR\x12supportedProviders\x12\x1b\n" +
-	"\tis_global\x18\b \x01(\bR\bisGlobal\"\"\n" +
-	" ListPaymentProviderRoutesRequest\"\xcc\x01\n" +
+	"\tis_global\x18\b \x01(\bR\bisGlobal\x12@\n" +
+	"\baudience\x18\t \x01(\x0e2$.payments.payment.v1.PaymentAudienceR\baudience\"d\n" +
+	" ListPaymentProviderRoutesRequest\x12@\n" +
+	"\baudience\x18\x01 \x01(\x0e2$.payments.payment.v1.PaymentAudienceR\baudience\"\xcc\x01\n" +
 	"!ListPaymentProviderRoutesResponse\x12A\n" +
 	"\x06routes\x18\x01 \x03(\v2).payments.payment.v1.PaymentProviderRouteR\x06routes\x12/\n" +
 	"\x13supported_providers\x18\x02 \x03(\tR\x12supportedProviders\x123\n" +
-	"\x15unavailable_providers\x18\x03 \x03(\tR\x14unavailableProviders\"r\n" +
+	"\x15unavailable_providers\x18\x03 \x03(\tR\x14unavailableProviders\"\xb4\x01\n" +
 	"\x1eSetPaymentProviderRouteRequest\x12\x12\n" +
 	"\x04flow\x18\x01 \x01(\tR\x04flow\x12\x1e\n" +
 	"\bprovider\x18\x02 \x01(\tB\x02\x18\x01R\bprovider\x12\x1c\n" +
-	"\tproviders\x18\x03 \x03(\tR\tproviders\"b\n" +
+	"\tproviders\x18\x03 \x03(\tR\tproviders\x12@\n" +
+	"\baudience\x18\x04 \x01(\x0e2$.payments.payment.v1.PaymentAudienceR\baudience\"b\n" +
 	"\x1fSetPaymentProviderRouteResponse\x12?\n" +
 	"\x05route\x18\x01 \x01(\v2).payments.payment.v1.PaymentProviderRouteR\x05route*\xcc\x02\n" +
 	"\x11TransactionStatus\x12\"\n" +
@@ -6176,11 +6295,19 @@ const file_payments_payment_v1_payment_proto_rawDesc = "" +
 	"\x14PAY_OPTION_KIND_CARD\x10\x01\x12\x19\n" +
 	"\x15PAY_OPTION_KIND_KASPI\x10\x02\x12\x1f\n" +
 	"\x1bPAY_OPTION_KIND_INSTALLMENT\x10\x03\x12\x1a\n" +
-	"\x16PAY_OPTION_KIND_WALLET\x10\x04*o\n" +
+	"\x16PAY_OPTION_KIND_WALLET\x10\x04*\xd0\x01\n" +
 	"\x0ePaymentUseCase\x12 \n" +
 	"\x1cPAYMENT_USE_CASE_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18PAYMENT_USE_CASE_FUELING\x10\x01\x12\x1d\n" +
-	"\x19PAYMENT_USE_CASE_ROADSIDE\x10\x02*i\n" +
+	"\x19PAYMENT_USE_CASE_ROADSIDE\x10\x02\x12!\n" +
+	"\x1dPAYMENT_USE_CASE_SUBSCRIPTION\x10\x03\x12!\n" +
+	"\x1dPAYMENT_USE_CASE_BID_PURCHASE\x10\x04\x12\x19\n" +
+	"\x15PAYMENT_USE_CASE_CART\x10\x05*\x89\x01\n" +
+	"\x0fPaymentAudience\x12 \n" +
+	"\x1cPAYMENT_AUDIENCE_UNSPECIFIED\x10\x00\x12\x1b\n" +
+	"\x17PAYMENT_AUDIENCE_CLIENT\x10\x01\x12\x1c\n" +
+	"\x18PAYMENT_AUDIENCE_PARTNER\x10\x02\x12\x19\n" +
+	"\x15PAYMENT_AUDIENCE_SAPP\x10\x03*i\n" +
 	"\x0eSettlementMode\x12\x1f\n" +
 	"\x1bSETTLEMENT_MODE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16SETTLEMENT_MODE_DIRECT\x10\x01\x12\x1a\n" +
@@ -6254,7 +6381,7 @@ func file_payments_payment_v1_payment_proto_rawDescGZIP() []byte {
 	return file_payments_payment_v1_payment_proto_rawDescData
 }
 
-var file_payments_payment_v1_payment_proto_enumTypes = make([]protoimpl.EnumInfo, 13)
+var file_payments_payment_v1_payment_proto_enumTypes = make([]protoimpl.EnumInfo, 14)
 var file_payments_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 67)
 var file_payments_payment_v1_payment_proto_goTypes = []any{
 	(TransactionStatus)(0),                         // 0: payments.payment.v1.TransactionStatus
@@ -6264,200 +6391,204 @@ var file_payments_payment_v1_payment_proto_goTypes = []any{
 	(PayEntityType)(0),                             // 4: payments.payment.v1.PayEntityType
 	(PayOptionKind)(0),                             // 5: payments.payment.v1.PayOptionKind
 	(PaymentUseCase)(0),                            // 6: payments.payment.v1.PaymentUseCase
-	(SettlementMode)(0),                            // 7: payments.payment.v1.SettlementMode
-	(CreditApplicationStatus)(0),                   // 8: payments.payment.v1.CreditApplicationStatus
-	(CreditProductKind)(0),                         // 9: payments.payment.v1.CreditProductKind
-	(CreditLoanType)(0),                            // 10: payments.payment.v1.CreditLoanType
-	(CreditRefundType)(0),                          // 11: payments.payment.v1.CreditRefundType
-	(CessionAgreementStatus)(0),                    // 12: payments.payment.v1.CessionAgreementStatus
-	(*Transaction)(nil),                            // 13: payments.payment.v1.Transaction
-	(*Refund)(nil),                                 // 14: payments.payment.v1.Refund
-	(*AuditLogEntry)(nil),                          // 15: payments.payment.v1.AuditLogEntry
-	(*CreateTransactionRequest)(nil),               // 16: payments.payment.v1.CreateTransactionRequest
-	(*CreateTransactionResponse)(nil),              // 17: payments.payment.v1.CreateTransactionResponse
-	(*ListTransactionsRequest)(nil),                // 18: payments.payment.v1.ListTransactionsRequest
-	(*ListTransactionsResponse)(nil),               // 19: payments.payment.v1.ListTransactionsResponse
-	(*GetTransactionRequest)(nil),                  // 20: payments.payment.v1.GetTransactionRequest
-	(*GetTransactionResponse)(nil),                 // 21: payments.payment.v1.GetTransactionResponse
-	(*InitiateRefundRequest)(nil),                  // 22: payments.payment.v1.InitiateRefundRequest
-	(*InitiateRefundResponse)(nil),                 // 23: payments.payment.v1.InitiateRefundResponse
-	(*CapturePaymentRequest)(nil),                  // 24: payments.payment.v1.CapturePaymentRequest
-	(*CapturePaymentResponse)(nil),                 // 25: payments.payment.v1.CapturePaymentResponse
-	(*CancelPaymentRequest)(nil),                   // 26: payments.payment.v1.CancelPaymentRequest
-	(*CancelPaymentResponse)(nil),                  // 27: payments.payment.v1.CancelPaymentResponse
-	(*ReleasePaymentRequest)(nil),                  // 28: payments.payment.v1.ReleasePaymentRequest
-	(*ReleasePaymentResponse)(nil),                 // 29: payments.payment.v1.ReleasePaymentResponse
-	(*HandleIokaWebhookRequest)(nil),               // 30: payments.payment.v1.HandleIokaWebhookRequest
-	(*HandleIokaWebhookResponse)(nil),              // 31: payments.payment.v1.HandleIokaWebhookResponse
-	(*HandleKaspiCheckPayRequest)(nil),             // 32: payments.payment.v1.HandleKaspiCheckPayRequest
-	(*HandleKaspiCheckPayResponse)(nil),            // 33: payments.payment.v1.HandleKaspiCheckPayResponse
-	(*HandleLegacyKaspiCallbackRequest)(nil),       // 34: payments.payment.v1.HandleLegacyKaspiCallbackRequest
-	(*HandleLegacyKaspiCallbackResponse)(nil),      // 35: payments.payment.v1.HandleLegacyKaspiCallbackResponse
-	(*GetPaymentAuditLogRequest)(nil),              // 36: payments.payment.v1.GetPaymentAuditLogRequest
-	(*GetPaymentAuditLogResponse)(nil),             // 37: payments.payment.v1.GetPaymentAuditLogResponse
-	(*MarkPaidB2BRequest)(nil),                     // 38: payments.payment.v1.MarkPaidB2BRequest
-	(*MarkPaidB2BResponse)(nil),                    // 39: payments.payment.v1.MarkPaidB2BResponse
-	(*ListAvailablePaymentMethodsRequest)(nil),     // 40: payments.payment.v1.ListAvailablePaymentMethodsRequest
-	(*AvailablePaymentMethod)(nil),                 // 41: payments.payment.v1.AvailablePaymentMethod
-	(*ListAvailablePaymentMethodsResponse)(nil),    // 42: payments.payment.v1.ListAvailablePaymentMethodsResponse
-	(*PayOption)(nil),                              // 43: payments.payment.v1.PayOption
-	(*InitPaymentRequest)(nil),                     // 44: payments.payment.v1.InitPaymentRequest
-	(*InitPaymentResponse)(nil),                    // 45: payments.payment.v1.InitPaymentResponse
-	(*StartPaymentRequest)(nil),                    // 46: payments.payment.v1.StartPaymentRequest
-	(*StartPaymentResponse)(nil),                   // 47: payments.payment.v1.StartPaymentResponse
-	(*ConfirmWalletPaymentRequest)(nil),            // 48: payments.payment.v1.ConfirmWalletPaymentRequest
-	(*ConfirmWalletPaymentResponse)(nil),           // 49: payments.payment.v1.ConfirmWalletPaymentResponse
-	(*CreditApprovedParams)(nil),                   // 50: payments.payment.v1.CreditApprovedParams
-	(*CreditPrintForm)(nil),                        // 51: payments.payment.v1.CreditPrintForm
-	(*CreditGood)(nil),                             // 52: payments.payment.v1.CreditGood
-	(*CreateCreditApplicationRequest)(nil),         // 53: payments.payment.v1.CreateCreditApplicationRequest
-	(*CreditApplication)(nil),                      // 54: payments.payment.v1.CreditApplication
-	(*CreateCreditApplicationResponse)(nil),        // 55: payments.payment.v1.CreateCreditApplicationResponse
-	(*GetCreditApplicationRequest)(nil),            // 56: payments.payment.v1.GetCreditApplicationRequest
-	(*GetCreditApplicationResponse)(nil),           // 57: payments.payment.v1.GetCreditApplicationResponse
-	(*RefundCreditApplicationRequest)(nil),         // 58: payments.payment.v1.RefundCreditApplicationRequest
-	(*RefundCreditApplicationResponse)(nil),        // 59: payments.payment.v1.RefundCreditApplicationResponse
-	(*CessionLoan)(nil),                            // 60: payments.payment.v1.CessionLoan
-	(*ListCessionLoansRequest)(nil),                // 61: payments.payment.v1.ListCessionLoansRequest
-	(*ListCessionLoansResponse)(nil),               // 62: payments.payment.v1.ListCessionLoansResponse
-	(*CessionAgreement)(nil),                       // 63: payments.payment.v1.CessionAgreement
-	(*SubmitCessionAgreementRequest)(nil),          // 64: payments.payment.v1.SubmitCessionAgreementRequest
-	(*SubmitCessionAgreementResponse)(nil),         // 65: payments.payment.v1.SubmitCessionAgreementResponse
-	(*GetCessionAgreementRequest)(nil),             // 66: payments.payment.v1.GetCessionAgreementRequest
-	(*GetCessionAgreementResponse)(nil),            // 67: payments.payment.v1.GetCessionAgreementResponse
-	(*CreditRepaymentBand)(nil),                    // 68: payments.payment.v1.CreditRepaymentBand
-	(*CreditPartnerProduct)(nil),                   // 69: payments.payment.v1.CreditPartnerProduct
-	(*ListPartnerProductsRequest)(nil),             // 70: payments.payment.v1.ListPartnerProductsRequest
-	(*ListPartnerProductsResponse)(nil),            // 71: payments.payment.v1.ListPartnerProductsResponse
-	(*RefreshCreditApplicationStatusRequest)(nil),  // 72: payments.payment.v1.RefreshCreditApplicationStatusRequest
-	(*RefreshCreditApplicationStatusResponse)(nil), // 73: payments.payment.v1.RefreshCreditApplicationStatusResponse
-	(*PaymentProviderRoute)(nil),                   // 74: payments.payment.v1.PaymentProviderRoute
-	(*ListPaymentProviderRoutesRequest)(nil),       // 75: payments.payment.v1.ListPaymentProviderRoutesRequest
-	(*ListPaymentProviderRoutesResponse)(nil),      // 76: payments.payment.v1.ListPaymentProviderRoutesResponse
-	(*SetPaymentProviderRouteRequest)(nil),         // 77: payments.payment.v1.SetPaymentProviderRouteRequest
-	(*SetPaymentProviderRouteResponse)(nil),        // 78: payments.payment.v1.SetPaymentProviderRouteResponse
-	nil,                                            // 79: payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
-	(*timestamppb.Timestamp)(nil),                  // 80: google.protobuf.Timestamp
+	(PaymentAudience)(0),                           // 7: payments.payment.v1.PaymentAudience
+	(SettlementMode)(0),                            // 8: payments.payment.v1.SettlementMode
+	(CreditApplicationStatus)(0),                   // 9: payments.payment.v1.CreditApplicationStatus
+	(CreditProductKind)(0),                         // 10: payments.payment.v1.CreditProductKind
+	(CreditLoanType)(0),                            // 11: payments.payment.v1.CreditLoanType
+	(CreditRefundType)(0),                          // 12: payments.payment.v1.CreditRefundType
+	(CessionAgreementStatus)(0),                    // 13: payments.payment.v1.CessionAgreementStatus
+	(*Transaction)(nil),                            // 14: payments.payment.v1.Transaction
+	(*Refund)(nil),                                 // 15: payments.payment.v1.Refund
+	(*AuditLogEntry)(nil),                          // 16: payments.payment.v1.AuditLogEntry
+	(*CreateTransactionRequest)(nil),               // 17: payments.payment.v1.CreateTransactionRequest
+	(*CreateTransactionResponse)(nil),              // 18: payments.payment.v1.CreateTransactionResponse
+	(*ListTransactionsRequest)(nil),                // 19: payments.payment.v1.ListTransactionsRequest
+	(*ListTransactionsResponse)(nil),               // 20: payments.payment.v1.ListTransactionsResponse
+	(*GetTransactionRequest)(nil),                  // 21: payments.payment.v1.GetTransactionRequest
+	(*GetTransactionResponse)(nil),                 // 22: payments.payment.v1.GetTransactionResponse
+	(*InitiateRefundRequest)(nil),                  // 23: payments.payment.v1.InitiateRefundRequest
+	(*InitiateRefundResponse)(nil),                 // 24: payments.payment.v1.InitiateRefundResponse
+	(*CapturePaymentRequest)(nil),                  // 25: payments.payment.v1.CapturePaymentRequest
+	(*CapturePaymentResponse)(nil),                 // 26: payments.payment.v1.CapturePaymentResponse
+	(*CancelPaymentRequest)(nil),                   // 27: payments.payment.v1.CancelPaymentRequest
+	(*CancelPaymentResponse)(nil),                  // 28: payments.payment.v1.CancelPaymentResponse
+	(*ReleasePaymentRequest)(nil),                  // 29: payments.payment.v1.ReleasePaymentRequest
+	(*ReleasePaymentResponse)(nil),                 // 30: payments.payment.v1.ReleasePaymentResponse
+	(*HandleIokaWebhookRequest)(nil),               // 31: payments.payment.v1.HandleIokaWebhookRequest
+	(*HandleIokaWebhookResponse)(nil),              // 32: payments.payment.v1.HandleIokaWebhookResponse
+	(*HandleKaspiCheckPayRequest)(nil),             // 33: payments.payment.v1.HandleKaspiCheckPayRequest
+	(*HandleKaspiCheckPayResponse)(nil),            // 34: payments.payment.v1.HandleKaspiCheckPayResponse
+	(*HandleLegacyKaspiCallbackRequest)(nil),       // 35: payments.payment.v1.HandleLegacyKaspiCallbackRequest
+	(*HandleLegacyKaspiCallbackResponse)(nil),      // 36: payments.payment.v1.HandleLegacyKaspiCallbackResponse
+	(*GetPaymentAuditLogRequest)(nil),              // 37: payments.payment.v1.GetPaymentAuditLogRequest
+	(*GetPaymentAuditLogResponse)(nil),             // 38: payments.payment.v1.GetPaymentAuditLogResponse
+	(*MarkPaidB2BRequest)(nil),                     // 39: payments.payment.v1.MarkPaidB2BRequest
+	(*MarkPaidB2BResponse)(nil),                    // 40: payments.payment.v1.MarkPaidB2BResponse
+	(*ListAvailablePaymentMethodsRequest)(nil),     // 41: payments.payment.v1.ListAvailablePaymentMethodsRequest
+	(*AvailablePaymentMethod)(nil),                 // 42: payments.payment.v1.AvailablePaymentMethod
+	(*ListAvailablePaymentMethodsResponse)(nil),    // 43: payments.payment.v1.ListAvailablePaymentMethodsResponse
+	(*PayOption)(nil),                              // 44: payments.payment.v1.PayOption
+	(*InitPaymentRequest)(nil),                     // 45: payments.payment.v1.InitPaymentRequest
+	(*InitPaymentResponse)(nil),                    // 46: payments.payment.v1.InitPaymentResponse
+	(*StartPaymentRequest)(nil),                    // 47: payments.payment.v1.StartPaymentRequest
+	(*StartPaymentResponse)(nil),                   // 48: payments.payment.v1.StartPaymentResponse
+	(*ConfirmWalletPaymentRequest)(nil),            // 49: payments.payment.v1.ConfirmWalletPaymentRequest
+	(*ConfirmWalletPaymentResponse)(nil),           // 50: payments.payment.v1.ConfirmWalletPaymentResponse
+	(*CreditApprovedParams)(nil),                   // 51: payments.payment.v1.CreditApprovedParams
+	(*CreditPrintForm)(nil),                        // 52: payments.payment.v1.CreditPrintForm
+	(*CreditGood)(nil),                             // 53: payments.payment.v1.CreditGood
+	(*CreateCreditApplicationRequest)(nil),         // 54: payments.payment.v1.CreateCreditApplicationRequest
+	(*CreditApplication)(nil),                      // 55: payments.payment.v1.CreditApplication
+	(*CreateCreditApplicationResponse)(nil),        // 56: payments.payment.v1.CreateCreditApplicationResponse
+	(*GetCreditApplicationRequest)(nil),            // 57: payments.payment.v1.GetCreditApplicationRequest
+	(*GetCreditApplicationResponse)(nil),           // 58: payments.payment.v1.GetCreditApplicationResponse
+	(*RefundCreditApplicationRequest)(nil),         // 59: payments.payment.v1.RefundCreditApplicationRequest
+	(*RefundCreditApplicationResponse)(nil),        // 60: payments.payment.v1.RefundCreditApplicationResponse
+	(*CessionLoan)(nil),                            // 61: payments.payment.v1.CessionLoan
+	(*ListCessionLoansRequest)(nil),                // 62: payments.payment.v1.ListCessionLoansRequest
+	(*ListCessionLoansResponse)(nil),               // 63: payments.payment.v1.ListCessionLoansResponse
+	(*CessionAgreement)(nil),                       // 64: payments.payment.v1.CessionAgreement
+	(*SubmitCessionAgreementRequest)(nil),          // 65: payments.payment.v1.SubmitCessionAgreementRequest
+	(*SubmitCessionAgreementResponse)(nil),         // 66: payments.payment.v1.SubmitCessionAgreementResponse
+	(*GetCessionAgreementRequest)(nil),             // 67: payments.payment.v1.GetCessionAgreementRequest
+	(*GetCessionAgreementResponse)(nil),            // 68: payments.payment.v1.GetCessionAgreementResponse
+	(*CreditRepaymentBand)(nil),                    // 69: payments.payment.v1.CreditRepaymentBand
+	(*CreditPartnerProduct)(nil),                   // 70: payments.payment.v1.CreditPartnerProduct
+	(*ListPartnerProductsRequest)(nil),             // 71: payments.payment.v1.ListPartnerProductsRequest
+	(*ListPartnerProductsResponse)(nil),            // 72: payments.payment.v1.ListPartnerProductsResponse
+	(*RefreshCreditApplicationStatusRequest)(nil),  // 73: payments.payment.v1.RefreshCreditApplicationStatusRequest
+	(*RefreshCreditApplicationStatusResponse)(nil), // 74: payments.payment.v1.RefreshCreditApplicationStatusResponse
+	(*PaymentProviderRoute)(nil),                   // 75: payments.payment.v1.PaymentProviderRoute
+	(*ListPaymentProviderRoutesRequest)(nil),       // 76: payments.payment.v1.ListPaymentProviderRoutesRequest
+	(*ListPaymentProviderRoutesResponse)(nil),      // 77: payments.payment.v1.ListPaymentProviderRoutesResponse
+	(*SetPaymentProviderRouteRequest)(nil),         // 78: payments.payment.v1.SetPaymentProviderRouteRequest
+	(*SetPaymentProviderRouteResponse)(nil),        // 79: payments.payment.v1.SetPaymentProviderRouteResponse
+	nil,                                            // 80: payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
+	(*timestamppb.Timestamp)(nil),                  // 81: google.protobuf.Timestamp
 }
 var file_payments_payment_v1_payment_proto_depIdxs = []int32{
 	2,  // 0: payments.payment.v1.Transaction.provider:type_name -> payments.payment.v1.PaymentProvider
 	3,  // 1: payments.payment.v1.Transaction.payment_method:type_name -> payments.payment.v1.PaymentMethod
 	0,  // 2: payments.payment.v1.Transaction.status:type_name -> payments.payment.v1.TransactionStatus
 	1,  // 3: payments.payment.v1.Transaction.type:type_name -> payments.payment.v1.TransactionType
-	80, // 4: payments.payment.v1.Transaction.paid_at:type_name -> google.protobuf.Timestamp
-	80, // 5: payments.payment.v1.Transaction.created_at:type_name -> google.protobuf.Timestamp
-	80, // 6: payments.payment.v1.Transaction.updated_at:type_name -> google.protobuf.Timestamp
-	80, // 7: payments.payment.v1.Refund.created_at:type_name -> google.protobuf.Timestamp
-	80, // 8: payments.payment.v1.AuditLogEntry.created_at:type_name -> google.protobuf.Timestamp
+	81, // 4: payments.payment.v1.Transaction.paid_at:type_name -> google.protobuf.Timestamp
+	81, // 5: payments.payment.v1.Transaction.created_at:type_name -> google.protobuf.Timestamp
+	81, // 6: payments.payment.v1.Transaction.updated_at:type_name -> google.protobuf.Timestamp
+	81, // 7: payments.payment.v1.Refund.created_at:type_name -> google.protobuf.Timestamp
+	81, // 8: payments.payment.v1.AuditLogEntry.created_at:type_name -> google.protobuf.Timestamp
 	2,  // 9: payments.payment.v1.CreateTransactionRequest.provider:type_name -> payments.payment.v1.PaymentProvider
 	3,  // 10: payments.payment.v1.CreateTransactionRequest.payment_method:type_name -> payments.payment.v1.PaymentMethod
-	7,  // 11: payments.payment.v1.CreateTransactionRequest.settlement_mode:type_name -> payments.payment.v1.SettlementMode
-	13, // 12: payments.payment.v1.CreateTransactionResponse.transaction:type_name -> payments.payment.v1.Transaction
+	8,  // 11: payments.payment.v1.CreateTransactionRequest.settlement_mode:type_name -> payments.payment.v1.SettlementMode
+	14, // 12: payments.payment.v1.CreateTransactionResponse.transaction:type_name -> payments.payment.v1.Transaction
 	0,  // 13: payments.payment.v1.ListTransactionsRequest.status:type_name -> payments.payment.v1.TransactionStatus
-	13, // 14: payments.payment.v1.ListTransactionsResponse.transactions:type_name -> payments.payment.v1.Transaction
-	13, // 15: payments.payment.v1.GetTransactionResponse.transaction:type_name -> payments.payment.v1.Transaction
-	14, // 16: payments.payment.v1.InitiateRefundResponse.refund:type_name -> payments.payment.v1.Refund
-	13, // 17: payments.payment.v1.CapturePaymentResponse.transaction:type_name -> payments.payment.v1.Transaction
-	13, // 18: payments.payment.v1.CancelPaymentResponse.transaction:type_name -> payments.payment.v1.Transaction
-	13, // 19: payments.payment.v1.ReleasePaymentResponse.transaction:type_name -> payments.payment.v1.Transaction
-	14, // 20: payments.payment.v1.ReleasePaymentResponse.refund:type_name -> payments.payment.v1.Refund
-	79, // 21: payments.payment.v1.HandleIokaWebhookRequest.headers:type_name -> payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
-	15, // 22: payments.payment.v1.GetPaymentAuditLogResponse.entries:type_name -> payments.payment.v1.AuditLogEntry
-	13, // 23: payments.payment.v1.MarkPaidB2BResponse.transaction:type_name -> payments.payment.v1.Transaction
+	14, // 14: payments.payment.v1.ListTransactionsResponse.transactions:type_name -> payments.payment.v1.Transaction
+	14, // 15: payments.payment.v1.GetTransactionResponse.transaction:type_name -> payments.payment.v1.Transaction
+	15, // 16: payments.payment.v1.InitiateRefundResponse.refund:type_name -> payments.payment.v1.Refund
+	14, // 17: payments.payment.v1.CapturePaymentResponse.transaction:type_name -> payments.payment.v1.Transaction
+	14, // 18: payments.payment.v1.CancelPaymentResponse.transaction:type_name -> payments.payment.v1.Transaction
+	14, // 19: payments.payment.v1.ReleasePaymentResponse.transaction:type_name -> payments.payment.v1.Transaction
+	15, // 20: payments.payment.v1.ReleasePaymentResponse.refund:type_name -> payments.payment.v1.Refund
+	80, // 21: payments.payment.v1.HandleIokaWebhookRequest.headers:type_name -> payments.payment.v1.HandleIokaWebhookRequest.HeadersEntry
+	16, // 22: payments.payment.v1.GetPaymentAuditLogResponse.entries:type_name -> payments.payment.v1.AuditLogEntry
+	14, // 23: payments.payment.v1.MarkPaidB2BResponse.transaction:type_name -> payments.payment.v1.Transaction
 	6,  // 24: payments.payment.v1.ListAvailablePaymentMethodsRequest.use_case:type_name -> payments.payment.v1.PaymentUseCase
 	5,  // 25: payments.payment.v1.AvailablePaymentMethod.kind:type_name -> payments.payment.v1.PayOptionKind
-	41, // 26: payments.payment.v1.ListAvailablePaymentMethodsResponse.payment_methods:type_name -> payments.payment.v1.AvailablePaymentMethod
+	42, // 26: payments.payment.v1.ListAvailablePaymentMethodsResponse.payment_methods:type_name -> payments.payment.v1.AvailablePaymentMethod
 	5,  // 27: payments.payment.v1.PayOption.kind:type_name -> payments.payment.v1.PayOptionKind
 	4,  // 28: payments.payment.v1.InitPaymentRequest.entity_type:type_name -> payments.payment.v1.PayEntityType
-	43, // 29: payments.payment.v1.InitPaymentResponse.available_options:type_name -> payments.payment.v1.PayOption
-	43, // 30: payments.payment.v1.InitPaymentResponse.installment_options:type_name -> payments.payment.v1.PayOption
-	51, // 31: payments.payment.v1.CreateCreditApplicationRequest.print_forms:type_name -> payments.payment.v1.CreditPrintForm
-	52, // 32: payments.payment.v1.CreateCreditApplicationRequest.goods:type_name -> payments.payment.v1.CreditGood
-	9,  // 33: payments.payment.v1.CreateCreditApplicationRequest.product_kind:type_name -> payments.payment.v1.CreditProductKind
-	8,  // 34: payments.payment.v1.CreditApplication.status:type_name -> payments.payment.v1.CreditApplicationStatus
-	80, // 35: payments.payment.v1.CreditApplication.created_at:type_name -> google.protobuf.Timestamp
-	80, // 36: payments.payment.v1.CreditApplication.updated_at:type_name -> google.protobuf.Timestamp
-	9,  // 37: payments.payment.v1.CreditApplication.product_kind:type_name -> payments.payment.v1.CreditProductKind
-	10, // 38: payments.payment.v1.CreditApplication.loan_type:type_name -> payments.payment.v1.CreditLoanType
-	50, // 39: payments.payment.v1.CreditApplication.approved_params:type_name -> payments.payment.v1.CreditApprovedParams
-	54, // 40: payments.payment.v1.CreateCreditApplicationResponse.application:type_name -> payments.payment.v1.CreditApplication
-	54, // 41: payments.payment.v1.GetCreditApplicationResponse.application:type_name -> payments.payment.v1.CreditApplication
-	11, // 42: payments.payment.v1.RefundCreditApplicationRequest.refund_type:type_name -> payments.payment.v1.CreditRefundType
-	54, // 43: payments.payment.v1.RefundCreditApplicationResponse.application:type_name -> payments.payment.v1.CreditApplication
-	80, // 44: payments.payment.v1.CessionLoan.issued_at:type_name -> google.protobuf.Timestamp
-	60, // 45: payments.payment.v1.ListCessionLoansResponse.loans:type_name -> payments.payment.v1.CessionLoan
-	63, // 46: payments.payment.v1.ListCessionLoansResponse.agreement:type_name -> payments.payment.v1.CessionAgreement
-	12, // 47: payments.payment.v1.CessionAgreement.status:type_name -> payments.payment.v1.CessionAgreementStatus
-	80, // 48: payments.payment.v1.CessionAgreement.submitted_at:type_name -> google.protobuf.Timestamp
-	80, // 49: payments.payment.v1.CessionAgreement.confirmed_at:type_name -> google.protobuf.Timestamp
-	80, // 50: payments.payment.v1.CessionAgreement.created_at:type_name -> google.protobuf.Timestamp
-	80, // 51: payments.payment.v1.CessionAgreement.updated_at:type_name -> google.protobuf.Timestamp
-	63, // 52: payments.payment.v1.SubmitCessionAgreementResponse.agreement:type_name -> payments.payment.v1.CessionAgreement
-	63, // 53: payments.payment.v1.GetCessionAgreementResponse.agreement:type_name -> payments.payment.v1.CessionAgreement
-	10, // 54: payments.payment.v1.CreditPartnerProduct.loan_type:type_name -> payments.payment.v1.CreditLoanType
-	68, // 55: payments.payment.v1.CreditPartnerProduct.repayment:type_name -> payments.payment.v1.CreditRepaymentBand
-	69, // 56: payments.payment.v1.ListPartnerProductsResponse.products:type_name -> payments.payment.v1.CreditPartnerProduct
-	54, // 57: payments.payment.v1.RefreshCreditApplicationStatusResponse.application:type_name -> payments.payment.v1.CreditApplication
-	80, // 58: payments.payment.v1.PaymentProviderRoute.updated_at:type_name -> google.protobuf.Timestamp
-	74, // 59: payments.payment.v1.ListPaymentProviderRoutesResponse.routes:type_name -> payments.payment.v1.PaymentProviderRoute
-	74, // 60: payments.payment.v1.SetPaymentProviderRouteResponse.route:type_name -> payments.payment.v1.PaymentProviderRoute
-	16, // 61: payments.payment.v1.PaymentService.CreateTransaction:input_type -> payments.payment.v1.CreateTransactionRequest
-	18, // 62: payments.payment.v1.PaymentService.ListTransactions:input_type -> payments.payment.v1.ListTransactionsRequest
-	20, // 63: payments.payment.v1.PaymentService.GetTransaction:input_type -> payments.payment.v1.GetTransactionRequest
-	22, // 64: payments.payment.v1.PaymentService.InitiateRefund:input_type -> payments.payment.v1.InitiateRefundRequest
-	24, // 65: payments.payment.v1.PaymentService.CapturePayment:input_type -> payments.payment.v1.CapturePaymentRequest
-	26, // 66: payments.payment.v1.PaymentService.CancelPayment:input_type -> payments.payment.v1.CancelPaymentRequest
-	28, // 67: payments.payment.v1.PaymentService.ReleasePayment:input_type -> payments.payment.v1.ReleasePaymentRequest
-	30, // 68: payments.payment.v1.PaymentService.HandleIokaWebhook:input_type -> payments.payment.v1.HandleIokaWebhookRequest
-	32, // 69: payments.payment.v1.PaymentService.HandleKaspiCheckPay:input_type -> payments.payment.v1.HandleKaspiCheckPayRequest
-	34, // 70: payments.payment.v1.PaymentService.HandleLegacyKaspiCallback:input_type -> payments.payment.v1.HandleLegacyKaspiCallbackRequest
-	36, // 71: payments.payment.v1.PaymentService.GetPaymentAuditLog:input_type -> payments.payment.v1.GetPaymentAuditLogRequest
-	38, // 72: payments.payment.v1.PaymentService.MarkPaidB2B:input_type -> payments.payment.v1.MarkPaidB2BRequest
-	40, // 73: payments.payment.v1.PaymentService.ListAvailablePaymentMethods:input_type -> payments.payment.v1.ListAvailablePaymentMethodsRequest
-	44, // 74: payments.payment.v1.PaymentService.InitPayment:input_type -> payments.payment.v1.InitPaymentRequest
-	46, // 75: payments.payment.v1.PaymentService.StartPayment:input_type -> payments.payment.v1.StartPaymentRequest
-	48, // 76: payments.payment.v1.PaymentService.ConfirmWalletPayment:input_type -> payments.payment.v1.ConfirmWalletPaymentRequest
-	75, // 77: payments.payment.v1.PaymentService.ListPaymentProviderRoutes:input_type -> payments.payment.v1.ListPaymentProviderRoutesRequest
-	77, // 78: payments.payment.v1.PaymentService.SetPaymentProviderRoute:input_type -> payments.payment.v1.SetPaymentProviderRouteRequest
-	53, // 79: payments.payment.v1.CreditService.CreateCreditApplication:input_type -> payments.payment.v1.CreateCreditApplicationRequest
-	56, // 80: payments.payment.v1.CreditService.GetCreditApplication:input_type -> payments.payment.v1.GetCreditApplicationRequest
-	58, // 81: payments.payment.v1.CreditService.RefundCreditApplication:input_type -> payments.payment.v1.RefundCreditApplicationRequest
-	61, // 82: payments.payment.v1.CreditService.ListCessionLoans:input_type -> payments.payment.v1.ListCessionLoansRequest
-	64, // 83: payments.payment.v1.CreditService.SubmitCessionAgreement:input_type -> payments.payment.v1.SubmitCessionAgreementRequest
-	66, // 84: payments.payment.v1.CreditService.GetCessionAgreement:input_type -> payments.payment.v1.GetCessionAgreementRequest
-	70, // 85: payments.payment.v1.CreditService.ListPartnerProducts:input_type -> payments.payment.v1.ListPartnerProductsRequest
-	72, // 86: payments.payment.v1.CreditService.RefreshCreditApplicationStatus:input_type -> payments.payment.v1.RefreshCreditApplicationStatusRequest
-	17, // 87: payments.payment.v1.PaymentService.CreateTransaction:output_type -> payments.payment.v1.CreateTransactionResponse
-	19, // 88: payments.payment.v1.PaymentService.ListTransactions:output_type -> payments.payment.v1.ListTransactionsResponse
-	21, // 89: payments.payment.v1.PaymentService.GetTransaction:output_type -> payments.payment.v1.GetTransactionResponse
-	23, // 90: payments.payment.v1.PaymentService.InitiateRefund:output_type -> payments.payment.v1.InitiateRefundResponse
-	25, // 91: payments.payment.v1.PaymentService.CapturePayment:output_type -> payments.payment.v1.CapturePaymentResponse
-	27, // 92: payments.payment.v1.PaymentService.CancelPayment:output_type -> payments.payment.v1.CancelPaymentResponse
-	29, // 93: payments.payment.v1.PaymentService.ReleasePayment:output_type -> payments.payment.v1.ReleasePaymentResponse
-	31, // 94: payments.payment.v1.PaymentService.HandleIokaWebhook:output_type -> payments.payment.v1.HandleIokaWebhookResponse
-	33, // 95: payments.payment.v1.PaymentService.HandleKaspiCheckPay:output_type -> payments.payment.v1.HandleKaspiCheckPayResponse
-	35, // 96: payments.payment.v1.PaymentService.HandleLegacyKaspiCallback:output_type -> payments.payment.v1.HandleLegacyKaspiCallbackResponse
-	37, // 97: payments.payment.v1.PaymentService.GetPaymentAuditLog:output_type -> payments.payment.v1.GetPaymentAuditLogResponse
-	39, // 98: payments.payment.v1.PaymentService.MarkPaidB2B:output_type -> payments.payment.v1.MarkPaidB2BResponse
-	42, // 99: payments.payment.v1.PaymentService.ListAvailablePaymentMethods:output_type -> payments.payment.v1.ListAvailablePaymentMethodsResponse
-	45, // 100: payments.payment.v1.PaymentService.InitPayment:output_type -> payments.payment.v1.InitPaymentResponse
-	47, // 101: payments.payment.v1.PaymentService.StartPayment:output_type -> payments.payment.v1.StartPaymentResponse
-	49, // 102: payments.payment.v1.PaymentService.ConfirmWalletPayment:output_type -> payments.payment.v1.ConfirmWalletPaymentResponse
-	76, // 103: payments.payment.v1.PaymentService.ListPaymentProviderRoutes:output_type -> payments.payment.v1.ListPaymentProviderRoutesResponse
-	78, // 104: payments.payment.v1.PaymentService.SetPaymentProviderRoute:output_type -> payments.payment.v1.SetPaymentProviderRouteResponse
-	55, // 105: payments.payment.v1.CreditService.CreateCreditApplication:output_type -> payments.payment.v1.CreateCreditApplicationResponse
-	57, // 106: payments.payment.v1.CreditService.GetCreditApplication:output_type -> payments.payment.v1.GetCreditApplicationResponse
-	59, // 107: payments.payment.v1.CreditService.RefundCreditApplication:output_type -> payments.payment.v1.RefundCreditApplicationResponse
-	62, // 108: payments.payment.v1.CreditService.ListCessionLoans:output_type -> payments.payment.v1.ListCessionLoansResponse
-	65, // 109: payments.payment.v1.CreditService.SubmitCessionAgreement:output_type -> payments.payment.v1.SubmitCessionAgreementResponse
-	67, // 110: payments.payment.v1.CreditService.GetCessionAgreement:output_type -> payments.payment.v1.GetCessionAgreementResponse
-	71, // 111: payments.payment.v1.CreditService.ListPartnerProducts:output_type -> payments.payment.v1.ListPartnerProductsResponse
-	73, // 112: payments.payment.v1.CreditService.RefreshCreditApplicationStatus:output_type -> payments.payment.v1.RefreshCreditApplicationStatusResponse
-	87, // [87:113] is the sub-list for method output_type
-	61, // [61:87] is the sub-list for method input_type
-	61, // [61:61] is the sub-list for extension type_name
-	61, // [61:61] is the sub-list for extension extendee
-	0,  // [0:61] is the sub-list for field type_name
+	44, // 29: payments.payment.v1.InitPaymentResponse.available_options:type_name -> payments.payment.v1.PayOption
+	44, // 30: payments.payment.v1.InitPaymentResponse.installment_options:type_name -> payments.payment.v1.PayOption
+	52, // 31: payments.payment.v1.CreateCreditApplicationRequest.print_forms:type_name -> payments.payment.v1.CreditPrintForm
+	53, // 32: payments.payment.v1.CreateCreditApplicationRequest.goods:type_name -> payments.payment.v1.CreditGood
+	10, // 33: payments.payment.v1.CreateCreditApplicationRequest.product_kind:type_name -> payments.payment.v1.CreditProductKind
+	9,  // 34: payments.payment.v1.CreditApplication.status:type_name -> payments.payment.v1.CreditApplicationStatus
+	81, // 35: payments.payment.v1.CreditApplication.created_at:type_name -> google.protobuf.Timestamp
+	81, // 36: payments.payment.v1.CreditApplication.updated_at:type_name -> google.protobuf.Timestamp
+	10, // 37: payments.payment.v1.CreditApplication.product_kind:type_name -> payments.payment.v1.CreditProductKind
+	11, // 38: payments.payment.v1.CreditApplication.loan_type:type_name -> payments.payment.v1.CreditLoanType
+	51, // 39: payments.payment.v1.CreditApplication.approved_params:type_name -> payments.payment.v1.CreditApprovedParams
+	55, // 40: payments.payment.v1.CreateCreditApplicationResponse.application:type_name -> payments.payment.v1.CreditApplication
+	55, // 41: payments.payment.v1.GetCreditApplicationResponse.application:type_name -> payments.payment.v1.CreditApplication
+	12, // 42: payments.payment.v1.RefundCreditApplicationRequest.refund_type:type_name -> payments.payment.v1.CreditRefundType
+	55, // 43: payments.payment.v1.RefundCreditApplicationResponse.application:type_name -> payments.payment.v1.CreditApplication
+	81, // 44: payments.payment.v1.CessionLoan.issued_at:type_name -> google.protobuf.Timestamp
+	61, // 45: payments.payment.v1.ListCessionLoansResponse.loans:type_name -> payments.payment.v1.CessionLoan
+	64, // 46: payments.payment.v1.ListCessionLoansResponse.agreement:type_name -> payments.payment.v1.CessionAgreement
+	13, // 47: payments.payment.v1.CessionAgreement.status:type_name -> payments.payment.v1.CessionAgreementStatus
+	81, // 48: payments.payment.v1.CessionAgreement.submitted_at:type_name -> google.protobuf.Timestamp
+	81, // 49: payments.payment.v1.CessionAgreement.confirmed_at:type_name -> google.protobuf.Timestamp
+	81, // 50: payments.payment.v1.CessionAgreement.created_at:type_name -> google.protobuf.Timestamp
+	81, // 51: payments.payment.v1.CessionAgreement.updated_at:type_name -> google.protobuf.Timestamp
+	64, // 52: payments.payment.v1.SubmitCessionAgreementResponse.agreement:type_name -> payments.payment.v1.CessionAgreement
+	64, // 53: payments.payment.v1.GetCessionAgreementResponse.agreement:type_name -> payments.payment.v1.CessionAgreement
+	11, // 54: payments.payment.v1.CreditPartnerProduct.loan_type:type_name -> payments.payment.v1.CreditLoanType
+	69, // 55: payments.payment.v1.CreditPartnerProduct.repayment:type_name -> payments.payment.v1.CreditRepaymentBand
+	70, // 56: payments.payment.v1.ListPartnerProductsResponse.products:type_name -> payments.payment.v1.CreditPartnerProduct
+	55, // 57: payments.payment.v1.RefreshCreditApplicationStatusResponse.application:type_name -> payments.payment.v1.CreditApplication
+	81, // 58: payments.payment.v1.PaymentProviderRoute.updated_at:type_name -> google.protobuf.Timestamp
+	7,  // 59: payments.payment.v1.PaymentProviderRoute.audience:type_name -> payments.payment.v1.PaymentAudience
+	7,  // 60: payments.payment.v1.ListPaymentProviderRoutesRequest.audience:type_name -> payments.payment.v1.PaymentAudience
+	75, // 61: payments.payment.v1.ListPaymentProviderRoutesResponse.routes:type_name -> payments.payment.v1.PaymentProviderRoute
+	7,  // 62: payments.payment.v1.SetPaymentProviderRouteRequest.audience:type_name -> payments.payment.v1.PaymentAudience
+	75, // 63: payments.payment.v1.SetPaymentProviderRouteResponse.route:type_name -> payments.payment.v1.PaymentProviderRoute
+	17, // 64: payments.payment.v1.PaymentService.CreateTransaction:input_type -> payments.payment.v1.CreateTransactionRequest
+	19, // 65: payments.payment.v1.PaymentService.ListTransactions:input_type -> payments.payment.v1.ListTransactionsRequest
+	21, // 66: payments.payment.v1.PaymentService.GetTransaction:input_type -> payments.payment.v1.GetTransactionRequest
+	23, // 67: payments.payment.v1.PaymentService.InitiateRefund:input_type -> payments.payment.v1.InitiateRefundRequest
+	25, // 68: payments.payment.v1.PaymentService.CapturePayment:input_type -> payments.payment.v1.CapturePaymentRequest
+	27, // 69: payments.payment.v1.PaymentService.CancelPayment:input_type -> payments.payment.v1.CancelPaymentRequest
+	29, // 70: payments.payment.v1.PaymentService.ReleasePayment:input_type -> payments.payment.v1.ReleasePaymentRequest
+	31, // 71: payments.payment.v1.PaymentService.HandleIokaWebhook:input_type -> payments.payment.v1.HandleIokaWebhookRequest
+	33, // 72: payments.payment.v1.PaymentService.HandleKaspiCheckPay:input_type -> payments.payment.v1.HandleKaspiCheckPayRequest
+	35, // 73: payments.payment.v1.PaymentService.HandleLegacyKaspiCallback:input_type -> payments.payment.v1.HandleLegacyKaspiCallbackRequest
+	37, // 74: payments.payment.v1.PaymentService.GetPaymentAuditLog:input_type -> payments.payment.v1.GetPaymentAuditLogRequest
+	39, // 75: payments.payment.v1.PaymentService.MarkPaidB2B:input_type -> payments.payment.v1.MarkPaidB2BRequest
+	41, // 76: payments.payment.v1.PaymentService.ListAvailablePaymentMethods:input_type -> payments.payment.v1.ListAvailablePaymentMethodsRequest
+	45, // 77: payments.payment.v1.PaymentService.InitPayment:input_type -> payments.payment.v1.InitPaymentRequest
+	47, // 78: payments.payment.v1.PaymentService.StartPayment:input_type -> payments.payment.v1.StartPaymentRequest
+	49, // 79: payments.payment.v1.PaymentService.ConfirmWalletPayment:input_type -> payments.payment.v1.ConfirmWalletPaymentRequest
+	76, // 80: payments.payment.v1.PaymentService.ListPaymentProviderRoutes:input_type -> payments.payment.v1.ListPaymentProviderRoutesRequest
+	78, // 81: payments.payment.v1.PaymentService.SetPaymentProviderRoute:input_type -> payments.payment.v1.SetPaymentProviderRouteRequest
+	54, // 82: payments.payment.v1.CreditService.CreateCreditApplication:input_type -> payments.payment.v1.CreateCreditApplicationRequest
+	57, // 83: payments.payment.v1.CreditService.GetCreditApplication:input_type -> payments.payment.v1.GetCreditApplicationRequest
+	59, // 84: payments.payment.v1.CreditService.RefundCreditApplication:input_type -> payments.payment.v1.RefundCreditApplicationRequest
+	62, // 85: payments.payment.v1.CreditService.ListCessionLoans:input_type -> payments.payment.v1.ListCessionLoansRequest
+	65, // 86: payments.payment.v1.CreditService.SubmitCessionAgreement:input_type -> payments.payment.v1.SubmitCessionAgreementRequest
+	67, // 87: payments.payment.v1.CreditService.GetCessionAgreement:input_type -> payments.payment.v1.GetCessionAgreementRequest
+	71, // 88: payments.payment.v1.CreditService.ListPartnerProducts:input_type -> payments.payment.v1.ListPartnerProductsRequest
+	73, // 89: payments.payment.v1.CreditService.RefreshCreditApplicationStatus:input_type -> payments.payment.v1.RefreshCreditApplicationStatusRequest
+	18, // 90: payments.payment.v1.PaymentService.CreateTransaction:output_type -> payments.payment.v1.CreateTransactionResponse
+	20, // 91: payments.payment.v1.PaymentService.ListTransactions:output_type -> payments.payment.v1.ListTransactionsResponse
+	22, // 92: payments.payment.v1.PaymentService.GetTransaction:output_type -> payments.payment.v1.GetTransactionResponse
+	24, // 93: payments.payment.v1.PaymentService.InitiateRefund:output_type -> payments.payment.v1.InitiateRefundResponse
+	26, // 94: payments.payment.v1.PaymentService.CapturePayment:output_type -> payments.payment.v1.CapturePaymentResponse
+	28, // 95: payments.payment.v1.PaymentService.CancelPayment:output_type -> payments.payment.v1.CancelPaymentResponse
+	30, // 96: payments.payment.v1.PaymentService.ReleasePayment:output_type -> payments.payment.v1.ReleasePaymentResponse
+	32, // 97: payments.payment.v1.PaymentService.HandleIokaWebhook:output_type -> payments.payment.v1.HandleIokaWebhookResponse
+	34, // 98: payments.payment.v1.PaymentService.HandleKaspiCheckPay:output_type -> payments.payment.v1.HandleKaspiCheckPayResponse
+	36, // 99: payments.payment.v1.PaymentService.HandleLegacyKaspiCallback:output_type -> payments.payment.v1.HandleLegacyKaspiCallbackResponse
+	38, // 100: payments.payment.v1.PaymentService.GetPaymentAuditLog:output_type -> payments.payment.v1.GetPaymentAuditLogResponse
+	40, // 101: payments.payment.v1.PaymentService.MarkPaidB2B:output_type -> payments.payment.v1.MarkPaidB2BResponse
+	43, // 102: payments.payment.v1.PaymentService.ListAvailablePaymentMethods:output_type -> payments.payment.v1.ListAvailablePaymentMethodsResponse
+	46, // 103: payments.payment.v1.PaymentService.InitPayment:output_type -> payments.payment.v1.InitPaymentResponse
+	48, // 104: payments.payment.v1.PaymentService.StartPayment:output_type -> payments.payment.v1.StartPaymentResponse
+	50, // 105: payments.payment.v1.PaymentService.ConfirmWalletPayment:output_type -> payments.payment.v1.ConfirmWalletPaymentResponse
+	77, // 106: payments.payment.v1.PaymentService.ListPaymentProviderRoutes:output_type -> payments.payment.v1.ListPaymentProviderRoutesResponse
+	79, // 107: payments.payment.v1.PaymentService.SetPaymentProviderRoute:output_type -> payments.payment.v1.SetPaymentProviderRouteResponse
+	56, // 108: payments.payment.v1.CreditService.CreateCreditApplication:output_type -> payments.payment.v1.CreateCreditApplicationResponse
+	58, // 109: payments.payment.v1.CreditService.GetCreditApplication:output_type -> payments.payment.v1.GetCreditApplicationResponse
+	60, // 110: payments.payment.v1.CreditService.RefundCreditApplication:output_type -> payments.payment.v1.RefundCreditApplicationResponse
+	63, // 111: payments.payment.v1.CreditService.ListCessionLoans:output_type -> payments.payment.v1.ListCessionLoansResponse
+	66, // 112: payments.payment.v1.CreditService.SubmitCessionAgreement:output_type -> payments.payment.v1.SubmitCessionAgreementResponse
+	68, // 113: payments.payment.v1.CreditService.GetCessionAgreement:output_type -> payments.payment.v1.GetCessionAgreementResponse
+	72, // 114: payments.payment.v1.CreditService.ListPartnerProducts:output_type -> payments.payment.v1.ListPartnerProductsResponse
+	74, // 115: payments.payment.v1.CreditService.RefreshCreditApplicationStatus:output_type -> payments.payment.v1.RefreshCreditApplicationStatusResponse
+	90, // [90:116] is the sub-list for method output_type
+	64, // [64:90] is the sub-list for method input_type
+	64, // [64:64] is the sub-list for extension type_name
+	64, // [64:64] is the sub-list for extension extendee
+	0,  // [0:64] is the sub-list for field type_name
 }
 
 func init() { file_payments_payment_v1_payment_proto_init() }
@@ -6470,7 +6601,7 @@ func file_payments_payment_v1_payment_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_payments_payment_v1_payment_proto_rawDesc), len(file_payments_payment_v1_payment_proto_rawDesc)),
-			NumEnums:      13,
+			NumEnums:      14,
 			NumMessages:   67,
 			NumExtensions: 0,
 			NumServices:   2,
