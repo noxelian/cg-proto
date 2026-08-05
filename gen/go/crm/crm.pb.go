@@ -585,8 +585,12 @@ type Stage struct {
 	// where the manager must be able to drop a deal in from anywhere
 	// without first satisfying the prior stage's gates.
 	BypassRequirements bool `protobuf:"varint,15,opt,name=bypass_requirements,json=bypassRequirements,proto3" json:"bypass_requirements,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	// Immutable integration identity for system-managed stages (for example
+	// "auto_in_repair" or "delivery_closing"). Empty for ordinary custom
+	// stages. Cross-service consumers resolve this code, never the display name.
+	SystemCode    string `protobuf:"bytes,16,opt,name=system_code,json=systemCode,proto3" json:"system_code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Stage) Reset() {
@@ -722,6 +726,13 @@ func (x *Stage) GetBypassRequirements() bool {
 		return x.BypassRequirements
 	}
 	return false
+}
+
+func (x *Stage) GetSystemCode() string {
+	if x != nil {
+		return x.SystemCode
+	}
+	return ""
 }
 
 type CreatePipelineRequest struct {
@@ -27410,7 +27421,7 @@ const file_crm_crm_proto_rawDesc = "" +
 	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12%\n" +
 	"\x06stages\x18\n" +
 	" \x03(\v2\r.crm.v1.StageR\x06stages\x12\x18\n" +
-	"\asources\x18\v \x03(\tR\asources\"\xb6\x04\n" +
+	"\asources\x18\v \x03(\tR\asources\"\xd7\x04\n" +
 	"\x05Stage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vpipeline_id\x18\x02 \x01(\tR\n" +
@@ -27431,7 +27442,9 @@ const file_crm_crm_proto_rawDesc = "" +
 	"\rrequires_user\x18\f \x01(\bR\frequiresUser\x12+\n" +
 	"\x11requires_assignee\x18\r \x01(\bR\x10requiresAssignee\x12'\n" +
 	"\x0frequires_amount\x18\x0e \x01(\bR\x0erequiresAmount\x12/\n" +
-	"\x13bypass_requirements\x18\x0f \x01(\bR\x12bypassRequirements\"v\n" +
+	"\x13bypass_requirements\x18\x0f \x01(\bR\x12bypassRequirements\x12\x1f\n" +
+	"\vsystem_code\x18\x10 \x01(\tR\n" +
+	"systemCode\"v\n" +
 	"\x15CreatePipelineRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +

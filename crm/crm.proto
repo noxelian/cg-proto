@@ -502,6 +502,10 @@ message Stage {
   // where the manager must be able to drop a deal in from anywhere
   // without first satisfying the prior stage's gates.
   bool bypass_requirements = 15;
+  // Immutable integration identity for system-managed stages (for example
+  // "auto_in_repair" or "delivery_closing"). Empty for ordinary custom
+  // stages. Cross-service consumers resolve this code, never the display name.
+  string system_code = 16;
 }
 
 message CreatePipelineRequest {

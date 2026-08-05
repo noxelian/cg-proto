@@ -29,6 +29,9 @@ service WorkshopService {
   rpc UpdateRepairOrderStatus(UpdateRepairOrderStatusRequest) returns (UpdateRepairOrderStatusResponse);
   rpc ListRepairOrders(ListRepairOrdersRequest) returns (ListRepairOrdersResponse);
   rpc GetKanban(GetKanbanRequest) returns (GetKanbanResponse);
+  // AcceptVehicle is the explicit V2 arrival command. The authenticated
+  // principal is the audit actor; caller-supplied identity is never trusted.
+  rpc AcceptVehicle(AcceptVehicleRequest) returns (AcceptVehicleResponse);
 
   // --- Car Work ---
   rpc CreateCarWork(CreateCarWorkRequest) returns (CreateCarWorkResponse);
@@ -109,6 +112,10 @@ service WorkshopService {
   rpc RejectEstimate(RejectEstimateRequest) returns (RejectEstimateResponse);
 
   // --- CRM Integration ---
+  // CreateIntakeOrderFromCRM is reserved for the idempotent V2 CRM event
+  // consumer and controlled replay tooling. Human/BFF intake must not use it
+  // to orchestrate CRM and workshop synchronously.
+  rpc CreateIntakeOrderFromCRM(CreateIntakeOrderFromCRMRequest) returns (CreateIntakeOrderFromCRMResponse);
   rpc CreateOrderFromCRM(CreateOrderFromCRMRequest) returns (CreateOrderFromCRMResponse);
   rpc SyncCRMDeals(SyncCRMDealsRequest) returns (SyncCRMDealsResponse);
   rpc GetCRMSyncStatus(GetCRMSyncStatusRequest) returns (GetCRMSyncStatusResponse);
@@ -127,6 +134,9 @@ service WorkshopService {
   rpc MarkPaidManual(MarkPaidManualRequest) returns (MarkPaidManualResponse);
   rpc CancelPayment(CancelPaymentRequest) returns (CancelPaymentResponse);
   rpc GetPaymentHistory(GetPaymentHistoryRequest) returns (GetPaymentHistoryResponse);
+  // GetRepairOrderPaymentTarget is a read-only service-to-service contract for
+  // cg-payments. It returns owner-authoritative whole-tenge payment facts.
+  rpc GetRepairOrderPaymentTarget(GetRepairOrderPaymentTargetRequest) returns (GetRepairOrderPaymentTargetResponse);
 
   // --- Warranty ---
   rpc GetWarrantyOrders(GetWarrantyOrdersRequest) returns (GetWarrantyOrdersResponse);
@@ -166,6 +176,9 @@ enum RepairStatus {
   REPAIR_STATUS_WAITING_APPROVAL = 11;
   REPAIR_STATUS_ESTIMATE_REJECTED = 12;
   REPAIR_STATUS_CLOSED_BY_CLIENT = 13;
+  REPAIR_STATUS_INSPECTION = 14;
+  REPAIR_STATUS_WAITING_PAYMENT = 15;
+  REPAIR_STATUS_PAID_WAITING_ARRIVAL = 16;
 }
 
 enum MasterRole {
@@ -239,12 +252,45 @@ enum PaymentMethod {
   PAYMENT_METHOD_TERMINAL = 2;
   PAYMENT_METHOD_IOKA = 3;
   PAYMENT_METHOD_KASPI = 4;
+  // Projection of a bank-confirmed cg-payments transaction. Workshop never
+  // confirms bank transfers itself.
+  PAYMENT_METHOD_BANK_TRANSFER = 5;
 }
 
 enum PaymentType {
   PAYMENT_TYPE_UNSPECIFIED = 0;
   PAYMENT_TYPE_PREPAID = 1;
   PAYMENT_TYPE_POSTPAID = 2;
+}
+
+// RepairOrderWorkflow separates the V2 intake lifecycle from adapters that
+// preserve legacy behavior. Unspecified keeps old rows and old consumers safe.
+enum RepairOrderWorkflow {
+  REPAIR_ORDER_WORKFLOW_UNSPECIFIED = 0;
+  REPAIR_ORDER_WORKFLOW_LEGACY = 1;
+  REPAIR_ORDER_WORKFLOW_V2 = 2;
+}
+
+enum RepairOrderOrigin {
+  REPAIR_ORDER_ORIGIN_UNSPECIFIED = 0;
+  REPAIR_ORDER_ORIGIN_MANUAL = 1;
+  REPAIR_ORDER_ORIGIN_CRM = 2;
+  REPAIR_ORDER_ORIGIN_LEGACY_NEW_ORDER = 3;
+  REPAIR_ORDER_ORIGIN_MARKETPLACE = 4;
+  REPAIR_ORDER_ORIGIN_SHIELD_CLAIM = 5;
+  REPAIR_ORDER_ORIGIN_WARRANTY = 6;
+}
+
+// RepairOrderBlockerType classifies active operational blockers in the
+// workshop-owned Kanban read model. It is not a payment status replacement.
+enum RepairOrderBlockerType {
+  REPAIR_ORDER_BLOCKER_TYPE_UNSPECIFIED = 0;
+  REPAIR_ORDER_BLOCKER_TYPE_CLIENT_APPROVAL = 1;
+  REPAIR_ORDER_BLOCKER_TYPE_PAYMENT = 2;
+  REPAIR_ORDER_BLOCKER_TYPE_VEHICLE_ARRIVAL = 3;
+  REPAIR_ORDER_BLOCKER_TYPE_PARTS = 4;
+  REPAIR_ORDER_BLOCKER_TYPE_PRODUCTION = 5;
+  REPAIR_ORDER_BLOCKER_TYPE_OTHER = 6;
 }
 
 // =============================================================================
@@ -339,6 +385,17 @@ message RepairOrder {
   // Empty when not resolved. Lets the client "my orders" list show the shop
   // name without a second round-trip. (cg_web userOrdersService order_work card.)
   string workshop_name = 53;
+  // V2 ownership and linkage. Legacy rows decode to UNSPECIFIED/nil and keep
+  // their existing behavior until explicitly classified by the owner service.
+  RepairOrderWorkflow workflow = 54;
+  RepairOrderOrigin origin = 55;
+  CRMRepairOrderLinkage crm_linkage = 56;
+  VehicleArrivalAudit arrival_audit = 57;
+  // Active blockers only; resolved blocker history remains workshop-owned.
+  repeated RepairOrderBlocker active_blockers = 58;
+  int32 active_blocker_count = 59;
+  // Server-derived against promised_date for compact Kanban rendering.
+  bool is_overdue = 60;
 }
 
 message MasterSummary {
@@ -585,6 +642,11 @@ message KanbanColumn {
   string label = 2;
   int32 count = 3;
   repeated RepairOrder orders = 4;
+  int32 blocked_order_count = 5;
+  int32 overdue_order_count = 6;
+  // Workshop amounts are always whole tenge.
+  int64 total_amount_tenge = 7;
+  int64 paid_amount_tenge = 8;
 }
 
 message OutsourceKanbanColumn {
@@ -1642,4 +1704,105 @@ message DownloadSignedAVRResponse {
   bytes  content      = 1;  // Signed document binary (PDF or XLSX).
   string filename     = 2;  // Suggested filename, e.g. "AVR_12345_signed.pdf".
   string content_type = 3;  // MIME type, e.g. "application/pdf".
+}
+
+// =============================================================================
+// Workshop V2 additive contracts
+// =============================================================================
+
+message CRMRepairOrderLinkage {
+  string deal_id = 1;
+  string pipeline_id = 2;
+  // Stable outbox event id used by the workshop inbox for deduplication.
+  string source_event_id = 3;
+  // Stable CRM stage identity; display names are not integration keys.
+  string source_stage_system_code = 4;
+}
+
+message VehicleArrivalAudit {
+  google.protobuf.Timestamp accepted_at = 1;
+  // Bound by cg-workshop from the authenticated principal.
+  int64 accepted_by_user_id = 2;
+  string note = 3;
+}
+
+message RepairOrderBlocker {
+  // Stable within one repair order and suitable as a UI key.
+  string code = 1;
+  RepairOrderBlockerType type = 2;
+  string label = 3;
+  string details = 4;
+  google.protobuf.Timestamp blocked_at = 5;
+  // Zero means a system-derived blocker.
+  int64 blocked_by_user_id = 6;
+}
+
+message AcceptVehicleRequest {
+  int64 repair_order_id = 1;
+  // Required command key. A retry with the same key returns the same arrival
+  // result and must not publish a second lifecycle event.
+  string idempotency_key = 2;
+  optional string note = 3;
+}
+
+message AcceptVehicleResponse {
+  RepairOrder order = 1;
+  bool already_accepted = 2;
+}
+
+message CreateIntakeOrderFromCRMRequest {
+  // Required command key. Reusing it with a different CRM linkage is invalid.
+  string idempotency_key = 1;
+  // Stable CRM outbox event id used for inbox deduplication and audit.
+  string source_event_id = 2;
+  int64 workshop_id = 3;
+  // Tenant context only. cg-workshop binds it to workshop ownership and the
+  // authenticated service principal before mutation.
+  string organization_id = 4;
+  string crm_deal_id = 5;
+  string crm_pipeline_id = 6;
+  string crm_source_stage_system_code = 7;
+  int64 user_id = 8;
+  int64 garage_car_id = 9;
+  string client_name = 10;
+  string client_phone = 11;
+  string license_plate = 12;
+  string vin = 13;
+  string car_model = 14;
+  string car_color = 15;
+  int32 car_year = 16;
+  int32 mark_id = 17;
+  int32 model_id = 18;
+  string description = 19;
+  // CRM-owned deal title retained for traceability; it is not a workshop
+  // client-name surrogate.
+  string crm_deal_title = 20;
+}
+
+message CreateIntakeOrderFromCRMResponse {
+  RepairOrder order = 1;
+  // True when the idempotency key, source event or CRM deal linkage already
+  // identified the returned V2 repair order.
+  bool already_exists = 2;
+}
+
+message GetRepairOrderPaymentTargetRequest {
+  int64 repair_order_id = 1;
+}
+
+message RepairOrderPaymentTarget {
+  int64 repair_order_id = 1;
+  string organization_id = 2;
+  int64 payer_user_id = 3;
+  // Owner-authoritative amounts in whole tenge. cg-payments converts the
+  // outstanding value to tiyn at its workshop adapter boundary.
+  int64 total_amount_tenge = 4;
+  int64 paid_amount_tenge = 5;
+  int64 outstanding_amount_tenge = 6;
+  string currency = 7;
+  PaymentStatus payment_status = 8;
+}
+
+message GetRepairOrderPaymentTargetResponse {
+  RepairOrderPaymentTarget target = 1;
 }
