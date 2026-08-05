@@ -1,6 +1,8 @@
 package counterv1
 
 import (
+	"os"
+	"strings"
 	"testing"
 
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -16,11 +18,19 @@ func TestCounterAppPerspectiveContract(t *testing.T) {
 	assertCounterEnumValue(t, enums.ByName("CounterPerspective"), "COUNTER_PERSPECTIVE_SUPPORT", 4)
 
 	messages := File_platform_counter_counter_proto.Messages()
-	for _, requestName := range []protoreflect.Name{"GetCountersRequest", "GetBadgeTotalRequest"} {
-		request := messages.ByName(requestName)
-		assertCounterField(t, request, "app", 2, protoreflect.EnumKind, false)
-		assertCounterField(t, request, "perspective", 3, protoreflect.EnumKind, false)
-		assertCounterField(t, request, "organization_ids", 4, protoreflect.StringKind, true)
+	requests := map[protoreflect.Name][]counterFieldExpectation{
+		"GetCountersRequest":                  {{"app", 2, protoreflect.EnumKind, false}, {"perspective", 3, protoreflect.EnumKind, false}, {"organization_ids", 4, protoreflect.StringKind, true}},
+		"IncrementCounterRequest":             {{"app", 4, protoreflect.EnumKind, false}, {"perspective", 5, protoreflect.EnumKind, false}, {"organization_ids", 6, protoreflect.StringKind, true}},
+		"DecrementCounterRequest":             {{"app", 4, protoreflect.EnumKind, false}, {"perspective", 5, protoreflect.EnumKind, false}, {"organization_ids", 6, protoreflect.StringKind, true}},
+		"SetCounterRequest":                   {{"app", 4, protoreflect.EnumKind, false}, {"perspective", 5, protoreflect.EnumKind, false}, {"organization_ids", 6, protoreflect.StringKind, true}},
+		"GetRoadsidePurchasesSnapshotRequest": {{"app", 2, protoreflect.EnumKind, false}, {"perspective", 3, protoreflect.EnumKind, false}, {"organization_ids", 4, protoreflect.StringKind, true}},
+		"ResetRoadsidePurchasesUnreadRequest": {{"app", 3, protoreflect.EnumKind, false}, {"perspective", 4, protoreflect.EnumKind, false}, {"organization_ids", 5, protoreflect.StringKind, true}},
+		"GetBadgeTotalRequest":                {{"app", 2, protoreflect.EnumKind, false}, {"perspective", 3, protoreflect.EnumKind, false}, {"organization_ids", 4, protoreflect.StringKind, true}},
+	}
+	for requestName, fields := range requests {
+		for _, field := range fields {
+			assertCounterField(t, messages.ByName(requestName), field.name, field.number, field.kind, field.list)
+		}
 	}
 
 	projection := messages.ByName("OrganizationUnreadProjection")
@@ -34,6 +44,28 @@ func TestCounterAppPerspectiveContract(t *testing.T) {
 	}
 	assertCounterField(t, messages.ByName("GetCountersResponse"), "organization_unread", 2, protoreflect.MessageKind, true)
 	assertCounterField(t, messages.ByName("GetBadgeTotalResponse"), "organization_unread", 3, protoreflect.MessageKind, true)
+	assertCounterContractDocumentation(t)
+}
+
+func assertCounterContractDocumentation(t *testing.T) {
+	t.Helper()
+	source, err := os.ReadFile("../../../../platform/counter/counter.proto")
+	if err != nil {
+		t.Fatalf("read counter.proto: %v", err)
+	}
+	for _, required := range []string{
+		"routing/profile context only",
+		"owner/BFF MUST bind app to the verified JWT app",
+		"reject a caller-scoped",
+		"membership/ownership with the source",
+		"BFF-selected fields are never authority",
+		"CLIENT+BUYER and",
+		"PRO+SELLER_ORG",
+	} {
+		if !strings.Contains(string(source), required) {
+			t.Errorf("counter.proto missing contract documentation %q", required)
+		}
+	}
 }
 
 type counterFieldExpectation struct {

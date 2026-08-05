@@ -31,8 +31,8 @@ enum ChatContextType {
 }
 
 // ChatPerspective identifies the authenticated caller's side of a chat.
-// BFFs set this routing context from the selected application/profile; chat
-// service still verifies the JWT user and organization membership.
+// A single user can therefore address CLIENT+BUYER and PRO+SELLER_ORG as
+// independent scopes; user_id alone never selects a profile.
 enum ChatPerspective {
   CHAT_PERSPECTIVE_UNSPECIFIED = 0;
   CHAT_PERSPECTIVE_BUYER = 1;
@@ -41,7 +41,7 @@ enum ChatPerspective {
   CHAT_PERSPECTIVE_SUPPORT = 4;
 }
 
-// ChatApp is the application delivery boundary for realtime chat events.
+// ChatApp is the application boundary for caller routing and realtime events.
 enum ChatApp {
   CHAT_APP_UNSPECIFIED = 0;
   CHAT_APP_CLIENT = 1;
@@ -126,9 +126,15 @@ message VehicleContext {
 }
 
 // ChatRealtimeEventPayload is the protobuf-owned projection of the
-// chat.message.sent realtime event. The explicit recipient boundary allows
-// websocket and push consumers to route one phone/user session to the correct
-// application and organization without user-only inference.
+// chat.message.sent JSON event. During migration producers MUST dual-write the
+// exact legacy target_apps/recipient_org_id fields and the typed recipient
+// fields. Typed consumers read recipient_app first and fall back to normalized
+// legacy values ("client" -> CLIENT, "partner" -> PRO); legacy consumers keep
+// reading target_apps. If typed and legacy app or organization values are both
+// present, they MUST agree or the owner rejects INVALID_ARGUMENT. Consumers
+// MUST retain legacy fallback delivery while typed routing is absent so pushes
+// are never silently dropped. Organization routing is verified from the chat
+// owner and membership source; event or BFF values are not authority.
 message ChatRealtimeEventPayload {
   string message_id = 1;
   string chat_id = 2;
@@ -136,13 +142,23 @@ message ChatRealtimeEventPayload {
   string message_type = 4;
   int64 recipient_id = 5;
   repeated int64 recipient_user_ids = 6;
-  ChatApp recipient_app = 7;
-  ChatPerspective recipient_perspective = 8;
-  string recipient_organization_id = 9;
-  ChatContextType context_type = 10;
-  string context_id = 11;
+  // Legacy JSON field. Values remain exactly "client" and/or "partner".
+  repeated string target_apps = 7;
+  // Legacy JSON field consumed by current partner websocket routing.
+  string recipient_org_id = 8;
+  // Typed fields use distinct names/tags so legacy JSON remains dual-readable.
+  ChatApp recipient_app = 9;
+  ChatPerspective recipient_perspective = 10;
+  string recipient_organization_id = 11;
+  // Legacy JSON context_type remains a category string such as "request".
+  string context_type = 12;
+  string context_id = 13;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 message CreateChatRequest {
   ChatContextType context_type = 1;
   string context_id = 2;
@@ -155,28 +171,39 @@ message CreateChatRequest {
   ChatPerspective perspective = 6;
   string organization_id = 7;
   optional int64 origin_bid_id = 8;
+  ChatApp app = 9;
 }
 
 message CreateChatResponse {
   Chat chat = 1;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 message GetChatRequest {
   string chat_id = 1;
   ChatPerspective perspective = 2;
   string organization_id = 3;
+  ChatApp app = 4;
 }
 
 message GetChatResponse {
   Chat chat = 1;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 message GetUserChatsRequest {
   int64 user_id = 1;
   int32 page = 2;
   int32 page_size = 3;
   ChatPerspective perspective = 4;
   string organization_id = 5;
+  ChatApp app = 6;
 }
 
 message GetUserChatsResponse {
@@ -184,8 +211,10 @@ message GetUserChatsResponse {
   int32 total = 2;
 }
 
-// GetOrgChatsRequest fetches chats for an organization.
-// The caller must be a member of the organization (validated via JWT org claim).
+// GetOrgChatsRequest fetches chats for an organization. app, perspective, and
+// organization_id are routing/profile context only. The owner/BFF MUST bind app
+// to the verified JWT app, reject a caller-scoped app mismatch, and validate
+// organization membership/ownership; request values are never authority.
 message GetOrgChatsRequest {
   string organization_id = 1;
   int32 limit = 2;
@@ -194,6 +223,7 @@ message GetOrgChatsRequest {
   // status filters chats: "open" | "closed" | "all". Defaults to "all".
   string status = 4;
   ChatPerspective perspective = 5;
+  ChatApp app = 6;
 }
 
 message GetOrgChatsResponse {
@@ -203,6 +233,10 @@ message GetOrgChatsResponse {
   int32 total = 3;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 message SendMessageRequest {
   string chat_id = 1;
   int64 sender_id = 2;
@@ -210,18 +244,24 @@ message SendMessageRequest {
   string message_type = 4;
   ChatPerspective perspective = 5;
   string organization_id = 6;
+  ChatApp app = 7;
 }
 
 message SendMessageResponse {
   Message message = 1;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 message GetMessagesRequest {
   string chat_id = 1;
   string before_id = 2;
   int32 limit = 3;
   ChatPerspective perspective = 4;
   string organization_id = 5;
+  ChatApp app = 6;
 }
 
 message GetMessagesResponse {
@@ -231,12 +271,17 @@ message GetMessagesResponse {
   VehicleContext vehicle_context = 3;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 message MarkAsReadRequest {
   string chat_id = 1;
   int64 user_id = 2;
   string last_message_id = 3;
   ChatPerspective perspective = 4;
   string organization_id = 5;
+  ChatApp app = 6;
 }
 
 message MarkAsReadResponse {
@@ -247,7 +292,10 @@ message MarkAsReadResponse {
 // B1: DeleteMessage
 // ============================================================
 
-// DeleteMessageRequest identifies the message to soft-delete.
+// DeleteMessageRequest identifies the message to soft-delete. app, perspective,
+// and organization_id are routing/profile context only. The owner/BFF MUST bind
+// app to the verified JWT app, reject a caller-scoped app mismatch, and validate
+// organization membership/ownership; request values are never authority.
 // requester_user_id is used for authorship verification:
 //   PERMISSION_DENIED when requester_user_id != Message.sender_id.
 message DeleteMessageRequest {
@@ -256,6 +304,7 @@ message DeleteMessageRequest {
   int64 requester_user_id = 3;
   ChatPerspective perspective = 4;
   string organization_id = 5;
+  ChatApp app = 6;
 }
 
 // DeleteMessageResponse is intentionally empty (maps to HTTP 204 on the BFF side).

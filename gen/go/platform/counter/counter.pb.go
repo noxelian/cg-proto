@@ -121,7 +121,8 @@ func (CounterApp) EnumDescriptor() ([]byte, []int) {
 }
 
 // CounterPerspective separates buyer and seller profile projections for one
-// authenticated user. The counter owner verifies organization membership.
+// authenticated user. A single user can therefore address CLIENT+BUYER and
+// PRO+SELLER_ORG as independent scopes; user_id alone never selects a profile.
 type CounterPerspective int32
 
 const (
@@ -353,6 +354,10 @@ func (x *UserCounters) GetRoadsidePurchasesUnread() int32 {
 	return 0
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; BFF-selected fields are never authority.
 type GetCountersRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	UserId          int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -473,6 +478,10 @@ func (x *GetCountersResponse) GetOrganizationUnread() []*OrganizationUnreadProje
 	return nil
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; request fields are never authority.
 type IncrementCounterRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	UserId          int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -601,6 +610,10 @@ func (x *IncrementCounterResponse) GetNewValue() int32 {
 	return 0
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; request fields are never authority.
 type DecrementCounterRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	UserId          int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -729,6 +742,10 @@ func (x *DecrementCounterResponse) GetNewValue() int32 {
 	return 0
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; request fields are never authority.
 type SetCounterRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	UserId          int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -857,6 +874,10 @@ func (x *SetCounterResponse) GetSuccess() bool {
 	return false
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; BFF-selected fields are never authority.
 type GetRoadsidePurchasesSnapshotRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	State           RoadsidePurchasesState `protobuf:"varint,1,opt,name=state,proto3,enum=platform.counter.v1.RoadsidePurchasesState" json:"state,omitempty"`
@@ -970,6 +991,10 @@ func (x *GetRoadsidePurchasesSnapshotResponse) GetCursor() uint64 {
 	return 0
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; BFF-selected fields are never authority.
 type ResetRoadsidePurchasesUnreadRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	State RoadsidePurchasesState `protobuf:"varint,1,opt,name=state,proto3,enum=platform.counter.v1.RoadsidePurchasesState" json:"state,omitempty"`
@@ -1108,6 +1133,10 @@ func (x *ResetRoadsidePurchasesUnreadResponse) GetStateUnread() int32 {
 	return 0
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; BFF-selected fields are never authority.
 type GetBadgeTotalRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	UserId          int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`

@@ -81,8 +81,8 @@ func (ChatContextType) EnumDescriptor() ([]byte, []int) {
 }
 
 // ChatPerspective identifies the authenticated caller's side of a chat.
-// BFFs set this routing context from the selected application/profile; chat
-// service still verifies the JWT user and organization membership.
+// A single user can therefore address CLIENT+BUYER and PRO+SELLER_ORG as
+// independent scopes; user_id alone never selects a profile.
 type ChatPerspective int32
 
 const (
@@ -138,7 +138,7 @@ func (ChatPerspective) EnumDescriptor() ([]byte, []int) {
 	return file_communication_chat_chat_proto_rawDescGZIP(), []int{1}
 }
 
-// ChatApp is the application delivery boundary for realtime chat events.
+// ChatApp is the application boundary for caller routing and realtime events.
 type ChatApp int32
 
 const (
@@ -684,24 +684,36 @@ func (x *VehicleContext) GetProvenance() VehicleContextProvenance {
 }
 
 // ChatRealtimeEventPayload is the protobuf-owned projection of the
-// chat.message.sent realtime event. The explicit recipient boundary allows
-// websocket and push consumers to route one phone/user session to the correct
-// application and organization without user-only inference.
+// chat.message.sent JSON event. During migration producers MUST dual-write the
+// exact legacy target_apps/recipient_org_id fields and the typed recipient
+// fields. Typed consumers read recipient_app first and fall back to normalized
+// legacy values ("client" -> CLIENT, "partner" -> PRO); legacy consumers keep
+// reading target_apps. If typed and legacy app or organization values are both
+// present, they MUST agree or the owner rejects INVALID_ARGUMENT. Consumers
+// MUST retain legacy fallback delivery while typed routing is absent so pushes
+// are never silently dropped. Organization routing is verified from the chat
+// owner and membership source; event or BFF values are not authority.
 type ChatRealtimeEventPayload struct {
-	state                   protoimpl.MessageState `protogen:"open.v1"`
-	MessageId               string                 `protobuf:"bytes,1,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
-	ChatId                  string                 `protobuf:"bytes,2,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
-	SenderId                int64                  `protobuf:"varint,3,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
-	MessageType             string                 `protobuf:"bytes,4,opt,name=message_type,json=messageType,proto3" json:"message_type,omitempty"`
-	RecipientId             int64                  `protobuf:"varint,5,opt,name=recipient_id,json=recipientId,proto3" json:"recipient_id,omitempty"`
-	RecipientUserIds        []int64                `protobuf:"varint,6,rep,packed,name=recipient_user_ids,json=recipientUserIds,proto3" json:"recipient_user_ids,omitempty"`
-	RecipientApp            ChatApp                `protobuf:"varint,7,opt,name=recipient_app,json=recipientApp,proto3,enum=communication.chat.v1.ChatApp" json:"recipient_app,omitempty"`
-	RecipientPerspective    ChatPerspective        `protobuf:"varint,8,opt,name=recipient_perspective,json=recipientPerspective,proto3,enum=communication.chat.v1.ChatPerspective" json:"recipient_perspective,omitempty"`
-	RecipientOrganizationId string                 `protobuf:"bytes,9,opt,name=recipient_organization_id,json=recipientOrganizationId,proto3" json:"recipient_organization_id,omitempty"`
-	ContextType             ChatContextType        `protobuf:"varint,10,opt,name=context_type,json=contextType,proto3,enum=communication.chat.v1.ChatContextType" json:"context_type,omitempty"`
-	ContextId               string                 `protobuf:"bytes,11,opt,name=context_id,json=contextId,proto3" json:"context_id,omitempty"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	MessageId        string                 `protobuf:"bytes,1,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
+	ChatId           string                 `protobuf:"bytes,2,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
+	SenderId         int64                  `protobuf:"varint,3,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
+	MessageType      string                 `protobuf:"bytes,4,opt,name=message_type,json=messageType,proto3" json:"message_type,omitempty"`
+	RecipientId      int64                  `protobuf:"varint,5,opt,name=recipient_id,json=recipientId,proto3" json:"recipient_id,omitempty"`
+	RecipientUserIds []int64                `protobuf:"varint,6,rep,packed,name=recipient_user_ids,json=recipientUserIds,proto3" json:"recipient_user_ids,omitempty"`
+	// Legacy JSON field. Values remain exactly "client" and/or "partner".
+	TargetApps []string `protobuf:"bytes,7,rep,name=target_apps,json=targetApps,proto3" json:"target_apps,omitempty"`
+	// Legacy JSON field consumed by current partner websocket routing.
+	RecipientOrgId string `protobuf:"bytes,8,opt,name=recipient_org_id,json=recipientOrgId,proto3" json:"recipient_org_id,omitempty"`
+	// Typed fields use distinct names/tags so legacy JSON remains dual-readable.
+	RecipientApp            ChatApp         `protobuf:"varint,9,opt,name=recipient_app,json=recipientApp,proto3,enum=communication.chat.v1.ChatApp" json:"recipient_app,omitempty"`
+	RecipientPerspective    ChatPerspective `protobuf:"varint,10,opt,name=recipient_perspective,json=recipientPerspective,proto3,enum=communication.chat.v1.ChatPerspective" json:"recipient_perspective,omitempty"`
+	RecipientOrganizationId string          `protobuf:"bytes,11,opt,name=recipient_organization_id,json=recipientOrganizationId,proto3" json:"recipient_organization_id,omitempty"`
+	// Legacy JSON context_type remains a category string such as "request".
+	ContextType   string `protobuf:"bytes,12,opt,name=context_type,json=contextType,proto3" json:"context_type,omitempty"`
+	ContextId     string `protobuf:"bytes,13,opt,name=context_id,json=contextId,proto3" json:"context_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ChatRealtimeEventPayload) Reset() {
@@ -776,6 +788,20 @@ func (x *ChatRealtimeEventPayload) GetRecipientUserIds() []int64 {
 	return nil
 }
 
+func (x *ChatRealtimeEventPayload) GetTargetApps() []string {
+	if x != nil {
+		return x.TargetApps
+	}
+	return nil
+}
+
+func (x *ChatRealtimeEventPayload) GetRecipientOrgId() string {
+	if x != nil {
+		return x.RecipientOrgId
+	}
+	return ""
+}
+
 func (x *ChatRealtimeEventPayload) GetRecipientApp() ChatApp {
 	if x != nil {
 		return x.RecipientApp
@@ -797,11 +823,11 @@ func (x *ChatRealtimeEventPayload) GetRecipientOrganizationId() string {
 	return ""
 }
 
-func (x *ChatRealtimeEventPayload) GetContextType() ChatContextType {
+func (x *ChatRealtimeEventPayload) GetContextType() string {
 	if x != nil {
 		return x.ContextType
 	}
-	return ChatContextType_CHAT_CONTEXT_TYPE_UNSPECIFIED
+	return ""
 }
 
 func (x *ChatRealtimeEventPayload) GetContextId() string {
@@ -811,6 +837,10 @@ func (x *ChatRealtimeEventPayload) GetContextId() string {
 	return ""
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 type CreateChatRequest struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	ContextType ChatContextType        `protobuf:"varint,1,opt,name=context_type,json=contextType,proto3,enum=communication.chat.v1.ChatContextType" json:"context_type,omitempty"`
@@ -824,6 +854,7 @@ type CreateChatRequest struct {
 	Perspective    ChatPerspective `protobuf:"varint,6,opt,name=perspective,proto3,enum=communication.chat.v1.ChatPerspective" json:"perspective,omitempty"`
 	OrganizationId string          `protobuf:"bytes,7,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
 	OriginBidId    *int64          `protobuf:"varint,8,opt,name=origin_bid_id,json=originBidId,proto3,oneof" json:"origin_bid_id,omitempty"`
+	App            ChatApp         `protobuf:"varint,9,opt,name=app,proto3,enum=communication.chat.v1.ChatApp" json:"app,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -914,6 +945,13 @@ func (x *CreateChatRequest) GetOriginBidId() int64 {
 	return 0
 }
 
+func (x *CreateChatRequest) GetApp() ChatApp {
+	if x != nil {
+		return x.App
+	}
+	return ChatApp_CHAT_APP_UNSPECIFIED
+}
+
 type CreateChatResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Chat          *Chat                  `protobuf:"bytes,1,opt,name=chat,proto3" json:"chat,omitempty"`
@@ -958,11 +996,16 @@ func (x *CreateChatResponse) GetChat() *Chat {
 	return nil
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 type GetChatRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	ChatId         string                 `protobuf:"bytes,1,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
 	Perspective    ChatPerspective        `protobuf:"varint,2,opt,name=perspective,proto3,enum=communication.chat.v1.ChatPerspective" json:"perspective,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	App            ChatApp                `protobuf:"varint,4,opt,name=app,proto3,enum=communication.chat.v1.ChatApp" json:"app,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1018,6 +1061,13 @@ func (x *GetChatRequest) GetOrganizationId() string {
 	return ""
 }
 
+func (x *GetChatRequest) GetApp() ChatApp {
+	if x != nil {
+		return x.App
+	}
+	return ChatApp_CHAT_APP_UNSPECIFIED
+}
+
 type GetChatResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Chat          *Chat                  `protobuf:"bytes,1,opt,name=chat,proto3" json:"chat,omitempty"`
@@ -1062,6 +1112,10 @@ func (x *GetChatResponse) GetChat() *Chat {
 	return nil
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 type GetUserChatsRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1069,6 +1123,7 @@ type GetUserChatsRequest struct {
 	PageSize       int32                  `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	Perspective    ChatPerspective        `protobuf:"varint,4,opt,name=perspective,proto3,enum=communication.chat.v1.ChatPerspective" json:"perspective,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,5,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	App            ChatApp                `protobuf:"varint,6,opt,name=app,proto3,enum=communication.chat.v1.ChatApp" json:"app,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1138,6 +1193,13 @@ func (x *GetUserChatsRequest) GetOrganizationId() string {
 	return ""
 }
 
+func (x *GetUserChatsRequest) GetApp() ChatApp {
+	if x != nil {
+		return x.App
+	}
+	return ChatApp_CHAT_APP_UNSPECIFIED
+}
+
 type GetUserChatsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Chats         []*Chat                `protobuf:"bytes,1,rep,name=chats,proto3" json:"chats,omitempty"`
@@ -1190,8 +1252,10 @@ func (x *GetUserChatsResponse) GetTotal() int32 {
 	return 0
 }
 
-// GetOrgChatsRequest fetches chats for an organization.
-// The caller must be a member of the organization (validated via JWT org claim).
+// GetOrgChatsRequest fetches chats for an organization. app, perspective, and
+// organization_id are routing/profile context only. The owner/BFF MUST bind app
+// to the verified JWT app, reject a caller-scoped app mismatch, and validate
+// organization membership/ownership; request values are never authority.
 type GetOrgChatsRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
@@ -1201,6 +1265,7 @@ type GetOrgChatsRequest struct {
 	// status filters chats: "open" | "closed" | "all". Defaults to "all".
 	Status        string          `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
 	Perspective   ChatPerspective `protobuf:"varint,5,opt,name=perspective,proto3,enum=communication.chat.v1.ChatPerspective" json:"perspective,omitempty"`
+	App           ChatApp         `protobuf:"varint,6,opt,name=app,proto3,enum=communication.chat.v1.ChatApp" json:"app,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1270,6 +1335,13 @@ func (x *GetOrgChatsRequest) GetPerspective() ChatPerspective {
 	return ChatPerspective_CHAT_PERSPECTIVE_UNSPECIFIED
 }
 
+func (x *GetOrgChatsRequest) GetApp() ChatApp {
+	if x != nil {
+		return x.App
+	}
+	return ChatApp_CHAT_APP_UNSPECIFIED
+}
+
 type GetOrgChatsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Chats []*Chat                `protobuf:"bytes,1,rep,name=chats,proto3" json:"chats,omitempty"`
@@ -1331,6 +1403,10 @@ func (x *GetOrgChatsResponse) GetTotal() int32 {
 	return 0
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 type SendMessageRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	ChatId         string                 `protobuf:"bytes,1,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1339,6 +1415,7 @@ type SendMessageRequest struct {
 	MessageType    string                 `protobuf:"bytes,4,opt,name=message_type,json=messageType,proto3" json:"message_type,omitempty"`
 	Perspective    ChatPerspective        `protobuf:"varint,5,opt,name=perspective,proto3,enum=communication.chat.v1.ChatPerspective" json:"perspective,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,6,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	App            ChatApp                `protobuf:"varint,7,opt,name=app,proto3,enum=communication.chat.v1.ChatApp" json:"app,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1415,6 +1492,13 @@ func (x *SendMessageRequest) GetOrganizationId() string {
 	return ""
 }
 
+func (x *SendMessageRequest) GetApp() ChatApp {
+	if x != nil {
+		return x.App
+	}
+	return ChatApp_CHAT_APP_UNSPECIFIED
+}
+
 type SendMessageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Message       *Message               `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
@@ -1459,6 +1543,10 @@ func (x *SendMessageResponse) GetMessage() *Message {
 	return nil
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 type GetMessagesRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	ChatId         string                 `protobuf:"bytes,1,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1466,6 +1554,7 @@ type GetMessagesRequest struct {
 	Limit          int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
 	Perspective    ChatPerspective        `protobuf:"varint,4,opt,name=perspective,proto3,enum=communication.chat.v1.ChatPerspective" json:"perspective,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,5,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	App            ChatApp                `protobuf:"varint,6,opt,name=app,proto3,enum=communication.chat.v1.ChatApp" json:"app,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1535,6 +1624,13 @@ func (x *GetMessagesRequest) GetOrganizationId() string {
 	return ""
 }
 
+func (x *GetMessagesRequest) GetApp() ChatApp {
+	if x != nil {
+		return x.App
+	}
+	return ChatApp_CHAT_APP_UNSPECIFIED
+}
+
 type GetMessagesResponse struct {
 	state    protoimpl.MessageState `protogen:"open.v1"`
 	Messages []*Message             `protobuf:"bytes,1,rep,name=messages,proto3" json:"messages,omitempty"`
@@ -1596,6 +1692,10 @@ func (x *GetMessagesResponse) GetVehicleContext() *VehicleContext {
 	return nil
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 type MarkAsReadRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	ChatId         string                 `protobuf:"bytes,1,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
@@ -1603,6 +1703,7 @@ type MarkAsReadRequest struct {
 	LastMessageId  string                 `protobuf:"bytes,3,opt,name=last_message_id,json=lastMessageId,proto3" json:"last_message_id,omitempty"`
 	Perspective    ChatPerspective        `protobuf:"varint,4,opt,name=perspective,proto3,enum=communication.chat.v1.ChatPerspective" json:"perspective,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,5,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	App            ChatApp                `protobuf:"varint,6,opt,name=app,proto3,enum=communication.chat.v1.ChatApp" json:"app,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1672,6 +1773,13 @@ func (x *MarkAsReadRequest) GetOrganizationId() string {
 	return ""
 }
 
+func (x *MarkAsReadRequest) GetApp() ChatApp {
+	if x != nil {
+		return x.App
+	}
+	return ChatApp_CHAT_APP_UNSPECIFIED
+}
+
 type MarkAsReadResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	MarkedCount   int32                  `protobuf:"varint,1,opt,name=marked_count,json=markedCount,proto3" json:"marked_count,omitempty"`
@@ -1716,7 +1824,10 @@ func (x *MarkAsReadResponse) GetMarkedCount() int32 {
 	return 0
 }
 
-// DeleteMessageRequest identifies the message to soft-delete.
+// DeleteMessageRequest identifies the message to soft-delete. app, perspective,
+// and organization_id are routing/profile context only. The owner/BFF MUST bind
+// app to the verified JWT app, reject a caller-scoped app mismatch, and validate
+// organization membership/ownership; request values are never authority.
 // requester_user_id is used for authorship verification:
 //
 //	PERMISSION_DENIED when requester_user_id != Message.sender_id.
@@ -1727,6 +1838,7 @@ type DeleteMessageRequest struct {
 	RequesterUserId int64                  `protobuf:"varint,3,opt,name=requester_user_id,json=requesterUserId,proto3" json:"requester_user_id,omitempty"`
 	Perspective     ChatPerspective        `protobuf:"varint,4,opt,name=perspective,proto3,enum=communication.chat.v1.ChatPerspective" json:"perspective,omitempty"`
 	OrganizationId  string                 `protobuf:"bytes,5,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	App             ChatApp                `protobuf:"varint,6,opt,name=app,proto3,enum=communication.chat.v1.ChatApp" json:"app,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1794,6 +1906,13 @@ func (x *DeleteMessageRequest) GetOrganizationId() string {
 		return x.OrganizationId
 	}
 	return ""
+}
+
+func (x *DeleteMessageRequest) GetApp() ChatApp {
+	if x != nil {
+		return x.App
+	}
+	return ChatApp_CHAT_APP_UNSPECIFIED
 }
 
 // DeleteMessageResponse is intentionally empty (maps to HTTP 204 on the BFF side).
@@ -2420,7 +2539,7 @@ const file_communication_chat_chat_proto_rawDesc = "" +
 	"provenanceB\x10\n" +
 	"\x0e_garage_car_idB\x14\n" +
 	"\x12_car_generation_idB\x06\n" +
-	"\x04_vin\"\xab\x04\n" +
+	"\x04_vin\"\xce\x04\n" +
 	"\x18ChatRealtimeEventPayload\x12\x1d\n" +
 	"\n" +
 	"message_id\x18\x01 \x01(\tR\tmessageId\x12\x17\n" +
@@ -2428,14 +2547,17 @@ const file_communication_chat_chat_proto_rawDesc = "" +
 	"\tsender_id\x18\x03 \x01(\x03R\bsenderId\x12!\n" +
 	"\fmessage_type\x18\x04 \x01(\tR\vmessageType\x12!\n" +
 	"\frecipient_id\x18\x05 \x01(\x03R\vrecipientId\x12,\n" +
-	"\x12recipient_user_ids\x18\x06 \x03(\x03R\x10recipientUserIds\x12C\n" +
-	"\rrecipient_app\x18\a \x01(\x0e2\x1e.communication.chat.v1.ChatAppR\frecipientApp\x12[\n" +
-	"\x15recipient_perspective\x18\b \x01(\x0e2&.communication.chat.v1.ChatPerspectiveR\x14recipientPerspective\x12:\n" +
-	"\x19recipient_organization_id\x18\t \x01(\tR\x17recipientOrganizationId\x12I\n" +
-	"\fcontext_type\x18\n" +
-	" \x01(\x0e2&.communication.chat.v1.ChatContextTypeR\vcontextType\x12\x1d\n" +
+	"\x12recipient_user_ids\x18\x06 \x03(\x03R\x10recipientUserIds\x12\x1f\n" +
+	"\vtarget_apps\x18\a \x03(\tR\n" +
+	"targetApps\x12(\n" +
+	"\x10recipient_org_id\x18\b \x01(\tR\x0erecipientOrgId\x12C\n" +
+	"\rrecipient_app\x18\t \x01(\x0e2\x1e.communication.chat.v1.ChatAppR\frecipientApp\x12[\n" +
+	"\x15recipient_perspective\x18\n" +
+	" \x01(\x0e2&.communication.chat.v1.ChatPerspectiveR\x14recipientPerspective\x12:\n" +
+	"\x19recipient_organization_id\x18\v \x01(\tR\x17recipientOrganizationId\x12!\n" +
+	"\fcontext_type\x18\f \x01(\tR\vcontextType\x12\x1d\n" +
 	"\n" +
-	"context_id\x18\v \x01(\tR\tcontextId\"\x87\x03\n" +
+	"context_id\x18\r \x01(\tR\tcontextId\"\xb9\x03\n" +
 	"\x11CreateChatRequest\x12I\n" +
 	"\fcontext_type\x18\x01 \x01(\x0e2&.communication.chat.v1.ChatContextTypeR\vcontextType\x12\x1d\n" +
 	"\n" +
@@ -2445,70 +2567,78 @@ const file_communication_chat_chat_proto_rawDesc = "" +
 	"\rseller_org_id\x18\x05 \x01(\tR\vsellerOrgId\x12H\n" +
 	"\vperspective\x18\x06 \x01(\x0e2&.communication.chat.v1.ChatPerspectiveR\vperspective\x12'\n" +
 	"\x0forganization_id\x18\a \x01(\tR\x0eorganizationId\x12'\n" +
-	"\rorigin_bid_id\x18\b \x01(\x03H\x00R\voriginBidId\x88\x01\x01B\x10\n" +
+	"\rorigin_bid_id\x18\b \x01(\x03H\x00R\voriginBidId\x88\x01\x01\x120\n" +
+	"\x03app\x18\t \x01(\x0e2\x1e.communication.chat.v1.ChatAppR\x03appB\x10\n" +
 	"\x0e_origin_bid_id\"E\n" +
 	"\x12CreateChatResponse\x12/\n" +
-	"\x04chat\x18\x01 \x01(\v2\x1b.communication.chat.v1.ChatR\x04chat\"\x9c\x01\n" +
+	"\x04chat\x18\x01 \x01(\v2\x1b.communication.chat.v1.ChatR\x04chat\"\xce\x01\n" +
 	"\x0eGetChatRequest\x12\x17\n" +
 	"\achat_id\x18\x01 \x01(\tR\x06chatId\x12H\n" +
 	"\vperspective\x18\x02 \x01(\x0e2&.communication.chat.v1.ChatPerspectiveR\vperspective\x12'\n" +
-	"\x0forganization_id\x18\x03 \x01(\tR\x0eorganizationId\"B\n" +
+	"\x0forganization_id\x18\x03 \x01(\tR\x0eorganizationId\x120\n" +
+	"\x03app\x18\x04 \x01(\x0e2\x1e.communication.chat.v1.ChatAppR\x03app\"B\n" +
 	"\x0fGetChatResponse\x12/\n" +
-	"\x04chat\x18\x01 \x01(\v2\x1b.communication.chat.v1.ChatR\x04chat\"\xd2\x01\n" +
+	"\x04chat\x18\x01 \x01(\v2\x1b.communication.chat.v1.ChatR\x04chat\"\x84\x02\n" +
 	"\x13GetUserChatsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x1b\n" +
 	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\x12H\n" +
 	"\vperspective\x18\x04 \x01(\x0e2&.communication.chat.v1.ChatPerspectiveR\vperspective\x12'\n" +
-	"\x0forganization_id\x18\x05 \x01(\tR\x0eorganizationId\"_\n" +
+	"\x0forganization_id\x18\x05 \x01(\tR\x0eorganizationId\x120\n" +
+	"\x03app\x18\x06 \x01(\x0e2\x1e.communication.chat.v1.ChatAppR\x03app\"_\n" +
 	"\x14GetUserChatsResponse\x121\n" +
 	"\x05chats\x18\x01 \x03(\v2\x1b.communication.chat.v1.ChatR\x05chats\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"\xcd\x01\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xff\x01\n" +
 	"\x12GetOrgChatsRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06cursor\x18\x03 \x01(\tR\x06cursor\x12\x16\n" +
 	"\x06status\x18\x04 \x01(\tR\x06status\x12H\n" +
-	"\vperspective\x18\x05 \x01(\x0e2&.communication.chat.v1.ChatPerspectiveR\vperspective\"\x7f\n" +
+	"\vperspective\x18\x05 \x01(\x0e2&.communication.chat.v1.ChatPerspectiveR\vperspective\x120\n" +
+	"\x03app\x18\x06 \x01(\x0e2\x1e.communication.chat.v1.ChatAppR\x03app\"\x7f\n" +
 	"\x13GetOrgChatsResponse\x121\n" +
 	"\x05chats\x18\x01 \x03(\v2\x1b.communication.chat.v1.ChatR\x05chats\x12\x1f\n" +
 	"\vnext_cursor\x18\x02 \x01(\tR\n" +
 	"nextCursor\x12\x14\n" +
-	"\x05total\x18\x03 \x01(\x05R\x05total\"\xfa\x01\n" +
+	"\x05total\x18\x03 \x01(\x05R\x05total\"\xac\x02\n" +
 	"\x12SendMessageRequest\x12\x17\n" +
 	"\achat_id\x18\x01 \x01(\tR\x06chatId\x12\x1b\n" +
 	"\tsender_id\x18\x02 \x01(\x03R\bsenderId\x12\x18\n" +
 	"\acontent\x18\x03 \x01(\tR\acontent\x12!\n" +
 	"\fmessage_type\x18\x04 \x01(\tR\vmessageType\x12H\n" +
 	"\vperspective\x18\x05 \x01(\x0e2&.communication.chat.v1.ChatPerspectiveR\vperspective\x12'\n" +
-	"\x0forganization_id\x18\x06 \x01(\tR\x0eorganizationId\"O\n" +
+	"\x0forganization_id\x18\x06 \x01(\tR\x0eorganizationId\x120\n" +
+	"\x03app\x18\a \x01(\x0e2\x1e.communication.chat.v1.ChatAppR\x03app\"O\n" +
 	"\x13SendMessageResponse\x128\n" +
-	"\amessage\x18\x01 \x01(\v2\x1e.communication.chat.v1.MessageR\amessage\"\xd3\x01\n" +
+	"\amessage\x18\x01 \x01(\v2\x1e.communication.chat.v1.MessageR\amessage\"\x85\x02\n" +
 	"\x12GetMessagesRequest\x12\x17\n" +
 	"\achat_id\x18\x01 \x01(\tR\x06chatId\x12\x1b\n" +
 	"\tbefore_id\x18\x02 \x01(\tR\bbeforeId\x12\x14\n" +
 	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12H\n" +
 	"\vperspective\x18\x04 \x01(\x0e2&.communication.chat.v1.ChatPerspectiveR\vperspective\x12'\n" +
-	"\x0forganization_id\x18\x05 \x01(\tR\x0eorganizationId\"\xbc\x01\n" +
+	"\x0forganization_id\x18\x05 \x01(\tR\x0eorganizationId\x120\n" +
+	"\x03app\x18\x06 \x01(\x0e2\x1e.communication.chat.v1.ChatAppR\x03app\"\xbc\x01\n" +
 	"\x13GetMessagesResponse\x12:\n" +
 	"\bmessages\x18\x01 \x03(\v2\x1e.communication.chat.v1.MessageR\bmessages\x12\x19\n" +
 	"\bhas_more\x18\x02 \x01(\bR\ahasMore\x12N\n" +
-	"\x0fvehicle_context\x18\x03 \x01(\v2%.communication.chat.v1.VehicleContextR\x0evehicleContext\"\xe0\x01\n" +
+	"\x0fvehicle_context\x18\x03 \x01(\v2%.communication.chat.v1.VehicleContextR\x0evehicleContext\"\x92\x02\n" +
 	"\x11MarkAsReadRequest\x12\x17\n" +
 	"\achat_id\x18\x01 \x01(\tR\x06chatId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12&\n" +
 	"\x0flast_message_id\x18\x03 \x01(\tR\rlastMessageId\x12H\n" +
 	"\vperspective\x18\x04 \x01(\x0e2&.communication.chat.v1.ChatPerspectiveR\vperspective\x12'\n" +
-	"\x0forganization_id\x18\x05 \x01(\tR\x0eorganizationId\"7\n" +
+	"\x0forganization_id\x18\x05 \x01(\tR\x0eorganizationId\x120\n" +
+	"\x03app\x18\x06 \x01(\x0e2\x1e.communication.chat.v1.ChatAppR\x03app\"7\n" +
 	"\x12MarkAsReadResponse\x12!\n" +
-	"\fmarked_count\x18\x01 \x01(\x05R\vmarkedCount\"\xed\x01\n" +
+	"\fmarked_count\x18\x01 \x01(\x05R\vmarkedCount\"\x9f\x02\n" +
 	"\x14DeleteMessageRequest\x12\x17\n" +
 	"\achat_id\x18\x01 \x01(\tR\x06chatId\x12\x1d\n" +
 	"\n" +
 	"message_id\x18\x02 \x01(\tR\tmessageId\x12*\n" +
 	"\x11requester_user_id\x18\x03 \x01(\x03R\x0frequesterUserId\x12H\n" +
 	"\vperspective\x18\x04 \x01(\x0e2&.communication.chat.v1.ChatPerspectiveR\vperspective\x12'\n" +
-	"\x0forganization_id\x18\x05 \x01(\tR\x0eorganizationId\"\x17\n" +
+	"\x0forganization_id\x18\x05 \x01(\tR\x0eorganizationId\x120\n" +
+	"\x03app\x18\x06 \x01(\x0e2\x1e.communication.chat.v1.ChatAppR\x03app\"\x17\n" +
 	"\x15DeleteMessageResponse\"d\n" +
 	"\x18AdminGetUserChatsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x12\n" +
@@ -2644,59 +2774,66 @@ var file_communication_chat_chat_proto_depIdxs = []int32{
 	3,  // 8: communication.chat.v1.VehicleContext.provenance:type_name -> communication.chat.v1.VehicleContextProvenance
 	2,  // 9: communication.chat.v1.ChatRealtimeEventPayload.recipient_app:type_name -> communication.chat.v1.ChatApp
 	1,  // 10: communication.chat.v1.ChatRealtimeEventPayload.recipient_perspective:type_name -> communication.chat.v1.ChatPerspective
-	0,  // 11: communication.chat.v1.ChatRealtimeEventPayload.context_type:type_name -> communication.chat.v1.ChatContextType
-	0,  // 12: communication.chat.v1.CreateChatRequest.context_type:type_name -> communication.chat.v1.ChatContextType
-	1,  // 13: communication.chat.v1.CreateChatRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
+	0,  // 11: communication.chat.v1.CreateChatRequest.context_type:type_name -> communication.chat.v1.ChatContextType
+	1,  // 12: communication.chat.v1.CreateChatRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
+	2,  // 13: communication.chat.v1.CreateChatRequest.app:type_name -> communication.chat.v1.ChatApp
 	4,  // 14: communication.chat.v1.CreateChatResponse.chat:type_name -> communication.chat.v1.Chat
 	1,  // 15: communication.chat.v1.GetChatRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
-	4,  // 16: communication.chat.v1.GetChatResponse.chat:type_name -> communication.chat.v1.Chat
-	1,  // 17: communication.chat.v1.GetUserChatsRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
-	4,  // 18: communication.chat.v1.GetUserChatsResponse.chats:type_name -> communication.chat.v1.Chat
-	1,  // 19: communication.chat.v1.GetOrgChatsRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
-	4,  // 20: communication.chat.v1.GetOrgChatsResponse.chats:type_name -> communication.chat.v1.Chat
-	1,  // 21: communication.chat.v1.SendMessageRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
-	5,  // 22: communication.chat.v1.SendMessageResponse.message:type_name -> communication.chat.v1.Message
-	1,  // 23: communication.chat.v1.GetMessagesRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
-	5,  // 24: communication.chat.v1.GetMessagesResponse.messages:type_name -> communication.chat.v1.Message
-	6,  // 25: communication.chat.v1.GetMessagesResponse.vehicle_context:type_name -> communication.chat.v1.VehicleContext
-	1,  // 26: communication.chat.v1.MarkAsReadRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
-	1,  // 27: communication.chat.v1.DeleteMessageRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
-	4,  // 28: communication.chat.v1.AdminGetUserChatsResponse.chats:type_name -> communication.chat.v1.Chat
-	5,  // 29: communication.chat.v1.AdminGetChatMessagesResponse.messages:type_name -> communication.chat.v1.Message
-	0,  // 30: communication.chat.v1.AdminListChatsRequest.context_type:type_name -> communication.chat.v1.ChatContextType
-	4,  // 31: communication.chat.v1.AdminListChatsResponse.chats:type_name -> communication.chat.v1.Chat
-	5,  // 32: communication.chat.v1.AdminSendMessageResponse.message:type_name -> communication.chat.v1.Message
-	8,  // 33: communication.chat.v1.ChatService.CreateChat:input_type -> communication.chat.v1.CreateChatRequest
-	10, // 34: communication.chat.v1.ChatService.GetChat:input_type -> communication.chat.v1.GetChatRequest
-	12, // 35: communication.chat.v1.ChatService.GetUserChats:input_type -> communication.chat.v1.GetUserChatsRequest
-	14, // 36: communication.chat.v1.ChatService.GetOrgChats:input_type -> communication.chat.v1.GetOrgChatsRequest
-	16, // 37: communication.chat.v1.ChatService.SendMessage:input_type -> communication.chat.v1.SendMessageRequest
-	18, // 38: communication.chat.v1.ChatService.GetMessages:input_type -> communication.chat.v1.GetMessagesRequest
-	20, // 39: communication.chat.v1.ChatService.MarkAsRead:input_type -> communication.chat.v1.MarkAsReadRequest
-	22, // 40: communication.chat.v1.ChatService.DeleteMessage:input_type -> communication.chat.v1.DeleteMessageRequest
-	24, // 41: communication.chat.v1.AdminChatService.AdminGetUserChats:input_type -> communication.chat.v1.AdminGetUserChatsRequest
-	26, // 42: communication.chat.v1.AdminChatService.AdminGetChatMessages:input_type -> communication.chat.v1.AdminGetChatMessagesRequest
-	28, // 43: communication.chat.v1.AdminChatService.AdminListChats:input_type -> communication.chat.v1.AdminListChatsRequest
-	30, // 44: communication.chat.v1.AdminChatService.AdminSendMessage:input_type -> communication.chat.v1.AdminSendMessageRequest
-	32, // 45: communication.chat.v1.AdminChatService.AdminMarkChatRead:input_type -> communication.chat.v1.AdminMarkChatReadRequest
-	9,  // 46: communication.chat.v1.ChatService.CreateChat:output_type -> communication.chat.v1.CreateChatResponse
-	11, // 47: communication.chat.v1.ChatService.GetChat:output_type -> communication.chat.v1.GetChatResponse
-	13, // 48: communication.chat.v1.ChatService.GetUserChats:output_type -> communication.chat.v1.GetUserChatsResponse
-	15, // 49: communication.chat.v1.ChatService.GetOrgChats:output_type -> communication.chat.v1.GetOrgChatsResponse
-	17, // 50: communication.chat.v1.ChatService.SendMessage:output_type -> communication.chat.v1.SendMessageResponse
-	19, // 51: communication.chat.v1.ChatService.GetMessages:output_type -> communication.chat.v1.GetMessagesResponse
-	21, // 52: communication.chat.v1.ChatService.MarkAsRead:output_type -> communication.chat.v1.MarkAsReadResponse
-	23, // 53: communication.chat.v1.ChatService.DeleteMessage:output_type -> communication.chat.v1.DeleteMessageResponse
-	25, // 54: communication.chat.v1.AdminChatService.AdminGetUserChats:output_type -> communication.chat.v1.AdminGetUserChatsResponse
-	27, // 55: communication.chat.v1.AdminChatService.AdminGetChatMessages:output_type -> communication.chat.v1.AdminGetChatMessagesResponse
-	29, // 56: communication.chat.v1.AdminChatService.AdminListChats:output_type -> communication.chat.v1.AdminListChatsResponse
-	31, // 57: communication.chat.v1.AdminChatService.AdminSendMessage:output_type -> communication.chat.v1.AdminSendMessageResponse
-	33, // 58: communication.chat.v1.AdminChatService.AdminMarkChatRead:output_type -> communication.chat.v1.AdminMarkChatReadResponse
-	46, // [46:59] is the sub-list for method output_type
-	33, // [33:46] is the sub-list for method input_type
-	33, // [33:33] is the sub-list for extension type_name
-	33, // [33:33] is the sub-list for extension extendee
-	0,  // [0:33] is the sub-list for field type_name
+	2,  // 16: communication.chat.v1.GetChatRequest.app:type_name -> communication.chat.v1.ChatApp
+	4,  // 17: communication.chat.v1.GetChatResponse.chat:type_name -> communication.chat.v1.Chat
+	1,  // 18: communication.chat.v1.GetUserChatsRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
+	2,  // 19: communication.chat.v1.GetUserChatsRequest.app:type_name -> communication.chat.v1.ChatApp
+	4,  // 20: communication.chat.v1.GetUserChatsResponse.chats:type_name -> communication.chat.v1.Chat
+	1,  // 21: communication.chat.v1.GetOrgChatsRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
+	2,  // 22: communication.chat.v1.GetOrgChatsRequest.app:type_name -> communication.chat.v1.ChatApp
+	4,  // 23: communication.chat.v1.GetOrgChatsResponse.chats:type_name -> communication.chat.v1.Chat
+	1,  // 24: communication.chat.v1.SendMessageRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
+	2,  // 25: communication.chat.v1.SendMessageRequest.app:type_name -> communication.chat.v1.ChatApp
+	5,  // 26: communication.chat.v1.SendMessageResponse.message:type_name -> communication.chat.v1.Message
+	1,  // 27: communication.chat.v1.GetMessagesRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
+	2,  // 28: communication.chat.v1.GetMessagesRequest.app:type_name -> communication.chat.v1.ChatApp
+	5,  // 29: communication.chat.v1.GetMessagesResponse.messages:type_name -> communication.chat.v1.Message
+	6,  // 30: communication.chat.v1.GetMessagesResponse.vehicle_context:type_name -> communication.chat.v1.VehicleContext
+	1,  // 31: communication.chat.v1.MarkAsReadRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
+	2,  // 32: communication.chat.v1.MarkAsReadRequest.app:type_name -> communication.chat.v1.ChatApp
+	1,  // 33: communication.chat.v1.DeleteMessageRequest.perspective:type_name -> communication.chat.v1.ChatPerspective
+	2,  // 34: communication.chat.v1.DeleteMessageRequest.app:type_name -> communication.chat.v1.ChatApp
+	4,  // 35: communication.chat.v1.AdminGetUserChatsResponse.chats:type_name -> communication.chat.v1.Chat
+	5,  // 36: communication.chat.v1.AdminGetChatMessagesResponse.messages:type_name -> communication.chat.v1.Message
+	0,  // 37: communication.chat.v1.AdminListChatsRequest.context_type:type_name -> communication.chat.v1.ChatContextType
+	4,  // 38: communication.chat.v1.AdminListChatsResponse.chats:type_name -> communication.chat.v1.Chat
+	5,  // 39: communication.chat.v1.AdminSendMessageResponse.message:type_name -> communication.chat.v1.Message
+	8,  // 40: communication.chat.v1.ChatService.CreateChat:input_type -> communication.chat.v1.CreateChatRequest
+	10, // 41: communication.chat.v1.ChatService.GetChat:input_type -> communication.chat.v1.GetChatRequest
+	12, // 42: communication.chat.v1.ChatService.GetUserChats:input_type -> communication.chat.v1.GetUserChatsRequest
+	14, // 43: communication.chat.v1.ChatService.GetOrgChats:input_type -> communication.chat.v1.GetOrgChatsRequest
+	16, // 44: communication.chat.v1.ChatService.SendMessage:input_type -> communication.chat.v1.SendMessageRequest
+	18, // 45: communication.chat.v1.ChatService.GetMessages:input_type -> communication.chat.v1.GetMessagesRequest
+	20, // 46: communication.chat.v1.ChatService.MarkAsRead:input_type -> communication.chat.v1.MarkAsReadRequest
+	22, // 47: communication.chat.v1.ChatService.DeleteMessage:input_type -> communication.chat.v1.DeleteMessageRequest
+	24, // 48: communication.chat.v1.AdminChatService.AdminGetUserChats:input_type -> communication.chat.v1.AdminGetUserChatsRequest
+	26, // 49: communication.chat.v1.AdminChatService.AdminGetChatMessages:input_type -> communication.chat.v1.AdminGetChatMessagesRequest
+	28, // 50: communication.chat.v1.AdminChatService.AdminListChats:input_type -> communication.chat.v1.AdminListChatsRequest
+	30, // 51: communication.chat.v1.AdminChatService.AdminSendMessage:input_type -> communication.chat.v1.AdminSendMessageRequest
+	32, // 52: communication.chat.v1.AdminChatService.AdminMarkChatRead:input_type -> communication.chat.v1.AdminMarkChatReadRequest
+	9,  // 53: communication.chat.v1.ChatService.CreateChat:output_type -> communication.chat.v1.CreateChatResponse
+	11, // 54: communication.chat.v1.ChatService.GetChat:output_type -> communication.chat.v1.GetChatResponse
+	13, // 55: communication.chat.v1.ChatService.GetUserChats:output_type -> communication.chat.v1.GetUserChatsResponse
+	15, // 56: communication.chat.v1.ChatService.GetOrgChats:output_type -> communication.chat.v1.GetOrgChatsResponse
+	17, // 57: communication.chat.v1.ChatService.SendMessage:output_type -> communication.chat.v1.SendMessageResponse
+	19, // 58: communication.chat.v1.ChatService.GetMessages:output_type -> communication.chat.v1.GetMessagesResponse
+	21, // 59: communication.chat.v1.ChatService.MarkAsRead:output_type -> communication.chat.v1.MarkAsReadResponse
+	23, // 60: communication.chat.v1.ChatService.DeleteMessage:output_type -> communication.chat.v1.DeleteMessageResponse
+	25, // 61: communication.chat.v1.AdminChatService.AdminGetUserChats:output_type -> communication.chat.v1.AdminGetUserChatsResponse
+	27, // 62: communication.chat.v1.AdminChatService.AdminGetChatMessages:output_type -> communication.chat.v1.AdminGetChatMessagesResponse
+	29, // 63: communication.chat.v1.AdminChatService.AdminListChats:output_type -> communication.chat.v1.AdminListChatsResponse
+	31, // 64: communication.chat.v1.AdminChatService.AdminSendMessage:output_type -> communication.chat.v1.AdminSendMessageResponse
+	33, // 65: communication.chat.v1.AdminChatService.AdminMarkChatRead:output_type -> communication.chat.v1.AdminMarkChatReadResponse
+	53, // [53:66] is the sub-list for method output_type
+	40, // [40:53] is the sub-list for method input_type
+	40, // [40:40] is the sub-list for extension type_name
+	40, // [40:40] is the sub-list for extension extendee
+	0,  // [0:40] is the sub-list for field type_name
 }
 
 func init() { file_communication_chat_chat_proto_init() }

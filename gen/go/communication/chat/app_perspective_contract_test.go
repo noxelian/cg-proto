@@ -1,6 +1,8 @@
 package chatv1
 
 import (
+	"os"
+	"strings"
 	"testing"
 
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -25,12 +27,14 @@ func TestAppPerspectiveContract(t *testing.T) {
 	assertField(t, messages.ByName("Message"), "sender_organization_id", 9, protoreflect.StringKind)
 
 	requestFields := map[protoreflect.Name][]fieldExpectation{
-		"GetChatRequest":      {{"perspective", 2, protoreflect.EnumKind}, {"organization_id", 3, protoreflect.StringKind}},
-		"GetUserChatsRequest": {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}},
-		"GetOrgChatsRequest":  {{"perspective", 5, protoreflect.EnumKind}},
-		"SendMessageRequest":  {{"perspective", 5, protoreflect.EnumKind}, {"organization_id", 6, protoreflect.StringKind}},
-		"GetMessagesRequest":  {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}},
-		"MarkAsReadRequest":   {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}},
+		"CreateChatRequest":    {{"perspective", 6, protoreflect.EnumKind}, {"organization_id", 7, protoreflect.StringKind}, {"origin_bid_id", 8, protoreflect.Int64Kind}, {"app", 9, protoreflect.EnumKind}},
+		"GetChatRequest":       {{"perspective", 2, protoreflect.EnumKind}, {"organization_id", 3, protoreflect.StringKind}, {"app", 4, protoreflect.EnumKind}},
+		"GetUserChatsRequest":  {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}, {"app", 6, protoreflect.EnumKind}},
+		"GetOrgChatsRequest":   {{"organization_id", 1, protoreflect.StringKind}, {"perspective", 5, protoreflect.EnumKind}, {"app", 6, protoreflect.EnumKind}},
+		"SendMessageRequest":   {{"perspective", 5, protoreflect.EnumKind}, {"organization_id", 6, protoreflect.StringKind}, {"app", 7, protoreflect.EnumKind}},
+		"GetMessagesRequest":   {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}, {"app", 6, protoreflect.EnumKind}},
+		"MarkAsReadRequest":    {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}, {"app", 6, protoreflect.EnumKind}},
+		"DeleteMessageRequest": {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}, {"app", 6, protoreflect.EnumKind}},
 	}
 	for messageName, fields := range requestFields {
 		message := messages.ByName(messageName)
@@ -58,13 +62,40 @@ func TestAppPerspectiveContract(t *testing.T) {
 
 	realtime := messages.ByName("ChatRealtimeEventPayload")
 	for _, field := range []fieldExpectation{
-		{"recipient_app", 7, protoreflect.EnumKind},
-		{"recipient_perspective", 8, protoreflect.EnumKind},
-		{"recipient_organization_id", 9, protoreflect.StringKind},
-		{"context_type", 10, protoreflect.EnumKind},
-		{"context_id", 11, protoreflect.StringKind},
+		{"target_apps", 7, protoreflect.StringKind},
+		{"recipient_org_id", 8, protoreflect.StringKind},
+		{"recipient_app", 9, protoreflect.EnumKind},
+		{"recipient_perspective", 10, protoreflect.EnumKind},
+		{"recipient_organization_id", 11, protoreflect.StringKind},
+		{"context_type", 12, protoreflect.StringKind},
+		{"context_id", 13, protoreflect.StringKind},
 	} {
 		assertField(t, realtime, field.name, field.number, field.kind)
+	}
+	if !realtime.Fields().ByName("target_apps").IsList() {
+		t.Fatal("ChatRealtimeEventPayload.target_apps must remain a repeated legacy JSON string")
+	}
+
+	assertChatContractDocumentation(t)
+}
+
+func assertChatContractDocumentation(t *testing.T) {
+	t.Helper()
+	source, err := os.ReadFile("../../../../communication/chat/chat.proto")
+	if err != nil {
+		t.Fatalf("read chat.proto: %v", err)
+	}
+	for _, required := range []string{
+		`("client" -> CLIENT, "partner" -> PRO)`,
+		"they MUST agree or the owner rejects INVALID_ARGUMENT",
+		"MUST retain legacy fallback delivery",
+		"owner/BFF MUST bind app to the verified JWT app",
+		"request values are never authority",
+		"CLIENT+BUYER and PRO+SELLER_ORG",
+	} {
+		if !strings.Contains(string(source), required) {
+			t.Errorf("chat.proto missing contract documentation %q", required)
+		}
 	}
 }
 

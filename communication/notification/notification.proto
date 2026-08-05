@@ -65,7 +65,8 @@ enum NotificationApp {
 }
 
 // NotificationPerspective identifies the recipient profile inside an app.
-// Owner services must verify JWT and organization membership before delivery.
+// A single user can therefore address CLIENT+BUYER and PRO+SELLER_ORG as
+// independent scopes; user_id alone never selects a profile.
 enum NotificationPerspective {
   NOTIFICATION_PERSPECTIVE_UNSPECIFIED = 0;
   NOTIFICATION_PERSPECTIVE_BUYER = 1;
@@ -121,10 +122,16 @@ message SendPushRequest {
   string context_id = 10;
 }
 
-// PushEventPayload is the protobuf-owned projection of notification.push.
-// Legacy JSON publishers may omit fields 8-14 during the additive rollout;
-// new producers must provide explicit recipient routing instead of inferring
-// application or organization solely from user_id.
+// PushEventPayload is the protobuf-owned projection of notification.push JSON.
+// Producers MUST dual-write exact legacy target_apps/category strings and the
+// separately named typed fields during migration. Typed consumers prefer
+// typed_target_apps/typed_category and fall back to legacy normalization
+// ("client" -> CLIENT, "partner" -> PRO). When both forms are present their
+// normalized app sets and category MUST agree or the owner rejects
+// INVALID_ARGUMENT. Legacy empty target_apps keeps its existing broadcast-to-
+// all-apps meaning on this event stream; it MUST NOT become CLIENT-only or drop
+// a push. Organization routing is verified from its source owner/membership;
+// publisher and BFF values are routing context, not authority.
 message PushEventPayload {
   int64 user_id = 1;
   string event_type = 2;
@@ -133,24 +140,28 @@ message PushEventPayload {
   map<string, string> data = 5;
   string priority = 6;
   string dedup_key = 7;
-  // Legacy multi-app producer target. New producers emit one scoped event and
-  // set recipient_app; consumers keep this during the additive migration.
-  repeated NotificationApp target_apps = 8;
-  NotificationCategory category = 9;
-  NotificationApp recipient_app = 10;
+  // Exact legacy JSON fields consumed by current publishers and consumers.
+  repeated string target_apps = 8;
+  string category = 9;
+  // Typed app scopes use a non-conflicting name/tag for dual-read/write.
+  repeated NotificationApp typed_target_apps = 10;
   NotificationPerspective recipient_perspective = 11;
   string recipient_organization_id = 12;
   string context_type = 13;
   string context_id = 14;
+  NotificationCategory typed_category = 15;
 }
 
 // RealtimeNotificationEventPayload mirrors the notification.new payload sent
-// to websocket clients and carries the same explicit recipient boundary.
+// to websocket clients. Exact legacy type/category strings stay intact while
+// separately named typed values are dual-written. When both forms are present
+// they MUST agree or the owner rejects INVALID_ARGUMENT; typed consumers fall
+// back to the legacy strings until migration completes.
 message RealtimeNotificationEventPayload {
   int64 user_id = 1;
   string id = 2;
-  NotificationType type = 3;
-  NotificationCategory category = 4;
+  string type = 3;
+  string category = 4;
   string title = 5;
   string body = 6;
   map<string, string> data = 7;
@@ -161,6 +172,8 @@ message RealtimeNotificationEventPayload {
   string recipient_organization_id = 12;
   string context_type = 13;
   string context_id = 14;
+  NotificationType typed_type = 15;
+  NotificationCategory typed_category = 16;
 }
 
 message SendPushResponse {
@@ -201,6 +214,10 @@ message SendEmailResponse {
   bool success = 1;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; BFF-selected
+// fields are never authority.
 message GetNotificationsRequest {
   int64 user_id = 1;
   NotificationCategory category = 2;
@@ -224,6 +241,10 @@ message NotificationStreamSummary {
   int32 unread_count = 3;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; BFF-selected
+// fields are never authority.
 message GetNotificationStreamsRequest {
   int64 user_id = 1;
   NotificationApp app = 2;
@@ -235,6 +256,10 @@ message GetNotificationStreamsResponse {
   repeated NotificationStreamSummary streams = 1;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; BFF-selected
+// fields are never authority.
 message MarkAsReadRequest {
   int64 user_id = 1;
   repeated string notification_ids = 2;
@@ -251,6 +276,10 @@ message MarkAsReadResponse {
   int32 marked_count = 1;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; BFF-selected
+// fields are never authority.
 message GetUnreadCountRequest {
   int64 user_id = 1;
   NotificationApp app = 2;
@@ -272,9 +301,14 @@ message RegisterDeviceRequest {
   string app_version = 5;
   string device_model = 6;
   string locale = 7;
-  // app identifies which application registered this device: "client" (default) or "partner"
+  // Legacy ingress normalizes empty or "client" to CLIENT and "partner" to
+  // PRO. This empty-to-CLIENT fallback is legacy-ingress-only; event-stream
+  // empty target_apps retains its existing broadcast-to-all-apps meaning.
   string app = 8;
-  // target_app is the typed form. UNSPECIFIED preserves legacy app handling.
+  // target_app is routing/profile context only and MUST match the verified JWT
+  // app. If non-empty app and target_app are both present, they MUST agree or
+  // the owner rejects INVALID_ARGUMENT. The owner/BFF validates user ownership;
+  // BFF-selected values are never authority.
   NotificationApp target_app = 9;
 }
 

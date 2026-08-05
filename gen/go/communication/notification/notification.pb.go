@@ -248,7 +248,8 @@ func (NotificationApp) EnumDescriptor() ([]byte, []int) {
 }
 
 // NotificationPerspective identifies the recipient profile inside an app.
-// Owner services must verify JWT and organization membership before delivery.
+// A single user can therefore address CLIENT+BUYER and PRO+SELLER_ORG as
+// independent scopes; user_id alone never selects a profile.
 type NotificationPerspective int32
 
 const (
@@ -688,10 +689,16 @@ func (x *SendPushRequest) GetContextId() string {
 	return ""
 }
 
-// PushEventPayload is the protobuf-owned projection of notification.push.
-// Legacy JSON publishers may omit fields 8-14 during the additive rollout;
-// new producers must provide explicit recipient routing instead of inferring
-// application or organization solely from user_id.
+// PushEventPayload is the protobuf-owned projection of notification.push JSON.
+// Producers MUST dual-write exact legacy target_apps/category strings and the
+// separately named typed fields during migration. Typed consumers prefer
+// typed_target_apps/typed_category and fall back to legacy normalization
+// ("client" -> CLIENT, "partner" -> PRO). When both forms are present their
+// normalized app sets and category MUST agree or the owner rejects
+// INVALID_ARGUMENT. Legacy empty target_apps keeps its existing broadcast-to-
+// all-apps meaning on this event stream; it MUST NOT become CLIENT-only or drop
+// a push. Organization routing is verified from its source owner/membership;
+// publisher and BFF values are routing context, not authority.
 type PushEventPayload struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	UserId    int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -701,15 +708,16 @@ type PushEventPayload struct {
 	Data      map[string]string      `protobuf:"bytes,5,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	Priority  string                 `protobuf:"bytes,6,opt,name=priority,proto3" json:"priority,omitempty"`
 	DedupKey  string                 `protobuf:"bytes,7,opt,name=dedup_key,json=dedupKey,proto3" json:"dedup_key,omitempty"`
-	// Legacy multi-app producer target. New producers emit one scoped event and
-	// set recipient_app; consumers keep this during the additive migration.
-	TargetApps              []NotificationApp       `protobuf:"varint,8,rep,packed,name=target_apps,json=targetApps,proto3,enum=communication.notification.v1.NotificationApp" json:"target_apps,omitempty"`
-	Category                NotificationCategory    `protobuf:"varint,9,opt,name=category,proto3,enum=communication.notification.v1.NotificationCategory" json:"category,omitempty"`
-	RecipientApp            NotificationApp         `protobuf:"varint,10,opt,name=recipient_app,json=recipientApp,proto3,enum=communication.notification.v1.NotificationApp" json:"recipient_app,omitempty"`
+	// Exact legacy JSON fields consumed by current publishers and consumers.
+	TargetApps []string `protobuf:"bytes,8,rep,name=target_apps,json=targetApps,proto3" json:"target_apps,omitempty"`
+	Category   string   `protobuf:"bytes,9,opt,name=category,proto3" json:"category,omitempty"`
+	// Typed app scopes use a non-conflicting name/tag for dual-read/write.
+	TypedTargetApps         []NotificationApp       `protobuf:"varint,10,rep,packed,name=typed_target_apps,json=typedTargetApps,proto3,enum=communication.notification.v1.NotificationApp" json:"typed_target_apps,omitempty"`
 	RecipientPerspective    NotificationPerspective `protobuf:"varint,11,opt,name=recipient_perspective,json=recipientPerspective,proto3,enum=communication.notification.v1.NotificationPerspective" json:"recipient_perspective,omitempty"`
 	RecipientOrganizationId string                  `protobuf:"bytes,12,opt,name=recipient_organization_id,json=recipientOrganizationId,proto3" json:"recipient_organization_id,omitempty"`
 	ContextType             string                  `protobuf:"bytes,13,opt,name=context_type,json=contextType,proto3" json:"context_type,omitempty"`
 	ContextId               string                  `protobuf:"bytes,14,opt,name=context_id,json=contextId,proto3" json:"context_id,omitempty"`
+	TypedCategory           NotificationCategory    `protobuf:"varint,15,opt,name=typed_category,json=typedCategory,proto3,enum=communication.notification.v1.NotificationCategory" json:"typed_category,omitempty"`
 	unknownFields           protoimpl.UnknownFields
 	sizeCache               protoimpl.SizeCache
 }
@@ -793,25 +801,25 @@ func (x *PushEventPayload) GetDedupKey() string {
 	return ""
 }
 
-func (x *PushEventPayload) GetTargetApps() []NotificationApp {
+func (x *PushEventPayload) GetTargetApps() []string {
 	if x != nil {
 		return x.TargetApps
 	}
 	return nil
 }
 
-func (x *PushEventPayload) GetCategory() NotificationCategory {
+func (x *PushEventPayload) GetCategory() string {
 	if x != nil {
 		return x.Category
 	}
-	return NotificationCategory_NOTIFICATION_CATEGORY_UNSPECIFIED
+	return ""
 }
 
-func (x *PushEventPayload) GetRecipientApp() NotificationApp {
+func (x *PushEventPayload) GetTypedTargetApps() []NotificationApp {
 	if x != nil {
-		return x.RecipientApp
+		return x.TypedTargetApps
 	}
-	return NotificationApp_NOTIFICATION_APP_UNSPECIFIED
+	return nil
 }
 
 func (x *PushEventPayload) GetRecipientPerspective() NotificationPerspective {
@@ -842,14 +850,24 @@ func (x *PushEventPayload) GetContextId() string {
 	return ""
 }
 
+func (x *PushEventPayload) GetTypedCategory() NotificationCategory {
+	if x != nil {
+		return x.TypedCategory
+	}
+	return NotificationCategory_NOTIFICATION_CATEGORY_UNSPECIFIED
+}
+
 // RealtimeNotificationEventPayload mirrors the notification.new payload sent
-// to websocket clients and carries the same explicit recipient boundary.
+// to websocket clients. Exact legacy type/category strings stay intact while
+// separately named typed values are dual-written. When both forms are present
+// they MUST agree or the owner rejects INVALID_ARGUMENT; typed consumers fall
+// back to the legacy strings until migration completes.
 type RealtimeNotificationEventPayload struct {
 	state                   protoimpl.MessageState  `protogen:"open.v1"`
 	UserId                  int64                   `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Id                      string                  `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
-	Type                    NotificationType        `protobuf:"varint,3,opt,name=type,proto3,enum=communication.notification.v1.NotificationType" json:"type,omitempty"`
-	Category                NotificationCategory    `protobuf:"varint,4,opt,name=category,proto3,enum=communication.notification.v1.NotificationCategory" json:"category,omitempty"`
+	Type                    string                  `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	Category                string                  `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
 	Title                   string                  `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
 	Body                    string                  `protobuf:"bytes,6,opt,name=body,proto3" json:"body,omitempty"`
 	Data                    map[string]string       `protobuf:"bytes,7,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
@@ -860,6 +878,8 @@ type RealtimeNotificationEventPayload struct {
 	RecipientOrganizationId string                  `protobuf:"bytes,12,opt,name=recipient_organization_id,json=recipientOrganizationId,proto3" json:"recipient_organization_id,omitempty"`
 	ContextType             string                  `protobuf:"bytes,13,opt,name=context_type,json=contextType,proto3" json:"context_type,omitempty"`
 	ContextId               string                  `protobuf:"bytes,14,opt,name=context_id,json=contextId,proto3" json:"context_id,omitempty"`
+	TypedType               NotificationType        `protobuf:"varint,15,opt,name=typed_type,json=typedType,proto3,enum=communication.notification.v1.NotificationType" json:"typed_type,omitempty"`
+	TypedCategory           NotificationCategory    `protobuf:"varint,16,opt,name=typed_category,json=typedCategory,proto3,enum=communication.notification.v1.NotificationCategory" json:"typed_category,omitempty"`
 	unknownFields           protoimpl.UnknownFields
 	sizeCache               protoimpl.SizeCache
 }
@@ -908,18 +928,18 @@ func (x *RealtimeNotificationEventPayload) GetId() string {
 	return ""
 }
 
-func (x *RealtimeNotificationEventPayload) GetType() NotificationType {
+func (x *RealtimeNotificationEventPayload) GetType() string {
 	if x != nil {
 		return x.Type
 	}
-	return NotificationType_NOTIFICATION_TYPE_UNSPECIFIED
+	return ""
 }
 
-func (x *RealtimeNotificationEventPayload) GetCategory() NotificationCategory {
+func (x *RealtimeNotificationEventPayload) GetCategory() string {
 	if x != nil {
 		return x.Category
 	}
-	return NotificationCategory_NOTIFICATION_CATEGORY_UNSPECIFIED
+	return ""
 }
 
 func (x *RealtimeNotificationEventPayload) GetTitle() string {
@@ -990,6 +1010,20 @@ func (x *RealtimeNotificationEventPayload) GetContextId() string {
 		return x.ContextId
 	}
 	return ""
+}
+
+func (x *RealtimeNotificationEventPayload) GetTypedType() NotificationType {
+	if x != nil {
+		return x.TypedType
+	}
+	return NotificationType_NOTIFICATION_TYPE_UNSPECIFIED
+}
+
+func (x *RealtimeNotificationEventPayload) GetTypedCategory() NotificationCategory {
+	if x != nil {
+		return x.TypedCategory
+	}
+	return NotificationCategory_NOTIFICATION_CATEGORY_UNSPECIFIED
 }
 
 type SendPushResponse struct {
@@ -1286,6 +1320,10 @@ func (x *SendEmailResponse) GetSuccess() bool {
 	return false
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; BFF-selected
+// fields are never authority.
 type GetNotificationsRequest struct {
 	state          protoimpl.MessageState  `protogen:"open.v1"`
 	UserId         int64                   `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1506,6 +1544,10 @@ func (x *NotificationStreamSummary) GetUnreadCount() int32 {
 	return 0
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; BFF-selected
+// fields are never authority.
 type GetNotificationStreamsRequest struct {
 	state          protoimpl.MessageState  `protogen:"open.v1"`
 	UserId         int64                   `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1618,6 +1660,10 @@ func (x *GetNotificationStreamsResponse) GetStreams() []*NotificationStreamSumma
 	return nil
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; BFF-selected
+// fields are never authority.
 type MarkAsReadRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	UserId          int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1756,6 +1802,10 @@ func (x *MarkAsReadResponse) GetMarkedCount() int32 {
 	return 0
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; BFF-selected
+// fields are never authority.
 type GetUnreadCountRequest struct {
 	state          protoimpl.MessageState  `protogen:"open.v1"`
 	UserId         int64                   `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1879,9 +1929,14 @@ type RegisterDeviceRequest struct {
 	AppVersion  string                 `protobuf:"bytes,5,opt,name=app_version,json=appVersion,proto3" json:"app_version,omitempty"`
 	DeviceModel string                 `protobuf:"bytes,6,opt,name=device_model,json=deviceModel,proto3" json:"device_model,omitempty"`
 	Locale      string                 `protobuf:"bytes,7,opt,name=locale,proto3" json:"locale,omitempty"`
-	// app identifies which application registered this device: "client" (default) or "partner"
+	// Legacy ingress normalizes empty or "client" to CLIENT and "partner" to
+	// PRO. This empty-to-CLIENT fallback is legacy-ingress-only; event-stream
+	// empty target_apps retains its existing broadcast-to-all-apps meaning.
 	App string `protobuf:"bytes,8,opt,name=app,proto3" json:"app,omitempty"`
-	// target_app is the typed form. UNSPECIFIED preserves legacy app handling.
+	// target_app is routing/profile context only and MUST match the verified JWT
+	// app. If non-empty app and target_app are both present, they MUST agree or
+	// the owner rejects INVALID_ARGUMENT. The owner/BFF validates user ownership;
+	// BFF-selected values are never authority.
 	TargetApp     NotificationApp `protobuf:"varint,9,opt,name=target_app,json=targetApp,proto3,enum=communication.notification.v1.NotificationApp" json:"target_app,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3897,7 +3952,7 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	" \x01(\tR\tcontextId\x1a7\n" +
 	"\tDataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x97\x06\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x95\x06\n" +
 	"\x10PushEventPayload\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
@@ -3906,25 +3961,26 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\x04body\x18\x04 \x01(\tR\x04body\x12M\n" +
 	"\x04data\x18\x05 \x03(\v29.communication.notification.v1.PushEventPayload.DataEntryR\x04data\x12\x1a\n" +
 	"\bpriority\x18\x06 \x01(\tR\bpriority\x12\x1b\n" +
-	"\tdedup_key\x18\a \x01(\tR\bdedupKey\x12O\n" +
-	"\vtarget_apps\x18\b \x03(\x0e2..communication.notification.v1.NotificationAppR\n" +
-	"targetApps\x12O\n" +
-	"\bcategory\x18\t \x01(\x0e23.communication.notification.v1.NotificationCategoryR\bcategory\x12S\n" +
-	"\rrecipient_app\x18\n" +
-	" \x01(\x0e2..communication.notification.v1.NotificationAppR\frecipientApp\x12k\n" +
+	"\tdedup_key\x18\a \x01(\tR\bdedupKey\x12\x1f\n" +
+	"\vtarget_apps\x18\b \x03(\tR\n" +
+	"targetApps\x12\x1a\n" +
+	"\bcategory\x18\t \x01(\tR\bcategory\x12Z\n" +
+	"\x11typed_target_apps\x18\n" +
+	" \x03(\x0e2..communication.notification.v1.NotificationAppR\x0ftypedTargetApps\x12k\n" +
 	"\x15recipient_perspective\x18\v \x01(\x0e26.communication.notification.v1.NotificationPerspectiveR\x14recipientPerspective\x12:\n" +
 	"\x19recipient_organization_id\x18\f \x01(\tR\x17recipientOrganizationId\x12!\n" +
 	"\fcontext_type\x18\r \x01(\tR\vcontextType\x12\x1d\n" +
 	"\n" +
-	"context_id\x18\x0e \x01(\tR\tcontextId\x1a7\n" +
+	"context_id\x18\x0e \x01(\tR\tcontextId\x12Z\n" +
+	"\x0etyped_category\x18\x0f \x01(\x0e23.communication.notification.v1.NotificationCategoryR\rtypedCategory\x1a7\n" +
 	"\tDataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xb7\x06\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xfd\x06\n" +
 	" RealtimeNotificationEventPayload\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\tR\x02id\x12C\n" +
-	"\x04type\x18\x03 \x01(\x0e2/.communication.notification.v1.NotificationTypeR\x04type\x12O\n" +
-	"\bcategory\x18\x04 \x01(\x0e23.communication.notification.v1.NotificationCategoryR\bcategory\x12\x14\n" +
+	"\x02id\x18\x02 \x01(\tR\x02id\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\x12\x1a\n" +
+	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x14\n" +
 	"\x05title\x18\x05 \x01(\tR\x05title\x12\x12\n" +
 	"\x04body\x18\x06 \x01(\tR\x04body\x12]\n" +
 	"\x04data\x18\a \x03(\v2I.communication.notification.v1.RealtimeNotificationEventPayload.DataEntryR\x04data\x12\x17\n" +
@@ -3937,7 +3993,10 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\x19recipient_organization_id\x18\f \x01(\tR\x17recipientOrganizationId\x12!\n" +
 	"\fcontext_type\x18\r \x01(\tR\vcontextType\x12\x1d\n" +
 	"\n" +
-	"context_id\x18\x0e \x01(\tR\tcontextId\x1a7\n" +
+	"context_id\x18\x0e \x01(\tR\tcontextId\x12N\n" +
+	"\n" +
+	"typed_type\x18\x0f \x01(\x0e2/.communication.notification.v1.NotificationTypeR\ttypedType\x12Z\n" +
+	"\x0etyped_category\x18\x10 \x01(\x0e23.communication.notification.v1.NotificationCategoryR\rtypedCategory\x1a7\n" +
 	"\tDataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"O\n" +
@@ -4318,107 +4377,106 @@ var file_communication_notification_notification_proto_depIdxs = []int32{
 	3,  // 11: communication.notification.v1.SendPushRequest.recipient_app:type_name -> communication.notification.v1.NotificationApp
 	4,  // 12: communication.notification.v1.SendPushRequest.recipient_perspective:type_name -> communication.notification.v1.NotificationPerspective
 	58, // 13: communication.notification.v1.PushEventPayload.data:type_name -> communication.notification.v1.PushEventPayload.DataEntry
-	3,  // 14: communication.notification.v1.PushEventPayload.target_apps:type_name -> communication.notification.v1.NotificationApp
-	1,  // 15: communication.notification.v1.PushEventPayload.category:type_name -> communication.notification.v1.NotificationCategory
-	3,  // 16: communication.notification.v1.PushEventPayload.recipient_app:type_name -> communication.notification.v1.NotificationApp
-	4,  // 17: communication.notification.v1.PushEventPayload.recipient_perspective:type_name -> communication.notification.v1.NotificationPerspective
-	0,  // 18: communication.notification.v1.RealtimeNotificationEventPayload.type:type_name -> communication.notification.v1.NotificationType
-	1,  // 19: communication.notification.v1.RealtimeNotificationEventPayload.category:type_name -> communication.notification.v1.NotificationCategory
-	59, // 20: communication.notification.v1.RealtimeNotificationEventPayload.data:type_name -> communication.notification.v1.RealtimeNotificationEventPayload.DataEntry
-	63, // 21: communication.notification.v1.RealtimeNotificationEventPayload.created_at:type_name -> google.protobuf.Timestamp
-	3,  // 22: communication.notification.v1.RealtimeNotificationEventPayload.recipient_app:type_name -> communication.notification.v1.NotificationApp
-	4,  // 23: communication.notification.v1.RealtimeNotificationEventPayload.recipient_perspective:type_name -> communication.notification.v1.NotificationPerspective
-	60, // 24: communication.notification.v1.SendSMSRequest.template_data:type_name -> communication.notification.v1.SendSMSRequest.TemplateDataEntry
-	61, // 25: communication.notification.v1.SendEmailRequest.template_data:type_name -> communication.notification.v1.SendEmailRequest.TemplateDataEntry
-	1,  // 26: communication.notification.v1.GetNotificationsRequest.category:type_name -> communication.notification.v1.NotificationCategory
-	2,  // 27: communication.notification.v1.GetNotificationsRequest.stream:type_name -> communication.notification.v1.NotificationStream
-	3,  // 28: communication.notification.v1.GetNotificationsRequest.app:type_name -> communication.notification.v1.NotificationApp
-	4,  // 29: communication.notification.v1.GetNotificationsRequest.perspective:type_name -> communication.notification.v1.NotificationPerspective
-	5,  // 30: communication.notification.v1.GetNotificationsResponse.notifications:type_name -> communication.notification.v1.Notification
-	2,  // 31: communication.notification.v1.NotificationStreamSummary.stream:type_name -> communication.notification.v1.NotificationStream
-	5,  // 32: communication.notification.v1.NotificationStreamSummary.latest_notification:type_name -> communication.notification.v1.Notification
-	3,  // 33: communication.notification.v1.GetNotificationStreamsRequest.app:type_name -> communication.notification.v1.NotificationApp
-	4,  // 34: communication.notification.v1.GetNotificationStreamsRequest.perspective:type_name -> communication.notification.v1.NotificationPerspective
-	17, // 35: communication.notification.v1.GetNotificationStreamsResponse.streams:type_name -> communication.notification.v1.NotificationStreamSummary
-	2,  // 36: communication.notification.v1.MarkAsReadRequest.stream:type_name -> communication.notification.v1.NotificationStream
-	3,  // 37: communication.notification.v1.MarkAsReadRequest.app:type_name -> communication.notification.v1.NotificationApp
-	4,  // 38: communication.notification.v1.MarkAsReadRequest.perspective:type_name -> communication.notification.v1.NotificationPerspective
-	3,  // 39: communication.notification.v1.GetUnreadCountRequest.app:type_name -> communication.notification.v1.NotificationApp
-	4,  // 40: communication.notification.v1.GetUnreadCountRequest.perspective:type_name -> communication.notification.v1.NotificationPerspective
-	3,  // 41: communication.notification.v1.RegisterDeviceRequest.target_app:type_name -> communication.notification.v1.NotificationApp
-	6,  // 42: communication.notification.v1.RegisterDeviceResponse.device:type_name -> communication.notification.v1.DeviceInfo
-	6,  // 43: communication.notification.v1.UpdateDeviceResponse.device:type_name -> communication.notification.v1.DeviceInfo
-	6,  // 44: communication.notification.v1.ListUserDevicesResponse.devices:type_name -> communication.notification.v1.DeviceInfo
-	34, // 45: communication.notification.v1.GetPreferencesResponse.preferences:type_name -> communication.notification.v1.NotificationPreferences
-	34, // 46: communication.notification.v1.UpdatePreferencesResponse.preferences:type_name -> communication.notification.v1.NotificationPreferences
-	62, // 47: communication.notification.v1.CampaignAction.params:type_name -> communication.notification.v1.CampaignAction.ParamsEntry
-	1,  // 48: communication.notification.v1.Campaign.category:type_name -> communication.notification.v1.NotificationCategory
-	39, // 49: communication.notification.v1.Campaign.action:type_name -> communication.notification.v1.CampaignAction
-	40, // 50: communication.notification.v1.Campaign.segment:type_name -> communication.notification.v1.CampaignSegment
-	63, // 51: communication.notification.v1.Campaign.created_at:type_name -> google.protobuf.Timestamp
-	63, // 52: communication.notification.v1.Campaign.updated_at:type_name -> google.protobuf.Timestamp
-	63, // 53: communication.notification.v1.Campaign.started_at:type_name -> google.protobuf.Timestamp
-	63, // 54: communication.notification.v1.Campaign.finished_at:type_name -> google.protobuf.Timestamp
-	1,  // 55: communication.notification.v1.AdminCreateCampaignRequest.category:type_name -> communication.notification.v1.NotificationCategory
-	39, // 56: communication.notification.v1.AdminCreateCampaignRequest.action:type_name -> communication.notification.v1.CampaignAction
-	40, // 57: communication.notification.v1.AdminCreateCampaignRequest.segment:type_name -> communication.notification.v1.CampaignSegment
-	41, // 58: communication.notification.v1.AdminCreateCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
-	1,  // 59: communication.notification.v1.AdminUpdateCampaignRequest.category:type_name -> communication.notification.v1.NotificationCategory
-	39, // 60: communication.notification.v1.AdminUpdateCampaignRequest.action:type_name -> communication.notification.v1.CampaignAction
-	40, // 61: communication.notification.v1.AdminUpdateCampaignRequest.segment:type_name -> communication.notification.v1.CampaignSegment
-	41, // 62: communication.notification.v1.AdminUpdateCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
-	41, // 63: communication.notification.v1.AdminGetCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
-	41, // 64: communication.notification.v1.AdminListCampaignsResponse.campaigns:type_name -> communication.notification.v1.Campaign
-	40, // 65: communication.notification.v1.AdminPreviewSegmentRequest.segment:type_name -> communication.notification.v1.CampaignSegment
-	41, // 66: communication.notification.v1.AdminSendCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
-	41, // 67: communication.notification.v1.AdminCancelCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
-	7,  // 68: communication.notification.v1.NotificationService.SendPush:input_type -> communication.notification.v1.SendPushRequest
-	11, // 69: communication.notification.v1.NotificationService.SendSMS:input_type -> communication.notification.v1.SendSMSRequest
-	13, // 70: communication.notification.v1.NotificationService.SendEmail:input_type -> communication.notification.v1.SendEmailRequest
-	15, // 71: communication.notification.v1.NotificationService.GetNotifications:input_type -> communication.notification.v1.GetNotificationsRequest
-	18, // 72: communication.notification.v1.NotificationService.GetNotificationStreams:input_type -> communication.notification.v1.GetNotificationStreamsRequest
-	20, // 73: communication.notification.v1.NotificationService.MarkAsRead:input_type -> communication.notification.v1.MarkAsReadRequest
-	22, // 74: communication.notification.v1.NotificationService.GetUnreadCount:input_type -> communication.notification.v1.GetUnreadCountRequest
-	24, // 75: communication.notification.v1.NotificationService.RegisterDevice:input_type -> communication.notification.v1.RegisterDeviceRequest
-	26, // 76: communication.notification.v1.NotificationService.UnregisterDevice:input_type -> communication.notification.v1.UnregisterDeviceRequest
-	28, // 77: communication.notification.v1.NotificationService.UpdateDevice:input_type -> communication.notification.v1.UpdateDeviceRequest
-	30, // 78: communication.notification.v1.NotificationService.ListUserDevices:input_type -> communication.notification.v1.ListUserDevicesRequest
-	32, // 79: communication.notification.v1.NotificationService.GetSMSBalance:input_type -> communication.notification.v1.GetSMSBalanceRequest
-	35, // 80: communication.notification.v1.NotificationService.GetPreferences:input_type -> communication.notification.v1.GetPreferencesRequest
-	37, // 81: communication.notification.v1.NotificationService.UpdatePreferences:input_type -> communication.notification.v1.UpdatePreferencesRequest
-	42, // 82: communication.notification.v1.CampaignService.AdminCreateCampaign:input_type -> communication.notification.v1.AdminCreateCampaignRequest
-	44, // 83: communication.notification.v1.CampaignService.AdminUpdateCampaign:input_type -> communication.notification.v1.AdminUpdateCampaignRequest
-	46, // 84: communication.notification.v1.CampaignService.AdminGetCampaign:input_type -> communication.notification.v1.AdminGetCampaignRequest
-	48, // 85: communication.notification.v1.CampaignService.AdminListCampaigns:input_type -> communication.notification.v1.AdminListCampaignsRequest
-	50, // 86: communication.notification.v1.CampaignService.AdminPreviewSegment:input_type -> communication.notification.v1.AdminPreviewSegmentRequest
-	52, // 87: communication.notification.v1.CampaignService.AdminSendCampaign:input_type -> communication.notification.v1.AdminSendCampaignRequest
-	54, // 88: communication.notification.v1.CampaignService.AdminCancelCampaign:input_type -> communication.notification.v1.AdminCancelCampaignRequest
-	10, // 89: communication.notification.v1.NotificationService.SendPush:output_type -> communication.notification.v1.SendPushResponse
-	12, // 90: communication.notification.v1.NotificationService.SendSMS:output_type -> communication.notification.v1.SendSMSResponse
-	14, // 91: communication.notification.v1.NotificationService.SendEmail:output_type -> communication.notification.v1.SendEmailResponse
-	16, // 92: communication.notification.v1.NotificationService.GetNotifications:output_type -> communication.notification.v1.GetNotificationsResponse
-	19, // 93: communication.notification.v1.NotificationService.GetNotificationStreams:output_type -> communication.notification.v1.GetNotificationStreamsResponse
-	21, // 94: communication.notification.v1.NotificationService.MarkAsRead:output_type -> communication.notification.v1.MarkAsReadResponse
-	23, // 95: communication.notification.v1.NotificationService.GetUnreadCount:output_type -> communication.notification.v1.GetUnreadCountResponse
-	25, // 96: communication.notification.v1.NotificationService.RegisterDevice:output_type -> communication.notification.v1.RegisterDeviceResponse
-	27, // 97: communication.notification.v1.NotificationService.UnregisterDevice:output_type -> communication.notification.v1.UnregisterDeviceResponse
-	29, // 98: communication.notification.v1.NotificationService.UpdateDevice:output_type -> communication.notification.v1.UpdateDeviceResponse
-	31, // 99: communication.notification.v1.NotificationService.ListUserDevices:output_type -> communication.notification.v1.ListUserDevicesResponse
-	33, // 100: communication.notification.v1.NotificationService.GetSMSBalance:output_type -> communication.notification.v1.GetSMSBalanceResponse
-	36, // 101: communication.notification.v1.NotificationService.GetPreferences:output_type -> communication.notification.v1.GetPreferencesResponse
-	38, // 102: communication.notification.v1.NotificationService.UpdatePreferences:output_type -> communication.notification.v1.UpdatePreferencesResponse
-	43, // 103: communication.notification.v1.CampaignService.AdminCreateCampaign:output_type -> communication.notification.v1.AdminCreateCampaignResponse
-	45, // 104: communication.notification.v1.CampaignService.AdminUpdateCampaign:output_type -> communication.notification.v1.AdminUpdateCampaignResponse
-	47, // 105: communication.notification.v1.CampaignService.AdminGetCampaign:output_type -> communication.notification.v1.AdminGetCampaignResponse
-	49, // 106: communication.notification.v1.CampaignService.AdminListCampaigns:output_type -> communication.notification.v1.AdminListCampaignsResponse
-	51, // 107: communication.notification.v1.CampaignService.AdminPreviewSegment:output_type -> communication.notification.v1.AdminPreviewSegmentResponse
-	53, // 108: communication.notification.v1.CampaignService.AdminSendCampaign:output_type -> communication.notification.v1.AdminSendCampaignResponse
-	55, // 109: communication.notification.v1.CampaignService.AdminCancelCampaign:output_type -> communication.notification.v1.AdminCancelCampaignResponse
-	89, // [89:110] is the sub-list for method output_type
-	68, // [68:89] is the sub-list for method input_type
-	68, // [68:68] is the sub-list for extension type_name
-	68, // [68:68] is the sub-list for extension extendee
-	0,  // [0:68] is the sub-list for field type_name
+	3,  // 14: communication.notification.v1.PushEventPayload.typed_target_apps:type_name -> communication.notification.v1.NotificationApp
+	4,  // 15: communication.notification.v1.PushEventPayload.recipient_perspective:type_name -> communication.notification.v1.NotificationPerspective
+	1,  // 16: communication.notification.v1.PushEventPayload.typed_category:type_name -> communication.notification.v1.NotificationCategory
+	59, // 17: communication.notification.v1.RealtimeNotificationEventPayload.data:type_name -> communication.notification.v1.RealtimeNotificationEventPayload.DataEntry
+	63, // 18: communication.notification.v1.RealtimeNotificationEventPayload.created_at:type_name -> google.protobuf.Timestamp
+	3,  // 19: communication.notification.v1.RealtimeNotificationEventPayload.recipient_app:type_name -> communication.notification.v1.NotificationApp
+	4,  // 20: communication.notification.v1.RealtimeNotificationEventPayload.recipient_perspective:type_name -> communication.notification.v1.NotificationPerspective
+	0,  // 21: communication.notification.v1.RealtimeNotificationEventPayload.typed_type:type_name -> communication.notification.v1.NotificationType
+	1,  // 22: communication.notification.v1.RealtimeNotificationEventPayload.typed_category:type_name -> communication.notification.v1.NotificationCategory
+	60, // 23: communication.notification.v1.SendSMSRequest.template_data:type_name -> communication.notification.v1.SendSMSRequest.TemplateDataEntry
+	61, // 24: communication.notification.v1.SendEmailRequest.template_data:type_name -> communication.notification.v1.SendEmailRequest.TemplateDataEntry
+	1,  // 25: communication.notification.v1.GetNotificationsRequest.category:type_name -> communication.notification.v1.NotificationCategory
+	2,  // 26: communication.notification.v1.GetNotificationsRequest.stream:type_name -> communication.notification.v1.NotificationStream
+	3,  // 27: communication.notification.v1.GetNotificationsRequest.app:type_name -> communication.notification.v1.NotificationApp
+	4,  // 28: communication.notification.v1.GetNotificationsRequest.perspective:type_name -> communication.notification.v1.NotificationPerspective
+	5,  // 29: communication.notification.v1.GetNotificationsResponse.notifications:type_name -> communication.notification.v1.Notification
+	2,  // 30: communication.notification.v1.NotificationStreamSummary.stream:type_name -> communication.notification.v1.NotificationStream
+	5,  // 31: communication.notification.v1.NotificationStreamSummary.latest_notification:type_name -> communication.notification.v1.Notification
+	3,  // 32: communication.notification.v1.GetNotificationStreamsRequest.app:type_name -> communication.notification.v1.NotificationApp
+	4,  // 33: communication.notification.v1.GetNotificationStreamsRequest.perspective:type_name -> communication.notification.v1.NotificationPerspective
+	17, // 34: communication.notification.v1.GetNotificationStreamsResponse.streams:type_name -> communication.notification.v1.NotificationStreamSummary
+	2,  // 35: communication.notification.v1.MarkAsReadRequest.stream:type_name -> communication.notification.v1.NotificationStream
+	3,  // 36: communication.notification.v1.MarkAsReadRequest.app:type_name -> communication.notification.v1.NotificationApp
+	4,  // 37: communication.notification.v1.MarkAsReadRequest.perspective:type_name -> communication.notification.v1.NotificationPerspective
+	3,  // 38: communication.notification.v1.GetUnreadCountRequest.app:type_name -> communication.notification.v1.NotificationApp
+	4,  // 39: communication.notification.v1.GetUnreadCountRequest.perspective:type_name -> communication.notification.v1.NotificationPerspective
+	3,  // 40: communication.notification.v1.RegisterDeviceRequest.target_app:type_name -> communication.notification.v1.NotificationApp
+	6,  // 41: communication.notification.v1.RegisterDeviceResponse.device:type_name -> communication.notification.v1.DeviceInfo
+	6,  // 42: communication.notification.v1.UpdateDeviceResponse.device:type_name -> communication.notification.v1.DeviceInfo
+	6,  // 43: communication.notification.v1.ListUserDevicesResponse.devices:type_name -> communication.notification.v1.DeviceInfo
+	34, // 44: communication.notification.v1.GetPreferencesResponse.preferences:type_name -> communication.notification.v1.NotificationPreferences
+	34, // 45: communication.notification.v1.UpdatePreferencesResponse.preferences:type_name -> communication.notification.v1.NotificationPreferences
+	62, // 46: communication.notification.v1.CampaignAction.params:type_name -> communication.notification.v1.CampaignAction.ParamsEntry
+	1,  // 47: communication.notification.v1.Campaign.category:type_name -> communication.notification.v1.NotificationCategory
+	39, // 48: communication.notification.v1.Campaign.action:type_name -> communication.notification.v1.CampaignAction
+	40, // 49: communication.notification.v1.Campaign.segment:type_name -> communication.notification.v1.CampaignSegment
+	63, // 50: communication.notification.v1.Campaign.created_at:type_name -> google.protobuf.Timestamp
+	63, // 51: communication.notification.v1.Campaign.updated_at:type_name -> google.protobuf.Timestamp
+	63, // 52: communication.notification.v1.Campaign.started_at:type_name -> google.protobuf.Timestamp
+	63, // 53: communication.notification.v1.Campaign.finished_at:type_name -> google.protobuf.Timestamp
+	1,  // 54: communication.notification.v1.AdminCreateCampaignRequest.category:type_name -> communication.notification.v1.NotificationCategory
+	39, // 55: communication.notification.v1.AdminCreateCampaignRequest.action:type_name -> communication.notification.v1.CampaignAction
+	40, // 56: communication.notification.v1.AdminCreateCampaignRequest.segment:type_name -> communication.notification.v1.CampaignSegment
+	41, // 57: communication.notification.v1.AdminCreateCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
+	1,  // 58: communication.notification.v1.AdminUpdateCampaignRequest.category:type_name -> communication.notification.v1.NotificationCategory
+	39, // 59: communication.notification.v1.AdminUpdateCampaignRequest.action:type_name -> communication.notification.v1.CampaignAction
+	40, // 60: communication.notification.v1.AdminUpdateCampaignRequest.segment:type_name -> communication.notification.v1.CampaignSegment
+	41, // 61: communication.notification.v1.AdminUpdateCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
+	41, // 62: communication.notification.v1.AdminGetCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
+	41, // 63: communication.notification.v1.AdminListCampaignsResponse.campaigns:type_name -> communication.notification.v1.Campaign
+	40, // 64: communication.notification.v1.AdminPreviewSegmentRequest.segment:type_name -> communication.notification.v1.CampaignSegment
+	41, // 65: communication.notification.v1.AdminSendCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
+	41, // 66: communication.notification.v1.AdminCancelCampaignResponse.campaign:type_name -> communication.notification.v1.Campaign
+	7,  // 67: communication.notification.v1.NotificationService.SendPush:input_type -> communication.notification.v1.SendPushRequest
+	11, // 68: communication.notification.v1.NotificationService.SendSMS:input_type -> communication.notification.v1.SendSMSRequest
+	13, // 69: communication.notification.v1.NotificationService.SendEmail:input_type -> communication.notification.v1.SendEmailRequest
+	15, // 70: communication.notification.v1.NotificationService.GetNotifications:input_type -> communication.notification.v1.GetNotificationsRequest
+	18, // 71: communication.notification.v1.NotificationService.GetNotificationStreams:input_type -> communication.notification.v1.GetNotificationStreamsRequest
+	20, // 72: communication.notification.v1.NotificationService.MarkAsRead:input_type -> communication.notification.v1.MarkAsReadRequest
+	22, // 73: communication.notification.v1.NotificationService.GetUnreadCount:input_type -> communication.notification.v1.GetUnreadCountRequest
+	24, // 74: communication.notification.v1.NotificationService.RegisterDevice:input_type -> communication.notification.v1.RegisterDeviceRequest
+	26, // 75: communication.notification.v1.NotificationService.UnregisterDevice:input_type -> communication.notification.v1.UnregisterDeviceRequest
+	28, // 76: communication.notification.v1.NotificationService.UpdateDevice:input_type -> communication.notification.v1.UpdateDeviceRequest
+	30, // 77: communication.notification.v1.NotificationService.ListUserDevices:input_type -> communication.notification.v1.ListUserDevicesRequest
+	32, // 78: communication.notification.v1.NotificationService.GetSMSBalance:input_type -> communication.notification.v1.GetSMSBalanceRequest
+	35, // 79: communication.notification.v1.NotificationService.GetPreferences:input_type -> communication.notification.v1.GetPreferencesRequest
+	37, // 80: communication.notification.v1.NotificationService.UpdatePreferences:input_type -> communication.notification.v1.UpdatePreferencesRequest
+	42, // 81: communication.notification.v1.CampaignService.AdminCreateCampaign:input_type -> communication.notification.v1.AdminCreateCampaignRequest
+	44, // 82: communication.notification.v1.CampaignService.AdminUpdateCampaign:input_type -> communication.notification.v1.AdminUpdateCampaignRequest
+	46, // 83: communication.notification.v1.CampaignService.AdminGetCampaign:input_type -> communication.notification.v1.AdminGetCampaignRequest
+	48, // 84: communication.notification.v1.CampaignService.AdminListCampaigns:input_type -> communication.notification.v1.AdminListCampaignsRequest
+	50, // 85: communication.notification.v1.CampaignService.AdminPreviewSegment:input_type -> communication.notification.v1.AdminPreviewSegmentRequest
+	52, // 86: communication.notification.v1.CampaignService.AdminSendCampaign:input_type -> communication.notification.v1.AdminSendCampaignRequest
+	54, // 87: communication.notification.v1.CampaignService.AdminCancelCampaign:input_type -> communication.notification.v1.AdminCancelCampaignRequest
+	10, // 88: communication.notification.v1.NotificationService.SendPush:output_type -> communication.notification.v1.SendPushResponse
+	12, // 89: communication.notification.v1.NotificationService.SendSMS:output_type -> communication.notification.v1.SendSMSResponse
+	14, // 90: communication.notification.v1.NotificationService.SendEmail:output_type -> communication.notification.v1.SendEmailResponse
+	16, // 91: communication.notification.v1.NotificationService.GetNotifications:output_type -> communication.notification.v1.GetNotificationsResponse
+	19, // 92: communication.notification.v1.NotificationService.GetNotificationStreams:output_type -> communication.notification.v1.GetNotificationStreamsResponse
+	21, // 93: communication.notification.v1.NotificationService.MarkAsRead:output_type -> communication.notification.v1.MarkAsReadResponse
+	23, // 94: communication.notification.v1.NotificationService.GetUnreadCount:output_type -> communication.notification.v1.GetUnreadCountResponse
+	25, // 95: communication.notification.v1.NotificationService.RegisterDevice:output_type -> communication.notification.v1.RegisterDeviceResponse
+	27, // 96: communication.notification.v1.NotificationService.UnregisterDevice:output_type -> communication.notification.v1.UnregisterDeviceResponse
+	29, // 97: communication.notification.v1.NotificationService.UpdateDevice:output_type -> communication.notification.v1.UpdateDeviceResponse
+	31, // 98: communication.notification.v1.NotificationService.ListUserDevices:output_type -> communication.notification.v1.ListUserDevicesResponse
+	33, // 99: communication.notification.v1.NotificationService.GetSMSBalance:output_type -> communication.notification.v1.GetSMSBalanceResponse
+	36, // 100: communication.notification.v1.NotificationService.GetPreferences:output_type -> communication.notification.v1.GetPreferencesResponse
+	38, // 101: communication.notification.v1.NotificationService.UpdatePreferences:output_type -> communication.notification.v1.UpdatePreferencesResponse
+	43, // 102: communication.notification.v1.CampaignService.AdminCreateCampaign:output_type -> communication.notification.v1.AdminCreateCampaignResponse
+	45, // 103: communication.notification.v1.CampaignService.AdminUpdateCampaign:output_type -> communication.notification.v1.AdminUpdateCampaignResponse
+	47, // 104: communication.notification.v1.CampaignService.AdminGetCampaign:output_type -> communication.notification.v1.AdminGetCampaignResponse
+	49, // 105: communication.notification.v1.CampaignService.AdminListCampaigns:output_type -> communication.notification.v1.AdminListCampaignsResponse
+	51, // 106: communication.notification.v1.CampaignService.AdminPreviewSegment:output_type -> communication.notification.v1.AdminPreviewSegmentResponse
+	53, // 107: communication.notification.v1.CampaignService.AdminSendCampaign:output_type -> communication.notification.v1.AdminSendCampaignResponse
+	55, // 108: communication.notification.v1.CampaignService.AdminCancelCampaign:output_type -> communication.notification.v1.AdminCancelCampaignResponse
+	88, // [88:109] is the sub-list for method output_type
+	67, // [67:88] is the sub-list for method input_type
+	67, // [67:67] is the sub-list for extension type_name
+	67, // [67:67] is the sub-list for extension extendee
+	0,  // [0:67] is the sub-list for field type_name
 }
 
 func init() { file_communication_notification_notification_proto_init() }

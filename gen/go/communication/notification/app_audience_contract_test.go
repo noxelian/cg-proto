@@ -1,6 +1,8 @@
 package notificationv1
 
 import (
+	"os"
+	"strings"
 	"testing"
 
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -39,16 +41,64 @@ func TestAppAudienceContract(t *testing.T) {
 		}
 	}
 
-	for _, eventName := range []protoreflect.Name{"PushEventPayload", "RealtimeNotificationEventPayload"} {
-		event := messages.ByName(eventName)
-		for _, field := range []notificationFieldExpectation{
-			{"recipient_app", 10, protoreflect.EnumKind},
-			{"recipient_perspective", 11, protoreflect.EnumKind},
-			{"recipient_organization_id", 12, protoreflect.StringKind},
-			{"context_type", 13, protoreflect.StringKind},
-			{"context_id", 14, protoreflect.StringKind},
-		} {
-			assertNotificationField(t, event, field.name, field.number, field.kind)
+	pushEvent := messages.ByName("PushEventPayload")
+	for _, field := range []notificationFieldExpectation{
+		{"target_apps", 8, protoreflect.StringKind},
+		{"category", 9, protoreflect.StringKind},
+		{"typed_target_apps", 10, protoreflect.EnumKind},
+		{"recipient_perspective", 11, protoreflect.EnumKind},
+		{"recipient_organization_id", 12, protoreflect.StringKind},
+		{"context_type", 13, protoreflect.StringKind},
+		{"context_id", 14, protoreflect.StringKind},
+		{"typed_category", 15, protoreflect.EnumKind},
+	} {
+		assertNotificationField(t, pushEvent, field.name, field.number, field.kind)
+	}
+	for _, fieldName := range []protoreflect.Name{"target_apps", "typed_target_apps"} {
+		if !pushEvent.Fields().ByName(fieldName).IsList() {
+			t.Fatalf("PushEventPayload.%s must be repeated", fieldName)
+		}
+	}
+
+	realtimeEvent := messages.ByName("RealtimeNotificationEventPayload")
+	for _, field := range []notificationFieldExpectation{
+		{"type", 3, protoreflect.StringKind},
+		{"category", 4, protoreflect.StringKind},
+		{"recipient_app", 10, protoreflect.EnumKind},
+		{"recipient_perspective", 11, protoreflect.EnumKind},
+		{"recipient_organization_id", 12, protoreflect.StringKind},
+		{"context_type", 13, protoreflect.StringKind},
+		{"context_id", 14, protoreflect.StringKind},
+		{"typed_type", 15, protoreflect.EnumKind},
+		{"typed_category", 16, protoreflect.EnumKind},
+	} {
+		assertNotificationField(t, realtimeEvent, field.name, field.number, field.kind)
+	}
+
+	registerDevice := messages.ByName("RegisterDeviceRequest")
+	assertNotificationField(t, registerDevice, "app", 8, protoreflect.StringKind)
+	assertNotificationField(t, registerDevice, "target_app", 9, protoreflect.EnumKind)
+	assertNotificationContractDocumentation(t)
+}
+
+func assertNotificationContractDocumentation(t *testing.T) {
+	t.Helper()
+	source, err := os.ReadFile("../../../../communication/notification/notification.proto")
+	if err != nil {
+		t.Fatalf("read notification.proto: %v", err)
+	}
+	for _, required := range []string{
+		`("client" -> CLIENT, "partner" -> PRO)`,
+		"owner rejects INVALID_ARGUMENT",
+		"broadcast-to-",
+		"MUST NOT become CLIENT-only or drop",
+		"empty-to-CLIENT fallback is legacy-ingress-only",
+		"MUST match the verified JWT",
+		"BFF-selected",
+		"fields are never authority",
+	} {
+		if !strings.Contains(string(source), required) {
+			t.Errorf("notification.proto missing contract documentation %q", required)
 		}
 	}
 }

@@ -32,7 +32,8 @@ enum CounterApp {
 }
 
 // CounterPerspective separates buyer and seller profile projections for one
-// authenticated user. The counter owner verifies organization membership.
+// authenticated user. A single user can therefore address CLIENT+BUYER and
+// PRO+SELLER_ORG as independent scopes; user_id alone never selects a profile.
 enum CounterPerspective {
   COUNTER_PERSPECTIVE_UNSPECIFIED = 0;
   COUNTER_PERSPECTIVE_BUYER = 1;
@@ -60,6 +61,10 @@ message UserCounters {
   int32 roadside_purchases_unread = 8;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; BFF-selected fields are never authority.
 message GetCountersRequest {
   int64 user_id = 1;
   CounterApp app = 2;
@@ -72,6 +77,10 @@ message GetCountersResponse {
   repeated OrganizationUnreadProjection organization_unread = 2;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; request fields are never authority.
 message IncrementCounterRequest {
   int64 user_id = 1;
   string counter_name = 2;
@@ -85,6 +94,10 @@ message IncrementCounterResponse {
   int32 new_value = 1;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; request fields are never authority.
 message DecrementCounterRequest {
   int64 user_id = 1;
   string counter_name = 2;
@@ -98,6 +111,10 @@ message DecrementCounterResponse {
   int32 new_value = 1;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; request fields are never authority.
 message SetCounterRequest {
   int64 user_id = 1;
   string counter_name = 2;
@@ -111,6 +128,10 @@ message SetCounterResponse {
   bool success = 1;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; BFF-selected fields are never authority.
 message GetRoadsidePurchasesSnapshotRequest {
   RoadsidePurchasesState state = 1;
   CounterApp app = 2;
@@ -123,6 +144,10 @@ message GetRoadsidePurchasesSnapshotResponse {
   uint64 cursor = 1;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; BFF-selected fields are never authority.
 message ResetRoadsidePurchasesUnreadRequest {
   RoadsidePurchasesState state = 1;
   // Cursor previously issued by GetRoadsidePurchasesSnapshot.
@@ -139,6 +164,10 @@ message ResetRoadsidePurchasesUnreadResponse {
   int32 state_unread = 3;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; BFF-selected fields are never authority.
 message GetBadgeTotalRequest {
   int64 user_id = 1;
   CounterApp app = 2;
