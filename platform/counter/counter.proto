@@ -24,6 +24,31 @@ enum RoadsidePurchasesState {
   ROADSIDE_PURCHASES_STATE_COMPLETED = 2;
 }
 
+// CounterApp separates badge state for the Client and PRO applications.
+enum CounterApp {
+  COUNTER_APP_UNSPECIFIED = 0;
+  COUNTER_APP_CLIENT = 1;
+  COUNTER_APP_PRO = 2;
+}
+
+// CounterPerspective separates buyer and seller profile projections for one
+// authenticated user. The counter owner verifies organization membership.
+enum CounterPerspective {
+  COUNTER_PERSPECTIVE_UNSPECIFIED = 0;
+  COUNTER_PERSPECTIVE_BUYER = 1;
+  COUNTER_PERSPECTIVE_SELLER_ORG = 2;
+  COUNTER_PERSPECTIVE_SELLER_USER = 3;
+  COUNTER_PERSPECTIVE_SUPPORT = 4;
+}
+
+message OrganizationUnreadProjection {
+  string organization_id = 1;
+  int32 unread_messages = 2;
+  int32 unread_notifications = 3;
+  int32 total = 4;
+  map<string, int32> breakdown = 5;
+}
+
 message UserCounters {
   int64 user_id = 1;
   int32 unread_messages = 2;
@@ -37,16 +62,23 @@ message UserCounters {
 
 message GetCountersRequest {
   int64 user_id = 1;
+  CounterApp app = 2;
+  CounterPerspective perspective = 3;
+  repeated string organization_ids = 4;
 }
 
 message GetCountersResponse {
   UserCounters counters = 1;
+  repeated OrganizationUnreadProjection organization_unread = 2;
 }
 
 message IncrementCounterRequest {
   int64 user_id = 1;
   string counter_name = 2;
   int32 delta = 3;
+  CounterApp app = 4;
+  CounterPerspective perspective = 5;
+  repeated string organization_ids = 6;
 }
 
 message IncrementCounterResponse {
@@ -57,6 +89,9 @@ message DecrementCounterRequest {
   int64 user_id = 1;
   string counter_name = 2;
   int32 delta = 3;
+  CounterApp app = 4;
+  CounterPerspective perspective = 5;
+  repeated string organization_ids = 6;
 }
 
 message DecrementCounterResponse {
@@ -67,6 +102,9 @@ message SetCounterRequest {
   int64 user_id = 1;
   string counter_name = 2;
   int32 value = 3;
+  CounterApp app = 4;
+  CounterPerspective perspective = 5;
+  repeated string organization_ids = 6;
 }
 
 message SetCounterResponse {
@@ -75,6 +113,9 @@ message SetCounterResponse {
 
 message GetRoadsidePurchasesSnapshotRequest {
   RoadsidePurchasesState state = 1;
+  CounterApp app = 2;
+  CounterPerspective perspective = 3;
+  repeated string organization_ids = 4;
 }
 
 message GetRoadsidePurchasesSnapshotResponse {
@@ -86,6 +127,9 @@ message ResetRoadsidePurchasesUnreadRequest {
   RoadsidePurchasesState state = 1;
   // Cursor previously issued by GetRoadsidePurchasesSnapshot.
   uint64 cursor = 2;
+  CounterApp app = 3;
+  CounterPerspective perspective = 4;
+  repeated string organization_ids = 5;
 }
 
 message ResetRoadsidePurchasesUnreadResponse {
@@ -97,9 +141,13 @@ message ResetRoadsidePurchasesUnreadResponse {
 
 message GetBadgeTotalRequest {
   int64 user_id = 1;
+  CounterApp app = 2;
+  CounterPerspective perspective = 3;
+  repeated string organization_ids = 4;
 }
 
 message GetBadgeTotalResponse {
-  int32 total = 1;                  // min(cap, сумма max(0,src)); кап на чтении
+  int32 total = 1; // min(cap, сумма max(0,src)); кап на чтении
   map<string, int32> breakdown = 2; // без капа
+  repeated OrganizationUnreadProjection organization_unread = 3;
 }

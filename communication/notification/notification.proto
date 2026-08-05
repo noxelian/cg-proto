@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package communication.notification.v1;
 
-option go_package = "github.com/4ubak/cg-proto/gen/go/communication/notification;notificationv1";
-
 import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/communication/notification;notificationv1";
 
 service NotificationService {
   rpc SendPush(SendPushRequest) returns (SendPushResponse);
@@ -56,6 +56,24 @@ enum NotificationStream {
   NOTIFICATION_STREAM_NEWS = 3;
 }
 
+// NotificationApp is the typed application boundary. PRO maps to the legacy
+// device app value "partner" during the additive consumer migration.
+enum NotificationApp {
+  NOTIFICATION_APP_UNSPECIFIED = 0;
+  NOTIFICATION_APP_CLIENT = 1;
+  NOTIFICATION_APP_PRO = 2;
+}
+
+// NotificationPerspective identifies the recipient profile inside an app.
+// Owner services must verify JWT and organization membership before delivery.
+enum NotificationPerspective {
+  NOTIFICATION_PERSPECTIVE_UNSPECIFIED = 0;
+  NOTIFICATION_PERSPECTIVE_BUYER = 1;
+  NOTIFICATION_PERSPECTIVE_SELLER_ORG = 2;
+  NOTIFICATION_PERSPECTIVE_SELLER_USER = 3;
+  NOTIFICATION_PERSPECTIVE_SUPPORT = 4;
+}
+
 message Notification {
   string id = 1;
   int64 user_id = 2;
@@ -66,6 +84,11 @@ message Notification {
   map<string, string> data = 7;
   bool is_read = 8;
   google.protobuf.Timestamp created_at = 9;
+  NotificationApp recipient_app = 10;
+  NotificationPerspective recipient_perspective = 11;
+  string recipient_organization_id = 12;
+  string context_type = 13;
+  string context_id = 14;
 }
 
 // DeviceInfo is returned by RegisterDevice, UpdateDevice, and ListUserDevices.
@@ -79,6 +102,8 @@ message DeviceInfo {
   string locale = 7;
   google.protobuf.Timestamp last_seen_at = 8;
   google.protobuf.Timestamp created_at = 9;
+  // Typed replacement for the legacy RegisterDeviceRequest.app string.
+  NotificationApp app = 10;
 }
 
 message SendPushRequest {
@@ -87,6 +112,55 @@ message SendPushRequest {
   string body = 3;
   NotificationCategory category = 4;
   map<string, string> data = 5;
+  // One scoped delivery belongs to exactly one application. Campaign fan-out
+  // creates separate deliveries per app.
+  NotificationApp recipient_app = 6;
+  NotificationPerspective recipient_perspective = 7;
+  string recipient_organization_id = 8;
+  string context_type = 9;
+  string context_id = 10;
+}
+
+// PushEventPayload is the protobuf-owned projection of notification.push.
+// Legacy JSON publishers may omit fields 8-14 during the additive rollout;
+// new producers must provide explicit recipient routing instead of inferring
+// application or organization solely from user_id.
+message PushEventPayload {
+  int64 user_id = 1;
+  string event_type = 2;
+  string title = 3;
+  string body = 4;
+  map<string, string> data = 5;
+  string priority = 6;
+  string dedup_key = 7;
+  // Legacy multi-app producer target. New producers emit one scoped event and
+  // set recipient_app; consumers keep this during the additive migration.
+  repeated NotificationApp target_apps = 8;
+  NotificationCategory category = 9;
+  NotificationApp recipient_app = 10;
+  NotificationPerspective recipient_perspective = 11;
+  string recipient_organization_id = 12;
+  string context_type = 13;
+  string context_id = 14;
+}
+
+// RealtimeNotificationEventPayload mirrors the notification.new payload sent
+// to websocket clients and carries the same explicit recipient boundary.
+message RealtimeNotificationEventPayload {
+  int64 user_id = 1;
+  string id = 2;
+  NotificationType type = 3;
+  NotificationCategory category = 4;
+  string title = 5;
+  string body = 6;
+  map<string, string> data = 7;
+  bool is_read = 8;
+  google.protobuf.Timestamp created_at = 9;
+  NotificationApp recipient_app = 10;
+  NotificationPerspective recipient_perspective = 11;
+  string recipient_organization_id = 12;
+  string context_type = 13;
+  string context_id = 14;
 }
 
 message SendPushResponse {
@@ -134,6 +208,9 @@ message GetNotificationsRequest {
   int32 page = 4;
   int32 page_size = 5;
   NotificationStream stream = 6;
+  NotificationApp app = 7;
+  NotificationPerspective perspective = 8;
+  string organization_id = 9;
 }
 
 message GetNotificationsResponse {
@@ -149,6 +226,9 @@ message NotificationStreamSummary {
 
 message GetNotificationStreamsRequest {
   int64 user_id = 1;
+  NotificationApp app = 2;
+  NotificationPerspective perspective = 3;
+  string organization_id = 4;
 }
 
 message GetNotificationStreamsResponse {
@@ -162,6 +242,9 @@ message MarkAsReadRequest {
   // When mark_all is true, scopes the bulk action to one customer-facing
   // stream. UNSPECIFIED preserves the legacy all-notifications behavior.
   NotificationStream stream = 4;
+  NotificationApp app = 5;
+  NotificationPerspective perspective = 6;
+  string organization_id = 7;
 }
 
 message MarkAsReadResponse {
@@ -170,6 +253,9 @@ message MarkAsReadResponse {
 
 message GetUnreadCountRequest {
   int64 user_id = 1;
+  NotificationApp app = 2;
+  NotificationPerspective perspective = 3;
+  string organization_id = 4;
 }
 
 message GetUnreadCountResponse {
@@ -180,14 +266,16 @@ message GetUnreadCountResponse {
 // fcm_token field carries any push token: FCM registration token or APNs device token.
 message RegisterDeviceRequest {
   int64 user_id = 1;
-  string device_id = 2;   // legacy; prefer using fcm_token as the canonical token
-  string fcm_token = 3;   // canonical push token for all platforms
-  string platform = 4;    // "ios" | "android" | "web"
+  string device_id = 2; // legacy; prefer using fcm_token as the canonical token
+  string fcm_token = 3; // canonical push token for all platforms
+  string platform = 4; // "ios" | "android" | "web"
   string app_version = 5;
   string device_model = 6;
   string locale = 7;
   // app identifies which application registered this device: "client" (default) or "partner"
   string app = 8;
+  // target_app is the typed form. UNSPECIFIED preserves legacy app handling.
+  NotificationApp target_app = 9;
 }
 
 message RegisterDeviceResponse {
@@ -197,7 +285,7 @@ message RegisterDeviceResponse {
 
 message UnregisterDeviceRequest {
   int64 user_id = 1;
-  string device_id = 2;   // token value (legacy field name kept for compat)
+  string device_id = 2; // token value (legacy field name kept for compat)
 }
 
 message UnregisterDeviceResponse {
