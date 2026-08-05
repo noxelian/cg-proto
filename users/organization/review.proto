@@ -89,6 +89,9 @@ message Review {
   // Exact marketplace parts order that authorized this review. Mutually
   // exclusive with request_id and repair_order_id.
   optional int64 parts_order_id = 19;
+  // Exact roadside/diagnostics order that authorized this review. Mutually
+  // exclusive with every other source identifier.
+  optional string roadside_order_id = 20;
 }
 
 message CreateReviewRequest {
@@ -107,7 +110,7 @@ message CreateReviewRequest {
   optional int64 order_amount = 10;
   repeated string photos = 11;
   // Source identifies the origin flow. Known values: "workshop_order",
-  // "parts_order".
+  // "parts_order", "roadside_order".
   // Empty = legacy default (request_id-based eligibility).
   optional string source = 12;
   // Repair order id for source="workshop_order". Required in that mode,
@@ -117,6 +120,9 @@ message CreateReviewRequest {
   // mode, ignored otherwise. Eligibility is verified against the exact
   // cg-orders record (buyer, seller, type, and terminal-positive status).
   int64 parts_order_id = 14;
+  // Roadside/diagnostics order UUID for source="roadside_order". Eligibility
+  // is verified against the exact completed order and completing assignment.
+  string roadside_order_id = 15;
 }
 
 message CreateReviewResponse {

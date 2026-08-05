@@ -70,9 +70,12 @@ type Review struct {
 	RepairOrderId *int64 `protobuf:"varint,18,opt,name=repair_order_id,json=repairOrderId,proto3,oneof" json:"repair_order_id,omitempty"`
 	// Exact marketplace parts order that authorized this review. Mutually
 	// exclusive with request_id and repair_order_id.
-	PartsOrderId  *int64 `protobuf:"varint,19,opt,name=parts_order_id,json=partsOrderId,proto3,oneof" json:"parts_order_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	PartsOrderId *int64 `protobuf:"varint,19,opt,name=parts_order_id,json=partsOrderId,proto3,oneof" json:"parts_order_id,omitempty"`
+	// Exact roadside/diagnostics order that authorized this review. Mutually
+	// exclusive with every other source identifier.
+	RoadsideOrderId *string `protobuf:"bytes,20,opt,name=roadside_order_id,json=roadsideOrderId,proto3,oneof" json:"roadside_order_id,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *Review) Reset() {
@@ -238,6 +241,13 @@ func (x *Review) GetPartsOrderId() int64 {
 	return 0
 }
 
+func (x *Review) GetRoadsideOrderId() string {
+	if x != nil && x.RoadsideOrderId != nil {
+		return *x.RoadsideOrderId
+	}
+	return ""
+}
+
 type CreateReviewRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
@@ -255,7 +265,7 @@ type CreateReviewRequest struct {
 	OrderAmount *int64   `protobuf:"varint,10,opt,name=order_amount,json=orderAmount,proto3,oneof" json:"order_amount,omitempty"`
 	Photos      []string `protobuf:"bytes,11,rep,name=photos,proto3" json:"photos,omitempty"`
 	// Source identifies the origin flow. Known values: "workshop_order",
-	// "parts_order".
+	// "parts_order", "roadside_order".
 	// Empty = legacy default (request_id-based eligibility).
 	Source *string `protobuf:"bytes,12,opt,name=source,proto3,oneof" json:"source,omitempty"`
 	// Repair order id for source="workshop_order". Required in that mode,
@@ -264,9 +274,12 @@ type CreateReviewRequest struct {
 	// Marketplace parts order id for source="parts_order". Required in that
 	// mode, ignored otherwise. Eligibility is verified against the exact
 	// cg-orders record (buyer, seller, type, and terminal-positive status).
-	PartsOrderId  int64 `protobuf:"varint,14,opt,name=parts_order_id,json=partsOrderId,proto3" json:"parts_order_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	PartsOrderId int64 `protobuf:"varint,14,opt,name=parts_order_id,json=partsOrderId,proto3" json:"parts_order_id,omitempty"`
+	// Roadside/diagnostics order UUID for source="roadside_order". Eligibility
+	// is verified against the exact completed order and completing assignment.
+	RoadsideOrderId string `protobuf:"bytes,15,opt,name=roadside_order_id,json=roadsideOrderId,proto3" json:"roadside_order_id,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *CreateReviewRequest) Reset() {
@@ -395,6 +408,13 @@ func (x *CreateReviewRequest) GetPartsOrderId() int64 {
 		return x.PartsOrderId
 	}
 	return 0
+}
+
+func (x *CreateReviewRequest) GetRoadsideOrderId() string {
+	if x != nil {
+		return x.RoadsideOrderId
+	}
+	return ""
 }
 
 type CreateReviewResponse struct {
@@ -1405,7 +1425,7 @@ var File_users_organization_review_proto protoreflect.FileDescriptor
 
 const file_users_organization_review_proto_rawDesc = "" +
 	"\n" +
-	"\x1fusers/organization/review.proto\x12\x15users.organization.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc9\x05\n" +
+	"\x1fusers/organization/review.proto\x12\x15users.organization.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x90\x06\n" +
 	"\x06Review\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12$\n" +
@@ -1430,13 +1450,15 @@ const file_users_organization_review_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12+\n" +
 	"\x0frepair_order_id\x18\x12 \x01(\x03H\x03R\rrepairOrderId\x88\x01\x01\x12)\n" +
-	"\x0eparts_order_id\x18\x13 \x01(\x03H\x04R\fpartsOrderId\x88\x01\x01B\t\n" +
+	"\x0eparts_order_id\x18\x13 \x01(\x03H\x04R\fpartsOrderId\x88\x01\x01\x12/\n" +
+	"\x11roadside_order_id\x18\x14 \x01(\tH\x05R\x0froadsideOrderId\x88\x01\x01B\t\n" +
 	"\a_car_idB\x0f\n" +
 	"\r_order_amountB\f\n" +
 	"\n" +
 	"_legacy_idB\x12\n" +
 	"\x10_repair_order_idB\x11\n" +
-	"\x0f_parts_order_id\"\xe0\x03\n" +
+	"\x0f_parts_order_idB\x14\n" +
+	"\x12_roadside_order_id\"\x8c\x04\n" +
 	"\x13CreateReviewRequest\x12'\n" +
 	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12$\n" +
 	"\x0eauthor_user_id\x18\x02 \x01(\x03R\fauthorUserId\x12\x1f\n" +
@@ -1454,7 +1476,8 @@ const file_users_organization_review_proto_rawDesc = "" +
 	"\x06photos\x18\v \x03(\tR\x06photos\x12\x1b\n" +
 	"\x06source\x18\f \x01(\tH\x02R\x06source\x88\x01\x01\x12&\n" +
 	"\x0frepair_order_id\x18\r \x01(\x03R\rrepairOrderId\x12$\n" +
-	"\x0eparts_order_id\x18\x0e \x01(\x03R\fpartsOrderIdB\t\n" +
+	"\x0eparts_order_id\x18\x0e \x01(\x03R\fpartsOrderId\x12*\n" +
+	"\x11roadside_order_id\x18\x0f \x01(\tR\x0froadsideOrderIdB\t\n" +
 	"\a_car_idB\x0f\n" +
 	"\r_order_amountB\t\n" +
 	"\a_source\"M\n" +

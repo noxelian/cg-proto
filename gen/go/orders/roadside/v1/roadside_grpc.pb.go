@@ -19,13 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RoadsideService_ListRoadsideServices_FullMethodName   = "/orders.roadside.v1.RoadsideService/ListRoadsideServices"
-	RoadsideService_CalculateRoadsidePrice_FullMethodName = "/orders.roadside.v1.RoadsideService/CalculateRoadsidePrice"
-	RoadsideService_CreateRoadsideOrder_FullMethodName    = "/orders.roadside.v1.RoadsideService/CreateRoadsideOrder"
-	RoadsideService_GetRoadsideOrder_FullMethodName       = "/orders.roadside.v1.RoadsideService/GetRoadsideOrder"
-	RoadsideService_ListMyRoadsideOrders_FullMethodName   = "/orders.roadside.v1.RoadsideService/ListMyRoadsideOrders"
-	RoadsideService_CancelRoadsideOrder_FullMethodName    = "/orders.roadside.v1.RoadsideService/CancelRoadsideOrder"
-	RoadsideService_ResumeRoadsidePayment_FullMethodName  = "/orders.roadside.v1.RoadsideService/ResumeRoadsidePayment"
+	RoadsideService_ListRoadsideServices_FullMethodName           = "/orders.roadside.v1.RoadsideService/ListRoadsideServices"
+	RoadsideService_CalculateRoadsidePrice_FullMethodName         = "/orders.roadside.v1.RoadsideService/CalculateRoadsidePrice"
+	RoadsideService_CreateRoadsideOrder_FullMethodName            = "/orders.roadside.v1.RoadsideService/CreateRoadsideOrder"
+	RoadsideService_GetRoadsideOrder_FullMethodName               = "/orders.roadside.v1.RoadsideService/GetRoadsideOrder"
+	RoadsideService_ListMyRoadsideOrders_FullMethodName           = "/orders.roadside.v1.RoadsideService/ListMyRoadsideOrders"
+	RoadsideService_CancelRoadsideOrder_FullMethodName            = "/orders.roadside.v1.RoadsideService/CancelRoadsideOrder"
+	RoadsideService_ResumeRoadsidePayment_FullMethodName          = "/orders.roadside.v1.RoadsideService/ResumeRoadsidePayment"
+	RoadsideService_CheckRoadsideReviewEligibility_FullMethodName = "/orders.roadside.v1.RoadsideService/CheckRoadsideReviewEligibility"
 )
 
 // RoadsideServiceClient is the client API for RoadsideService service.
@@ -60,6 +61,10 @@ type RoadsideServiceClient interface {
 	// order without this. Only the authenticated client who owns the order may
 	// call it through gwc.
 	ResumeRoadsidePayment(ctx context.Context, in *ResumeRoadsidePaymentRequest, opts ...grpc.CallOption) (*ResumeRoadsidePaymentResponse, error)
+	// CheckRoadsideReviewEligibility verifies one exact completed order and its
+	// completing organization. This is an internal, service-authenticated check
+	// used by organization-service before it accepts a customer review.
+	CheckRoadsideReviewEligibility(ctx context.Context, in *CheckRoadsideReviewEligibilityRequest, opts ...grpc.CallOption) (*CheckRoadsideReviewEligibilityResponse, error)
 }
 
 type roadsideServiceClient struct {
@@ -140,6 +145,16 @@ func (c *roadsideServiceClient) ResumeRoadsidePayment(ctx context.Context, in *R
 	return out, nil
 }
 
+func (c *roadsideServiceClient) CheckRoadsideReviewEligibility(ctx context.Context, in *CheckRoadsideReviewEligibilityRequest, opts ...grpc.CallOption) (*CheckRoadsideReviewEligibilityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckRoadsideReviewEligibilityResponse)
+	err := c.cc.Invoke(ctx, RoadsideService_CheckRoadsideReviewEligibility_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RoadsideServiceServer is the server API for RoadsideService service.
 // All implementations must embed UnimplementedRoadsideServiceServer
 // for forward compatibility.
@@ -172,6 +187,10 @@ type RoadsideServiceServer interface {
 	// order without this. Only the authenticated client who owns the order may
 	// call it through gwc.
 	ResumeRoadsidePayment(context.Context, *ResumeRoadsidePaymentRequest) (*ResumeRoadsidePaymentResponse, error)
+	// CheckRoadsideReviewEligibility verifies one exact completed order and its
+	// completing organization. This is an internal, service-authenticated check
+	// used by organization-service before it accepts a customer review.
+	CheckRoadsideReviewEligibility(context.Context, *CheckRoadsideReviewEligibilityRequest) (*CheckRoadsideReviewEligibilityResponse, error)
 	mustEmbedUnimplementedRoadsideServiceServer()
 }
 
@@ -202,6 +221,9 @@ func (UnimplementedRoadsideServiceServer) CancelRoadsideOrder(context.Context, *
 }
 func (UnimplementedRoadsideServiceServer) ResumeRoadsidePayment(context.Context, *ResumeRoadsidePaymentRequest) (*ResumeRoadsidePaymentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResumeRoadsidePayment not implemented")
+}
+func (UnimplementedRoadsideServiceServer) CheckRoadsideReviewEligibility(context.Context, *CheckRoadsideReviewEligibilityRequest) (*CheckRoadsideReviewEligibilityResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckRoadsideReviewEligibility not implemented")
 }
 func (UnimplementedRoadsideServiceServer) mustEmbedUnimplementedRoadsideServiceServer() {}
 func (UnimplementedRoadsideServiceServer) testEmbeddedByValue()                         {}
@@ -350,6 +372,24 @@ func _RoadsideService_ResumeRoadsidePayment_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RoadsideService_CheckRoadsideReviewEligibility_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckRoadsideReviewEligibilityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoadsideServiceServer).CheckRoadsideReviewEligibility(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RoadsideService_CheckRoadsideReviewEligibility_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoadsideServiceServer).CheckRoadsideReviewEligibility(ctx, req.(*CheckRoadsideReviewEligibilityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RoadsideService_ServiceDesc is the grpc.ServiceDesc for RoadsideService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -384,6 +424,10 @@ var RoadsideService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResumeRoadsidePayment",
 			Handler:    _RoadsideService_ResumeRoadsidePayment_Handler,
+		},
+		{
+			MethodName: "CheckRoadsideReviewEligibility",
+			Handler:    _RoadsideService_CheckRoadsideReviewEligibility_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

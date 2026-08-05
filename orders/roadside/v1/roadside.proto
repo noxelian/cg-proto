@@ -40,6 +40,11 @@ service RoadsideService {
   // order without this. Only the authenticated client who owns the order may
   // call it through gwc.
   rpc ResumeRoadsidePayment(ResumeRoadsidePaymentRequest) returns (ResumeRoadsidePaymentResponse);
+
+  // CheckRoadsideReviewEligibility verifies one exact completed order and its
+  // completing organization. This is an internal, service-authenticated check
+  // used by organization-service before it accepts a customer review.
+  rpc CheckRoadsideReviewEligibility(CheckRoadsideReviewEligibilityRequest) returns (CheckRoadsideReviewEligibilityResponse);
 }
 
 // RoadsideDispatchService exposes operator dispatch and catalog management
@@ -377,6 +382,16 @@ message GetRoadsideOrderResponse {
   // It is active while work is in progress and completed after the order is
   // finished. Revoked assignments remain available only on the admin card.
   RoadsideAssignment assignment = 2;
+}
+
+message CheckRoadsideReviewEligibilityRequest {
+  string order_id = 1;
+  int64 user_id = 2;
+  string organization_id = 3;
+}
+
+message CheckRoadsideReviewEligibilityResponse {
+  bool eligible = 1;
 }
 
 message ListMyRoadsideOrdersRequest {
