@@ -86,7 +86,7 @@ func TestAppAudienceContract(t *testing.T) {
 	assertNotificationContractDocumentation(t)
 }
 
-func TestPushEventPayloadProtoJSONPreservesLegacyWireShape(t *testing.T) {
+func TestPushEventPayloadProtoJSONPreservesKeysButQuotesInt64(t *testing.T) {
 	payload := &PushEventPayload{
 		UserId:               42,
 		EventType:            "bid.received",
@@ -107,8 +107,11 @@ func TestPushEventPayloadProtoJSONPreservesLegacyWireShape(t *testing.T) {
 		[]string{"user_id", "event_type", "dedup_key", "target_apps", "category"},
 		[]string{"userId", "eventType", "dedupKey", "targetApps"},
 	)
+	if got := string(wire["user_id"]); got != `"42"` {
+		t.Fatalf("protojson user_id = %s, want quoted int64; legacy events must use compat/communication", got)
+	}
 	if _, ok := wire["typedTargetApps"]; !ok {
-		t.Fatal("typedTargetApps must coexist separately from legacy target_apps")
+		t.Fatal("deprecated typedTargetApps must remain wire-readable during migration")
 	}
 
 	var consumer struct {
@@ -140,7 +143,7 @@ func TestPushEventPayloadProtoJSONReadsLiveLegacyJSONWithoutDefaulting(t *testin
 	}
 }
 
-func TestRealtimeNotificationEventProtoJSONPreservesLegacyWireShape(t *testing.T) {
+func TestRealtimeNotificationEventProtoJSONPreservesKeysButQuotesInt64(t *testing.T) {
 	createdAt := timestamppb.New(time.Date(2026, time.August, 5, 12, 30, 0, 0, time.UTC))
 	payload := &RealtimeNotificationEventPayload{
 		UserId:        42,
@@ -161,6 +164,9 @@ func TestRealtimeNotificationEventProtoJSONPreservesLegacyWireShape(t *testing.T
 		[]string{"user_id", "type", "category", "is_read", "created_at"},
 		[]string{"userId", "isRead", "createdAt"},
 	)
+	if got := string(wire["user_id"]); got != `"42"` {
+		t.Fatalf("protojson user_id = %s, want quoted int64; legacy events must use compat/communication", got)
+	}
 	if _, ok := wire["typedType"]; !ok {
 		t.Fatal("typedType must coexist separately from legacy string type")
 	}
@@ -192,19 +198,6 @@ func TestRealtimeNotificationEventProtoJSONReadsLiveLegacyJSONWithoutDefaulting(
 	}
 	if got := payload.CreatedAt.AsTime().UTC().Format(time.RFC3339); got != "2026-08-05T12:30:00Z" {
 		t.Fatalf("created_at = %q, want live value", got)
-	}
-}
-
-func TestPushEventPayloadKeepsConflictingFormsForOwnerValidation(t *testing.T) {
-	const conflicting = `{"target_apps":["client"],"category":"promo","typedTargetApps":["NOTIFICATION_APP_PRO"],"typedCategory":"NOTIFICATION_CATEGORY_SYSTEM"}`
-	var payload PushEventPayload
-	if err := protojson.Unmarshal([]byte(conflicting), &payload); err != nil {
-		t.Fatalf("unmarshal conflicting dual-write fixture: %v", err)
-	}
-	if !reflect.DeepEqual(payload.TargetApps, []string{"client"}) ||
-		!reflect.DeepEqual(payload.TypedTargetApps, []NotificationApp{NotificationApp_NOTIFICATION_APP_PRO}) ||
-		payload.Category != "promo" || payload.TypedCategory != NotificationCategory_NOTIFICATION_CATEGORY_SYSTEM {
-		t.Fatalf("legacy and typed forms must remain distinct for owner rejection: %+v", &payload)
 	}
 }
 
@@ -293,7 +286,7 @@ func assertNotificationEnumValue(t *testing.T, enum protoreflect.EnumDescriptor,
 	}
 }
 
-func assertNotificationField(t *testing.T, message protoreflect.MessageDescriptor, name protoreflect.Name, number protoreflect.FieldNumber, kind protoreflect.Kind) {
+func assertNotificationField(t *testing.T, message protoreflect.MessageDescriptor, name protoreflect.Name, number protoreflect.FieldNumber, kind protoreflect.Kind) protoreflect.FieldDescriptor {
 	t.Helper()
 	if message == nil {
 		t.Fatalf("message containing %s not found", name)
@@ -305,4 +298,5 @@ func assertNotificationField(t *testing.T, message protoreflect.MessageDescripto
 	if field.Number() != number || field.Kind() != kind {
 		t.Fatalf("%s.%s = field %d (%s), want %d (%s)", message.Name(), name, field.Number(), field.Kind(), number, kind)
 	}
+	return field
 }

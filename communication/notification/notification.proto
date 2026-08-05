@@ -75,6 +75,23 @@ enum NotificationPerspective {
   NOTIFICATION_PERSPECTIVE_SUPPORT = 4;
 }
 
+// NotificationScope is the single authoritative app + perspective + organization tuple.
+// Services derive it from authenticated claims: app MUST match the verified JWT app,
+// and organization_id is accepted only after membership/ownership validation.
+// membership_version is 0 iff organization_id is empty; organization scopes
+// carry the source-of-truth membership generation and stale/rehired versions
+// are rejected. A
+// request value is routing context, never authority. When an older parallel app
+// field/string and scope are both supplied, scope takes precedence only after the
+// owner proves they normalize to the same value; otherwise it rejects
+// INVALID_ARGUMENT.
+message NotificationScope {
+  NotificationApp app = 1;
+  NotificationPerspective perspective = 2;
+  string organization_id = 3;
+  int64 membership_version = 4;
+}
+
 message Notification {
   string id = 1;
   int64 user_id = 2;
@@ -90,6 +107,7 @@ message Notification {
   string recipient_organization_id = 12;
   string context_type = 13;
   string context_id = 14;
+  NotificationScope recipient_scope = 15;
 }
 
 // DeviceInfo is returned by RegisterDevice, UpdateDevice, and ListUserDevices.
@@ -105,6 +123,7 @@ message DeviceInfo {
   google.protobuf.Timestamp created_at = 9;
   // Typed replacement for the legacy RegisterDeviceRequest.app string.
   NotificationApp app = 10;
+  NotificationScope scope = 11;
 }
 
 message SendPushRequest {
@@ -120,21 +139,28 @@ message SendPushRequest {
   string recipient_organization_id = 8;
   string context_type = 9;
   string context_id = 10;
+  NotificationScope recipient_scope = 11;
 }
 
 // PushEventPayload is the protobuf-owned projection of notification.push JSON.
-// Producers MUST dual-write exact legacy target_apps/category strings and the
-// separately named typed fields during migration. Typed consumers prefer
-// typed_target_apps/typed_category and fall back to legacy normalization
-// ("client" -> CLIENT, "partner" -> PRO). When both forms are present their
-// normalized app sets and category MUST agree or the owner rejects
-// INVALID_ARGUMENT. Legacy empty target_apps keeps its existing broadcast-to-
-// all-apps meaning on this event stream; it MUST NOT become CLIENT-only or drop
-// a push. Organization routing is verified from its source owner/membership;
+// Producers keep exact legacy target_apps/category strings during migration.
+// New producers write recipient_scopes, where every tuple binds its app,
+// perspective, and organization; delivery code emits one delivery per
+// recipient_scopes tuple and MUST NOT flatten tuples into an app/org cross
+// product: one delivery per recipient_scopes tuple. If typed and legacy routing
+// are both present, the owner must reject conflicting typed and legacy routing
+// with INVALID_ARGUMENT (reject conflicting typed and legacy routing).
+// Legacy-only target_apps normalize ("client" -> CLIENT, "partner" -> PRO). Empty legacy
+// target_apps keeps its existing broadcast-to-all-apps meaning on this event
+// stream; it MUST NOT become CLIENT-only or drop a push. The deprecated
+// typed_target_apps plus parallel perspective/org fields remain readable only
+// for the rolling migration and must agree with recipient_scopes when both are
+// present. Organization routing is verified from its source owner/membership;
 // publisher and BFF values are routing context, not authority.
 message PushEventPayload {
-  // Explicit json_name values preserve the encoding/json wire contract when
-  // producers migrate to protojson, whose inferred names are camelCase.
+  // json_name preserves legacy key spelling only. protojson still quotes int64;
+  // notification.push publishers MUST use compat/communication's explicit
+  // encoding/json marshaler so user_id remains a JSON number.
   int64 user_id = 1 [json_name = "user_id"];
   string event_type = 2 [json_name = "event_type"];
   string title = 3 [json_name = "title"];
@@ -145,13 +171,14 @@ message PushEventPayload {
   // Exact legacy JSON fields consumed by current publishers and consumers.
   repeated string target_apps = 8 [json_name = "target_apps"];
   string category = 9 [json_name = "category"];
-  // Typed app scopes use a non-conflicting name/tag for dual-read/write.
-  repeated NotificationApp typed_target_apps = 10;
-  NotificationPerspective recipient_perspective = 11;
-  string recipient_organization_id = 12;
+  // Deprecated parallel typed routing kept only for rolling wire compatibility.
+  repeated NotificationApp typed_target_apps = 10 [deprecated = true];
+  NotificationPerspective recipient_perspective = 11 [deprecated = true];
+  string recipient_organization_id = 12 [deprecated = true];
   string context_type = 13;
   string context_id = 14;
   NotificationCategory typed_category = 15;
+  repeated NotificationScope recipient_scopes = 16;
 }
 
 // RealtimeNotificationEventPayload mirrors the notification.new payload sent
@@ -160,8 +187,9 @@ message PushEventPayload {
 // they MUST agree or the owner rejects INVALID_ARGUMENT; typed consumers fall
 // back to the legacy strings until migration completes.
 message RealtimeNotificationEventPayload {
-  // Keep the existing notification.new payload byte-shape compatible with
-  // encoding/json field tags as producers move to protojson.
+  // json_name preserves key spelling only. notification.new websocket/Kafka
+  // publishers MUST use compat/communication's encoding/json marshaler so
+  // user_id remains numeric and created_at remains RFC3339.
   int64 user_id = 1 [json_name = "user_id"];
   string id = 2 [json_name = "id"];
   string type = 3 [json_name = "type"];
@@ -178,6 +206,9 @@ message RealtimeNotificationEventPayload {
   string context_id = 14;
   NotificationType typed_type = 15;
   NotificationCategory typed_category = 16;
+  // One realtime envelope is routed to exactly this one bound scope. The
+  // deprecated parallel fields at tags 10-12 must agree when dual-written.
+  NotificationScope recipient_scope = 17;
 }
 
 message SendPushResponse {
@@ -232,6 +263,7 @@ message GetNotificationsRequest {
   NotificationApp app = 7;
   NotificationPerspective perspective = 8;
   string organization_id = 9;
+  NotificationScope scope = 10;
 }
 
 message GetNotificationsResponse {
@@ -254,6 +286,7 @@ message GetNotificationStreamsRequest {
   NotificationApp app = 2;
   NotificationPerspective perspective = 3;
   string organization_id = 4;
+  NotificationScope scope = 5;
 }
 
 message GetNotificationStreamsResponse {
@@ -274,6 +307,7 @@ message MarkAsReadRequest {
   NotificationApp app = 5;
   NotificationPerspective perspective = 6;
   string organization_id = 7;
+  NotificationScope scope = 8;
 }
 
 message MarkAsReadResponse {
@@ -289,14 +323,17 @@ message GetUnreadCountRequest {
   NotificationApp app = 2;
   NotificationPerspective perspective = 3;
   string organization_id = 4;
+  NotificationScope scope = 5;
 }
 
 message GetUnreadCountResponse {
   int32 count = 1;
 }
 
-// RegisterDevice — upsert by (user_id, fcm_token, app).
+// RegisterDevice — upsert by (user_id, fcm_token, scope).
 // fcm_token field carries any push token: FCM registration token or APNs device token.
+// The server derives/validates scope from claims. Legacy app/target_app are
+// accepted only when they agree with scope; a conflict is INVALID_ARGUMENT.
 message RegisterDeviceRequest {
   int64 user_id = 1;
   string device_id = 2; // legacy; prefer using fcm_token as the canonical token
@@ -314,6 +351,7 @@ message RegisterDeviceRequest {
   // the owner rejects INVALID_ARGUMENT. The owner/BFF validates user ownership;
   // BFF-selected values are never authority.
   NotificationApp target_app = 9;
+  NotificationScope scope = 10;
 }
 
 message RegisterDeviceResponse {
@@ -321,31 +359,40 @@ message RegisterDeviceResponse {
   DeviceInfo device = 2;
 }
 
+// The owner derives/validates scope from the JWT before mutation. Client
+// logout/update cannot mutate Partner registrations, even for the same user_id
+// and token; an omitted legacy scope is derived from the caller, never treated
+// as a user-global delete.
 message UnregisterDeviceRequest {
   int64 user_id = 1;
   string device_id = 2; // token value (legacy field name kept for compat)
+  NotificationScope scope = 3;
 }
 
 message UnregisterDeviceResponse {
   bool success = 1;
 }
 
-// UpdateDevice — partial update of device metadata.
+// UpdateDevice — partial update of device metadata within the server-validated
+// caller scope. Client logout/update cannot mutate Partner registrations.
 message UpdateDeviceRequest {
   int64 user_id = 1;
   string token = 2;
   string app_version = 3;
   string device_model = 4;
   string locale = 5;
+  NotificationScope scope = 6;
 }
 
 message UpdateDeviceResponse {
   DeviceInfo device = 1;
 }
 
-// ListUserDevices — returns all registered devices for a user.
+// ListUserDevices — returns registrations only for the server-validated caller
+// scope; it never returns a user-global union across Client and Partner.
 message ListUserDevicesRequest {
   int64 user_id = 1;
+  NotificationScope scope = 2;
 }
 
 message ListUserDevicesResponse {
@@ -369,10 +416,14 @@ message NotificationPreferences {
   bool order_notifications = 6;
   bool promo_notifications = 7;
   bool job_notifications = 8;
+  NotificationScope scope = 9;
 }
 
+// Preferences are isolated by the scope derived from the verified JWT app and
+// validated organization membership; user_id alone is never the preference key.
 message GetPreferencesRequest {
   int64 user_id = 1;
+  NotificationScope scope = 2;
 }
 
 message GetPreferencesResponse {
@@ -388,6 +439,7 @@ message UpdatePreferencesRequest {
   optional bool order_notifications = 6;
   optional bool promo_notifications = 7;
   optional bool job_notifications = 8;
+  NotificationScope scope = 9;
 }
 
 message UpdatePreferencesResponse {

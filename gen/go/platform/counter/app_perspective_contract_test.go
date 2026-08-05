@@ -18,14 +18,19 @@ func TestCounterAppPerspectiveContract(t *testing.T) {
 	assertCounterEnumValue(t, enums.ByName("CounterPerspective"), "COUNTER_PERSPECTIVE_SUPPORT", 4)
 
 	messages := File_platform_counter_counter_proto.Messages()
+	scope := messages.ByName("CounterScope")
+	assertCounterField(t, scope, "app", 1, protoreflect.EnumKind, false)
+	assertCounterField(t, scope, "perspective", 2, protoreflect.EnumKind, false)
+	assertCounterField(t, scope, "organization_id", 3, protoreflect.StringKind, false)
+	assertCounterField(t, scope, "membership_version", 4, protoreflect.Int64Kind, false)
 	requests := map[protoreflect.Name][]counterFieldExpectation{
-		"GetCountersRequest":                  {{"app", 2, protoreflect.EnumKind, false}, {"perspective", 3, protoreflect.EnumKind, false}, {"organization_ids", 4, protoreflect.StringKind, true}},
-		"IncrementCounterRequest":             {{"app", 4, protoreflect.EnumKind, false}, {"perspective", 5, protoreflect.EnumKind, false}, {"organization_ids", 6, protoreflect.StringKind, true}},
-		"DecrementCounterRequest":             {{"app", 4, protoreflect.EnumKind, false}, {"perspective", 5, protoreflect.EnumKind, false}, {"organization_ids", 6, protoreflect.StringKind, true}},
-		"SetCounterRequest":                   {{"app", 4, protoreflect.EnumKind, false}, {"perspective", 5, protoreflect.EnumKind, false}, {"organization_ids", 6, protoreflect.StringKind, true}},
-		"GetRoadsidePurchasesSnapshotRequest": {{"app", 2, protoreflect.EnumKind, false}, {"perspective", 3, protoreflect.EnumKind, false}, {"organization_ids", 4, protoreflect.StringKind, true}},
-		"ResetRoadsidePurchasesUnreadRequest": {{"app", 3, protoreflect.EnumKind, false}, {"perspective", 4, protoreflect.EnumKind, false}, {"organization_ids", 5, protoreflect.StringKind, true}},
-		"GetBadgeTotalRequest":                {{"app", 2, protoreflect.EnumKind, false}, {"perspective", 3, protoreflect.EnumKind, false}, {"organization_ids", 4, protoreflect.StringKind, true}},
+		"GetCountersRequest":                  {{"app", 2, protoreflect.EnumKind, false}, {"perspective", 3, protoreflect.EnumKind, false}, {"organization_ids", 4, protoreflect.StringKind, true}, {"scopes", 5, protoreflect.MessageKind, true}},
+		"IncrementCounterRequest":             {{"app", 4, protoreflect.EnumKind, false}, {"perspective", 5, protoreflect.EnumKind, false}, {"organization_ids", 6, protoreflect.StringKind, true}, {"scopes", 7, protoreflect.MessageKind, true}},
+		"DecrementCounterRequest":             {{"app", 4, protoreflect.EnumKind, false}, {"perspective", 5, protoreflect.EnumKind, false}, {"organization_ids", 6, protoreflect.StringKind, true}, {"scopes", 7, protoreflect.MessageKind, true}},
+		"SetCounterRequest":                   {{"app", 4, protoreflect.EnumKind, false}, {"perspective", 5, protoreflect.EnumKind, false}, {"organization_ids", 6, protoreflect.StringKind, true}, {"scopes", 7, protoreflect.MessageKind, true}},
+		"GetRoadsidePurchasesSnapshotRequest": {{"app", 2, protoreflect.EnumKind, false}, {"perspective", 3, protoreflect.EnumKind, false}, {"organization_ids", 4, protoreflect.StringKind, true}, {"scopes", 5, protoreflect.MessageKind, true}},
+		"ResetRoadsidePurchasesUnreadRequest": {{"app", 3, protoreflect.EnumKind, false}, {"perspective", 4, protoreflect.EnumKind, false}, {"organization_ids", 5, protoreflect.StringKind, true}, {"scopes", 6, protoreflect.MessageKind, true}},
+		"GetBadgeTotalRequest":                {{"app", 2, protoreflect.EnumKind, false}, {"perspective", 3, protoreflect.EnumKind, false}, {"organization_ids", 4, protoreflect.StringKind, true}, {"scopes", 5, protoreflect.MessageKind, true}},
 	}
 	for requestName, fields := range requests {
 		for _, field := range fields {
@@ -60,7 +65,10 @@ func assertCounterContractDocumentation(t *testing.T) {
 		"membership/ownership with the source",
 		"BFF-selected fields are never authority",
 		"CLIENT+BUYER and",
-		"PRO+SELLER_ORG",
+			"PRO+SELLER_ORG",
+			"membership_version is 0 iff organization_id is empty",
+			"removal/rehire",
+			"late event",
 	} {
 		if !strings.Contains(string(source), required) {
 			t.Errorf("counter.proto missing contract documentation %q", required)

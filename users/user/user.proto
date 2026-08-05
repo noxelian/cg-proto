@@ -381,9 +381,14 @@ message UserSettings {
   bool chat_notifications = 4;
   bool order_notifications = 5;
   bool promo_notifications = 6;
+  UserAppScope scope = 7;
 }
 
-message GetSettingsRequest {}
+// Legacy settings are isolated by the same authenticated app/profile tuple as
+// devices; they are never a user-global preference mutation.
+message GetSettingsRequest {
+  UserAppScope scope = 1;
+}
 
 message GetSettingsResponse {
   UserSettings settings = 1;
@@ -396,6 +401,7 @@ message UpdateSettingsRequest {
   optional bool chat_notifications = 4;
   optional bool order_notifications = 5;
   optional bool promo_notifications = 6;
+  UserAppScope scope = 7;
 }
 
 message UpdateSettingsResponse {
@@ -403,6 +409,35 @@ message UpdateSettingsResponse {
 }
 
 // Devices
+// These legacy UserService device RPCs remain additive for existing consumers;
+// cg-communication NotificationService is the long-term device owner. Until
+// migration completes, every operation is isolated by UserAppScope.
+enum UserApp {
+  USER_APP_UNSPECIFIED = 0;
+  USER_APP_CLIENT = 1;
+  USER_APP_PRO = 2;
+}
+
+enum UserPerspective {
+  USER_PERSPECTIVE_UNSPECIFIED = 0;
+  USER_PERSPECTIVE_BUYER = 1;
+  USER_PERSPECTIVE_SELLER_ORG = 2;
+  USER_PERSPECTIVE_SELLER_USER = 3;
+}
+
+// UserAppScope binds app, perspective, and organization. The service derives
+// app from the verified JWT app and validates organization access plus the
+// current membership generation. membership_version is 0 iff organization_id
+// is empty; removal/rehire makes an older version stale. If a future
+// legacy app field and scope coexist, scope takes precedence only after their
+// normalized values agree; the owner must reject a conflict.
+message UserAppScope {
+  UserApp app = 1;
+  UserPerspective perspective = 2;
+  string organization_id = 3;
+  int64 membership_version = 4;
+}
+
 message Device {
   string id = 1;
   string device_id = 2;
@@ -410,27 +445,37 @@ message Device {
   string fcm_token = 4;
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp last_used_at = 6;
+  UserAppScope scope = 7;
 }
 
+// RegisterDevice writes only inside the authenticated scope. An unspecified
+// scope is derived from claims for legacy callers, never treated as global.
 message RegisterDeviceRequest {
   string device_id = 1;
   string fcm_token = 2;
   string platform = 3;
+  UserAppScope scope = 4;
 }
 
 message RegisterDeviceResponse {
   bool success = 1;
 }
 
+// Client logout cannot unregister a Partner device for the same account. The
+// server binds scope to verified claims before selecting the registration.
 message UnregisterDeviceRequest {
   string device_id = 1;
+  UserAppScope scope = 2;
 }
 
 message UnregisterDeviceResponse {
   bool success = 1;
 }
 
-message GetDevicesRequest {}
+// GetDevices returns only the authenticated app/profile registrations.
+message GetDevicesRequest {
+  UserAppScope scope = 1;
+}
 
 message GetDevicesResponse {
   repeated Device devices = 1;

@@ -42,6 +42,19 @@ enum CounterPerspective {
   COUNTER_PERSPECTIVE_SUPPORT = 4;
 }
 
+// CounterScope binds app, perspective, organization, and membership generation
+// into one tuple. membership_version is 0 iff organization_id is empty. For an
+// organization scope the owner validates the positive version against the
+// source membership record, so removal/rehire or a late event cannot reuse an
+// older seller-org scope. Legacy parallel fields remain migration inputs only
+// and never override or supply a detached membership version.
+message CounterScope {
+  CounterApp app = 1;
+  CounterPerspective perspective = 2;
+  string organization_id = 3;
+  int64 membership_version = 4;
+}
+
 message OrganizationUnreadProjection {
   string organization_id = 1;
   int32 unread_messages = 2;
@@ -70,6 +83,7 @@ message GetCountersRequest {
   CounterApp app = 2;
   CounterPerspective perspective = 3;
   repeated string organization_ids = 4;
+  repeated CounterScope scopes = 5;
 }
 
 message GetCountersResponse {
@@ -88,6 +102,7 @@ message IncrementCounterRequest {
   CounterApp app = 4;
   CounterPerspective perspective = 5;
   repeated string organization_ids = 6;
+  repeated CounterScope scopes = 7;
 }
 
 message IncrementCounterResponse {
@@ -105,6 +120,7 @@ message DecrementCounterRequest {
   CounterApp app = 4;
   CounterPerspective perspective = 5;
   repeated string organization_ids = 6;
+  repeated CounterScope scopes = 7;
 }
 
 message DecrementCounterResponse {
@@ -122,6 +138,7 @@ message SetCounterRequest {
   CounterApp app = 4;
   CounterPerspective perspective = 5;
   repeated string organization_ids = 6;
+  repeated CounterScope scopes = 7;
 }
 
 message SetCounterResponse {
@@ -137,6 +154,7 @@ message GetRoadsidePurchasesSnapshotRequest {
   CounterApp app = 2;
   CounterPerspective perspective = 3;
   repeated string organization_ids = 4;
+  repeated CounterScope scopes = 5;
 }
 
 message GetRoadsidePurchasesSnapshotResponse {
@@ -155,6 +173,7 @@ message ResetRoadsidePurchasesUnreadRequest {
   CounterApp app = 3;
   CounterPerspective perspective = 4;
   repeated string organization_ids = 5;
+  repeated CounterScope scopes = 6;
 }
 
 message ResetRoadsidePurchasesUnreadResponse {
@@ -173,6 +192,7 @@ message GetBadgeTotalRequest {
   CounterApp app = 2;
   CounterPerspective perspective = 3;
   repeated string organization_ids = 4;
+  repeated CounterScope scopes = 5;
 }
 
 message GetBadgeTotalResponse {

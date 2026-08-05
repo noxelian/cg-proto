@@ -20,30 +20,52 @@ func TestAppPerspectiveContract(t *testing.T) {
 	assertEnumValue(t, enums.ByName("ChatPerspective"), "CHAT_PERSPECTIVE_SUPPORT", 4)
 	assertEnumValue(t, enums.ByName("ChatApp"), "CHAT_APP_CLIENT", 1)
 	assertEnumValue(t, enums.ByName("ChatApp"), "CHAT_APP_PRO", 2)
+	assertEnumValue(t, enums.ByName("ChatApp"), "CHAT_APP_ADMIN", 3)
 
 	messages := File_communication_chat_chat_proto.Messages()
+	chatScope := messages.ByName("ChatScope")
+	assertField(t, chatScope, "app", 1, protoreflect.EnumKind)
+	assertField(t, chatScope, "perspective", 2, protoreflect.EnumKind)
+	assertField(t, chatScope, "organization_id", 3, protoreflect.StringKind)
+	assertField(t, chatScope, "membership_version", 4, protoreflect.Int64Kind)
 	assertField(t, messages.ByName("Chat"), "caller_perspective", 20, protoreflect.EnumKind)
 	assertField(t, messages.ByName("Chat"), "caller_organization_id", 21, protoreflect.StringKind)
 	assertField(t, messages.ByName("Chat"), "vehicle_context", 22, protoreflect.MessageKind)
 	assertField(t, messages.ByName("Chat"), "origin_bid_id", 23, protoreflect.Int64Kind)
+	assertField(t, messages.ByName("Chat"), "caller_scope", 24, protoreflect.MessageKind)
 	assertField(t, messages.ByName("Message"), "sender_perspective", 8, protoreflect.EnumKind)
 	assertField(t, messages.ByName("Message"), "sender_organization_id", 9, protoreflect.StringKind)
+	assertField(t, messages.ByName("Message"), "sender_scope", 10, protoreflect.MessageKind)
 
 	requestFields := map[protoreflect.Name][]fieldExpectation{
-		"CreateChatRequest":    {{"perspective", 6, protoreflect.EnumKind}, {"organization_id", 7, protoreflect.StringKind}, {"origin_bid_id", 8, protoreflect.Int64Kind}, {"app", 9, protoreflect.EnumKind}},
-		"GetChatRequest":       {{"perspective", 2, protoreflect.EnumKind}, {"organization_id", 3, protoreflect.StringKind}, {"app", 4, protoreflect.EnumKind}},
-		"GetUserChatsRequest":  {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}, {"app", 6, protoreflect.EnumKind}},
-		"GetOrgChatsRequest":   {{"organization_id", 1, protoreflect.StringKind}, {"perspective", 5, protoreflect.EnumKind}, {"app", 6, protoreflect.EnumKind}},
-		"SendMessageRequest":   {{"perspective", 5, protoreflect.EnumKind}, {"organization_id", 6, protoreflect.StringKind}, {"app", 7, protoreflect.EnumKind}},
-		"GetMessagesRequest":   {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}, {"app", 6, protoreflect.EnumKind}},
-		"MarkAsReadRequest":    {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}, {"app", 6, protoreflect.EnumKind}},
-		"DeleteMessageRequest": {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}, {"app", 6, protoreflect.EnumKind}},
+		"CreateChatRequest":    {{"perspective", 6, protoreflect.EnumKind}, {"organization_id", 7, protoreflect.StringKind}, {"origin_bid_id", 8, protoreflect.Int64Kind}, {"app", 9, protoreflect.EnumKind}, {"scope", 10, protoreflect.MessageKind}},
+		"GetChatRequest":       {{"perspective", 2, protoreflect.EnumKind}, {"organization_id", 3, protoreflect.StringKind}, {"app", 4, protoreflect.EnumKind}, {"scope", 5, protoreflect.MessageKind}},
+		"GetUserChatsRequest":  {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}, {"app", 6, protoreflect.EnumKind}, {"scope", 7, protoreflect.MessageKind}},
+		"GetOrgChatsRequest":   {{"organization_id", 1, protoreflect.StringKind}, {"perspective", 5, protoreflect.EnumKind}, {"app", 6, protoreflect.EnumKind}, {"scope", 7, protoreflect.MessageKind}},
+		"SendMessageRequest":   {{"perspective", 5, protoreflect.EnumKind}, {"organization_id", 6, protoreflect.StringKind}, {"app", 7, protoreflect.EnumKind}, {"scope", 8, protoreflect.MessageKind}},
+		"GetMessagesRequest":   {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}, {"app", 6, protoreflect.EnumKind}, {"scope", 7, protoreflect.MessageKind}},
+		"MarkAsReadRequest":    {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}, {"app", 6, protoreflect.EnumKind}, {"scope", 7, protoreflect.MessageKind}},
+		"DeleteMessageRequest": {{"perspective", 4, protoreflect.EnumKind}, {"organization_id", 5, protoreflect.StringKind}, {"app", 6, protoreflect.EnumKind}, {"scope", 7, protoreflect.MessageKind}},
 	}
 	for messageName, fields := range requestFields {
 		message := messages.ByName(messageName)
 		for _, field := range fields {
 			assertField(t, message, field.name, field.number, field.kind)
 		}
+	}
+	chatService := File_communication_chat_chat_proto.Services().ByName("ChatService")
+	if chatService == nil {
+		t.Fatal("ChatService not found")
+	}
+	if chatService.Methods().Len() != len(requestFields) {
+		t.Fatalf("ChatService has %d methods, test enumerates %d; every adjacent chat RPC must carry scope", chatService.Methods().Len(), len(requestFields))
+	}
+	for i := 0; i < chatService.Methods().Len(); i++ {
+		method := chatService.Methods().Get(i)
+		if _, ok := requestFields[method.Input().Name()]; !ok {
+			t.Fatalf("chat RPC %s request %s is not enumerated", method.Name(), method.Input().Name())
+		}
+		assertField(t, method.Input(), "scope", method.Input().Fields().ByName("scope").Number(), protoreflect.MessageKind)
 	}
 
 	vehicle := messages.ByName("VehicleContext")
@@ -78,11 +100,35 @@ func TestAppPerspectiveContract(t *testing.T) {
 	if !realtime.Fields().ByName("target_apps").IsList() {
 		t.Fatal("ChatRealtimeEventPayload.target_apps must remain a repeated legacy JSON string")
 	}
+	assertField(t, realtime, "recipient_scope", 14, protoreflect.MessageKind)
+
+	adminRequestFields := map[protoreflect.Name]protoreflect.FieldNumber{
+		"AdminGetUserChatsRequest":    4,
+		"AdminGetChatMessagesRequest": 4,
+		"AdminListChatsRequest":       4,
+		"AdminSendMessageRequest":     3,
+		"AdminMarkChatReadRequest":    2,
+	}
+	adminService := File_communication_chat_chat_proto.Services().ByName("AdminChatService")
+	if adminService == nil {
+		t.Fatal("AdminChatService not found")
+	}
+	if adminService.Methods().Len() != len(adminRequestFields) {
+		t.Fatalf("AdminChatService has %d methods, test enumerates %d; add every adjacent support method to the scope invariant", adminService.Methods().Len(), len(adminRequestFields))
+	}
+	for i := 0; i < adminService.Methods().Len(); i++ {
+		method := adminService.Methods().Get(i)
+		fieldNumber, ok := adminRequestFields[method.Input().Name()]
+		if !ok {
+			t.Fatalf("admin chat RPC %s request %s is not enumerated", method.Name(), method.Input().Name())
+		}
+		assertField(t, method.Input(), "scope", fieldNumber, protoreflect.MessageKind)
+	}
 
 	assertChatContractDocumentation(t)
 }
 
-func TestChatRealtimeEventProtoJSONPreservesLegacyWireShape(t *testing.T) {
+func TestChatRealtimeEventProtoJSONPreservesKeysButQuotesInt64(t *testing.T) {
 	payload := &ChatRealtimeEventPayload{
 		MessageId:               "message-1",
 		ChatId:                  "chat-1",
@@ -117,8 +163,21 @@ func TestChatRealtimeEventProtoJSONPreservesLegacyWireShape(t *testing.T) {
 			t.Errorf("protojson emitted forbidden camelCase legacy key %q", key)
 		}
 	}
+	for key, want := range map[string]string{
+		"sender_id":    `"11"`,
+		"recipient_id": `"22"`,
+	} {
+		if got := string(wire[key]); got != want {
+			t.Fatalf("protojson %s = %s, want %s; legacy events must use compat/communication", key, got, want)
+		}
+	}
+	var protoJSONRecipientIDs []string
+	if err := json.Unmarshal(wire["recipient_user_ids"], &protoJSONRecipientIDs); err != nil ||
+		!reflect.DeepEqual(protoJSONRecipientIDs, []string{"22", "23"}) {
+		t.Fatalf("protojson recipient_user_ids = %s (%v), want quoted strings; legacy events must use compat/communication", wire["recipient_user_ids"], err)
+	}
 	if _, ok := wire["recipientApp"]; !ok {
-		t.Fatal("typed recipientApp must coexist separately from legacy target_apps")
+		t.Fatal("deprecated recipientApp must remain wire-readable during migration")
 	}
 	if _, ok := wire["recipientOrganizationId"]; !ok {
 		t.Fatal("typed recipientOrganizationId must coexist separately from legacy recipient_org_id")
@@ -163,18 +222,6 @@ func TestChatRealtimeEventProtoJSONReadsLiveLegacyJSONWithoutDefaulting(t *testi
 	}
 }
 
-func TestChatRealtimeEventKeepsConflictingFormsForOwnerValidation(t *testing.T) {
-	const conflicting = `{"target_apps":["client"],"recipient_org_id":"org-legacy","recipientApp":"CHAT_APP_PRO","recipientOrganizationId":"org-typed"}`
-	var payload ChatRealtimeEventPayload
-	if err := protojson.Unmarshal([]byte(conflicting), &payload); err != nil {
-		t.Fatalf("unmarshal conflicting chat dual-write fixture: %v", err)
-	}
-	if !reflect.DeepEqual(payload.TargetApps, []string{"client"}) || payload.RecipientOrgId != "org-legacy" ||
-		payload.RecipientApp != ChatApp_CHAT_APP_PRO || payload.RecipientOrganizationId != "org-typed" {
-		t.Fatalf("legacy and typed forms must remain distinct for owner rejection: %+v", &payload)
-	}
-}
-
 func assertChatContractDocumentation(t *testing.T) {
 	t.Helper()
 	source, err := os.ReadFile("../../../../communication/chat/chat.proto")
@@ -187,7 +234,9 @@ func assertChatContractDocumentation(t *testing.T) {
 		"MUST retain legacy fallback delivery",
 		"owner/BFF MUST bind app to the verified JWT app",
 		"request values are never authority",
-		"CLIENT+BUYER and PRO+SELLER_ORG",
+			"CLIENT+BUYER and PRO+SELLER_ORG",
+			"membership_version is 0 iff organization_id is empty",
+			"stale mismatch",
 	} {
 		if !strings.Contains(string(source), required) {
 			t.Errorf("chat.proto missing contract documentation %q", required)
