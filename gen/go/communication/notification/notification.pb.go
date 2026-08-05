@@ -2320,7 +2320,10 @@ type Campaign struct {
 	// "client" (cg_client_fapp) and/or "partner" (cg_fapp PRO).
 	// Empty means ["client"]. Applied on top of the segment via the existing
 	// user_devices.app filter in the push pipeline.
-	TargetApps    []string `protobuf:"bytes,17,rep,name=target_apps,json=targetApps,proto3" json:"target_apps,omitempty"`
+	TargetApps []string `protobuf:"bytes,17,rep,name=target_apps,json=targetApps,proto3" json:"target_apps,omitempty"`
+	// Optional campaign image rendered in the notification conversation.
+	// Must be an absolute HTTPS URL; empty means text-only.
+	ImageUrl      string `protobuf:"bytes,18,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2474,6 +2477,13 @@ func (x *Campaign) GetTargetApps() []string {
 	return nil
 }
 
+func (x *Campaign) GetImageUrl() string {
+	if x != nil {
+		return x.ImageUrl
+	}
+	return ""
+}
+
 type AdminCreateCampaignRequest struct {
 	state    protoimpl.MessageState `protogen:"open.v1"`
 	Title    string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
@@ -2483,6 +2493,7 @@ type AdminCreateCampaignRequest struct {
 	Segment  *CampaignSegment       `protobuf:"bytes,5,opt,name=segment,proto3" json:"segment,omitempty"`
 	// target_apps: "client" and/or "partner"; empty = ["client"].
 	TargetApps    []string `protobuf:"bytes,6,rep,name=target_apps,json=targetApps,proto3" json:"target_apps,omitempty"`
+	ImageUrl      string   `protobuf:"bytes,7,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2559,6 +2570,13 @@ func (x *AdminCreateCampaignRequest) GetTargetApps() []string {
 	return nil
 }
 
+func (x *AdminCreateCampaignRequest) GetImageUrl() string {
+	if x != nil {
+		return x.ImageUrl
+	}
+	return ""
+}
+
 type AdminCreateCampaignResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Campaign      *Campaign              `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
@@ -2613,6 +2631,7 @@ type AdminUpdateCampaignRequest struct {
 	Segment  *CampaignSegment       `protobuf:"bytes,6,opt,name=segment,proto3" json:"segment,omitempty"`
 	// target_apps: "client" and/or "partner"; empty = ["client"].
 	TargetApps    []string `protobuf:"bytes,7,rep,name=target_apps,json=targetApps,proto3" json:"target_apps,omitempty"`
+	ImageUrl      string   `protobuf:"bytes,8,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2694,6 +2713,13 @@ func (x *AdminUpdateCampaignRequest) GetTargetApps() []string {
 		return x.TargetApps
 	}
 	return nil
+}
+
+func (x *AdminUpdateCampaignRequest) GetImageUrl() string {
+	if x != nil {
+		return x.ImageUrl
+	}
+	return ""
 }
 
 type AdminUpdateCampaignResponse struct {
@@ -3387,7 +3413,7 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\b_has_carB\n" +
 	"\n" +
 	"\b_mark_idB\x0f\n" +
-	"\r_has_requests\"\xef\x05\n" +
+	"\r_has_requests\"\x8c\x06\n" +
 	"\bCampaign\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x12\n" +
@@ -3413,7 +3439,8 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\vfinished_at\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"finishedAt\x12\x1f\n" +
 	"\vtarget_apps\x18\x11 \x03(\tR\n" +
-	"targetApps\"\xc9\x02\n" +
+	"targetApps\x12\x1b\n" +
+	"\timage_url\x18\x12 \x01(\tR\bimageUrl\"\xe6\x02\n" +
 	"\x1aAdminCreateCampaignRequest\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12\x12\n" +
 	"\x04body\x18\x02 \x01(\tR\x04body\x12O\n" +
@@ -3421,9 +3448,10 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\x06action\x18\x04 \x01(\v2-.communication.notification.v1.CampaignActionR\x06action\x12H\n" +
 	"\asegment\x18\x05 \x01(\v2..communication.notification.v1.CampaignSegmentR\asegment\x12\x1f\n" +
 	"\vtarget_apps\x18\x06 \x03(\tR\n" +
-	"targetApps\"b\n" +
+	"targetApps\x12\x1b\n" +
+	"\timage_url\x18\a \x01(\tR\bimageUrl\"b\n" +
 	"\x1bAdminCreateCampaignResponse\x12C\n" +
-	"\bcampaign\x18\x01 \x01(\v2'.communication.notification.v1.CampaignR\bcampaign\"\xd9\x02\n" +
+	"\bcampaign\x18\x01 \x01(\v2'.communication.notification.v1.CampaignR\bcampaign\"\xf6\x02\n" +
 	"\x1aAdminUpdateCampaignRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x12\n" +
@@ -3432,7 +3460,8 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\x06action\x18\x05 \x01(\v2-.communication.notification.v1.CampaignActionR\x06action\x12H\n" +
 	"\asegment\x18\x06 \x01(\v2..communication.notification.v1.CampaignSegmentR\asegment\x12\x1f\n" +
 	"\vtarget_apps\x18\a \x03(\tR\n" +
-	"targetApps\"b\n" +
+	"targetApps\x12\x1b\n" +
+	"\timage_url\x18\b \x01(\tR\bimageUrl\"b\n" +
 	"\x1bAdminUpdateCampaignResponse\x12C\n" +
 	"\bcampaign\x18\x01 \x01(\v2'.communication.notification.v1.CampaignR\bcampaign\")\n" +
 	"\x17AdminGetCampaignRequest\x12\x0e\n" +

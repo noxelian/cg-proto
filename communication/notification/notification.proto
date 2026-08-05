@@ -369,6 +369,9 @@ message Campaign {
   // Empty means ["client"]. Applied on top of the segment via the existing
   // user_devices.app filter in the push pipeline.
   repeated string target_apps = 17;
+  // Optional campaign image rendered in the notification conversation.
+  // Must be an absolute HTTPS URL; empty means text-only.
+  string image_url = 18;
 }
 
 message AdminCreateCampaignRequest {
@@ -379,6 +382,7 @@ message AdminCreateCampaignRequest {
   CampaignSegment segment = 5;
   // target_apps: "client" and/or "partner"; empty = ["client"].
   repeated string target_apps = 6;
+  string image_url = 7;
 }
 
 message AdminCreateCampaignResponse {
@@ -394,6 +398,7 @@ message AdminUpdateCampaignRequest {
   CampaignSegment segment = 6;
   // target_apps: "client" and/or "partner"; empty = ["client"].
   repeated string target_apps = 7;
+  string image_url = 8;
 }
 
 message AdminUpdateCampaignResponse {
