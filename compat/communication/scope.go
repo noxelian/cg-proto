@@ -252,8 +252,9 @@ type ChatAudience struct {
 	LegacyBroadcast bool
 }
 
-// NormalizeChatAudience validates the single bound typed scope against the
-// deprecated parallel fields and exact legacy target_apps/recipient_org_id.
+// NormalizeChatAudience prefers bound recipients and treats every legacy field
+// only as optional corroboration. One event has one app/perspective/organization
+// identity; membership generations remain bound independently to each user.
 func NormalizeChatAudience(event *chatv1.ChatRealtimeEventPayload) (ChatAudience, error) {
 	if event == nil {
 		return ChatAudience{}, errNilLegacyEnvelope
@@ -286,13 +287,11 @@ func NormalizeChatAudience(event *chatv1.ChatRealtimeEventPayload) (ChatAudience
 			return ChatAudience{}, fmt.Errorf("recipients conflict with legacy recipient identifiers")
 		}
 		if bound != nil {
-			if bound.GetOrganizationId() != "" && len(legacyUsers) > 1 {
-				return ChatAudience{}, fmt.Errorf("one organization recipient_scope cannot address multiple recipient_user_ids")
+			if len(boundRecipients) > 1 {
+				return ChatAudience{}, fmt.Errorf("recipient_scope must be absent for multi-recipient events")
 			}
-			for _, recipient := range boundRecipients {
-				if chatScopeCanonicalKey(recipient.GetScope()) != chatScopeCanonicalKey(bound) {
-					return ChatAudience{}, fmt.Errorf("recipients conflict with recipient_scope")
-				}
+			if chatScopeCanonicalKey(boundRecipients[0].GetScope()) != chatScopeCanonicalKey(bound) {
+				return ChatAudience{}, fmt.Errorf("recipient conflicts with recipient_scope")
 			}
 		}
 		if parallelPresent {
@@ -316,8 +315,8 @@ func NormalizeChatAudience(event *chatv1.ChatRealtimeEventPayload) (ChatAudience
 	}
 
 	if bound != nil {
-		if bound.GetOrganizationId() != "" && len(legacyUsers) > 1 {
-			return ChatAudience{}, fmt.Errorf("one organization recipient_scope cannot address multiple recipient_user_ids")
+		if len(legacyUsers) > 1 {
+			return ChatAudience{}, fmt.Errorf("recipient_scope must be absent for multi-recipient events")
 		}
 		if parallelPresent && chatScopeIdentityKey(bound) != chatScopeIdentityKey(parallel) {
 			return ChatAudience{}, fmt.Errorf("recipient_scope conflicts with deprecated typed routing")
@@ -364,6 +363,7 @@ func NormalizeChatAudience(event *chatv1.ChatRealtimeEventPayload) (ChatAudience
 func validateChatRecipients(recipients []*chatv1.ChatRecipient) ([]*chatv1.ChatRecipient, error) {
 	seenUsers := make(map[int64]string, len(recipients))
 	result := make([]*chatv1.ChatRecipient, 0, len(recipients))
+	eventIdentity := ""
 	for _, recipient := range recipients {
 		if recipient == nil {
 			return nil, fmt.Errorf("chat recipient is nil")
@@ -380,6 +380,12 @@ func validateChatRecipients(recipients []*chatv1.ChatRecipient) ([]*chatv1.ChatR
 				return nil, fmt.Errorf("chat recipient user_id %d has conflicting scopes", recipient.GetUserId())
 			}
 			return nil, fmt.Errorf("duplicate chat recipient user_id %d", recipient.GetUserId())
+		}
+		identity := chatScopeIdentityKey(recipient.GetScope())
+		if eventIdentity == "" {
+			eventIdentity = identity
+		} else if eventIdentity != identity {
+			return nil, fmt.Errorf("chat recipients must share one app, perspective, and organization identity")
 		}
 		seenUsers[recipient.GetUserId()] = canonical
 		result = append(result, recipient)

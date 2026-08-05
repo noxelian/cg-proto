@@ -159,21 +159,27 @@ message VehicleContext {
 }
 
 // ChatRealtimeEventPayload is the protobuf-owned projection of the
-// chat.message.sent JSON event. New organization fan-out producers write
-// recipients, binding every recipient user to their own membership generation.
-// During migration producers keep the exact legacy recipient_id,
-// recipient_user_ids, target_apps, recipient_org_id, and single recipient_scope
-// fields. Typed consumers read recipients first and fall back to the exact
-// normalized legacy values
-// ("client" -> CLIENT, "partner" -> PRO). If typed and legacy app or
-// organization values are both present, they MUST agree or the owner rejects
-// INVALID_ARGUMENT; more than one legacy target app conflicts with a single
-// recipient_scope. In short, they MUST agree or the owner rejects INVALID_ARGUMENT.
-// Consumers MUST retain legacy fallback delivery while typed
-// routing is absent so pushes are never silently dropped. Deprecated parallel
-// typed fields at tags 9-11 remain readable during migration but must agree with
-// recipient_scope. Organization routing is verified from the chat owner and
-// membership source; event or BFF values are not authority.
+// chat.message.sent JSON event. New producers write recipients, binding every
+// recipient user to their own membership generation. All recipients in one
+// event MUST share one exact app + perspective + organization identity;
+// membership_version may differ per user.
+//
+// During migration recipient_id/recipient_user_ids, target_apps, and
+// recipient_org_id may be dual-written only as corroboration: when present,
+// their user set, app, and organization MUST exactly match recipients. They
+// never supply scope or membership generation. For one bound recipient the
+// deprecated recipient_scope may also be dual-written only when its full tuple,
+// including membership_version, agrees exactly. For two or more recipients it
+// MUST be absent, including non-organization fan-out, because one scope cannot
+// represent multiple recipient tuples. A contradictory payload is rejected with
+// INVALID_ARGUMENT rather than partially delivered.
+//
+// Consumers MUST retain legacy fallback delivery exactly while recipients is
+// absent so messages are never silently dropped. Legacy app strings normalize
+// exactly as ("client" -> CLIENT, "partner" -> PRO). Deprecated parallel typed
+// fields at tags 9-11 remain readable only as corroboration and cannot supply a
+// membership generation. Organization routing is verified from the chat owner
+// and membership source; event or BFF values are not authority.
 message ChatRealtimeEventPayload {
   // json_name preserves legacy key spelling only. protojson quotes all int64
   // values, so chat.events/websocket publishers MUST use compat/communication's
@@ -196,7 +202,8 @@ message ChatRealtimeEventPayload {
   string context_type = 12 [json_name = "context_type"];
   string context_id = 13 [json_name = "context_id"];
   ChatScope recipient_scope = 14;
-  // Canonical recipient identities. A user may appear at most once in an event.
+  // Canonical recipient identities. A user may appear at most once in an event,
+  // and every entry shares one app + perspective + organization identity.
   // For organization delivery every entry carries that user's positive current
   // membership_version. A removed/re-hired member therefore cannot receive an
   // event addressed to an older generation.

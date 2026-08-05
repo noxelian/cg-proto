@@ -23,15 +23,10 @@ func TestLegacyChatJSONKeepsAllConsumerIDsNumeric(t *testing.T) {
 		MessageType:      "text",
 		RecipientId:      exactLargeID - 1,
 		RecipientUserIds: []int64{exactLargeID - 1, exactLargeID - 2},
-		TargetApps:       []string{"client"},
+		TargetApps:       []string{"partner"},
+		RecipientOrgId:   "org-7",
 		ContextType:      "request",
 		ContextId:        "request-1",
-		RecipientScope: &chatv1.ChatScope{
-			App:               chatv1.ChatApp_CHAT_APP_PRO,
-			Perspective:       chatv1.ChatPerspective_CHAT_PERSPECTIVE_SELLER_ORG,
-			OrganizationId:    "org-7",
-			MembershipVersion: 17,
-		},
 		Recipients: []*chatv1.ChatRecipient{
 			{UserId: exactLargeID - 1, Scope: &chatv1.ChatScope{App: chatv1.ChatApp_CHAT_APP_PRO, Perspective: chatv1.ChatPerspective_CHAT_PERSPECTIVE_SELLER_ORG, OrganizationId: "org-7", MembershipVersion: 17}},
 			{UserId: exactLargeID - 2, Scope: &chatv1.ChatScope{App: chatv1.ChatApp_CHAT_APP_PRO, Perspective: chatv1.ChatPerspective_CHAT_PERSPECTIVE_SELLER_ORG, OrganizationId: "org-7", MembershipVersion: 18}},
@@ -46,7 +41,6 @@ func TestLegacyChatJSONKeepsAllConsumerIDsNumeric(t *testing.T) {
 	assertNumericJSONField(t, wire, "sender_id", exactLargeID)
 	assertNumericJSONField(t, wire, "recipient_id", exactLargeID-1)
 	assertNumericJSONArray(t, wire, "recipient_user_ids", []int64{exactLargeID - 1, exactLargeID - 2})
-	assertNestedMembershipVersion(t, wire, "recipient_scope", 17)
 	assertBoundChatRecipientsNumeric(t, wire, []int64{exactLargeID - 1, exactLargeID - 2}, []int64{17, 18})
 
 	var mobileConsumer struct {
@@ -72,6 +66,9 @@ func TestLegacyChatJSONKeepsAllConsumerIDsNumeric(t *testing.T) {
 		!reflect.DeepEqual(roundTrip.GetRecipientUserIds(), event.GetRecipientUserIds()) || len(roundTrip.GetRecipients()) != 2 ||
 		roundTrip.GetRecipients()[1].GetScope().GetMembershipVersion() != 18 {
 		t.Fatalf("chat round trip changed integer IDs: %+v", &roundTrip)
+	}
+	if _, err := NormalizeChatAudience(&roundTrip); err != nil {
+		t.Fatalf("documented rolling multi-recipient payload rejected: %v", err)
 	}
 }
 

@@ -238,13 +238,18 @@ func assertChatContractDocumentation(t *testing.T) {
 	}
 	for _, required := range []string{
 		`("client" -> CLIENT, "partner" -> PRO)`,
-		"they MUST agree or the owner rejects INVALID_ARGUMENT",
+		"MUST share one exact app + perspective + organization identity",
+		"For two or more recipients it",
+		"MUST be absent, including non-organization fan-out",
+		"never supply scope or membership generation",
+		"rejected with",
+		"INVALID_ARGUMENT rather than partially delivered",
 		"MUST retain legacy fallback delivery",
 		"owner/BFF MUST bind app to the verified JWT app",
 		"request values are never authority",
 		"CLIENT+BUYER, PRO+BUYER_ORG, and",
 		"PRO+SELLER_ORG",
-		"binding every recipient user to their own membership generation",
+		"recipient user to their own membership generation",
 		"membership_version is 0 iff organization_id is empty",
 		"stale mismatch",
 	} {

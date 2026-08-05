@@ -188,6 +188,83 @@ func TestNormalizeChatAudience(t *testing.T) {
 		}
 	})
 
+	t.Run("bound recipients reject mixed app", func(t *testing.T) {
+		_, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{Recipients: []*chatv1.ChatRecipient{
+			{UserId: 41, Scope: partner},
+			{UserId: 42, Scope: &chatv1.ChatScope{App: chatv1.ChatApp_CHAT_APP_CLIENT, Perspective: chatv1.ChatPerspective_CHAT_PERSPECTIVE_BUYER}},
+		}})
+		if err == nil {
+			t.Fatal("mixed recipient apps accepted")
+		}
+	})
+
+	t.Run("bound recipients reject mixed organization", func(t *testing.T) {
+		_, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{Recipients: []*chatv1.ChatRecipient{
+			{UserId: 41, Scope: partner},
+			{UserId: 42, Scope: &chatv1.ChatScope{App: partner.GetApp(), Perspective: partner.GetPerspective(), OrganizationId: "org-2", MembershipVersion: 19}},
+		}})
+		if err == nil {
+			t.Fatal("mixed recipient organizations accepted")
+		}
+	})
+
+	t.Run("bound recipients reject mixed perspective", func(t *testing.T) {
+		_, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{Recipients: []*chatv1.ChatRecipient{
+			{UserId: 41, Scope: partner},
+			{UserId: 42, Scope: &chatv1.ChatScope{App: partner.GetApp(), Perspective: chatv1.ChatPerspective_CHAT_PERSPECTIVE_BUYER_ORG, OrganizationId: partner.GetOrganizationId(), MembershipVersion: 19}},
+		}})
+		if err == nil {
+			t.Fatal("mixed recipient perspectives accepted")
+		}
+	})
+
+	t.Run("multi recipient event rejects deprecated single scope", func(t *testing.T) {
+		_, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{
+			RecipientScope: partner,
+			Recipients: []*chatv1.ChatRecipient{
+				{UserId: 41, Scope: partner},
+				{UserId: 42, Scope: &chatv1.ChatScope{App: partner.GetApp(), Perspective: partner.GetPerspective(), OrganizationId: partner.GetOrganizationId(), MembershipVersion: 19}},
+			},
+		})
+		if err == nil {
+			t.Fatal("multi-recipient event accepted one deprecated recipient_scope")
+		}
+	})
+
+	t.Run("single recipient scope must agree through membership generation", func(t *testing.T) {
+		result, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{
+			RecipientId:    41,
+			RecipientScope: partner,
+			Recipients:     []*chatv1.ChatRecipient{{UserId: 41, Scope: partner}},
+		})
+		if err != nil || len(result.Recipients) != 1 {
+			t.Fatalf("matching single recipient scope rejected: result=%+v err=%v", result, err)
+		}
+		stale := &chatv1.ChatScope{App: partner.GetApp(), Perspective: partner.GetPerspective(), OrganizationId: partner.GetOrganizationId(), MembershipVersion: partner.GetMembershipVersion() - 1}
+		if _, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{RecipientScope: stale, Recipients: []*chatv1.ChatRecipient{{UserId: 41, Scope: partner}}}); err == nil {
+			t.Fatal("single recipient accepted conflicting recipient_scope generation")
+		}
+	})
+
+	t.Run("non organization multi recipient follows the same single scope rule", func(t *testing.T) {
+		client := &chatv1.ChatScope{App: chatv1.ChatApp_CHAT_APP_CLIENT, Perspective: chatv1.ChatPerspective_CHAT_PERSPECTIVE_BUYER}
+		event := &chatv1.ChatRealtimeEventPayload{
+			RecipientUserIds: []int64{51, 52},
+			TargetApps:       []string{"client"},
+			Recipients: []*chatv1.ChatRecipient{
+				{UserId: 51, Scope: client},
+				{UserId: 52, Scope: client},
+			},
+		}
+		if _, err := NormalizeChatAudience(event); err != nil {
+			t.Fatalf("homogeneous non-org fanout rejected: %v", err)
+		}
+		event.RecipientScope = client
+		if _, err := NormalizeChatAudience(event); err == nil {
+			t.Fatal("non-org multi-recipient event accepted one recipient_scope")
+		}
+	})
+
 	t.Run("fired and rehired generation for one user conflicts", func(t *testing.T) {
 		_, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{Recipients: []*chatv1.ChatRecipient{
 			{UserId: 41, Scope: partner},
@@ -212,6 +289,26 @@ func TestNormalizeChatAudience(t *testing.T) {
 		})
 		if err == nil {
 			t.Fatal("conflicting canonical and legacy user identity accepted")
+		}
+	})
+
+	t.Run("bound recipients must agree with legacy app", func(t *testing.T) {
+		_, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{
+			TargetApps: []string{"client"},
+			Recipients: []*chatv1.ChatRecipient{{UserId: 41, Scope: partner}},
+		})
+		if err == nil {
+			t.Fatal("conflicting canonical and legacy app accepted")
+		}
+	})
+
+	t.Run("bound recipients must agree with legacy organization", func(t *testing.T) {
+		_, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{
+			RecipientOrgId: "org-other",
+			Recipients:     []*chatv1.ChatRecipient{{UserId: 41, Scope: partner}},
+		})
+		if err == nil {
+			t.Fatal("conflicting canonical and legacy organization accepted")
 		}
 	})
 
