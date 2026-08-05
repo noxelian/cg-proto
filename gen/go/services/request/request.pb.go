@@ -81,6 +81,9 @@ const (
 	RequestAccessPerspective_REQUEST_ACCESS_PERSPECTIVE_BUYER        RequestAccessPerspective = 1
 	RequestAccessPerspective_REQUEST_ACCESS_PERSPECTIVE_SUPPLIER_ORG RequestAccessPerspective = 2
 	RequestAccessPerspective_REQUEST_ACCESS_PERSPECTIVE_SUPPORT      RequestAccessPerspective = 3
+	// A PRO organization that owns/buys through a parts request. It is not the
+	// Client buyer and is not a supplier feed projection.
+	RequestAccessPerspective_REQUEST_ACCESS_PERSPECTIVE_BUYER_ORG RequestAccessPerspective = 4
 )
 
 // Enum value maps for RequestAccessPerspective.
@@ -90,12 +93,14 @@ var (
 		1: "REQUEST_ACCESS_PERSPECTIVE_BUYER",
 		2: "REQUEST_ACCESS_PERSPECTIVE_SUPPLIER_ORG",
 		3: "REQUEST_ACCESS_PERSPECTIVE_SUPPORT",
+		4: "REQUEST_ACCESS_PERSPECTIVE_BUYER_ORG",
 	}
 	RequestAccessPerspective_value = map[string]int32{
 		"REQUEST_ACCESS_PERSPECTIVE_UNSPECIFIED":  0,
 		"REQUEST_ACCESS_PERSPECTIVE_BUYER":        1,
 		"REQUEST_ACCESS_PERSPECTIVE_SUPPLIER_ORG": 2,
 		"REQUEST_ACCESS_PERSPECTIVE_SUPPORT":      3,
+		"REQUEST_ACCESS_PERSPECTIVE_BUYER_ORG":    4,
 	}
 )
 
@@ -402,7 +407,8 @@ func (AssignmentMode) EnumDescriptor() ([]byte, []int) {
 }
 
 // RequestAccessScope binds the caller app, perspective, and organization so a
-// dual-role account cannot cross from a CLIENT buyer projection into a PARTNER supplier organization feed.
+// dual-role account cannot cross between CLIENT buyer, PARTNER buyer
+// organization, and PARTNER supplier organization projections.
 // JWT app and organization authority wins over all request data. Existing
 // request user_id and organization_id fields remain filters, never authority;
 // the owner validates ownership/membership and the current membership_version,
@@ -959,7 +965,8 @@ type CreateRequestRequest struct {
 	// Caller-generated token for safely retrying an ambiguous create. The owner
 	// service scopes it to the authenticated principal and rejects reuse with a
 	// different payload. Maximum 255 bytes; empty keeps legacy behavior.
-	IdempotencyKey string `protobuf:"bytes,27,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	IdempotencyKey string              `protobuf:"bytes,27,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	Scope          *RequestAccessScope `protobuf:"bytes,28,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1183,6 +1190,13 @@ func (x *CreateRequestRequest) GetIdempotencyKey() string {
 	return ""
 }
 
+func (x *CreateRequestRequest) GetScope() *RequestAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
+}
+
 type CreateRequestResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Request       *Request               `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
@@ -1346,9 +1360,10 @@ type UpdateRequestRequest struct {
 	// кузовные/запчасти) and categories of a request. group_id is optional
 	// (absent = unchanged); category_ids replaces the set when has_category_ids
 	// is true (allows clearing to empty).
-	GroupId        *int64  `protobuf:"varint,13,opt,name=group_id,json=groupId,proto3,oneof" json:"group_id,omitempty"`
-	CategoryIds    []int64 `protobuf:"varint,14,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
-	HasCategoryIds bool    `protobuf:"varint,15,opt,name=has_category_ids,json=hasCategoryIds,proto3" json:"has_category_ids,omitempty"`
+	GroupId        *int64              `protobuf:"varint,13,opt,name=group_id,json=groupId,proto3,oneof" json:"group_id,omitempty"`
+	CategoryIds    []int64             `protobuf:"varint,14,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
+	HasCategoryIds bool                `protobuf:"varint,15,opt,name=has_category_ids,json=hasCategoryIds,proto3" json:"has_category_ids,omitempty"`
+	Scope          *RequestAccessScope `protobuf:"bytes,16,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1488,6 +1503,13 @@ func (x *UpdateRequestRequest) GetHasCategoryIds() bool {
 	return false
 }
 
+func (x *UpdateRequestRequest) GetScope() *RequestAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
+}
+
 type UpdateRequestResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Request       *Request               `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
@@ -1537,6 +1559,7 @@ type DeleteRequestRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"` // UUID string
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Scope         *RequestAccessScope    `protobuf:"bytes,3,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1583,6 +1606,13 @@ func (x *DeleteRequestRequest) GetUserId() int64 {
 		return x.UserId
 	}
 	return 0
+}
+
+func (x *DeleteRequestRequest) GetScope() *RequestAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
 }
 
 type DeleteRequestResponse struct {
@@ -2283,6 +2313,7 @@ type ChangeStatusRequest struct {
 	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"` // UUID string
 	Status        RequestStatus          `protobuf:"varint,2,opt,name=status,proto3,enum=services.request.v1.RequestStatus" json:"status,omitempty"`
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Scope         *RequestAccessScope    `protobuf:"bytes,4,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2336,6 +2367,13 @@ func (x *ChangeStatusRequest) GetUserId() int64 {
 		return x.UserId
 	}
 	return 0
+}
+
+func (x *ChangeStatusRequest) GetScope() *RequestAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
 }
 
 type ChangeStatusResponse struct {
@@ -2852,6 +2890,7 @@ type SelectRequestBidRequest struct {
 	BidId          int64                  `protobuf:"varint,2,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
 	PayerUserId    int64                  `protobuf:"varint,3,opt,name=payer_user_id,json=payerUserId,proto3" json:"payer_user_id,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,4,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	Scope          *RequestAccessScope    `protobuf:"bytes,5,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -2914,6 +2953,13 @@ func (x *SelectRequestBidRequest) GetOrganizationId() string {
 	return ""
 }
 
+func (x *SelectRequestBidRequest) GetScope() *RequestAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
+}
+
 type SelectRequestBidResponse struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Selected        bool                   `protobuf:"varint,1,opt,name=selected,proto3" json:"selected,omitempty"`
@@ -2971,6 +3017,7 @@ type CloseRequestRequest struct {
 	RequestId      string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	IdempotencyKey string                 `protobuf:"bytes,3,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	Scope          *RequestAccessScope    `protobuf:"bytes,4,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -3024,6 +3071,13 @@ func (x *CloseRequestRequest) GetIdempotencyKey() string {
 		return x.IdempotencyKey
 	}
 	return ""
+}
+
+func (x *CloseRequestRequest) GetScope() *RequestAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
 }
 
 type CloseRequestResponse struct {
@@ -4554,7 +4608,8 @@ type PauseRequestRequest struct {
 	UserId    int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`         // must match request.user_id
 	// Optional UUID of the organization the customer is pausing for.
 	// Mirrors legacy paused_by_service_id. Empty = self-pause.
-	PausedByOrgId *string `protobuf:"bytes,3,opt,name=paused_by_org_id,json=pausedByOrgId,proto3,oneof" json:"paused_by_org_id,omitempty"`
+	PausedByOrgId *string             `protobuf:"bytes,3,opt,name=paused_by_org_id,json=pausedByOrgId,proto3,oneof" json:"paused_by_org_id,omitempty"`
+	Scope         *RequestAccessScope `protobuf:"bytes,4,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4610,6 +4665,13 @@ func (x *PauseRequestRequest) GetPausedByOrgId() string {
 	return ""
 }
 
+func (x *PauseRequestRequest) GetScope() *RequestAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
+}
+
 type PauseRequestResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Request       *Request               `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
@@ -4659,6 +4721,7 @@ type UnpauseRequestRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RequestId     string                 `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"` // UUID of the request to unpause
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`         // must match request.user_id
+	Scope         *RequestAccessScope    `protobuf:"bytes,3,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4705,6 +4768,13 @@ func (x *UnpauseRequestRequest) GetUserId() int64 {
 		return x.UserId
 	}
 	return 0
+}
+
+func (x *UnpauseRequestRequest) GetScope() *RequestAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
 }
 
 type UnpauseRequestResponse struct {
@@ -5351,6 +5421,7 @@ type ReserveRequestBidSelectionRequest struct {
 	BidId          int64                  `protobuf:"varint,2,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
 	PayerUserId    int64                  `protobuf:"varint,3,opt,name=payer_user_id,json=payerUserId,proto3" json:"payer_user_id,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,4,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	Scope          *RequestAccessScope    `protobuf:"bytes,5,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -5413,6 +5484,13 @@ func (x *ReserveRequestBidSelectionRequest) GetOrganizationId() string {
 	return ""
 }
 
+func (x *ReserveRequestBidSelectionRequest) GetScope() *RequestAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
+}
+
 type ReserveRequestBidSelectionResponse struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Reserved        bool                   `protobuf:"varint,1,opt,name=reserved,proto3" json:"reserved,omitempty"`
@@ -5471,6 +5549,7 @@ type CancelRequestBidSelectionRequest struct {
 	BidId          int64                  `protobuf:"varint,2,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
 	PayerUserId    int64                  `protobuf:"varint,3,opt,name=payer_user_id,json=payerUserId,proto3" json:"payer_user_id,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,4,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	Scope          *RequestAccessScope    `protobuf:"bytes,5,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -5531,6 +5610,13 @@ func (x *CancelRequestBidSelectionRequest) GetOrganizationId() string {
 		return x.OrganizationId
 	}
 	return ""
+}
+
+func (x *CancelRequestBidSelectionRequest) GetScope() *RequestAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
 }
 
 type CancelRequestBidSelectionResponse struct {
@@ -5768,7 +5854,8 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x12_claimed_by_org_idB\x12\n" +
 	"\x10_selected_bid_idB\x1b\n" +
 	"\x19_selected_organization_idB\x18\n" +
-	"\x16_escrow_transaction_id\"\xd9\t\n" +
+	"\x16_escrow_transaction_id\"\x98\n" +
+	"\n" +
 	"\x14CreateRequestRequest\x124\n" +
 	"\x04type\x18\x01 \x01(\x0e2 .services.request.v1.RequestTypeR\x04type\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
@@ -5798,7 +5885,8 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x0eestimate_items\x18\x18 \x03(\v2!.services.request.v1.EstimateItemR\restimateItems\x12$\n" +
 	"\x0etarget_org_ids\x18\x19 \x03(\tR\ftargetOrgIds\x12S\n" +
 	"\x0einsurance_info\x18\x1a \x01(\v2'.services.request.v1.InsuranceInfoInputH\aR\rinsuranceInfo\x88\x01\x01\x12'\n" +
-	"\x0fidempotency_key\x18\x1b \x01(\tR\x0eidempotencyKeyB\x14\n" +
+	"\x0fidempotency_key\x18\x1b \x01(\tR\x0eidempotencyKey\x12=\n" +
+	"\x05scope\x18\x1c \x01(\v2'.services.request.v1.RequestAccessScopeR\x05scopeB\x14\n" +
 	"\x12_car_generation_idB\x12\n" +
 	"\x10_repair_order_idB\t\n" +
 	"\a_org_idB\x10\n" +
@@ -5814,7 +5902,7 @@ const file_services_request_request_proto_rawDesc = "" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12=\n" +
 	"\x05scope\x18\x02 \x01(\v2'.services.request.v1.RequestAccessScopeR\x05scope\"L\n" +
 	"\x12GetRequestResponse\x126\n" +
-	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\x9d\x05\n" +
+	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\xdc\x05\n" +
 	"\x14UpdateRequestRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x17\n" +
@@ -5833,7 +5921,8 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\rgarage_car_id\x18\f \x01(\x03H\bR\vgarageCarId\x88\x01\x01\x12\x1e\n" +
 	"\bgroup_id\x18\r \x01(\x03H\tR\agroupId\x88\x01\x01\x12!\n" +
 	"\fcategory_ids\x18\x0e \x03(\x03R\vcategoryIds\x12(\n" +
-	"\x10has_category_ids\x18\x0f \x01(\bR\x0ehasCategoryIdsB\a\n" +
+	"\x10has_category_ids\x18\x0f \x01(\bR\x0ehasCategoryIds\x12=\n" +
+	"\x05scope\x18\x10 \x01(\v2'.services.request.v1.RequestAccessScopeR\x05scopeB\a\n" +
 	"\x05_noteB\n" +
 	"\n" +
 	"\b_addressB\v\n" +
@@ -5847,11 +5936,12 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x0e_garage_car_idB\v\n" +
 	"\t_group_id\"O\n" +
 	"\x15UpdateRequestResponse\x126\n" +
-	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"N\n" +
+	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\x8d\x01\n" +
 	"\x14DeleteRequestRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"1\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12=\n" +
+	"\x05scope\x18\x03 \x01(\v2'.services.request.v1.RequestAccessScopeR\x05scope\"1\n" +
 	"\x15DeleteRequestResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xb8\x05\n" +
 	"\x13ListRequestsRequest\x124\n" +
@@ -5920,12 +6010,13 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x05scope\x18\f \x01(\v2'.services.request.v1.RequestAccessScopeR\x05scope\"h\n" +
 	"\x16SearchRequestsResponse\x128\n" +
 	"\brequests\x18\x01 \x03(\v2\x1c.services.request.v1.RequestR\brequests\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"\x89\x01\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xc8\x01\n" +
 	"\x13ChangeStatusRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12:\n" +
 	"\x06status\x18\x02 \x01(\x0e2\".services.request.v1.RequestStatusR\x06status\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\"N\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12=\n" +
+	"\x05scope\x18\x04 \x01(\v2'.services.request.v1.RequestAccessScopeR\x05scope\"N\n" +
 	"\x14ChangeStatusResponse\x126\n" +
 	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\x9b\x02\n" +
 	"\x1bPrepareRequestEscrowRequest\x12\x1d\n" +
@@ -5970,21 +6061,23 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x0fidempotency_key\x18\x05 \x01(\tR\x0eidempotencyKey\"\x86\x01\n" +
 	"\x1eMarkRequestEscrowStateResponse\x12=\n" +
 	"\x05state\x18\x01 \x01(\x0e2'.services.request.v1.RequestEscrowStateR\x05state\x12%\n" +
-	"\x0erequest_closed\x18\x02 \x01(\bR\rrequestClosed\"\x9c\x01\n" +
+	"\x0erequest_closed\x18\x02 \x01(\bR\rrequestClosed\"\xdb\x01\n" +
 	"\x17SelectRequestBidRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x15\n" +
 	"\x06bid_id\x18\x02 \x01(\x03R\x05bidId\x12\"\n" +
 	"\rpayer_user_id\x18\x03 \x01(\x03R\vpayerUserId\x12'\n" +
-	"\x0forganization_id\x18\x04 \x01(\tR\x0eorganizationId\"a\n" +
+	"\x0forganization_id\x18\x04 \x01(\tR\x0eorganizationId\x12=\n" +
+	"\x05scope\x18\x05 \x01(\v2'.services.request.v1.RequestAccessScopeR\x05scope\"a\n" +
 	"\x18SelectRequestBidResponse\x12\x1a\n" +
 	"\bselected\x18\x01 \x01(\bR\bselected\x12)\n" +
-	"\x10already_selected\x18\x02 \x01(\bR\x0falreadySelected\"v\n" +
+	"\x10already_selected\x18\x02 \x01(\bR\x0falreadySelected\"\xb5\x01\n" +
 	"\x13CloseRequestRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0fidempotency_key\x18\x03 \x01(\tR\x0eidempotencyKey\"N\n" +
+	"\x0fidempotency_key\x18\x03 \x01(\tR\x0eidempotencyKey\x12=\n" +
+	"\x05scope\x18\x04 \x01(\v2'.services.request.v1.RequestAccessScopeR\x05scope\"N\n" +
 	"\x14CloseRequestResponse\x126\n" +
 	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\x9d\x02\n" +
 	"\x16GetUserRequestsRequest\x12\x17\n" +
@@ -6092,19 +6185,21 @@ const file_services_request_request_proto_rawDesc = "" +
 	"moderation\x18\x03 \x01(\x05R\n" +
 	"moderation\x12\x1a\n" +
 	"\binactive\x18\x04 \x01(\x05R\binactive\x12\x16\n" +
-	"\x06paused\x18\x05 \x01(\x05R\x06paused\"\x90\x01\n" +
+	"\x06paused\x18\x05 \x01(\x05R\x06paused\"\xcf\x01\n" +
 	"\x13PauseRequestRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12,\n" +
-	"\x10paused_by_org_id\x18\x03 \x01(\tH\x00R\rpausedByOrgId\x88\x01\x01B\x13\n" +
+	"\x10paused_by_org_id\x18\x03 \x01(\tH\x00R\rpausedByOrgId\x88\x01\x01\x12=\n" +
+	"\x05scope\x18\x04 \x01(\v2'.services.request.v1.RequestAccessScopeR\x05scopeB\x13\n" +
 	"\x11_paused_by_org_id\"N\n" +
 	"\x14PauseRequestResponse\x126\n" +
-	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"O\n" +
+	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\x8e\x01\n" +
 	"\x15UnpauseRequestRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"P\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12=\n" +
+	"\x05scope\x18\x03 \x01(\v2'.services.request.v1.RequestAccessScopeR\x05scope\"P\n" +
 	"\x16UnpauseRequestResponse\x126\n" +
 	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\xf7\x01\n" +
 	"\x12InsuranceInfoInput\x12'\n" +
@@ -6154,22 +6249,24 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12'\n" +
 	"\x0fidempotency_key\x18\x03 \x01(\tR\x0eidempotencyKey\"Z\n" +
 	" CompleteInsuranceRequestResponse\x126\n" +
-	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\xa6\x01\n" +
+	"\arequest\x18\x01 \x01(\v2\x1c.services.request.v1.RequestR\arequest\"\xe5\x01\n" +
 	"!ReserveRequestBidSelectionRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x15\n" +
 	"\x06bid_id\x18\x02 \x01(\x03R\x05bidId\x12\"\n" +
 	"\rpayer_user_id\x18\x03 \x01(\x03R\vpayerUserId\x12'\n" +
-	"\x0forganization_id\x18\x04 \x01(\tR\x0eorganizationId\"k\n" +
+	"\x0forganization_id\x18\x04 \x01(\tR\x0eorganizationId\x12=\n" +
+	"\x05scope\x18\x05 \x01(\v2'.services.request.v1.RequestAccessScopeR\x05scope\"k\n" +
 	"\"ReserveRequestBidSelectionResponse\x12\x1a\n" +
 	"\breserved\x18\x01 \x01(\bR\breserved\x12)\n" +
-	"\x10already_reserved\x18\x02 \x01(\bR\x0falreadyReserved\"\xa5\x01\n" +
+	"\x10already_reserved\x18\x02 \x01(\bR\x0falreadyReserved\"\xe4\x01\n" +
 	" CancelRequestBidSelectionRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12\x15\n" +
 	"\x06bid_id\x18\x02 \x01(\x03R\x05bidId\x12\"\n" +
 	"\rpayer_user_id\x18\x03 \x01(\x03R\vpayerUserId\x12'\n" +
-	"\x0forganization_id\x18\x04 \x01(\tR\x0eorganizationId\"n\n" +
+	"\x0forganization_id\x18\x04 \x01(\tR\x0eorganizationId\x12=\n" +
+	"\x05scope\x18\x05 \x01(\v2'.services.request.v1.RequestAccessScopeR\x05scope\"n\n" +
 	"!CancelRequestBidSelectionResponse\x12\x1c\n" +
 	"\tcancelled\x18\x01 \x01(\bR\tcancelled\x12+\n" +
 	"\x11already_cancelled\x18\x02 \x01(\bR\x10alreadyCancelled\"L\n" +
@@ -6183,12 +6280,13 @@ const file_services_request_request_proto_rawDesc = "" +
 	"\x1eREQUEST_ACCESS_APP_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19REQUEST_ACCESS_APP_CLIENT\x10\x01\x12\x1e\n" +
 	"\x1aREQUEST_ACCESS_APP_PARTNER\x10\x02\x12\x1c\n" +
-	"\x18REQUEST_ACCESS_APP_ADMIN\x10\x03*\xc1\x01\n" +
+	"\x18REQUEST_ACCESS_APP_ADMIN\x10\x03*\xeb\x01\n" +
 	"\x18RequestAccessPerspective\x12*\n" +
 	"&REQUEST_ACCESS_PERSPECTIVE_UNSPECIFIED\x10\x00\x12$\n" +
 	" REQUEST_ACCESS_PERSPECTIVE_BUYER\x10\x01\x12+\n" +
 	"'REQUEST_ACCESS_PERSPECTIVE_SUPPLIER_ORG\x10\x02\x12&\n" +
-	"\"REQUEST_ACCESS_PERSPECTIVE_SUPPORT\x10\x03*\\\n" +
+	"\"REQUEST_ACCESS_PERSPECTIVE_SUPPORT\x10\x03\x12(\n" +
+	"$REQUEST_ACCESS_PERSPECTIVE_BUYER_ORG\x10\x04*\\\n" +
 	"\vRequestType\x12\x1c\n" +
 	"\x18REQUEST_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13REQUEST_TYPE_REPAIR\x10\x01\x12\x16\n" +
@@ -6355,142 +6453,152 @@ var file_services_request_request_proto_goTypes = []any{
 	(*timestamppb.Timestamp)(nil),                 // 83: google.protobuf.Timestamp
 }
 var file_services_request_request_proto_depIdxs = []int32{
-	0,  // 0: services.request.v1.RequestAccessScope.app:type_name -> services.request.v1.RequestAccessApp
-	1,  // 1: services.request.v1.RequestAccessScope.perspective:type_name -> services.request.v1.RequestAccessPerspective
-	2,  // 2: services.request.v1.Request.type:type_name -> services.request.v1.RequestType
-	3,  // 3: services.request.v1.Request.status:type_name -> services.request.v1.RequestStatus
-	83, // 4: services.request.v1.Request.created_at:type_name -> google.protobuf.Timestamp
-	83, // 5: services.request.v1.Request.updated_at:type_name -> google.protobuf.Timestamp
-	83, // 6: services.request.v1.Request.published_at:type_name -> google.protobuf.Timestamp
-	83, // 7: services.request.v1.Request.paused_at:type_name -> google.protobuf.Timestamp
-	5,  // 8: services.request.v1.Request.kind:type_name -> services.request.v1.RequestKind
-	83, // 9: services.request.v1.Request.deadline:type_name -> google.protobuf.Timestamp
-	6,  // 10: services.request.v1.Request.assignment_mode:type_name -> services.request.v1.AssignmentMode
-	8,  // 11: services.request.v1.Request.estimate_items:type_name -> services.request.v1.EstimateItem
-	4,  // 12: services.request.v1.Request.escrow_state:type_name -> services.request.v1.RequestEscrowState
-	2,  // 13: services.request.v1.CreateRequestRequest.type:type_name -> services.request.v1.RequestType
-	5,  // 14: services.request.v1.CreateRequestRequest.kind:type_name -> services.request.v1.RequestKind
-	83, // 15: services.request.v1.CreateRequestRequest.deadline:type_name -> google.protobuf.Timestamp
-	6,  // 16: services.request.v1.CreateRequestRequest.assignment_mode:type_name -> services.request.v1.AssignmentMode
-	8,  // 17: services.request.v1.CreateRequestRequest.estimate_items:type_name -> services.request.v1.EstimateItem
-	67, // 18: services.request.v1.CreateRequestRequest.insurance_info:type_name -> services.request.v1.InsuranceInfoInput
-	9,  // 19: services.request.v1.CreateRequestResponse.request:type_name -> services.request.v1.Request
-	7,  // 20: services.request.v1.GetRequestRequest.scope:type_name -> services.request.v1.RequestAccessScope
-	9,  // 21: services.request.v1.GetRequestResponse.request:type_name -> services.request.v1.Request
-	9,  // 22: services.request.v1.UpdateRequestResponse.request:type_name -> services.request.v1.Request
-	2,  // 23: services.request.v1.ListRequestsRequest.type:type_name -> services.request.v1.RequestType
-	3,  // 24: services.request.v1.ListRequestsRequest.status:type_name -> services.request.v1.RequestStatus
-	5,  // 25: services.request.v1.ListRequestsRequest.kind:type_name -> services.request.v1.RequestKind
-	7,  // 26: services.request.v1.ListRequestsRequest.scope:type_name -> services.request.v1.RequestAccessScope
-	9,  // 27: services.request.v1.ListRequestsResponse.requests:type_name -> services.request.v1.Request
-	2,  // 28: services.request.v1.PublishedRequestPreview.type:type_name -> services.request.v1.RequestType
-	83, // 29: services.request.v1.PublishedRequestPreview.published_at:type_name -> google.protobuf.Timestamp
-	21, // 30: services.request.v1.ListPublishedPreviewsResponse.requests:type_name -> services.request.v1.PublishedRequestPreview
-	2,  // 31: services.request.v1.SearchRequestsRequest.type:type_name -> services.request.v1.RequestType
-	7,  // 32: services.request.v1.SearchRequestsRequest.scope:type_name -> services.request.v1.RequestAccessScope
-	9,  // 33: services.request.v1.SearchRequestsResponse.requests:type_name -> services.request.v1.Request
-	3,  // 34: services.request.v1.ChangeStatusRequest.status:type_name -> services.request.v1.RequestStatus
-	9,  // 35: services.request.v1.ChangeStatusResponse.request:type_name -> services.request.v1.Request
-	4,  // 36: services.request.v1.PrepareRequestEscrowResponse.state:type_name -> services.request.v1.RequestEscrowState
-	4,  // 37: services.request.v1.MarkRequestEscrowStateRequest.state:type_name -> services.request.v1.RequestEscrowState
-	4,  // 38: services.request.v1.MarkRequestEscrowStateResponse.state:type_name -> services.request.v1.RequestEscrowState
-	9,  // 39: services.request.v1.CloseRequestResponse.request:type_name -> services.request.v1.Request
-	3,  // 40: services.request.v1.GetUserRequestsRequest.status:type_name -> services.request.v1.RequestStatus
-	3,  // 41: services.request.v1.GetUserRequestsRequest.statuses:type_name -> services.request.v1.RequestStatus
-	7,  // 42: services.request.v1.GetUserRequestsRequest.scope:type_name -> services.request.v1.RequestAccessScope
-	9,  // 43: services.request.v1.GetUserRequestsResponse.requests:type_name -> services.request.v1.Request
-	7,  // 44: services.request.v1.GetNewRequestsForOrganizationRequest.scope:type_name -> services.request.v1.RequestAccessScope
-	7,  // 45: services.request.v1.MarkRequestAsViewedRequest.scope:type_name -> services.request.v1.RequestAccessScope
-	7,  // 46: services.request.v1.IsRequestNewRequest.scope:type_name -> services.request.v1.RequestAccessScope
-	7,  // 47: services.request.v1.DismissRequestRequest.scope:type_name -> services.request.v1.RequestAccessScope
-	2,  // 48: services.request.v1.CountUnreadForOrganizationRequest.type:type_name -> services.request.v1.RequestType
-	7,  // 49: services.request.v1.CountUnreadForOrganizationRequest.scope:type_name -> services.request.v1.RequestAccessScope
-	9,  // 50: services.request.v1.ClassifyRequestResponse.request:type_name -> services.request.v1.Request
-	5,  // 51: services.request.v1.GetInsurancePayoutTermsResponse.kind:type_name -> services.request.v1.RequestKind
-	3,  // 52: services.request.v1.GetInsurancePayoutTermsResponse.status:type_name -> services.request.v1.RequestStatus
-	6,  // 53: services.request.v1.GetInsurancePayoutTermsResponse.assignment_mode:type_name -> services.request.v1.AssignmentMode
-	2,  // 54: services.request.v1.GetRequestEligibilityInfoResponse.type:type_name -> services.request.v1.RequestType
-	2,  // 55: services.request.v1.GetUserRequestCountsRequest.type:type_name -> services.request.v1.RequestType
-	7,  // 56: services.request.v1.GetUserRequestCountsRequest.scope:type_name -> services.request.v1.RequestAccessScope
-	9,  // 57: services.request.v1.PauseRequestResponse.request:type_name -> services.request.v1.Request
-	9,  // 58: services.request.v1.UnpauseRequestResponse.request:type_name -> services.request.v1.Request
-	68, // 59: services.request.v1.GetRequestInsuranceInfoResponse.info:type_name -> services.request.v1.RequestInsuranceInfo
-	9,  // 60: services.request.v1.CompleteInsuranceRequestResponse.request:type_name -> services.request.v1.Request
-	10, // 61: services.request.v1.RequestService.CreateRequest:input_type -> services.request.v1.CreateRequestRequest
-	12, // 62: services.request.v1.RequestService.GetRequest:input_type -> services.request.v1.GetRequestRequest
-	14, // 63: services.request.v1.RequestService.UpdateRequest:input_type -> services.request.v1.UpdateRequestRequest
-	16, // 64: services.request.v1.RequestService.DeleteRequest:input_type -> services.request.v1.DeleteRequestRequest
-	18, // 65: services.request.v1.RequestService.ListRequests:input_type -> services.request.v1.ListRequestsRequest
-	20, // 66: services.request.v1.RequestService.ListPublishedPreviews:input_type -> services.request.v1.ListPublishedPreviewsRequest
-	23, // 67: services.request.v1.RequestService.SearchRequests:input_type -> services.request.v1.SearchRequestsRequest
-	25, // 68: services.request.v1.RequestService.ChangeStatus:input_type -> services.request.v1.ChangeStatusRequest
-	37, // 69: services.request.v1.RequestService.GetUserRequests:input_type -> services.request.v1.GetUserRequestsRequest
-	39, // 70: services.request.v1.RequestService.IncrementViews:input_type -> services.request.v1.IncrementViewsRequest
-	41, // 71: services.request.v1.RequestService.GetSuggestions:input_type -> services.request.v1.GetSuggestionsRequest
-	43, // 72: services.request.v1.RequestService.GetNewRequestsForOrganization:input_type -> services.request.v1.GetNewRequestsForOrganizationRequest
-	45, // 73: services.request.v1.RequestService.MarkRequestAsViewed:input_type -> services.request.v1.MarkRequestAsViewedRequest
-	47, // 74: services.request.v1.RequestService.IsRequestNew:input_type -> services.request.v1.IsRequestNewRequest
-	49, // 75: services.request.v1.RequestService.DismissRequest:input_type -> services.request.v1.DismissRequestRequest
-	51, // 76: services.request.v1.RequestService.CountUnreadForOrganization:input_type -> services.request.v1.CountUnreadForOrganizationRequest
-	53, // 77: services.request.v1.RequestService.ClassifyRequest:input_type -> services.request.v1.ClassifyRequestRequest
-	55, // 78: services.request.v1.RequestService.GetRequestForClassification:input_type -> services.request.v1.GetRequestForClassificationRequest
-	57, // 79: services.request.v1.RequestService.GetInsurancePayoutTerms:input_type -> services.request.v1.GetInsurancePayoutTermsRequest
-	59, // 80: services.request.v1.RequestService.GetRequestEligibilityInfo:input_type -> services.request.v1.GetRequestEligibilityInfoRequest
-	61, // 81: services.request.v1.RequestService.GetUserRequestCounts:input_type -> services.request.v1.GetUserRequestCountsRequest
-	63, // 82: services.request.v1.RequestService.PauseRequest:input_type -> services.request.v1.PauseRequestRequest
-	65, // 83: services.request.v1.RequestService.UnpauseRequest:input_type -> services.request.v1.UnpauseRequestRequest
-	69, // 84: services.request.v1.RequestService.GetRequestInsuranceInfo:input_type -> services.request.v1.GetRequestInsuranceInfoRequest
-	71, // 85: services.request.v1.RequestService.ClaimInsuranceRequest:input_type -> services.request.v1.ClaimInsuranceRequestRequest
-	75, // 86: services.request.v1.RequestService.CompleteInsuranceRequest:input_type -> services.request.v1.CompleteInsuranceRequestRequest
-	73, // 87: services.request.v1.RequestService.IsOrgTargeted:input_type -> services.request.v1.IsOrgTargetedRequest
-	27, // 88: services.request.v1.RequestService.PrepareRequestEscrow:input_type -> services.request.v1.PrepareRequestEscrowRequest
-	29, // 89: services.request.v1.RequestService.AuthorizeRequestEscrowCapture:input_type -> services.request.v1.AuthorizeRequestEscrowCaptureRequest
-	31, // 90: services.request.v1.RequestService.MarkRequestEscrowState:input_type -> services.request.v1.MarkRequestEscrowStateRequest
-	33, // 91: services.request.v1.RequestService.SelectRequestBid:input_type -> services.request.v1.SelectRequestBidRequest
-	35, // 92: services.request.v1.RequestService.CloseRequest:input_type -> services.request.v1.CloseRequestRequest
-	77, // 93: services.request.v1.RequestService.ReserveRequestBidSelection:input_type -> services.request.v1.ReserveRequestBidSelectionRequest
-	79, // 94: services.request.v1.RequestService.CancelRequestBidSelection:input_type -> services.request.v1.CancelRequestBidSelectionRequest
-	81, // 95: services.request.v1.RequestService.ListRequestUserIDs:input_type -> services.request.v1.ListRequestUserIDsRequest
-	11, // 96: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
-	13, // 97: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
-	15, // 98: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
-	17, // 99: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
-	19, // 100: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
-	22, // 101: services.request.v1.RequestService.ListPublishedPreviews:output_type -> services.request.v1.ListPublishedPreviewsResponse
-	24, // 102: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
-	26, // 103: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
-	38, // 104: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
-	40, // 105: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
-	42, // 106: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
-	44, // 107: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
-	46, // 108: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
-	48, // 109: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
-	50, // 110: services.request.v1.RequestService.DismissRequest:output_type -> services.request.v1.DismissRequestResponse
-	52, // 111: services.request.v1.RequestService.CountUnreadForOrganization:output_type -> services.request.v1.CountUnreadForOrganizationResponse
-	54, // 112: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
-	56, // 113: services.request.v1.RequestService.GetRequestForClassification:output_type -> services.request.v1.GetRequestForClassificationResponse
-	58, // 114: services.request.v1.RequestService.GetInsurancePayoutTerms:output_type -> services.request.v1.GetInsurancePayoutTermsResponse
-	60, // 115: services.request.v1.RequestService.GetRequestEligibilityInfo:output_type -> services.request.v1.GetRequestEligibilityInfoResponse
-	62, // 116: services.request.v1.RequestService.GetUserRequestCounts:output_type -> services.request.v1.GetUserRequestCountsResponse
-	64, // 117: services.request.v1.RequestService.PauseRequest:output_type -> services.request.v1.PauseRequestResponse
-	66, // 118: services.request.v1.RequestService.UnpauseRequest:output_type -> services.request.v1.UnpauseRequestResponse
-	70, // 119: services.request.v1.RequestService.GetRequestInsuranceInfo:output_type -> services.request.v1.GetRequestInsuranceInfoResponse
-	72, // 120: services.request.v1.RequestService.ClaimInsuranceRequest:output_type -> services.request.v1.ClaimInsuranceRequestResponse
-	76, // 121: services.request.v1.RequestService.CompleteInsuranceRequest:output_type -> services.request.v1.CompleteInsuranceRequestResponse
-	74, // 122: services.request.v1.RequestService.IsOrgTargeted:output_type -> services.request.v1.IsOrgTargetedResponse
-	28, // 123: services.request.v1.RequestService.PrepareRequestEscrow:output_type -> services.request.v1.PrepareRequestEscrowResponse
-	30, // 124: services.request.v1.RequestService.AuthorizeRequestEscrowCapture:output_type -> services.request.v1.AuthorizeRequestEscrowCaptureResponse
-	32, // 125: services.request.v1.RequestService.MarkRequestEscrowState:output_type -> services.request.v1.MarkRequestEscrowStateResponse
-	34, // 126: services.request.v1.RequestService.SelectRequestBid:output_type -> services.request.v1.SelectRequestBidResponse
-	36, // 127: services.request.v1.RequestService.CloseRequest:output_type -> services.request.v1.CloseRequestResponse
-	78, // 128: services.request.v1.RequestService.ReserveRequestBidSelection:output_type -> services.request.v1.ReserveRequestBidSelectionResponse
-	80, // 129: services.request.v1.RequestService.CancelRequestBidSelection:output_type -> services.request.v1.CancelRequestBidSelectionResponse
-	82, // 130: services.request.v1.RequestService.ListRequestUserIDs:output_type -> services.request.v1.ListRequestUserIDsResponse
-	96, // [96:131] is the sub-list for method output_type
-	61, // [61:96] is the sub-list for method input_type
-	61, // [61:61] is the sub-list for extension type_name
-	61, // [61:61] is the sub-list for extension extendee
-	0,  // [0:61] is the sub-list for field type_name
+	0,   // 0: services.request.v1.RequestAccessScope.app:type_name -> services.request.v1.RequestAccessApp
+	1,   // 1: services.request.v1.RequestAccessScope.perspective:type_name -> services.request.v1.RequestAccessPerspective
+	2,   // 2: services.request.v1.Request.type:type_name -> services.request.v1.RequestType
+	3,   // 3: services.request.v1.Request.status:type_name -> services.request.v1.RequestStatus
+	83,  // 4: services.request.v1.Request.created_at:type_name -> google.protobuf.Timestamp
+	83,  // 5: services.request.v1.Request.updated_at:type_name -> google.protobuf.Timestamp
+	83,  // 6: services.request.v1.Request.published_at:type_name -> google.protobuf.Timestamp
+	83,  // 7: services.request.v1.Request.paused_at:type_name -> google.protobuf.Timestamp
+	5,   // 8: services.request.v1.Request.kind:type_name -> services.request.v1.RequestKind
+	83,  // 9: services.request.v1.Request.deadline:type_name -> google.protobuf.Timestamp
+	6,   // 10: services.request.v1.Request.assignment_mode:type_name -> services.request.v1.AssignmentMode
+	8,   // 11: services.request.v1.Request.estimate_items:type_name -> services.request.v1.EstimateItem
+	4,   // 12: services.request.v1.Request.escrow_state:type_name -> services.request.v1.RequestEscrowState
+	2,   // 13: services.request.v1.CreateRequestRequest.type:type_name -> services.request.v1.RequestType
+	5,   // 14: services.request.v1.CreateRequestRequest.kind:type_name -> services.request.v1.RequestKind
+	83,  // 15: services.request.v1.CreateRequestRequest.deadline:type_name -> google.protobuf.Timestamp
+	6,   // 16: services.request.v1.CreateRequestRequest.assignment_mode:type_name -> services.request.v1.AssignmentMode
+	8,   // 17: services.request.v1.CreateRequestRequest.estimate_items:type_name -> services.request.v1.EstimateItem
+	67,  // 18: services.request.v1.CreateRequestRequest.insurance_info:type_name -> services.request.v1.InsuranceInfoInput
+	7,   // 19: services.request.v1.CreateRequestRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	9,   // 20: services.request.v1.CreateRequestResponse.request:type_name -> services.request.v1.Request
+	7,   // 21: services.request.v1.GetRequestRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	9,   // 22: services.request.v1.GetRequestResponse.request:type_name -> services.request.v1.Request
+	7,   // 23: services.request.v1.UpdateRequestRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	9,   // 24: services.request.v1.UpdateRequestResponse.request:type_name -> services.request.v1.Request
+	7,   // 25: services.request.v1.DeleteRequestRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	2,   // 26: services.request.v1.ListRequestsRequest.type:type_name -> services.request.v1.RequestType
+	3,   // 27: services.request.v1.ListRequestsRequest.status:type_name -> services.request.v1.RequestStatus
+	5,   // 28: services.request.v1.ListRequestsRequest.kind:type_name -> services.request.v1.RequestKind
+	7,   // 29: services.request.v1.ListRequestsRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	9,   // 30: services.request.v1.ListRequestsResponse.requests:type_name -> services.request.v1.Request
+	2,   // 31: services.request.v1.PublishedRequestPreview.type:type_name -> services.request.v1.RequestType
+	83,  // 32: services.request.v1.PublishedRequestPreview.published_at:type_name -> google.protobuf.Timestamp
+	21,  // 33: services.request.v1.ListPublishedPreviewsResponse.requests:type_name -> services.request.v1.PublishedRequestPreview
+	2,   // 34: services.request.v1.SearchRequestsRequest.type:type_name -> services.request.v1.RequestType
+	7,   // 35: services.request.v1.SearchRequestsRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	9,   // 36: services.request.v1.SearchRequestsResponse.requests:type_name -> services.request.v1.Request
+	3,   // 37: services.request.v1.ChangeStatusRequest.status:type_name -> services.request.v1.RequestStatus
+	7,   // 38: services.request.v1.ChangeStatusRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	9,   // 39: services.request.v1.ChangeStatusResponse.request:type_name -> services.request.v1.Request
+	4,   // 40: services.request.v1.PrepareRequestEscrowResponse.state:type_name -> services.request.v1.RequestEscrowState
+	4,   // 41: services.request.v1.MarkRequestEscrowStateRequest.state:type_name -> services.request.v1.RequestEscrowState
+	4,   // 42: services.request.v1.MarkRequestEscrowStateResponse.state:type_name -> services.request.v1.RequestEscrowState
+	7,   // 43: services.request.v1.SelectRequestBidRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	7,   // 44: services.request.v1.CloseRequestRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	9,   // 45: services.request.v1.CloseRequestResponse.request:type_name -> services.request.v1.Request
+	3,   // 46: services.request.v1.GetUserRequestsRequest.status:type_name -> services.request.v1.RequestStatus
+	3,   // 47: services.request.v1.GetUserRequestsRequest.statuses:type_name -> services.request.v1.RequestStatus
+	7,   // 48: services.request.v1.GetUserRequestsRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	9,   // 49: services.request.v1.GetUserRequestsResponse.requests:type_name -> services.request.v1.Request
+	7,   // 50: services.request.v1.GetNewRequestsForOrganizationRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	7,   // 51: services.request.v1.MarkRequestAsViewedRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	7,   // 52: services.request.v1.IsRequestNewRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	7,   // 53: services.request.v1.DismissRequestRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	2,   // 54: services.request.v1.CountUnreadForOrganizationRequest.type:type_name -> services.request.v1.RequestType
+	7,   // 55: services.request.v1.CountUnreadForOrganizationRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	9,   // 56: services.request.v1.ClassifyRequestResponse.request:type_name -> services.request.v1.Request
+	5,   // 57: services.request.v1.GetInsurancePayoutTermsResponse.kind:type_name -> services.request.v1.RequestKind
+	3,   // 58: services.request.v1.GetInsurancePayoutTermsResponse.status:type_name -> services.request.v1.RequestStatus
+	6,   // 59: services.request.v1.GetInsurancePayoutTermsResponse.assignment_mode:type_name -> services.request.v1.AssignmentMode
+	2,   // 60: services.request.v1.GetRequestEligibilityInfoResponse.type:type_name -> services.request.v1.RequestType
+	2,   // 61: services.request.v1.GetUserRequestCountsRequest.type:type_name -> services.request.v1.RequestType
+	7,   // 62: services.request.v1.GetUserRequestCountsRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	7,   // 63: services.request.v1.PauseRequestRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	9,   // 64: services.request.v1.PauseRequestResponse.request:type_name -> services.request.v1.Request
+	7,   // 65: services.request.v1.UnpauseRequestRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	9,   // 66: services.request.v1.UnpauseRequestResponse.request:type_name -> services.request.v1.Request
+	68,  // 67: services.request.v1.GetRequestInsuranceInfoResponse.info:type_name -> services.request.v1.RequestInsuranceInfo
+	9,   // 68: services.request.v1.CompleteInsuranceRequestResponse.request:type_name -> services.request.v1.Request
+	7,   // 69: services.request.v1.ReserveRequestBidSelectionRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	7,   // 70: services.request.v1.CancelRequestBidSelectionRequest.scope:type_name -> services.request.v1.RequestAccessScope
+	10,  // 71: services.request.v1.RequestService.CreateRequest:input_type -> services.request.v1.CreateRequestRequest
+	12,  // 72: services.request.v1.RequestService.GetRequest:input_type -> services.request.v1.GetRequestRequest
+	14,  // 73: services.request.v1.RequestService.UpdateRequest:input_type -> services.request.v1.UpdateRequestRequest
+	16,  // 74: services.request.v1.RequestService.DeleteRequest:input_type -> services.request.v1.DeleteRequestRequest
+	18,  // 75: services.request.v1.RequestService.ListRequests:input_type -> services.request.v1.ListRequestsRequest
+	20,  // 76: services.request.v1.RequestService.ListPublishedPreviews:input_type -> services.request.v1.ListPublishedPreviewsRequest
+	23,  // 77: services.request.v1.RequestService.SearchRequests:input_type -> services.request.v1.SearchRequestsRequest
+	25,  // 78: services.request.v1.RequestService.ChangeStatus:input_type -> services.request.v1.ChangeStatusRequest
+	37,  // 79: services.request.v1.RequestService.GetUserRequests:input_type -> services.request.v1.GetUserRequestsRequest
+	39,  // 80: services.request.v1.RequestService.IncrementViews:input_type -> services.request.v1.IncrementViewsRequest
+	41,  // 81: services.request.v1.RequestService.GetSuggestions:input_type -> services.request.v1.GetSuggestionsRequest
+	43,  // 82: services.request.v1.RequestService.GetNewRequestsForOrganization:input_type -> services.request.v1.GetNewRequestsForOrganizationRequest
+	45,  // 83: services.request.v1.RequestService.MarkRequestAsViewed:input_type -> services.request.v1.MarkRequestAsViewedRequest
+	47,  // 84: services.request.v1.RequestService.IsRequestNew:input_type -> services.request.v1.IsRequestNewRequest
+	49,  // 85: services.request.v1.RequestService.DismissRequest:input_type -> services.request.v1.DismissRequestRequest
+	51,  // 86: services.request.v1.RequestService.CountUnreadForOrganization:input_type -> services.request.v1.CountUnreadForOrganizationRequest
+	53,  // 87: services.request.v1.RequestService.ClassifyRequest:input_type -> services.request.v1.ClassifyRequestRequest
+	55,  // 88: services.request.v1.RequestService.GetRequestForClassification:input_type -> services.request.v1.GetRequestForClassificationRequest
+	57,  // 89: services.request.v1.RequestService.GetInsurancePayoutTerms:input_type -> services.request.v1.GetInsurancePayoutTermsRequest
+	59,  // 90: services.request.v1.RequestService.GetRequestEligibilityInfo:input_type -> services.request.v1.GetRequestEligibilityInfoRequest
+	61,  // 91: services.request.v1.RequestService.GetUserRequestCounts:input_type -> services.request.v1.GetUserRequestCountsRequest
+	63,  // 92: services.request.v1.RequestService.PauseRequest:input_type -> services.request.v1.PauseRequestRequest
+	65,  // 93: services.request.v1.RequestService.UnpauseRequest:input_type -> services.request.v1.UnpauseRequestRequest
+	69,  // 94: services.request.v1.RequestService.GetRequestInsuranceInfo:input_type -> services.request.v1.GetRequestInsuranceInfoRequest
+	71,  // 95: services.request.v1.RequestService.ClaimInsuranceRequest:input_type -> services.request.v1.ClaimInsuranceRequestRequest
+	75,  // 96: services.request.v1.RequestService.CompleteInsuranceRequest:input_type -> services.request.v1.CompleteInsuranceRequestRequest
+	73,  // 97: services.request.v1.RequestService.IsOrgTargeted:input_type -> services.request.v1.IsOrgTargetedRequest
+	27,  // 98: services.request.v1.RequestService.PrepareRequestEscrow:input_type -> services.request.v1.PrepareRequestEscrowRequest
+	29,  // 99: services.request.v1.RequestService.AuthorizeRequestEscrowCapture:input_type -> services.request.v1.AuthorizeRequestEscrowCaptureRequest
+	31,  // 100: services.request.v1.RequestService.MarkRequestEscrowState:input_type -> services.request.v1.MarkRequestEscrowStateRequest
+	33,  // 101: services.request.v1.RequestService.SelectRequestBid:input_type -> services.request.v1.SelectRequestBidRequest
+	35,  // 102: services.request.v1.RequestService.CloseRequest:input_type -> services.request.v1.CloseRequestRequest
+	77,  // 103: services.request.v1.RequestService.ReserveRequestBidSelection:input_type -> services.request.v1.ReserveRequestBidSelectionRequest
+	79,  // 104: services.request.v1.RequestService.CancelRequestBidSelection:input_type -> services.request.v1.CancelRequestBidSelectionRequest
+	81,  // 105: services.request.v1.RequestService.ListRequestUserIDs:input_type -> services.request.v1.ListRequestUserIDsRequest
+	11,  // 106: services.request.v1.RequestService.CreateRequest:output_type -> services.request.v1.CreateRequestResponse
+	13,  // 107: services.request.v1.RequestService.GetRequest:output_type -> services.request.v1.GetRequestResponse
+	15,  // 108: services.request.v1.RequestService.UpdateRequest:output_type -> services.request.v1.UpdateRequestResponse
+	17,  // 109: services.request.v1.RequestService.DeleteRequest:output_type -> services.request.v1.DeleteRequestResponse
+	19,  // 110: services.request.v1.RequestService.ListRequests:output_type -> services.request.v1.ListRequestsResponse
+	22,  // 111: services.request.v1.RequestService.ListPublishedPreviews:output_type -> services.request.v1.ListPublishedPreviewsResponse
+	24,  // 112: services.request.v1.RequestService.SearchRequests:output_type -> services.request.v1.SearchRequestsResponse
+	26,  // 113: services.request.v1.RequestService.ChangeStatus:output_type -> services.request.v1.ChangeStatusResponse
+	38,  // 114: services.request.v1.RequestService.GetUserRequests:output_type -> services.request.v1.GetUserRequestsResponse
+	40,  // 115: services.request.v1.RequestService.IncrementViews:output_type -> services.request.v1.IncrementViewsResponse
+	42,  // 116: services.request.v1.RequestService.GetSuggestions:output_type -> services.request.v1.GetSuggestionsResponse
+	44,  // 117: services.request.v1.RequestService.GetNewRequestsForOrganization:output_type -> services.request.v1.GetNewRequestsForOrganizationResponse
+	46,  // 118: services.request.v1.RequestService.MarkRequestAsViewed:output_type -> services.request.v1.MarkRequestAsViewedResponse
+	48,  // 119: services.request.v1.RequestService.IsRequestNew:output_type -> services.request.v1.IsRequestNewResponse
+	50,  // 120: services.request.v1.RequestService.DismissRequest:output_type -> services.request.v1.DismissRequestResponse
+	52,  // 121: services.request.v1.RequestService.CountUnreadForOrganization:output_type -> services.request.v1.CountUnreadForOrganizationResponse
+	54,  // 122: services.request.v1.RequestService.ClassifyRequest:output_type -> services.request.v1.ClassifyRequestResponse
+	56,  // 123: services.request.v1.RequestService.GetRequestForClassification:output_type -> services.request.v1.GetRequestForClassificationResponse
+	58,  // 124: services.request.v1.RequestService.GetInsurancePayoutTerms:output_type -> services.request.v1.GetInsurancePayoutTermsResponse
+	60,  // 125: services.request.v1.RequestService.GetRequestEligibilityInfo:output_type -> services.request.v1.GetRequestEligibilityInfoResponse
+	62,  // 126: services.request.v1.RequestService.GetUserRequestCounts:output_type -> services.request.v1.GetUserRequestCountsResponse
+	64,  // 127: services.request.v1.RequestService.PauseRequest:output_type -> services.request.v1.PauseRequestResponse
+	66,  // 128: services.request.v1.RequestService.UnpauseRequest:output_type -> services.request.v1.UnpauseRequestResponse
+	70,  // 129: services.request.v1.RequestService.GetRequestInsuranceInfo:output_type -> services.request.v1.GetRequestInsuranceInfoResponse
+	72,  // 130: services.request.v1.RequestService.ClaimInsuranceRequest:output_type -> services.request.v1.ClaimInsuranceRequestResponse
+	76,  // 131: services.request.v1.RequestService.CompleteInsuranceRequest:output_type -> services.request.v1.CompleteInsuranceRequestResponse
+	74,  // 132: services.request.v1.RequestService.IsOrgTargeted:output_type -> services.request.v1.IsOrgTargetedResponse
+	28,  // 133: services.request.v1.RequestService.PrepareRequestEscrow:output_type -> services.request.v1.PrepareRequestEscrowResponse
+	30,  // 134: services.request.v1.RequestService.AuthorizeRequestEscrowCapture:output_type -> services.request.v1.AuthorizeRequestEscrowCaptureResponse
+	32,  // 135: services.request.v1.RequestService.MarkRequestEscrowState:output_type -> services.request.v1.MarkRequestEscrowStateResponse
+	34,  // 136: services.request.v1.RequestService.SelectRequestBid:output_type -> services.request.v1.SelectRequestBidResponse
+	36,  // 137: services.request.v1.RequestService.CloseRequest:output_type -> services.request.v1.CloseRequestResponse
+	78,  // 138: services.request.v1.RequestService.ReserveRequestBidSelection:output_type -> services.request.v1.ReserveRequestBidSelectionResponse
+	80,  // 139: services.request.v1.RequestService.CancelRequestBidSelection:output_type -> services.request.v1.CancelRequestBidSelectionResponse
+	82,  // 140: services.request.v1.RequestService.ListRequestUserIDs:output_type -> services.request.v1.ListRequestUserIDsResponse
+	106, // [106:141] is the sub-list for method output_type
+	71,  // [71:106] is the sub-list for method input_type
+	71,  // [71:71] is the sub-list for extension type_name
+	71,  // [71:71] is the sub-list for extension extendee
+	0,   // [0:71] is the sub-list for field type_name
 }
 
 func init() { file_services_request_request_proto_init() }

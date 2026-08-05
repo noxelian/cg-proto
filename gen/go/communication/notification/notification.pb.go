@@ -248,8 +248,8 @@ func (NotificationApp) EnumDescriptor() ([]byte, []int) {
 }
 
 // NotificationPerspective identifies the recipient profile inside an app.
-// A single user can therefore address CLIENT+BUYER and PRO+SELLER_ORG as
-// independent scopes; user_id alone never selects a profile.
+// A single user can therefore address CLIENT+BUYER, PRO+BUYER_ORG, and
+// PRO+SELLER_ORG as independent scopes; user_id alone never selects a profile.
 type NotificationPerspective int32
 
 const (
@@ -258,6 +258,9 @@ const (
 	NotificationPerspective_NOTIFICATION_PERSPECTIVE_SELLER_ORG  NotificationPerspective = 2
 	NotificationPerspective_NOTIFICATION_PERSPECTIVE_SELLER_USER NotificationPerspective = 3
 	NotificationPerspective_NOTIFICATION_PERSPECTIVE_SUPPORT     NotificationPerspective = 4
+	// PRO organization purchasing parts; never aliases the Client buyer or the
+	// supplier organization projection.
+	NotificationPerspective_NOTIFICATION_PERSPECTIVE_BUYER_ORG NotificationPerspective = 5
 )
 
 // Enum value maps for NotificationPerspective.
@@ -268,6 +271,7 @@ var (
 		2: "NOTIFICATION_PERSPECTIVE_SELLER_ORG",
 		3: "NOTIFICATION_PERSPECTIVE_SELLER_USER",
 		4: "NOTIFICATION_PERSPECTIVE_SUPPORT",
+		5: "NOTIFICATION_PERSPECTIVE_BUYER_ORG",
 	}
 	NotificationPerspective_value = map[string]int32{
 		"NOTIFICATION_PERSPECTIVE_UNSPECIFIED": 0,
@@ -275,6 +279,7 @@ var (
 		"NOTIFICATION_PERSPECTIVE_SELLER_ORG":  2,
 		"NOTIFICATION_PERSPECTIVE_SELLER_USER": 3,
 		"NOTIFICATION_PERSPECTIVE_SUPPORT":     4,
+		"NOTIFICATION_PERSPECTIVE_BUYER_ORG":   5,
 	}
 )
 
@@ -4510,13 +4515,14 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\x0fNotificationApp\x12 \n" +
 	"\x1cNOTIFICATION_APP_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17NOTIFICATION_APP_CLIENT\x10\x01\x12\x18\n" +
-	"\x14NOTIFICATION_APP_PRO\x10\x02*\xe0\x01\n" +
+	"\x14NOTIFICATION_APP_PRO\x10\x02*\x88\x02\n" +
 	"\x17NotificationPerspective\x12(\n" +
 	"$NOTIFICATION_PERSPECTIVE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eNOTIFICATION_PERSPECTIVE_BUYER\x10\x01\x12'\n" +
 	"#NOTIFICATION_PERSPECTIVE_SELLER_ORG\x10\x02\x12(\n" +
 	"$NOTIFICATION_PERSPECTIVE_SELLER_USER\x10\x03\x12$\n" +
-	" NOTIFICATION_PERSPECTIVE_SUPPORT\x10\x042\xf1\r\n" +
+	" NOTIFICATION_PERSPECTIVE_SUPPORT\x10\x04\x12&\n" +
+	"\"NOTIFICATION_PERSPECTIVE_BUYER_ORG\x10\x052\xf1\r\n" +
 	"\x13NotificationService\x12k\n" +
 	"\bSendPush\x12..communication.notification.v1.SendPushRequest\x1a/.communication.notification.v1.SendPushResponse\x12h\n" +
 	"\aSendSMS\x12-.communication.notification.v1.SendSMSRequest\x1a..communication.notification.v1.SendSMSResponse\x12n\n" +

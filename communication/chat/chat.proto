@@ -31,14 +31,17 @@ enum ChatContextType {
 }
 
 // ChatPerspective identifies the authenticated caller's side of a chat.
-// A single user can therefore address CLIENT+BUYER and PRO+SELLER_ORG as
-// independent scopes; user_id alone never selects a profile.
+// A single user can therefore address CLIENT+BUYER, PRO+BUYER_ORG, and
+// PRO+SELLER_ORG as independent scopes; user_id alone never selects a profile.
 enum ChatPerspective {
   CHAT_PERSPECTIVE_UNSPECIFIED = 0;
   CHAT_PERSPECTIVE_BUYER = 1;
   CHAT_PERSPECTIVE_SELLER_ORG = 2;
   CHAT_PERSPECTIVE_SELLER_USER = 3;
   CHAT_PERSPECTIVE_SUPPORT = 4;
+  // BUYER_ORG is a PRO organization purchasing parts. It is deliberately
+  // disjoint from both the Client buyer and the PRO supplier organization.
+  CHAT_PERSPECTIVE_BUYER_ORG = 5;
 }
 
 // ChatApp is the application boundary for caller routing and realtime events.
@@ -61,6 +64,15 @@ message ChatScope {
   ChatPerspective perspective = 2;
   string organization_id = 3;
   int64 membership_version = 4;
+}
+
+// ChatRecipient binds one verified recipient user to exactly one application,
+// perspective, organization, and membership generation. Producers resolve the
+// user from the authoritative chat participants/membership projection; event
+// payload fields are never identity authority.
+message ChatRecipient {
+  int64 user_id = 1;
+  ChatScope scope = 2;
 }
 
 // VehicleContextProvenance records which owner projection supplied the
@@ -147,10 +159,12 @@ message VehicleContext {
 }
 
 // ChatRealtimeEventPayload is the protobuf-owned projection of the
-// chat.message.sent JSON event. During migration producers keep the exact
-// legacy target_apps/recipient_org_id fields and add recipient_scope, whose app,
-// perspective, and organization cannot be recombined independently. Typed
-// consumers read recipient_scope first and fall back to normalized legacy values
+// chat.message.sent JSON event. New organization fan-out producers write
+// recipients, binding every recipient user to their own membership generation.
+// During migration producers keep the exact legacy recipient_id,
+// recipient_user_ids, target_apps, recipient_org_id, and single recipient_scope
+// fields. Typed consumers read recipients first and fall back to the exact
+// normalized legacy values
 // ("client" -> CLIENT, "partner" -> PRO). If typed and legacy app or
 // organization values are both present, they MUST agree or the owner rejects
 // INVALID_ARGUMENT; more than one legacy target app conflicts with a single
@@ -182,6 +196,11 @@ message ChatRealtimeEventPayload {
   string context_type = 12 [json_name = "context_type"];
   string context_id = 13 [json_name = "context_id"];
   ChatScope recipient_scope = 14;
+  // Canonical recipient identities. A user may appear at most once in an event.
+  // For organization delivery every entry carries that user's positive current
+  // membership_version. A removed/re-hired member therefore cannot receive an
+  // event addressed to an older generation.
+  repeated ChatRecipient recipients = 15;
 }
 
 // app, perspective, and organization_id are routing/profile context only.

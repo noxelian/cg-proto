@@ -81,6 +81,9 @@ const (
 	BidAccessPerspective_BID_ACCESS_PERSPECTIVE_BUYER        BidAccessPerspective = 1
 	BidAccessPerspective_BID_ACCESS_PERSPECTIVE_SUPPLIER_ORG BidAccessPerspective = 2
 	BidAccessPerspective_BID_ACCESS_PERSPECTIVE_SUPPORT      BidAccessPerspective = 3
+	// A PRO organization buying parts. It is distinct from both a Client buyer
+	// and the supplier organization that authored a bid.
+	BidAccessPerspective_BID_ACCESS_PERSPECTIVE_BUYER_ORG BidAccessPerspective = 4
 )
 
 // Enum value maps for BidAccessPerspective.
@@ -90,12 +93,14 @@ var (
 		1: "BID_ACCESS_PERSPECTIVE_BUYER",
 		2: "BID_ACCESS_PERSPECTIVE_SUPPLIER_ORG",
 		3: "BID_ACCESS_PERSPECTIVE_SUPPORT",
+		4: "BID_ACCESS_PERSPECTIVE_BUYER_ORG",
 	}
 	BidAccessPerspective_value = map[string]int32{
 		"BID_ACCESS_PERSPECTIVE_UNSPECIFIED":  0,
 		"BID_ACCESS_PERSPECTIVE_BUYER":        1,
 		"BID_ACCESS_PERSPECTIVE_SUPPLIER_ORG": 2,
 		"BID_ACCESS_PERSPECTIVE_SUPPORT":      3,
+		"BID_ACCESS_PERSPECTIVE_BUYER_ORG":    4,
 	}
 )
 
@@ -231,7 +236,8 @@ func (BidStatus) EnumDescriptor() ([]byte, []int) {
 }
 
 // BidAccessScope binds the caller app, perspective, and organization so a
-// dual-role account cannot read a CLIENT buyer response list as a PARTNER supplier organization.
+// dual-role account cannot cross between CLIENT buyer, PARTNER buyer
+// organization, and PARTNER supplier organization projections.
 // JWT app and organization authority wins over request data. Existing
 // user_id and organization_id remain compatibility filters, never authority;
 // bid-service validates request ownership or organization membership plus the
@@ -580,7 +586,8 @@ type CreateBidRequest struct {
 	Description string                  `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
 	Photos      []string                `protobuf:"bytes,9,rep,name=photos,proto3" json:"photos,omitempty"`
 	// Admin: skip payment/subscription check when creating bid on behalf of org
-	SkipPaymentCheck bool `protobuf:"varint,10,opt,name=skip_payment_check,json=skipPaymentCheck,proto3" json:"skip_payment_check,omitempty"`
+	SkipPaymentCheck bool            `protobuf:"varint,10,opt,name=skip_payment_check,json=skipPaymentCheck,proto3" json:"skip_payment_check,omitempty"`
+	Scope            *BidAccessScope `protobuf:"bytes,11,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -683,6 +690,13 @@ func (x *CreateBidRequest) GetSkipPaymentCheck() bool {
 		return x.SkipPaymentCheck
 	}
 	return false
+}
+
+func (x *CreateBidRequest) GetScope() *BidAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
 }
 
 type CreateBidPartRequest struct {
@@ -1490,6 +1504,7 @@ type UpdateBidRequest struct {
 	Parts          []*CreateBidPartRequest `protobuf:"bytes,6,rep,name=parts,proto3" json:"parts,omitempty"`
 	Description    *string                 `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Photos         []string                `protobuf:"bytes,8,rep,name=photos,proto3" json:"photos,omitempty"`
+	Scope          *BidAccessScope         `protobuf:"bytes,9,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1580,6 +1595,13 @@ func (x *UpdateBidRequest) GetPhotos() []string {
 	return nil
 }
 
+func (x *UpdateBidRequest) GetScope() *BidAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
+}
+
 type UpdateBidResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Bid           *Bid                   `protobuf:"bytes,1,opt,name=bid,proto3" json:"bid,omitempty"`
@@ -1629,6 +1651,7 @@ type DeleteBidRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	BidId          int64                  `protobuf:"varint,1,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"` // UUID from organization-service
+	Scope          *BidAccessScope        `protobuf:"bytes,3,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1675,6 +1698,13 @@ func (x *DeleteBidRequest) GetOrganizationId() string {
 		return x.OrganizationId
 	}
 	return ""
+}
+
+func (x *DeleteBidRequest) GetScope() *BidAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
 }
 
 type DeleteBidResponse struct {
@@ -2129,6 +2159,7 @@ type AcceptBidRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BidId         int64                  `protobuf:"varint,1,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Scope         *BidAccessScope        `protobuf:"bytes,3,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2175,6 +2206,13 @@ func (x *AcceptBidRequest) GetUserId() int64 {
 		return x.UserId
 	}
 	return 0
+}
+
+func (x *AcceptBidRequest) GetScope() *BidAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
 }
 
 type AcceptBidResponse struct {
@@ -2226,6 +2264,7 @@ type RejectBidRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BidId         int64                  `protobuf:"varint,1,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Scope         *BidAccessScope        `protobuf:"bytes,3,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2272,6 +2311,13 @@ func (x *RejectBidRequest) GetUserId() int64 {
 		return x.UserId
 	}
 	return 0
+}
+
+func (x *RejectBidRequest) GetScope() *BidAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
 }
 
 type RejectBidResponse struct {
@@ -2323,6 +2369,7 @@ type CancelBidRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	BidId          int64                  `protobuf:"varint,1,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
 	OrganizationId string                 `protobuf:"bytes,2,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"` // UUID from organization-service
+	Scope          *BidAccessScope        `protobuf:"bytes,3,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -2369,6 +2416,13 @@ func (x *CancelBidRequest) GetOrganizationId() string {
 		return x.OrganizationId
 	}
 	return ""
+}
+
+func (x *CancelBidRequest) GetScope() *BidAccessScope {
+	if x != nil {
+		return x.Scope
+	}
+	return nil
 }
 
 type CancelBidResponse struct {
@@ -2671,6 +2725,7 @@ type MarkPartsPurchasedRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BidId         int64                  `protobuf:"varint,1,opt,name=bid_id,json=bidId,proto3" json:"bid_id,omitempty"`
 	PartIds       []int64                `protobuf:"varint,2,rep,packed,name=part_ids,json=partIds,proto3" json:"part_ids,omitempty"`
+	Scope         *BidAccessScope        `protobuf:"bytes,3,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2715,6 +2770,13 @@ func (x *MarkPartsPurchasedRequest) GetBidId() int64 {
 func (x *MarkPartsPurchasedRequest) GetPartIds() []int64 {
 	if x != nil {
 		return x.PartIds
+	}
+	return nil
+}
+
+func (x *MarkPartsPurchasedRequest) GetScope() *BidAccessScope {
+	if x != nil {
+		return x.Scope
 	}
 	return nil
 }
@@ -3216,7 +3278,7 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\favailability\x18\b \x01(\tR\favailability\x12\x16\n" +
 	"\x06status\x18\t \x01(\tR\x06status\x12!\n" +
 	"\fwarehouse_id\x18\n" +
-	" \x01(\tR\vwarehouseId\"\x9c\x03\n" +
+	" \x01(\tR\vwarehouseId\"\xd3\x03\n" +
 	"\x10CreateBidRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12,\n" +
@@ -3229,7 +3291,8 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\vdescription\x18\b \x01(\tR\vdescription\x12\x16\n" +
 	"\x06photos\x18\t \x03(\tR\x06photos\x12,\n" +
 	"\x12skip_payment_check\x18\n" +
-	" \x01(\bR\x10skipPaymentCheckB\b\n" +
+	" \x01(\bR\x10skipPaymentCheck\x125\n" +
+	"\x05scope\x18\v \x01(\v2\x1f.services.bid.v1.BidAccessScopeR\x05scopeB\b\n" +
 	"\x06_priceB\v\n" +
 	"\t_duration\"\xeb\x01\n" +
 	"\x14CreateBidPartRequest\x12\x1b\n" +
@@ -3288,7 +3351,7 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x03 \x01(\tR\x0eorganizationId\x12!\n" +
 	"\famount_minor\x18\x04 \x01(\x03R\vamountMinor\x12\x1a\n" +
 	"\bcurrency\x18\x05 \x01(\tR\bcurrency\x122\n" +
-	"\x06status\x18\x06 \x01(\x0e2\x1a.services.bid.v1.BidStatusR\x06status\"\xcd\x02\n" +
+	"\x06status\x18\x06 \x01(\x0e2\x1a.services.bid.v1.BidStatusR\x06status\"\x84\x03\n" +
 	"\x10UpdateBidRequest\x12\x15\n" +
 	"\x06bid_id\x18\x01 \x01(\x03R\x05bidId\x12'\n" +
 	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x12\x19\n" +
@@ -3297,15 +3360,17 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\bduration\x18\x05 \x01(\x05H\x01R\bduration\x88\x01\x01\x12;\n" +
 	"\x05parts\x18\x06 \x03(\v2%.services.bid.v1.CreateBidPartRequestR\x05parts\x12%\n" +
 	"\vdescription\x18\a \x01(\tH\x02R\vdescription\x88\x01\x01\x12\x16\n" +
-	"\x06photos\x18\b \x03(\tR\x06photosB\b\n" +
+	"\x06photos\x18\b \x03(\tR\x06photos\x125\n" +
+	"\x05scope\x18\t \x01(\v2\x1f.services.bid.v1.BidAccessScopeR\x05scopeB\b\n" +
 	"\x06_priceB\v\n" +
 	"\t_durationB\x0e\n" +
 	"\f_description\";\n" +
 	"\x11UpdateBidResponse\x12&\n" +
-	"\x03bid\x18\x01 \x01(\v2\x14.services.bid.v1.BidR\x03bid\"R\n" +
+	"\x03bid\x18\x01 \x01(\v2\x14.services.bid.v1.BidR\x03bid\"\x89\x01\n" +
 	"\x10DeleteBidRequest\x12\x15\n" +
 	"\x06bid_id\x18\x01 \x01(\x03R\x05bidId\x12'\n" +
-	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\"-\n" +
+	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x125\n" +
+	"\x05scope\x18\x03 \x01(\v2\x1f.services.bid.v1.BidAccessScopeR\x05scope\"-\n" +
 	"\x11DeleteBidResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xa3\x02\n" +
 	"\x0fListBidsRequest\x12,\n" +
@@ -3338,20 +3403,23 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\x05scope\x18\x05 \x01(\v2\x1f.services.bid.v1.BidAccessScopeR\x05scope\"_\n" +
 	"\x1dGetBidsByOrganizationResponse\x12(\n" +
 	"\x04bids\x18\x01 \x03(\v2\x14.services.bid.v1.BidR\x04bids\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"B\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"y\n" +
 	"\x10AcceptBidRequest\x12\x15\n" +
 	"\x06bid_id\x18\x01 \x01(\x03R\x05bidId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\";\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x125\n" +
+	"\x05scope\x18\x03 \x01(\v2\x1f.services.bid.v1.BidAccessScopeR\x05scope\";\n" +
 	"\x11AcceptBidResponse\x12&\n" +
-	"\x03bid\x18\x01 \x01(\v2\x14.services.bid.v1.BidR\x03bid\"B\n" +
+	"\x03bid\x18\x01 \x01(\v2\x14.services.bid.v1.BidR\x03bid\"y\n" +
 	"\x10RejectBidRequest\x12\x15\n" +
 	"\x06bid_id\x18\x01 \x01(\x03R\x05bidId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\";\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x125\n" +
+	"\x05scope\x18\x03 \x01(\v2\x1f.services.bid.v1.BidAccessScopeR\x05scope\";\n" +
 	"\x11RejectBidResponse\x12&\n" +
-	"\x03bid\x18\x01 \x01(\v2\x14.services.bid.v1.BidR\x03bid\"R\n" +
+	"\x03bid\x18\x01 \x01(\v2\x14.services.bid.v1.BidR\x03bid\"\x89\x01\n" +
 	"\x10CancelBidRequest\x12\x15\n" +
 	"\x06bid_id\x18\x01 \x01(\x03R\x05bidId\x12'\n" +
-	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\";\n" +
+	"\x0forganization_id\x18\x02 \x01(\tR\x0eorganizationId\x125\n" +
+	"\x05scope\x18\x03 \x01(\v2\x1f.services.bid.v1.BidAccessScopeR\x05scope\";\n" +
 	"\x11CancelBidResponse\x12&\n" +
 	"\x03bid\x18\x01 \x01(\v2\x14.services.bid.v1.BidR\x03bid\"J\n" +
 	"\x11BidPartPriceQuery\x12\x15\n" +
@@ -3370,10 +3438,11 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\x05items\x18\x01 \x03(\v2\".services.bid.v1.BidPartPriceQueryR\x05items\x125\n" +
 	"\x05scope\x18\x02 \x01(\v2\x1f.services.bid.v1.BidAccessScopeR\x05scope\"Y\n" +
 	"\x18GetBidPartPricesResponse\x12=\n" +
-	"\aresults\x18\x01 \x03(\v2#.services.bid.v1.BidPartPriceResultR\aresults\"M\n" +
+	"\aresults\x18\x01 \x03(\v2#.services.bid.v1.BidPartPriceResultR\aresults\"\x84\x01\n" +
 	"\x19MarkPartsPurchasedRequest\x12\x15\n" +
 	"\x06bid_id\x18\x01 \x01(\x03R\x05bidId\x12\x19\n" +
-	"\bpart_ids\x18\x02 \x03(\x03R\apartIds\"\x1c\n" +
+	"\bpart_ids\x18\x02 \x03(\x03R\apartIds\x125\n" +
+	"\x05scope\x18\x03 \x01(\v2\x1f.services.bid.v1.BidAccessScopeR\x05scope\"\x1c\n" +
 	"\x1aMarkPartsPurchasedResponse\"\x9a\x01\n" +
 	"\x12MarkBidReadRequest\x12\x15\n" +
 	"\x06bid_id\x18\x01 \x01(\x03R\x05bidId\x12\x17\n" +
@@ -3410,12 +3479,13 @@ const file_services_bid_bid_proto_rawDesc = "" +
 	"\x1aBID_ACCESS_APP_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15BID_ACCESS_APP_CLIENT\x10\x01\x12\x1a\n" +
 	"\x16BID_ACCESS_APP_PARTNER\x10\x02\x12\x18\n" +
-	"\x14BID_ACCESS_APP_ADMIN\x10\x03*\xad\x01\n" +
+	"\x14BID_ACCESS_APP_ADMIN\x10\x03*\xd3\x01\n" +
 	"\x14BidAccessPerspective\x12&\n" +
 	"\"BID_ACCESS_PERSPECTIVE_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cBID_ACCESS_PERSPECTIVE_BUYER\x10\x01\x12'\n" +
 	"#BID_ACCESS_PERSPECTIVE_SUPPLIER_ORG\x10\x02\x12\"\n" +
-	"\x1eBID_ACCESS_PERSPECTIVE_SUPPORT\x10\x03*R\n" +
+	"\x1eBID_ACCESS_PERSPECTIVE_SUPPORT\x10\x03\x12$\n" +
+	" BID_ACCESS_PERSPECTIVE_BUYER_ORG\x10\x04*R\n" +
 	"\aBidType\x12\x18\n" +
 	"\x14BID_TYPE_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fBID_TYPE_STO\x10\x01\x12\x1b\n" +
@@ -3527,82 +3597,89 @@ var file_services_bid_bid_proto_depIdxs = []int32{
 	51, // 6: services.bid.v1.Bid.updated_at:type_name -> google.protobuf.Timestamp
 	2,  // 7: services.bid.v1.CreateBidRequest.type:type_name -> services.bid.v1.BidType
 	8,  // 8: services.bid.v1.CreateBidRequest.parts:type_name -> services.bid.v1.CreateBidPartRequest
-	5,  // 9: services.bid.v1.CreateBidResponse.bid:type_name -> services.bid.v1.Bid
-	4,  // 10: services.bid.v1.GetBidRequest.scope:type_name -> services.bid.v1.BidAccessScope
-	5,  // 11: services.bid.v1.GetBidResponse.bid:type_name -> services.bid.v1.Bid
-	4,  // 12: services.bid.v1.GetBidForBuyerRequest.scope:type_name -> services.bid.v1.BidAccessScope
-	5,  // 13: services.bid.v1.GetBidForBuyerResponse.bid:type_name -> services.bid.v1.Bid
-	4,  // 14: services.bid.v1.ListBidsForBuyerRequest.scope:type_name -> services.bid.v1.BidAccessScope
-	5,  // 15: services.bid.v1.ListBidsForBuyerResponse.bids:type_name -> services.bid.v1.Bid
-	4,  // 16: services.bid.v1.HasAcceptedBidForOrganizationRequest.scope:type_name -> services.bid.v1.BidAccessScope
-	3,  // 17: services.bid.v1.GetEscrowBidTermsResponse.status:type_name -> services.bid.v1.BidStatus
-	8,  // 18: services.bid.v1.UpdateBidRequest.parts:type_name -> services.bid.v1.CreateBidPartRequest
-	5,  // 19: services.bid.v1.UpdateBidResponse.bid:type_name -> services.bid.v1.Bid
-	2,  // 20: services.bid.v1.ListBidsRequest.type:type_name -> services.bid.v1.BidType
-	3,  // 21: services.bid.v1.ListBidsRequest.status:type_name -> services.bid.v1.BidStatus
-	4,  // 22: services.bid.v1.ListBidsRequest.scope:type_name -> services.bid.v1.BidAccessScope
-	5,  // 23: services.bid.v1.ListBidsResponse.bids:type_name -> services.bid.v1.Bid
-	3,  // 24: services.bid.v1.GetBidsByRequestRequest.status:type_name -> services.bid.v1.BidStatus
-	4,  // 25: services.bid.v1.GetBidsByRequestRequest.scope:type_name -> services.bid.v1.BidAccessScope
-	5,  // 26: services.bid.v1.GetBidsByRequestResponse.bids:type_name -> services.bid.v1.Bid
-	3,  // 27: services.bid.v1.GetBidsByOrganizationRequest.status:type_name -> services.bid.v1.BidStatus
-	4,  // 28: services.bid.v1.GetBidsByOrganizationRequest.scope:type_name -> services.bid.v1.BidAccessScope
-	5,  // 29: services.bid.v1.GetBidsByOrganizationResponse.bids:type_name -> services.bid.v1.Bid
-	5,  // 30: services.bid.v1.AcceptBidResponse.bid:type_name -> services.bid.v1.Bid
-	5,  // 31: services.bid.v1.RejectBidResponse.bid:type_name -> services.bid.v1.Bid
-	5,  // 32: services.bid.v1.CancelBidResponse.bid:type_name -> services.bid.v1.Bid
-	38, // 33: services.bid.v1.GetBidPartPricesRequest.items:type_name -> services.bid.v1.BidPartPriceQuery
-	4,  // 34: services.bid.v1.GetBidPartPricesRequest.scope:type_name -> services.bid.v1.BidAccessScope
-	39, // 35: services.bid.v1.GetBidPartPricesResponse.results:type_name -> services.bid.v1.BidPartPriceResult
-	4,  // 36: services.bid.v1.MarkBidReadRequest.scope:type_name -> services.bid.v1.BidAccessScope
-	4,  // 37: services.bid.v1.GetRequestResponsesSummaryRequest.scope:type_name -> services.bid.v1.BidAccessScope
-	46, // 38: services.bid.v1.GetRequestResponsesSummaryResponse.summaries:type_name -> services.bid.v1.RequestResponseSummary
-	3,  // 39: services.bid.v1.GetBidSelectionTermsResponse.status:type_name -> services.bid.v1.BidStatus
-	7,  // 40: services.bid.v1.BidService.CreateBid:input_type -> services.bid.v1.CreateBidRequest
-	10, // 41: services.bid.v1.BidService.GetBid:input_type -> services.bid.v1.GetBidRequest
-	22, // 42: services.bid.v1.BidService.UpdateBid:input_type -> services.bid.v1.UpdateBidRequest
-	24, // 43: services.bid.v1.BidService.DeleteBid:input_type -> services.bid.v1.DeleteBidRequest
-	26, // 44: services.bid.v1.BidService.ListBids:input_type -> services.bid.v1.ListBidsRequest
-	28, // 45: services.bid.v1.BidService.GetBidsByRequest:input_type -> services.bid.v1.GetBidsByRequestRequest
-	30, // 46: services.bid.v1.BidService.GetBidsByOrganization:input_type -> services.bid.v1.GetBidsByOrganizationRequest
-	32, // 47: services.bid.v1.BidService.AcceptBid:input_type -> services.bid.v1.AcceptBidRequest
-	34, // 48: services.bid.v1.BidService.RejectBid:input_type -> services.bid.v1.RejectBidRequest
-	36, // 49: services.bid.v1.BidService.CancelBid:input_type -> services.bid.v1.CancelBidRequest
-	42, // 50: services.bid.v1.BidService.MarkPartsPurchased:input_type -> services.bid.v1.MarkPartsPurchasedRequest
-	40, // 51: services.bid.v1.BidService.GetBidPartPrices:input_type -> services.bid.v1.GetBidPartPricesRequest
-	44, // 52: services.bid.v1.BidService.MarkBidRead:input_type -> services.bid.v1.MarkBidReadRequest
-	47, // 53: services.bid.v1.BidService.GetRequestResponsesSummary:input_type -> services.bid.v1.GetRequestResponsesSummaryRequest
-	12, // 54: services.bid.v1.BidService.GetBidForBuyer:input_type -> services.bid.v1.GetBidForBuyerRequest
-	14, // 55: services.bid.v1.BidService.ListBidsForBuyer:input_type -> services.bid.v1.ListBidsForBuyerRequest
-	16, // 56: services.bid.v1.BidService.HasAcceptedBidForOrganization:input_type -> services.bid.v1.HasAcceptedBidForOrganizationRequest
-	18, // 57: services.bid.v1.BidService.GetAcceptedInsuranceBidForPayout:input_type -> services.bid.v1.GetAcceptedInsuranceBidForPayoutRequest
-	20, // 58: services.bid.v1.BidService.GetEscrowBidTerms:input_type -> services.bid.v1.GetEscrowBidTermsRequest
-	49, // 59: services.bid.v1.BidService.GetBidSelectionTerms:input_type -> services.bid.v1.GetBidSelectionTermsRequest
-	9,  // 60: services.bid.v1.BidService.CreateBid:output_type -> services.bid.v1.CreateBidResponse
-	11, // 61: services.bid.v1.BidService.GetBid:output_type -> services.bid.v1.GetBidResponse
-	23, // 62: services.bid.v1.BidService.UpdateBid:output_type -> services.bid.v1.UpdateBidResponse
-	25, // 63: services.bid.v1.BidService.DeleteBid:output_type -> services.bid.v1.DeleteBidResponse
-	27, // 64: services.bid.v1.BidService.ListBids:output_type -> services.bid.v1.ListBidsResponse
-	29, // 65: services.bid.v1.BidService.GetBidsByRequest:output_type -> services.bid.v1.GetBidsByRequestResponse
-	31, // 66: services.bid.v1.BidService.GetBidsByOrganization:output_type -> services.bid.v1.GetBidsByOrganizationResponse
-	33, // 67: services.bid.v1.BidService.AcceptBid:output_type -> services.bid.v1.AcceptBidResponse
-	35, // 68: services.bid.v1.BidService.RejectBid:output_type -> services.bid.v1.RejectBidResponse
-	37, // 69: services.bid.v1.BidService.CancelBid:output_type -> services.bid.v1.CancelBidResponse
-	43, // 70: services.bid.v1.BidService.MarkPartsPurchased:output_type -> services.bid.v1.MarkPartsPurchasedResponse
-	41, // 71: services.bid.v1.BidService.GetBidPartPrices:output_type -> services.bid.v1.GetBidPartPricesResponse
-	45, // 72: services.bid.v1.BidService.MarkBidRead:output_type -> services.bid.v1.MarkBidReadResponse
-	48, // 73: services.bid.v1.BidService.GetRequestResponsesSummary:output_type -> services.bid.v1.GetRequestResponsesSummaryResponse
-	13, // 74: services.bid.v1.BidService.GetBidForBuyer:output_type -> services.bid.v1.GetBidForBuyerResponse
-	15, // 75: services.bid.v1.BidService.ListBidsForBuyer:output_type -> services.bid.v1.ListBidsForBuyerResponse
-	17, // 76: services.bid.v1.BidService.HasAcceptedBidForOrganization:output_type -> services.bid.v1.HasAcceptedBidForOrganizationResponse
-	19, // 77: services.bid.v1.BidService.GetAcceptedInsuranceBidForPayout:output_type -> services.bid.v1.GetAcceptedInsuranceBidForPayoutResponse
-	21, // 78: services.bid.v1.BidService.GetEscrowBidTerms:output_type -> services.bid.v1.GetEscrowBidTermsResponse
-	50, // 79: services.bid.v1.BidService.GetBidSelectionTerms:output_type -> services.bid.v1.GetBidSelectionTermsResponse
-	60, // [60:80] is the sub-list for method output_type
-	40, // [40:60] is the sub-list for method input_type
-	40, // [40:40] is the sub-list for extension type_name
-	40, // [40:40] is the sub-list for extension extendee
-	0,  // [0:40] is the sub-list for field type_name
+	4,  // 9: services.bid.v1.CreateBidRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	5,  // 10: services.bid.v1.CreateBidResponse.bid:type_name -> services.bid.v1.Bid
+	4,  // 11: services.bid.v1.GetBidRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	5,  // 12: services.bid.v1.GetBidResponse.bid:type_name -> services.bid.v1.Bid
+	4,  // 13: services.bid.v1.GetBidForBuyerRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	5,  // 14: services.bid.v1.GetBidForBuyerResponse.bid:type_name -> services.bid.v1.Bid
+	4,  // 15: services.bid.v1.ListBidsForBuyerRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	5,  // 16: services.bid.v1.ListBidsForBuyerResponse.bids:type_name -> services.bid.v1.Bid
+	4,  // 17: services.bid.v1.HasAcceptedBidForOrganizationRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	3,  // 18: services.bid.v1.GetEscrowBidTermsResponse.status:type_name -> services.bid.v1.BidStatus
+	8,  // 19: services.bid.v1.UpdateBidRequest.parts:type_name -> services.bid.v1.CreateBidPartRequest
+	4,  // 20: services.bid.v1.UpdateBidRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	5,  // 21: services.bid.v1.UpdateBidResponse.bid:type_name -> services.bid.v1.Bid
+	4,  // 22: services.bid.v1.DeleteBidRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	2,  // 23: services.bid.v1.ListBidsRequest.type:type_name -> services.bid.v1.BidType
+	3,  // 24: services.bid.v1.ListBidsRequest.status:type_name -> services.bid.v1.BidStatus
+	4,  // 25: services.bid.v1.ListBidsRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	5,  // 26: services.bid.v1.ListBidsResponse.bids:type_name -> services.bid.v1.Bid
+	3,  // 27: services.bid.v1.GetBidsByRequestRequest.status:type_name -> services.bid.v1.BidStatus
+	4,  // 28: services.bid.v1.GetBidsByRequestRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	5,  // 29: services.bid.v1.GetBidsByRequestResponse.bids:type_name -> services.bid.v1.Bid
+	3,  // 30: services.bid.v1.GetBidsByOrganizationRequest.status:type_name -> services.bid.v1.BidStatus
+	4,  // 31: services.bid.v1.GetBidsByOrganizationRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	5,  // 32: services.bid.v1.GetBidsByOrganizationResponse.bids:type_name -> services.bid.v1.Bid
+	4,  // 33: services.bid.v1.AcceptBidRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	5,  // 34: services.bid.v1.AcceptBidResponse.bid:type_name -> services.bid.v1.Bid
+	4,  // 35: services.bid.v1.RejectBidRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	5,  // 36: services.bid.v1.RejectBidResponse.bid:type_name -> services.bid.v1.Bid
+	4,  // 37: services.bid.v1.CancelBidRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	5,  // 38: services.bid.v1.CancelBidResponse.bid:type_name -> services.bid.v1.Bid
+	38, // 39: services.bid.v1.GetBidPartPricesRequest.items:type_name -> services.bid.v1.BidPartPriceQuery
+	4,  // 40: services.bid.v1.GetBidPartPricesRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	39, // 41: services.bid.v1.GetBidPartPricesResponse.results:type_name -> services.bid.v1.BidPartPriceResult
+	4,  // 42: services.bid.v1.MarkPartsPurchasedRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	4,  // 43: services.bid.v1.MarkBidReadRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	4,  // 44: services.bid.v1.GetRequestResponsesSummaryRequest.scope:type_name -> services.bid.v1.BidAccessScope
+	46, // 45: services.bid.v1.GetRequestResponsesSummaryResponse.summaries:type_name -> services.bid.v1.RequestResponseSummary
+	3,  // 46: services.bid.v1.GetBidSelectionTermsResponse.status:type_name -> services.bid.v1.BidStatus
+	7,  // 47: services.bid.v1.BidService.CreateBid:input_type -> services.bid.v1.CreateBidRequest
+	10, // 48: services.bid.v1.BidService.GetBid:input_type -> services.bid.v1.GetBidRequest
+	22, // 49: services.bid.v1.BidService.UpdateBid:input_type -> services.bid.v1.UpdateBidRequest
+	24, // 50: services.bid.v1.BidService.DeleteBid:input_type -> services.bid.v1.DeleteBidRequest
+	26, // 51: services.bid.v1.BidService.ListBids:input_type -> services.bid.v1.ListBidsRequest
+	28, // 52: services.bid.v1.BidService.GetBidsByRequest:input_type -> services.bid.v1.GetBidsByRequestRequest
+	30, // 53: services.bid.v1.BidService.GetBidsByOrganization:input_type -> services.bid.v1.GetBidsByOrganizationRequest
+	32, // 54: services.bid.v1.BidService.AcceptBid:input_type -> services.bid.v1.AcceptBidRequest
+	34, // 55: services.bid.v1.BidService.RejectBid:input_type -> services.bid.v1.RejectBidRequest
+	36, // 56: services.bid.v1.BidService.CancelBid:input_type -> services.bid.v1.CancelBidRequest
+	42, // 57: services.bid.v1.BidService.MarkPartsPurchased:input_type -> services.bid.v1.MarkPartsPurchasedRequest
+	40, // 58: services.bid.v1.BidService.GetBidPartPrices:input_type -> services.bid.v1.GetBidPartPricesRequest
+	44, // 59: services.bid.v1.BidService.MarkBidRead:input_type -> services.bid.v1.MarkBidReadRequest
+	47, // 60: services.bid.v1.BidService.GetRequestResponsesSummary:input_type -> services.bid.v1.GetRequestResponsesSummaryRequest
+	12, // 61: services.bid.v1.BidService.GetBidForBuyer:input_type -> services.bid.v1.GetBidForBuyerRequest
+	14, // 62: services.bid.v1.BidService.ListBidsForBuyer:input_type -> services.bid.v1.ListBidsForBuyerRequest
+	16, // 63: services.bid.v1.BidService.HasAcceptedBidForOrganization:input_type -> services.bid.v1.HasAcceptedBidForOrganizationRequest
+	18, // 64: services.bid.v1.BidService.GetAcceptedInsuranceBidForPayout:input_type -> services.bid.v1.GetAcceptedInsuranceBidForPayoutRequest
+	20, // 65: services.bid.v1.BidService.GetEscrowBidTerms:input_type -> services.bid.v1.GetEscrowBidTermsRequest
+	49, // 66: services.bid.v1.BidService.GetBidSelectionTerms:input_type -> services.bid.v1.GetBidSelectionTermsRequest
+	9,  // 67: services.bid.v1.BidService.CreateBid:output_type -> services.bid.v1.CreateBidResponse
+	11, // 68: services.bid.v1.BidService.GetBid:output_type -> services.bid.v1.GetBidResponse
+	23, // 69: services.bid.v1.BidService.UpdateBid:output_type -> services.bid.v1.UpdateBidResponse
+	25, // 70: services.bid.v1.BidService.DeleteBid:output_type -> services.bid.v1.DeleteBidResponse
+	27, // 71: services.bid.v1.BidService.ListBids:output_type -> services.bid.v1.ListBidsResponse
+	29, // 72: services.bid.v1.BidService.GetBidsByRequest:output_type -> services.bid.v1.GetBidsByRequestResponse
+	31, // 73: services.bid.v1.BidService.GetBidsByOrganization:output_type -> services.bid.v1.GetBidsByOrganizationResponse
+	33, // 74: services.bid.v1.BidService.AcceptBid:output_type -> services.bid.v1.AcceptBidResponse
+	35, // 75: services.bid.v1.BidService.RejectBid:output_type -> services.bid.v1.RejectBidResponse
+	37, // 76: services.bid.v1.BidService.CancelBid:output_type -> services.bid.v1.CancelBidResponse
+	43, // 77: services.bid.v1.BidService.MarkPartsPurchased:output_type -> services.bid.v1.MarkPartsPurchasedResponse
+	41, // 78: services.bid.v1.BidService.GetBidPartPrices:output_type -> services.bid.v1.GetBidPartPricesResponse
+	45, // 79: services.bid.v1.BidService.MarkBidRead:output_type -> services.bid.v1.MarkBidReadResponse
+	48, // 80: services.bid.v1.BidService.GetRequestResponsesSummary:output_type -> services.bid.v1.GetRequestResponsesSummaryResponse
+	13, // 81: services.bid.v1.BidService.GetBidForBuyer:output_type -> services.bid.v1.GetBidForBuyerResponse
+	15, // 82: services.bid.v1.BidService.ListBidsForBuyer:output_type -> services.bid.v1.ListBidsForBuyerResponse
+	17, // 83: services.bid.v1.BidService.HasAcceptedBidForOrganization:output_type -> services.bid.v1.HasAcceptedBidForOrganizationResponse
+	19, // 84: services.bid.v1.BidService.GetAcceptedInsuranceBidForPayout:output_type -> services.bid.v1.GetAcceptedInsuranceBidForPayoutResponse
+	21, // 85: services.bid.v1.BidService.GetEscrowBidTerms:output_type -> services.bid.v1.GetEscrowBidTermsResponse
+	50, // 86: services.bid.v1.BidService.GetBidSelectionTerms:output_type -> services.bid.v1.GetBidSelectionTermsResponse
+	67, // [67:87] is the sub-list for method output_type
+	47, // [47:67] is the sub-list for method input_type
+	47, // [47:47] is the sub-list for extension type_name
+	47, // [47:47] is the sub-list for extension extendee
+	0,  // [0:47] is the sub-list for field type_name
 }
 
 func init() { file_services_bid_bid_proto_init() }

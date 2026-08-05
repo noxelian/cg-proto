@@ -166,10 +166,14 @@ enum RequestAccessPerspective {
   REQUEST_ACCESS_PERSPECTIVE_BUYER = 1;
   REQUEST_ACCESS_PERSPECTIVE_SUPPLIER_ORG = 2;
   REQUEST_ACCESS_PERSPECTIVE_SUPPORT = 3;
+  // A PRO organization that owns/buys through a parts request. It is not the
+  // Client buyer and is not a supplier feed projection.
+  REQUEST_ACCESS_PERSPECTIVE_BUYER_ORG = 4;
 }
 
 // RequestAccessScope binds the caller app, perspective, and organization so a
-// dual-role account cannot cross from a CLIENT buyer projection into a PARTNER supplier organization feed.
+// dual-role account cannot cross between CLIENT buyer, PARTNER buyer
+// organization, and PARTNER supplier organization projections.
 // JWT app and organization authority wins over all request data. Existing
 // request user_id and organization_id fields remain filters, never authority;
 // the owner validates ownership/membership and the current membership_version,
@@ -181,6 +185,12 @@ message RequestAccessScope {
   string organization_id = 3;
   int64 membership_version = 4;
 }
+
+// Every user-facing request command that can own or mutate a parts request
+// carries RequestAccessScope. Public discovery/view counters and exact
+// service/admin-only classification, insurance, escrow, eligibility, and
+// broadcast projections remain protected by their separate transport/service
+// authorization contract and intentionally do not accept a mobile app scope.
 
 enum RequestType {
   REQUEST_TYPE_UNSPECIFIED = 0;
@@ -363,6 +373,7 @@ message CreateRequestRequest {
   // service scopes it to the authenticated principal and rejects reuse with a
   // different payload. Maximum 255 bytes; empty keeps legacy behavior.
   string idempotency_key = 27;
+  RequestAccessScope scope = 28;
 }
 
 message CreateRequestResponse {
@@ -407,6 +418,7 @@ message UpdateRequestRequest {
   optional int64 group_id = 13;
   repeated int64 category_ids = 14;
   bool has_category_ids = 15;
+  RequestAccessScope scope = 16;
 }
 
 message UpdateRequestResponse {
@@ -417,6 +429,7 @@ message UpdateRequestResponse {
 message DeleteRequestRequest {
   string request_id = 1; // UUID string
   int64 user_id = 2;
+  RequestAccessScope scope = 3;
 }
 
 message DeleteRequestResponse {
@@ -502,6 +515,7 @@ message ChangeStatusRequest {
   string request_id = 1; // UUID string
   RequestStatus status = 2;
   int64 user_id = 3;
+  RequestAccessScope scope = 4;
 }
 
 message ChangeStatusResponse {
@@ -562,6 +576,7 @@ message SelectRequestBidRequest {
   int64 bid_id = 2;
   int64 payer_user_id = 3;
   string organization_id = 4;
+  RequestAccessScope scope = 5;
 }
 
 message SelectRequestBidResponse {
@@ -573,6 +588,7 @@ message CloseRequestRequest {
   string request_id = 1;
   int64 user_id = 2;
   string idempotency_key = 3;
+  RequestAccessScope scope = 4;
 }
 
 message CloseRequestResponse {
@@ -751,6 +767,7 @@ message PauseRequestRequest {
   // Optional UUID of the organization the customer is pausing for.
   // Mirrors legacy paused_by_service_id. Empty = self-pause.
   optional string paused_by_org_id = 3;
+  RequestAccessScope scope = 4;
 }
 
 message PauseRequestResponse {
@@ -761,6 +778,7 @@ message PauseRequestResponse {
 message UnpauseRequestRequest {
   string request_id = 1; // UUID of the request to unpause
   int64 user_id = 2; // must match request.user_id
+  RequestAccessScope scope = 3;
 }
 
 message UnpauseRequestResponse {
@@ -844,6 +862,7 @@ message ReserveRequestBidSelectionRequest {
   int64 bid_id = 2;
   int64 payer_user_id = 3;
   string organization_id = 4;
+  RequestAccessScope scope = 5;
 }
 
 message ReserveRequestBidSelectionResponse {
@@ -856,6 +875,7 @@ message CancelRequestBidSelectionRequest {
   int64 bid_id = 2;
   int64 payer_user_id = 3;
   string organization_id = 4;
+  RequestAccessScope scope = 5;
 }
 
 message CancelRequestBidSelectionResponse {

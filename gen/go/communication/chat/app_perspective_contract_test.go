@@ -18,6 +18,7 @@ func TestAppPerspectiveContract(t *testing.T) {
 	assertEnumValue(t, enums.ByName("ChatPerspective"), "CHAT_PERSPECTIVE_SELLER_ORG", 2)
 	assertEnumValue(t, enums.ByName("ChatPerspective"), "CHAT_PERSPECTIVE_SELLER_USER", 3)
 	assertEnumValue(t, enums.ByName("ChatPerspective"), "CHAT_PERSPECTIVE_SUPPORT", 4)
+	assertEnumValue(t, enums.ByName("ChatPerspective"), "CHAT_PERSPECTIVE_BUYER_ORG", 5)
 	assertEnumValue(t, enums.ByName("ChatApp"), "CHAT_APP_CLIENT", 1)
 	assertEnumValue(t, enums.ByName("ChatApp"), "CHAT_APP_PRO", 2)
 	assertEnumValue(t, enums.ByName("ChatApp"), "CHAT_APP_ADMIN", 3)
@@ -101,6 +102,13 @@ func TestAppPerspectiveContract(t *testing.T) {
 		t.Fatal("ChatRealtimeEventPayload.target_apps must remain a repeated legacy JSON string")
 	}
 	assertField(t, realtime, "recipient_scope", 14, protoreflect.MessageKind)
+	recipient := messages.ByName("ChatRecipient")
+	assertField(t, recipient, "user_id", 1, protoreflect.Int64Kind)
+	assertField(t, recipient, "scope", 2, protoreflect.MessageKind)
+	assertField(t, realtime, "recipients", 15, protoreflect.MessageKind)
+	if !realtime.Fields().ByName("recipients").IsList() {
+		t.Fatal("ChatRealtimeEventPayload.recipients must be repeated")
+	}
 
 	adminRequestFields := map[protoreflect.Name]protoreflect.FieldNumber{
 		"AdminGetUserChatsRequest":    4,
@@ -234,9 +242,11 @@ func assertChatContractDocumentation(t *testing.T) {
 		"MUST retain legacy fallback delivery",
 		"owner/BFF MUST bind app to the verified JWT app",
 		"request values are never authority",
-			"CLIENT+BUYER and PRO+SELLER_ORG",
-			"membership_version is 0 iff organization_id is empty",
-			"stale mismatch",
+		"CLIENT+BUYER, PRO+BUYER_ORG, and",
+		"PRO+SELLER_ORG",
+		"binding every recipient user to their own membership generation",
+		"membership_version is 0 iff organization_id is empty",
+		"stale mismatch",
 	} {
 		if !strings.Contains(string(source), required) {
 			t.Errorf("chat.proto missing contract documentation %q", required)

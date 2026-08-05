@@ -15,6 +15,10 @@ func TestLegacyUserDeviceAndSettingsRPCsAreAppScopedAcrossLifecycle(t *testing.T
 	assertUserDeviceField(t, scope, "perspective", 2, protoreflect.EnumKind)
 	assertUserDeviceField(t, scope, "organization_id", 3, protoreflect.StringKind)
 	assertUserDeviceField(t, scope, "membership_version", 4, protoreflect.Int64Kind)
+	perspective := File_users_user_user_proto.Enums().ByName("UserPerspective").Values().ByName("USER_PERSPECTIVE_BUYER_ORG")
+	if perspective == nil || perspective.Number() != 4 {
+		t.Fatalf("USER_PERSPECTIVE_BUYER_ORG = %v, want 4", perspective)
+	}
 
 	for messageName, fieldNumber := range map[protoreflect.Name]protoreflect.FieldNumber{
 		"GetSettingsRequest":      1,

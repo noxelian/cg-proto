@@ -16,6 +16,7 @@ func TestCounterAppPerspectiveContract(t *testing.T) {
 	assertCounterEnumValue(t, enums.ByName("CounterPerspective"), "COUNTER_PERSPECTIVE_SELLER_ORG", 2)
 	assertCounterEnumValue(t, enums.ByName("CounterPerspective"), "COUNTER_PERSPECTIVE_SELLER_USER", 3)
 	assertCounterEnumValue(t, enums.ByName("CounterPerspective"), "COUNTER_PERSPECTIVE_SUPPORT", 4)
+	assertCounterEnumValue(t, enums.ByName("CounterPerspective"), "COUNTER_PERSPECTIVE_BUYER_ORG", 5)
 
 	messages := File_platform_counter_counter_proto.Messages()
 	scope := messages.ByName("CounterScope")
@@ -64,11 +65,11 @@ func assertCounterContractDocumentation(t *testing.T) {
 		"reject a caller-scoped",
 		"membership/ownership with the source",
 		"BFF-selected fields are never authority",
-		"CLIENT+BUYER and",
-			"PRO+SELLER_ORG",
-			"membership_version is 0 iff organization_id is empty",
-			"removal/rehire",
-			"late event",
+		"CLIENT+BUYER,",
+		"PRO+BUYER_ORG, and PRO+SELLER_ORG",
+		"membership_version is 0 iff organization_id is empty",
+		"removal/rehire",
+		"late event",
 	} {
 		if !strings.Contains(string(source), required) {
 			t.Errorf("counter.proto missing contract documentation %q", required)

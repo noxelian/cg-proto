@@ -9,6 +9,17 @@ import (
 func TestNormalizeCounterRouting(t *testing.T) {
 	org1 := counterOrganizationScope("org-1", 7)
 	org2 := counterOrganizationScope("org-2", 12)
+	buyerOrg := &counterv1.CounterScope{App: counterv1.CounterApp_COUNTER_APP_PRO, Perspective: counterv1.CounterPerspective_COUNTER_PERSPECTIVE_BUYER_ORG, OrganizationId: "org-1", MembershipVersion: 7}
+
+	t.Run("PRO buyer organization remains distinct from supplier organization", func(t *testing.T) {
+		got, err := NormalizeCounterRouting(CounterRouting{Scopes: []*counterv1.CounterScope{buyerOrg, org1}}, map[string]int64{"org-1": 7})
+		if err != nil {
+			t.Fatalf("normalize: %v", err)
+		}
+		if len(got) != 2 || counterIdentity(got[0]) == counterIdentity(got[1]) {
+			t.Fatalf("buyer/supplier counter scopes mixed: %+v", got)
+		}
+	})
 
 	t.Run("matching multiple bound tuples preserve each generation", func(t *testing.T) {
 		got, err := NormalizeCounterRouting(CounterRouting{

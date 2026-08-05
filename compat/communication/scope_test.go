@@ -18,9 +18,32 @@ func TestNormalizePushAudience(t *testing.T) {
 		OrganizationId:    "org-1",
 		MembershipVersion: 7,
 	}
+	partnerBuyer := &notificationv1.NotificationScope{
+		App:               notificationv1.NotificationApp_NOTIFICATION_APP_PRO,
+		Perspective:       notificationv1.NotificationPerspective_NOTIFICATION_PERSPECTIVE_BUYER_ORG,
+		OrganizationId:    "org-1",
+		MembershipVersion: 7,
+	}
+
+	t.Run("PRO buyer organization is distinct from supplier organization", func(t *testing.T) {
+		result, err := NormalizePushAudience(&notificationv1.PushEventPayload{UserId: 27, RecipientScopes: []*notificationv1.NotificationScope{partnerBuyer, partner}})
+		if err != nil {
+			t.Fatalf("normalize: %v", err)
+		}
+		if len(result.Scopes) != 2 || notificationScopeIdentityKey(result.Scopes[0]) == notificationScopeIdentityKey(result.Scopes[1]) {
+			t.Fatalf("buyer/supplier scopes were mixed: %+v", result.Scopes)
+		}
+	})
+
+	t.Run("canonical notification scope requires its bound user", func(t *testing.T) {
+		if _, err := NormalizePushAudience(&notificationv1.PushEventPayload{RecipientScopes: []*notificationv1.NotificationScope{partner}}); err == nil {
+			t.Fatal("canonical notification tuple accepted without user_id")
+		}
+	})
 
 	t.Run("matching multiple bound scopes stay separate", func(t *testing.T) {
 		result, err := NormalizePushAudience(&notificationv1.PushEventPayload{
+			UserId:          27,
 			TargetApps:      []string{"client", "partner"},
 			RecipientScopes: []*notificationv1.NotificationScope{client, partner},
 		})
@@ -34,6 +57,7 @@ func TestNormalizePushAudience(t *testing.T) {
 
 	t.Run("typed legacy conflict is rejected", func(t *testing.T) {
 		_, err := NormalizePushAudience(&notificationv1.PushEventPayload{
+			UserId:          27,
 			TargetApps:      []string{"client"},
 			RecipientScopes: []*notificationv1.NotificationScope{partner},
 		})
@@ -44,6 +68,7 @@ func TestNormalizePushAudience(t *testing.T) {
 
 	t.Run("deprecated parallel conflict is rejected", func(t *testing.T) {
 		_, err := NormalizePushAudience(&notificationv1.PushEventPayload{
+			UserId:                  27,
 			TypedTargetApps:         []notificationv1.NotificationApp{notificationv1.NotificationApp_NOTIFICATION_APP_PRO},
 			RecipientPerspective:    notificationv1.NotificationPerspective_NOTIFICATION_PERSPECTIVE_SELLER_ORG,
 			RecipientOrganizationId: "org-2",
@@ -62,6 +87,7 @@ func TestNormalizePushAudience(t *testing.T) {
 			MembershipVersion: partner.GetMembershipVersion() - 1,
 		}
 		_, err := NormalizePushAudience(&notificationv1.PushEventPayload{
+			UserId:          27,
 			RecipientScopes: []*notificationv1.NotificationScope{stale, partner},
 		})
 		if err == nil {
@@ -71,6 +97,7 @@ func TestNormalizePushAudience(t *testing.T) {
 
 	t.Run("organization routing without canonical version is rejected", func(t *testing.T) {
 		_, err := NormalizePushAudience(&notificationv1.PushEventPayload{
+			UserId:                  27,
 			TypedTargetApps:         []notificationv1.NotificationApp{notificationv1.NotificationApp_NOTIFICATION_APP_PRO},
 			RecipientPerspective:    notificationv1.NotificationPerspective_NOTIFICATION_PERSPECTIVE_SELLER_ORG,
 			RecipientOrganizationId: "org-1",
@@ -127,6 +154,66 @@ func TestNormalizeChatAudience(t *testing.T) {
 		OrganizationId:    "org-1",
 		MembershipVersion: 11,
 	}
+	partnerBuyer := &chatv1.ChatScope{
+		App:               chatv1.ChatApp_CHAT_APP_PRO,
+		Perspective:       chatv1.ChatPerspective_CHAT_PERSPECTIVE_BUYER_ORG,
+		OrganizationId:    "org-buyer",
+		MembershipVersion: 4,
+	}
+
+	t.Run("PRO buyer organization does not alias supplier", func(t *testing.T) {
+		result, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{Recipients: []*chatv1.ChatRecipient{{UserId: 30, Scope: partnerBuyer}}})
+		if err != nil {
+			t.Fatalf("normalize: %v", err)
+		}
+		if len(result.Recipients) != 1 || result.Recipients[0].GetScope().GetPerspective() != chatv1.ChatPerspective_CHAT_PERSPECTIVE_BUYER_ORG || chatScopeIdentityKey(partnerBuyer) == chatScopeIdentityKey(partner) {
+			t.Fatalf("buyer organization scope was mixed: %+v", result)
+		}
+	})
+
+	t.Run("organization fanout binds each user generation", func(t *testing.T) {
+		first := &chatv1.ChatRecipient{UserId: 41, Scope: partner}
+		second := &chatv1.ChatRecipient{UserId: 42, Scope: &chatv1.ChatScope{App: partner.GetApp(), Perspective: partner.GetPerspective(), OrganizationId: partner.GetOrganizationId(), MembershipVersion: 19}}
+		result, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{
+			RecipientUserIds: []int64{41, 42},
+			TargetApps:       []string{"partner"},
+			RecipientOrgId:   "org-1",
+			Recipients:       []*chatv1.ChatRecipient{first, second},
+		})
+		if err != nil {
+			t.Fatalf("normalize: %v", err)
+		}
+		if len(result.Recipients) != 2 || result.Recipients[0].GetScope().GetMembershipVersion() != 11 || result.Recipients[1].GetScope().GetMembershipVersion() != 19 {
+			t.Fatalf("recipient generations lost: %+v", result.Recipients)
+		}
+	})
+
+	t.Run("fired and rehired generation for one user conflicts", func(t *testing.T) {
+		_, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{Recipients: []*chatv1.ChatRecipient{
+			{UserId: 41, Scope: partner},
+			{UserId: 41, Scope: &chatv1.ChatScope{App: partner.GetApp(), Perspective: partner.GetPerspective(), OrganizationId: partner.GetOrganizationId(), MembershipVersion: 12}},
+		}})
+		if err == nil {
+			t.Fatal("same user accepted under fired and rehired generations")
+		}
+	})
+
+	t.Run("one legacy organization scope cannot fan out to many users", func(t *testing.T) {
+		_, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{RecipientUserIds: []int64{41, 42}, RecipientScope: partner})
+		if err == nil {
+			t.Fatal("single organization generation accepted for multiple users")
+		}
+	})
+
+	t.Run("bound recipients must agree with legacy user identifiers", func(t *testing.T) {
+		_, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{
+			RecipientUserIds: []int64{99},
+			Recipients:       []*chatv1.ChatRecipient{{UserId: 41, Scope: partner}},
+		})
+		if err == nil {
+			t.Fatal("conflicting canonical and legacy user identity accepted")
+		}
+	})
 
 	t.Run("matching typed and legacy route", func(t *testing.T) {
 		result, err := NormalizeChatAudience(&chatv1.ChatRealtimeEventPayload{
@@ -216,6 +303,9 @@ func TestNormalizeChatAudience(t *testing.T) {
 		}
 		if err := ValidateChatMembershipVersion(partner, 12); err == nil {
 			t.Fatal("stale membership version accepted")
+		}
+		if err := ValidateChatMembershipVersion(partner, 0); err == nil {
+			t.Fatal("removed member generation accepted")
 		}
 	})
 }

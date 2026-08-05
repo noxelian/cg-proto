@@ -121,8 +121,9 @@ func (CounterApp) EnumDescriptor() ([]byte, []int) {
 }
 
 // CounterPerspective separates buyer and seller profile projections for one
-// authenticated user. A single user can therefore address CLIENT+BUYER and
-// PRO+SELLER_ORG as independent scopes; user_id alone never selects a profile.
+// authenticated user. A single user can therefore address CLIENT+BUYER,
+// PRO+BUYER_ORG, and PRO+SELLER_ORG as independent scopes; user_id alone never
+// selects a profile.
 type CounterPerspective int32
 
 const (
@@ -131,6 +132,8 @@ const (
 	CounterPerspective_COUNTER_PERSPECTIVE_SELLER_ORG  CounterPerspective = 2
 	CounterPerspective_COUNTER_PERSPECTIVE_SELLER_USER CounterPerspective = 3
 	CounterPerspective_COUNTER_PERSPECTIVE_SUPPORT     CounterPerspective = 4
+	// PRO organization purchasing parts, isolated from Client and supplier state.
+	CounterPerspective_COUNTER_PERSPECTIVE_BUYER_ORG CounterPerspective = 5
 )
 
 // Enum value maps for CounterPerspective.
@@ -141,6 +144,7 @@ var (
 		2: "COUNTER_PERSPECTIVE_SELLER_ORG",
 		3: "COUNTER_PERSPECTIVE_SELLER_USER",
 		4: "COUNTER_PERSPECTIVE_SUPPORT",
+		5: "COUNTER_PERSPECTIVE_BUYER_ORG",
 	}
 	CounterPerspective_value = map[string]int32{
 		"COUNTER_PERSPECTIVE_UNSPECIFIED": 0,
@@ -148,6 +152,7 @@ var (
 		"COUNTER_PERSPECTIVE_SELLER_ORG":  2,
 		"COUNTER_PERSPECTIVE_SELLER_USER": 3,
 		"COUNTER_PERSPECTIVE_SUPPORT":     4,
+		"COUNTER_PERSPECTIVE_BUYER_ORG":   5,
 	}
 )
 
@@ -1503,13 +1508,14 @@ const file_platform_counter_counter_proto_rawDesc = "" +
 	"CounterApp\x12\x1b\n" +
 	"\x17COUNTER_APP_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12COUNTER_APP_CLIENT\x10\x01\x12\x13\n" +
-	"\x0fCOUNTER_APP_PRO\x10\x02*\xc2\x01\n" +
+	"\x0fCOUNTER_APP_PRO\x10\x02*\xe5\x01\n" +
 	"\x12CounterPerspective\x12#\n" +
 	"\x1fCOUNTER_PERSPECTIVE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19COUNTER_PERSPECTIVE_BUYER\x10\x01\x12\"\n" +
 	"\x1eCOUNTER_PERSPECTIVE_SELLER_ORG\x10\x02\x12#\n" +
 	"\x1fCOUNTER_PERSPECTIVE_SELLER_USER\x10\x03\x12\x1f\n" +
-	"\x1bCOUNTER_PERSPECTIVE_SUPPORT\x10\x042\xc7\x06\n" +
+	"\x1bCOUNTER_PERSPECTIVE_SUPPORT\x10\x04\x12!\n" +
+	"\x1dCOUNTER_PERSPECTIVE_BUYER_ORG\x10\x052\xc7\x06\n" +
 	"\x0eCounterService\x12`\n" +
 	"\vGetCounters\x12'.platform.counter.v1.GetCountersRequest\x1a(.platform.counter.v1.GetCountersResponse\x12o\n" +
 	"\x10IncrementCounter\x12,.platform.counter.v1.IncrementCounterRequest\x1a-.platform.counter.v1.IncrementCounterResponse\x12o\n" +

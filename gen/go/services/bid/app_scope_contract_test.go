@@ -15,16 +15,24 @@ func TestPartsBidReadsCarryAuthoritativeScope(t *testing.T) {
 	assertBidScopeField(t, scope, "perspective", 2, protoreflect.EnumKind)
 	assertBidScopeField(t, scope, "organization_id", 3, protoreflect.StringKind)
 	assertBidScopeField(t, scope, "membership_version", 4, protoreflect.Int64Kind)
+	assertBidEnumValue(t, File_services_bid_bid_proto.Enums().ByName("BidAccessPerspective"), "BID_ACCESS_PERSPECTIVE_BUYER_ORG", 4)
 
 	requestFields := map[protoreflect.Name]protoreflect.FieldNumber{
+		"CreateBidRequest":                     11,
 		"GetBidRequest":                        2,
+		"UpdateBidRequest":                     9,
+		"DeleteBidRequest":                     3,
 		"GetBidForBuyerRequest":                3,
 		"ListBidsForBuyerRequest":              3,
 		"HasAcceptedBidForOrganizationRequest": 3,
 		"ListBidsRequest":                      7,
 		"GetBidsByRequestRequest":              5,
 		"GetBidsByOrganizationRequest":         5,
+		"AcceptBidRequest":                     3,
+		"RejectBidRequest":                     3,
+		"CancelBidRequest":                     3,
 		"GetBidPartPricesRequest":              2,
+		"MarkPartsPurchasedRequest":            3,
 		"MarkBidReadRequest":                   4,
 		"GetRequestResponsesSummaryRequest":    3,
 	}
@@ -33,14 +41,21 @@ func TestPartsBidReadsCarryAuthoritativeScope(t *testing.T) {
 	}
 	service := File_services_bid_bid_proto.Services().ByName("BidService")
 	operations := map[protoreflect.Name]protoreflect.Name{
+		"CreateBid":                     "CreateBidRequest",
 		"GetBid":                        "GetBidRequest",
+		"UpdateBid":                     "UpdateBidRequest",
+		"DeleteBid":                     "DeleteBidRequest",
 		"GetBidForBuyer":                "GetBidForBuyerRequest",
 		"ListBidsForBuyer":              "ListBidsForBuyerRequest",
 		"HasAcceptedBidForOrganization": "HasAcceptedBidForOrganizationRequest",
 		"ListBids":                      "ListBidsRequest",
 		"GetBidsByRequest":              "GetBidsByRequestRequest",
 		"GetBidsByOrganization":         "GetBidsByOrganizationRequest",
+		"AcceptBid":                     "AcceptBidRequest",
+		"RejectBid":                     "RejectBidRequest",
+		"CancelBid":                     "CancelBidRequest",
 		"GetBidPartPrices":              "GetBidPartPricesRequest",
+		"MarkPartsPurchased":            "MarkPartsPurchasedRequest",
 		"MarkBidRead":                   "MarkBidReadRequest",
 		"GetRequestResponsesSummary":    "GetRequestResponsesSummaryRequest",
 	}
@@ -52,6 +67,27 @@ func TestPartsBidReadsCarryAuthoritativeScope(t *testing.T) {
 		if method == nil || method.Input().Name() != requestName || method.Input().Fields().ByName("scope") == nil {
 			t.Fatalf("BidService.%s is not bound to scoped request %s", methodName, requestName)
 		}
+	}
+	serviceOnly := map[protoreflect.Name]protoreflect.Name{
+		"GetAcceptedInsuranceBidForPayout": "GetAcceptedInsuranceBidForPayoutRequest",
+		"GetEscrowBidTerms":                "GetEscrowBidTermsRequest",
+		"GetBidSelectionTerms":             "GetBidSelectionTermsRequest",
+	}
+	if service.Methods().Len() != len(operations)+len(serviceOnly) {
+		t.Fatalf("BidService has %d methods; scoped=%d service-only=%d", service.Methods().Len(), len(operations), len(serviceOnly))
+	}
+	for methodName, requestName := range serviceOnly {
+		method := service.Methods().ByName(methodName)
+		if method == nil || method.Input().Name() != requestName || method.Input().Fields().ByName("scope") != nil {
+			t.Fatalf("BidService.%s service-only boundary changed", methodName)
+		}
+	}
+}
+
+func assertBidEnumValue(t *testing.T, enum protoreflect.EnumDescriptor, name protoreflect.Name, number protoreflect.EnumNumber) {
+	t.Helper()
+	if enum == nil || enum.Values().ByName(name) == nil || enum.Values().ByName(name).Number() != number {
+		t.Fatalf("enum value %s=%d not found", name, number)
 	}
 }
 

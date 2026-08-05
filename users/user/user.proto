@@ -423,6 +423,9 @@ enum UserPerspective {
   USER_PERSPECTIVE_BUYER = 1;
   USER_PERSPECTIVE_SELLER_ORG = 2;
   USER_PERSPECTIVE_SELLER_USER = 3;
+  // PRO organization purchasing parts. Device/settings state for this profile
+  // must not be shared with Client buyer or supplier organization profiles.
+  USER_PERSPECTIVE_BUYER_ORG = 4;
 }
 
 // UserAppScope binds app, perspective, and organization. The service derives

@@ -65,14 +65,17 @@ enum NotificationApp {
 }
 
 // NotificationPerspective identifies the recipient profile inside an app.
-// A single user can therefore address CLIENT+BUYER and PRO+SELLER_ORG as
-// independent scopes; user_id alone never selects a profile.
+// A single user can therefore address CLIENT+BUYER, PRO+BUYER_ORG, and
+// PRO+SELLER_ORG as independent scopes; user_id alone never selects a profile.
 enum NotificationPerspective {
   NOTIFICATION_PERSPECTIVE_UNSPECIFIED = 0;
   NOTIFICATION_PERSPECTIVE_BUYER = 1;
   NOTIFICATION_PERSPECTIVE_SELLER_ORG = 2;
   NOTIFICATION_PERSPECTIVE_SELLER_USER = 3;
   NOTIFICATION_PERSPECTIVE_SUPPORT = 4;
+  // PRO organization purchasing parts; never aliases the Client buyer or the
+  // supplier organization projection.
+  NOTIFICATION_PERSPECTIVE_BUYER_ORG = 5;
 }
 
 // NotificationScope is the single authoritative app + perspective + organization tuple.

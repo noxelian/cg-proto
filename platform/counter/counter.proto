@@ -32,14 +32,17 @@ enum CounterApp {
 }
 
 // CounterPerspective separates buyer and seller profile projections for one
-// authenticated user. A single user can therefore address CLIENT+BUYER and
-// PRO+SELLER_ORG as independent scopes; user_id alone never selects a profile.
+// authenticated user. A single user can therefore address CLIENT+BUYER,
+// PRO+BUYER_ORG, and PRO+SELLER_ORG as independent scopes; user_id alone never
+// selects a profile.
 enum CounterPerspective {
   COUNTER_PERSPECTIVE_UNSPECIFIED = 0;
   COUNTER_PERSPECTIVE_BUYER = 1;
   COUNTER_PERSPECTIVE_SELLER_ORG = 2;
   COUNTER_PERSPECTIVE_SELLER_USER = 3;
   COUNTER_PERSPECTIVE_SUPPORT = 4;
+  // PRO organization purchasing parts, isolated from Client and supplier state.
+  COUNTER_PERSPECTIVE_BUYER_ORG = 5;
 }
 
 // CounterScope binds app, perspective, organization, and membership generation

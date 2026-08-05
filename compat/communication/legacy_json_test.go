@@ -32,17 +32,22 @@ func TestLegacyChatJSONKeepsAllConsumerIDsNumeric(t *testing.T) {
 			OrganizationId:    "org-7",
 			MembershipVersion: 17,
 		},
+		Recipients: []*chatv1.ChatRecipient{
+			{UserId: exactLargeID - 1, Scope: &chatv1.ChatScope{App: chatv1.ChatApp_CHAT_APP_PRO, Perspective: chatv1.ChatPerspective_CHAT_PERSPECTIVE_SELLER_ORG, OrganizationId: "org-7", MembershipVersion: 17}},
+			{UserId: exactLargeID - 2, Scope: &chatv1.ChatScope{App: chatv1.ChatApp_CHAT_APP_PRO, Perspective: chatv1.ChatPerspective_CHAT_PERSPECTIVE_SELLER_ORG, OrganizationId: "org-7", MembershipVersion: 18}},
+		},
 	}
 
 	wire, err := MarshalLegacyChatEvent(event)
 	if err != nil {
 		t.Fatalf("marshal legacy chat event: %v", err)
 	}
-	assertJSONKeys(t, wire, "message_id", "chat_id", "sender_id", "message_type", "recipient_id", "recipient_user_ids", "target_apps", "recipient_org_id", "context_type", "context_id")
+	assertJSONKeys(t, wire, "message_id", "chat_id", "sender_id", "message_type", "recipient_id", "recipient_user_ids", "target_apps", "recipient_org_id", "context_type", "context_id", "recipients")
 	assertNumericJSONField(t, wire, "sender_id", exactLargeID)
 	assertNumericJSONField(t, wire, "recipient_id", exactLargeID-1)
 	assertNumericJSONArray(t, wire, "recipient_user_ids", []int64{exactLargeID - 1, exactLargeID - 2})
 	assertNestedMembershipVersion(t, wire, "recipient_scope", 17)
+	assertBoundChatRecipientsNumeric(t, wire, []int64{exactLargeID - 1, exactLargeID - 2}, []int64{17, 18})
 
 	var mobileConsumer struct {
 		MessageID        string  `json:"message_id"`
@@ -64,8 +69,44 @@ func TestLegacyChatJSONKeepsAllConsumerIDsNumeric(t *testing.T) {
 		t.Fatalf("unmarshal legacy chat event: %v", err)
 	}
 	if roundTrip.GetSenderId() != event.GetSenderId() || roundTrip.GetRecipientId() != event.GetRecipientId() ||
-		!reflect.DeepEqual(roundTrip.GetRecipientUserIds(), event.GetRecipientUserIds()) {
+		!reflect.DeepEqual(roundTrip.GetRecipientUserIds(), event.GetRecipientUserIds()) || len(roundTrip.GetRecipients()) != 2 ||
+		roundTrip.GetRecipients()[1].GetScope().GetMembershipVersion() != 18 {
 		t.Fatalf("chat round trip changed integer IDs: %+v", &roundTrip)
+	}
+}
+
+func assertBoundChatRecipientsNumeric(t *testing.T, data []byte, wantUsers, wantVersions []int64) {
+	t.Helper()
+	values := decodeNumbers(t, data)
+	items, ok := values["recipients"].([]any)
+	if !ok || len(items) != len(wantUsers) || len(wantUsers) != len(wantVersions) {
+		t.Fatalf("recipients = %#v, want %d entries", values["recipients"], len(wantUsers))
+	}
+	for i, item := range items {
+		recipient, ok := item.(map[string]any)
+		if !ok {
+			t.Fatalf("recipients[%d] type = %T", i, item)
+		}
+		userID, ok := recipient["user_id"].(json.Number)
+		if !ok {
+			t.Fatalf("recipients[%d].user_id type = %T, want number", i, recipient["user_id"])
+		}
+		gotUser, err := userID.Int64()
+		if err != nil || gotUser != wantUsers[i] {
+			t.Fatalf("recipients[%d].user_id = %q (%v), want %d", i, userID, err, wantUsers[i])
+		}
+		scope, ok := recipient["scope"].(map[string]any)
+		if !ok {
+			t.Fatalf("recipients[%d].scope type = %T", i, recipient["scope"])
+		}
+		version, ok := scope["membership_version"].(json.Number)
+		if !ok {
+			t.Fatalf("recipients[%d].scope.membership_version type = %T, want number", i, scope["membership_version"])
+		}
+		gotVersion, err := version.Int64()
+		if err != nil || gotVersion != wantVersions[i] {
+			t.Fatalf("recipients[%d].scope.membership_version = %q (%v), want %d", i, version, err, wantVersions[i])
+		}
 	}
 }
 

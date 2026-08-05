@@ -123,13 +123,15 @@ func validateCounterScope(scope *counterv1.CounterScope) error {
 		return fmt.Errorf("CLIENT counter scope cannot carry organization_id")
 	}
 	if scope.GetApp() == counterv1.CounterApp_COUNTER_APP_PRO &&
+		scope.GetPerspective() != counterv1.CounterPerspective_COUNTER_PERSPECTIVE_BUYER_ORG &&
 		scope.GetPerspective() != counterv1.CounterPerspective_COUNTER_PERSPECTIVE_SELLER_ORG &&
 		scope.GetPerspective() != counterv1.CounterPerspective_COUNTER_PERSPECTIVE_SELLER_USER &&
 		scope.GetPerspective() != counterv1.CounterPerspective_COUNTER_PERSPECTIVE_SUPPORT {
-		return fmt.Errorf("PRO counter scope must use a seller or support perspective")
+		return fmt.Errorf("PRO counter scope must use BUYER_ORG, a seller, or support perspective")
 	}
-	if scope.GetPerspective() == counterv1.CounterPerspective_COUNTER_PERSPECTIVE_SELLER_ORG && scope.GetOrganizationId() == "" {
-		return fmt.Errorf("seller organization counter scope requires organization_id")
+	if (scope.GetPerspective() == counterv1.CounterPerspective_COUNTER_PERSPECTIVE_BUYER_ORG ||
+		scope.GetPerspective() == counterv1.CounterPerspective_COUNTER_PERSPECTIVE_SELLER_ORG) && scope.GetOrganizationId() == "" {
+		return fmt.Errorf("organization counter perspective requires organization_id")
 	}
 	if scope.GetOrganizationId() == "" && scope.GetMembershipVersion() != 0 {
 		return fmt.Errorf("membership_version must be 0 without organization_id")

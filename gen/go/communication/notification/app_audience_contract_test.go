@@ -21,6 +21,7 @@ func TestAppAudienceContract(t *testing.T) {
 	assertNotificationEnumValue(t, enums.ByName("NotificationPerspective"), "NOTIFICATION_PERSPECTIVE_SELLER_ORG", 2)
 	assertNotificationEnumValue(t, enums.ByName("NotificationPerspective"), "NOTIFICATION_PERSPECTIVE_SELLER_USER", 3)
 	assertNotificationEnumValue(t, enums.ByName("NotificationPerspective"), "NOTIFICATION_PERSPECTIVE_SUPPORT", 4)
+	assertNotificationEnumValue(t, enums.ByName("NotificationPerspective"), "NOTIFICATION_PERSPECTIVE_BUYER_ORG", 5)
 
 	messages := File_communication_notification_notification_proto.Messages()
 	for _, field := range []notificationFieldExpectation{

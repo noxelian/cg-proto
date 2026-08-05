@@ -18,20 +18,21 @@ import (
 var errNilLegacyEnvelope = errors.New("legacy communication envelope is nil")
 
 type legacyChatEvent struct {
-	MessageID               string                 `json:"message_id"`
-	ChatID                  string                 `json:"chat_id"`
-	SenderID                int64                  `json:"sender_id"`
-	MessageType             string                 `json:"message_type"`
-	RecipientID             int64                  `json:"recipient_id"`
-	RecipientUserIDs        []int64                `json:"recipient_user_ids,omitempty"`
-	TargetApps              []string               `json:"target_apps"`
-	RecipientOrgID          string                 `json:"recipient_org_id"`
-	RecipientApp            chatv1.ChatApp         `json:"recipient_app,omitempty"`
-	RecipientPerspective    chatv1.ChatPerspective `json:"recipient_perspective,omitempty"`
-	RecipientOrganizationID string                 `json:"recipient_organization_id,omitempty"`
-	ContextType             string                 `json:"context_type"`
-	ContextID               string                 `json:"context_id"`
-	RecipientScope          *chatv1.ChatScope      `json:"recipient_scope,omitempty"`
+	MessageID               string                  `json:"message_id"`
+	ChatID                  string                  `json:"chat_id"`
+	SenderID                int64                   `json:"sender_id"`
+	MessageType             string                  `json:"message_type"`
+	RecipientID             int64                   `json:"recipient_id"`
+	RecipientUserIDs        []int64                 `json:"recipient_user_ids,omitempty"`
+	TargetApps              []string                `json:"target_apps"`
+	RecipientOrgID          string                  `json:"recipient_org_id"`
+	RecipientApp            chatv1.ChatApp          `json:"recipient_app,omitempty"`
+	RecipientPerspective    chatv1.ChatPerspective  `json:"recipient_perspective,omitempty"`
+	RecipientOrganizationID string                  `json:"recipient_organization_id,omitempty"`
+	ContextType             string                  `json:"context_type"`
+	ContextID               string                  `json:"context_id"`
+	RecipientScope          *chatv1.ChatScope       `json:"recipient_scope,omitempty"`
+	Recipients              []*chatv1.ChatRecipient `json:"recipients,omitempty"`
 }
 
 // MarshalLegacyChatEvent preserves the encoding/json wire used by chat.events.
@@ -54,6 +55,7 @@ func MarshalLegacyChatEvent(event *chatv1.ChatRealtimeEventPayload) ([]byte, err
 		ContextType:             event.GetContextType(),
 		ContextID:               event.GetContextId(),
 		RecipientScope:          event.GetRecipientScope(),
+		Recipients:              event.GetRecipients(),
 	})
 }
 
@@ -82,6 +84,7 @@ func UnmarshalLegacyChatEvent(data []byte, event *chatv1.ChatRealtimeEventPayloa
 		ContextType:             wire.ContextType,
 		ContextId:               wire.ContextID,
 		RecipientScope:          wire.RecipientScope,
+		Recipients:              wire.Recipients,
 	}
 	return nil
 }

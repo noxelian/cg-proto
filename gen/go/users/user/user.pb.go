@@ -149,6 +149,9 @@ const (
 	UserPerspective_USER_PERSPECTIVE_BUYER       UserPerspective = 1
 	UserPerspective_USER_PERSPECTIVE_SELLER_ORG  UserPerspective = 2
 	UserPerspective_USER_PERSPECTIVE_SELLER_USER UserPerspective = 3
+	// PRO organization purchasing parts. Device/settings state for this profile
+	// must not be shared with Client buyer or supplier organization profiles.
+	UserPerspective_USER_PERSPECTIVE_BUYER_ORG UserPerspective = 4
 )
 
 // Enum value maps for UserPerspective.
@@ -158,12 +161,14 @@ var (
 		1: "USER_PERSPECTIVE_BUYER",
 		2: "USER_PERSPECTIVE_SELLER_ORG",
 		3: "USER_PERSPECTIVE_SELLER_USER",
+		4: "USER_PERSPECTIVE_BUYER_ORG",
 	}
 	UserPerspective_value = map[string]int32{
 		"USER_PERSPECTIVE_UNSPECIFIED": 0,
 		"USER_PERSPECTIVE_BUYER":       1,
 		"USER_PERSPECTIVE_SELLER_ORG":  2,
 		"USER_PERSPECTIVE_SELLER_USER": 3,
+		"USER_PERSPECTIVE_BUYER_ORG":   4,
 	}
 )
 
@@ -6148,12 +6153,13 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\aUserApp\x12\x18\n" +
 	"\x14USER_APP_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fUSER_APP_CLIENT\x10\x01\x12\x10\n" +
-	"\fUSER_APP_PRO\x10\x02*\x92\x01\n" +
+	"\fUSER_APP_PRO\x10\x02*\xb2\x01\n" +
 	"\x0fUserPerspective\x12 \n" +
 	"\x1cUSER_PERSPECTIVE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16USER_PERSPECTIVE_BUYER\x10\x01\x12\x1f\n" +
 	"\x1bUSER_PERSPECTIVE_SELLER_ORG\x10\x02\x12 \n" +
-	"\x1cUSER_PERSPECTIVE_SELLER_USER\x10\x032\xc9!\n" +
+	"\x1cUSER_PERSPECTIVE_SELLER_USER\x10\x03\x12\x1e\n" +
+	"\x1aUSER_PERSPECTIVE_BUYER_ORG\x10\x042\xc9!\n" +
 	"\vUserService\x12Q\n" +
 	"\n" +
 	"GetProfile\x12 .users.user.v1.GetProfileRequest\x1a!.users.user.v1.GetProfileResponse\x12Z\n" +
