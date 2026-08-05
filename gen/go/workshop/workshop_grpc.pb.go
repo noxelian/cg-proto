@@ -131,6 +131,7 @@ type WorkshopServiceClient interface {
 	GetKanban(ctx context.Context, in *GetKanbanRequest, opts ...grpc.CallOption) (*GetKanbanResponse, error)
 	// AcceptVehicle is the explicit V2 arrival command. The authenticated
 	// principal is the audit actor; caller-supplied identity is never trusted.
+	// See AcceptVehicleRequest for the mandatory replay/conflict contract.
 	AcceptVehicle(ctx context.Context, in *AcceptVehicleRequest, opts ...grpc.CallOption) (*AcceptVehicleResponse, error)
 	// --- Car Work ---
 	CreateCarWork(ctx context.Context, in *CreateCarWorkRequest, opts ...grpc.CallOption) (*CreateCarWorkResponse, error)
@@ -201,7 +202,9 @@ type WorkshopServiceClient interface {
 	// --- CRM Integration ---
 	// CreateIntakeOrderFromCRM is reserved for the idempotent V2 CRM event
 	// consumer and controlled replay tooling. Human/BFF intake must not use it
-	// to orchestrate CRM and workshop synchronously.
+	// to orchestrate CRM and workshop synchronously. The request contains only
+	// routing/linkage identifiers; cg-workshop resolves every tenant, customer,
+	// car and display field from authoritative records before writing.
 	CreateIntakeOrderFromCRM(ctx context.Context, in *CreateIntakeOrderFromCRMRequest, opts ...grpc.CallOption) (*CreateIntakeOrderFromCRMResponse, error)
 	CreateOrderFromCRM(ctx context.Context, in *CreateOrderFromCRMRequest, opts ...grpc.CallOption) (*CreateOrderFromCRMResponse, error)
 	SyncCRMDeals(ctx context.Context, in *SyncCRMDealsRequest, opts ...grpc.CallOption) (*SyncCRMDealsResponse, error)
@@ -1139,6 +1142,7 @@ type WorkshopServiceServer interface {
 	GetKanban(context.Context, *GetKanbanRequest) (*GetKanbanResponse, error)
 	// AcceptVehicle is the explicit V2 arrival command. The authenticated
 	// principal is the audit actor; caller-supplied identity is never trusted.
+	// See AcceptVehicleRequest for the mandatory replay/conflict contract.
 	AcceptVehicle(context.Context, *AcceptVehicleRequest) (*AcceptVehicleResponse, error)
 	// --- Car Work ---
 	CreateCarWork(context.Context, *CreateCarWorkRequest) (*CreateCarWorkResponse, error)
@@ -1209,7 +1213,9 @@ type WorkshopServiceServer interface {
 	// --- CRM Integration ---
 	// CreateIntakeOrderFromCRM is reserved for the idempotent V2 CRM event
 	// consumer and controlled replay tooling. Human/BFF intake must not use it
-	// to orchestrate CRM and workshop synchronously.
+	// to orchestrate CRM and workshop synchronously. The request contains only
+	// routing/linkage identifiers; cg-workshop resolves every tenant, customer,
+	// car and display field from authoritative records before writing.
 	CreateIntakeOrderFromCRM(context.Context, *CreateIntakeOrderFromCRMRequest) (*CreateIntakeOrderFromCRMResponse, error)
 	CreateOrderFromCRM(context.Context, *CreateOrderFromCRMRequest) (*CreateOrderFromCRMResponse, error)
 	SyncCRMDeals(context.Context, *SyncCRMDealsRequest) (*SyncCRMDealsResponse, error)

@@ -13702,10 +13702,22 @@ func (x *RepairOrderBlocker) GetBlockedByUserId() int64 {
 }
 
 type AcceptVehicleRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	RepairOrderId int64                  `protobuf:"varint,1,opt,name=repair_order_id,json=repairOrderId,proto3" json:"repair_order_id,omitempty"`
-	// Required command key. A retry with the same key returns the same arrival
-	// result and must not publish a second lifecycle event.
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The required idempotency key is scoped to
+	// (authoritative organization_id, authoritative workshop_id,
+	// WorkshopService.AcceptVehicle). The immutable semantic fingerprint is the
+	// exact tuple (repair_order_id, note presence, note UTF-8 bytes); the key is
+	// not part of the fingerprint. Therefore an absent note and an empty note
+	// are distinct, and note is immutable after the first successful accept.
+	//
+	// Any deduplication identity (the scoped key or the repair order's arrival)
+	// with the same fingerprint returns the same logical order with
+	// already_accepted=true and publishes no second arrival outbox event. A
+	// scoped key reused with a different fingerprint, an already accepted order
+	// with a different fingerprint, or identities resolving to different rows
+	// returns gRPC ALREADY_EXISTS and performs no mutation or publication.
+	RepairOrderId int64 `protobuf:"varint,1,opt,name=repair_order_id,json=repairOrderId,proto3" json:"repair_order_id,omitempty"`
+	// Required, non-empty command key with the scope and semantics above.
 	IdempotencyKey string  `protobuf:"bytes,2,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
 	Note           *string `protobuf:"bytes,3,opt,name=note,proto3,oneof" json:"note,omitempty"`
 	unknownFields  protoimpl.UnknownFields
@@ -13764,9 +13776,11 @@ func (x *AcceptVehicleRequest) GetNote() string {
 }
 
 type AcceptVehicleResponse struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Order           *RepairOrder           `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
-	AlreadyAccepted bool                   `protobuf:"varint,2,opt,name=already_accepted,json=alreadyAccepted,proto3" json:"already_accepted,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Order *RepairOrder           `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
+	// False only for the first successful arrival mutation. True for every
+	// same-semantics replay, including one presented under a new scoped key.
+	AlreadyAccepted bool `protobuf:"varint,2,opt,name=already_accepted,json=alreadyAccepted,proto3" json:"already_accepted,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -13817,32 +13831,43 @@ func (x *AcceptVehicleResponse) GetAlreadyAccepted() bool {
 
 type CreateIntakeOrderFromCRMRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Required command key. Reusing it with a different CRM linkage is invalid.
+	// The required idempotency key is scoped to
+	// (authoritative organization_id, workshop_id,
+	// WorkshopService.CreateIntakeOrderFromCRM). The immutable semantic request
+	// fingerprint is the exact tuple (source_event_id, workshop_id,
+	// crm_deal_id); the key is not part of the fingerprint.
+	//
+	// The scoped key, the CRM source event identity scoped to its authenticated
+	// producer, and the authoritative CRM deal identity are independent
+	// deduplication identities. If any identifies an order with the same
+	// fingerprint, the server returns the same logical order with
+	// already_exists=true and emits no second intake outbox event. A key, event,
+	// or deal identity reused with a different fingerprint, or identities
+	// resolving to different rows, returns gRPC ALREADY_EXISTS and performs no
+	// mutation or publication.
+	//
+	// Before deduplication can create or return an order, cg-workshop MUST resolve
+	// workshop_id to its authoritative organization, authorize the service
+	// principal for that tenant, and load crm_deal_id from CRM under that resolved
+	// organization. It derives pipeline, stage, customer/user, garage car and
+	// display data only from the authoritative CRM deal and cg-users linkage. An
+	// event consumer MUST bind source_event_id to its durable authenticated inbox
+	// envelope; controlled replay tooling MUST bind it to the stored source event
+	// record. Missing workshop/deal/source records fail NOT_FOUND;
+	// tenant/authorization mismatch fails PERMISSION_DENIED; unresolved or
+	// ambiguous user/car linkage fails FAILED_PRECONDITION. Every failure is
+	// closed before any write. Request data is never authority for
+	// organization_id, user_id or car_id.
 	IdempotencyKey string `protobuf:"bytes,1,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
-	// Stable CRM outbox event id used for inbox deduplication and audit.
+	// Stable CRM outbox event id, unique within its authenticated producer. It is
+	// bound to durable inbox/outbox metadata and used for inbox deduplication.
 	SourceEventId string `protobuf:"bytes,2,opt,name=source_event_id,json=sourceEventId,proto3" json:"source_event_id,omitempty"`
-	WorkshopId    int64  `protobuf:"varint,3,opt,name=workshop_id,json=workshopId,proto3" json:"workshop_id,omitempty"`
-	// Tenant context only. cg-workshop binds it to workshop ownership and the
-	// authenticated service principal before mutation.
-	OrganizationId           string `protobuf:"bytes,4,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
-	CrmDealId                string `protobuf:"bytes,5,opt,name=crm_deal_id,json=crmDealId,proto3" json:"crm_deal_id,omitempty"`
-	CrmPipelineId            string `protobuf:"bytes,6,opt,name=crm_pipeline_id,json=crmPipelineId,proto3" json:"crm_pipeline_id,omitempty"`
-	CrmSourceStageSystemCode string `protobuf:"bytes,7,opt,name=crm_source_stage_system_code,json=crmSourceStageSystemCode,proto3" json:"crm_source_stage_system_code,omitempty"`
-	UserId                   int64  `protobuf:"varint,8,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	GarageCarId              int64  `protobuf:"varint,9,opt,name=garage_car_id,json=garageCarId,proto3" json:"garage_car_id,omitempty"`
-	ClientName               string `protobuf:"bytes,10,opt,name=client_name,json=clientName,proto3" json:"client_name,omitempty"`
-	ClientPhone              string `protobuf:"bytes,11,opt,name=client_phone,json=clientPhone,proto3" json:"client_phone,omitempty"`
-	LicensePlate             string `protobuf:"bytes,12,opt,name=license_plate,json=licensePlate,proto3" json:"license_plate,omitempty"`
-	Vin                      string `protobuf:"bytes,13,opt,name=vin,proto3" json:"vin,omitempty"`
-	CarModel                 string `protobuf:"bytes,14,opt,name=car_model,json=carModel,proto3" json:"car_model,omitempty"`
-	CarColor                 string `protobuf:"bytes,15,opt,name=car_color,json=carColor,proto3" json:"car_color,omitempty"`
-	CarYear                  int32  `protobuf:"varint,16,opt,name=car_year,json=carYear,proto3" json:"car_year,omitempty"`
-	MarkId                   int32  `protobuf:"varint,17,opt,name=mark_id,json=markId,proto3" json:"mark_id,omitempty"`
-	ModelId                  int32  `protobuf:"varint,18,opt,name=model_id,json=modelId,proto3" json:"model_id,omitempty"`
-	Description              string `protobuf:"bytes,19,opt,name=description,proto3" json:"description,omitempty"`
-	// CRM-owned deal title retained for traceability; it is not a workshop
-	// client-name surrogate.
-	CrmDealTitle  string `protobuf:"bytes,20,opt,name=crm_deal_title,json=crmDealTitle,proto3" json:"crm_deal_title,omitempty"`
+	// Target workshop routing id; authoritative ownership is resolved and bound
+	// to the authoritative CRM deal tenant server-side as described above.
+	WorkshopId int64 `protobuf:"varint,3,opt,name=workshop_id,json=workshopId,proto3" json:"workshop_id,omitempty"`
+	// Stable CRM deal linkage. Its authoritative tenant/pipeline are loaded from
+	// CRM under the resolved workshop tenant, not accepted from this request.
+	CrmDealId     string `protobuf:"bytes,5,opt,name=crm_deal_id,json=crmDealId,proto3" json:"crm_deal_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -13898,13 +13923,6 @@ func (x *CreateIntakeOrderFromCRMRequest) GetWorkshopId() int64 {
 	return 0
 }
 
-func (x *CreateIntakeOrderFromCRMRequest) GetOrganizationId() string {
-	if x != nil {
-		return x.OrganizationId
-	}
-	return ""
-}
-
 func (x *CreateIntakeOrderFromCRMRequest) GetCrmDealId() string {
 	if x != nil {
 		return x.CrmDealId
@@ -13912,116 +13930,12 @@ func (x *CreateIntakeOrderFromCRMRequest) GetCrmDealId() string {
 	return ""
 }
 
-func (x *CreateIntakeOrderFromCRMRequest) GetCrmPipelineId() string {
-	if x != nil {
-		return x.CrmPipelineId
-	}
-	return ""
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetCrmSourceStageSystemCode() string {
-	if x != nil {
-		return x.CrmSourceStageSystemCode
-	}
-	return ""
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetGarageCarId() int64 {
-	if x != nil {
-		return x.GarageCarId
-	}
-	return 0
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetClientName() string {
-	if x != nil {
-		return x.ClientName
-	}
-	return ""
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetClientPhone() string {
-	if x != nil {
-		return x.ClientPhone
-	}
-	return ""
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetLicensePlate() string {
-	if x != nil {
-		return x.LicensePlate
-	}
-	return ""
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetVin() string {
-	if x != nil {
-		return x.Vin
-	}
-	return ""
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetCarModel() string {
-	if x != nil {
-		return x.CarModel
-	}
-	return ""
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetCarColor() string {
-	if x != nil {
-		return x.CarColor
-	}
-	return ""
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetCarYear() int32 {
-	if x != nil {
-		return x.CarYear
-	}
-	return 0
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetMarkId() int32 {
-	if x != nil {
-		return x.MarkId
-	}
-	return 0
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetModelId() int32 {
-	if x != nil {
-		return x.ModelId
-	}
-	return 0
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *CreateIntakeOrderFromCRMRequest) GetCrmDealTitle() string {
-	if x != nil {
-		return x.CrmDealTitle
-	}
-	return ""
-}
-
 type CreateIntakeOrderFromCRMResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Order *RepairOrder           `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
-	// True when the idempotency key, source event or CRM deal linkage already
-	// identified the returned V2 repair order.
+	// False only for the first successful intake mutation. True when the scoped
+	// key, source event or authoritative CRM deal identity already identified
+	// the same-semantics V2 repair order.
 	AlreadyExists bool `protobuf:"varint,2,opt,name=already_exists,json=alreadyExists,proto3" json:"already_exists,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -15369,31 +15283,13 @@ const file_workshop_workshop_proto_rawDesc = "" +
 	"\x05_note\"r\n" +
 	"\x15AcceptVehicleResponse\x12.\n" +
 	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order\x12)\n" +
-	"\x10already_accepted\x18\x02 \x01(\bR\x0falreadyAccepted\"\xcd\x05\n" +
+	"\x10already_accepted\x18\x02 \x01(\bR\x0falreadyAccepted\"\x96\x03\n" +
 	"\x1fCreateIntakeOrderFromCRMRequest\x12'\n" +
 	"\x0fidempotency_key\x18\x01 \x01(\tR\x0eidempotencyKey\x12&\n" +
 	"\x0fsource_event_id\x18\x02 \x01(\tR\rsourceEventId\x12\x1f\n" +
 	"\vworkshop_id\x18\x03 \x01(\x03R\n" +
-	"workshopId\x12'\n" +
-	"\x0forganization_id\x18\x04 \x01(\tR\x0eorganizationId\x12\x1e\n" +
-	"\vcrm_deal_id\x18\x05 \x01(\tR\tcrmDealId\x12&\n" +
-	"\x0fcrm_pipeline_id\x18\x06 \x01(\tR\rcrmPipelineId\x12>\n" +
-	"\x1ccrm_source_stage_system_code\x18\a \x01(\tR\x18crmSourceStageSystemCode\x12\x17\n" +
-	"\auser_id\x18\b \x01(\x03R\x06userId\x12\"\n" +
-	"\rgarage_car_id\x18\t \x01(\x03R\vgarageCarId\x12\x1f\n" +
-	"\vclient_name\x18\n" +
-	" \x01(\tR\n" +
-	"clientName\x12!\n" +
-	"\fclient_phone\x18\v \x01(\tR\vclientPhone\x12#\n" +
-	"\rlicense_plate\x18\f \x01(\tR\flicensePlate\x12\x10\n" +
-	"\x03vin\x18\r \x01(\tR\x03vin\x12\x1b\n" +
-	"\tcar_model\x18\x0e \x01(\tR\bcarModel\x12\x1b\n" +
-	"\tcar_color\x18\x0f \x01(\tR\bcarColor\x12\x19\n" +
-	"\bcar_year\x18\x10 \x01(\x05R\acarYear\x12\x17\n" +
-	"\amark_id\x18\x11 \x01(\x05R\x06markId\x12\x19\n" +
-	"\bmodel_id\x18\x12 \x01(\x05R\amodelId\x12 \n" +
-	"\vdescription\x18\x13 \x01(\tR\vdescription\x12$\n" +
-	"\x0ecrm_deal_title\x18\x14 \x01(\tR\fcrmDealTitle\"y\n" +
+	"workshopId\x12\x1e\n" +
+	"\vcrm_deal_id\x18\x05 \x01(\tR\tcrmDealIdJ\x04\b\x04\x10\x05J\x04\b\x06\x10\x15R\x0forganization_idR\x0fcrm_pipeline_idR\x1ccrm_source_stage_system_codeR\auser_idR\rgarage_car_idR\vclient_nameR\fclient_phoneR\rlicense_plateR\x03vinR\tcar_modelR\tcar_colorR\bcar_yearR\amark_idR\bmodel_idR\vdescriptionR\x0ecrm_deal_title\"y\n" +
 	" CreateIntakeOrderFromCRMResponse\x12.\n" +
 	"\x05order\x18\x01 \x01(\v2\x18.workshop.v1.RepairOrderR\x05order\x12%\n" +
 	"\x0ealready_exists\x18\x02 \x01(\bR\ralreadyExists\"L\n" +

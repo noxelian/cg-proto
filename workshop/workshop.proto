@@ -31,6 +31,7 @@ service WorkshopService {
   rpc GetKanban(GetKanbanRequest) returns (GetKanbanResponse);
   // AcceptVehicle is the explicit V2 arrival command. The authenticated
   // principal is the audit actor; caller-supplied identity is never trusted.
+  // See AcceptVehicleRequest for the mandatory replay/conflict contract.
   rpc AcceptVehicle(AcceptVehicleRequest) returns (AcceptVehicleResponse);
 
   // --- Car Work ---
@@ -114,7 +115,9 @@ service WorkshopService {
   // --- CRM Integration ---
   // CreateIntakeOrderFromCRM is reserved for the idempotent V2 CRM event
   // consumer and controlled replay tooling. Human/BFF intake must not use it
-  // to orchestrate CRM and workshop synchronously.
+  // to orchestrate CRM and workshop synchronously. The request contains only
+  // routing/linkage identifiers; cg-workshop resolves every tenant, customer,
+  // car and display field from authoritative records before writing.
   rpc CreateIntakeOrderFromCRM(CreateIntakeOrderFromCRMRequest) returns (CreateIntakeOrderFromCRMResponse);
   rpc CreateOrderFromCRM(CreateOrderFromCRMRequest) returns (CreateOrderFromCRMResponse);
   rpc SyncCRMDeals(SyncCRMDealsRequest) returns (SyncCRMDealsResponse);
@@ -1738,51 +1741,82 @@ message RepairOrderBlocker {
 }
 
 message AcceptVehicleRequest {
+  // The required idempotency key is scoped to
+  // (authoritative organization_id, authoritative workshop_id,
+  // WorkshopService.AcceptVehicle). The immutable semantic fingerprint is the
+  // exact tuple (repair_order_id, note presence, note UTF-8 bytes); the key is
+  // not part of the fingerprint. Therefore an absent note and an empty note
+  // are distinct, and note is immutable after the first successful accept.
+  //
+  // Any deduplication identity (the scoped key or the repair order's arrival)
+  // with the same fingerprint returns the same logical order with
+  // already_accepted=true and publishes no second arrival outbox event. A
+  // scoped key reused with a different fingerprint, an already accepted order
+  // with a different fingerprint, or identities resolving to different rows
+  // returns gRPC ALREADY_EXISTS and performs no mutation or publication.
   int64 repair_order_id = 1;
-  // Required command key. A retry with the same key returns the same arrival
-  // result and must not publish a second lifecycle event.
+  // Required, non-empty command key with the scope and semantics above.
   string idempotency_key = 2;
   optional string note = 3;
 }
 
 message AcceptVehicleResponse {
   RepairOrder order = 1;
+  // False only for the first successful arrival mutation. True for every
+  // same-semantics replay, including one presented under a new scoped key.
   bool already_accepted = 2;
 }
 
 message CreateIntakeOrderFromCRMRequest {
-  // Required command key. Reusing it with a different CRM linkage is invalid.
+  // The required idempotency key is scoped to
+  // (authoritative organization_id, workshop_id,
+  // WorkshopService.CreateIntakeOrderFromCRM). The immutable semantic request
+  // fingerprint is the exact tuple (source_event_id, workshop_id,
+  // crm_deal_id); the key is not part of the fingerprint.
+  //
+  // The scoped key, the CRM source event identity scoped to its authenticated
+  // producer, and the authoritative CRM deal identity are independent
+  // deduplication identities. If any identifies an order with the same
+  // fingerprint, the server returns the same logical order with
+  // already_exists=true and emits no second intake outbox event. A key, event,
+  // or deal identity reused with a different fingerprint, or identities
+  // resolving to different rows, returns gRPC ALREADY_EXISTS and performs no
+  // mutation or publication.
+  //
+  // Before deduplication can create or return an order, cg-workshop MUST resolve
+  // workshop_id to its authoritative organization, authorize the service
+  // principal for that tenant, and load crm_deal_id from CRM under that resolved
+  // organization. It derives pipeline, stage, customer/user, garage car and
+  // display data only from the authoritative CRM deal and cg-users linkage. An
+  // event consumer MUST bind source_event_id to its durable authenticated inbox
+  // envelope; controlled replay tooling MUST bind it to the stored source event
+  // record. Missing workshop/deal/source records fail NOT_FOUND;
+  // tenant/authorization mismatch fails PERMISSION_DENIED; unresolved or
+  // ambiguous user/car linkage fails FAILED_PRECONDITION. Every failure is
+  // closed before any write. Request data is never authority for
+  // organization_id, user_id or car_id.
   string idempotency_key = 1;
-  // Stable CRM outbox event id used for inbox deduplication and audit.
+  // Stable CRM outbox event id, unique within its authenticated producer. It is
+  // bound to durable inbox/outbox metadata and used for inbox deduplication.
   string source_event_id = 2;
+  // Target workshop routing id; authoritative ownership is resolved and bound
+  // to the authoritative CRM deal tenant server-side as described above.
   int64 workshop_id = 3;
-  // Tenant context only. cg-workshop binds it to workshop ownership and the
-  // authenticated service principal before mutation.
-  string organization_id = 4;
+  reserved 4, 6 to 20;
+  reserved "organization_id", "crm_pipeline_id", "crm_source_stage_system_code",
+      "user_id", "garage_car_id", "client_name", "client_phone",
+      "license_plate", "vin", "car_model", "car_color", "car_year",
+      "mark_id", "model_id", "description", "crm_deal_title";
+  // Stable CRM deal linkage. Its authoritative tenant/pipeline are loaded from
+  // CRM under the resolved workshop tenant, not accepted from this request.
   string crm_deal_id = 5;
-  string crm_pipeline_id = 6;
-  string crm_source_stage_system_code = 7;
-  int64 user_id = 8;
-  int64 garage_car_id = 9;
-  string client_name = 10;
-  string client_phone = 11;
-  string license_plate = 12;
-  string vin = 13;
-  string car_model = 14;
-  string car_color = 15;
-  int32 car_year = 16;
-  int32 mark_id = 17;
-  int32 model_id = 18;
-  string description = 19;
-  // CRM-owned deal title retained for traceability; it is not a workshop
-  // client-name surrogate.
-  string crm_deal_title = 20;
 }
 
 message CreateIntakeOrderFromCRMResponse {
   RepairOrder order = 1;
-  // True when the idempotency key, source event or CRM deal linkage already
-  // identified the returned V2 repair order.
+  // False only for the first successful intake mutation. True when the scoped
+  // key, source event or authoritative CRM deal identity already identified
+  // the same-semantics V2 repair order.
   bool already_exists = 2;
 }
 

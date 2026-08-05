@@ -24,10 +24,50 @@ that CRM uses to enter `delivery_closing`; it never closes the deal automaticall
 ## Commands and events
 
 `CreateIntakeOrderFromCRM` is a service-only/replay command for the V2 intake
-consumer. Its idempotency key and CRM deal linkage are stable deduplication
-identities. The existing `CreateOrderFromCRM` RPC remains unchanged for legacy
-callers. `AcceptVehicle` is an explicit, idempotent workshop command; the actor is
-bound from authenticated context, not trusted from request data.
+consumer. Its request is intentionally IDs-only: command key, immutable CRM
+source-event id, target workshop id and CRM deal id. It does not accept
+`organization_id`, `user_id`, `garage_car_id` or a caller-owned customer/car
+snapshot. Before any write, `cg-workshop` resolves `workshop_id` to its
+authoritative organization, authorizes the service principal for that tenant,
+then loads `crm_deal_id` through CRM under the
+resolved organization. Pipeline, stage, customer/user, garage car and display
+data come only from that authoritative deal and cg-users linkage. Event
+consumers bind `source_event_id` to their durable authenticated inbox envelope;
+controlled replay tooling binds it to the stored source event record. Missing
+workshop/deal/source records fail `NOT_FOUND`; tenant/authorization mismatches
+fail `PERMISSION_DENIED`; unresolved or ambiguous user/car linkage fails
+`FAILED_PRECONDITION`. Every path fails closed before mutation. The existing
+`CreateOrderFromCRM` RPC remains unchanged for legacy callers.
+
+`AcceptVehicle` is an explicit, idempotent workshop command. The order resolves
+the authoritative workshop and tenant, and the authenticated principal is the
+arrival audit actor. The request carries no actor or tenant identity.
+
+### Idempotency and conflicts
+
+`CreateIntakeOrderFromCRM.idempotency_key` is scoped to `(authoritative
+organization_id, workshop_id, RPC)`. Its semantic fingerprint is the exact tuple
+`(source_event_id, workshop_id, crm_deal_id)`; the key itself is excluded. The
+scoped key, source event identity `(authenticated CRM producer,
+source_event_id)`, and authoritative CRM deal identity `(CRM organization_id,
+crm_deal_id)` are independent deduplication identities.
+
+`AcceptVehicle.idempotency_key` is scoped to `(authoritative organization_id,
+authoritative workshop_id, RPC)`. Its semantic fingerprint is the exact tuple
+`(repair_order_id, note presence, note UTF-8 bytes)`; the key itself is excluded.
+The optional `note` is therefore immutable semantic input: absent and empty are
+distinct.
+
+For both commands, replaying the same semantics returns the same logical repair
+order and sets `already_exists`/`already_accepted` without inserting a second
+audit row or publishing a second outbox event. This also applies when another
+deduplication identity reaches the same row. Reusing a scoped key, source event
+or deal/arrival identity with different semantics returns gRPC `ALREADY_EXISTS`
+without mutation. If the supplied deduplication identities resolve to different
+rows, the same conflict is returned and the inconsistency is not guessed away.
+An already accepted order can never acquire a second arrival audit or event: a
+same-fingerprint retry returns the original result, while a different note/order
+fingerprint conflicts.
 
 Cross-service mutations are delivered from transactional outboxes and applied by
 idempotent inbox consumers. The existing `transaction.succeeded` payment fact is

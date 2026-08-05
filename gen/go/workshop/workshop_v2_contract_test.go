@@ -5,8 +5,41 @@ import (
 	"time"
 
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
+
+func TestCreateIntakeOrderFromCRMRequestIsIDsOnly(t *testing.T) {
+	fields := (&CreateIntakeOrderFromCRMRequest{}).ProtoReflect().Descriptor().Fields()
+	want := map[protoreflect.Name]bool{
+		"idempotency_key": true,
+		"source_event_id": true,
+		"workshop_id":     true,
+		"crm_deal_id":     true,
+	}
+	if fields.Len() != len(want) {
+		t.Fatalf("intake request field count = %d, want %d IDs-only fields", fields.Len(), len(want))
+	}
+	for i := 0; i < fields.Len(); i++ {
+		if name := fields.Get(i).Name(); !want[name] {
+			t.Fatalf("caller-owned field %q must not be part of intake request", name)
+		}
+	}
+}
+
+func TestAcceptVehicleNotePreservesFingerprintPresence(t *testing.T) {
+	absent := &AcceptVehicleRequest{RepairOrderId: 42, IdempotencyKey: "arrival-42"}
+	empty := &AcceptVehicleRequest{RepairOrderId: 42, IdempotencyKey: "arrival-42", Note: proto.String("")}
+	if absent.Note != nil {
+		t.Fatal("absent note unexpectedly has presence")
+	}
+	if empty.Note == nil {
+		t.Fatal("empty note must retain presence for semantic fingerprinting")
+	}
+	if proto.Equal(absent, empty) {
+		t.Fatal("absent and empty note must be distinct semantic requests")
+	}
+}
 
 func TestWorkshopV2RepairOrderRoundTrip(t *testing.T) {
 	acceptedAt := time.Date(2026, 8, 5, 12, 30, 0, 0, time.UTC)
