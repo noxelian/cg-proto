@@ -27,17 +27,22 @@ that CRM uses to enter `delivery_closing`; it never closes the deal automaticall
 consumer. Its request is intentionally IDs-only: command key, immutable CRM
 source-event id, target workshop id and CRM deal id. It does not accept
 `organization_id`, `user_id`, `garage_car_id` or a caller-owned customer/car
-snapshot. Before any write, `cg-workshop` resolves `workshop_id` to its
-authoritative organization, authorizes the service principal for that tenant,
-then loads `crm_deal_id` through CRM under the
-resolved organization. Pipeline, stage, customer/user, garage car and display
-data come only from that authoritative deal and cg-users linkage. Event
-consumers bind `source_event_id` to their durable authenticated inbox envelope;
-controlled replay tooling binds it to the stored source event record. Missing
-workshop/deal/source records fail `NOT_FOUND`; tenant/authorization mismatches
-fail `PERMISSION_DENIED`; unresolved or ambiguous user/car linkage fails
-`FAILED_PRECONDITION`. Every path fails closed before mutation. The existing
-`CreateOrderFromCRM` RPC remains unchanged for legacy callers.
+snapshot. `cg-workshop` resolves `workshop_id` to its authoritative organization
+and authenticates the service principal before looking at a durable command.
+Only a first execution reads source systems. It calls the new CRM-owned
+`GetWorkshopIntakeProjection` with the exact organization, workshop, source
+event and deal binding. CRM admits only the exact `cg-workshop` service identity,
+verifies the four fields against one durable CRM workshop-handoff/outbox record,
+loads the deal under that organization, and obtains the minimal user/car fields
+through cg-users' exact-`cg-crm` `GetWorkshopIntakeParty`. cg-users
+validates that the car belongs to the authoritative deal user and returns no
+unrelated profile or garage data. Thus CRM remains the owner of deal linkage,
+cg-users remains the owner of user/car facts, and neither human APIs nor BFFs
+gain an arbitrary cross-tenant read. Missing workshop/deal/source/user/car
+records fail `NOT_FOUND`; caller or binding mismatches fail `PERMISSION_DENIED`;
+unresolved or ambiguous linkage fails `FAILED_PRECONDITION`. Every path fails
+closed before mutation. The existing `CreateOrderFromCRM` RPC remains unchanged
+for legacy callers.
 
 `AcceptVehicle` is an explicit, idempotent workshop command. The order resolves
 the authoritative workshop and tenant, and the authenticated principal is the
@@ -51,6 +56,18 @@ organization_id, workshop_id, RPC)`. Its semantic fingerprint is the exact tuple
 scoped key, source event identity `(authenticated CRM producer,
 source_event_id)`, and authoritative CRM deal identity `(CRM organization_id,
 crm_deal_id)` are independent deduplication identities.
+
+The required processing order is normative. `cg-workshop` MUST authenticate and
+bind the tenant/service scope before any deduplication lookup. It MUST then look
+up the durable command record by the immutable command identities before
+reading CRM or cg-users. A matching fingerprint returns the stored result
+without re-reading CRM or cg-users; a conflicting fingerprint returns gRPC
+`ALREADY_EXISTS` without mutation. Only the first execution may resolve the
+current authoritative CRM/user/car sources. After successful resolution, one
+local transaction atomically persists the repair order, deduplication records,
+intake audit and outbox event. An outage or deletion of a CRM, user or car source
+after first success cannot break an exact replay. An exact replay produces no
+second intake audit or outbox event.
 
 `AcceptVehicle.idempotency_key` is scoped to `(authoritative organization_id,
 authoritative workshop_id, RPC)`. Its semantic fingerprint is the exact tuple

@@ -176,6 +176,7 @@ const (
 	CRMService_CountExternalCallsByUser_FullMethodName           = "/crm.v1.CRMService/CountExternalCallsByUser"
 	CRMService_DeleteExternalCall_FullMethodName                 = "/crm.v1.CRMService/DeleteExternalCall"
 	CRMService_CreateCustomerActionLead_FullMethodName           = "/crm.v1.CRMService/CreateCustomerActionLead"
+	CRMService_GetWorkshopIntakeProjection_FullMethodName        = "/crm.v1.CRMService/GetWorkshopIntakeProjection"
 )
 
 // CRMServiceClient is the client API for CRMService service.
@@ -568,6 +569,18 @@ type CRMServiceClient interface {
 	// BFF (never spoofable by the client). Idempotent per
 	// (organization_id, user_id, order_id, action_type) within a short window.
 	CreateCustomerActionLead(ctx context.Context, in *CreateCustomerActionLeadRequest, opts ...grpc.CallOption) (*CreateCustomerActionLeadResponse, error)
+	// GetWorkshopIntakeProjection is the only CRM read used by the workshop V2
+	// intake path. It is service-to-service only and requires the exact verified
+	// JWT identity UserID=0, phone=device_id="cg-workshop"; human and BFF callers
+	// are denied. CRM requires organization_id, workshop_id, source_event_id and
+	// crm_deal_id and verifies that all four match one durable CRM
+	// workshop-handoff/outbox record before reading the org-scoped deal. Missing
+	// records fail NOT_FOUND; any binding or caller mismatch fails
+	// PERMISSION_DENIED; unresolved/ambiguous
+	// deal-party linkage fails FAILED_PRECONDITION. The response contains only
+	// workshop-intake fields and resolves its user/car fields through the narrow
+	// cg-users projection rather than treating CRM copies as authority.
+	GetWorkshopIntakeProjection(ctx context.Context, in *GetWorkshopIntakeProjectionRequest, opts ...grpc.CallOption) (*GetWorkshopIntakeProjectionResponse, error)
 }
 
 type cRMServiceClient struct {
@@ -2160,6 +2173,16 @@ func (c *cRMServiceClient) CreateCustomerActionLead(ctx context.Context, in *Cre
 	return out, nil
 }
 
+func (c *cRMServiceClient) GetWorkshopIntakeProjection(ctx context.Context, in *GetWorkshopIntakeProjectionRequest, opts ...grpc.CallOption) (*GetWorkshopIntakeProjectionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWorkshopIntakeProjectionResponse)
+	err := c.cc.Invoke(ctx, CRMService_GetWorkshopIntakeProjection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CRMServiceServer is the server API for CRMService service.
 // All implementations must embed UnimplementedCRMServiceServer
 // for forward compatibility.
@@ -2550,6 +2573,18 @@ type CRMServiceServer interface {
 	// BFF (never spoofable by the client). Idempotent per
 	// (organization_id, user_id, order_id, action_type) within a short window.
 	CreateCustomerActionLead(context.Context, *CreateCustomerActionLeadRequest) (*CreateCustomerActionLeadResponse, error)
+	// GetWorkshopIntakeProjection is the only CRM read used by the workshop V2
+	// intake path. It is service-to-service only and requires the exact verified
+	// JWT identity UserID=0, phone=device_id="cg-workshop"; human and BFF callers
+	// are denied. CRM requires organization_id, workshop_id, source_event_id and
+	// crm_deal_id and verifies that all four match one durable CRM
+	// workshop-handoff/outbox record before reading the org-scoped deal. Missing
+	// records fail NOT_FOUND; any binding or caller mismatch fails
+	// PERMISSION_DENIED; unresolved/ambiguous
+	// deal-party linkage fails FAILED_PRECONDITION. The response contains only
+	// workshop-intake fields and resolves its user/car fields through the narrow
+	// cg-users projection rather than treating CRM copies as authority.
+	GetWorkshopIntakeProjection(context.Context, *GetWorkshopIntakeProjectionRequest) (*GetWorkshopIntakeProjectionResponse, error)
 	mustEmbedUnimplementedCRMServiceServer()
 }
 
@@ -3030,6 +3065,9 @@ func (UnimplementedCRMServiceServer) DeleteExternalCall(context.Context, *Delete
 }
 func (UnimplementedCRMServiceServer) CreateCustomerActionLead(context.Context, *CreateCustomerActionLeadRequest) (*CreateCustomerActionLeadResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateCustomerActionLead not implemented")
+}
+func (UnimplementedCRMServiceServer) GetWorkshopIntakeProjection(context.Context, *GetWorkshopIntakeProjectionRequest) (*GetWorkshopIntakeProjectionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetWorkshopIntakeProjection not implemented")
 }
 func (UnimplementedCRMServiceServer) mustEmbedUnimplementedCRMServiceServer() {}
 func (UnimplementedCRMServiceServer) testEmbeddedByValue()                    {}
@@ -5878,6 +5916,24 @@ func _CRMService_CreateCustomerActionLead_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CRMService_GetWorkshopIntakeProjection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWorkshopIntakeProjectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CRMServiceServer).GetWorkshopIntakeProjection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CRMService_GetWorkshopIntakeProjection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CRMServiceServer).GetWorkshopIntakeProjection(ctx, req.(*GetWorkshopIntakeProjectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CRMService_ServiceDesc is the grpc.ServiceDesc for CRMService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -6512,6 +6568,10 @@ var CRMService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateCustomerActionLead",
 			Handler:    _CRMService_CreateCustomerActionLead_Handler,
+		},
+		{
+			MethodName: "GetWorkshopIntakeProjection",
+			Handler:    _CRMService_GetWorkshopIntakeProjection_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

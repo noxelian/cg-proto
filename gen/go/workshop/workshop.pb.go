@@ -13834,8 +13834,8 @@ type CreateIntakeOrderFromCRMRequest struct {
 	// The required idempotency key is scoped to
 	// (authoritative organization_id, workshop_id,
 	// WorkshopService.CreateIntakeOrderFromCRM). The immutable semantic request
-	// fingerprint is the exact tuple (source_event_id, workshop_id,
-	// crm_deal_id); the key is not part of the fingerprint.
+	// fingerprint is the exact tuple (source_event_id, workshop_id, crm_deal_id);
+	// the key is not part of the fingerprint.
 	//
 	// The scoped key, the CRM source event identity scoped to its authenticated
 	// producer, and the authoritative CRM deal identity are independent
@@ -13846,18 +13846,20 @@ type CreateIntakeOrderFromCRMRequest struct {
 	// resolving to different rows, returns gRPC ALREADY_EXISTS and performs no
 	// mutation or publication.
 	//
-	// Before deduplication can create or return an order, cg-workshop MUST resolve
-	// workshop_id to its authoritative organization, authorize the service
-	// principal for that tenant, and load crm_deal_id from CRM under that resolved
-	// organization. It derives pipeline, stage, customer/user, garage car and
-	// display data only from the authoritative CRM deal and cg-users linkage. An
-	// event consumer MUST bind source_event_id to its durable authenticated inbox
-	// envelope; controlled replay tooling MUST bind it to the stored source event
-	// record. Missing workshop/deal/source records fail NOT_FOUND;
-	// tenant/authorization mismatch fails PERMISSION_DENIED; unresolved or
-	// ambiguous user/car linkage fails FAILED_PRECONDITION. Every failure is
-	// closed before any write. Request data is never authority for
-	// organization_id, user_id or car_id.
+	// cg-workshop first authenticates the caller, resolves workshop_id to its
+	// authoritative organization and binds the tenant/service scope. It then
+	// looks up its durable command/inbox records by the immutable identities
+	// above. A matching fingerprint returns the stored result without calling
+	// CRM or cg-users; a conflict returns ALREADY_EXISTS. Only a first execution
+	// with no durable match calls CRM.GetWorkshopIntakeProjection using the exact
+	// organization/workshop/source-event/deal binding. It freezes that owner-
+	// sourced projection and atomically writes the order, every dedup identity,
+	// one intake audit and one outbox event. A later exact replay is independent
+	// of mutable source availability or deletion. Missing workshop/deal/source
+	// records fail NOT_FOUND; tenant/authorization mismatch fails
+	// PERMISSION_DENIED; unresolved or ambiguous user/car linkage fails
+	// FAILED_PRECONDITION. Every failure is closed before mutation. Request data
+	// is never authority for organization_id, user_id or car_id.
 	IdempotencyKey string `protobuf:"bytes,1,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
 	// Stable CRM outbox event id, unique within its authenticated producer. It is
 	// bound to durable inbox/outbox metadata and used for inbox deduplication.
