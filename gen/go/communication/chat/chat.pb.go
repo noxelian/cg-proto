@@ -694,24 +694,26 @@ func (x *VehicleContext) GetProvenance() VehicleContextProvenance {
 // are never silently dropped. Organization routing is verified from the chat
 // owner and membership source; event or BFF values are not authority.
 type ChatRealtimeEventPayload struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	MessageId        string                 `protobuf:"bytes,1,opt,name=message_id,json=messageId,proto3" json:"message_id,omitempty"`
-	ChatId           string                 `protobuf:"bytes,2,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
-	SenderId         int64                  `protobuf:"varint,3,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
-	MessageType      string                 `protobuf:"bytes,4,opt,name=message_type,json=messageType,proto3" json:"message_type,omitempty"`
-	RecipientId      int64                  `protobuf:"varint,5,opt,name=recipient_id,json=recipientId,proto3" json:"recipient_id,omitempty"`
-	RecipientUserIds []int64                `protobuf:"varint,6,rep,packed,name=recipient_user_ids,json=recipientUserIds,proto3" json:"recipient_user_ids,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Explicit json_name values preserve the encoding/json event shape when
+	// chat producers migrate to protojson, whose inferred names are camelCase.
+	MessageId        string  `protobuf:"bytes,1,opt,name=message_id,proto3" json:"message_id,omitempty"`
+	ChatId           string  `protobuf:"bytes,2,opt,name=chat_id,proto3" json:"chat_id,omitempty"`
+	SenderId         int64   `protobuf:"varint,3,opt,name=sender_id,proto3" json:"sender_id,omitempty"`
+	MessageType      string  `protobuf:"bytes,4,opt,name=message_type,proto3" json:"message_type,omitempty"`
+	RecipientId      int64   `protobuf:"varint,5,opt,name=recipient_id,proto3" json:"recipient_id,omitempty"`
+	RecipientUserIds []int64 `protobuf:"varint,6,rep,packed,name=recipient_user_ids,proto3" json:"recipient_user_ids,omitempty"`
 	// Legacy JSON field. Values remain exactly "client" and/or "partner".
-	TargetApps []string `protobuf:"bytes,7,rep,name=target_apps,json=targetApps,proto3" json:"target_apps,omitempty"`
+	TargetApps []string `protobuf:"bytes,7,rep,name=target_apps,proto3" json:"target_apps,omitempty"`
 	// Legacy JSON field consumed by current partner websocket routing.
-	RecipientOrgId string `protobuf:"bytes,8,opt,name=recipient_org_id,json=recipientOrgId,proto3" json:"recipient_org_id,omitempty"`
+	RecipientOrgId string `protobuf:"bytes,8,opt,name=recipient_org_id,proto3" json:"recipient_org_id,omitempty"`
 	// Typed fields use distinct names/tags so legacy JSON remains dual-readable.
 	RecipientApp            ChatApp         `protobuf:"varint,9,opt,name=recipient_app,json=recipientApp,proto3,enum=communication.chat.v1.ChatApp" json:"recipient_app,omitempty"`
 	RecipientPerspective    ChatPerspective `protobuf:"varint,10,opt,name=recipient_perspective,json=recipientPerspective,proto3,enum=communication.chat.v1.ChatPerspective" json:"recipient_perspective,omitempty"`
 	RecipientOrganizationId string          `protobuf:"bytes,11,opt,name=recipient_organization_id,json=recipientOrganizationId,proto3" json:"recipient_organization_id,omitempty"`
 	// Legacy JSON context_type remains a category string such as "request".
-	ContextType   string `protobuf:"bytes,12,opt,name=context_type,json=contextType,proto3" json:"context_type,omitempty"`
-	ContextId     string `protobuf:"bytes,13,opt,name=context_id,json=contextId,proto3" json:"context_id,omitempty"`
+	ContextType   string `protobuf:"bytes,12,opt,name=context_type,proto3" json:"context_type,omitempty"`
+	ContextId     string `protobuf:"bytes,13,opt,name=context_id,proto3" json:"context_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2539,25 +2541,26 @@ const file_communication_chat_chat_proto_rawDesc = "" +
 	"provenanceB\x10\n" +
 	"\x0e_garage_car_idB\x14\n" +
 	"\x12_car_generation_idB\x06\n" +
-	"\x04_vin\"\xce\x04\n" +
-	"\x18ChatRealtimeEventPayload\x12\x1d\n" +
+	"\x04_vin\"\xda\x04\n" +
+	"\x18ChatRealtimeEventPayload\x12\x1e\n" +
 	"\n" +
-	"message_id\x18\x01 \x01(\tR\tmessageId\x12\x17\n" +
-	"\achat_id\x18\x02 \x01(\tR\x06chatId\x12\x1b\n" +
-	"\tsender_id\x18\x03 \x01(\x03R\bsenderId\x12!\n" +
-	"\fmessage_type\x18\x04 \x01(\tR\vmessageType\x12!\n" +
-	"\frecipient_id\x18\x05 \x01(\x03R\vrecipientId\x12,\n" +
-	"\x12recipient_user_ids\x18\x06 \x03(\x03R\x10recipientUserIds\x12\x1f\n" +
-	"\vtarget_apps\x18\a \x03(\tR\n" +
-	"targetApps\x12(\n" +
-	"\x10recipient_org_id\x18\b \x01(\tR\x0erecipientOrgId\x12C\n" +
+	"message_id\x18\x01 \x01(\tR\n" +
+	"message_id\x12\x18\n" +
+	"\achat_id\x18\x02 \x01(\tR\achat_id\x12\x1c\n" +
+	"\tsender_id\x18\x03 \x01(\x03R\tsender_id\x12\"\n" +
+	"\fmessage_type\x18\x04 \x01(\tR\fmessage_type\x12\"\n" +
+	"\frecipient_id\x18\x05 \x01(\x03R\frecipient_id\x12.\n" +
+	"\x12recipient_user_ids\x18\x06 \x03(\x03R\x12recipient_user_ids\x12 \n" +
+	"\vtarget_apps\x18\a \x03(\tR\vtarget_apps\x12*\n" +
+	"\x10recipient_org_id\x18\b \x01(\tR\x10recipient_org_id\x12C\n" +
 	"\rrecipient_app\x18\t \x01(\x0e2\x1e.communication.chat.v1.ChatAppR\frecipientApp\x12[\n" +
 	"\x15recipient_perspective\x18\n" +
 	" \x01(\x0e2&.communication.chat.v1.ChatPerspectiveR\x14recipientPerspective\x12:\n" +
-	"\x19recipient_organization_id\x18\v \x01(\tR\x17recipientOrganizationId\x12!\n" +
-	"\fcontext_type\x18\f \x01(\tR\vcontextType\x12\x1d\n" +
+	"\x19recipient_organization_id\x18\v \x01(\tR\x17recipientOrganizationId\x12\"\n" +
+	"\fcontext_type\x18\f \x01(\tR\fcontext_type\x12\x1e\n" +
 	"\n" +
-	"context_id\x18\r \x01(\tR\tcontextId\"\xb9\x03\n" +
+	"context_id\x18\r \x01(\tR\n" +
+	"context_id\"\xb9\x03\n" +
 	"\x11CreateChatRequest\x12I\n" +
 	"\fcontext_type\x18\x01 \x01(\x0e2&.communication.chat.v1.ChatContextTypeR\vcontextType\x12\x1d\n" +
 	"\n" +

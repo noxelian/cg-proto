@@ -700,16 +700,18 @@ func (x *SendPushRequest) GetContextId() string {
 // a push. Organization routing is verified from its source owner/membership;
 // publisher and BFF values are routing context, not authority.
 type PushEventPayload struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	UserId    int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	EventType string                 `protobuf:"bytes,2,opt,name=event_type,json=eventType,proto3" json:"event_type,omitempty"`
-	Title     string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
-	Body      string                 `protobuf:"bytes,4,opt,name=body,proto3" json:"body,omitempty"`
-	Data      map[string]string      `protobuf:"bytes,5,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	Priority  string                 `protobuf:"bytes,6,opt,name=priority,proto3" json:"priority,omitempty"`
-	DedupKey  string                 `protobuf:"bytes,7,opt,name=dedup_key,json=dedupKey,proto3" json:"dedup_key,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Explicit json_name values preserve the encoding/json wire contract when
+	// producers migrate to protojson, whose inferred names are camelCase.
+	UserId    int64             `protobuf:"varint,1,opt,name=user_id,proto3" json:"user_id,omitempty"`
+	EventType string            `protobuf:"bytes,2,opt,name=event_type,proto3" json:"event_type,omitempty"`
+	Title     string            `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Body      string            `protobuf:"bytes,4,opt,name=body,proto3" json:"body,omitempty"`
+	Data      map[string]string `protobuf:"bytes,5,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Priority  string            `protobuf:"bytes,6,opt,name=priority,proto3" json:"priority,omitempty"`
+	DedupKey  string            `protobuf:"bytes,7,opt,name=dedup_key,proto3" json:"dedup_key,omitempty"`
 	// Exact legacy JSON fields consumed by current publishers and consumers.
-	TargetApps []string `protobuf:"bytes,8,rep,name=target_apps,json=targetApps,proto3" json:"target_apps,omitempty"`
+	TargetApps []string `protobuf:"bytes,8,rep,name=target_apps,proto3" json:"target_apps,omitempty"`
 	Category   string   `protobuf:"bytes,9,opt,name=category,proto3" json:"category,omitempty"`
 	// Typed app scopes use a non-conflicting name/tag for dual-read/write.
 	TypedTargetApps         []NotificationApp       `protobuf:"varint,10,rep,packed,name=typed_target_apps,json=typedTargetApps,proto3,enum=communication.notification.v1.NotificationApp" json:"typed_target_apps,omitempty"`
@@ -863,16 +865,18 @@ func (x *PushEventPayload) GetTypedCategory() NotificationCategory {
 // they MUST agree or the owner rejects INVALID_ARGUMENT; typed consumers fall
 // back to the legacy strings until migration completes.
 type RealtimeNotificationEventPayload struct {
-	state                   protoimpl.MessageState  `protogen:"open.v1"`
-	UserId                  int64                   `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Keep the existing notification.new payload byte-shape compatible with
+	// encoding/json field tags as producers move to protojson.
+	UserId                  int64                   `protobuf:"varint,1,opt,name=user_id,proto3" json:"user_id,omitempty"`
 	Id                      string                  `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 	Type                    string                  `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
 	Category                string                  `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty"`
 	Title                   string                  `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
 	Body                    string                  `protobuf:"bytes,6,opt,name=body,proto3" json:"body,omitempty"`
 	Data                    map[string]string       `protobuf:"bytes,7,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	IsRead                  bool                    `protobuf:"varint,8,opt,name=is_read,json=isRead,proto3" json:"is_read,omitempty"`
-	CreatedAt               *timestamppb.Timestamp  `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	IsRead                  bool                    `protobuf:"varint,8,opt,name=is_read,proto3" json:"is_read,omitempty"`
+	CreatedAt               *timestamppb.Timestamp  `protobuf:"bytes,9,opt,name=created_at,proto3" json:"created_at,omitempty"`
 	RecipientApp            NotificationApp         `protobuf:"varint,10,opt,name=recipient_app,json=recipientApp,proto3,enum=communication.notification.v1.NotificationApp" json:"recipient_app,omitempty"`
 	RecipientPerspective    NotificationPerspective `protobuf:"varint,11,opt,name=recipient_perspective,json=recipientPerspective,proto3,enum=communication.notification.v1.NotificationPerspective" json:"recipient_perspective,omitempty"`
 	RecipientOrganizationId string                  `protobuf:"bytes,12,opt,name=recipient_organization_id,json=recipientOrganizationId,proto3" json:"recipient_organization_id,omitempty"`
@@ -3952,18 +3956,18 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	" \x01(\tR\tcontextId\x1a7\n" +
 	"\tDataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x95\x06\n" +
-	"\x10PushEventPayload\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x99\x06\n" +
+	"\x10PushEventPayload\x12\x18\n" +
+	"\auser_id\x18\x01 \x01(\x03R\auser_id\x12\x1e\n" +
 	"\n" +
-	"event_type\x18\x02 \x01(\tR\teventType\x12\x14\n" +
+	"event_type\x18\x02 \x01(\tR\n" +
+	"event_type\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12\x12\n" +
 	"\x04body\x18\x04 \x01(\tR\x04body\x12M\n" +
 	"\x04data\x18\x05 \x03(\v29.communication.notification.v1.PushEventPayload.DataEntryR\x04data\x12\x1a\n" +
-	"\bpriority\x18\x06 \x01(\tR\bpriority\x12\x1b\n" +
-	"\tdedup_key\x18\a \x01(\tR\bdedupKey\x12\x1f\n" +
-	"\vtarget_apps\x18\b \x03(\tR\n" +
-	"targetApps\x12\x1a\n" +
+	"\bpriority\x18\x06 \x01(\tR\bpriority\x12\x1c\n" +
+	"\tdedup_key\x18\a \x01(\tR\tdedup_key\x12 \n" +
+	"\vtarget_apps\x18\b \x03(\tR\vtarget_apps\x12\x1a\n" +
 	"\bcategory\x18\t \x01(\tR\bcategory\x12Z\n" +
 	"\x11typed_target_apps\x18\n" +
 	" \x03(\x0e2..communication.notification.v1.NotificationAppR\x0ftypedTargetApps\x12k\n" +
@@ -3975,18 +3979,19 @@ const file_communication_notification_notification_proto_rawDesc = "" +
 	"\x0etyped_category\x18\x0f \x01(\x0e23.communication.notification.v1.NotificationCategoryR\rtypedCategory\x1a7\n" +
 	"\tDataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xfd\x06\n" +
-	" RealtimeNotificationEventPayload\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x0e\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x80\a\n" +
+	" RealtimeNotificationEventPayload\x12\x18\n" +
+	"\auser_id\x18\x01 \x01(\x03R\auser_id\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\tR\x02id\x12\x12\n" +
 	"\x04type\x18\x03 \x01(\tR\x04type\x12\x1a\n" +
 	"\bcategory\x18\x04 \x01(\tR\bcategory\x12\x14\n" +
 	"\x05title\x18\x05 \x01(\tR\x05title\x12\x12\n" +
 	"\x04body\x18\x06 \x01(\tR\x04body\x12]\n" +
-	"\x04data\x18\a \x03(\v2I.communication.notification.v1.RealtimeNotificationEventPayload.DataEntryR\x04data\x12\x17\n" +
-	"\ais_read\x18\b \x01(\bR\x06isRead\x129\n" +
+	"\x04data\x18\a \x03(\v2I.communication.notification.v1.RealtimeNotificationEventPayload.DataEntryR\x04data\x12\x18\n" +
+	"\ais_read\x18\b \x01(\bR\ais_read\x12:\n" +
 	"\n" +
-	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12S\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"created_at\x12S\n" +
 	"\rrecipient_app\x18\n" +
 	" \x01(\x0e2..communication.notification.v1.NotificationAppR\frecipientApp\x12k\n" +
 	"\x15recipient_perspective\x18\v \x01(\x0e26.communication.notification.v1.NotificationPerspectiveR\x14recipientPerspective\x12:\n" +

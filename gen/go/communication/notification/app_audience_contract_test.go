@@ -1,11 +1,16 @@
 package notificationv1
 
 import (
+	"encoding/json"
 	"os"
+	"reflect"
 	"strings"
 	"testing"
+	"time"
 
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func TestAppAudienceContract(t *testing.T) {
@@ -79,6 +84,174 @@ func TestAppAudienceContract(t *testing.T) {
 	assertNotificationField(t, registerDevice, "app", 8, protoreflect.StringKind)
 	assertNotificationField(t, registerDevice, "target_app", 9, protoreflect.EnumKind)
 	assertNotificationContractDocumentation(t)
+}
+
+func TestPushEventPayloadProtoJSONPreservesLegacyWireShape(t *testing.T) {
+	payload := &PushEventPayload{
+		UserId:               42,
+		EventType:            "bid.received",
+		Title:                "New bid",
+		Body:                 "A workshop replied",
+		Data:                 map[string]string{"route": "request"},
+		Priority:             "high",
+		DedupKey:             "bid:77",
+		TargetApps:           []string{"client", "partner"},
+		Category:             "promo",
+		TypedTargetApps:      []NotificationApp{NotificationApp_NOTIFICATION_APP_CLIENT, NotificationApp_NOTIFICATION_APP_PRO},
+		RecipientPerspective: NotificationPerspective_NOTIFICATION_PERSPECTIVE_BUYER,
+		TypedCategory:        NotificationCategory_NOTIFICATION_CATEGORY_PROMO,
+	}
+
+	wire := marshalNotificationProtoJSON(t, payload)
+	assertNotificationJSONKeys(t, wire,
+		[]string{"user_id", "event_type", "dedup_key", "target_apps", "category"},
+		[]string{"userId", "eventType", "dedupKey", "targetApps"},
+	)
+	if _, ok := wire["typedTargetApps"]; !ok {
+		t.Fatal("typedTargetApps must coexist separately from legacy target_apps")
+	}
+
+	var consumer struct {
+		EventType  string   `json:"event_type"`
+		DedupKey   string   `json:"dedup_key"`
+		TargetApps []string `json:"target_apps"`
+		Category   string   `json:"category"`
+	}
+	decodeNotificationJSON(t, wire, &consumer)
+	if consumer.EventType != "bid.received" || consumer.DedupKey != "bid:77" || consumer.Category != "promo" {
+		t.Fatalf("encoding/json migration seam lost legacy values: %+v", consumer)
+	}
+	if want := []string{"client", "partner"}; !reflect.DeepEqual(consumer.TargetApps, want) {
+		t.Fatalf("encoding/json target_apps = %v, want %v", consumer.TargetApps, want)
+	}
+}
+
+func TestPushEventPayloadProtoJSONReadsLiveLegacyJSONWithoutDefaulting(t *testing.T) {
+	const live = `{"user_id":42,"event_type":"bid.received","title":"New bid","body":"A workshop replied","data":{"route":"request"},"priority":"high","dedup_key":"bid:77","target_apps":["client","partner"],"category":"promo"}`
+	var payload PushEventPayload
+	if err := protojson.Unmarshal([]byte(live), &payload); err != nil {
+		t.Fatalf("unmarshal live notification.push JSON: %v", err)
+	}
+	if payload.UserId != 42 || payload.EventType != "bid.received" || payload.DedupKey != "bid:77" || payload.Category != "promo" {
+		t.Fatalf("legacy push values were lost or defaulted: %+v", &payload)
+	}
+	if want := []string{"client", "partner"}; !reflect.DeepEqual(payload.TargetApps, want) {
+		t.Fatalf("target_apps = %v, want %v", payload.TargetApps, want)
+	}
+}
+
+func TestRealtimeNotificationEventProtoJSONPreservesLegacyWireShape(t *testing.T) {
+	createdAt := timestamppb.New(time.Date(2026, time.August, 5, 12, 30, 0, 0, time.UTC))
+	payload := &RealtimeNotificationEventPayload{
+		UserId:        42,
+		Id:            "notification-7",
+		Type:          "push",
+		Category:      "chat",
+		Title:         "Message",
+		Body:          "New message",
+		Data:          map[string]string{"chat_id": "chat-1"},
+		IsRead:        true,
+		CreatedAt:     createdAt,
+		TypedType:     NotificationType_NOTIFICATION_TYPE_PUSH,
+		TypedCategory: NotificationCategory_NOTIFICATION_CATEGORY_CHAT,
+	}
+
+	wire := marshalNotificationProtoJSON(t, payload)
+	assertNotificationJSONKeys(t, wire,
+		[]string{"user_id", "type", "category", "is_read", "created_at"},
+		[]string{"userId", "isRead", "createdAt"},
+	)
+	if _, ok := wire["typedType"]; !ok {
+		t.Fatal("typedType must coexist separately from legacy string type")
+	}
+	if _, ok := wire["typedCategory"]; !ok {
+		t.Fatal("typedCategory must coexist separately from legacy string category")
+	}
+
+	var consumer struct {
+		Type      string    `json:"type"`
+		Category  string    `json:"category"`
+		IsRead    bool      `json:"is_read"`
+		CreatedAt time.Time `json:"created_at"`
+	}
+	decodeNotificationJSON(t, wire, &consumer)
+	if consumer.Type != "push" || consumer.Category != "chat" || !consumer.IsRead ||
+		consumer.CreatedAt.UTC().Format(time.RFC3339) != "2026-08-05T12:30:00Z" {
+		t.Fatalf("encoding/json realtime seam lost legacy values: %+v", consumer)
+	}
+}
+
+func TestRealtimeNotificationEventProtoJSONReadsLiveLegacyJSONWithoutDefaulting(t *testing.T) {
+	const live = `{"user_id":42,"id":"notification-7","type":"push","category":"chat","title":"Message","body":"New message","data":{"chat_id":"chat-1"},"is_read":true,"created_at":"2026-08-05T12:30:00Z"}`
+	var payload RealtimeNotificationEventPayload
+	if err := protojson.Unmarshal([]byte(live), &payload); err != nil {
+		t.Fatalf("unmarshal live notification.new JSON: %v", err)
+	}
+	if payload.UserId != 42 || payload.Type != "push" || payload.Category != "chat" || !payload.IsRead {
+		t.Fatalf("legacy realtime values were lost or defaulted: %+v", &payload)
+	}
+	if got := payload.CreatedAt.AsTime().UTC().Format(time.RFC3339); got != "2026-08-05T12:30:00Z" {
+		t.Fatalf("created_at = %q, want live value", got)
+	}
+}
+
+func TestPushEventPayloadKeepsConflictingFormsForOwnerValidation(t *testing.T) {
+	const conflicting = `{"target_apps":["client"],"category":"promo","typedTargetApps":["NOTIFICATION_APP_PRO"],"typedCategory":"NOTIFICATION_CATEGORY_SYSTEM"}`
+	var payload PushEventPayload
+	if err := protojson.Unmarshal([]byte(conflicting), &payload); err != nil {
+		t.Fatalf("unmarshal conflicting dual-write fixture: %v", err)
+	}
+	if !reflect.DeepEqual(payload.TargetApps, []string{"client"}) ||
+		!reflect.DeepEqual(payload.TypedTargetApps, []NotificationApp{NotificationApp_NOTIFICATION_APP_PRO}) ||
+		payload.Category != "promo" || payload.TypedCategory != NotificationCategory_NOTIFICATION_CATEGORY_SYSTEM {
+		t.Fatalf("legacy and typed forms must remain distinct for owner rejection: %+v", &payload)
+	}
+}
+
+func marshalNotificationProtoJSON(t *testing.T, message interface{ ProtoReflect() protoreflect.Message }) map[string]json.RawMessage {
+	t.Helper()
+	encoded, err := protojson.Marshal(message)
+	if err != nil {
+		t.Fatalf("protojson marshal: %v", err)
+	}
+	var wire map[string]json.RawMessage
+	if err := json.Unmarshal(encoded, &wire); err != nil {
+		t.Fatalf("decode marshaled protojson: %v", err)
+	}
+	return wire
+}
+
+func assertNotificationJSONKeys(t *testing.T, wire map[string]json.RawMessage, present, absent []string) {
+	t.Helper()
+	for _, key := range present {
+		if _, ok := wire[key]; !ok {
+			t.Errorf("protojson missing required legacy key %q; keys=%v", key, notificationJSONKeys(wire))
+		}
+	}
+	for _, key := range absent {
+		if _, ok := wire[key]; ok {
+			t.Errorf("protojson emitted forbidden camelCase legacy key %q", key)
+		}
+	}
+}
+
+func notificationJSONKeys(wire map[string]json.RawMessage) []string {
+	keys := make([]string, 0, len(wire))
+	for key := range wire {
+		keys = append(keys, key)
+	}
+	return keys
+}
+
+func decodeNotificationJSON(t *testing.T, wire map[string]json.RawMessage, target any) {
+	t.Helper()
+	encoded, err := json.Marshal(wire)
+	if err != nil {
+		t.Fatalf("encode protojson map: %v", err)
+	}
+	if err := json.Unmarshal(encoded, target); err != nil {
+		t.Fatalf("decode with current encoding/json tags: %v", err)
+	}
 }
 
 func assertNotificationContractDocumentation(t *testing.T) {

@@ -136,23 +136,25 @@ message VehicleContext {
 // are never silently dropped. Organization routing is verified from the chat
 // owner and membership source; event or BFF values are not authority.
 message ChatRealtimeEventPayload {
-  string message_id = 1;
-  string chat_id = 2;
-  int64 sender_id = 3;
-  string message_type = 4;
-  int64 recipient_id = 5;
-  repeated int64 recipient_user_ids = 6;
+  // Explicit json_name values preserve the encoding/json event shape when
+  // chat producers migrate to protojson, whose inferred names are camelCase.
+  string message_id = 1 [json_name = "message_id"];
+  string chat_id = 2 [json_name = "chat_id"];
+  int64 sender_id = 3 [json_name = "sender_id"];
+  string message_type = 4 [json_name = "message_type"];
+  int64 recipient_id = 5 [json_name = "recipient_id"];
+  repeated int64 recipient_user_ids = 6 [json_name = "recipient_user_ids"];
   // Legacy JSON field. Values remain exactly "client" and/or "partner".
-  repeated string target_apps = 7;
+  repeated string target_apps = 7 [json_name = "target_apps"];
   // Legacy JSON field consumed by current partner websocket routing.
-  string recipient_org_id = 8;
+  string recipient_org_id = 8 [json_name = "recipient_org_id"];
   // Typed fields use distinct names/tags so legacy JSON remains dual-readable.
   ChatApp recipient_app = 9;
   ChatPerspective recipient_perspective = 10;
   string recipient_organization_id = 11;
   // Legacy JSON context_type remains a category string such as "request".
-  string context_type = 12;
-  string context_id = 13;
+  string context_type = 12 [json_name = "context_type"];
+  string context_id = 13 [json_name = "context_id"];
 }
 
 // app, perspective, and organization_id are routing/profile context only.

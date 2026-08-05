@@ -133,16 +133,18 @@ message SendPushRequest {
 // a push. Organization routing is verified from its source owner/membership;
 // publisher and BFF values are routing context, not authority.
 message PushEventPayload {
-  int64 user_id = 1;
-  string event_type = 2;
-  string title = 3;
-  string body = 4;
-  map<string, string> data = 5;
-  string priority = 6;
-  string dedup_key = 7;
+  // Explicit json_name values preserve the encoding/json wire contract when
+  // producers migrate to protojson, whose inferred names are camelCase.
+  int64 user_id = 1 [json_name = "user_id"];
+  string event_type = 2 [json_name = "event_type"];
+  string title = 3 [json_name = "title"];
+  string body = 4 [json_name = "body"];
+  map<string, string> data = 5 [json_name = "data"];
+  string priority = 6 [json_name = "priority"];
+  string dedup_key = 7 [json_name = "dedup_key"];
   // Exact legacy JSON fields consumed by current publishers and consumers.
-  repeated string target_apps = 8;
-  string category = 9;
+  repeated string target_apps = 8 [json_name = "target_apps"];
+  string category = 9 [json_name = "category"];
   // Typed app scopes use a non-conflicting name/tag for dual-read/write.
   repeated NotificationApp typed_target_apps = 10;
   NotificationPerspective recipient_perspective = 11;
@@ -158,15 +160,17 @@ message PushEventPayload {
 // they MUST agree or the owner rejects INVALID_ARGUMENT; typed consumers fall
 // back to the legacy strings until migration completes.
 message RealtimeNotificationEventPayload {
-  int64 user_id = 1;
-  string id = 2;
-  string type = 3;
-  string category = 4;
-  string title = 5;
-  string body = 6;
-  map<string, string> data = 7;
-  bool is_read = 8;
-  google.protobuf.Timestamp created_at = 9;
+  // Keep the existing notification.new payload byte-shape compatible with
+  // encoding/json field tags as producers move to protojson.
+  int64 user_id = 1 [json_name = "user_id"];
+  string id = 2 [json_name = "id"];
+  string type = 3 [json_name = "type"];
+  string category = 4 [json_name = "category"];
+  string title = 5 [json_name = "title"];
+  string body = 6 [json_name = "body"];
+  map<string, string> data = 7 [json_name = "data"];
+  bool is_read = 8 [json_name = "is_read"];
+  google.protobuf.Timestamp created_at = 9 [json_name = "created_at"];
   NotificationApp recipient_app = 10;
   NotificationPerspective recipient_perspective = 11;
   string recipient_organization_id = 12;

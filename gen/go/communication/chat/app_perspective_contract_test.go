@@ -1,10 +1,13 @@
 package chatv1
 
 import (
+	"encoding/json"
 	"os"
+	"reflect"
 	"strings"
 	"testing"
 
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
@@ -77,6 +80,99 @@ func TestAppPerspectiveContract(t *testing.T) {
 	}
 
 	assertChatContractDocumentation(t)
+}
+
+func TestChatRealtimeEventProtoJSONPreservesLegacyWireShape(t *testing.T) {
+	payload := &ChatRealtimeEventPayload{
+		MessageId:               "message-1",
+		ChatId:                  "chat-1",
+		SenderId:                11,
+		MessageType:             "text",
+		RecipientId:             22,
+		RecipientUserIds:        []int64{22, 23},
+		TargetApps:              []string{"client", "partner"},
+		RecipientOrgId:          "org-legacy",
+		RecipientApp:            ChatApp_CHAT_APP_PRO,
+		RecipientPerspective:    ChatPerspective_CHAT_PERSPECTIVE_SELLER_ORG,
+		RecipientOrganizationId: "org-typed",
+		ContextType:             "request",
+		ContextId:               "request-7",
+	}
+
+	encoded, err := protojson.Marshal(payload)
+	if err != nil {
+		t.Fatalf("protojson marshal chat event: %v", err)
+	}
+	var wire map[string]json.RawMessage
+	if err := json.Unmarshal(encoded, &wire); err != nil {
+		t.Fatalf("decode marshaled chat protojson: %v", err)
+	}
+	for _, key := range []string{"message_id", "chat_id", "sender_id", "message_type", "recipient_id", "recipient_user_ids", "target_apps", "recipient_org_id", "context_type", "context_id"} {
+		if _, ok := wire[key]; !ok {
+			t.Errorf("protojson missing required legacy key %q", key)
+		}
+	}
+	for _, key := range []string{"messageId", "chatId", "senderId", "messageType", "recipientId", "recipientUserIds", "targetApps", "recipientOrgId", "contextType", "contextId"} {
+		if _, ok := wire[key]; ok {
+			t.Errorf("protojson emitted forbidden camelCase legacy key %q", key)
+		}
+	}
+	if _, ok := wire["recipientApp"]; !ok {
+		t.Fatal("typed recipientApp must coexist separately from legacy target_apps")
+	}
+	if _, ok := wire["recipientOrganizationId"]; !ok {
+		t.Fatal("typed recipientOrganizationId must coexist separately from legacy recipient_org_id")
+	}
+
+	var consumer struct {
+		MessageID      string   `json:"message_id"`
+		ChatID         string   `json:"chat_id"`
+		MessageType    string   `json:"message_type"`
+		TargetApps     []string `json:"target_apps"`
+		RecipientOrgID string   `json:"recipient_org_id"`
+		ContextType    string   `json:"context_type"`
+		ContextID      string   `json:"context_id"`
+	}
+	if err := json.Unmarshal(encoded, &consumer); err != nil {
+		t.Fatalf("decode chat protojson with current encoding/json tags: %v", err)
+	}
+	if consumer.MessageID != "message-1" || consumer.ChatID != "chat-1" || consumer.MessageType != "text" ||
+		consumer.RecipientOrgID != "org-legacy" || consumer.ContextType != "request" || consumer.ContextID != "request-7" {
+		t.Fatalf("encoding/json chat migration seam lost legacy values: %+v", consumer)
+	}
+	if want := []string{"client", "partner"}; !reflect.DeepEqual(consumer.TargetApps, want) {
+		t.Fatalf("encoding/json target_apps = %v, want %v", consumer.TargetApps, want)
+	}
+}
+
+func TestChatRealtimeEventProtoJSONReadsLiveLegacyJSONWithoutDefaulting(t *testing.T) {
+	const live = `{"message_id":"message-1","chat_id":"chat-1","sender_id":11,"message_type":"text","recipient_id":22,"recipient_user_ids":[22,23],"target_apps":["client","partner"],"recipient_org_id":"org-legacy","context_type":"request","context_id":"request-7"}`
+	var payload ChatRealtimeEventPayload
+	if err := protojson.Unmarshal([]byte(live), &payload); err != nil {
+		t.Fatalf("unmarshal live chat.message.sent JSON: %v", err)
+	}
+	if payload.MessageId != "message-1" || payload.ChatId != "chat-1" || payload.SenderId != 11 || payload.MessageType != "text" ||
+		payload.RecipientId != 22 || payload.RecipientOrgId != "org-legacy" || payload.ContextType != "request" || payload.ContextId != "request-7" {
+		t.Fatalf("legacy chat values were lost or defaulted: %+v", &payload)
+	}
+	if !reflect.DeepEqual(payload.RecipientUserIds, []int64{22, 23}) {
+		t.Fatalf("recipient_user_ids = %v, want [22 23]", payload.RecipientUserIds)
+	}
+	if !reflect.DeepEqual(payload.TargetApps, []string{"client", "partner"}) {
+		t.Fatalf("target_apps = %v, want [client partner]", payload.TargetApps)
+	}
+}
+
+func TestChatRealtimeEventKeepsConflictingFormsForOwnerValidation(t *testing.T) {
+	const conflicting = `{"target_apps":["client"],"recipient_org_id":"org-legacy","recipientApp":"CHAT_APP_PRO","recipientOrganizationId":"org-typed"}`
+	var payload ChatRealtimeEventPayload
+	if err := protojson.Unmarshal([]byte(conflicting), &payload); err != nil {
+		t.Fatalf("unmarshal conflicting chat dual-write fixture: %v", err)
+	}
+	if !reflect.DeepEqual(payload.TargetApps, []string{"client"}) || payload.RecipientOrgId != "org-legacy" ||
+		payload.RecipientApp != ChatApp_CHAT_APP_PRO || payload.RecipientOrganizationId != "org-typed" {
+		t.Fatalf("legacy and typed forms must remain distinct for owner rejection: %+v", &payload)
+	}
 }
 
 func assertChatContractDocumentation(t *testing.T) {
