@@ -86,6 +86,19 @@ An already accepted order can never acquire a second arrival audit or event: a
 same-fingerprint retry returns the original result, while a different note/order
 fingerprint conflicts.
 
+Every successful exact replay under either command that presents a previously
+unseen scoped idempotency key MUST bind that key as an alias to the stored
+immutable fingerprint and result before returning. The lookup and alias insert
+MUST use the same uniqueness and transactional serialization as the existing
+key, deal, source-event and arrival identities. If the key is already bound to
+any different fingerprint or result, the command returns `ALREADY_EXISTS` with
+no mutation. This makes the sequential regression normative: `D1/K1 -> D1/K2
+-> D2/K2` first creates result R1, then D1/K2 must bind K2 to R1 before returning
+R1, and D2/K2 must then return `ALREADY_EXISTS` without mutation. Under the same
+serialization, concurrent D1/K2 and D2/K2 cannot both succeed. Exact replay and
+alias binding must not create a second order, intake or arrival audit, outbox
+event, or source-system read.
+
 Cross-service mutations are delivered from transactional outboxes and applied by
 idempotent inbox consumers. The existing `transaction.succeeded` payment fact is
 authoritative for repair-order payment projection. Workshop lifecycle facts

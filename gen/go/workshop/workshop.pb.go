@@ -13716,6 +13716,12 @@ type AcceptVehicleRequest struct {
 	// scoped key reused with a different fingerprint, an already accepted order
 	// with a different fingerprint, or identities resolving to different rows
 	// returns gRPC ALREADY_EXISTS and performs no mutation or publication.
+	// Every successful exact replay that presents a previously unseen scoped
+	// idempotency key MUST, before returning, atomically persist that key as an
+	// alias to the stored immutable fingerprint and result. If the key is
+	// already bound to a different fingerprint or result, the command returns
+	// ALREADY_EXISTS with no mutation. Alias binding uses the same uniqueness and
+	// transactional serialization as every other deduplication identity.
 	RepairOrderId int64 `protobuf:"varint,1,opt,name=repair_order_id,json=repairOrderId,proto3" json:"repair_order_id,omitempty"`
 	// Required, non-empty command key with the scope and semantics above.
 	IdempotencyKey string  `protobuf:"bytes,2,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
@@ -13845,6 +13851,12 @@ type CreateIntakeOrderFromCRMRequest struct {
 	// or deal identity reused with a different fingerprint, or identities
 	// resolving to different rows, returns gRPC ALREADY_EXISTS and performs no
 	// mutation or publication.
+	// Every successful exact replay that presents a previously unseen scoped
+	// idempotency key MUST, before returning, atomically persist that key as an
+	// alias to the stored immutable fingerprint and result. If the key is
+	// already bound to a different fingerprint or result, the command returns
+	// ALREADY_EXISTS with no mutation. Alias binding uses the same uniqueness and
+	// transactional serialization as every other deduplication identity.
 	//
 	// cg-workshop first authenticates the caller, resolves workshop_id to its
 	// authoritative organization and binds the tenant/service scope. It then

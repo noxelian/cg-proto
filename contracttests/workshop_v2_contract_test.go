@@ -122,6 +122,37 @@ func TestWorkshopV2ReplayAndAuthorizationSemanticsArePinned(t *testing.T) {
 	)
 }
 
+func TestWorkshopV2ExactReplayBindsEveryNewScopedKeyAtomically(t *testing.T) {
+	workshopSource := readContractFile(t, "workshop/workshop.proto")
+	adr := readContractFile(t, "docs/adr/0001-workshop-v2-contracts.md")
+
+	acceptVehicle := contractBlock(t, workshopSource, "message AcceptVehicleRequest", "message AcceptVehicleResponse")
+	createIntake := contractBlock(t, workshopSource, "message CreateIntakeOrderFromCRMRequest", "message CreateIntakeOrderFromCRMResponse")
+	for name, command := range map[string]string{
+		"AcceptVehicle":            acceptVehicle,
+		"CreateIntakeOrderFromCRM": createIntake,
+	} {
+		t.Run(name, func(t *testing.T) {
+			assertContainsAll(t, command,
+				"previously unseen scoped idempotency key",
+				"MUST, before returning, atomically persist that key as an alias",
+				"stored immutable fingerprint and result",
+				"already bound to a different fingerprint or result",
+				"ALREADY_EXISTS with no mutation",
+				"same uniqueness and transactional serialization",
+			)
+		})
+	}
+
+	assertContainsAll(t, adr,
+		"D1/K1 -> D1/K2 -> D2/K2",
+		"D1/K2 must bind K2 to R1 before returning R1",
+		"D2/K2 must then return `ALREADY_EXISTS` without mutation",
+		"concurrent D1/K2 and D2/K2 cannot both succeed",
+		"must not create a second order, intake or arrival audit, outbox event, or source-system read",
+	)
+}
+
 func TestAcceptVehicleNotePresenceAndAdditiveNumbers(t *testing.T) {
 	absent := &workshopv1.AcceptVehicleRequest{RepairOrderId: 42, IdempotencyKey: "arrival-42"}
 	empty := &workshopv1.AcceptVehicleRequest{
@@ -204,6 +235,19 @@ func assertContainsAll(t *testing.T, source string, fragments ...string) {
 			t.Errorf("contract text missing %q", fragment)
 		}
 	}
+}
+
+func contractBlock(t *testing.T, source, start, end string) string {
+	t.Helper()
+	startIndex := strings.Index(source, start)
+	if startIndex < 0 {
+		t.Fatalf("contract block start %q not found", start)
+	}
+	endIndex := strings.Index(source[startIndex:], end)
+	if endIndex < 0 {
+		t.Fatalf("contract block end %q not found after %q", end, start)
+	}
+	return source[startIndex : startIndex+endIndex]
 }
 
 func normalizeWhitespace(value string) string {
