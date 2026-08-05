@@ -19,11 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CounterService_GetCounters_FullMethodName      = "/platform.counter.v1.CounterService/GetCounters"
-	CounterService_IncrementCounter_FullMethodName = "/platform.counter.v1.CounterService/IncrementCounter"
-	CounterService_DecrementCounter_FullMethodName = "/platform.counter.v1.CounterService/DecrementCounter"
-	CounterService_SetCounter_FullMethodName       = "/platform.counter.v1.CounterService/SetCounter"
-	CounterService_GetBadgeTotal_FullMethodName    = "/platform.counter.v1.CounterService/GetBadgeTotal"
+	CounterService_GetCounters_FullMethodName                  = "/platform.counter.v1.CounterService/GetCounters"
+	CounterService_IncrementCounter_FullMethodName             = "/platform.counter.v1.CounterService/IncrementCounter"
+	CounterService_DecrementCounter_FullMethodName             = "/platform.counter.v1.CounterService/DecrementCounter"
+	CounterService_SetCounter_FullMethodName                   = "/platform.counter.v1.CounterService/SetCounter"
+	CounterService_GetBadgeTotal_FullMethodName                = "/platform.counter.v1.CounterService/GetBadgeTotal"
+	CounterService_GetRoadsidePurchasesSnapshot_FullMethodName = "/platform.counter.v1.CounterService/GetRoadsidePurchasesSnapshot"
+	CounterService_ResetRoadsidePurchasesUnread_FullMethodName = "/platform.counter.v1.CounterService/ResetRoadsidePurchasesUnread"
 )
 
 // CounterServiceClient is the client API for CounterService service.
@@ -35,6 +37,12 @@ type CounterServiceClient interface {
 	DecrementCounter(ctx context.Context, in *DecrementCounterRequest, opts ...grpc.CallOption) (*DecrementCounterResponse, error)
 	SetCounter(ctx context.Context, in *SetCounterRequest, opts ...grpc.CallOption) (*SetCounterResponse, error)
 	GetBadgeTotal(ctx context.Context, in *GetBadgeTotalRequest, opts ...grpc.CallOption) (*GetBadgeTotalResponse, error)
+	// GetRoadsidePurchasesSnapshot returns a counter-owned, monotonic cursor for
+	// one purchases filter. Unlike wall-clock timestamps it is safe across hosts.
+	GetRoadsidePurchasesSnapshot(ctx context.Context, in *GetRoadsidePurchasesSnapshotRequest, opts ...grpc.CallOption) (*GetRoadsidePurchasesSnapshotResponse, error)
+	// ResetRoadsidePurchasesUnread marks changes through a counter-issued cursor
+	// as viewed for one filter. The authenticated user may only reset their own.
+	ResetRoadsidePurchasesUnread(ctx context.Context, in *ResetRoadsidePurchasesUnreadRequest, opts ...grpc.CallOption) (*ResetRoadsidePurchasesUnreadResponse, error)
 }
 
 type counterServiceClient struct {
@@ -95,6 +103,26 @@ func (c *counterServiceClient) GetBadgeTotal(ctx context.Context, in *GetBadgeTo
 	return out, nil
 }
 
+func (c *counterServiceClient) GetRoadsidePurchasesSnapshot(ctx context.Context, in *GetRoadsidePurchasesSnapshotRequest, opts ...grpc.CallOption) (*GetRoadsidePurchasesSnapshotResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRoadsidePurchasesSnapshotResponse)
+	err := c.cc.Invoke(ctx, CounterService_GetRoadsidePurchasesSnapshot_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *counterServiceClient) ResetRoadsidePurchasesUnread(ctx context.Context, in *ResetRoadsidePurchasesUnreadRequest, opts ...grpc.CallOption) (*ResetRoadsidePurchasesUnreadResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResetRoadsidePurchasesUnreadResponse)
+	err := c.cc.Invoke(ctx, CounterService_ResetRoadsidePurchasesUnread_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CounterServiceServer is the server API for CounterService service.
 // All implementations must embed UnimplementedCounterServiceServer
 // for forward compatibility.
@@ -104,6 +132,12 @@ type CounterServiceServer interface {
 	DecrementCounter(context.Context, *DecrementCounterRequest) (*DecrementCounterResponse, error)
 	SetCounter(context.Context, *SetCounterRequest) (*SetCounterResponse, error)
 	GetBadgeTotal(context.Context, *GetBadgeTotalRequest) (*GetBadgeTotalResponse, error)
+	// GetRoadsidePurchasesSnapshot returns a counter-owned, monotonic cursor for
+	// one purchases filter. Unlike wall-clock timestamps it is safe across hosts.
+	GetRoadsidePurchasesSnapshot(context.Context, *GetRoadsidePurchasesSnapshotRequest) (*GetRoadsidePurchasesSnapshotResponse, error)
+	// ResetRoadsidePurchasesUnread marks changes through a counter-issued cursor
+	// as viewed for one filter. The authenticated user may only reset their own.
+	ResetRoadsidePurchasesUnread(context.Context, *ResetRoadsidePurchasesUnreadRequest) (*ResetRoadsidePurchasesUnreadResponse, error)
 	mustEmbedUnimplementedCounterServiceServer()
 }
 
@@ -128,6 +162,12 @@ func (UnimplementedCounterServiceServer) SetCounter(context.Context, *SetCounter
 }
 func (UnimplementedCounterServiceServer) GetBadgeTotal(context.Context, *GetBadgeTotalRequest) (*GetBadgeTotalResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetBadgeTotal not implemented")
+}
+func (UnimplementedCounterServiceServer) GetRoadsidePurchasesSnapshot(context.Context, *GetRoadsidePurchasesSnapshotRequest) (*GetRoadsidePurchasesSnapshotResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetRoadsidePurchasesSnapshot not implemented")
+}
+func (UnimplementedCounterServiceServer) ResetRoadsidePurchasesUnread(context.Context, *ResetRoadsidePurchasesUnreadRequest) (*ResetRoadsidePurchasesUnreadResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResetRoadsidePurchasesUnread not implemented")
 }
 func (UnimplementedCounterServiceServer) mustEmbedUnimplementedCounterServiceServer() {}
 func (UnimplementedCounterServiceServer) testEmbeddedByValue()                        {}
@@ -240,6 +280,42 @@ func _CounterService_GetBadgeTotal_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CounterService_GetRoadsidePurchasesSnapshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRoadsidePurchasesSnapshotRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CounterServiceServer).GetRoadsidePurchasesSnapshot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CounterService_GetRoadsidePurchasesSnapshot_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CounterServiceServer).GetRoadsidePurchasesSnapshot(ctx, req.(*GetRoadsidePurchasesSnapshotRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CounterService_ResetRoadsidePurchasesUnread_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetRoadsidePurchasesUnreadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CounterServiceServer).ResetRoadsidePurchasesUnread(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CounterService_ResetRoadsidePurchasesUnread_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CounterServiceServer).ResetRoadsidePurchasesUnread(ctx, req.(*ResetRoadsidePurchasesUnreadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CounterService_ServiceDesc is the grpc.ServiceDesc for CounterService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +342,14 @@ var CounterService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBadgeTotal",
 			Handler:    _CounterService_GetBadgeTotal_Handler,
+		},
+		{
+			MethodName: "GetRoadsidePurchasesSnapshot",
+			Handler:    _CounterService_GetRoadsidePurchasesSnapshot_Handler,
+		},
+		{
+			MethodName: "ResetRoadsidePurchasesUnread",
+			Handler:    _CounterService_ResetRoadsidePurchasesUnread_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

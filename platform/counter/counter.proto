@@ -10,6 +10,18 @@ service CounterService {
   rpc DecrementCounter(DecrementCounterRequest) returns (DecrementCounterResponse);
   rpc SetCounter(SetCounterRequest) returns (SetCounterResponse);
   rpc GetBadgeTotal(GetBadgeTotalRequest) returns (GetBadgeTotalResponse);
+  // GetRoadsidePurchasesSnapshot returns a counter-owned, monotonic cursor for
+  // one purchases filter. Unlike wall-clock timestamps it is safe across hosts.
+  rpc GetRoadsidePurchasesSnapshot(GetRoadsidePurchasesSnapshotRequest) returns (GetRoadsidePurchasesSnapshotResponse);
+  // ResetRoadsidePurchasesUnread marks changes through a counter-issued cursor
+  // as viewed for one filter. The authenticated user may only reset their own.
+  rpc ResetRoadsidePurchasesUnread(ResetRoadsidePurchasesUnreadRequest) returns (ResetRoadsidePurchasesUnreadResponse);
+}
+
+enum RoadsidePurchasesState {
+  ROADSIDE_PURCHASES_STATE_UNSPECIFIED = 0;
+  ROADSIDE_PURCHASES_STATE_ACTIVE = 1;
+  ROADSIDE_PURCHASES_STATE_COMPLETED = 2;
 }
 
 message UserCounters {
@@ -20,6 +32,7 @@ message UserCounters {
   int32 favorites = 5;
   int32 pending_orders = 6;
   int32 new_applications = 7;
+  int32 roadside_purchases_unread = 8;
 }
 
 message GetCountersRequest {
@@ -60,6 +73,26 @@ message SetCounterResponse {
   bool success = 1;
 }
 
+message GetRoadsidePurchasesSnapshotRequest {
+  RoadsidePurchasesState state = 1;
+}
+
+message GetRoadsidePurchasesSnapshotResponse {
+  // Opaque per-user sequence. Clients must only return it to the reset RPC.
+  uint64 cursor = 1;
+}
+
+message ResetRoadsidePurchasesUnreadRequest {
+  RoadsidePurchasesState state = 1;
+  // Cursor previously issued by GetRoadsidePurchasesSnapshot.
+  uint64 cursor = 2;
+}
+
+message ResetRoadsidePurchasesUnreadResponse {
+  bool success = 1;
+  int32 roadside_purchases_unread = 2;
+}
+
 message GetBadgeTotalRequest {
   int64 user_id = 1;
 }
@@ -68,4 +101,3 @@ message GetBadgeTotalResponse {
   int32 total = 1;                  // min(cap, сумма max(0,src)); кап на чтении
   map<string, int32> breakdown = 2; // без капа
 }
-

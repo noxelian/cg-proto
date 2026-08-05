@@ -21,17 +21,67 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type RoadsidePurchasesState int32
+
+const (
+	RoadsidePurchasesState_ROADSIDE_PURCHASES_STATE_UNSPECIFIED RoadsidePurchasesState = 0
+	RoadsidePurchasesState_ROADSIDE_PURCHASES_STATE_ACTIVE      RoadsidePurchasesState = 1
+	RoadsidePurchasesState_ROADSIDE_PURCHASES_STATE_COMPLETED   RoadsidePurchasesState = 2
+)
+
+// Enum value maps for RoadsidePurchasesState.
+var (
+	RoadsidePurchasesState_name = map[int32]string{
+		0: "ROADSIDE_PURCHASES_STATE_UNSPECIFIED",
+		1: "ROADSIDE_PURCHASES_STATE_ACTIVE",
+		2: "ROADSIDE_PURCHASES_STATE_COMPLETED",
+	}
+	RoadsidePurchasesState_value = map[string]int32{
+		"ROADSIDE_PURCHASES_STATE_UNSPECIFIED": 0,
+		"ROADSIDE_PURCHASES_STATE_ACTIVE":      1,
+		"ROADSIDE_PURCHASES_STATE_COMPLETED":   2,
+	}
+)
+
+func (x RoadsidePurchasesState) Enum() *RoadsidePurchasesState {
+	p := new(RoadsidePurchasesState)
+	*p = x
+	return p
+}
+
+func (x RoadsidePurchasesState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RoadsidePurchasesState) Descriptor() protoreflect.EnumDescriptor {
+	return file_platform_counter_counter_proto_enumTypes[0].Descriptor()
+}
+
+func (RoadsidePurchasesState) Type() protoreflect.EnumType {
+	return &file_platform_counter_counter_proto_enumTypes[0]
+}
+
+func (x RoadsidePurchasesState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RoadsidePurchasesState.Descriptor instead.
+func (RoadsidePurchasesState) EnumDescriptor() ([]byte, []int) {
+	return file_platform_counter_counter_proto_rawDescGZIP(), []int{0}
+}
+
 type UserCounters struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	UserId              int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	UnreadMessages      int32                  `protobuf:"varint,2,opt,name=unread_messages,json=unreadMessages,proto3" json:"unread_messages,omitempty"`
-	UnreadNotifications int32                  `protobuf:"varint,3,opt,name=unread_notifications,json=unreadNotifications,proto3" json:"unread_notifications,omitempty"`
-	ActiveAds           int32                  `protobuf:"varint,4,opt,name=active_ads,json=activeAds,proto3" json:"active_ads,omitempty"`
-	Favorites           int32                  `protobuf:"varint,5,opt,name=favorites,proto3" json:"favorites,omitempty"`
-	PendingOrders       int32                  `protobuf:"varint,6,opt,name=pending_orders,json=pendingOrders,proto3" json:"pending_orders,omitempty"`
-	NewApplications     int32                  `protobuf:"varint,7,opt,name=new_applications,json=newApplications,proto3" json:"new_applications,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	state                   protoimpl.MessageState `protogen:"open.v1"`
+	UserId                  int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UnreadMessages          int32                  `protobuf:"varint,2,opt,name=unread_messages,json=unreadMessages,proto3" json:"unread_messages,omitempty"`
+	UnreadNotifications     int32                  `protobuf:"varint,3,opt,name=unread_notifications,json=unreadNotifications,proto3" json:"unread_notifications,omitempty"`
+	ActiveAds               int32                  `protobuf:"varint,4,opt,name=active_ads,json=activeAds,proto3" json:"active_ads,omitempty"`
+	Favorites               int32                  `protobuf:"varint,5,opt,name=favorites,proto3" json:"favorites,omitempty"`
+	PendingOrders           int32                  `protobuf:"varint,6,opt,name=pending_orders,json=pendingOrders,proto3" json:"pending_orders,omitempty"`
+	NewApplications         int32                  `protobuf:"varint,7,opt,name=new_applications,json=newApplications,proto3" json:"new_applications,omitempty"`
+	RoadsidePurchasesUnread int32                  `protobuf:"varint,8,opt,name=roadside_purchases_unread,json=roadsidePurchasesUnread,proto3" json:"roadside_purchases_unread,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *UserCounters) Reset() {
@@ -109,6 +159,13 @@ func (x *UserCounters) GetPendingOrders() int32 {
 func (x *UserCounters) GetNewApplications() int32 {
 	if x != nil {
 		return x.NewApplications
+	}
+	return 0
+}
+
+func (x *UserCounters) GetRoadsidePurchasesUnread() int32 {
+	if x != nil {
+		return x.RoadsidePurchasesUnread
 	}
 	return 0
 }
@@ -513,6 +570,200 @@ func (x *SetCounterResponse) GetSuccess() bool {
 	return false
 }
 
+type GetRoadsidePurchasesSnapshotRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	State         RoadsidePurchasesState `protobuf:"varint,1,opt,name=state,proto3,enum=platform.counter.v1.RoadsidePurchasesState" json:"state,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRoadsidePurchasesSnapshotRequest) Reset() {
+	*x = GetRoadsidePurchasesSnapshotRequest{}
+	mi := &file_platform_counter_counter_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRoadsidePurchasesSnapshotRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRoadsidePurchasesSnapshotRequest) ProtoMessage() {}
+
+func (x *GetRoadsidePurchasesSnapshotRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_counter_counter_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRoadsidePurchasesSnapshotRequest.ProtoReflect.Descriptor instead.
+func (*GetRoadsidePurchasesSnapshotRequest) Descriptor() ([]byte, []int) {
+	return file_platform_counter_counter_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetRoadsidePurchasesSnapshotRequest) GetState() RoadsidePurchasesState {
+	if x != nil {
+		return x.State
+	}
+	return RoadsidePurchasesState_ROADSIDE_PURCHASES_STATE_UNSPECIFIED
+}
+
+type GetRoadsidePurchasesSnapshotResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Opaque per-user sequence. Clients must only return it to the reset RPC.
+	Cursor        uint64 `protobuf:"varint,1,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRoadsidePurchasesSnapshotResponse) Reset() {
+	*x = GetRoadsidePurchasesSnapshotResponse{}
+	mi := &file_platform_counter_counter_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRoadsidePurchasesSnapshotResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRoadsidePurchasesSnapshotResponse) ProtoMessage() {}
+
+func (x *GetRoadsidePurchasesSnapshotResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_counter_counter_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRoadsidePurchasesSnapshotResponse.ProtoReflect.Descriptor instead.
+func (*GetRoadsidePurchasesSnapshotResponse) Descriptor() ([]byte, []int) {
+	return file_platform_counter_counter_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetRoadsidePurchasesSnapshotResponse) GetCursor() uint64 {
+	if x != nil {
+		return x.Cursor
+	}
+	return 0
+}
+
+type ResetRoadsidePurchasesUnreadRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	State RoadsidePurchasesState `protobuf:"varint,1,opt,name=state,proto3,enum=platform.counter.v1.RoadsidePurchasesState" json:"state,omitempty"`
+	// Cursor previously issued by GetRoadsidePurchasesSnapshot.
+	Cursor        uint64 `protobuf:"varint,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResetRoadsidePurchasesUnreadRequest) Reset() {
+	*x = ResetRoadsidePurchasesUnreadRequest{}
+	mi := &file_platform_counter_counter_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResetRoadsidePurchasesUnreadRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResetRoadsidePurchasesUnreadRequest) ProtoMessage() {}
+
+func (x *ResetRoadsidePurchasesUnreadRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_counter_counter_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResetRoadsidePurchasesUnreadRequest.ProtoReflect.Descriptor instead.
+func (*ResetRoadsidePurchasesUnreadRequest) Descriptor() ([]byte, []int) {
+	return file_platform_counter_counter_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ResetRoadsidePurchasesUnreadRequest) GetState() RoadsidePurchasesState {
+	if x != nil {
+		return x.State
+	}
+	return RoadsidePurchasesState_ROADSIDE_PURCHASES_STATE_UNSPECIFIED
+}
+
+func (x *ResetRoadsidePurchasesUnreadRequest) GetCursor() uint64 {
+	if x != nil {
+		return x.Cursor
+	}
+	return 0
+}
+
+type ResetRoadsidePurchasesUnreadResponse struct {
+	state                   protoimpl.MessageState `protogen:"open.v1"`
+	Success                 bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	RoadsidePurchasesUnread int32                  `protobuf:"varint,2,opt,name=roadside_purchases_unread,json=roadsidePurchasesUnread,proto3" json:"roadside_purchases_unread,omitempty"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
+}
+
+func (x *ResetRoadsidePurchasesUnreadResponse) Reset() {
+	*x = ResetRoadsidePurchasesUnreadResponse{}
+	mi := &file_platform_counter_counter_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResetRoadsidePurchasesUnreadResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResetRoadsidePurchasesUnreadResponse) ProtoMessage() {}
+
+func (x *ResetRoadsidePurchasesUnreadResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_platform_counter_counter_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResetRoadsidePurchasesUnreadResponse.ProtoReflect.Descriptor instead.
+func (*ResetRoadsidePurchasesUnreadResponse) Descriptor() ([]byte, []int) {
+	return file_platform_counter_counter_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ResetRoadsidePurchasesUnreadResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *ResetRoadsidePurchasesUnreadResponse) GetRoadsidePurchasesUnread() int32 {
+	if x != nil {
+		return x.RoadsidePurchasesUnread
+	}
+	return 0
+}
+
 type GetBadgeTotalRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -522,7 +773,7 @@ type GetBadgeTotalRequest struct {
 
 func (x *GetBadgeTotalRequest) Reset() {
 	*x = GetBadgeTotalRequest{}
-	mi := &file_platform_counter_counter_proto_msgTypes[9]
+	mi := &file_platform_counter_counter_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -534,7 +785,7 @@ func (x *GetBadgeTotalRequest) String() string {
 func (*GetBadgeTotalRequest) ProtoMessage() {}
 
 func (x *GetBadgeTotalRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_platform_counter_counter_proto_msgTypes[9]
+	mi := &file_platform_counter_counter_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -547,7 +798,7 @@ func (x *GetBadgeTotalRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBadgeTotalRequest.ProtoReflect.Descriptor instead.
 func (*GetBadgeTotalRequest) Descriptor() ([]byte, []int) {
-	return file_platform_counter_counter_proto_rawDescGZIP(), []int{9}
+	return file_platform_counter_counter_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetBadgeTotalRequest) GetUserId() int64 {
@@ -567,7 +818,7 @@ type GetBadgeTotalResponse struct {
 
 func (x *GetBadgeTotalResponse) Reset() {
 	*x = GetBadgeTotalResponse{}
-	mi := &file_platform_counter_counter_proto_msgTypes[10]
+	mi := &file_platform_counter_counter_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -579,7 +830,7 @@ func (x *GetBadgeTotalResponse) String() string {
 func (*GetBadgeTotalResponse) ProtoMessage() {}
 
 func (x *GetBadgeTotalResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_platform_counter_counter_proto_msgTypes[10]
+	mi := &file_platform_counter_counter_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -592,7 +843,7 @@ func (x *GetBadgeTotalResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBadgeTotalResponse.ProtoReflect.Descriptor instead.
 func (*GetBadgeTotalResponse) Descriptor() ([]byte, []int) {
-	return file_platform_counter_counter_proto_rawDescGZIP(), []int{10}
+	return file_platform_counter_counter_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetBadgeTotalResponse) GetTotal() int32 {
@@ -613,7 +864,7 @@ var File_platform_counter_counter_proto protoreflect.FileDescriptor
 
 const file_platform_counter_counter_proto_rawDesc = "" +
 	"\n" +
-	"\x1eplatform/counter/counter.proto\x12\x13platform.counter.v1\"\x92\x02\n" +
+	"\x1eplatform/counter/counter.proto\x12\x13platform.counter.v1\"\xce\x02\n" +
 	"\fUserCounters\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12'\n" +
 	"\x0funread_messages\x18\x02 \x01(\x05R\x0eunreadMessages\x121\n" +
@@ -622,7 +873,8 @@ const file_platform_counter_counter_proto_rawDesc = "" +
 	"active_ads\x18\x04 \x01(\x05R\tactiveAds\x12\x1c\n" +
 	"\tfavorites\x18\x05 \x01(\x05R\tfavorites\x12%\n" +
 	"\x0epending_orders\x18\x06 \x01(\x05R\rpendingOrders\x12)\n" +
-	"\x10new_applications\x18\a \x01(\x05R\x0fnewApplications\"-\n" +
+	"\x10new_applications\x18\a \x01(\x05R\x0fnewApplications\x12:\n" +
+	"\x19roadside_purchases_unread\x18\b \x01(\x05R\x17roadsidePurchasesUnread\"-\n" +
 	"\x12GetCountersRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"T\n" +
 	"\x13GetCountersResponse\x12=\n" +
@@ -644,7 +896,17 @@ const file_platform_counter_counter_proto_rawDesc = "" +
 	"\fcounter_name\x18\x02 \x01(\tR\vcounterName\x12\x14\n" +
 	"\x05value\x18\x03 \x01(\x05R\x05value\".\n" +
 	"\x12SetCounterResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"/\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"h\n" +
+	"#GetRoadsidePurchasesSnapshotRequest\x12A\n" +
+	"\x05state\x18\x01 \x01(\x0e2+.platform.counter.v1.RoadsidePurchasesStateR\x05state\">\n" +
+	"$GetRoadsidePurchasesSnapshotResponse\x12\x16\n" +
+	"\x06cursor\x18\x01 \x01(\x04R\x06cursor\"\x80\x01\n" +
+	"#ResetRoadsidePurchasesUnreadRequest\x12A\n" +
+	"\x05state\x18\x01 \x01(\x0e2+.platform.counter.v1.RoadsidePurchasesStateR\x05state\x12\x16\n" +
+	"\x06cursor\x18\x02 \x01(\x04R\x06cursor\"|\n" +
+	"$ResetRoadsidePurchasesUnreadResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12:\n" +
+	"\x19roadside_purchases_unread\x18\x02 \x01(\x05R\x17roadsidePurchasesUnread\"/\n" +
 	"\x14GetBadgeTotalRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xc4\x01\n" +
 	"\x15GetBadgeTotalResponse\x12\x14\n" +
@@ -652,14 +914,20 @@ const file_platform_counter_counter_proto_rawDesc = "" +
 	"\tbreakdown\x18\x02 \x03(\v29.platform.counter.v1.GetBadgeTotalResponse.BreakdownEntryR\tbreakdown\x1a<\n" +
 	"\x0eBreakdownEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x05R\x05value:\x028\x012\x9b\x04\n" +
+	"\x05value\x18\x02 \x01(\x05R\x05value:\x028\x01*\x8f\x01\n" +
+	"\x16RoadsidePurchasesState\x12(\n" +
+	"$ROADSIDE_PURCHASES_STATE_UNSPECIFIED\x10\x00\x12#\n" +
+	"\x1fROADSIDE_PURCHASES_STATE_ACTIVE\x10\x01\x12&\n" +
+	"\"ROADSIDE_PURCHASES_STATE_COMPLETED\x10\x022\xc7\x06\n" +
 	"\x0eCounterService\x12`\n" +
 	"\vGetCounters\x12'.platform.counter.v1.GetCountersRequest\x1a(.platform.counter.v1.GetCountersResponse\x12o\n" +
 	"\x10IncrementCounter\x12,.platform.counter.v1.IncrementCounterRequest\x1a-.platform.counter.v1.IncrementCounterResponse\x12o\n" +
 	"\x10DecrementCounter\x12,.platform.counter.v1.DecrementCounterRequest\x1a-.platform.counter.v1.DecrementCounterResponse\x12]\n" +
 	"\n" +
 	"SetCounter\x12&.platform.counter.v1.SetCounterRequest\x1a'.platform.counter.v1.SetCounterResponse\x12f\n" +
-	"\rGetBadgeTotal\x12).platform.counter.v1.GetBadgeTotalRequest\x1a*.platform.counter.v1.GetBadgeTotalResponseB=Z;github.com/4ubak/cg-proto/gen/go/platform/counter;counterv1b\x06proto3"
+	"\rGetBadgeTotal\x12).platform.counter.v1.GetBadgeTotalRequest\x1a*.platform.counter.v1.GetBadgeTotalResponse\x12\x93\x01\n" +
+	"\x1cGetRoadsidePurchasesSnapshot\x128.platform.counter.v1.GetRoadsidePurchasesSnapshotRequest\x1a9.platform.counter.v1.GetRoadsidePurchasesSnapshotResponse\x12\x93\x01\n" +
+	"\x1cResetRoadsidePurchasesUnread\x128.platform.counter.v1.ResetRoadsidePurchasesUnreadRequest\x1a9.platform.counter.v1.ResetRoadsidePurchasesUnreadResponseB=Z;github.com/4ubak/cg-proto/gen/go/platform/counter;counterv1b\x06proto3"
 
 var (
 	file_platform_counter_counter_proto_rawDescOnce sync.Once
@@ -673,39 +941,51 @@ func file_platform_counter_counter_proto_rawDescGZIP() []byte {
 	return file_platform_counter_counter_proto_rawDescData
 }
 
-var file_platform_counter_counter_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_platform_counter_counter_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_platform_counter_counter_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_platform_counter_counter_proto_goTypes = []any{
-	(*UserCounters)(nil),             // 0: platform.counter.v1.UserCounters
-	(*GetCountersRequest)(nil),       // 1: platform.counter.v1.GetCountersRequest
-	(*GetCountersResponse)(nil),      // 2: platform.counter.v1.GetCountersResponse
-	(*IncrementCounterRequest)(nil),  // 3: platform.counter.v1.IncrementCounterRequest
-	(*IncrementCounterResponse)(nil), // 4: platform.counter.v1.IncrementCounterResponse
-	(*DecrementCounterRequest)(nil),  // 5: platform.counter.v1.DecrementCounterRequest
-	(*DecrementCounterResponse)(nil), // 6: platform.counter.v1.DecrementCounterResponse
-	(*SetCounterRequest)(nil),        // 7: platform.counter.v1.SetCounterRequest
-	(*SetCounterResponse)(nil),       // 8: platform.counter.v1.SetCounterResponse
-	(*GetBadgeTotalRequest)(nil),     // 9: platform.counter.v1.GetBadgeTotalRequest
-	(*GetBadgeTotalResponse)(nil),    // 10: platform.counter.v1.GetBadgeTotalResponse
-	nil,                              // 11: platform.counter.v1.GetBadgeTotalResponse.BreakdownEntry
+	(RoadsidePurchasesState)(0),                  // 0: platform.counter.v1.RoadsidePurchasesState
+	(*UserCounters)(nil),                         // 1: platform.counter.v1.UserCounters
+	(*GetCountersRequest)(nil),                   // 2: platform.counter.v1.GetCountersRequest
+	(*GetCountersResponse)(nil),                  // 3: platform.counter.v1.GetCountersResponse
+	(*IncrementCounterRequest)(nil),              // 4: platform.counter.v1.IncrementCounterRequest
+	(*IncrementCounterResponse)(nil),             // 5: platform.counter.v1.IncrementCounterResponse
+	(*DecrementCounterRequest)(nil),              // 6: platform.counter.v1.DecrementCounterRequest
+	(*DecrementCounterResponse)(nil),             // 7: platform.counter.v1.DecrementCounterResponse
+	(*SetCounterRequest)(nil),                    // 8: platform.counter.v1.SetCounterRequest
+	(*SetCounterResponse)(nil),                   // 9: platform.counter.v1.SetCounterResponse
+	(*GetRoadsidePurchasesSnapshotRequest)(nil),  // 10: platform.counter.v1.GetRoadsidePurchasesSnapshotRequest
+	(*GetRoadsidePurchasesSnapshotResponse)(nil), // 11: platform.counter.v1.GetRoadsidePurchasesSnapshotResponse
+	(*ResetRoadsidePurchasesUnreadRequest)(nil),  // 12: platform.counter.v1.ResetRoadsidePurchasesUnreadRequest
+	(*ResetRoadsidePurchasesUnreadResponse)(nil), // 13: platform.counter.v1.ResetRoadsidePurchasesUnreadResponse
+	(*GetBadgeTotalRequest)(nil),                 // 14: platform.counter.v1.GetBadgeTotalRequest
+	(*GetBadgeTotalResponse)(nil),                // 15: platform.counter.v1.GetBadgeTotalResponse
+	nil,                                          // 16: platform.counter.v1.GetBadgeTotalResponse.BreakdownEntry
 }
 var file_platform_counter_counter_proto_depIdxs = []int32{
-	0,  // 0: platform.counter.v1.GetCountersResponse.counters:type_name -> platform.counter.v1.UserCounters
-	11, // 1: platform.counter.v1.GetBadgeTotalResponse.breakdown:type_name -> platform.counter.v1.GetBadgeTotalResponse.BreakdownEntry
-	1,  // 2: platform.counter.v1.CounterService.GetCounters:input_type -> platform.counter.v1.GetCountersRequest
-	3,  // 3: platform.counter.v1.CounterService.IncrementCounter:input_type -> platform.counter.v1.IncrementCounterRequest
-	5,  // 4: platform.counter.v1.CounterService.DecrementCounter:input_type -> platform.counter.v1.DecrementCounterRequest
-	7,  // 5: platform.counter.v1.CounterService.SetCounter:input_type -> platform.counter.v1.SetCounterRequest
-	9,  // 6: platform.counter.v1.CounterService.GetBadgeTotal:input_type -> platform.counter.v1.GetBadgeTotalRequest
-	2,  // 7: platform.counter.v1.CounterService.GetCounters:output_type -> platform.counter.v1.GetCountersResponse
-	4,  // 8: platform.counter.v1.CounterService.IncrementCounter:output_type -> platform.counter.v1.IncrementCounterResponse
-	6,  // 9: platform.counter.v1.CounterService.DecrementCounter:output_type -> platform.counter.v1.DecrementCounterResponse
-	8,  // 10: platform.counter.v1.CounterService.SetCounter:output_type -> platform.counter.v1.SetCounterResponse
-	10, // 11: platform.counter.v1.CounterService.GetBadgeTotal:output_type -> platform.counter.v1.GetBadgeTotalResponse
-	7,  // [7:12] is the sub-list for method output_type
-	2,  // [2:7] is the sub-list for method input_type
-	2,  // [2:2] is the sub-list for extension type_name
-	2,  // [2:2] is the sub-list for extension extendee
-	0,  // [0:2] is the sub-list for field type_name
+	1,  // 0: platform.counter.v1.GetCountersResponse.counters:type_name -> platform.counter.v1.UserCounters
+	0,  // 1: platform.counter.v1.GetRoadsidePurchasesSnapshotRequest.state:type_name -> platform.counter.v1.RoadsidePurchasesState
+	0,  // 2: platform.counter.v1.ResetRoadsidePurchasesUnreadRequest.state:type_name -> platform.counter.v1.RoadsidePurchasesState
+	16, // 3: platform.counter.v1.GetBadgeTotalResponse.breakdown:type_name -> platform.counter.v1.GetBadgeTotalResponse.BreakdownEntry
+	2,  // 4: platform.counter.v1.CounterService.GetCounters:input_type -> platform.counter.v1.GetCountersRequest
+	4,  // 5: platform.counter.v1.CounterService.IncrementCounter:input_type -> platform.counter.v1.IncrementCounterRequest
+	6,  // 6: platform.counter.v1.CounterService.DecrementCounter:input_type -> platform.counter.v1.DecrementCounterRequest
+	8,  // 7: platform.counter.v1.CounterService.SetCounter:input_type -> platform.counter.v1.SetCounterRequest
+	14, // 8: platform.counter.v1.CounterService.GetBadgeTotal:input_type -> platform.counter.v1.GetBadgeTotalRequest
+	10, // 9: platform.counter.v1.CounterService.GetRoadsidePurchasesSnapshot:input_type -> platform.counter.v1.GetRoadsidePurchasesSnapshotRequest
+	12, // 10: platform.counter.v1.CounterService.ResetRoadsidePurchasesUnread:input_type -> platform.counter.v1.ResetRoadsidePurchasesUnreadRequest
+	3,  // 11: platform.counter.v1.CounterService.GetCounters:output_type -> platform.counter.v1.GetCountersResponse
+	5,  // 12: platform.counter.v1.CounterService.IncrementCounter:output_type -> platform.counter.v1.IncrementCounterResponse
+	7,  // 13: platform.counter.v1.CounterService.DecrementCounter:output_type -> platform.counter.v1.DecrementCounterResponse
+	9,  // 14: platform.counter.v1.CounterService.SetCounter:output_type -> platform.counter.v1.SetCounterResponse
+	15, // 15: platform.counter.v1.CounterService.GetBadgeTotal:output_type -> platform.counter.v1.GetBadgeTotalResponse
+	11, // 16: platform.counter.v1.CounterService.GetRoadsidePurchasesSnapshot:output_type -> platform.counter.v1.GetRoadsidePurchasesSnapshotResponse
+	13, // 17: platform.counter.v1.CounterService.ResetRoadsidePurchasesUnread:output_type -> platform.counter.v1.ResetRoadsidePurchasesUnreadResponse
+	11, // [11:18] is the sub-list for method output_type
+	4,  // [4:11] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_platform_counter_counter_proto_init() }
@@ -718,13 +998,14 @@ func file_platform_counter_counter_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_platform_counter_counter_proto_rawDesc), len(file_platform_counter_counter_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   12,
+			NumEnums:      1,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_platform_counter_counter_proto_goTypes,
 		DependencyIndexes: file_platform_counter_counter_proto_depIdxs,
+		EnumInfos:         file_platform_counter_counter_proto_enumTypes,
 		MessageInfos:      file_platform_counter_counter_proto_msgTypes,
 	}.Build()
 	File_platform_counter_counter_proto = out.File
