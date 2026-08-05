@@ -140,6 +140,9 @@ enum PaymentProvider {
 enum PaymentMethod {
   PAYMENT_METHOD_UNSPECIFIED = 0;
   PAYMENT_METHOD_CARD = 1;
+  // Apple Pay is a native CLIENT capability only. A PARTNER/PRO or SAPP
+  // audience must never receive or start this method, even when its platform
+  // string says "ios".
   PAYMENT_METHOD_APPLE_PAY = 2;
   PAYMENT_METHOD_GOOGLE_PAY = 3;
   PAYMENT_METHOD_KASPI = 4;
@@ -192,6 +195,29 @@ enum PaymentUseCase {
   // Roadside assistance and the dispatched fixed-price services sold through
   // the same order API (POST /roadside/services).
   PAYMENT_USE_CASE_ROADSIDE = 2;
+  // Partner/PRO subscription purchase. cg-orders owns the payable projection.
+  PAYMENT_USE_CASE_SUBSCRIPTION = 3;
+  // Partner/PRO one-time bid purchase. cg-orders owns the payable projection.
+  PAYMENT_USE_CASE_BID_PURCHASE = 4;
+  // Parts cart checkout (legacy basket and new cart_checkout owner entities).
+  PAYMENT_USE_CASE_CART = 5;
+}
+
+// PaymentAudience is the trusted application audience from the verified JWT
+// app claim. Public callers never choose it. Owner services and BFFs derive it
+// from authentication and use it to keep provider/method catalogs separate.
+enum PaymentAudience {
+  // Unspecified is reserved for compatibility with routes written before
+  // audience scoping. It must never grant an audience-specific method.
+  PAYMENT_AUDIENCE_UNSPECIFIED = 0;
+  // CLIENT is the consumer mobile application and is the only audience that
+  // may be offered Apple Pay (subject to the separate iOS platform gate).
+  PAYMENT_AUDIENCE_CLIENT = 1;
+  // PARTNER is the Partner/PRO application. Apple Pay is forbidden here.
+  PAYMENT_AUDIENCE_PARTNER = 2;
+  // SAPP is the bank super-app miniapp. Apple Pay is forbidden here; its
+  // provider/method catalog is selected for the verified SAPP channel.
+  PAYMENT_AUDIENCE_SAPP = 3;
 }
 
 // =============================================
@@ -468,7 +494,10 @@ message ListAvailablePaymentMethodsRequest {
   // therefore keep exactly today's list.
   //
   // The checkout catalog needs the gate as much as the combined-pay modal does:
-  // without it a fueling checkout on Android shows an Apple Pay row.
+  // without it a fueling checkout on Android shows an Apple Pay row. Platform
+  // is only a rendering capability; the service still derives PaymentAudience
+  // from the verified JWT app claim. PARTNER/PRO and SAPP must never receive
+  // Apple Pay even if this field is "ios".
   string client_platform = 2;
 }
 
@@ -512,6 +541,10 @@ message PayOption {
   int32 cashback_percent = 8;
 }
 
+// InitPaymentRequest intentionally has no audience field. cg-payments derives
+// PaymentAudience from the verified JWT app claim forwarded by the trusted
+// owner/BFF boundary. Caller-supplied audience must never select a provider or
+// make Apple Pay available to PARTNER/PRO or SAPP.
 message InitPaymentRequest {
   PayEntityType entity_type = 1;
   int64 entity_id = 2; // Required positive ID resolved by the entity owner.
@@ -969,11 +1002,19 @@ message PaymentProviderRoute {
   // automatically. The panel shows the difference as unavailable.
   repeated string supported_providers = 7;
   // is_global marks the reserved "default" row: the one switch that applies to
-  // every service without an exception of its own.
+  // every service in this audience without an exception of its own.
   bool is_global = 8;
+  // audience scopes this route independently from the same flow in other apps.
+  // The effective key is (audience, flow). UNSPECIFIED identifies a legacy
+  // pre-audience route only and must not grant audience-specific methods.
+  PaymentAudience audience = 9;
 }
 
-message ListPaymentProviderRoutesRequest {}
+message ListPaymentProviderRoutesRequest {
+  // audience filters the admin list. UNSPECIFIED lists every audience so old
+  // admin clients retain their broad list behavior.
+  PaymentAudience audience = 1;
+}
 
 message ListPaymentProviderRoutesResponse {
   // routes carries one entry per known flow, always resolved to the value in
@@ -995,6 +1036,10 @@ message SetPaymentProviderRouteRequest {
   // providers replaces the whole set for this flow, in offer order. An empty
   // list clears the route so the flow falls back to configuration.
   repeated string providers = 3;
+  // audience selects the independent route set to replace. New admin clients
+  // must send a concrete value. UNSPECIFIED addresses only the legacy route
+  // namespace for wire compatibility; it must not enable audience-only methods.
+  PaymentAudience audience = 4;
 }
 
 message SetPaymentProviderRouteResponse {
