@@ -422,6 +422,19 @@ service CRMService {
   // BFF (never spoofable by the client). Idempotent per
   // (organization_id, user_id, order_id, action_type) within a short window.
   rpc CreateCustomerActionLead(CreateCustomerActionLeadRequest) returns (CreateCustomerActionLeadResponse);
+
+  // GetWorkshopIntakeProjection is the only CRM read used by the workshop V2
+  // intake path. It is service-to-service only and requires the exact verified
+  // JWT identity UserID=0, phone=device_id="cg-workshop"; human and BFF callers
+  // are denied. CRM requires organization_id, workshop_id, source_event_id and
+  // crm_deal_id and verifies that all four match one durable CRM
+  // workshop-handoff/outbox record before reading the org-scoped deal. Missing
+  // records fail NOT_FOUND; any binding or caller mismatch fails
+  // PERMISSION_DENIED; unresolved/ambiguous
+  // deal-party linkage fails FAILED_PRECONDITION. The response contains only
+  // workshop-intake fields and resolves its user/car fields through the narrow
+  // cg-users projection rather than treating CRM copies as authority.
+  rpc GetWorkshopIntakeProjection(GetWorkshopIntakeProjectionRequest) returns (GetWorkshopIntakeProjectionResponse);
 }
 
 // CustomerActionType maps the legacy v1/crm/client/{id} action ids to a typed
@@ -502,6 +515,10 @@ message Stage {
   // where the manager must be able to drop a deal in from anywhere
   // without first satisfying the prior stage's gates.
   bool bypass_requirements = 15;
+  // Immutable integration identity for system-managed stages (for example
+  // "auto_in_repair" or "delivery_closing"). Empty for ordinary custom
+  // stages. Cross-service consumers resolve this code, never the display name.
+  string system_code = 16;
 }
 
 message CreatePipelineRequest {
@@ -4105,4 +4122,43 @@ message AiChatTurn {
   string role    = 1; // "user" | "assistant"
   string content = 2;
   google.protobuf.Timestamp created_at = 3;
+}
+
+// GetWorkshopIntakeProjectionRequest carries lookup constraints, never
+// authority. CRM binds all fields to its durable handoff and org-scoped deal.
+message GetWorkshopIntakeProjectionRequest {
+  string organization_id = 1;
+  int64 workshop_id = 2;
+  string source_event_id = 3;
+  string crm_deal_id = 4;
+}
+
+// WorkshopIntakeProjection is a narrow, first-execution snapshot. CRM owns the
+// deal linkage and stage fields; cg-users owns the user/car fields that CRM
+// obtains through GetWorkshopIntakeParty. cg-workshop freezes the returned
+// values into its repair order and never re-reads this projection for an exact
+// command replay.
+message WorkshopIntakeProjection {
+  string organization_id = 1;
+  int64 workshop_id = 2;
+  string source_event_id = 3;
+  string crm_deal_id = 4;
+  string crm_pipeline_id = 5;
+  string crm_source_stage_system_code = 6;
+  int64 user_id = 7;
+  int64 garage_car_id = 8;
+  string client_name = 9;
+  string client_phone = 10;
+  string license_plate = 11;
+  string vin = 12;
+  string car_color = 13;
+  int32 car_year = 14;
+  int32 mark_id = 15;
+  int32 model_id = 16;
+  string description = 17;
+  string crm_deal_title = 18;
+}
+
+message GetWorkshopIntakeProjectionResponse {
+  WorkshopIntakeProjection projection = 1;
 }
