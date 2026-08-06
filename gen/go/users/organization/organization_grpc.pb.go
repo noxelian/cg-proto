@@ -60,6 +60,8 @@ const (
 	OrganizationService_SetPlatformOrgAccess_FullMethodName             = "/users.organization.v1.OrganizationService/SetPlatformOrgAccess"
 	OrganizationService_GetPlatformOrgAccess_FullMethodName             = "/users.organization.v1.OrganizationService/GetPlatformOrgAccess"
 	OrganizationService_CheckPlatformRole_FullMethodName                = "/users.organization.v1.OrganizationService/CheckPlatformRole"
+	OrganizationService_AuthorizeMembership_FullMethodName              = "/users.organization.v1.OrganizationService/AuthorizeMembership"
+	OrganizationService_ListEligibleMembers_FullMethodName              = "/users.organization.v1.OrganizationService/ListEligibleMembers"
 )
 
 // OrganizationServiceClient is the client API for OrganizationService service.
@@ -155,6 +157,23 @@ type OrganizationServiceClient interface {
 	// Deprecated: Do not use.
 	// Deprecated: Use UserService.CheckPlatformRole instead.
 	CheckPlatformRole(ctx context.Context, in *CheckPlatformRoleRequest, opts ...grpc.CallOption) (*CheckPlatformRoleResponse, error)
+	// AuthorizeMembership is the organization service's authoritative,
+	// service-to-service membership-generation check. The owner MUST authorize
+	// only an ACTIVE member whose stored membership_version exactly matches the
+	// positive requested generation. A missing, zero, or stale generation fails
+	// closed; routing metadata and JWT organization claims are context, never
+	// membership authority. This RPC MUST NOT be exposed through public BFF
+	// routes or reveal member metadata to an untrusted caller.
+	AuthorizeMembership(ctx context.Context, in *AuthorizeMembershipRequest, opts ...grpc.CallOption) (*AuthorizeMembershipResponse, error)
+	// ListEligibleMembers returns every ACTIVE member as a bound
+	// (user_id, membership_version) recipient. It is an internal fanout API and
+	// MUST NOT be exposed through public BFF routes. Pagination has no implicit
+	// recipient cap: callers continue until next_page_token is empty and MUST
+	// revalidate a pending recipient with AuthorizeMembership before delivery.
+	// The owner orders rows by the stable (user_id, member_id) tuple. Tokens are
+	// integrity-protected and cryptographically bound to organization_id plus
+	// that last tuple; a tampered or cross-organization token is INVALID_ARGUMENT.
+	ListEligibleMembers(ctx context.Context, in *ListEligibleMembersRequest, opts ...grpc.CallOption) (*ListEligibleMembersResponse, error)
 }
 
 type organizationServiceClient struct {
@@ -580,6 +599,26 @@ func (c *organizationServiceClient) CheckPlatformRole(ctx context.Context, in *C
 	return out, nil
 }
 
+func (c *organizationServiceClient) AuthorizeMembership(ctx context.Context, in *AuthorizeMembershipRequest, opts ...grpc.CallOption) (*AuthorizeMembershipResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AuthorizeMembershipResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_AuthorizeMembership_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *organizationServiceClient) ListEligibleMembers(ctx context.Context, in *ListEligibleMembersRequest, opts ...grpc.CallOption) (*ListEligibleMembersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListEligibleMembersResponse)
+	err := c.cc.Invoke(ctx, OrganizationService_ListEligibleMembers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrganizationServiceServer is the server API for OrganizationService service.
 // All implementations must embed UnimplementedOrganizationServiceServer
 // for forward compatibility.
@@ -673,6 +712,23 @@ type OrganizationServiceServer interface {
 	// Deprecated: Do not use.
 	// Deprecated: Use UserService.CheckPlatformRole instead.
 	CheckPlatformRole(context.Context, *CheckPlatformRoleRequest) (*CheckPlatformRoleResponse, error)
+	// AuthorizeMembership is the organization service's authoritative,
+	// service-to-service membership-generation check. The owner MUST authorize
+	// only an ACTIVE member whose stored membership_version exactly matches the
+	// positive requested generation. A missing, zero, or stale generation fails
+	// closed; routing metadata and JWT organization claims are context, never
+	// membership authority. This RPC MUST NOT be exposed through public BFF
+	// routes or reveal member metadata to an untrusted caller.
+	AuthorizeMembership(context.Context, *AuthorizeMembershipRequest) (*AuthorizeMembershipResponse, error)
+	// ListEligibleMembers returns every ACTIVE member as a bound
+	// (user_id, membership_version) recipient. It is an internal fanout API and
+	// MUST NOT be exposed through public BFF routes. Pagination has no implicit
+	// recipient cap: callers continue until next_page_token is empty and MUST
+	// revalidate a pending recipient with AuthorizeMembership before delivery.
+	// The owner orders rows by the stable (user_id, member_id) tuple. Tokens are
+	// integrity-protected and cryptographically bound to organization_id plus
+	// that last tuple; a tampered or cross-organization token is INVALID_ARGUMENT.
+	ListEligibleMembers(context.Context, *ListEligibleMembersRequest) (*ListEligibleMembersResponse, error)
 	mustEmbedUnimplementedOrganizationServiceServer()
 }
 
@@ -805,6 +861,12 @@ func (UnimplementedOrganizationServiceServer) GetPlatformOrgAccess(context.Conte
 }
 func (UnimplementedOrganizationServiceServer) CheckPlatformRole(context.Context, *CheckPlatformRoleRequest) (*CheckPlatformRoleResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CheckPlatformRole not implemented")
+}
+func (UnimplementedOrganizationServiceServer) AuthorizeMembership(context.Context, *AuthorizeMembershipRequest) (*AuthorizeMembershipResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AuthorizeMembership not implemented")
+}
+func (UnimplementedOrganizationServiceServer) ListEligibleMembers(context.Context, *ListEligibleMembersRequest) (*ListEligibleMembersResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListEligibleMembers not implemented")
 }
 func (UnimplementedOrganizationServiceServer) mustEmbedUnimplementedOrganizationServiceServer() {}
 func (UnimplementedOrganizationServiceServer) testEmbeddedByValue()                             {}
@@ -1565,6 +1627,42 @@ func _OrganizationService_CheckPlatformRole_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrganizationService_AuthorizeMembership_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthorizeMembershipRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).AuthorizeMembership(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_AuthorizeMembership_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).AuthorizeMembership(ctx, req.(*AuthorizeMembershipRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrganizationService_ListEligibleMembers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEligibleMembersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrganizationServiceServer).ListEligibleMembers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrganizationService_ListEligibleMembers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrganizationServiceServer).ListEligibleMembers(ctx, req.(*ListEligibleMembersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrganizationService_ServiceDesc is the grpc.ServiceDesc for OrganizationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1735,6 +1833,14 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckPlatformRole",
 			Handler:    _OrganizationService_CheckPlatformRole_Handler,
+		},
+		{
+			MethodName: "AuthorizeMembership",
+			Handler:    _OrganizationService_AuthorizeMembership_Handler,
+		},
+		{
+			MethodName: "ListEligibleMembers",
+			Handler:    _OrganizationService_ListEligibleMembers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

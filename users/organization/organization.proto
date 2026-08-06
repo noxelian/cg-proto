@@ -125,6 +125,25 @@ service OrganizationService {
   rpc CheckPlatformRole(CheckPlatformRoleRequest) returns (CheckPlatformRoleResponse) {
     option deprecated = true;
   }
+
+  // AuthorizeMembership is the organization service's authoritative,
+  // service-to-service membership-generation check. The owner MUST authorize
+  // only an ACTIVE member whose stored membership_version exactly matches the
+  // positive requested generation. A missing, zero, or stale generation fails
+  // closed; routing metadata and JWT organization claims are context, never
+  // membership authority. This RPC MUST NOT be exposed through public BFF
+  // routes or reveal member metadata to an untrusted caller.
+  rpc AuthorizeMembership(AuthorizeMembershipRequest) returns (AuthorizeMembershipResponse);
+
+  // ListEligibleMembers returns every ACTIVE member as a bound
+  // (user_id, membership_version) recipient. It is an internal fanout API and
+  // MUST NOT be exposed through public BFF routes. Pagination has no implicit
+  // recipient cap: callers continue until next_page_token is empty and MUST
+  // revalidate a pending recipient with AuthorizeMembership before delivery.
+  // The owner orders rows by the stable (user_id, member_id) tuple. Tokens are
+  // integrity-protected and cryptographically bound to organization_id plus
+  // that last tuple; a tampered or cross-organization token is INVALID_ARGUMENT.
+  rpc ListEligibleMembers(ListEligibleMembersRequest) returns (ListEligibleMembersResponse);
 }
 
 enum OrganizationType {
@@ -234,6 +253,11 @@ message Member {
   // members row so the admin panel can show "почему уволен" without a
   // separate member_history lookup.
   string fired_reason = 9;
+  // membership_version is the monotonic access generation for this
+  // (organization_id, user_id). The first active membership is 1. It remains
+  // unchanged on fire and role changes and increments only when a fired member
+  // is rehired into a new access generation.
+  int64 membership_version = 10;
 }
 
 message Role {
@@ -345,6 +369,8 @@ message OrganizationMembership {
   Organization organization = 1;
   string role_code = 2;
   repeated string permissions = 3;
+  // Exact active access generation for this organization membership.
+  int64 membership_version = 4;
 }
 
 // Members
@@ -1022,4 +1048,84 @@ message ReviewDocumentRequest {
 
 message ReviewDocumentResponse {
   OrganizationDocument document = 1;
+}
+
+// AuthorizeMembershipRequest carries a complete membership identity. All
+// fields are request data; the organization service binds them to its stored
+// membership record and its authenticated service caller policy.
+message AuthorizeMembershipRequest {
+  int64 user_id = 1;
+  string organization_id = 2;
+  // Must be positive and must exactly match the current stored generation.
+  int64 membership_version = 3;
+}
+
+message AuthorizeMembershipResponse {
+  // authorized is true only for an ACTIVE exact-generation membership.
+  bool authorized = 1;
+  // current_membership_version is owner-derived. It is returned only to an
+  // authenticated internal caller; public/untrusted callers must be rejected
+  // before this response is constructed.
+  int64 current_membership_version = 2;
+  // member is populated only when authorized is true.
+  Member member = 3;
+}
+
+message ListEligibleMembersRequest {
+  string organization_id = 1;
+  // page_size is bounded by the owner. A zero value selects the owner default;
+  // it never means "return at most 20 members". A negative value is
+  // INVALID_ARGUMENT.
+  int32 page_size = 2;
+  // page_token is an opaque, integrity-protected owner cursor bound to this
+  // organization_id and the last stable (user_id, member_id) ordering tuple.
+  // Callers must not construct or interpret it; tampering or reuse with another
+  // organization_id is INVALID_ARGUMENT.
+  string page_token = 3;
+}
+
+// EligibleMemberRecipient is one active delivery identity. The two fields are
+// inseparable: consumers must never combine user_id with another generation.
+message EligibleMemberRecipient {
+  int64 user_id = 1;
+  int64 membership_version = 2;
+}
+
+message ListEligibleMembersResponse {
+  // recipients are ordered by stable (user_id, member_id), with member_id kept
+  // inside the opaque cursor. The same ordering applies for the whole walk.
+  repeated EligibleMemberRecipient recipients = 1;
+  // Empty means the full active membership set has been enumerated.
+  string next_page_token = 2;
+}
+
+// OrganizationMembershipChangedEvent is the organization service-owned
+// transactional-outbox/Kafka contract. event_id is the idempotency identity.
+// membership_version is the new generation for ADD/REHIRE and the current
+// unchanged generation for FIRE/ROLE_CHANGED. Legacy encoding/json Kafka
+// producers and consumers require numeric int64 values, snake_case keys, and
+// RFC3339 occurred_at. compat/users nests this payload in the shared
+// {id,type,source,data,timestamp,metadata} envelope and requires validation
+// against the authoritative prior membership state; never use protojson on
+// that wire.
+message OrganizationMembershipChangedEvent {
+  string event_id = 1;
+  string organization_id = 2;
+  int64 user_id = 3;
+  int64 membership_version = 4;
+  MemberStatus old_status = 5;
+  MemberStatus new_status = 6;
+  OrganizationMembershipChangeType event_type = 7;
+  google.protobuf.Timestamp occurred_at = 8;
+}
+
+// OrganizationMembershipChangeType identifies the lifecycle transition that
+// produced an OrganizationMembershipChangedEvent. Role changes remain in the
+// current access generation; only ADD and REHIRE establish a generation.
+enum OrganizationMembershipChangeType {
+  ORGANIZATION_MEMBERSHIP_CHANGE_TYPE_UNSPECIFIED = 0;
+  ORGANIZATION_MEMBERSHIP_CHANGE_TYPE_ADD = 1;
+  ORGANIZATION_MEMBERSHIP_CHANGE_TYPE_FIRE = 2;
+  ORGANIZATION_MEMBERSHIP_CHANGE_TYPE_REHIRE = 3;
+  ORGANIZATION_MEMBERSHIP_CHANGE_TYPE_ROLE_CHANGED = 4;
 }
