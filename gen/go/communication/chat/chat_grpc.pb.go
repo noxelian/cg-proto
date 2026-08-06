@@ -408,7 +408,10 @@ const (
 //
 // AdminChatService provides admin-only RPCs for chat moderation.
 // All methods require a valid JWT with platform role "admin" or "support"
-// asserted via the x-platform-role gRPC metadata header (set by BFF).
+// asserted via the x-platform-role gRPC metadata header (set by BFF). Every
+// request carries ADMIN+SUPPORT scope (plus an authorized organization where
+// applicable). The service derives and validates scope from the JWT and role
+// assignment; caller-spoofed CHAT_PERSPECTIVE_SUPPORT has no precedence.
 type AdminChatServiceClient interface {
 	// AdminGetUserChats returns chats for any user by ID.
 	AdminGetUserChats(ctx context.Context, in *AdminGetUserChatsRequest, opts ...grpc.CallOption) (*AdminGetUserChatsResponse, error)
@@ -491,7 +494,10 @@ func (c *adminChatServiceClient) AdminMarkChatRead(ctx context.Context, in *Admi
 //
 // AdminChatService provides admin-only RPCs for chat moderation.
 // All methods require a valid JWT with platform role "admin" or "support"
-// asserted via the x-platform-role gRPC metadata header (set by BFF).
+// asserted via the x-platform-role gRPC metadata header (set by BFF). Every
+// request carries ADMIN+SUPPORT scope (plus an authorized organization where
+// applicable). The service derives and validates scope from the JWT and role
+// assignment; caller-spoofed CHAT_PERSPECTIVE_SUPPORT has no precedence.
 type AdminChatServiceServer interface {
 	// AdminGetUserChats returns chats for any user by ID.
 	AdminGetUserChats(context.Context, *AdminGetUserChatsRequest) (*AdminGetUserChatsResponse, error)

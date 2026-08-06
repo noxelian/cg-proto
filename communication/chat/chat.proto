@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package communication.chat.v1;
 
-option go_package = "github.com/4ubak/cg-proto/gen/go/communication/chat;chatv1";
-
 import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/4ubak/cg-proto/gen/go/communication/chat;chatv1";
 
 service ChatService {
   rpc CreateChat(CreateChatRequest) returns (CreateChatResponse);
@@ -30,6 +30,61 @@ enum ChatContextType {
   CHAT_CONTEXT_TYPE_SUPPORT = 5;
 }
 
+// ChatPerspective identifies the authenticated caller's side of a chat.
+// A single user can therefore address CLIENT+BUYER, PRO+BUYER_ORG, and
+// PRO+SELLER_ORG as independent scopes; user_id alone never selects a profile.
+enum ChatPerspective {
+  CHAT_PERSPECTIVE_UNSPECIFIED = 0;
+  CHAT_PERSPECTIVE_BUYER = 1;
+  CHAT_PERSPECTIVE_SELLER_ORG = 2;
+  CHAT_PERSPECTIVE_SELLER_USER = 3;
+  CHAT_PERSPECTIVE_SUPPORT = 4;
+  // BUYER_ORG is a PRO organization purchasing parts. It is deliberately
+  // disjoint from both the Client buyer and the PRO supplier organization.
+  CHAT_PERSPECTIVE_BUYER_ORG = 5;
+}
+
+// ChatApp is the application boundary for caller routing and realtime events.
+enum ChatApp {
+  CHAT_APP_UNSPECIFIED = 0;
+  CHAT_APP_CLIENT = 1;
+  CHAT_APP_PRO = 2;
+  CHAT_APP_ADMIN = 3;
+}
+
+// ChatScope binds app, perspective, and organization into one authoritative
+// routing tuple. The service derives app and caller identity from the verified
+// JWT, validates organization access and membership_version against the current
+// membership generation, and rejects any caller-supplied or stale mismatch.
+// membership_version is 0 iff organization_id is empty.
+// CHAT_PERSPECTIVE_SUPPORT is valid only for server-authorized admin/support
+// callers; request values never override those claims.
+message ChatScope {
+  ChatApp app = 1;
+  ChatPerspective perspective = 2;
+  string organization_id = 3;
+  int64 membership_version = 4;
+}
+
+// ChatRecipient binds one verified recipient user to exactly one application,
+// perspective, organization, and membership generation. Producers resolve the
+// user from the authoritative chat participants/membership projection; event
+// payload fields are never identity authority.
+message ChatRecipient {
+  int64 user_id = 1;
+  ChatScope scope = 2;
+}
+
+// VehicleContextProvenance records which owner projection supplied the
+// participant-authorized vehicle snapshot.
+enum VehicleContextProvenance {
+  VEHICLE_CONTEXT_PROVENANCE_UNSPECIFIED = 0;
+  VEHICLE_CONTEXT_PROVENANCE_REQUEST_SNAPSHOT = 1;
+  VEHICLE_CONTEXT_PROVENANCE_GARAGE_SNAPSHOT = 2;
+  VEHICLE_CONTEXT_PROVENANCE_PARTS_ORDER_SNAPSHOT = 3;
+  VEHICLE_CONTEXT_PROVENANCE_WORKSHOP_ORDER_SNAPSHOT = 4;
+}
+
 // Chat represents a conversation between a mobile user and a seller/org/support.
 // caller_role and caller_unread_count are populated by the server based on
 // the authenticated caller's identity relative to this chat.
@@ -52,15 +107,26 @@ message Chat {
   // --- Legacy s_ad enrichment (cg_web parity). Populated server-side from the
   // seller org (cg-users organization) + the chat context entity. Avatar is a
   // RELATIVE path; the BFF prefixes /fs/ before returning to the client. ---
-  string counterparty_name    = 13; // legacy s_ad.usr_name — seller org/user display name
-  string counterparty_avatar  = 14; // legacy s_ad.ava — relative path
+  string counterparty_name = 13; // legacy s_ad.usr_name — seller org/user display name
+  string counterparty_avatar = 14; // legacy s_ad.ava — relative path
   string counterparty_address = 15; // legacy s_ad.address — seller org address
-  string context_title        = 16; // legacy s_ad.note — short title of the ad/service
-  int64  context_price        = 17; // legacy s_ad.price — tiyins; 0 = unset
+  string context_title = 16; // legacy s_ad.note — short title of the ad/service
+  int64 context_price = 17; // legacy s_ad.price — tiyins; 0 = unset
   // Split unread counters (legacy client_new_msg_count / server_new_msg_count).
   // Coexist with unread_count(8) and caller_unread_count(12); do not touch those.
-  int32  unread_for_buyer     = 18; // legacy client_new_msg_count
-  int32  unread_for_seller    = 19; // legacy server_new_msg_count
+  int32 unread_for_buyer = 18; // legacy client_new_msg_count
+  int32 unread_for_seller = 19; // legacy server_new_msg_count
+  // Caller projection selected by the service after participant and org checks.
+  ChatPerspective caller_perspective = 20;
+  string caller_organization_id = 21;
+  // Omitted when this chat has no vehicle. VIN is populated only for an
+  // authorized participant; clients resolve car_make_id to an NSI logo.
+  VehicleContext vehicle_context = 22;
+  // Bid that originated this chat, when the request response is bid-backed.
+  optional int64 origin_bid_id = 23;
+  // Authoritative caller projection, including membership generation. During
+  // migration caller_perspective/caller_organization_id must match this tuple.
+  ChatScope caller_scope = 24;
 }
 
 message Message {
@@ -71,8 +137,83 @@ message Message {
   string message_type = 5;
   bool is_read = 6;
   google.protobuf.Timestamp created_at = 7;
+  // Sender projection resolved by chat service, never trusted as authority.
+  ChatPerspective sender_perspective = 8;
+  string sender_organization_id = 9;
+  // Authoritative sender projection, including membership generation. During
+  // migration the parallel sender fields must match this tuple.
+  ChatScope sender_scope = 10;
 }
 
+// VehicleContext is a participant-authorized vehicle snapshot for chat and
+// request projections. It deliberately stores NSI IDs, not an NSI logo URL.
+message VehicleContext {
+  optional int64 garage_car_id = 1;
+  int64 car_make_id = 2;
+  int64 car_model_id = 3;
+  optional int64 car_generation_id = 4;
+  int32 year = 5;
+  // VIN is omitted unless the caller is authorized to see it.
+  optional string vin = 6;
+  VehicleContextProvenance provenance = 7;
+}
+
+// ChatRealtimeEventPayload is the protobuf-owned projection of the
+// chat.message.sent JSON event. New producers write recipients, binding every
+// recipient user to their own membership generation. All recipients in one
+// event MUST share one exact app + perspective + organization identity;
+// membership_version may differ per user.
+//
+// During migration recipient_id/recipient_user_ids, target_apps, and
+// recipient_org_id may be dual-written only as corroboration: when present,
+// their user set, app, and organization MUST exactly match recipients. They
+// never supply scope or membership generation. For one bound recipient the
+// deprecated recipient_scope may also be dual-written only when its full tuple,
+// including membership_version, agrees exactly. For two or more recipients it
+// MUST be absent, including non-organization fan-out, because one scope cannot
+// represent multiple recipient tuples. A contradictory payload is rejected with
+// INVALID_ARGUMENT rather than partially delivered.
+//
+// Consumers MUST retain legacy fallback delivery exactly while recipients is
+// absent so messages are never silently dropped. Legacy app strings normalize
+// exactly as ("client" -> CLIENT, "partner" -> PRO). Deprecated parallel typed
+// fields at tags 9-11 remain readable only as corroboration and cannot supply a
+// membership generation. Organization routing is verified from the chat owner
+// and membership source; event or BFF values are not authority.
+message ChatRealtimeEventPayload {
+  // json_name preserves legacy key spelling only. protojson quotes all int64
+  // values, so chat.events/websocket publishers MUST use compat/communication's
+  // encoding/json marshaler for numeric sender/recipient identifiers.
+  string message_id = 1 [json_name = "message_id"];
+  string chat_id = 2 [json_name = "chat_id"];
+  int64 sender_id = 3 [json_name = "sender_id"];
+  string message_type = 4 [json_name = "message_type"];
+  int64 recipient_id = 5 [json_name = "recipient_id"];
+  repeated int64 recipient_user_ids = 6 [json_name = "recipient_user_ids"];
+  // Legacy JSON field. Values remain exactly "client" and/or "partner".
+  repeated string target_apps = 7 [json_name = "target_apps"];
+  // Legacy JSON field consumed by current partner websocket routing.
+  string recipient_org_id = 8 [json_name = "recipient_org_id"];
+  // Deprecated parallel typed fields retained for rolling wire compatibility.
+  ChatApp recipient_app = 9 [deprecated = true];
+  ChatPerspective recipient_perspective = 10 [deprecated = true];
+  string recipient_organization_id = 11 [deprecated = true];
+  // Legacy JSON context_type remains a category string such as "request".
+  string context_type = 12 [json_name = "context_type"];
+  string context_id = 13 [json_name = "context_id"];
+  ChatScope recipient_scope = 14;
+  // Canonical recipient identities. A user may appear at most once in an event,
+  // and every entry shares one app + perspective + organization identity.
+  // For organization delivery every entry carries that user's positive current
+  // membership_version. A removed/re-hired member therefore cannot receive an
+  // event addressed to an older generation.
+  repeated ChatRecipient recipients = 15;
+}
+
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 message CreateChatRequest {
   ChatContextType context_type = 1;
   string context_id = 2;
@@ -80,24 +221,47 @@ message CreateChatRequest {
   int64 seller_id = 4;
   // seller_org_id is the UUID of the seller organization (empty for individual sellers).
   string seller_org_id = 5;
+  // For REQUEST chats, context_id is the request UUID and seller_org_id is the
+  // responding supplier organization. The service verifies both relationships.
+  ChatPerspective perspective = 6;
+  string organization_id = 7;
+  optional int64 origin_bid_id = 8;
+  ChatApp app = 9;
+  ChatScope scope = 10;
 }
 
 message CreateChatResponse {
   Chat chat = 1;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 message GetChatRequest {
   string chat_id = 1;
+  ChatPerspective perspective = 2;
+  string organization_id = 3;
+  ChatApp app = 4;
+  ChatScope scope = 5;
 }
 
 message GetChatResponse {
   Chat chat = 1;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 message GetUserChatsRequest {
   int64 user_id = 1;
   int32 page = 2;
   int32 page_size = 3;
+  ChatPerspective perspective = 4;
+  string organization_id = 5;
+  ChatApp app = 6;
+  ChatScope scope = 7;
 }
 
 message GetUserChatsResponse {
@@ -105,8 +269,10 @@ message GetUserChatsResponse {
   int32 total = 2;
 }
 
-// GetOrgChatsRequest fetches chats for an organization.
-// The caller must be a member of the organization (validated via JWT org claim).
+// GetOrgChatsRequest fetches chats for an organization. app, perspective, and
+// organization_id are routing/profile context only. The owner/BFF MUST bind app
+// to the verified JWT app, reject a caller-scoped app mismatch, and validate
+// organization membership/ownership; request values are never authority.
 message GetOrgChatsRequest {
   string organization_id = 1;
   int32 limit = 2;
@@ -114,6 +280,9 @@ message GetOrgChatsRequest {
   string cursor = 3;
   // status filters chats: "open" | "closed" | "all". Defaults to "all".
   string status = 4;
+  ChatPerspective perspective = 5;
+  ChatApp app = 6;
+  ChatScope scope = 7;
 }
 
 message GetOrgChatsResponse {
@@ -123,50 +292,82 @@ message GetOrgChatsResponse {
   int32 total = 3;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 message SendMessageRequest {
   string chat_id = 1;
   int64 sender_id = 2;
   string content = 3;
   string message_type = 4;
+  ChatPerspective perspective = 5;
+  string organization_id = 6;
+  ChatApp app = 7;
+  ChatScope scope = 8;
 }
 
 message SendMessageResponse {
   Message message = 1;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 message GetMessagesRequest {
   string chat_id = 1;
   string before_id = 2;
   int32 limit = 3;
+  ChatPerspective perspective = 4;
+  string organization_id = 5;
+  ChatApp app = 6;
+  ChatScope scope = 7;
 }
 
 message GetMessagesResponse {
   repeated Message messages = 1;
   bool has_more = 2;
+  // Same participant-authorized snapshot exposed by Chat for message screens.
+  VehicleContext vehicle_context = 3;
 }
 
+// app, perspective, and organization_id are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership; request values
+// are never authority.
 message MarkAsReadRequest {
   string chat_id = 1;
   int64 user_id = 2;
   string last_message_id = 3;
+  ChatPerspective perspective = 4;
+  string organization_id = 5;
+  ChatApp app = 6;
+  ChatScope scope = 7;
 }
 
 message MarkAsReadResponse {
   int32 marked_count = 1;
 }
 
-
 // ============================================================
 // B1: DeleteMessage
 // ============================================================
 
-// DeleteMessageRequest identifies the message to soft-delete.
+// DeleteMessageRequest identifies the message to soft-delete. app, perspective,
+// and organization_id are routing/profile context only. The owner/BFF MUST bind
+// app to the verified JWT app, reject a caller-scoped app mismatch, and validate
+// organization membership/ownership; request values are never authority.
 // requester_user_id is used for authorship verification:
 //   PERMISSION_DENIED when requester_user_id != Message.sender_id.
 message DeleteMessageRequest {
-  string chat_id           = 1;
-  string message_id        = 2;
-  int64  requester_user_id = 3;
+  string chat_id = 1;
+  string message_id = 2;
+  int64 requester_user_id = 3;
+  ChatPerspective perspective = 4;
+  string organization_id = 5;
+  ChatApp app = 6;
+  ChatScope scope = 7;
 }
 
 // DeleteMessageResponse is intentionally empty (maps to HTTP 204 on the BFF side).
@@ -174,7 +375,10 @@ message DeleteMessageResponse {}
 
 // AdminChatService provides admin-only RPCs for chat moderation.
 // All methods require a valid JWT with platform role "admin" or "support"
-// asserted via the x-platform-role gRPC metadata header (set by BFF).
+// asserted via the x-platform-role gRPC metadata header (set by BFF). Every
+// request carries ADMIN+SUPPORT scope (plus an authorized organization where
+// applicable). The service derives and validates scope from the JWT and role
+// assignment; caller-spoofed CHAT_PERSPECTIVE_SUPPORT has no precedence.
 service AdminChatService {
   // AdminGetUserChats returns chats for any user by ID.
   rpc AdminGetUserChats(AdminGetUserChatsRequest) returns (AdminGetUserChatsResponse);
@@ -201,6 +405,7 @@ message AdminGetUserChatsRequest {
   int64 user_id = 1;
   int32 page = 2;
   int32 page_size = 3;
+  ChatScope scope = 4;
 }
 
 message AdminGetUserChatsResponse {
@@ -212,6 +417,7 @@ message AdminGetChatMessagesRequest {
   string chat_id = 1;
   string before_id = 2;
   int32 limit = 3;
+  ChatScope scope = 4;
 }
 
 message AdminGetChatMessagesResponse {
@@ -226,6 +432,7 @@ message AdminListChatsRequest {
   ChatContextType context_type = 1;
   int32 page = 2;
   int32 page_size = 3;
+  ChatScope scope = 4;
 }
 
 message AdminListChatsResponse {
@@ -240,6 +447,7 @@ message AdminListChatsResponse {
 message AdminSendMessageRequest {
   string chat_id = 1;
   string text = 2;
+  ChatScope scope = 3;
 }
 
 message AdminSendMessageResponse {
@@ -249,6 +457,7 @@ message AdminSendMessageResponse {
 // AdminMarkChatReadRequest clears the operator-side unread counter.
 message AdminMarkChatReadRequest {
   string chat_id = 1;
+  ChatScope scope = 2;
 }
 
 message AdminMarkChatReadResponse {

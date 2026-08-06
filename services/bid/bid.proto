@@ -73,6 +73,43 @@ service BidService {
   rpc GetBidSelectionTerms(GetBidSelectionTermsRequest) returns (GetBidSelectionTermsResponse);
 }
 
+enum BidAccessApp {
+  BID_ACCESS_APP_UNSPECIFIED = 0;
+  BID_ACCESS_APP_CLIENT = 1;
+  BID_ACCESS_APP_PARTNER = 2;
+  BID_ACCESS_APP_ADMIN = 3;
+}
+
+enum BidAccessPerspective {
+  BID_ACCESS_PERSPECTIVE_UNSPECIFIED = 0;
+  BID_ACCESS_PERSPECTIVE_BUYER = 1;
+  BID_ACCESS_PERSPECTIVE_SUPPLIER_ORG = 2;
+  BID_ACCESS_PERSPECTIVE_SUPPORT = 3;
+  // A PRO organization buying parts. It is distinct from both a Client buyer
+  // and the supplier organization that authored a bid.
+  BID_ACCESS_PERSPECTIVE_BUYER_ORG = 4;
+}
+
+// BidAccessScope binds the caller app, perspective, and organization so a
+// dual-role account cannot cross between CLIENT buyer, PARTNER buyer
+// organization, and PARTNER supplier organization projections.
+// JWT app and organization authority wins over request data. Existing
+// user_id and organization_id remain compatibility filters, never authority;
+// bid-service validates request ownership or organization membership plus the
+// current membership_version (0 only when organization_id is empty)
+// before returning parts bids, prices, read state, or response summaries.
+message BidAccessScope {
+  BidAccessApp app = 1;
+  BidAccessPerspective perspective = 2;
+  string organization_id = 3;
+  int64 membership_version = 4;
+}
+
+// Every externally authenticated parts read/response/purchase command carries
+// BidAccessScope. GetAcceptedInsuranceBidForPayout, GetEscrowBidTerms, and
+// GetBidSelectionTerms are deliberately service-to-service projections: their
+// owners authorize an exact service identity instead of a mobile app scope.
+
 enum BidType {
   BID_TYPE_UNSPECIFIED = 0;
   BID_TYPE_STO = 1; // СТО
@@ -143,6 +180,7 @@ message CreateBidRequest {
 
   // Admin: skip payment/subscription check when creating bid on behalf of org
   bool skip_payment_check = 10;
+  BidAccessScope scope = 11;
 }
 
 message CreateBidPartRequest {
@@ -163,6 +201,7 @@ message CreateBidResponse {
 // GetBid
 message GetBidRequest {
   int64 bid_id = 1;
+  BidAccessScope scope = 2;
 }
 
 message GetBidResponse {
@@ -172,6 +211,7 @@ message GetBidResponse {
 message GetBidForBuyerRequest {
   int64 bid_id = 1;
   int64 buyer_user_id = 2;
+  BidAccessScope scope = 3;
 }
 
 message GetBidForBuyerResponse {
@@ -181,6 +221,7 @@ message GetBidForBuyerResponse {
 message ListBidsForBuyerRequest {
   string request_id = 1;
   int64 buyer_user_id = 2;
+  BidAccessScope scope = 3;
 }
 
 message ListBidsForBuyerResponse {
@@ -190,6 +231,7 @@ message ListBidsForBuyerResponse {
 message HasAcceptedBidForOrganizationRequest {
   string request_id = 1;
   string organization_id = 2;
+  BidAccessScope scope = 3;
 }
 
 message HasAcceptedBidForOrganizationResponse {
@@ -232,6 +274,7 @@ message UpdateBidRequest {
   repeated CreateBidPartRequest parts = 6;
   optional string description = 7;
   repeated string photos = 8;
+  BidAccessScope scope = 9;
 }
 
 message UpdateBidResponse {
@@ -242,6 +285,7 @@ message UpdateBidResponse {
 message DeleteBidRequest {
   int64 bid_id = 1;
   string organization_id = 2; // UUID from organization-service
+  BidAccessScope scope = 3;
 }
 
 message DeleteBidResponse {
@@ -256,6 +300,7 @@ message ListBidsRequest {
   string request_id = 4;
   int32 page = 5;
   int32 page_size = 6;
+  BidAccessScope scope = 7;
 }
 
 message ListBidsResponse {
@@ -269,6 +314,7 @@ message GetBidsByRequestRequest {
   BidStatus status = 2;
   int32 page = 3;
   int32 page_size = 4;
+  BidAccessScope scope = 5;
 }
 
 message GetBidsByRequestResponse {
@@ -282,6 +328,7 @@ message GetBidsByOrganizationRequest {
   BidStatus status = 2;
   int32 page = 3;
   int32 page_size = 4;
+  BidAccessScope scope = 5;
 }
 
 message GetBidsByOrganizationResponse {
@@ -293,6 +340,7 @@ message GetBidsByOrganizationResponse {
 message AcceptBidRequest {
   int64 bid_id = 1;
   int64 user_id = 2;
+  BidAccessScope scope = 3;
 }
 
 message AcceptBidResponse {
@@ -303,6 +351,7 @@ message AcceptBidResponse {
 message RejectBidRequest {
   int64 bid_id = 1;
   int64 user_id = 2;
+  BidAccessScope scope = 3;
 }
 
 message RejectBidResponse {
@@ -313,6 +362,7 @@ message RejectBidResponse {
 message CancelBidRequest {
   int64 bid_id = 1;
   string organization_id = 2; // UUID from organization-service
+  BidAccessScope scope = 3;
 }
 
 message CancelBidResponse {
@@ -354,6 +404,7 @@ message BidPartPriceResult {
 
 message GetBidPartPricesRequest {
   repeated BidPartPriceQuery items = 1;
+  BidAccessScope scope = 2;
 }
 
 message GetBidPartPricesResponse {
@@ -364,6 +415,7 @@ message GetBidPartPricesResponse {
 message MarkPartsPurchasedRequest {
   int64 bid_id = 1;
   repeated int64 part_ids = 2;
+  BidAccessScope scope = 3;
 }
 
 message MarkPartsPurchasedResponse {}
@@ -373,6 +425,7 @@ message MarkBidReadRequest {
   int64 bid_id = 1;
   int64 user_id = 2;
   string request_id = 3;
+  BidAccessScope scope = 4;
 }
 
 message MarkBidReadResponse {
@@ -394,6 +447,7 @@ message GetRequestResponsesSummaryRequest {
   repeated string request_ids = 1;
   // user_id is used to look up which bids have already been read.
   int64 user_id = 2;
+  BidAccessScope scope = 3;
 }
 
 message GetRequestResponsesSummaryResponse {

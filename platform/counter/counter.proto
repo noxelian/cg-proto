@@ -24,6 +24,48 @@ enum RoadsidePurchasesState {
   ROADSIDE_PURCHASES_STATE_COMPLETED = 2;
 }
 
+// CounterApp separates badge state for the Client and PRO applications.
+enum CounterApp {
+  COUNTER_APP_UNSPECIFIED = 0;
+  COUNTER_APP_CLIENT = 1;
+  COUNTER_APP_PRO = 2;
+}
+
+// CounterPerspective separates buyer and seller profile projections for one
+// authenticated user. A single user can therefore address CLIENT+BUYER,
+// PRO+BUYER_ORG, and PRO+SELLER_ORG as independent scopes; user_id alone never
+// selects a profile.
+enum CounterPerspective {
+  COUNTER_PERSPECTIVE_UNSPECIFIED = 0;
+  COUNTER_PERSPECTIVE_BUYER = 1;
+  COUNTER_PERSPECTIVE_SELLER_ORG = 2;
+  COUNTER_PERSPECTIVE_SELLER_USER = 3;
+  COUNTER_PERSPECTIVE_SUPPORT = 4;
+  // PRO organization purchasing parts, isolated from Client and supplier state.
+  COUNTER_PERSPECTIVE_BUYER_ORG = 5;
+}
+
+// CounterScope binds app, perspective, organization, and membership generation
+// into one tuple. membership_version is 0 iff organization_id is empty. For an
+// organization scope the owner validates the positive version against the
+// source membership record, so removal/rehire or a late event cannot reuse an
+// older seller-org scope. Legacy parallel fields remain migration inputs only
+// and never override or supply a detached membership version.
+message CounterScope {
+  CounterApp app = 1;
+  CounterPerspective perspective = 2;
+  string organization_id = 3;
+  int64 membership_version = 4;
+}
+
+message OrganizationUnreadProjection {
+  string organization_id = 1;
+  int32 unread_messages = 2;
+  int32 unread_notifications = 3;
+  int32 total = 4;
+  map<string, int32> breakdown = 5;
+}
+
 message UserCounters {
   int64 user_id = 1;
   int32 unread_messages = 2;
@@ -35,46 +77,87 @@ message UserCounters {
   int32 roadside_purchases_unread = 8;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; BFF-selected fields are never authority.
 message GetCountersRequest {
   int64 user_id = 1;
+  CounterApp app = 2;
+  CounterPerspective perspective = 3;
+  repeated string organization_ids = 4;
+  repeated CounterScope scopes = 5;
 }
 
 message GetCountersResponse {
   UserCounters counters = 1;
+  repeated OrganizationUnreadProjection organization_unread = 2;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; request fields are never authority.
 message IncrementCounterRequest {
   int64 user_id = 1;
   string counter_name = 2;
   int32 delta = 3;
+  CounterApp app = 4;
+  CounterPerspective perspective = 5;
+  repeated string organization_ids = 6;
+  repeated CounterScope scopes = 7;
 }
 
 message IncrementCounterResponse {
   int32 new_value = 1;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; request fields are never authority.
 message DecrementCounterRequest {
   int64 user_id = 1;
   string counter_name = 2;
   int32 delta = 3;
+  CounterApp app = 4;
+  CounterPerspective perspective = 5;
+  repeated string organization_ids = 6;
+  repeated CounterScope scopes = 7;
 }
 
 message DecrementCounterResponse {
   int32 new_value = 1;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; request fields are never authority.
 message SetCounterRequest {
   int64 user_id = 1;
   string counter_name = 2;
   int32 value = 3;
+  CounterApp app = 4;
+  CounterPerspective perspective = 5;
+  repeated string organization_ids = 6;
+  repeated CounterScope scopes = 7;
 }
 
 message SetCounterResponse {
   bool success = 1;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; BFF-selected fields are never authority.
 message GetRoadsidePurchasesSnapshotRequest {
   RoadsidePurchasesState state = 1;
+  CounterApp app = 2;
+  CounterPerspective perspective = 3;
+  repeated string organization_ids = 4;
+  repeated CounterScope scopes = 5;
 }
 
 message GetRoadsidePurchasesSnapshotResponse {
@@ -82,10 +165,18 @@ message GetRoadsidePurchasesSnapshotResponse {
   uint64 cursor = 1;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; BFF-selected fields are never authority.
 message ResetRoadsidePurchasesUnreadRequest {
   RoadsidePurchasesState state = 1;
   // Cursor previously issued by GetRoadsidePurchasesSnapshot.
   uint64 cursor = 2;
+  CounterApp app = 3;
+  CounterPerspective perspective = 4;
+  repeated string organization_ids = 5;
+  repeated CounterScope scopes = 6;
 }
 
 message ResetRoadsidePurchasesUnreadResponse {
@@ -95,11 +186,20 @@ message ResetRoadsidePurchasesUnreadResponse {
   int32 state_unread = 3;
 }
 
+// app, perspective, and organization_ids are routing/profile context only.
+// The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
+// app mismatch, and validate organization membership/ownership with the source
+// owner; BFF-selected fields are never authority.
 message GetBadgeTotalRequest {
   int64 user_id = 1;
+  CounterApp app = 2;
+  CounterPerspective perspective = 3;
+  repeated string organization_ids = 4;
+  repeated CounterScope scopes = 5;
 }
 
 message GetBadgeTotalResponse {
-  int32 total = 1;                  // min(cap, сумма max(0,src)); кап на чтении
+  int32 total = 1; // min(cap, сумма max(0,src)); кап на чтении
   map<string, int32> breakdown = 2; // без капа
+  repeated OrganizationUnreadProjection organization_unread = 3;
 }
