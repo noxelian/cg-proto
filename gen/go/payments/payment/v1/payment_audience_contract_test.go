@@ -1,6 +1,8 @@
 package paymentv1
 
 import (
+	"os"
+	"strings"
 	"testing"
 
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -83,5 +85,20 @@ func TestInitPaymentRequestHasNoCallerSuppliedAudience(t *testing.T) {
 	fields := (&InitPaymentRequest{}).ProtoReflect().Descriptor().Fields()
 	if field := fields.ByName("audience"); field != nil {
 		t.Fatalf("InitPaymentRequest must derive audience from verified JWT app, found field %q", field.FullName())
+	}
+}
+
+func TestListPaymentProviderRoutesRequiresConcreteAudience(t *testing.T) {
+	source, err := os.ReadFile("../../../../../payments/payment/v1/payment.proto")
+	if err != nil {
+		t.Fatalf("read payment.proto: %v", err)
+	}
+	for _, required := range []string{
+		"audience is REQUIRED and must be a concrete CLIENT, PARTNER, or SAPP value",
+		"UNSPECIFIED is invalid and never means list all",
+	} {
+		if !strings.Contains(string(source), required) {
+			t.Errorf("payment.proto missing ListPaymentProviderRoutesRequest contract documentation %q", required)
+		}
 	}
 }

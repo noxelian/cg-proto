@@ -582,6 +582,14 @@ message InitPaymentResponse {
   int64 wallet_balance_tiyn = 4;
   // total_amount_tiyn is the authoritative amount resolved by the entity owner.
   int64 total_amount_tiyn = 5;
+  // The following owner-resolved verification facts are authoritative and are
+  // never copied from deprecated caller fields in InitPaymentRequest.
+  string currency = 6;
+  string organization_id = 7;
+  PayEntityType entity_type = 8;
+  int64 entity_id = 9;
+  // For any transaction created from this session, the transaction type is always CHARGE.
+  // Clients never supply a transaction type.
 }
 
 message StartPaymentRequest {
@@ -1011,8 +1019,8 @@ message PaymentProviderRoute {
 }
 
 message ListPaymentProviderRoutesRequest {
-  // audience filters the admin list. UNSPECIFIED lists every audience so old
-  // admin clients retain their broad list behavior.
+  // audience is REQUIRED and must be a concrete CLIENT, PARTNER, or SAPP value.
+  // UNSPECIFIED is invalid and never means list all; cg-payments must reject it.
   PaymentAudience audience = 1;
 }
 
