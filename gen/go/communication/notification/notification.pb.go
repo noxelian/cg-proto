@@ -545,6 +545,9 @@ func (x *Notification) GetRecipientScope() *NotificationScope {
 }
 
 // DeviceInfo is returned by RegisterDevice, UpdateDevice, and ListUserDevices.
+// Its installation identity is (user_id, app, token), not an organization
+// scope. The legacy-shaped scope field is an app projection only: perspective,
+// organization_id, and membership_version do not authorize or filter delivery.
 type DeviceInfo struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	Id          int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -557,7 +560,8 @@ type DeviceInfo struct {
 	LastSeenAt  *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=last_seen_at,json=lastSeenAt,proto3" json:"last_seen_at,omitempty"`
 	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Typed replacement for the legacy RegisterDeviceRequest.app string.
-	App           NotificationApp    `protobuf:"varint,10,opt,name=app,proto3,enum=communication.notification.v1.NotificationApp" json:"app,omitempty"`
+	App NotificationApp `protobuf:"varint,10,opt,name=app,proto3,enum=communication.notification.v1.NotificationApp" json:"app,omitempty"`
+	// App-only compatibility projection. Device scope is never delivery authorization or a recipient filter.
 	Scope         *NotificationScope `protobuf:"bytes,11,opt,name=scope,proto3" json:"scope,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -801,12 +805,15 @@ func (x *SendPushRequest) GetRecipientScope() *NotificationScope {
 // New producers write recipient_scopes, where every tuple binds its app,
 // perspective, and organization; delivery code emits one delivery per
 // recipient_scopes tuple and MUST NOT flatten tuples into an app/org cross
-// product: one delivery per recipient_scopes tuple. If typed and legacy routing
-// are both present, the owner must reject conflicting typed and legacy routing
+// product: one delivery per recipient_scopes tuple. The recipient_scopes are canonical.
+// If typed and legacy routing are both present, the owner must reject conflicting typed and legacy routing
 // with INVALID_ARGUMENT (reject conflicting typed and legacy routing).
-// Legacy-only target_apps normalize ("client" -> CLIENT, "partner" -> PRO). Empty legacy
-// target_apps keeps its existing broadcast-to-all-apps meaning on this event
-// stream; it MUST NOT become CLIENT-only or drop a push. The deprecated
+// Legacy-only target_apps normalize ("client" -> CLIENT, "partner" -> PRO).
+// Empty legacy target_apps normalize to CLIENT-only; they never broadcast to every application.
+// Legacy Partner routing without an exact organization_id and positive membership_version is invalid
+// and MUST fail closed. Because the
+// parallel legacy fields cannot carry membership_version, Partner delivery must
+// be represented by a canonical recipient_scopes tuple. The deprecated
 // typed_target_apps plus parallel perspective/org fields remain readable only
 // for the rolling migration and must agree with recipient_scopes when both are
 // present. Organization routing is verified from its source owner/membership;
@@ -2093,10 +2100,18 @@ func (x *GetUnreadCountResponse) GetCount() int32 {
 	return 0
 }
 
-// RegisterDevice — upsert by (user_id, fcm_token, scope).
+// RegisterDevice — upsert by (user_id, app, fcm_token). Organization membership
+// is deliberately absent from installation identity, so a PRO installation registered before an organization invite
+// remains eligible after the invite is authorized.
 // fcm_token field carries any push token: FCM registration token or APNs device token.
-// The server derives/validates scope from claims. Legacy app/target_app are
-// accepted only when they agree with scope; a conflict is INVALID_ARGUMENT.
+// The server derives/validates app from claims. Legacy app/target_app and
+// scope.app are accepted only when they agree; a conflict is INVALID_ARGUMENT.
+// Perspective/organization/version inside scope are ignored for installation
+// identity and can never grant delivery authority.
+// Delivery first resolves the exact event recipient_scope and performs fresh membership authorization,
+// then selects installations by user_id + recipient_scope.app. One PRO installation can receive all currently authorized PRO organization scopes.
+// A Client installation never receives a PRO recipient scope. Push data carries the exact organization_id and membership_version
+// used for authorization so the application can navigate within that same scope.
 type RegisterDeviceRequest struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	UserId      int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2107,8 +2122,8 @@ type RegisterDeviceRequest struct {
 	DeviceModel string                 `protobuf:"bytes,6,opt,name=device_model,json=deviceModel,proto3" json:"device_model,omitempty"`
 	Locale      string                 `protobuf:"bytes,7,opt,name=locale,proto3" json:"locale,omitempty"`
 	// Legacy ingress normalizes empty or "client" to CLIENT and "partner" to
-	// PRO. This empty-to-CLIENT fallback is legacy-ingress-only; event-stream
-	// empty target_apps retains its existing broadcast-to-all-apps meaning.
+	// PRO. The same fail-closed default applies to notification.push: empty
+	// target_apps is CLIENT-only and never broadcasts to every application.
 	App string `protobuf:"bytes,8,opt,name=app,proto3" json:"app,omitempty"`
 	// target_app is routing/profile context only and MUST match the verified JWT
 	// app. If non-empty app and target_app are both present, they MUST agree or
@@ -2272,9 +2287,9 @@ func (x *RegisterDeviceResponse) GetDevice() *DeviceInfo {
 	return nil
 }
 
-// The owner derives/validates scope from the JWT before mutation. Client
+// The owner derives/validates the installation app from the JWT before mutation. Client
 // logout/update cannot mutate Partner registrations, even for the same user_id
-// and token; an omitted legacy scope is derived from the caller, never treated
+// and token; an omitted legacy scope.app is derived from the caller, never treated
 // as a user-global delete.
 type UnregisterDeviceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -2381,7 +2396,7 @@ func (x *UnregisterDeviceResponse) GetSuccess() bool {
 }
 
 // UpdateDevice — partial update of device metadata within the server-validated
-// caller scope. Client logout/update cannot mutate Partner registrations.
+// caller app. Client logout/update cannot mutate Partner registrations.
 type UpdateDeviceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -2511,7 +2526,7 @@ func (x *UpdateDeviceResponse) GetDevice() *DeviceInfo {
 }
 
 // ListUserDevices — returns registrations only for the server-validated caller
-// scope; it never returns a user-global union across Client and Partner.
+// app; it never returns a user-global union across Client and Partner.
 type ListUserDevicesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
