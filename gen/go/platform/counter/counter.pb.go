@@ -569,6 +569,15 @@ func (x *GetCountersResponse) GetOrganizationUnread() []*OrganizationUnreadProje
 // The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
 // app mismatch, and validate organization membership/ownership with the source
 // owner; request fields are never authority.
+//
+// The synchronous push-badge path is reserved for the exact authenticated notification-service identity
+// (a pure service JWT, not a delegated user).
+// That path requires exactly one fully specified scopes tuple, a positive delta and an allowlisted unread counter.
+// For an organization scope the owner revalidates organization membership immediately before mutation.
+// A missing event_id is denied on this service path. Counter mutation, event deduplication,
+// and calculation of the exact-scope aggregate badge are one atomic operation.
+// An asynchronous Kafka replay carrying the same event_id must hit the same idempotency record
+// rather than incrementing again.
 type IncrementCounterRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	UserId          int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -578,8 +587,11 @@ type IncrementCounterRequest struct {
 	Perspective     CounterPerspective     `protobuf:"varint,5,opt,name=perspective,proto3,enum=platform.counter.v1.CounterPerspective" json:"perspective,omitempty"`
 	OrganizationIds []string               `protobuf:"bytes,6,rep,name=organization_ids,json=organizationIds,proto3" json:"organization_ids,omitempty"`
 	Scopes          []*CounterScope        `protobuf:"bytes,7,rep,name=scopes,proto3" json:"scopes,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Stable producer event identifier. It is mandatory for the authenticated
+	// notification-service path and is reused unchanged by the async Kafka path.
+	EventId       string `protobuf:"bytes,8,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *IncrementCounterRequest) Reset() {
@@ -661,9 +673,19 @@ func (x *IncrementCounterRequest) GetScopes() []*CounterScope {
 	return nil
 }
 
+func (x *IncrementCounterRequest) GetEventId() string {
+	if x != nil {
+		return x.EventId
+	}
+	return ""
+}
+
 type IncrementCounterResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	NewValue      int32                  `protobuf:"varint,1,opt,name=new_value,json=newValue,proto3" json:"new_value,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	NewValue int32                  `protobuf:"varint,1,opt,name=new_value,json=newValue,proto3" json:"new_value,omitempty"`
+	// Exact-scope aggregate after the idempotent mutation. The counter service
+	// atomically returns badge_total so FCM never needs a racy follow-up read.
+	BadgeTotal    int32 `protobuf:"varint,2,opt,name=badge_total,json=badgeTotal,proto3" json:"badge_total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -701,6 +723,13 @@ func (*IncrementCounterResponse) Descriptor() ([]byte, []int) {
 func (x *IncrementCounterResponse) GetNewValue() int32 {
 	if x != nil {
 		return x.NewValue
+	}
+	return 0
+}
+
+func (x *IncrementCounterResponse) GetBadgeTotal() int32 {
+	if x != nil {
+		return x.BadgeTotal
 	}
 	return 0
 }
@@ -1437,7 +1466,7 @@ const file_platform_counter_counter_proto_rawDesc = "" +
 	"\x06scopes\x18\x05 \x03(\v2!.platform.counter.v1.CounterScopeR\x06scopes\"\xb8\x01\n" +
 	"\x13GetCountersResponse\x12=\n" +
 	"\bcounters\x18\x01 \x01(\v2!.platform.counter.v1.UserCountersR\bcounters\x12b\n" +
-	"\x13organization_unread\x18\x02 \x03(\v21.platform.counter.v1.OrganizationUnreadProjectionR\x12organizationUnread\"\xcf\x02\n" +
+	"\x13organization_unread\x18\x02 \x03(\v21.platform.counter.v1.OrganizationUnreadProjectionR\x12organizationUnread\"\xea\x02\n" +
 	"\x17IncrementCounterRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12!\n" +
 	"\fcounter_name\x18\x02 \x01(\tR\vcounterName\x12\x14\n" +
@@ -1445,9 +1474,12 @@ const file_platform_counter_counter_proto_rawDesc = "" +
 	"\x03app\x18\x04 \x01(\x0e2\x1f.platform.counter.v1.CounterAppR\x03app\x12I\n" +
 	"\vperspective\x18\x05 \x01(\x0e2'.platform.counter.v1.CounterPerspectiveR\vperspective\x12)\n" +
 	"\x10organization_ids\x18\x06 \x03(\tR\x0forganizationIds\x129\n" +
-	"\x06scopes\x18\a \x03(\v2!.platform.counter.v1.CounterScopeR\x06scopes\"7\n" +
+	"\x06scopes\x18\a \x03(\v2!.platform.counter.v1.CounterScopeR\x06scopes\x12\x19\n" +
+	"\bevent_id\x18\b \x01(\tR\aeventId\"X\n" +
 	"\x18IncrementCounterResponse\x12\x1b\n" +
-	"\tnew_value\x18\x01 \x01(\x05R\bnewValue\"\xcf\x02\n" +
+	"\tnew_value\x18\x01 \x01(\x05R\bnewValue\x12\x1f\n" +
+	"\vbadge_total\x18\x02 \x01(\x05R\n" +
+	"badgeTotal\"\xcf\x02\n" +
 	"\x17DecrementCounterRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12!\n" +
 	"\fcounter_name\x18\x02 \x01(\tR\vcounterName\x12\x14\n" +

@@ -98,6 +98,15 @@ message GetCountersResponse {
 // The owner/BFF MUST bind app to the verified JWT app, reject a caller-scoped
 // app mismatch, and validate organization membership/ownership with the source
 // owner; request fields are never authority.
+//
+// The synchronous push-badge path is reserved for the exact authenticated notification-service identity
+// (a pure service JWT, not a delegated user).
+// That path requires exactly one fully specified scopes tuple, a positive delta and an allowlisted unread counter.
+// For an organization scope the owner revalidates organization membership immediately before mutation.
+// A missing event_id is denied on this service path. Counter mutation, event deduplication,
+// and calculation of the exact-scope aggregate badge are one atomic operation.
+// An asynchronous Kafka replay carrying the same event_id must hit the same idempotency record
+// rather than incrementing again.
 message IncrementCounterRequest {
   int64 user_id = 1;
   string counter_name = 2;
@@ -106,10 +115,16 @@ message IncrementCounterRequest {
   CounterPerspective perspective = 5;
   repeated string organization_ids = 6;
   repeated CounterScope scopes = 7;
+  // Stable producer event identifier. It is mandatory for the authenticated
+  // notification-service path and is reused unchanged by the async Kafka path.
+  string event_id = 8;
 }
 
 message IncrementCounterResponse {
   int32 new_value = 1;
+  // Exact-scope aggregate after the idempotent mutation. The counter service
+  // atomically returns badge_total so FCM never needs a racy follow-up read.
+  int32 badge_total = 2;
 }
 
 // app, perspective, and organization_ids are routing/profile context only.

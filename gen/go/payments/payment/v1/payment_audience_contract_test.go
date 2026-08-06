@@ -88,6 +88,36 @@ func TestInitPaymentRequestHasNoCallerSuppliedAudience(t *testing.T) {
 	}
 }
 
+func TestCreateTransactionCarriesTrustedOwnerAudience(t *testing.T) {
+	message := (&CreateTransactionRequest{}).ProtoReflect().Descriptor()
+	field := message.Fields().ByName("owner_audience")
+	if field == nil {
+		t.Fatal("CreateTransactionRequest.owner_audience is missing")
+	}
+	if got, want := field.Number(), protoreflect.FieldNumber(13); got != want {
+		t.Fatalf("owner_audience field number = %d, want %d", got, want)
+	}
+	if got, want := field.Enum().FullName(), PaymentAudience(0).Descriptor().FullName(); got != want {
+		t.Fatalf("owner_audience enum = %q, want %q", got, want)
+	}
+}
+
+func TestCreateTransactionOwnerAudienceIsNotCallerAuthority(t *testing.T) {
+	source, err := os.ReadFile("../../../../../payments/payment/v1/payment.proto")
+	if err != nil {
+		t.Fatalf("read payment.proto: %v", err)
+	}
+	for _, required := range []string{
+		"accepted only from the exact authenticated owner-service identity",
+		"Human and BFF callers must be rejected",
+		"empty Auth.App must never default to CLIENT",
+	} {
+		if !strings.Contains(string(source), required) {
+			t.Errorf("payment.proto missing CreateTransaction owner audience contract documentation %q", required)
+		}
+	}
+}
+
 func TestListPaymentProviderRoutesRequiresConcreteAudience(t *testing.T) {
 	source, err := os.ReadFile("../../../../../payments/payment/v1/payment.proto")
 	if err != nil {

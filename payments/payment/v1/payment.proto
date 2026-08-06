@@ -291,6 +291,15 @@ message CreateTransactionRequest {
   // the direct path every existing caller already gets, so adding this field
   // changes nothing for them.
   SettlementMode settlement_mode = 12;
+  // owner_audience is an authenticated owner-service assertion used when the
+  // service token intentionally carries an empty Auth.App.
+  // It is accepted only from the exact authenticated owner-service identity bound to entity_type;
+  // the payments service independently verifies that binding before selecting
+  // providers or methods. Human and BFF callers must be rejected when they set
+  // this field, and an absent assertion or empty Auth.App must never default to CLIENT.
+  // entity_type remains the owner-bound use-case discriminator, so no
+  // caller-selectable payment use_case is needed here.
+  PaymentAudience owner_audience = 13;
 }
 
 // SettlementMode selects how cg-billing posts a captured payment.

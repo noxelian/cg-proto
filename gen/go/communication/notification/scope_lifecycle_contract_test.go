@@ -66,10 +66,20 @@ func TestNotificationScopeAuthorityIsContractual(t *testing.T) {
 		"single authoritative app + perspective + organization tuple",
 		"verified JWT app",
 		"Client logout/update cannot mutate Partner registrations",
+		"Empty legacy target_apps normalize to CLIENT-only",
+		"Legacy Partner routing without an exact organization_id and positive membership_version is invalid",
+		"recipient_scopes are canonical",
 		"reject conflicting typed and legacy routing",
 		"one delivery per recipient_scopes tuple",
 		"membership_version is 0 iff organization_id is empty",
 		"stale/rehired versions",
+		"installation identity is (user_id, app, token)",
+		"Device scope is never delivery authorization or a recipient filter",
+		"PRO installation registered before an organization invite",
+		"fresh membership authorization",
+		"One PRO installation can receive all currently authorized PRO organization scopes",
+		"Client installation never receives a PRO recipient scope",
+		"data carries the exact organization_id and membership_version",
 	} {
 		if !strings.Contains(string(source), required) {
 			t.Errorf("notification.proto missing scope authority rule %q", required)

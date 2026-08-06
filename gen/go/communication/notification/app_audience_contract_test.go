@@ -257,9 +257,10 @@ func assertNotificationContractDocumentation(t *testing.T) {
 	for _, required := range []string{
 		`("client" -> CLIENT, "partner" -> PRO)`,
 		"owner rejects INVALID_ARGUMENT",
-		"broadcast-to-",
-		"MUST NOT become CLIENT-only or drop",
-		"empty-to-CLIENT fallback is legacy-ingress-only",
+		"Empty legacy target_apps normalize to CLIENT-only",
+		"never broadcast to every application",
+		"Legacy Partner routing without an exact organization_id",
+		"MUST fail closed",
 		"MUST match the verified JWT",
 		"BFF-selected",
 		"fields are never authority",

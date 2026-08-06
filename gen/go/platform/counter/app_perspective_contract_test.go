@@ -26,7 +26,7 @@ func TestCounterAppPerspectiveContract(t *testing.T) {
 	assertCounterField(t, scope, "membership_version", 4, protoreflect.Int64Kind, false)
 	requests := map[protoreflect.Name][]counterFieldExpectation{
 		"GetCountersRequest":                  {{"app", 2, protoreflect.EnumKind, false}, {"perspective", 3, protoreflect.EnumKind, false}, {"organization_ids", 4, protoreflect.StringKind, true}, {"scopes", 5, protoreflect.MessageKind, true}},
-		"IncrementCounterRequest":             {{"app", 4, protoreflect.EnumKind, false}, {"perspective", 5, protoreflect.EnumKind, false}, {"organization_ids", 6, protoreflect.StringKind, true}, {"scopes", 7, protoreflect.MessageKind, true}},
+		"IncrementCounterRequest":             {{"app", 4, protoreflect.EnumKind, false}, {"perspective", 5, protoreflect.EnumKind, false}, {"organization_ids", 6, protoreflect.StringKind, true}, {"scopes", 7, protoreflect.MessageKind, true}, {"event_id", 8, protoreflect.StringKind, false}},
 		"DecrementCounterRequest":             {{"app", 4, protoreflect.EnumKind, false}, {"perspective", 5, protoreflect.EnumKind, false}, {"organization_ids", 6, protoreflect.StringKind, true}, {"scopes", 7, protoreflect.MessageKind, true}},
 		"SetCounterRequest":                   {{"app", 4, protoreflect.EnumKind, false}, {"perspective", 5, protoreflect.EnumKind, false}, {"organization_ids", 6, protoreflect.StringKind, true}, {"scopes", 7, protoreflect.MessageKind, true}},
 		"GetRoadsidePurchasesSnapshotRequest": {{"app", 2, protoreflect.EnumKind, false}, {"perspective", 3, protoreflect.EnumKind, false}, {"organization_ids", 4, protoreflect.StringKind, true}, {"scopes", 5, protoreflect.MessageKind, true}},
@@ -50,6 +50,7 @@ func TestCounterAppPerspectiveContract(t *testing.T) {
 	}
 	assertCounterField(t, messages.ByName("GetCountersResponse"), "organization_unread", 2, protoreflect.MessageKind, true)
 	assertCounterField(t, messages.ByName("GetBadgeTotalResponse"), "organization_unread", 3, protoreflect.MessageKind, true)
+	assertCounterField(t, messages.ByName("IncrementCounterResponse"), "badge_total", 2, protoreflect.Int32Kind, false)
 	assertCounterContractDocumentation(t)
 }
 
@@ -70,6 +71,13 @@ func assertCounterContractDocumentation(t *testing.T) {
 		"membership_version is 0 iff organization_id is empty",
 		"removal/rehire",
 		"late event",
+		"exact authenticated notification-service identity",
+		"exactly one fully specified scopes tuple",
+		"positive delta and an allowlisted unread counter",
+		"revalidates organization membership immediately before mutation",
+		"missing event_id is denied",
+		"same event_id must hit the same idempotency record",
+		"atomically returns badge_total",
 	} {
 		if !strings.Contains(string(source), required) {
 			t.Errorf("counter.proto missing contract documentation %q", required)
