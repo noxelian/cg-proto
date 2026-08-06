@@ -23,10 +23,17 @@ func TestAuthorizeOrganizationCapabilityDescriptorContract(t *testing.T) {
 	if got, want := method.Output().FullName(), protoreflect.FullName("users.user.v1.AuthorizeOrganizationCapabilityResponse"); got != want {
 		t.Fatalf("AuthorizeOrganizationCapability output = %s, want %s", got, want)
 	}
+	if method.IsStreamingClient() || method.IsStreamingServer() {
+		t.Fatalf(
+			"AuthorizeOrganizationCapability must be unary, got client_streaming=%t server_streaming=%t",
+			method.IsStreamingClient(),
+			method.IsStreamingServer(),
+		)
+	}
 
 	request := file.Messages().ByName("AuthorizeOrganizationCapabilityRequest")
-	assertOrganizationCapabilityField(t, request, "organization_id", 1, protoreflect.StringKind)
-	assertOrganizationCapabilityField(t, request, "capability", 2, protoreflect.StringKind)
+	assertOrganizationCapabilityField(t, request, "organization_id", 1, protoreflect.StringKind, protoreflect.Optional, false)
+	assertOrganizationCapabilityField(t, request, "capability", 2, protoreflect.StringKind, protoreflect.Optional, false)
 	if got := request.Fields().Len(); got != 2 {
 		t.Fatalf("AuthorizeOrganizationCapabilityRequest has %d fields, want exactly 2", got)
 	}
@@ -37,16 +44,24 @@ func TestAuthorizeOrganizationCapabilityDescriptorContract(t *testing.T) {
 	}
 
 	response := file.Messages().ByName("AuthorizeOrganizationCapabilityResponse")
-	assertOrganizationCapabilityField(t, response, "allowed", 1, protoreflect.BoolKind)
-	assertOrganizationCapabilityField(t, response, "actor_user_id", 2, protoreflect.Int64Kind)
-	assertOrganizationCapabilityField(t, response, "organization_id", 3, protoreflect.StringKind)
-	assertOrganizationCapabilityField(t, response, "capability", 4, protoreflect.StringKind)
+	assertOrganizationCapabilityField(t, response, "allowed", 1, protoreflect.BoolKind, protoreflect.Optional, false)
+	assertOrganizationCapabilityField(t, response, "actor_user_id", 2, protoreflect.Int64Kind, protoreflect.Optional, false)
+	assertOrganizationCapabilityField(t, response, "organization_id", 3, protoreflect.StringKind, protoreflect.Optional, false)
+	assertOrganizationCapabilityField(t, response, "capability", 4, protoreflect.StringKind, protoreflect.Optional, false)
 	if got := response.Fields().Len(); got != 4 {
 		t.Fatalf("AuthorizeOrganizationCapabilityResponse has %d fields, want exactly 4", got)
 	}
 }
 
-func assertOrganizationCapabilityField(t *testing.T, message protoreflect.MessageDescriptor, name protoreflect.Name, number protoreflect.FieldNumber, kind protoreflect.Kind) protoreflect.FieldDescriptor {
+func assertOrganizationCapabilityField(
+	t *testing.T,
+	message protoreflect.MessageDescriptor,
+	name protoreflect.Name,
+	number protoreflect.FieldNumber,
+	kind protoreflect.Kind,
+	cardinality protoreflect.Cardinality,
+	hasPresence bool,
+) protoreflect.FieldDescriptor {
 	t.Helper()
 	if message == nil {
 		t.Fatalf("message containing %s not found", name)
@@ -55,8 +70,17 @@ func assertOrganizationCapabilityField(t *testing.T, message protoreflect.Messag
 	if field == nil {
 		t.Fatalf("%s.%s not found", message.Name(), name)
 	}
-	if field.Number() != number || field.Kind() != kind {
-		t.Fatalf("%s.%s = field %d (%s), want %d (%s)", message.Name(), name, field.Number(), field.Kind(), number, kind)
+	if got := field.Number(); got != number {
+		t.Fatalf("%s.%s number = %d, want %d", message.Name(), name, got, number)
+	}
+	if got := field.Kind(); got != kind {
+		t.Fatalf("%s.%s kind = %s, want %s", message.Name(), name, got, kind)
+	}
+	if got := field.Cardinality(); got != cardinality {
+		t.Fatalf("%s.%s cardinality = %s, want %s", message.Name(), name, got, cardinality)
+	}
+	if got := field.HasPresence(); got != hasPresence {
+		t.Fatalf("%s.%s HasPresence() = %t, want %t", message.Name(), name, got, hasPresence)
 	}
 	return field
 }
