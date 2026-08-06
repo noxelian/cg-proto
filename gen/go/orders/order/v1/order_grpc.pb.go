@@ -118,8 +118,10 @@ type OrderServiceClient interface {
 	GetMaintenanceQuote(ctx context.Context, in *GetMaintenanceQuoteRequest, opts ...grpc.CallOption) (*GetMaintenanceQuoteResponse, error)
 	// === Basket (parts cart) payable quote ===
 	// GetBasketQuote is the authoritative pricing projection for combined-pay
-	// entity_type=basket. payment_entity_id carries the cart ID. Amounts are in
-	// currency minor units (tiyn for KZT).
+	// entity_type=basket. GetBasketQuoteRequest.payment_entity_id is the external cart ID
+	// used only to locate and authorize the cart. BasketQuote.payment_entity_id is the owner-minted checkout/payment attempt ID
+	// and canonical combined-pay entity_id; it may differ from GetBasketQuoteRequest.payment_entity_id.
+	// Amounts are in currency minor units (tiyn for KZT).
 	GetBasketQuote(ctx context.Context, in *GetBasketQuoteRequest, opts ...grpc.CallOption) (*GetBasketQuoteResponse, error)
 	// === Admin analytics ===
 	GetSubscriptionStats(ctx context.Context, in *GetSubscriptionStatsRequest, opts ...grpc.CallOption) (*GetSubscriptionStatsResponse, error)
@@ -599,8 +601,10 @@ type OrderServiceServer interface {
 	GetMaintenanceQuote(context.Context, *GetMaintenanceQuoteRequest) (*GetMaintenanceQuoteResponse, error)
 	// === Basket (parts cart) payable quote ===
 	// GetBasketQuote is the authoritative pricing projection for combined-pay
-	// entity_type=basket. payment_entity_id carries the cart ID. Amounts are in
-	// currency minor units (tiyn for KZT).
+	// entity_type=basket. GetBasketQuoteRequest.payment_entity_id is the external cart ID
+	// used only to locate and authorize the cart. BasketQuote.payment_entity_id is the owner-minted checkout/payment attempt ID
+	// and canonical combined-pay entity_id; it may differ from GetBasketQuoteRequest.payment_entity_id.
+	// Amounts are in currency minor units (tiyn for KZT).
 	GetBasketQuote(context.Context, *GetBasketQuoteRequest) (*GetBasketQuoteResponse, error)
 	// === Admin analytics ===
 	GetSubscriptionStats(context.Context, *GetSubscriptionStatsRequest) (*GetSubscriptionStatsResponse, error)

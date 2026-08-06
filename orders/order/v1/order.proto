@@ -65,8 +65,10 @@ service OrderService {
 
   // === Basket (parts cart) payable quote ===
   // GetBasketQuote is the authoritative pricing projection for combined-pay
-  // entity_type=basket. payment_entity_id carries the cart ID. Amounts are in
-  // currency minor units (tiyn for KZT).
+  // entity_type=basket. GetBasketQuoteRequest.payment_entity_id is the external cart ID
+  // used only to locate and authorize the cart. BasketQuote.payment_entity_id is the owner-minted checkout/payment attempt ID
+  // and canonical combined-pay entity_id; it may differ from GetBasketQuoteRequest.payment_entity_id.
+  // Amounts are in currency minor units (tiyn for KZT).
   rpc GetBasketQuote(GetBasketQuoteRequest) returns (GetBasketQuoteResponse);
 
   // === Admin analytics ===
@@ -862,7 +864,10 @@ enum BasketQuoteStatus {
 }
 
 message BasketQuote {
-  int64 payment_entity_id = 1; // Cart ID used as combined-pay entity_id.
+  // Owner-minted checkout/payment attempt ID. This is the canonical
+  // combined-pay entity_id returned to cg-payments and deliberately may differ
+  // from the external cart ID supplied in GetBasketQuoteRequest.
+  int64 payment_entity_id = 1;
   int64 user_id = 2;           // Buyer that owns the cart.
   BasketQuoteStatus status = 3;
   int64 total_amount_minor = 4; // Grand total incl. delivery and commission; tiyn for KZT.
@@ -871,6 +876,8 @@ message BasketQuote {
 }
 
 message GetBasketQuoteRequest {
+  // External cart ID used only to locate and authorize the cart. This is a
+  // lookup identifier, not the canonical combined-pay payment attempt ID.
   int64 payment_entity_id = 1;
 }
 

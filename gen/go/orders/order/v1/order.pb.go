@@ -6885,13 +6885,16 @@ func (x *GetMaintenanceQuoteResponse) GetQuote() *MaintenanceQuote {
 }
 
 type BasketQuote struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	PaymentEntityId  int64                  `protobuf:"varint,1,opt,name=payment_entity_id,json=paymentEntityId,proto3" json:"payment_entity_id,omitempty"` // Cart ID used as combined-pay entity_id.
-	UserId           int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                              // Buyer that owns the cart.
-	Status           BasketQuoteStatus      `protobuf:"varint,3,opt,name=status,proto3,enum=orders.order.v1.BasketQuoteStatus" json:"status,omitempty"`
-	TotalAmountMinor int64                  `protobuf:"varint,4,opt,name=total_amount_minor,json=totalAmountMinor,proto3" json:"total_amount_minor,omitempty"` // Grand total incl. delivery and commission; tiyn for KZT.
-	Currency         string                 `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`
-	ItemsCount       int32                  `protobuf:"varint,6,opt,name=items_count,json=itemsCount,proto3" json:"items_count,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Owner-minted checkout/payment attempt ID. This is the canonical
+	// combined-pay entity_id returned to cg-payments and deliberately may differ
+	// from the external cart ID supplied in GetBasketQuoteRequest.
+	PaymentEntityId  int64             `protobuf:"varint,1,opt,name=payment_entity_id,json=paymentEntityId,proto3" json:"payment_entity_id,omitempty"`
+	UserId           int64             `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // Buyer that owns the cart.
+	Status           BasketQuoteStatus `protobuf:"varint,3,opt,name=status,proto3,enum=orders.order.v1.BasketQuoteStatus" json:"status,omitempty"`
+	TotalAmountMinor int64             `protobuf:"varint,4,opt,name=total_amount_minor,json=totalAmountMinor,proto3" json:"total_amount_minor,omitempty"` // Grand total incl. delivery and commission; tiyn for KZT.
+	Currency         string            `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`
+	ItemsCount       int32             `protobuf:"varint,6,opt,name=items_count,json=itemsCount,proto3" json:"items_count,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -6969,8 +6972,10 @@ func (x *BasketQuote) GetItemsCount() int32 {
 }
 
 type GetBasketQuoteRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	PaymentEntityId int64                  `protobuf:"varint,1,opt,name=payment_entity_id,json=paymentEntityId,proto3" json:"payment_entity_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// External cart ID used only to locate and authorize the cart. This is a
+	// lookup identifier, not the canonical combined-pay payment attempt ID.
+	PaymentEntityId int64 `protobuf:"varint,1,opt,name=payment_entity_id,json=paymentEntityId,proto3" json:"payment_entity_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
