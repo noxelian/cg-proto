@@ -778,6 +778,10 @@ message UserOrgEntry {
   // has_active_subscription is true when the org has a paid subscription.
   bool has_active_subscription = 6;
   int64 city_id = 7;
+  // Every active organization entry returns the authoritative positive access generation
+  // resolved from the stored membership. Clients must not supply or override it.
+  // Absent or 0 means legacy/untrusted; scope-sensitive consumers must fail closed.
+  int64 membership_version = 8;
 }
 
 message ListUserOrganizationsResponse {

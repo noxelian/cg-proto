@@ -15,6 +15,22 @@ func TestMembershipGenerationDescriptorContract(t *testing.T) {
 
 	assertMembershipField(t, messages.ByName("Member"), "membership_version", 10, protoreflect.Int64Kind)
 	assertMembershipField(t, messages.ByName("OrganizationMembership"), "membership_version", 4, protoreflect.Int64Kind)
+	userOrgEntry := messages.ByName("UserOrgEntry")
+	assertMembershipField(t, userOrgEntry, "membership_version", 8, protoreflect.Int64Kind)
+	for _, duplicate := range []protoreflect.Name{"generation", "membership_generation", "access_generation"} {
+		if field := userOrgEntry.Fields().ByName(duplicate); field != nil {
+			t.Fatalf("UserOrgEntry has duplicate membership generation field %q", field.FullName())
+		}
+	}
+	userOrgRequest := messages.ByName("ListUserOrganizationsRequest")
+	if field := userOrgRequest.Fields().ByName("membership_version"); field != nil {
+		t.Fatalf("ListUserOrganizationsRequest must not accept client-supplied %q", field.FullName())
+	}
+	userOrgResponse := messages.ByName("ListUserOrganizationsResponse")
+	organizations := assertMembershipField(t, userOrgResponse, "organizations", 1, protoreflect.MessageKind)
+	if !organizations.IsList() || organizations.Message().FullName() != userOrgEntry.FullName() {
+		t.Fatalf("ListUserOrganizationsResponse.organizations must be repeated UserOrgEntry")
+	}
 
 	request := messages.ByName("AuthorizeMembershipRequest")
 	assertMembershipField(t, request, "user_id", 1, protoreflect.Int64Kind)
@@ -110,6 +126,10 @@ func TestMembershipGenerationSourceDocumentsSecurityAndLifecycle(t *testing.T) {
 		"compat/users nests this payload",
 		"authoritative prior membership state",
 		"never use protojson",
+		"active organization entry returns the authoritative positive access generation",
+		"Clients must not supply or override it",
+		"Absent or 0 means legacy/untrusted",
+		"scope-sensitive consumers must fail closed",
 	} {
 		if !strings.Contains(string(source), required) {
 			t.Errorf("organization.proto missing contract documentation %q", required)

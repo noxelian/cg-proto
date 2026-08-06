@@ -5545,8 +5545,12 @@ type UserOrgEntry struct {
 	// has_active_subscription is true when the org has a paid subscription.
 	HasActiveSubscription bool  `protobuf:"varint,6,opt,name=has_active_subscription,json=hasActiveSubscription,proto3" json:"has_active_subscription,omitempty"`
 	CityId                int64 `protobuf:"varint,7,opt,name=city_id,json=cityId,proto3" json:"city_id,omitempty"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
+	// Every active organization entry returns the authoritative positive access generation
+	// resolved from the stored membership. Clients must not supply or override it.
+	// Absent or 0 means legacy/untrusted; scope-sensitive consumers must fail closed.
+	MembershipVersion int64 `protobuf:"varint,8,opt,name=membership_version,json=membershipVersion,proto3" json:"membership_version,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *UserOrgEntry) Reset() {
@@ -5624,6 +5628,13 @@ func (x *UserOrgEntry) GetHasActiveSubscription() bool {
 func (x *UserOrgEntry) GetCityId() int64 {
 	if x != nil {
 		return x.CityId
+	}
+	return 0
+}
+
+func (x *UserOrgEntry) GetMembershipVersion() int64 {
+	if x != nil {
+		return x.MembershipVersion
 	}
 	return 0
 }
@@ -8312,7 +8323,7 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"$GetMemberPermissionOverridesResponse\x12G\n" +
 	"\toverrides\x18\x01 \x03(\v2).users.organization.v1.PermissionOverrideR\toverrides\"7\n" +
 	"\x1cListUserOrganizationsRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xf5\x01\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xa4\x02\n" +
 	"\fUserOrgEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12;\n" +
@@ -8320,7 +8331,8 @@ const file_users_organization_organization_proto_rawDesc = "" +
 	"\trole_code\x18\x04 \x01(\tR\broleCode\x12\x16\n" +
 	"\x06status\x18\x05 \x01(\tR\x06status\x126\n" +
 	"\x17has_active_subscription\x18\x06 \x01(\bR\x15hasActiveSubscription\x12\x17\n" +
-	"\acity_id\x18\a \x01(\x03R\x06cityId\"j\n" +
+	"\acity_id\x18\a \x01(\x03R\x06cityId\x12-\n" +
+	"\x12membership_version\x18\b \x01(\x03R\x11membershipVersion\"j\n" +
 	"\x1dListUserOrganizationsResponse\x12I\n" +
 	"\rorganizations\x18\x01 \x03(\v2#.users.organization.v1.UserOrgEntryR\rorganizations\"\x8c\x01\n" +
 	"\x1eCreateDraftOrganizationRequest\x12\"\n" +
