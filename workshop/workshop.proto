@@ -158,6 +158,13 @@ service WorkshopService {
   rpc GetAVRSigningStatus(GetAVRSigningStatusRequest) returns (AVRSigningStatusResponse);
   // DownloadSignedAVR returns the signed AVR document bytes after signing is complete.
   rpc DownloadSignedAVR(DownloadSignedAVRRequest) returns (DownloadSignedAVRResponse);
+
+  // --- Workshop V2 delivered parts ---
+  // AcceptDeliveredParts records the workshop master's explicit acceptance of
+  // parts that a delivery fact has already placed in awaiting-acceptance state.
+  // Machine/service principals, including the read-only AI workshop master,
+  // are not permitted to execute this human command.
+  rpc AcceptDeliveredParts(AcceptDeliveredPartsRequest) returns (AcceptDeliveredPartsResponse);
 }
 
 // =============================================================================
@@ -296,6 +303,16 @@ enum RepairOrderBlockerType {
   REPAIR_ORDER_BLOCKER_TYPE_OTHER = 6;
 }
 
+// PartsAcceptanceState is owned by cg-workshop. Delivery is an external fact;
+// acceptance is a distinct, authenticated human-master decision.
+enum PartsAcceptanceState {
+  PARTS_ACCEPTANCE_STATE_UNSPECIFIED = 0;
+  PARTS_ACCEPTANCE_STATE_NOT_REQUIRED = 1;
+  PARTS_ACCEPTANCE_STATE_WAITING_DELIVERY = 2;
+  PARTS_ACCEPTANCE_STATE_DELIVERED_AWAITING_ACCEPTANCE = 3;
+  PARTS_ACCEPTANCE_STATE_ACCEPTED = 4;
+}
+
 // =============================================================================
 // Core Messages
 // =============================================================================
@@ -399,6 +416,10 @@ message RepairOrder {
   int32 active_blocker_count = 59;
   // Server-derived against promised_date for compact Kanban rendering.
   bool is_overdue = 60;
+  // Workshop-owned delivered-parts acceptance projection. Kanban carries the
+  // same RepairOrder message, so human and read-only AI views observe one
+  // authoritative state. Absent/UNSPECIFIED preserves legacy behavior.
+  PartsAcceptance parts_acceptance = 61;
 }
 
 message MasterSummary {
@@ -1850,4 +1871,48 @@ message RepairOrderPaymentTarget {
 
 message GetRepairOrderPaymentTargetResponse {
   RepairOrderPaymentTarget target = 1;
+}
+
+// PartsAcceptance separates carrier/order delivery facts from the workshop
+// master's authenticated acceptance. accepted_by_user_id is zero unless state
+// is ACCEPTED; cg-workshop derives it from the authenticated human principal.
+message PartsAcceptance {
+  PartsAcceptanceState state = 1;
+  google.protobuf.Timestamp delivered_at = 2;
+  google.protobuf.Timestamp accepted_at = 3;
+  int64 accepted_by_user_id = 4;
+}
+
+message AcceptDeliveredPartsRequest {
+  // The required idempotency key is scoped to
+  // (authoritative organization_id, authoritative workshop_id,
+  // WorkshopService.AcceptDeliveredParts). The immutable semantic fingerprint
+  // is the exact tuple (repair_order_id, note presence, note UTF-8 bytes); the
+  // key is not part of the fingerprint. An absent note and a present-empty note
+  // are therefore distinct.
+  //
+  // Only DELIVERED_AWAITING_ACCEPTANCE may transition to ACCEPTED. A delivery
+  // event may establish delivered_at and DELIVERED_AWAITING_ACCEPTANCE, but it
+  // is never acceptance. The server resolves organization/workshop and binds
+  // accepted_by_user_id from the authenticated human principal; the caller
+  // must have workshop:accept_delivered_parts. Machine/service principals,
+  // including the read-only AI workshop master, are denied.
+  //
+  // The first success atomically persists the acceptance audit, updated order,
+  // idempotency record and outbox event. An exact same-fingerprint replay
+  // returns the same logical order with already_accepted=true and creates no
+  // second audit or event. Reusing the scoped key or repair-order acceptance
+  // identity with a different fingerprint returns gRPC ALREADY_EXISTS without
+  // mutation. A successful exact replay under a new scoped key atomically binds
+  // that key as an alias to the stored fingerprint and result before returning.
+  int64 repair_order_id = 1;
+  string idempotency_key = 2;
+  optional string note = 3;
+}
+
+message AcceptDeliveredPartsResponse {
+  RepairOrder order = 1;
+  // False only for the first delivered-to-accepted mutation. True for every
+  // exact replay, including one presented under a newly bound scoped key.
+  bool already_accepted = 2;
 }

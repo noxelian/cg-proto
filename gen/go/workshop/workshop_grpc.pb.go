@@ -106,6 +106,7 @@ const (
 	WorkshopService_VerifyAVRSigningCode_FullMethodName           = "/workshop.v1.WorkshopService/VerifyAVRSigningCode"
 	WorkshopService_GetAVRSigningStatus_FullMethodName            = "/workshop.v1.WorkshopService/GetAVRSigningStatus"
 	WorkshopService_DownloadSignedAVR_FullMethodName              = "/workshop.v1.WorkshopService/DownloadSignedAVR"
+	WorkshopService_AcceptDeliveredParts_FullMethodName           = "/workshop.v1.WorkshopService/AcceptDeliveredParts"
 )
 
 // WorkshopServiceClient is the client API for WorkshopService service.
@@ -239,6 +240,12 @@ type WorkshopServiceClient interface {
 	GetAVRSigningStatus(ctx context.Context, in *GetAVRSigningStatusRequest, opts ...grpc.CallOption) (*AVRSigningStatusResponse, error)
 	// DownloadSignedAVR returns the signed AVR document bytes after signing is complete.
 	DownloadSignedAVR(ctx context.Context, in *DownloadSignedAVRRequest, opts ...grpc.CallOption) (*DownloadSignedAVRResponse, error)
+	// --- Workshop V2 delivered parts ---
+	// AcceptDeliveredParts records the workshop master's explicit acceptance of
+	// parts that a delivery fact has already placed in awaiting-acceptance state.
+	// Machine/service principals, including the read-only AI workshop master,
+	// are not permitted to execute this human command.
+	AcceptDeliveredParts(ctx context.Context, in *AcceptDeliveredPartsRequest, opts ...grpc.CallOption) (*AcceptDeliveredPartsResponse, error)
 }
 
 type workshopServiceClient struct {
@@ -1119,6 +1126,16 @@ func (c *workshopServiceClient) DownloadSignedAVR(ctx context.Context, in *Downl
 	return out, nil
 }
 
+func (c *workshopServiceClient) AcceptDeliveredParts(ctx context.Context, in *AcceptDeliveredPartsRequest, opts ...grpc.CallOption) (*AcceptDeliveredPartsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AcceptDeliveredPartsResponse)
+	err := c.cc.Invoke(ctx, WorkshopService_AcceptDeliveredParts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkshopServiceServer is the server API for WorkshopService service.
 // All implementations must embed UnimplementedWorkshopServiceServer
 // for forward compatibility.
@@ -1250,6 +1267,12 @@ type WorkshopServiceServer interface {
 	GetAVRSigningStatus(context.Context, *GetAVRSigningStatusRequest) (*AVRSigningStatusResponse, error)
 	// DownloadSignedAVR returns the signed AVR document bytes after signing is complete.
 	DownloadSignedAVR(context.Context, *DownloadSignedAVRRequest) (*DownloadSignedAVRResponse, error)
+	// --- Workshop V2 delivered parts ---
+	// AcceptDeliveredParts records the workshop master's explicit acceptance of
+	// parts that a delivery fact has already placed in awaiting-acceptance state.
+	// Machine/service principals, including the read-only AI workshop master,
+	// are not permitted to execute this human command.
+	AcceptDeliveredParts(context.Context, *AcceptDeliveredPartsRequest) (*AcceptDeliveredPartsResponse, error)
 	mustEmbedUnimplementedWorkshopServiceServer()
 }
 
@@ -1520,6 +1543,9 @@ func (UnimplementedWorkshopServiceServer) GetAVRSigningStatus(context.Context, *
 }
 func (UnimplementedWorkshopServiceServer) DownloadSignedAVR(context.Context, *DownloadSignedAVRRequest) (*DownloadSignedAVRResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DownloadSignedAVR not implemented")
+}
+func (UnimplementedWorkshopServiceServer) AcceptDeliveredParts(context.Context, *AcceptDeliveredPartsRequest) (*AcceptDeliveredPartsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AcceptDeliveredParts not implemented")
 }
 func (UnimplementedWorkshopServiceServer) mustEmbedUnimplementedWorkshopServiceServer() {}
 func (UnimplementedWorkshopServiceServer) testEmbeddedByValue()                         {}
@@ -3108,6 +3134,24 @@ func _WorkshopService_DownloadSignedAVR_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkshopService_AcceptDeliveredParts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AcceptDeliveredPartsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkshopServiceServer).AcceptDeliveredParts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkshopService_AcceptDeliveredParts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkshopServiceServer).AcceptDeliveredParts(ctx, req.(*AcceptDeliveredPartsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WorkshopService_ServiceDesc is the grpc.ServiceDesc for WorkshopService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3462,6 +3506,10 @@ var WorkshopService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DownloadSignedAVR",
 			Handler:    _WorkshopService_DownloadSignedAVR_Handler,
+		},
+		{
+			MethodName: "AcceptDeliveredParts",
+			Handler:    _WorkshopService_AcceptDeliveredParts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

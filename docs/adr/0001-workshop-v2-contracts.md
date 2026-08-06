@@ -19,7 +19,7 @@ Any confirmed positive partial or full payment may move a V2 order to
 `PAID_WAITING_ARRIVAL`. Payment status remains a separate projection from repair
 status. `AcceptVehicle` records arrival and publishes the lifecycle fact that CRM
 uses to enter its stable `auto_in_repair` system stage. `READY` publishes a fact
-that CRM uses to enter `delivery_closing`; it never closes the deal automatically.
+that CRM uses to enter `issuance_closing`; it never closes the deal automatically.
 
 ## Commands and events
 
@@ -47,6 +47,27 @@ for legacy callers.
 `AcceptVehicle` is an explicit, idempotent workshop command. The order resolves
 the authoritative workshop and tenant, and the authenticated principal is the
 arrival audit actor. The request carries no actor or tenant identity.
+
+Delivered-parts acceptance is a separate workshop-owned state machine:
+`NOT_REQUIRED | WAITING_DELIVERY | DELIVERED_AWAITING_ACCEPTANCE | ACCEPTED`.
+An authenticated delivery event may move an order to
+`DELIVERED_AWAITING_ACCEPTANCE` and set `delivered_at`, but it is never evidence
+of acceptance. `AcceptDeliveredParts` is the only transition from
+`DELIVERED_AWAITING_ACCEPTANCE` to `ACCEPTED`. It is a human unary command for a
+principal with `workshop:accept_delivered_parts`; machine/service identities,
+including the read-only AI workshop master, are denied. cg-workshop resolves
+the authoritative organization and workshop from `repair_order_id` and derives
+`accepted_by_user_id` from the authenticated principal. The body contains none
+of those authority fields.
+
+`AcceptDeliveredParts` uses the scoped idempotency identity `(authoritative
+organization_id, authoritative workshop_id, RPC)` and semantic fingerprint
+`(repair_order_id, note presence, note UTF-8 bytes)`. The first success
+atomically persists the acceptance audit, order mutation, command identity and
+outbox event. An exact replay returns the same order without a second audit or
+event. A conflicting key or repair-order acceptance identity returns
+`ALREADY_EXISTS` without mutation. A successful exact replay under a new scoped
+key binds that alias atomically before returning.
 
 ### Idempotency and conflicts
 
@@ -116,7 +137,8 @@ and the workshop event adapter converts only exact whole-tenge values.
 ## Authorization model
 
 The stable capability codes are `workshop:intake`, `workshop:operate`,
-`workshop:accept_vehicle`, `workshop:record_terminal_payment`,
+`workshop:accept_vehicle`, `workshop:accept_delivered_parts`,
+`workshop:record_terminal_payment`,
 `payments:confirm_bank_transfer` and `payments:refund`. The `accountant` platform
 role is a separate dynamic role definition composed from capabilities. The users
 contract already makes `role_codes` authoritative and marks the static
@@ -131,6 +153,11 @@ proto3 defaults, preserving old consumers. `new_order_legacy` orders use the
 legacy workflow/origin and remain writable only through the existing legacy
 adapter. V2 commands own V2 linkage, intake, arrival and blocker fields. Legacy
 and V2 paths must not concurrently update those fields.
+
+An absent `parts_acceptance` projection or `UNSPECIFIED` state preserves legacy
+behavior and must not be interpreted as accepted. Owner services may explicitly
+project `NOT_REQUIRED` only when no parts acceptance is required. Read-only AI
+consumers may observe this projection but cannot invoke the acceptance command.
 
 `BANK_TRANSFER` is added only to the workshop payment projection. Confirmation
 and refund authority remains in `cg-payments`; workshop never manufactures a
