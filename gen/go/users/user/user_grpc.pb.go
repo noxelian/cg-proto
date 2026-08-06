@@ -19,48 +19,49 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserService_GetProfile_FullMethodName                    = "/users.user.v1.UserService/GetProfile"
-	UserService_UpdateProfile_FullMethodName                 = "/users.user.v1.UserService/UpdateProfile"
-	UserService_GetUserByID_FullMethodName                   = "/users.user.v1.UserService/GetUserByID"
-	UserService_GetUserByPhone_FullMethodName                = "/users.user.v1.UserService/GetUserByPhone"
-	UserService_GetUserByLegacyID_FullMethodName             = "/users.user.v1.UserService/GetUserByLegacyID"
-	UserService_CreateUser_FullMethodName                    = "/users.user.v1.UserService/CreateUser"
-	UserService_GetUsersByIDs_FullMethodName                 = "/users.user.v1.UserService/GetUsersByIDs"
-	UserService_GetUsersByPhones_FullMethodName              = "/users.user.v1.UserService/GetUsersByPhones"
-	UserService_FindOrCreateByPhone_FullMethodName           = "/users.user.v1.UserService/FindOrCreateByPhone"
-	UserService_FindOrCreateByInstagramID_FullMethodName     = "/users.user.v1.UserService/FindOrCreateByInstagramID"
-	UserService_FindOrCreateByBoxoReference_FullMethodName   = "/users.user.v1.UserService/FindOrCreateByBoxoReference"
-	UserService_GetSettings_FullMethodName                   = "/users.user.v1.UserService/GetSettings"
-	UserService_UpdateSettings_FullMethodName                = "/users.user.v1.UserService/UpdateSettings"
-	UserService_RegisterDevice_FullMethodName                = "/users.user.v1.UserService/RegisterDevice"
-	UserService_UnregisterDevice_FullMethodName              = "/users.user.v1.UserService/UnregisterDevice"
-	UserService_GetDevices_FullMethodName                    = "/users.user.v1.UserService/GetDevices"
-	UserService_DeleteAccount_FullMethodName                 = "/users.user.v1.UserService/DeleteAccount"
-	UserService_ListUsers_FullMethodName                     = "/users.user.v1.UserService/ListUsers"
-	UserService_ResolveUserSegment_FullMethodName            = "/users.user.v1.UserService/ResolveUserSegment"
-	UserService_SetPlatformRoles_FullMethodName              = "/users.user.v1.UserService/SetPlatformRoles"
-	UserService_GetPlatformRoles_FullMethodName              = "/users.user.v1.UserService/GetPlatformRoles"
-	UserService_CheckPlatformRoles_FullMethodName            = "/users.user.v1.UserService/CheckPlatformRoles"
-	UserService_SetPlatformOrgAccess_FullMethodName          = "/users.user.v1.UserService/SetPlatformOrgAccess"
-	UserService_GetPlatformOrgAccess_FullMethodName          = "/users.user.v1.UserService/GetPlatformOrgAccess"
-	UserService_RemovePlatformOrgAccess_FullMethodName       = "/users.user.v1.UserService/RemovePlatformOrgAccess"
-	UserService_AddPlatformOrgAccess_FullMethodName          = "/users.user.v1.UserService/AddPlatformOrgAccess"
-	UserService_ListUsersByPlatformRoles_FullMethodName      = "/users.user.v1.UserService/ListUsersByPlatformRoles"
-	UserService_ListUsersByPlatformRolesInOrg_FullMethodName = "/users.user.v1.UserService/ListUsersByPlatformRolesInOrg"
-	UserService_ListPhones_FullMethodName                    = "/users.user.v1.UserService/ListPhones"
-	UserService_AddPhone_FullMethodName                      = "/users.user.v1.UserService/AddPhone"
-	UserService_RemovePhone_FullMethodName                   = "/users.user.v1.UserService/RemovePhone"
-	UserService_SetPrimaryPhone_FullMethodName               = "/users.user.v1.UserService/SetPrimaryPhone"
-	UserService_RelabelPhone_FullMethodName                  = "/users.user.v1.UserService/RelabelPhone"
-	UserService_ListPlatformRoleDefs_FullMethodName          = "/users.user.v1.UserService/ListPlatformRoleDefs"
-	UserService_GetPlatformRoleDef_FullMethodName            = "/users.user.v1.UserService/GetPlatformRoleDef"
-	UserService_CreatePlatformRoleDef_FullMethodName         = "/users.user.v1.UserService/CreatePlatformRoleDef"
-	UserService_UpdatePlatformRoleDef_FullMethodName         = "/users.user.v1.UserService/UpdatePlatformRoleDef"
-	UserService_DeletePlatformRoleDef_FullMethodName         = "/users.user.v1.UserService/DeletePlatformRoleDef"
-	UserService_ListModules_FullMethodName                   = "/users.user.v1.UserService/ListModules"
-	UserService_RequestPhoneChange_FullMethodName            = "/users.user.v1.UserService/RequestPhoneChange"
-	UserService_ConfirmPhoneChange_FullMethodName            = "/users.user.v1.UserService/ConfirmPhoneChange"
-	UserService_ActivatePromocode_FullMethodName             = "/users.user.v1.UserService/ActivatePromocode"
+	UserService_GetProfile_FullMethodName                      = "/users.user.v1.UserService/GetProfile"
+	UserService_UpdateProfile_FullMethodName                   = "/users.user.v1.UserService/UpdateProfile"
+	UserService_GetUserByID_FullMethodName                     = "/users.user.v1.UserService/GetUserByID"
+	UserService_GetUserByPhone_FullMethodName                  = "/users.user.v1.UserService/GetUserByPhone"
+	UserService_GetUserByLegacyID_FullMethodName               = "/users.user.v1.UserService/GetUserByLegacyID"
+	UserService_CreateUser_FullMethodName                      = "/users.user.v1.UserService/CreateUser"
+	UserService_GetUsersByIDs_FullMethodName                   = "/users.user.v1.UserService/GetUsersByIDs"
+	UserService_GetUsersByPhones_FullMethodName                = "/users.user.v1.UserService/GetUsersByPhones"
+	UserService_FindOrCreateByPhone_FullMethodName             = "/users.user.v1.UserService/FindOrCreateByPhone"
+	UserService_FindOrCreateByInstagramID_FullMethodName       = "/users.user.v1.UserService/FindOrCreateByInstagramID"
+	UserService_FindOrCreateByBoxoReference_FullMethodName     = "/users.user.v1.UserService/FindOrCreateByBoxoReference"
+	UserService_GetSettings_FullMethodName                     = "/users.user.v1.UserService/GetSettings"
+	UserService_UpdateSettings_FullMethodName                  = "/users.user.v1.UserService/UpdateSettings"
+	UserService_RegisterDevice_FullMethodName                  = "/users.user.v1.UserService/RegisterDevice"
+	UserService_UnregisterDevice_FullMethodName                = "/users.user.v1.UserService/UnregisterDevice"
+	UserService_GetDevices_FullMethodName                      = "/users.user.v1.UserService/GetDevices"
+	UserService_DeleteAccount_FullMethodName                   = "/users.user.v1.UserService/DeleteAccount"
+	UserService_ListUsers_FullMethodName                       = "/users.user.v1.UserService/ListUsers"
+	UserService_ResolveUserSegment_FullMethodName              = "/users.user.v1.UserService/ResolveUserSegment"
+	UserService_SetPlatformRoles_FullMethodName                = "/users.user.v1.UserService/SetPlatformRoles"
+	UserService_GetPlatformRoles_FullMethodName                = "/users.user.v1.UserService/GetPlatformRoles"
+	UserService_CheckPlatformRoles_FullMethodName              = "/users.user.v1.UserService/CheckPlatformRoles"
+	UserService_SetPlatformOrgAccess_FullMethodName            = "/users.user.v1.UserService/SetPlatformOrgAccess"
+	UserService_GetPlatformOrgAccess_FullMethodName            = "/users.user.v1.UserService/GetPlatformOrgAccess"
+	UserService_RemovePlatformOrgAccess_FullMethodName         = "/users.user.v1.UserService/RemovePlatformOrgAccess"
+	UserService_AddPlatformOrgAccess_FullMethodName            = "/users.user.v1.UserService/AddPlatformOrgAccess"
+	UserService_ListUsersByPlatformRoles_FullMethodName        = "/users.user.v1.UserService/ListUsersByPlatformRoles"
+	UserService_ListUsersByPlatformRolesInOrg_FullMethodName   = "/users.user.v1.UserService/ListUsersByPlatformRolesInOrg"
+	UserService_ListPhones_FullMethodName                      = "/users.user.v1.UserService/ListPhones"
+	UserService_AddPhone_FullMethodName                        = "/users.user.v1.UserService/AddPhone"
+	UserService_RemovePhone_FullMethodName                     = "/users.user.v1.UserService/RemovePhone"
+	UserService_SetPrimaryPhone_FullMethodName                 = "/users.user.v1.UserService/SetPrimaryPhone"
+	UserService_RelabelPhone_FullMethodName                    = "/users.user.v1.UserService/RelabelPhone"
+	UserService_ListPlatformRoleDefs_FullMethodName            = "/users.user.v1.UserService/ListPlatformRoleDefs"
+	UserService_GetPlatformRoleDef_FullMethodName              = "/users.user.v1.UserService/GetPlatformRoleDef"
+	UserService_CreatePlatformRoleDef_FullMethodName           = "/users.user.v1.UserService/CreatePlatformRoleDef"
+	UserService_UpdatePlatformRoleDef_FullMethodName           = "/users.user.v1.UserService/UpdatePlatformRoleDef"
+	UserService_DeletePlatformRoleDef_FullMethodName           = "/users.user.v1.UserService/DeletePlatformRoleDef"
+	UserService_ListModules_FullMethodName                     = "/users.user.v1.UserService/ListModules"
+	UserService_RequestPhoneChange_FullMethodName              = "/users.user.v1.UserService/RequestPhoneChange"
+	UserService_ConfirmPhoneChange_FullMethodName              = "/users.user.v1.UserService/ConfirmPhoneChange"
+	UserService_ActivatePromocode_FullMethodName               = "/users.user.v1.UserService/ActivatePromocode"
+	UserService_AuthorizeOrganizationCapability_FullMethodName = "/users.user.v1.UserService/AuthorizeOrganizationCapability"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -94,11 +95,10 @@ type UserServiceClient interface {
 	FindOrCreateByInstagramID(ctx context.Context, in *FindOrCreateByInstagramIDRequest, opts ...grpc.CallOption) (*FindOrCreateByInstagramIDResponse, error)
 	// FindOrCreateByBoxoReference resolves a bank super-app user delivered via
 	// Boxo Connect SSO (host app POSTs to auth-sapp). Resolution order:
-	//  1. users.boxo_reference match — returning miniapp user;
-	//  2. bank-verified phone match — the reference is linked to the existing
-	//     CTOgram account (the bank owns phone verification);
-	//  3. otherwise a new user is created with the supplied phone/profile.
-	//
+	//   1. users.boxo_reference match — returning miniapp user;
+	//   2. bank-verified phone match — the reference is linked to the existing
+	//      CTOgram account (the bank owns phone verification);
+	//   3. otherwise a new user is created with the supplied phone/profile.
 	// Service-only: callable by auth-sapp.
 	FindOrCreateByBoxoReference(ctx context.Context, in *FindOrCreateByBoxoReferenceRequest, opts ...grpc.CallOption) (*FindOrCreateByBoxoReferenceResponse, error)
 	// GetSettings returns user notification settings
@@ -187,6 +187,11 @@ type UserServiceClient interface {
 	// user. Credits the user's wallet balance with promo.amount (tenge).
 	// Returns ActivatePromocodeResponse.amount — the bonus amount credited.
 	ActivatePromocode(ctx context.Context, in *ActivatePromocodeRequest, opts ...grpc.CallOption) (*ActivatePromocodeResponse, error)
+	// AuthorizeOrganizationCapability checks whether the authenticated actor may
+	// use a named capability in an organization. cg-users MUST derive the actor
+	// from verified incoming authentication; callers cannot supply or override
+	// actor_user_id in the request.
+	AuthorizeOrganizationCapability(ctx context.Context, in *AuthorizeOrganizationCapabilityRequest, opts ...grpc.CallOption) (*AuthorizeOrganizationCapabilityResponse, error)
 }
 
 type userServiceClient struct {
@@ -617,6 +622,16 @@ func (c *userServiceClient) ActivatePromocode(ctx context.Context, in *ActivateP
 	return out, nil
 }
 
+func (c *userServiceClient) AuthorizeOrganizationCapability(ctx context.Context, in *AuthorizeOrganizationCapabilityRequest, opts ...grpc.CallOption) (*AuthorizeOrganizationCapabilityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AuthorizeOrganizationCapabilityResponse)
+	err := c.cc.Invoke(ctx, UserService_AuthorizeOrganizationCapability_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -648,11 +663,10 @@ type UserServiceServer interface {
 	FindOrCreateByInstagramID(context.Context, *FindOrCreateByInstagramIDRequest) (*FindOrCreateByInstagramIDResponse, error)
 	// FindOrCreateByBoxoReference resolves a bank super-app user delivered via
 	// Boxo Connect SSO (host app POSTs to auth-sapp). Resolution order:
-	//  1. users.boxo_reference match — returning miniapp user;
-	//  2. bank-verified phone match — the reference is linked to the existing
-	//     CTOgram account (the bank owns phone verification);
-	//  3. otherwise a new user is created with the supplied phone/profile.
-	//
+	//   1. users.boxo_reference match — returning miniapp user;
+	//   2. bank-verified phone match — the reference is linked to the existing
+	//      CTOgram account (the bank owns phone verification);
+	//   3. otherwise a new user is created with the supplied phone/profile.
 	// Service-only: callable by auth-sapp.
 	FindOrCreateByBoxoReference(context.Context, *FindOrCreateByBoxoReferenceRequest) (*FindOrCreateByBoxoReferenceResponse, error)
 	// GetSettings returns user notification settings
@@ -741,6 +755,11 @@ type UserServiceServer interface {
 	// user. Credits the user's wallet balance with promo.amount (tenge).
 	// Returns ActivatePromocodeResponse.amount — the bonus amount credited.
 	ActivatePromocode(context.Context, *ActivatePromocodeRequest) (*ActivatePromocodeResponse, error)
+	// AuthorizeOrganizationCapability checks whether the authenticated actor may
+	// use a named capability in an organization. cg-users MUST derive the actor
+	// from verified incoming authentication; callers cannot supply or override
+	// actor_user_id in the request.
+	AuthorizeOrganizationCapability(context.Context, *AuthorizeOrganizationCapabilityRequest) (*AuthorizeOrganizationCapabilityResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -876,6 +895,9 @@ func (UnimplementedUserServiceServer) ConfirmPhoneChange(context.Context, *Confi
 }
 func (UnimplementedUserServiceServer) ActivatePromocode(context.Context, *ActivatePromocodeRequest) (*ActivatePromocodeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ActivatePromocode not implemented")
+}
+func (UnimplementedUserServiceServer) AuthorizeOrganizationCapability(context.Context, *AuthorizeOrganizationCapabilityRequest) (*AuthorizeOrganizationCapabilityResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AuthorizeOrganizationCapability not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -1654,6 +1676,24 @@ func _UserService_ActivatePromocode_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_AuthorizeOrganizationCapability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthorizeOrganizationCapabilityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AuthorizeOrganizationCapability(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_AuthorizeOrganizationCapability_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AuthorizeOrganizationCapability(ctx, req.(*AuthorizeOrganizationCapabilityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1828,6 +1868,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ActivatePromocode",
 			Handler:    _UserService_ActivatePromocode_Handler,
+		},
+		{
+			MethodName: "AuthorizeOrganizationCapability",
+			Handler:    _UserService_AuthorizeOrganizationCapability_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

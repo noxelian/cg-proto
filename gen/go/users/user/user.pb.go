@@ -5736,6 +5736,129 @@ func (x *ActivatePromocodeResponse) GetMessage() string {
 	return ""
 }
 
+// AuthorizeOrganizationCapabilityRequest intentionally has no user_id or
+// actor_user_id. cg-users binds the actor to verified incoming authentication.
+type AuthorizeOrganizationCapabilityRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrganizationId string                 `protobuf:"bytes,1,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	Capability     string                 `protobuf:"bytes,2,opt,name=capability,proto3" json:"capability,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *AuthorizeOrganizationCapabilityRequest) Reset() {
+	*x = AuthorizeOrganizationCapabilityRequest{}
+	mi := &file_users_user_user_proto_msgTypes[99]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AuthorizeOrganizationCapabilityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AuthorizeOrganizationCapabilityRequest) ProtoMessage() {}
+
+func (x *AuthorizeOrganizationCapabilityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[99]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AuthorizeOrganizationCapabilityRequest.ProtoReflect.Descriptor instead.
+func (*AuthorizeOrganizationCapabilityRequest) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{99}
+}
+
+func (x *AuthorizeOrganizationCapabilityRequest) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *AuthorizeOrganizationCapabilityRequest) GetCapability() string {
+	if x != nil {
+		return x.Capability
+	}
+	return ""
+}
+
+type AuthorizeOrganizationCapabilityResponse struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Allowed bool                   `protobuf:"varint,1,opt,name=allowed,proto3" json:"allowed,omitempty"`
+	// actor_user_id is the actor derived by cg-users from verified incoming auth.
+	ActorUserId    int64  `protobuf:"varint,2,opt,name=actor_user_id,json=actorUserId,proto3" json:"actor_user_id,omitempty"`
+	OrganizationId string `protobuf:"bytes,3,opt,name=organization_id,json=organizationId,proto3" json:"organization_id,omitempty"`
+	Capability     string `protobuf:"bytes,4,opt,name=capability,proto3" json:"capability,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *AuthorizeOrganizationCapabilityResponse) Reset() {
+	*x = AuthorizeOrganizationCapabilityResponse{}
+	mi := &file_users_user_user_proto_msgTypes[100]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AuthorizeOrganizationCapabilityResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AuthorizeOrganizationCapabilityResponse) ProtoMessage() {}
+
+func (x *AuthorizeOrganizationCapabilityResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_users_user_user_proto_msgTypes[100]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AuthorizeOrganizationCapabilityResponse.ProtoReflect.Descriptor instead.
+func (*AuthorizeOrganizationCapabilityResponse) Descriptor() ([]byte, []int) {
+	return file_users_user_user_proto_rawDescGZIP(), []int{100}
+}
+
+func (x *AuthorizeOrganizationCapabilityResponse) GetAllowed() bool {
+	if x != nil {
+		return x.Allowed
+	}
+	return false
+}
+
+func (x *AuthorizeOrganizationCapabilityResponse) GetActorUserId() int64 {
+	if x != nil {
+		return x.ActorUserId
+	}
+	return 0
+}
+
+func (x *AuthorizeOrganizationCapabilityResponse) GetOrganizationId() string {
+	if x != nil {
+		return x.OrganizationId
+	}
+	return ""
+}
+
+func (x *AuthorizeOrganizationCapabilityResponse) GetCapability() string {
+	if x != nil {
+		return x.Capability
+	}
+	return ""
+}
+
 var File_users_user_user_proto protoreflect.FileDescriptor
 
 const file_users_user_user_proto_rawDesc = "" +
@@ -6139,7 +6262,19 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x19ActivatePromocodeResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x16\n" +
 	"\x06amount\x18\x02 \x01(\x03R\x06amount\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage*\xa6\x02\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage\"q\n" +
+	"&AuthorizeOrganizationCapabilityRequest\x12'\n" +
+	"\x0forganization_id\x18\x01 \x01(\tR\x0eorganizationId\x12\x1e\n" +
+	"\n" +
+	"capability\x18\x02 \x01(\tR\n" +
+	"capability\"\xb0\x01\n" +
+	"'AuthorizeOrganizationCapabilityResponse\x12\x18\n" +
+	"\aallowed\x18\x01 \x01(\bR\aallowed\x12\"\n" +
+	"\ractor_user_id\x18\x02 \x01(\x03R\vactorUserId\x12'\n" +
+	"\x0forganization_id\x18\x03 \x01(\tR\x0eorganizationId\x12\x1e\n" +
+	"\n" +
+	"capability\x18\x04 \x01(\tR\n" +
+	"capability*\xa6\x02\n" +
 	"\fPlatformRole\x12\x1d\n" +
 	"\x19PLATFORM_ROLE_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16PLATFORM_ROLE_MECHANIC\x10\x01\x12\x1e\n" +
@@ -6159,7 +6294,7 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\x16USER_PERSPECTIVE_BUYER\x10\x01\x12\x1f\n" +
 	"\x1bUSER_PERSPECTIVE_SELLER_ORG\x10\x02\x12 \n" +
 	"\x1cUSER_PERSPECTIVE_SELLER_USER\x10\x03\x12\x1e\n" +
-	"\x1aUSER_PERSPECTIVE_BUYER_ORG\x10\x042\xc9!\n" +
+	"\x1aUSER_PERSPECTIVE_BUYER_ORG\x10\x042\xdc\"\n" +
 	"\vUserService\x12Q\n" +
 	"\n" +
 	"GetProfile\x12 .users.user.v1.GetProfileRequest\x1a!.users.user.v1.GetProfileResponse\x12Z\n" +
@@ -6206,7 +6341,8 @@ const file_users_user_user_proto_rawDesc = "" +
 	"\vListModules\x12!.users.user.v1.ListModulesRequest\x1a\".users.user.v1.ListModulesResponse\x12i\n" +
 	"\x12RequestPhoneChange\x12(.users.user.v1.RequestPhoneChangeRequest\x1a).users.user.v1.RequestPhoneChangeResponse\x12i\n" +
 	"\x12ConfirmPhoneChange\x12(.users.user.v1.ConfirmPhoneChangeRequest\x1a).users.user.v1.ConfirmPhoneChangeResponse\x12f\n" +
-	"\x11ActivatePromocode\x12'.users.user.v1.ActivatePromocodeRequest\x1a(.users.user.v1.ActivatePromocodeResponse2\xbb\x02\n" +
+	"\x11ActivatePromocode\x12'.users.user.v1.ActivatePromocodeRequest\x1a(.users.user.v1.ActivatePromocodeResponse\x12\x90\x01\n" +
+	"\x1fAuthorizeOrganizationCapability\x125.users.user.v1.AuthorizeOrganizationCapabilityRequest\x1a6.users.user.v1.AuthorizeOrganizationCapabilityResponse2\xbb\x02\n" +
 	"\x10AdminUserService\x12`\n" +
 	"\x0fAdminGetProfile\x12%.users.user.v1.AdminGetProfileRequest\x1a&.users.user.v1.AdminGetProfileResponse\x12i\n" +
 	"\x12AdminUpdateProfile\x12(.users.user.v1.AdminUpdateProfileRequest\x1a).users.user.v1.AdminUpdateProfileResponse\x12Z\n" +
@@ -6225,115 +6361,117 @@ func file_users_user_user_proto_rawDescGZIP() []byte {
 }
 
 var file_users_user_user_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_users_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 99)
+var file_users_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 101)
 var file_users_user_user_proto_goTypes = []any{
-	(PlatformRole)(0),                            // 0: users.user.v1.PlatformRole
-	(UserApp)(0),                                 // 1: users.user.v1.UserApp
-	(UserPerspective)(0),                         // 2: users.user.v1.UserPerspective
-	(*User)(nil),                                 // 3: users.user.v1.User
-	(*UserCounters)(nil),                         // 4: users.user.v1.UserCounters
-	(*GetProfileRequest)(nil),                    // 5: users.user.v1.GetProfileRequest
-	(*GetProfileResponse)(nil),                   // 6: users.user.v1.GetProfileResponse
-	(*UpdateProfileRequest)(nil),                 // 7: users.user.v1.UpdateProfileRequest
-	(*UpdateProfileResponse)(nil),                // 8: users.user.v1.UpdateProfileResponse
-	(*GetUserByIDRequest)(nil),                   // 9: users.user.v1.GetUserByIDRequest
-	(*GetUserByIDResponse)(nil),                  // 10: users.user.v1.GetUserByIDResponse
-	(*GetUsersByIDsRequest)(nil),                 // 11: users.user.v1.GetUsersByIDsRequest
-	(*GetUsersByIDsResponse)(nil),                // 12: users.user.v1.GetUsersByIDsResponse
-	(*GetUsersByPhonesRequest)(nil),              // 13: users.user.v1.GetUsersByPhonesRequest
-	(*GetUsersByPhonesResponse)(nil),             // 14: users.user.v1.GetUsersByPhonesResponse
-	(*GetUserByPhoneRequest)(nil),                // 15: users.user.v1.GetUserByPhoneRequest
-	(*GetUserByPhoneResponse)(nil),               // 16: users.user.v1.GetUserByPhoneResponse
-	(*GetUserByLegacyIDRequest)(nil),             // 17: users.user.v1.GetUserByLegacyIDRequest
-	(*GetUserByLegacyIDResponse)(nil),            // 18: users.user.v1.GetUserByLegacyIDResponse
-	(*CreateUserRequest)(nil),                    // 19: users.user.v1.CreateUserRequest
-	(*CreateUserResponse)(nil),                   // 20: users.user.v1.CreateUserResponse
-	(*FindOrCreateByInstagramIDRequest)(nil),     // 21: users.user.v1.FindOrCreateByInstagramIDRequest
-	(*FindOrCreateByInstagramIDResponse)(nil),    // 22: users.user.v1.FindOrCreateByInstagramIDResponse
-	(*FindOrCreateByBoxoReferenceRequest)(nil),   // 23: users.user.v1.FindOrCreateByBoxoReferenceRequest
-	(*FindOrCreateByBoxoReferenceResponse)(nil),  // 24: users.user.v1.FindOrCreateByBoxoReferenceResponse
-	(*FindOrCreateByPhoneRequest)(nil),           // 25: users.user.v1.FindOrCreateByPhoneRequest
-	(*FindOrCreateByPhoneResponse)(nil),          // 26: users.user.v1.FindOrCreateByPhoneResponse
-	(*UserSettings)(nil),                         // 27: users.user.v1.UserSettings
-	(*GetSettingsRequest)(nil),                   // 28: users.user.v1.GetSettingsRequest
-	(*GetSettingsResponse)(nil),                  // 29: users.user.v1.GetSettingsResponse
-	(*UpdateSettingsRequest)(nil),                // 30: users.user.v1.UpdateSettingsRequest
-	(*UpdateSettingsResponse)(nil),               // 31: users.user.v1.UpdateSettingsResponse
-	(*UserAppScope)(nil),                         // 32: users.user.v1.UserAppScope
-	(*Device)(nil),                               // 33: users.user.v1.Device
-	(*RegisterDeviceRequest)(nil),                // 34: users.user.v1.RegisterDeviceRequest
-	(*RegisterDeviceResponse)(nil),               // 35: users.user.v1.RegisterDeviceResponse
-	(*UnregisterDeviceRequest)(nil),              // 36: users.user.v1.UnregisterDeviceRequest
-	(*UnregisterDeviceResponse)(nil),             // 37: users.user.v1.UnregisterDeviceResponse
-	(*GetDevicesRequest)(nil),                    // 38: users.user.v1.GetDevicesRequest
-	(*GetDevicesResponse)(nil),                   // 39: users.user.v1.GetDevicesResponse
-	(*DeleteAccountRequest)(nil),                 // 40: users.user.v1.DeleteAccountRequest
-	(*DeleteAccountResponse)(nil),                // 41: users.user.v1.DeleteAccountResponse
-	(*SetPlatformRolesRequest)(nil),              // 42: users.user.v1.SetPlatformRolesRequest
-	(*SetPlatformRolesResponse)(nil),             // 43: users.user.v1.SetPlatformRolesResponse
-	(*GetPlatformRolesRequest)(nil),              // 44: users.user.v1.GetPlatformRolesRequest
-	(*GetPlatformRolesResponse)(nil),             // 45: users.user.v1.GetPlatformRolesResponse
-	(*CheckPlatformRolesRequest)(nil),            // 46: users.user.v1.CheckPlatformRolesRequest
-	(*CheckPlatformRolesResponse)(nil),           // 47: users.user.v1.CheckPlatformRolesResponse
-	(*SetPlatformOrgAccessRequest)(nil),          // 48: users.user.v1.SetPlatformOrgAccessRequest
-	(*SetPlatformOrgAccessResponse)(nil),         // 49: users.user.v1.SetPlatformOrgAccessResponse
-	(*GetPlatformOrgAccessRequest)(nil),          // 50: users.user.v1.GetPlatformOrgAccessRequest
-	(*GetPlatformOrgAccessResponse)(nil),         // 51: users.user.v1.GetPlatformOrgAccessResponse
-	(*RemovePlatformOrgAccessRequest)(nil),       // 52: users.user.v1.RemovePlatformOrgAccessRequest
-	(*RemovePlatformOrgAccessResponse)(nil),      // 53: users.user.v1.RemovePlatformOrgAccessResponse
-	(*AddPlatformOrgAccessRequest)(nil),          // 54: users.user.v1.AddPlatformOrgAccessRequest
-	(*AddPlatformOrgAccessResponse)(nil),         // 55: users.user.v1.AddPlatformOrgAccessResponse
-	(*ListUsersRequest)(nil),                     // 56: users.user.v1.ListUsersRequest
-	(*ListUsersResponse)(nil),                    // 57: users.user.v1.ListUsersResponse
-	(*ResolveUserSegmentRequest)(nil),            // 58: users.user.v1.ResolveUserSegmentRequest
-	(*ResolveUserSegmentResponse)(nil),           // 59: users.user.v1.ResolveUserSegmentResponse
-	(*PlatformMember)(nil),                       // 60: users.user.v1.PlatformMember
-	(*ListUsersByPlatformRolesRequest)(nil),      // 61: users.user.v1.ListUsersByPlatformRolesRequest
-	(*ListUsersByPlatformRolesResponse)(nil),     // 62: users.user.v1.ListUsersByPlatformRolesResponse
-	(*ListUsersByPlatformRolesInOrgRequest)(nil), // 63: users.user.v1.ListUsersByPlatformRolesInOrgRequest
-	(*UserPhone)(nil),                            // 64: users.user.v1.UserPhone
-	(*ListPhonesRequest)(nil),                    // 65: users.user.v1.ListPhonesRequest
-	(*ListPhonesResponse)(nil),                   // 66: users.user.v1.ListPhonesResponse
-	(*AddPhoneRequest)(nil),                      // 67: users.user.v1.AddPhoneRequest
-	(*AddPhoneResponse)(nil),                     // 68: users.user.v1.AddPhoneResponse
-	(*RemovePhoneRequest)(nil),                   // 69: users.user.v1.RemovePhoneRequest
-	(*RemovePhoneResponse)(nil),                  // 70: users.user.v1.RemovePhoneResponse
-	(*SetPrimaryPhoneRequest)(nil),               // 71: users.user.v1.SetPrimaryPhoneRequest
-	(*SetPrimaryPhoneResponse)(nil),              // 72: users.user.v1.SetPrimaryPhoneResponse
-	(*RelabelPhoneRequest)(nil),                  // 73: users.user.v1.RelabelPhoneRequest
-	(*RelabelPhoneResponse)(nil),                 // 74: users.user.v1.RelabelPhoneResponse
-	(*PlatformRoleDef)(nil),                      // 75: users.user.v1.PlatformRoleDef
-	(*ListPlatformRoleDefsRequest)(nil),          // 76: users.user.v1.ListPlatformRoleDefsRequest
-	(*ListPlatformRoleDefsResponse)(nil),         // 77: users.user.v1.ListPlatformRoleDefsResponse
-	(*GetPlatformRoleDefRequest)(nil),            // 78: users.user.v1.GetPlatformRoleDefRequest
-	(*GetPlatformRoleDefResponse)(nil),           // 79: users.user.v1.GetPlatformRoleDefResponse
-	(*CreatePlatformRoleDefRequest)(nil),         // 80: users.user.v1.CreatePlatformRoleDefRequest
-	(*CreatePlatformRoleDefResponse)(nil),        // 81: users.user.v1.CreatePlatformRoleDefResponse
-	(*UpdatePlatformRoleDefRequest)(nil),         // 82: users.user.v1.UpdatePlatformRoleDefRequest
-	(*UpdatePlatformRoleDefResponse)(nil),        // 83: users.user.v1.UpdatePlatformRoleDefResponse
-	(*DeletePlatformRoleDefRequest)(nil),         // 84: users.user.v1.DeletePlatformRoleDefRequest
-	(*DeletePlatformRoleDefResponse)(nil),        // 85: users.user.v1.DeletePlatformRoleDefResponse
-	(*Module)(nil),                               // 86: users.user.v1.Module
-	(*ListModulesRequest)(nil),                   // 87: users.user.v1.ListModulesRequest
-	(*ListModulesResponse)(nil),                  // 88: users.user.v1.ListModulesResponse
-	(*AdminGetProfileRequest)(nil),               // 89: users.user.v1.AdminGetProfileRequest
-	(*AdminGetProfileResponse)(nil),              // 90: users.user.v1.AdminGetProfileResponse
-	(*AdminUpdateProfileRequest)(nil),            // 91: users.user.v1.AdminUpdateProfileRequest
-	(*AdminUpdateProfileResponse)(nil),           // 92: users.user.v1.AdminUpdateProfileResponse
-	(*AdminListCarsRequest)(nil),                 // 93: users.user.v1.AdminListCarsRequest
-	(*AdminListCarsResponse)(nil),                // 94: users.user.v1.AdminListCarsResponse
-	(*AdminCar)(nil),                             // 95: users.user.v1.AdminCar
-	(*RequestPhoneChangeRequest)(nil),            // 96: users.user.v1.RequestPhoneChangeRequest
-	(*RequestPhoneChangeResponse)(nil),           // 97: users.user.v1.RequestPhoneChangeResponse
-	(*ConfirmPhoneChangeRequest)(nil),            // 98: users.user.v1.ConfirmPhoneChangeRequest
-	(*ConfirmPhoneChangeResponse)(nil),           // 99: users.user.v1.ConfirmPhoneChangeResponse
-	(*ActivatePromocodeRequest)(nil),             // 100: users.user.v1.ActivatePromocodeRequest
-	(*ActivatePromocodeResponse)(nil),            // 101: users.user.v1.ActivatePromocodeResponse
-	(*timestamppb.Timestamp)(nil),                // 102: google.protobuf.Timestamp
+	(PlatformRole)(0),                               // 0: users.user.v1.PlatformRole
+	(UserApp)(0),                                    // 1: users.user.v1.UserApp
+	(UserPerspective)(0),                            // 2: users.user.v1.UserPerspective
+	(*User)(nil),                                    // 3: users.user.v1.User
+	(*UserCounters)(nil),                            // 4: users.user.v1.UserCounters
+	(*GetProfileRequest)(nil),                       // 5: users.user.v1.GetProfileRequest
+	(*GetProfileResponse)(nil),                      // 6: users.user.v1.GetProfileResponse
+	(*UpdateProfileRequest)(nil),                    // 7: users.user.v1.UpdateProfileRequest
+	(*UpdateProfileResponse)(nil),                   // 8: users.user.v1.UpdateProfileResponse
+	(*GetUserByIDRequest)(nil),                      // 9: users.user.v1.GetUserByIDRequest
+	(*GetUserByIDResponse)(nil),                     // 10: users.user.v1.GetUserByIDResponse
+	(*GetUsersByIDsRequest)(nil),                    // 11: users.user.v1.GetUsersByIDsRequest
+	(*GetUsersByIDsResponse)(nil),                   // 12: users.user.v1.GetUsersByIDsResponse
+	(*GetUsersByPhonesRequest)(nil),                 // 13: users.user.v1.GetUsersByPhonesRequest
+	(*GetUsersByPhonesResponse)(nil),                // 14: users.user.v1.GetUsersByPhonesResponse
+	(*GetUserByPhoneRequest)(nil),                   // 15: users.user.v1.GetUserByPhoneRequest
+	(*GetUserByPhoneResponse)(nil),                  // 16: users.user.v1.GetUserByPhoneResponse
+	(*GetUserByLegacyIDRequest)(nil),                // 17: users.user.v1.GetUserByLegacyIDRequest
+	(*GetUserByLegacyIDResponse)(nil),               // 18: users.user.v1.GetUserByLegacyIDResponse
+	(*CreateUserRequest)(nil),                       // 19: users.user.v1.CreateUserRequest
+	(*CreateUserResponse)(nil),                      // 20: users.user.v1.CreateUserResponse
+	(*FindOrCreateByInstagramIDRequest)(nil),        // 21: users.user.v1.FindOrCreateByInstagramIDRequest
+	(*FindOrCreateByInstagramIDResponse)(nil),       // 22: users.user.v1.FindOrCreateByInstagramIDResponse
+	(*FindOrCreateByBoxoReferenceRequest)(nil),      // 23: users.user.v1.FindOrCreateByBoxoReferenceRequest
+	(*FindOrCreateByBoxoReferenceResponse)(nil),     // 24: users.user.v1.FindOrCreateByBoxoReferenceResponse
+	(*FindOrCreateByPhoneRequest)(nil),              // 25: users.user.v1.FindOrCreateByPhoneRequest
+	(*FindOrCreateByPhoneResponse)(nil),             // 26: users.user.v1.FindOrCreateByPhoneResponse
+	(*UserSettings)(nil),                            // 27: users.user.v1.UserSettings
+	(*GetSettingsRequest)(nil),                      // 28: users.user.v1.GetSettingsRequest
+	(*GetSettingsResponse)(nil),                     // 29: users.user.v1.GetSettingsResponse
+	(*UpdateSettingsRequest)(nil),                   // 30: users.user.v1.UpdateSettingsRequest
+	(*UpdateSettingsResponse)(nil),                  // 31: users.user.v1.UpdateSettingsResponse
+	(*UserAppScope)(nil),                            // 32: users.user.v1.UserAppScope
+	(*Device)(nil),                                  // 33: users.user.v1.Device
+	(*RegisterDeviceRequest)(nil),                   // 34: users.user.v1.RegisterDeviceRequest
+	(*RegisterDeviceResponse)(nil),                  // 35: users.user.v1.RegisterDeviceResponse
+	(*UnregisterDeviceRequest)(nil),                 // 36: users.user.v1.UnregisterDeviceRequest
+	(*UnregisterDeviceResponse)(nil),                // 37: users.user.v1.UnregisterDeviceResponse
+	(*GetDevicesRequest)(nil),                       // 38: users.user.v1.GetDevicesRequest
+	(*GetDevicesResponse)(nil),                      // 39: users.user.v1.GetDevicesResponse
+	(*DeleteAccountRequest)(nil),                    // 40: users.user.v1.DeleteAccountRequest
+	(*DeleteAccountResponse)(nil),                   // 41: users.user.v1.DeleteAccountResponse
+	(*SetPlatformRolesRequest)(nil),                 // 42: users.user.v1.SetPlatformRolesRequest
+	(*SetPlatformRolesResponse)(nil),                // 43: users.user.v1.SetPlatformRolesResponse
+	(*GetPlatformRolesRequest)(nil),                 // 44: users.user.v1.GetPlatformRolesRequest
+	(*GetPlatformRolesResponse)(nil),                // 45: users.user.v1.GetPlatformRolesResponse
+	(*CheckPlatformRolesRequest)(nil),               // 46: users.user.v1.CheckPlatformRolesRequest
+	(*CheckPlatformRolesResponse)(nil),              // 47: users.user.v1.CheckPlatformRolesResponse
+	(*SetPlatformOrgAccessRequest)(nil),             // 48: users.user.v1.SetPlatformOrgAccessRequest
+	(*SetPlatformOrgAccessResponse)(nil),            // 49: users.user.v1.SetPlatformOrgAccessResponse
+	(*GetPlatformOrgAccessRequest)(nil),             // 50: users.user.v1.GetPlatformOrgAccessRequest
+	(*GetPlatformOrgAccessResponse)(nil),            // 51: users.user.v1.GetPlatformOrgAccessResponse
+	(*RemovePlatformOrgAccessRequest)(nil),          // 52: users.user.v1.RemovePlatformOrgAccessRequest
+	(*RemovePlatformOrgAccessResponse)(nil),         // 53: users.user.v1.RemovePlatformOrgAccessResponse
+	(*AddPlatformOrgAccessRequest)(nil),             // 54: users.user.v1.AddPlatformOrgAccessRequest
+	(*AddPlatformOrgAccessResponse)(nil),            // 55: users.user.v1.AddPlatformOrgAccessResponse
+	(*ListUsersRequest)(nil),                        // 56: users.user.v1.ListUsersRequest
+	(*ListUsersResponse)(nil),                       // 57: users.user.v1.ListUsersResponse
+	(*ResolveUserSegmentRequest)(nil),               // 58: users.user.v1.ResolveUserSegmentRequest
+	(*ResolveUserSegmentResponse)(nil),              // 59: users.user.v1.ResolveUserSegmentResponse
+	(*PlatformMember)(nil),                          // 60: users.user.v1.PlatformMember
+	(*ListUsersByPlatformRolesRequest)(nil),         // 61: users.user.v1.ListUsersByPlatformRolesRequest
+	(*ListUsersByPlatformRolesResponse)(nil),        // 62: users.user.v1.ListUsersByPlatformRolesResponse
+	(*ListUsersByPlatformRolesInOrgRequest)(nil),    // 63: users.user.v1.ListUsersByPlatformRolesInOrgRequest
+	(*UserPhone)(nil),                               // 64: users.user.v1.UserPhone
+	(*ListPhonesRequest)(nil),                       // 65: users.user.v1.ListPhonesRequest
+	(*ListPhonesResponse)(nil),                      // 66: users.user.v1.ListPhonesResponse
+	(*AddPhoneRequest)(nil),                         // 67: users.user.v1.AddPhoneRequest
+	(*AddPhoneResponse)(nil),                        // 68: users.user.v1.AddPhoneResponse
+	(*RemovePhoneRequest)(nil),                      // 69: users.user.v1.RemovePhoneRequest
+	(*RemovePhoneResponse)(nil),                     // 70: users.user.v1.RemovePhoneResponse
+	(*SetPrimaryPhoneRequest)(nil),                  // 71: users.user.v1.SetPrimaryPhoneRequest
+	(*SetPrimaryPhoneResponse)(nil),                 // 72: users.user.v1.SetPrimaryPhoneResponse
+	(*RelabelPhoneRequest)(nil),                     // 73: users.user.v1.RelabelPhoneRequest
+	(*RelabelPhoneResponse)(nil),                    // 74: users.user.v1.RelabelPhoneResponse
+	(*PlatformRoleDef)(nil),                         // 75: users.user.v1.PlatformRoleDef
+	(*ListPlatformRoleDefsRequest)(nil),             // 76: users.user.v1.ListPlatformRoleDefsRequest
+	(*ListPlatformRoleDefsResponse)(nil),            // 77: users.user.v1.ListPlatformRoleDefsResponse
+	(*GetPlatformRoleDefRequest)(nil),               // 78: users.user.v1.GetPlatformRoleDefRequest
+	(*GetPlatformRoleDefResponse)(nil),              // 79: users.user.v1.GetPlatformRoleDefResponse
+	(*CreatePlatformRoleDefRequest)(nil),            // 80: users.user.v1.CreatePlatformRoleDefRequest
+	(*CreatePlatformRoleDefResponse)(nil),           // 81: users.user.v1.CreatePlatformRoleDefResponse
+	(*UpdatePlatformRoleDefRequest)(nil),            // 82: users.user.v1.UpdatePlatformRoleDefRequest
+	(*UpdatePlatformRoleDefResponse)(nil),           // 83: users.user.v1.UpdatePlatformRoleDefResponse
+	(*DeletePlatformRoleDefRequest)(nil),            // 84: users.user.v1.DeletePlatformRoleDefRequest
+	(*DeletePlatformRoleDefResponse)(nil),           // 85: users.user.v1.DeletePlatformRoleDefResponse
+	(*Module)(nil),                                  // 86: users.user.v1.Module
+	(*ListModulesRequest)(nil),                      // 87: users.user.v1.ListModulesRequest
+	(*ListModulesResponse)(nil),                     // 88: users.user.v1.ListModulesResponse
+	(*AdminGetProfileRequest)(nil),                  // 89: users.user.v1.AdminGetProfileRequest
+	(*AdminGetProfileResponse)(nil),                 // 90: users.user.v1.AdminGetProfileResponse
+	(*AdminUpdateProfileRequest)(nil),               // 91: users.user.v1.AdminUpdateProfileRequest
+	(*AdminUpdateProfileResponse)(nil),              // 92: users.user.v1.AdminUpdateProfileResponse
+	(*AdminListCarsRequest)(nil),                    // 93: users.user.v1.AdminListCarsRequest
+	(*AdminListCarsResponse)(nil),                   // 94: users.user.v1.AdminListCarsResponse
+	(*AdminCar)(nil),                                // 95: users.user.v1.AdminCar
+	(*RequestPhoneChangeRequest)(nil),               // 96: users.user.v1.RequestPhoneChangeRequest
+	(*RequestPhoneChangeResponse)(nil),              // 97: users.user.v1.RequestPhoneChangeResponse
+	(*ConfirmPhoneChangeRequest)(nil),               // 98: users.user.v1.ConfirmPhoneChangeRequest
+	(*ConfirmPhoneChangeResponse)(nil),              // 99: users.user.v1.ConfirmPhoneChangeResponse
+	(*ActivatePromocodeRequest)(nil),                // 100: users.user.v1.ActivatePromocodeRequest
+	(*ActivatePromocodeResponse)(nil),               // 101: users.user.v1.ActivatePromocodeResponse
+	(*AuthorizeOrganizationCapabilityRequest)(nil),  // 102: users.user.v1.AuthorizeOrganizationCapabilityRequest
+	(*AuthorizeOrganizationCapabilityResponse)(nil), // 103: users.user.v1.AuthorizeOrganizationCapabilityResponse
+	(*timestamppb.Timestamp)(nil),                   // 104: google.protobuf.Timestamp
 }
 var file_users_user_user_proto_depIdxs = []int32{
-	102, // 0: users.user.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	102, // 1: users.user.v1.User.updated_at:type_name -> google.protobuf.Timestamp
+	104, // 0: users.user.v1.User.created_at:type_name -> google.protobuf.Timestamp
+	104, // 1: users.user.v1.User.updated_at:type_name -> google.protobuf.Timestamp
 	3,   // 2: users.user.v1.GetProfileResponse.user:type_name -> users.user.v1.User
 	4,   // 3: users.user.v1.GetProfileResponse.counters:type_name -> users.user.v1.UserCounters
 	3,   // 4: users.user.v1.UpdateProfileResponse.user:type_name -> users.user.v1.User
@@ -6353,8 +6491,8 @@ var file_users_user_user_proto_depIdxs = []int32{
 	27,  // 18: users.user.v1.UpdateSettingsResponse.settings:type_name -> users.user.v1.UserSettings
 	1,   // 19: users.user.v1.UserAppScope.app:type_name -> users.user.v1.UserApp
 	2,   // 20: users.user.v1.UserAppScope.perspective:type_name -> users.user.v1.UserPerspective
-	102, // 21: users.user.v1.Device.created_at:type_name -> google.protobuf.Timestamp
-	102, // 22: users.user.v1.Device.last_used_at:type_name -> google.protobuf.Timestamp
+	104, // 21: users.user.v1.Device.created_at:type_name -> google.protobuf.Timestamp
+	104, // 22: users.user.v1.Device.last_used_at:type_name -> google.protobuf.Timestamp
 	32,  // 23: users.user.v1.Device.scope:type_name -> users.user.v1.UserAppScope
 	32,  // 24: users.user.v1.RegisterDeviceRequest.scope:type_name -> users.user.v1.UserAppScope
 	32,  // 25: users.user.v1.UnregisterDeviceRequest.scope:type_name -> users.user.v1.UserAppScope
@@ -6367,14 +6505,14 @@ var file_users_user_user_proto_depIdxs = []int32{
 	0,   // 32: users.user.v1.PlatformMember.roles:type_name -> users.user.v1.PlatformRole
 	0,   // 33: users.user.v1.ListUsersByPlatformRolesRequest.roles:type_name -> users.user.v1.PlatformRole
 	60,  // 34: users.user.v1.ListUsersByPlatformRolesResponse.members:type_name -> users.user.v1.PlatformMember
-	102, // 35: users.user.v1.UserPhone.created_at:type_name -> google.protobuf.Timestamp
-	102, // 36: users.user.v1.UserPhone.updated_at:type_name -> google.protobuf.Timestamp
+	104, // 35: users.user.v1.UserPhone.created_at:type_name -> google.protobuf.Timestamp
+	104, // 36: users.user.v1.UserPhone.updated_at:type_name -> google.protobuf.Timestamp
 	64,  // 37: users.user.v1.ListPhonesResponse.phones:type_name -> users.user.v1.UserPhone
 	64,  // 38: users.user.v1.AddPhoneResponse.phone:type_name -> users.user.v1.UserPhone
 	64,  // 39: users.user.v1.SetPrimaryPhoneResponse.phone:type_name -> users.user.v1.UserPhone
 	64,  // 40: users.user.v1.RelabelPhoneResponse.phone:type_name -> users.user.v1.UserPhone
-	102, // 41: users.user.v1.PlatformRoleDef.created_at:type_name -> google.protobuf.Timestamp
-	102, // 42: users.user.v1.PlatformRoleDef.updated_at:type_name -> google.protobuf.Timestamp
+	104, // 41: users.user.v1.PlatformRoleDef.created_at:type_name -> google.protobuf.Timestamp
+	104, // 42: users.user.v1.PlatformRoleDef.updated_at:type_name -> google.protobuf.Timestamp
 	75,  // 43: users.user.v1.ListPlatformRoleDefsResponse.roles:type_name -> users.user.v1.PlatformRoleDef
 	75,  // 44: users.user.v1.GetPlatformRoleDefResponse.role:type_name -> users.user.v1.PlatformRoleDef
 	75,  // 45: users.user.v1.CreatePlatformRoleDefResponse.role:type_name -> users.user.v1.PlatformRoleDef
@@ -6384,8 +6522,8 @@ var file_users_user_user_proto_depIdxs = []int32{
 	4,   // 49: users.user.v1.AdminGetProfileResponse.counters:type_name -> users.user.v1.UserCounters
 	3,   // 50: users.user.v1.AdminUpdateProfileResponse.user:type_name -> users.user.v1.User
 	95,  // 51: users.user.v1.AdminListCarsResponse.cars:type_name -> users.user.v1.AdminCar
-	102, // 52: users.user.v1.AdminCar.created_at:type_name -> google.protobuf.Timestamp
-	102, // 53: users.user.v1.ConfirmPhoneChangeResponse.expires_at:type_name -> google.protobuf.Timestamp
+	104, // 52: users.user.v1.AdminCar.created_at:type_name -> google.protobuf.Timestamp
+	104, // 53: users.user.v1.ConfirmPhoneChangeResponse.expires_at:type_name -> google.protobuf.Timestamp
 	5,   // 54: users.user.v1.UserService.GetProfile:input_type -> users.user.v1.GetProfileRequest
 	7,   // 55: users.user.v1.UserService.UpdateProfile:input_type -> users.user.v1.UpdateProfileRequest
 	9,   // 56: users.user.v1.UserService.GetUserByID:input_type -> users.user.v1.GetUserByIDRequest
@@ -6428,56 +6566,58 @@ var file_users_user_user_proto_depIdxs = []int32{
 	96,  // 93: users.user.v1.UserService.RequestPhoneChange:input_type -> users.user.v1.RequestPhoneChangeRequest
 	98,  // 94: users.user.v1.UserService.ConfirmPhoneChange:input_type -> users.user.v1.ConfirmPhoneChangeRequest
 	100, // 95: users.user.v1.UserService.ActivatePromocode:input_type -> users.user.v1.ActivatePromocodeRequest
-	89,  // 96: users.user.v1.AdminUserService.AdminGetProfile:input_type -> users.user.v1.AdminGetProfileRequest
-	91,  // 97: users.user.v1.AdminUserService.AdminUpdateProfile:input_type -> users.user.v1.AdminUpdateProfileRequest
-	93,  // 98: users.user.v1.AdminUserService.AdminListCars:input_type -> users.user.v1.AdminListCarsRequest
-	6,   // 99: users.user.v1.UserService.GetProfile:output_type -> users.user.v1.GetProfileResponse
-	8,   // 100: users.user.v1.UserService.UpdateProfile:output_type -> users.user.v1.UpdateProfileResponse
-	10,  // 101: users.user.v1.UserService.GetUserByID:output_type -> users.user.v1.GetUserByIDResponse
-	16,  // 102: users.user.v1.UserService.GetUserByPhone:output_type -> users.user.v1.GetUserByPhoneResponse
-	18,  // 103: users.user.v1.UserService.GetUserByLegacyID:output_type -> users.user.v1.GetUserByLegacyIDResponse
-	20,  // 104: users.user.v1.UserService.CreateUser:output_type -> users.user.v1.CreateUserResponse
-	12,  // 105: users.user.v1.UserService.GetUsersByIDs:output_type -> users.user.v1.GetUsersByIDsResponse
-	14,  // 106: users.user.v1.UserService.GetUsersByPhones:output_type -> users.user.v1.GetUsersByPhonesResponse
-	26,  // 107: users.user.v1.UserService.FindOrCreateByPhone:output_type -> users.user.v1.FindOrCreateByPhoneResponse
-	22,  // 108: users.user.v1.UserService.FindOrCreateByInstagramID:output_type -> users.user.v1.FindOrCreateByInstagramIDResponse
-	24,  // 109: users.user.v1.UserService.FindOrCreateByBoxoReference:output_type -> users.user.v1.FindOrCreateByBoxoReferenceResponse
-	29,  // 110: users.user.v1.UserService.GetSettings:output_type -> users.user.v1.GetSettingsResponse
-	31,  // 111: users.user.v1.UserService.UpdateSettings:output_type -> users.user.v1.UpdateSettingsResponse
-	35,  // 112: users.user.v1.UserService.RegisterDevice:output_type -> users.user.v1.RegisterDeviceResponse
-	37,  // 113: users.user.v1.UserService.UnregisterDevice:output_type -> users.user.v1.UnregisterDeviceResponse
-	39,  // 114: users.user.v1.UserService.GetDevices:output_type -> users.user.v1.GetDevicesResponse
-	41,  // 115: users.user.v1.UserService.DeleteAccount:output_type -> users.user.v1.DeleteAccountResponse
-	57,  // 116: users.user.v1.UserService.ListUsers:output_type -> users.user.v1.ListUsersResponse
-	59,  // 117: users.user.v1.UserService.ResolveUserSegment:output_type -> users.user.v1.ResolveUserSegmentResponse
-	43,  // 118: users.user.v1.UserService.SetPlatformRoles:output_type -> users.user.v1.SetPlatformRolesResponse
-	45,  // 119: users.user.v1.UserService.GetPlatformRoles:output_type -> users.user.v1.GetPlatformRolesResponse
-	47,  // 120: users.user.v1.UserService.CheckPlatformRoles:output_type -> users.user.v1.CheckPlatformRolesResponse
-	49,  // 121: users.user.v1.UserService.SetPlatformOrgAccess:output_type -> users.user.v1.SetPlatformOrgAccessResponse
-	51,  // 122: users.user.v1.UserService.GetPlatformOrgAccess:output_type -> users.user.v1.GetPlatformOrgAccessResponse
-	53,  // 123: users.user.v1.UserService.RemovePlatformOrgAccess:output_type -> users.user.v1.RemovePlatformOrgAccessResponse
-	55,  // 124: users.user.v1.UserService.AddPlatformOrgAccess:output_type -> users.user.v1.AddPlatformOrgAccessResponse
-	62,  // 125: users.user.v1.UserService.ListUsersByPlatformRoles:output_type -> users.user.v1.ListUsersByPlatformRolesResponse
-	62,  // 126: users.user.v1.UserService.ListUsersByPlatformRolesInOrg:output_type -> users.user.v1.ListUsersByPlatformRolesResponse
-	66,  // 127: users.user.v1.UserService.ListPhones:output_type -> users.user.v1.ListPhonesResponse
-	68,  // 128: users.user.v1.UserService.AddPhone:output_type -> users.user.v1.AddPhoneResponse
-	70,  // 129: users.user.v1.UserService.RemovePhone:output_type -> users.user.v1.RemovePhoneResponse
-	72,  // 130: users.user.v1.UserService.SetPrimaryPhone:output_type -> users.user.v1.SetPrimaryPhoneResponse
-	74,  // 131: users.user.v1.UserService.RelabelPhone:output_type -> users.user.v1.RelabelPhoneResponse
-	77,  // 132: users.user.v1.UserService.ListPlatformRoleDefs:output_type -> users.user.v1.ListPlatformRoleDefsResponse
-	79,  // 133: users.user.v1.UserService.GetPlatformRoleDef:output_type -> users.user.v1.GetPlatformRoleDefResponse
-	81,  // 134: users.user.v1.UserService.CreatePlatformRoleDef:output_type -> users.user.v1.CreatePlatformRoleDefResponse
-	83,  // 135: users.user.v1.UserService.UpdatePlatformRoleDef:output_type -> users.user.v1.UpdatePlatformRoleDefResponse
-	85,  // 136: users.user.v1.UserService.DeletePlatformRoleDef:output_type -> users.user.v1.DeletePlatformRoleDefResponse
-	88,  // 137: users.user.v1.UserService.ListModules:output_type -> users.user.v1.ListModulesResponse
-	97,  // 138: users.user.v1.UserService.RequestPhoneChange:output_type -> users.user.v1.RequestPhoneChangeResponse
-	99,  // 139: users.user.v1.UserService.ConfirmPhoneChange:output_type -> users.user.v1.ConfirmPhoneChangeResponse
-	101, // 140: users.user.v1.UserService.ActivatePromocode:output_type -> users.user.v1.ActivatePromocodeResponse
-	90,  // 141: users.user.v1.AdminUserService.AdminGetProfile:output_type -> users.user.v1.AdminGetProfileResponse
-	92,  // 142: users.user.v1.AdminUserService.AdminUpdateProfile:output_type -> users.user.v1.AdminUpdateProfileResponse
-	94,  // 143: users.user.v1.AdminUserService.AdminListCars:output_type -> users.user.v1.AdminListCarsResponse
-	99,  // [99:144] is the sub-list for method output_type
-	54,  // [54:99] is the sub-list for method input_type
+	102, // 96: users.user.v1.UserService.AuthorizeOrganizationCapability:input_type -> users.user.v1.AuthorizeOrganizationCapabilityRequest
+	89,  // 97: users.user.v1.AdminUserService.AdminGetProfile:input_type -> users.user.v1.AdminGetProfileRequest
+	91,  // 98: users.user.v1.AdminUserService.AdminUpdateProfile:input_type -> users.user.v1.AdminUpdateProfileRequest
+	93,  // 99: users.user.v1.AdminUserService.AdminListCars:input_type -> users.user.v1.AdminListCarsRequest
+	6,   // 100: users.user.v1.UserService.GetProfile:output_type -> users.user.v1.GetProfileResponse
+	8,   // 101: users.user.v1.UserService.UpdateProfile:output_type -> users.user.v1.UpdateProfileResponse
+	10,  // 102: users.user.v1.UserService.GetUserByID:output_type -> users.user.v1.GetUserByIDResponse
+	16,  // 103: users.user.v1.UserService.GetUserByPhone:output_type -> users.user.v1.GetUserByPhoneResponse
+	18,  // 104: users.user.v1.UserService.GetUserByLegacyID:output_type -> users.user.v1.GetUserByLegacyIDResponse
+	20,  // 105: users.user.v1.UserService.CreateUser:output_type -> users.user.v1.CreateUserResponse
+	12,  // 106: users.user.v1.UserService.GetUsersByIDs:output_type -> users.user.v1.GetUsersByIDsResponse
+	14,  // 107: users.user.v1.UserService.GetUsersByPhones:output_type -> users.user.v1.GetUsersByPhonesResponse
+	26,  // 108: users.user.v1.UserService.FindOrCreateByPhone:output_type -> users.user.v1.FindOrCreateByPhoneResponse
+	22,  // 109: users.user.v1.UserService.FindOrCreateByInstagramID:output_type -> users.user.v1.FindOrCreateByInstagramIDResponse
+	24,  // 110: users.user.v1.UserService.FindOrCreateByBoxoReference:output_type -> users.user.v1.FindOrCreateByBoxoReferenceResponse
+	29,  // 111: users.user.v1.UserService.GetSettings:output_type -> users.user.v1.GetSettingsResponse
+	31,  // 112: users.user.v1.UserService.UpdateSettings:output_type -> users.user.v1.UpdateSettingsResponse
+	35,  // 113: users.user.v1.UserService.RegisterDevice:output_type -> users.user.v1.RegisterDeviceResponse
+	37,  // 114: users.user.v1.UserService.UnregisterDevice:output_type -> users.user.v1.UnregisterDeviceResponse
+	39,  // 115: users.user.v1.UserService.GetDevices:output_type -> users.user.v1.GetDevicesResponse
+	41,  // 116: users.user.v1.UserService.DeleteAccount:output_type -> users.user.v1.DeleteAccountResponse
+	57,  // 117: users.user.v1.UserService.ListUsers:output_type -> users.user.v1.ListUsersResponse
+	59,  // 118: users.user.v1.UserService.ResolveUserSegment:output_type -> users.user.v1.ResolveUserSegmentResponse
+	43,  // 119: users.user.v1.UserService.SetPlatformRoles:output_type -> users.user.v1.SetPlatformRolesResponse
+	45,  // 120: users.user.v1.UserService.GetPlatformRoles:output_type -> users.user.v1.GetPlatformRolesResponse
+	47,  // 121: users.user.v1.UserService.CheckPlatformRoles:output_type -> users.user.v1.CheckPlatformRolesResponse
+	49,  // 122: users.user.v1.UserService.SetPlatformOrgAccess:output_type -> users.user.v1.SetPlatformOrgAccessResponse
+	51,  // 123: users.user.v1.UserService.GetPlatformOrgAccess:output_type -> users.user.v1.GetPlatformOrgAccessResponse
+	53,  // 124: users.user.v1.UserService.RemovePlatformOrgAccess:output_type -> users.user.v1.RemovePlatformOrgAccessResponse
+	55,  // 125: users.user.v1.UserService.AddPlatformOrgAccess:output_type -> users.user.v1.AddPlatformOrgAccessResponse
+	62,  // 126: users.user.v1.UserService.ListUsersByPlatformRoles:output_type -> users.user.v1.ListUsersByPlatformRolesResponse
+	62,  // 127: users.user.v1.UserService.ListUsersByPlatformRolesInOrg:output_type -> users.user.v1.ListUsersByPlatformRolesResponse
+	66,  // 128: users.user.v1.UserService.ListPhones:output_type -> users.user.v1.ListPhonesResponse
+	68,  // 129: users.user.v1.UserService.AddPhone:output_type -> users.user.v1.AddPhoneResponse
+	70,  // 130: users.user.v1.UserService.RemovePhone:output_type -> users.user.v1.RemovePhoneResponse
+	72,  // 131: users.user.v1.UserService.SetPrimaryPhone:output_type -> users.user.v1.SetPrimaryPhoneResponse
+	74,  // 132: users.user.v1.UserService.RelabelPhone:output_type -> users.user.v1.RelabelPhoneResponse
+	77,  // 133: users.user.v1.UserService.ListPlatformRoleDefs:output_type -> users.user.v1.ListPlatformRoleDefsResponse
+	79,  // 134: users.user.v1.UserService.GetPlatformRoleDef:output_type -> users.user.v1.GetPlatformRoleDefResponse
+	81,  // 135: users.user.v1.UserService.CreatePlatformRoleDef:output_type -> users.user.v1.CreatePlatformRoleDefResponse
+	83,  // 136: users.user.v1.UserService.UpdatePlatformRoleDef:output_type -> users.user.v1.UpdatePlatformRoleDefResponse
+	85,  // 137: users.user.v1.UserService.DeletePlatformRoleDef:output_type -> users.user.v1.DeletePlatformRoleDefResponse
+	88,  // 138: users.user.v1.UserService.ListModules:output_type -> users.user.v1.ListModulesResponse
+	97,  // 139: users.user.v1.UserService.RequestPhoneChange:output_type -> users.user.v1.RequestPhoneChangeResponse
+	99,  // 140: users.user.v1.UserService.ConfirmPhoneChange:output_type -> users.user.v1.ConfirmPhoneChangeResponse
+	101, // 141: users.user.v1.UserService.ActivatePromocode:output_type -> users.user.v1.ActivatePromocodeResponse
+	103, // 142: users.user.v1.UserService.AuthorizeOrganizationCapability:output_type -> users.user.v1.AuthorizeOrganizationCapabilityResponse
+	90,  // 143: users.user.v1.AdminUserService.AdminGetProfile:output_type -> users.user.v1.AdminGetProfileResponse
+	92,  // 144: users.user.v1.AdminUserService.AdminUpdateProfile:output_type -> users.user.v1.AdminUpdateProfileResponse
+	94,  // 145: users.user.v1.AdminUserService.AdminListCars:output_type -> users.user.v1.AdminListCarsResponse
+	100, // [100:146] is the sub-list for method output_type
+	54,  // [54:100] is the sub-list for method input_type
 	54,  // [54:54] is the sub-list for extension type_name
 	54,  // [54:54] is the sub-list for extension extendee
 	0,   // [0:54] is the sub-list for field type_name
@@ -6500,7 +6640,7 @@ func file_users_user_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_users_user_user_proto_rawDesc), len(file_users_user_user_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   99,
+			NumMessages:   101,
 			NumExtensions: 0,
 			NumServices:   2,
 		},
