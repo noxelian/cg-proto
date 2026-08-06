@@ -172,6 +172,12 @@ service UserService {
   // user. Credits the user's wallet balance with promo.amount (tenge).
   // Returns ActivatePromocodeResponse.amount — the bonus amount credited.
   rpc ActivatePromocode(ActivatePromocodeRequest) returns (ActivatePromocodeResponse);
+
+  // AuthorizeOrganizationCapability checks whether the authenticated actor may
+  // use a named capability in an organization. cg-users MUST derive the actor
+  // from verified incoming authentication; callers cannot supply or override
+  // actor_user_id in the request.
+  rpc AuthorizeOrganizationCapability(AuthorizeOrganizationCapabilityRequest) returns (AuthorizeOrganizationCapabilityResponse);
 }
 
 // AdminUserService provides admin-only RPCs for managing any user's data.
@@ -857,4 +863,19 @@ message ActivatePromocodeResponse {
   int64 amount = 2;
   // message is an optional human-readable confirmation (e.g. "Бонус за промокод").
   string message = 3;
+}
+
+// AuthorizeOrganizationCapabilityRequest intentionally has no user_id or
+// actor_user_id. cg-users binds the actor to verified incoming authentication.
+message AuthorizeOrganizationCapabilityRequest {
+  string organization_id = 1;
+  string capability = 2;
+}
+
+message AuthorizeOrganizationCapabilityResponse {
+  bool allowed = 1;
+  // actor_user_id is the actor derived by cg-users from verified incoming auth.
+  int64 actor_user_id = 2;
+  string organization_id = 3;
+  string capability = 4;
 }
